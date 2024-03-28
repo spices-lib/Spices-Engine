@@ -5,6 +5,8 @@
 
 namespace Spiecs {
 
+#define MaxFrameInFlight 2
+
 	struct VulkanState
 	{
 		VulkanState() = default;

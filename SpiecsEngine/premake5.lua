@@ -45,6 +45,9 @@ project "SpiecsEngine"
 		"imgui"
 	}
 
+	filter "files:vendor/stb_image/**.cpp"
+	flags { "NoPCH" }
+
 	filter "system:windows"
 		systemversion "latest"
 

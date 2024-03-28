@@ -13,11 +13,6 @@ namespace Spiecs {
 		std::optional<uint32_t> transferqueuefamily;
 		std::optional<uint32_t> computequeuefamily;
 
-		VkQueue graphicqueue;
-		VkQueue presentqueue;
-		VkQueue transferqueue;
-		VkQueue computequeue;
-
 		bool isComplete() {
 			return graphicqueuefamily.has_value() &&
 				presentqueuefamily.has_value() &&
@@ -42,12 +37,26 @@ namespace Spiecs {
 		VulkanDevice(VulkanState& vulkanState);
 		virtual ~VulkanDevice();
 
-	private:
-		// only select one suitable physicaldevice
-		VkPhysicalDevice m_PhysicalDevice;
+		VulkanDevice(const VulkanDevice&) = delete;
+		VulkanDevice& operator=(const VulkanDevice&) = delete;
 
-		// logical device
-		VkDevice m_Device;
+		SwapChainSupportDetails& GetSwapChainSupport() { return m_SwapChainSupportDetails; };
+		void RequerySwapChainSupport();
+		QueueHelper& GetQueueHelper() { return m_QueueHelper; };
+		VkSampleCountFlagBits GetMaxUsableSampleCount();
+
+	private:
+		bool SelectPhysicalDevice(const VkInstance& instance, const VkSurfaceKHR& surface, GLFWwindow* window);
+		bool IsPropertyMeetDemand(const VkPhysicalDevice& device);
+		bool IsFeatureMeetDemand(const VkPhysicalDevice& device);
+		bool IsExtensionMeetDemand(const VkPhysicalDevice& device);
+		bool IsQueueMeetDemand(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
+		SwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface, GLFWwindow* window);
+	private:
+
+		std::vector<const char*> m_ExtensionProperties = {
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME
+		};
 
 		// queue 
 		QueueHelper m_QueueHelper;
