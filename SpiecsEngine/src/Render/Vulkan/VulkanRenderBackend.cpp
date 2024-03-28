@@ -3,11 +3,13 @@
 
 namespace Spiecs {
 
+	VulkanState VulkanRenderBackend::m_VulkanState;
+
 	VulkanRenderBackend::VulkanRenderBackend()
 	{
-		m_Windows = std::make_shared<VulkanWindows>(800, 600, "hello");
-		m_Instance = std::make_shared<VulkanInstance>("app", "engine", m_Windows->Get());
-		m_Device = std::make_shared<VulkanDevice>();
+		m_VulkanWindows = std::make_unique<VulkanWindows>(m_VulkanState, 800, 600, "Spiecs Engine");
+		m_VulkanInstance = std::make_unique<VulkanInstance>(m_VulkanState, "app", "engine");
+		m_VulkanDevice = std::make_unique<VulkanDevice>(m_VulkanState);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()

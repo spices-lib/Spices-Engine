@@ -14,7 +14,8 @@ namespace Spiecs {
 		return VK_FALSE;
 	}
 
-	VulkanInstance::VulkanInstance(const std::string& name, const std::string& enginename, GLFWwindow* window)
+	VulkanInstance::VulkanInstance(VulkanState& vulkanState, const std::string& name, const std::string& enginename)
+		: VulkanObject(vulkanState)
 	{
 		// app info
 		VkApplicationInfo appInfo = {};
@@ -102,13 +103,13 @@ namespace Spiecs {
 		FillDebugMessengerCreateInfo();
 		createInfo.pNext = &m_DebugMessengerCreateInfo;
 #endif
-		VK_CHECK(vkCreateInstance(&createInfo, nullptr, &m_Instance));
+		VK_CHECK(vkCreateInstance(&createInfo, nullptr, &vulkanState.m_Instance));
 
 #ifdef SPIECS_DEBUG
 
-		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(m_Instance, "vkCreateDebugUtilsMessengerEXT");
+		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCreateDebugUtilsMessengerEXT");
 		if (func != nullptr) {
-			func(m_Instance, &m_DebugMessengerCreateInfo, nullptr, &m_DebugMessenger);
+			func(vulkanState.m_Instance, &m_DebugMessengerCreateInfo, nullptr, &m_DebugMessenger);
 		}
 		else
 		{
@@ -119,22 +120,22 @@ namespace Spiecs {
 		SPIECS_LOG("VkInstance Create Succeed!!!");
 
 
-		VK_CHECK(glfwCreateWindowSurface(m_Instance, window, nullptr, &m_Surface));
+		VK_CHECK(glfwCreateWindowSurface(vulkanState.m_Instance, m_VulkanState.m_Windows, nullptr, &vulkanState.m_Surface));
 		SPIECS_LOG("VkSurfaceKHR Create Succeed!!!");
 
 	}
 
 	VulkanInstance::~VulkanInstance()
 	{
-		vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
+		vkDestroySurfaceKHR(m_VulkanState.m_Instance, m_VulkanState.m_Surface, nullptr);
 
 #ifdef SPIECS_DEBUG
-		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(m_Instance, "vkDestroyDebugUtilsMessengerEXT");
+		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(m_VulkanState.m_Instance, "vkDestroyDebugUtilsMessengerEXT");
 		if (func != nullptr) {
-			func(m_Instance, m_DebugMessenger, nullptr);
+			func(m_VulkanState.m_Instance, m_DebugMessenger, nullptr);
 		}
 #endif
-		vkDestroyInstance(m_Instance, nullptr);
+		vkDestroyInstance(m_VulkanState.m_Instance, nullptr);
 	}
 
 	void VulkanInstance::FillDebugMessengerCreateInfo()

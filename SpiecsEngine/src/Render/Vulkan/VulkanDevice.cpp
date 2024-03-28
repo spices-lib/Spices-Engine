@@ -3,7 +3,8 @@
 
 namespace Spiecs {
 
-	VulkanDevice::VulkanDevice()
+	VulkanDevice::VulkanDevice(VulkanState& vulkanState)
+		: VulkanObject(vulkanState)
 	{
 	}
 

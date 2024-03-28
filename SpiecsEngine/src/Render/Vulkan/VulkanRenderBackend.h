@@ -18,8 +18,10 @@ namespace Spiecs {
 		VulkanRenderBackend& operator=(const VulkanRenderBackend&) = delete;
 
 	private:
-		std::shared_ptr<VulkanWindows> m_Windows;
-		std::shared_ptr<VulkanInstance> m_Instance;
-		std::shared_ptr<VulkanDevice> m_Device;
+		static VulkanState m_VulkanState;
+
+		std::unique_ptr<VulkanWindows> m_VulkanWindows;
+		std::unique_ptr<VulkanInstance> m_VulkanInstance;
+		std::unique_ptr<VulkanDevice> m_VulkanDevice;
 	};
 }

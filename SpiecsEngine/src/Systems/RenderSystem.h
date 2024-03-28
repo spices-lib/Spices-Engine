@@ -6,7 +6,7 @@
 
 namespace Spiecs {
 
-	class RenderSystem : System
+	class RenderSystem : public System
 	{
 	public:
 		RenderSystem(const std::string& systemName) : System(systemName) {};

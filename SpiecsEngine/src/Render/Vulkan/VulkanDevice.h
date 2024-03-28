@@ -1,5 +1,7 @@
 #pragma once
 #include "Core/Core.h"
+#include "VulkanUtils.h"
+
 #include "optional"
 
 namespace Spiecs {
@@ -34,10 +36,10 @@ namespace Spiecs {
 		VkExtent2D extent;
 	};
 
-	class VulkanDevice
+	class VulkanDevice : public VulkanObject
 	{
 	public:
-		VulkanDevice(const VkInstance& instance, VkSurfaceKHR* surface, GLFWwindow* window);
+		VulkanDevice(VulkanState& vulkanState);
 		virtual ~VulkanDevice();
 
 	private:
@@ -51,6 +53,6 @@ namespace Spiecs {
 		QueueHelper m_QueueHelper;
 
 		// swapchain helper
-		SwapChainSupportDetails m_SwapChainSupportDetails;
+		SwapChainSupportDetails m_SwapChainSupportDetails{};
 	};
 }

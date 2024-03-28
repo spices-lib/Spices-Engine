@@ -3,21 +3,21 @@
 
 namespace Spiecs {
 
-	VulkanWindows::VulkanWindows(uint32_t width, uint32_t height, const std::string& name)
-		: m_Width(width), m_Height(height), m_WindowsName(name)
+	VulkanWindows::VulkanWindows(VulkanState& vulkanState, uint32_t width, uint32_t height, const std::string& name)
+		: VulkanObject(vulkanState), m_Width(width), m_Height(height), m_WindowsName(name)
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-		m_Windows = glfwCreateWindow(m_Width, m_Height, m_WindowsName.c_str(), nullptr, nullptr);
-		glfwSetWindowUserPointer(m_Windows, this);
-		glfwSetFramebufferSizeCallback(m_Windows, WindowsResizeCallback);
+		vulkanState.m_Windows = glfwCreateWindow(m_Width, m_Height, m_WindowsName.c_str(), nullptr, nullptr);
+		glfwSetWindowUserPointer(vulkanState.m_Windows, this);
+		glfwSetFramebufferSizeCallback(vulkanState.m_Windows, WindowsResizeCallback);
 	}
 
 	VulkanWindows::~VulkanWindows()
 	{
-		glfwDestroyWindow(m_Windows);
+		glfwDestroyWindow(m_VulkanState.m_Windows);
 		glfwTerminate();
 	}
 

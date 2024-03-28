@@ -1,3 +1,4 @@
+#pragma once
 #include "Core/Core.h"
 
 #include <vector>
@@ -6,6 +7,10 @@ namespace Spiecs {
 
 	struct VulkanState
 	{
+		VulkanState() = default;
+		VulkanState(const VulkanState&) = delete;
+		VulkanState& operator=(const VulkanState&) = delete;
+
 		GLFWwindow* m_Windows;
 		VkInstance m_Instance;
 		VkSurfaceKHR m_Surface;
@@ -26,5 +31,17 @@ namespace Spiecs {
 		std::vector<VkFence> m_Fence;
 	};
 
-	VulkanState m_VulkanState{};
+	class VulkanObject
+	{
+	public:
+		VulkanObject(VulkanState& vulkanState) : m_VulkanState(vulkanState){};
+		virtual ~VulkanObject() {};
+
+		VulkanObject(const VulkanObject&) = delete;
+		VulkanObject& operator=(const VulkanObject&) = delete;
+
+	protected:
+		VulkanState& m_VulkanState;
+	};
+
 }

@@ -4,7 +4,7 @@
 
 namespace Spiecs {
 
-	class MaterialSystem : System
+	class MaterialSystem : public System
 	{
 	public:
 		MaterialSystem(const std::string& systemName) : System(systemName) {};

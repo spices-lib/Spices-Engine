@@ -4,7 +4,7 @@
 
 namespace Spiecs {
 
-	class MeshSystem : System
+	class MeshSystem : public System
 	{
 	public:
 		MeshSystem(const std::string& systemName) : System(systemName) {};

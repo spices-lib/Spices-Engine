@@ -4,7 +4,7 @@
 
 namespace Spiecs {
 
-	class UISystem : System
+	class UISystem : public System
 	{
 	public:
 		UISystem(const std::string& systemName) : System(systemName) {};
