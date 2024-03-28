@@ -1,0 +1,3 @@
+[submodule "SpiecsEngine/vendor/imgui"]
+	path = SpiecsEngine/vendor/imgui
+	url = https://github.com/spiecs/imgui
