@@ -1,0 +1,15 @@
+﻿/.vs
+/bin-int
+/bin
+
+/SpiecsEngine/bin-int
+/SpiecsEngine/bin
+
+*.user
+*.sln
+*.vcxproj
+*.csproj
+*.vcxproj.filters
+
+*.json
+*.json
