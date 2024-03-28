@@ -24,7 +24,8 @@ project "SpiecsEngine"
 
 	defines
 	{
-		'SPIECS_ENGINE_ASSETS_PATH=std::string("%{wks.location}/SpiecsEngine/assets/")'
+		'SPIECS_ENGINE_ASSETS_PATH=std::string("%{wks.location}/SpiecsEngine/assets/")',
+		"RENDERAPI_VULKAN"
 	}
 
 	includedirs
@@ -56,11 +57,11 @@ project "SpiecsEngine"
 		}
 
 	filter "configurations:Debug"
-		defines "FL_DEBUG"
+		defines "SPIECS_DEBUG"
 		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "FL_RELEASE"
+		defines "SPIECS_RELEASE"
 		runtime "Release"
 		optimize "On"
