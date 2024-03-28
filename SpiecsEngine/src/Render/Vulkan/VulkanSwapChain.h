@@ -14,6 +14,9 @@ namespace Spiecs {
 		VulkanSwapChain(const VulkanSwapChain&) = delete;
 		VulkanSwapChain& operator=(const VulkanSwapChain&) = delete;
 
+		static VkFormat FindDepthFormat(const VkPhysicalDevice& physicalDevice);
+		static VkFormat findSupportedFormat(const VkPhysicalDevice& physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+
 		void Create();
 		void Destroy();
 

@@ -14,6 +14,34 @@ namespace Spiecs {
 		Destroy();
 	}
 
+	VkFormat VulkanSwapChain::FindDepthFormat(const VkPhysicalDevice& physicalDevice)
+	{
+		return findSupportedFormat(
+			physicalDevice, 
+			{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+		);
+	}
+
+	VkFormat VulkanSwapChain::findSupportedFormat(const VkPhysicalDevice& physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+	{
+		for (VkFormat format : candidates)
+		{
+			VkFormatProperties props;
+			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+
+			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+				return format;
+			}
+			else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+				return format;
+			}
+
+			throw std::runtime_error("failed to find supported format!");
+		}
+	}
+
 	void VulkanSwapChain::Create()
 	{
 		VkSwapchainCreateInfoKHR createInfo{};
@@ -46,12 +74,12 @@ namespace Spiecs {
 		createInfo.clipped = VK_TRUE;
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-		VK_CHECK(vkCreateSwapchainKHR(*m_Device, &createInfo, nullptr, &m_SwapChain));
-		FL_LOG("VkSwapchainKHR create succeed!!!");
+		VK_CHECK(vkCreateSwapchainKHR(m_VulkanState.m_Device, &createInfo, nullptr, &m_VulkanState.m_SwapChain));
+		SPIECS_LOG("VkSwapchainKHR create succeed!!!");
 
-		uint32_t imageCount = MaxFramInFlight;
-		vkGetSwapchainImagesKHR(*m_Device, m_SwapChain, &imageCount, m_SwapChainImages.data());
-		FL_LOG("SwapchainImages getted!!!");
+		uint32_t imageCount = MaxFrameInFlight;
+		vkGetSwapchainImagesKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, &imageCount, m_SwapChainImages.data());
+		SPIECS_LOG("SwapchainImages getted!!!");
 
 		for (size_t i = 0; i < m_SwapChainImages.size(); i++) {
 
@@ -75,7 +103,7 @@ namespace Spiecs {
 				createInfo.subresourceRange.baseArrayLayer = 0;
 				createInfo.subresourceRange.layerCount = 1;
 
-				VK_CHECK(vkCreateImageView(*m_Device, &createInfo, nullptr, &m_SwapChainImageViews[i]));
+				VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &createInfo, nullptr, &m_SwapChainImageViews[i]));
 			}
 
 			// Sampler
@@ -91,7 +119,7 @@ namespace Spiecs {
 				samplerInfo.anisotropyEnable = VK_TRUE;
 
 				VkPhysicalDeviceProperties properties{};
-				vkGetPhysicalDeviceProperties(m_Device->GetPhysicalDevice(), &properties);
+				vkGetPhysicalDeviceProperties(m_VulkanState.m_PhysicalDevice, &properties);
 
 				samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
 				samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
@@ -104,16 +132,16 @@ namespace Spiecs {
 				samplerInfo.minLod = 0;
 				samplerInfo.maxLod = static_cast<float>(0);
 
-				VK_CHECK(vkCreateSampler(*m_Device, &samplerInfo, nullptr, &m_SwapChainImageSamplers[i]));
+				VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_SwapChainImageSamplers[i]));
 			}
 		}
-		FL_LOG("SwapchainImageViews created succeed!!!");
+		SPIECS_LOG("SwapchainImageViews created succeed!!!");
 
 		{
 			VkFormat colorFormat = m_Device->GetSwapChainSupport().format.format;
 
-			m_ColorImage = new Image(
-				m_Device,
+			m_ColorImage = new VulkanImage(
+				m_VulkanState,
 				m_Device->GetSwapChainSupport().extent.width,
 				m_Device->GetSwapChainSupport().extent.height,
 				m_Device->GetMaxUsableSampleCount(),
@@ -130,8 +158,8 @@ namespace Spiecs {
 		{
 			VkFormat depthFormat = FindDepthFormat(m_Device->GetPhysicalDevice());
 
-			m_DepthImage = new Image(
-				m_Device,
+			m_DepthImage = new VulkanImage(
+				m_VulkanState,
 				m_Device->GetSwapChainSupport().extent.width,
 				m_Device->GetSwapChainSupport().extent.height,
 				m_Device->GetMaxUsableSampleCount(),
@@ -162,7 +190,7 @@ namespace Spiecs {
 			framebufferInfo.height = m_Device->GetSwapChainSupport().extent.height;
 			framebufferInfo.layers = 1;
 
-			VK_CHECK(vkCreateFramebuffer(*m_Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]));
+			VK_CHECK(vkCreateFramebuffer(m_VulkanState.m_Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]));
 		}
 	}
 
