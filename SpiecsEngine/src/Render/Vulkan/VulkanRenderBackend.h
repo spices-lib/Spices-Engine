@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
+#include "Render/FrameInfo.h"
 
 #include "VulkanWindows.h"
 #include "VulkanInstance.h"
@@ -8,6 +9,8 @@
 #include "VulkanCommandBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanSwapChain.h"
+#include "VulkanPipeline.h"
+#include "VulkanDescriptor.h"
 
 namespace Spiecs {
 
@@ -20,6 +23,16 @@ namespace Spiecs {
 		VulkanRenderBackend(const VulkanRenderBackend&) = delete;
 		VulkanRenderBackend& operator=(const VulkanRenderBackend&) = delete;
 
+		bool isWindowClosed() { return glfwWindowShouldClose(m_VulkanState.m_Windows); };
+		void WaitIdle() { vkDeviceWaitIdle(m_VulkanState.m_Device); };
+
+		void beginFrame(FrameInfo& frameInfo);
+		void endFrame(FrameInfo& frameInfo);
+
+		void DrawTest(FrameInfo& frameInfo);
+
+	private:
+		void RecreateSwapChain();
 	private:
 		static VulkanState m_VulkanState;
 
@@ -30,5 +43,6 @@ namespace Spiecs {
 		std::unique_ptr<VulkanCommandBuffer> m_VulkanCommandBuffer;
 		std::unique_ptr<VulkanRenderPass> m_VulkanRenderPass;
 		std::unique_ptr<VulkanSwapChain> m_VulkanSwapChain;
+		std::unique_ptr<VulkanDescriptorPool> m_VulkanDescriptorPool;
 	};
 }

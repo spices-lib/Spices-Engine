@@ -13,6 +13,9 @@ namespace Spiecs {
 		VulkanWindows(const VulkanWindows&) = delete;
 		VulkanWindows& operator=(const VulkanWindows&) = delete;
 
+		bool IsResized() { return m_WindowsResized; };
+		void SetResized(bool b) { m_WindowsResized = b; };
+
 	private:
 		static void WindowsResizeCallback(GLFWwindow* window, int width, int height);
 	private:

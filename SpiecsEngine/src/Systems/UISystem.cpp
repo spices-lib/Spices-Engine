@@ -11,5 +11,7 @@ namespace Spiecs {
 	}
 	void UISystem::OnSystemUpdate()
 	{
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		SPIECS_LOG("UISystem :: fin");
 	}
 }

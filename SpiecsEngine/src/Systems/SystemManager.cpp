@@ -19,10 +19,6 @@ namespace Spiecs {
 
 	void SystemManager::Run()
 	{
-		// system update
-		for (auto& pair : m_Identities)
-		{
-			pair.second->OnSystemUpdate();
-		}
+		m_Identities["RenderSystem"]->OnSystemUpdate();
 	}
 }

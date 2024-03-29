@@ -29,6 +29,6 @@ namespace Spiecs {
 
 	void Application::Run()
 	{
-
+		SystemManager::Run();
 	}
 }

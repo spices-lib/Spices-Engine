@@ -1,8 +1,11 @@
 #pragma once
 #include "Core/Core.h"
 #include "SystemManager.h"
-
+#include "Render/FrameInfo.h"
 #include "Render/RenderFrontend.h"
+#include "Render/Renderer/Renderer.h"
+#include <unordered_map>
+#include <memory>
 
 namespace Spiecs {
 
@@ -21,5 +24,7 @@ namespace Spiecs {
 
 	private:
 		std::unique_ptr<RenderFrontend> m_RenderFrontend;
+
+		std::unordered_map<std::string, std::unique_ptr<Renderer>> m_Renderers;
 	};
 }

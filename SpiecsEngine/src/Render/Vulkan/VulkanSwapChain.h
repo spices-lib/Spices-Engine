@@ -18,6 +18,8 @@ namespace Spiecs {
 		static VkFormat FindDepthFormat(const VkPhysicalDevice& physicalDevice);
 		static VkFormat findSupportedFormat(const VkPhysicalDevice& physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
+		VkFramebuffer& GetFramebuffer(uint32_t index) { return m_SwapChainFramebuffers[index]; };
+
 		void Create();
 		void Destroy();
 

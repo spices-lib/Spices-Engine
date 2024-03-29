@@ -38,6 +38,8 @@ namespace Spiecs {
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 		static void EnableAlphaBlending(PipelineConfigInfo& configInfo);
 
+		void Bind(uint32_t frameIndex);
+
 	private:
 		void CreateGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config);
 	private:

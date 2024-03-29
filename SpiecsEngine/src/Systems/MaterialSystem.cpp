@@ -11,5 +11,7 @@ namespace Spiecs {
 	}
 	void MaterialSystem::OnSystemUpdate()
 	{
+		std::this_thread::sleep_for(std::chrono::seconds(3));
+		SPIECS_LOG("MaterialSystem :: fin");
 	}
 }

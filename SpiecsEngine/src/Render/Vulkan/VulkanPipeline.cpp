@@ -112,6 +112,11 @@ namespace Spiecs {
 		configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 	}
 
+	void VulkanPipeline::Bind(uint32_t frameIndex)
+	{
+		vkCmdBindPipeline(m_VulkanState.m_CommandBuffer[frameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+	}
+
 	void VulkanPipeline::CreateGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config)
 	{
 		m_VertShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, vertFilepath);
