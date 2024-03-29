@@ -3,8 +3,9 @@
 
 namespace Spiecs {
 
-	VulkanSwapChain::VulkanSwapChain(VulkanState& vulkanState)
+	VulkanSwapChain::VulkanSwapChain(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice)
 		: VulkanObject(vulkanState)
+		, m_VulkanDevice(vulkanDevice)
 	{
 		Create();
 	}
@@ -48,16 +49,16 @@ namespace Spiecs {
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		createInfo.surface = m_VulkanState.m_Surface;
 		createInfo.minImageCount = MaxFrameInFlight;
-		createInfo.imageFormat = m_Device->GetSwapChainSupport().format.format;
-		createInfo.imageColorSpace = m_Device->GetSwapChainSupport().format.colorSpace;
-		createInfo.imageExtent = m_Device->GetSwapChainSupport().extent;
+		createInfo.imageFormat = m_VulkanDevice->GetSwapChainSupport().format.format;
+		createInfo.imageColorSpace = m_VulkanDevice->GetSwapChainSupport().format.colorSpace;
+		createInfo.imageExtent = m_VulkanDevice->GetSwapChainSupport().extent;
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		uint32_t queueFamilyIndices[] = { m_Device->GetQueueHelper().graphicqueuefamily.value(),
-			m_Device->GetQueueHelper().presentqueuefamily.value() };
+		uint32_t queueFamilyIndices[] = { m_VulkanDevice->GetQueueHelper().graphicqueuefamily.value(),
+			m_VulkanDevice->GetQueueHelper().presentqueuefamily.value() };
 
-		if (m_Device->GetQueueHelper().graphicqueuefamily != m_Device->GetQueueHelper().presentqueuefamily) {
+		if (m_VulkanDevice->GetQueueHelper().graphicqueuefamily != m_VulkanDevice->GetQueueHelper().presentqueuefamily) {
 			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 			createInfo.queueFamilyIndexCount = 2;
 			createInfo.pQueueFamilyIndices = queueFamilyIndices;
@@ -68,9 +69,9 @@ namespace Spiecs {
 			createInfo.pQueueFamilyIndices = nullptr;
 		}
 
-		createInfo.preTransform = m_Device->GetSwapChainSupport().capabilities.currentTransform;
+		createInfo.preTransform = m_VulkanDevice->GetSwapChainSupport().capabilities.currentTransform;
 		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-		createInfo.presentMode = m_Device->GetSwapChainSupport().presentMode;
+		createInfo.presentMode = m_VulkanDevice->GetSwapChainSupport().presentMode;
 		createInfo.clipped = VK_TRUE;
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
@@ -90,7 +91,7 @@ namespace Spiecs {
 				createInfo.image = m_SwapChainImages[i];
 
 				createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-				createInfo.format = m_Device->GetSwapChainSupport().format.format;
+				createInfo.format = m_VulkanDevice->GetSwapChainSupport().format.format;
 
 				createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
 				createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -138,13 +139,13 @@ namespace Spiecs {
 		SPIECS_LOG("SwapchainImageViews created succeed!!!");
 
 		{
-			VkFormat colorFormat = m_Device->GetSwapChainSupport().format.format;
+			VkFormat colorFormat = m_VulkanDevice->GetSwapChainSupport().format.format;
 
-			m_ColorImage = new VulkanImage(
+			m_ColorImage = std::make_unique<VulkanImage>(
 				m_VulkanState,
-				m_Device->GetSwapChainSupport().extent.width,
-				m_Device->GetSwapChainSupport().extent.height,
-				m_Device->GetMaxUsableSampleCount(),
+				m_VulkanDevice->GetSwapChainSupport().extent.width,
+				m_VulkanDevice->GetSwapChainSupport().extent.height,
+				m_VulkanDevice->GetMaxUsableSampleCount(),
 				colorFormat,
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
@@ -156,13 +157,13 @@ namespace Spiecs {
 		}
 
 		{
-			VkFormat depthFormat = FindDepthFormat(m_Device->GetPhysicalDevice());
+			VkFormat depthFormat = FindDepthFormat(m_VulkanState.m_PhysicalDevice);
 
-			m_DepthImage = new VulkanImage(
+			m_DepthImage = std::make_unique<VulkanImage>(
 				m_VulkanState,
-				m_Device->GetSwapChainSupport().extent.width,
-				m_Device->GetSwapChainSupport().extent.height,
-				m_Device->GetMaxUsableSampleCount(),
+				m_VulkanDevice->GetSwapChainSupport().extent.width,
+				m_VulkanDevice->GetSwapChainSupport().extent.height,
+				m_VulkanDevice->GetMaxUsableSampleCount(),
 				depthFormat,
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -183,11 +184,11 @@ namespace Spiecs {
 
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = *m_RenderPass;
+			framebufferInfo.renderPass = m_VulkanState.m_RenderPass;
 			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments->size());
 			framebufferInfo.pAttachments = attachments->data();
-			framebufferInfo.width = m_Device->GetSwapChainSupport().extent.width;
-			framebufferInfo.height = m_Device->GetSwapChainSupport().extent.height;
+			framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
+			framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
 			framebufferInfo.layers = 1;
 
 			VK_CHECK(vkCreateFramebuffer(m_VulkanState.m_Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]));

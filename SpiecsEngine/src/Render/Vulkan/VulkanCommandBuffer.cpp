@@ -34,7 +34,4 @@ namespace Spiecs {
 		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_CommandBuffer.data()));
 		SPIECS_LOG("VkCommandBuffer created succeed!!!");
 	}
-
-	
-
 }

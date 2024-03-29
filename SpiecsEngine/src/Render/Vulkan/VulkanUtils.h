@@ -24,6 +24,8 @@ namespace Spiecs {
 		VkQueue m_TransformQueue;
 		VkQueue m_ComputeQueue;
 
+		VkRenderPass m_RenderPass;
+
 		VkSwapchainKHR m_SwapChain;
 		VkCommandPool m_CommandPool;
 

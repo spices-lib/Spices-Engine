@@ -9,7 +9,9 @@ namespace Spiecs {
 		Application();
 		virtual ~Application();
 
+		Application(const Application&) = delete;
+		Application& operator=(const Application&) = delete;
+
 		void Run();
 	};
-
 }

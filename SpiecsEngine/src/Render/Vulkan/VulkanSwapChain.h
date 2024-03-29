@@ -2,13 +2,14 @@
 #include "Core/Core.h"
 #include "VulkanUtils.h"
 #include "VulkanImage.h"
+#include "VulkanDevice.h"
 
 namespace Spiecs {
 
 	class VulkanSwapChain : VulkanObject
 	{
 	public:
-		VulkanSwapChain(VulkanState& vulkanState);
+		VulkanSwapChain(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice);
 		virtual ~VulkanSwapChain();
 
 		VulkanSwapChain(const VulkanSwapChain&) = delete;
@@ -21,6 +22,8 @@ namespace Spiecs {
 		void Destroy();
 
 	private:
+		std::shared_ptr<VulkanDevice> m_VulkanDevice;
+
 		std::vector<VkImage> m_SwapChainImages;
 		std::vector<VkImageView> m_SwapChainImageViews;
 		std::vector<VkSampler> m_SwapChainImageSamplers;

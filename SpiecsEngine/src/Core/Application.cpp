@@ -29,10 +29,6 @@ namespace Spiecs {
 
 	void Application::Run()
 	{
-		while (1)
-		{
-			// all system update
-			SystemManager::Run();
-		}
+
 	}
 }

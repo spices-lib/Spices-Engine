@@ -6,6 +6,8 @@
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
 #include "VulkanCommandBuffer.h"
+#include "VulkanRenderPass.h"
+#include "VulkanSwapChain.h"
 
 namespace Spiecs {
 
@@ -23,8 +25,10 @@ namespace Spiecs {
 
 		std::unique_ptr<VulkanWindows> m_VulkanWindows;
 		std::unique_ptr<VulkanInstance> m_VulkanInstance;
-		std::unique_ptr<VulkanDevice> m_VulkanDevice;
+		std::shared_ptr<VulkanDevice> m_VulkanDevice;
 		std::unique_ptr<VulkanCommandPool> m_VulkanCommandPool;
 		std::unique_ptr<VulkanCommandBuffer> m_VulkanCommandBuffer;
+		std::unique_ptr<VulkanRenderPass> m_VulkanRenderPass;
+		std::unique_ptr<VulkanSwapChain> m_VulkanSwapChain;
 	};
 }
