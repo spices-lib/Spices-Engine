@@ -10,9 +10,6 @@ namespace Spiecs {
 		VulkanWindows(VulkanState& vulkanState, uint32_t width, uint32_t height, const std::string& name);
 		virtual ~VulkanWindows();
 
-		VulkanWindows(const VulkanWindows&) = delete;
-		VulkanWindows& operator=(const VulkanWindows&) = delete;
-
 		bool IsResized() { return m_WindowsResized; };
 		void SetResized(bool b) { m_WindowsResized = b; };
 

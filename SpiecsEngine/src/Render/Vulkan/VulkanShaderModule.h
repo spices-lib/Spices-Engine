@@ -10,9 +10,6 @@ namespace Spiecs {
 		VulkanShaderModule(VulkanState& vulkanState, const std::string& filePath);
 		virtual ~VulkanShaderModule();
 
-		VulkanShaderModule(const VulkanShaderModule&) = delete;
-		VulkanShaderModule& operator=(const VulkanShaderModule&) = delete;
-
 		VkShaderModule& Get() { return m_ShaderModule; };
 
 	private:

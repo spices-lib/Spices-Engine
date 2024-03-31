@@ -10,9 +10,6 @@ namespace Spiecs {
 		VulkanInstance(VulkanState& vulkanState, const std::string& name, const std::string& enginename);
 		virtual ~VulkanInstance();
 
-		VulkanInstance(const VulkanInstance&) = delete;
-		VulkanInstance& operator=(const VulkanInstance&) = delete;
-
 	private:
 		void FillDebugMessengerCreateInfo();
 	private:

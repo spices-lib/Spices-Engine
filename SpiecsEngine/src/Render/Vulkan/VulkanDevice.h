@@ -37,9 +37,6 @@ namespace Spiecs {
 		VulkanDevice(VulkanState& vulkanState);
 		virtual ~VulkanDevice();
 
-		VulkanDevice(const VulkanDevice&) = delete;
-		VulkanDevice& operator=(const VulkanDevice&) = delete;
-
 		SwapChainSupportDetails& GetSwapChainSupport() { return m_SwapChainSupportDetails; };
 		void RequerySwapChainSupport();
 		QueueHelper& GetQueueHelper() { return m_QueueHelper; };

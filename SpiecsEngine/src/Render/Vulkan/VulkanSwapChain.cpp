@@ -8,10 +8,12 @@ namespace Spiecs {
 		, m_VulkanDevice(vulkanDevice)
 	{
 		Create();
+		CreateSyncObjects();
 	}
 
 	VulkanSwapChain::~VulkanSwapChain()
 	{
+		DestroySyncObjects();
 		Destroy();
 	}
 
@@ -210,5 +212,34 @@ namespace Spiecs {
 		}
 
 		vkDestroySwapchainKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, nullptr);
+	}
+
+	void VulkanSwapChain::CreateSyncObjects()
+	{
+		m_VulkanState.m_ImageSemaphore.resize(MaxFrameInFlight);
+		m_VulkanState.m_QueueSemaphore.resize(MaxFrameInFlight);
+		m_VulkanState.m_Fence.resize(MaxFrameInFlight);
+
+		VkSemaphoreCreateInfo semaphoreInfo = {};
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo = {};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+		for (size_t i = 0; i < MaxFrameInFlight; i++) {
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ImageSemaphore[i]));
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_QueueSemaphore[i]));
+			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_Fence[i]));
+		}
+	}
+
+	void VulkanSwapChain::DestroySyncObjects()
+	{
+		for (size_t i = 0; i < MaxFrameInFlight; i++) {
+			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_ImageSemaphore[i], nullptr);
+			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_QueueSemaphore[i], nullptr);
+			vkDestroyFence(m_VulkanState.m_Device, m_VulkanState.m_Fence[i], nullptr);
+		}
 	}
 }

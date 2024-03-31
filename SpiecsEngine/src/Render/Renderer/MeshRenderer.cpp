@@ -6,25 +6,25 @@ namespace Spiecs {
 
 	void MeshRenderer::InitDescriptor()
 	{
-		auto descriptorSetLayout = VulkanDescriptorSetLayout::Builder(m_VulkanState)
+		auto descriptorSetLayout = VulkanDescriptorSetLayout::Builder()
 			.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-			.build();
+			.build(m_VulkanState);
 
 		std::vector<VkDescriptorSet> descriptorSet(MaxFrameInFlight);
-		for (int i = 0; i < descriptorSet.size(); i++)
+		/*for (int i = 0; i < descriptorSet.size(); i++)
 		{
 			auto bufferInfo = uboBuffers[i]->descriptorInfo();
 			VulkanDescriptorWriter(*descriptorSetLayout, *globalPool)
 				.WriteBuffer(0, &bufferInfo)
 				.Build(descriptorSet[i]);
-		}
+		}*/
 	}
 
 	void MeshRenderer::Render(FrameInfo& frameInfo)
 	{
 		m_VulkanPipeline->Bind(frameInfo.m_FrameIndex);
 
-		vkCmdBindDescriptorSets(
+		/*vkCmdBindDescriptorSets(
 			m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_PipelineLayout,
@@ -33,7 +33,7 @@ namespace Spiecs {
 			m_DescriptorSets.data(),
 			0,
 			nullptr
-		);
+		);*/
 
 
 	}
@@ -52,9 +52,7 @@ namespace Spiecs {
 		pipelineLayoutInfo.pushConstantRangeCount = 0;
 		pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-		if (vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create pipeline lauout!");
-		}
+		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
 	}
 
 	void MeshRenderer::CreatePipeline(VkRenderPass renderPass)

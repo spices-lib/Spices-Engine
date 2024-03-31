@@ -11,9 +11,6 @@ namespace Spiecs {
 		VulkanRenderPass(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice);
 		virtual ~VulkanRenderPass();
 
-		VulkanRenderPass(const VulkanRenderPass&) = delete;
-		VulkanRenderPass& operator=(const VulkanRenderPass&) = delete;
-
 	private:
 		std::shared_ptr<VulkanDevice> m_VulkanDevice;
 	};

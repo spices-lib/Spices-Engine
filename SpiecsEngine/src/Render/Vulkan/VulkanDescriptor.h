@@ -13,7 +13,7 @@ namespace Spiecs {
         class Builder 
         {
         public:
-            Builder(VulkanState& vulkanState): m_VulkanState(m_VulkanState) {};
+            Builder() {};
 
             Builder& AddBinding(
                 uint32_t binding,
@@ -22,19 +22,15 @@ namespace Spiecs {
                 uint32_t count = 1
             );
 
-            std::unique_ptr<VulkanDescriptorSetLayout> build() const;
+            std::unique_ptr<VulkanDescriptorSetLayout> build(VulkanState& vulkanState) const;
 
         private:
-            VulkanState& m_VulkanState;
             std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> m_Bindings{};
         };
 
     public:
 		VulkanDescriptorSetLayout(VulkanState& vulkanState, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
 		virtual ~VulkanDescriptorSetLayout();
-
-		VulkanDescriptorSetLayout(const VulkanDescriptorSetLayout&) = delete;
-		VulkanDescriptorSetLayout& operator=(const VulkanDescriptorSetLayout&) = delete;
 
         VkDescriptorSetLayout& GetDescriptorSetLayout() { return m_DescriptorSetLayout; };
 
@@ -50,15 +46,14 @@ namespace Spiecs {
     public:
         class Builder {
         public:
-            Builder(VulkanState& vulkanState) : m_VulkanState(m_VulkanState) {};
+            Builder() {};
 
             Builder& AddPoolSize(VkDescriptorType descriptorType, uint32_t count);
             Builder& SetPoolFlags(VkDescriptorPoolCreateFlags flags);
             Builder& SetMaxSets(uint32_t count);
-            std::unique_ptr<VulkanDescriptorPool> Build() const;
+            std::unique_ptr<VulkanDescriptorPool> Build(VulkanState& vulkanState) const;
 
         private:
-            VulkanState& m_VulkanState;
             std::vector<VkDescriptorPoolSize> m_PoolSizes{};
             uint32_t m_MaxSets = 1000;
             VkDescriptorPoolCreateFlags m_PoolFlags = 0;
@@ -67,9 +62,6 @@ namespace Spiecs {
     public:
         VulkanDescriptorPool(VulkanState& vulkanState, uint32_t maxSets, VkDescriptorPoolCreateFlags poolFlags, const std::vector<VkDescriptorPoolSize>& poolSizes);
         virtual ~VulkanDescriptorPool();
-
-        VulkanDescriptorPool(const VulkanDescriptorPool&) = delete;
-        VulkanDescriptorPool& operator=(const VulkanDescriptorPool&) = delete;
 
         bool allocateDescriptor(const VkDescriptorSetLayout descriptorSetLayout, VkDescriptorSet& descriptor) const;
         void freeDescriptors(std::vector<VkDescriptorSet>& descriptors) const;
@@ -86,9 +78,6 @@ namespace Spiecs {
     public:
         VulkanDescriptorWriter(VulkanDescriptorSetLayout& setLayout, VulkanDescriptorPool& pool)
             : m_SetLayout(setLayout), m_Pool(pool) {};
-
-        VulkanDescriptorWriter(const VulkanDescriptorWriter&) = delete;
-        VulkanDescriptorWriter& operator=(const VulkanDescriptorWriter&) = delete;
 
         VulkanDescriptorWriter& WriteBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
         VulkanDescriptorWriter& WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);

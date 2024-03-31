@@ -12,9 +12,6 @@ namespace Spiecs {
 		VulkanImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels);
 		virtual ~VulkanImage();
 
-		VulkanImage(const VulkanImage&) = delete;
-		VulkanImage& operator=(const VulkanImage&) = delete;
-
 		VkImageView& GetView() { return m_ImageView; };
 
 	public:

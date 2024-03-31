@@ -9,7 +9,7 @@ namespace Spiecs {
 	{
 		m_RenderFrontend = std::make_unique<RenderFrontend>();
 
-		m_Renderers
+		//m_Renderers
 
 		SPIECS_LOG("RenderSystem: Init Succeed");
 	}
@@ -33,6 +33,8 @@ namespace Spiecs {
 			float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(nowTime - currentTime).count();
 			float gameTime = std::chrono::duration<float, std::chrono::seconds::period>(nowTime - beginTime).count();
 			currentTime = nowTime;
+
+			std::cout << "FPS: " << 1000 / frameTime << std::endl;
 
 			m_RenderFrontend->beginFrame(frameInfo);
 

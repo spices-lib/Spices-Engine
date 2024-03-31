@@ -42,7 +42,7 @@ namespace Spiecs {
 				__debugbreak();
 			}
 
-			m_Identities[systemName] = reinterpret_cast<System*>(new T(systemName, std::forward<Args>(args)...));
+			m_Identities[systemName] = std::unique_ptr<System>(reinterpret_cast<System*>(new T(systemName, std::forward<Args>(args)...)));
 
 			// system init
 			m_Identities[systemName]->OnSystemInitialize();
@@ -71,6 +71,6 @@ namespace Spiecs {
 
 	private:
 		static std::unique_ptr<SystemManager> m_SystemManager;
-		static std::unordered_map<std::string, System*> m_Identities;
+		static std::unordered_map<std::string, std::unique_ptr<System>> m_Identities;
 	};
 }

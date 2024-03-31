@@ -11,9 +11,6 @@ namespace Spiecs {
 		VulkanBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
 		virtual ~VulkanBuffer();
 
-		VulkanBuffer(const VulkanBuffer&) = delete;
-		VulkanBuffer& operator=(const VulkanBuffer&) = delete;
-
 		void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 		inline VkDeviceMemory& GetMomory() { return m_BufferMemory; };
 		inline VkBuffer& Get() { return m_Buffer; };

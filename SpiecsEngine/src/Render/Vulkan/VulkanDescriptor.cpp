@@ -15,9 +15,9 @@ namespace Spiecs {
 		return *this;
 	}
 
-	std::unique_ptr<VulkanDescriptorSetLayout> VulkanDescriptorSetLayout::Builder::build() const
+	std::unique_ptr<VulkanDescriptorSetLayout> VulkanDescriptorSetLayout::Builder::build(VulkanState& vulkanState) const
 	{
-		return std::make_unique<VulkanDescriptorSetLayout>(m_VulkanState, m_Bindings);
+		return std::make_unique<VulkanDescriptorSetLayout>(vulkanState, m_Bindings);
 	}
 
 	VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(VulkanState& vulkanState, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings)
@@ -25,7 +25,7 @@ namespace Spiecs {
 		, m_Bindings(bindings)
 	{
 		std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};
-		for (auto kv : bindings) {
+		for (auto& kv : bindings) {
 			setLayoutBindings.push_back(kv.second);
 		}
 
@@ -69,9 +69,9 @@ namespace Spiecs {
 		return *this;
 	}
 
-	std::unique_ptr<VulkanDescriptorPool> VulkanDescriptorPool::Builder::Build() const 
+	std::unique_ptr<VulkanDescriptorPool> VulkanDescriptorPool::Builder::Build(VulkanState& vulkanState) const
 	{
-		return std::make_unique<VulkanDescriptorPool>(m_VulkanState, m_MaxSets, m_PoolSizes, m_PoolSizes);
+		return std::make_unique<VulkanDescriptorPool>(vulkanState, m_MaxSets, m_PoolFlags, m_PoolSizes);
 	}
 
 	VulkanDescriptorPool::VulkanDescriptorPool(VulkanState& vulkanState, uint32_t maxSets, VkDescriptorPoolCreateFlags poolFlags, const std::vector<VkDescriptorPoolSize>& poolSizes)

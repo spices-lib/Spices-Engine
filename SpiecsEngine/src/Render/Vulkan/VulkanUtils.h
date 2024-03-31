@@ -31,7 +31,7 @@ namespace Spiecs {
 
 		std::vector<VkCommandBuffer> m_CommandBuffer;
 		std::vector<VkSemaphore> m_ImageSemaphore;
-		std::vector<VkSemaphore> m_FrameSemaphore;
+		std::vector<VkSemaphore> m_QueueSemaphore;
 		std::vector<VkFence> m_Fence;
 	};
 

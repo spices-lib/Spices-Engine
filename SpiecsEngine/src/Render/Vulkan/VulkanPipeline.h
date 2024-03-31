@@ -32,9 +32,6 @@ namespace Spiecs {
 		VulkanPipeline(VulkanState& vulkanState, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config);
 		virtual ~VulkanPipeline();
 
-		VulkanPipeline(const VulkanPipeline&) = delete;
-		VulkanPipeline& operator=(const VulkanPipeline&) = delete;
-
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 		static void EnableAlphaBlending(PipelineConfigInfo& configInfo);
 

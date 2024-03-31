@@ -12,9 +12,6 @@ namespace Spiecs {
 		VulkanSwapChain(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice);
 		virtual ~VulkanSwapChain();
 
-		VulkanSwapChain(const VulkanSwapChain&) = delete;
-		VulkanSwapChain& operator=(const VulkanSwapChain&) = delete;
-
 		static VkFormat FindDepthFormat(const VkPhysicalDevice& physicalDevice);
 		static VkFormat findSupportedFormat(const VkPhysicalDevice& physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
@@ -24,15 +21,18 @@ namespace Spiecs {
 		void Destroy();
 
 	private:
+		void CreateSyncObjects();
+		void DestroySyncObjects();
+	private:
 		std::shared_ptr<VulkanDevice> m_VulkanDevice;
 
-		std::vector<VkImage> m_SwapChainImages;
-		std::vector<VkImageView> m_SwapChainImageViews;
-		std::vector<VkSampler> m_SwapChainImageSamplers;
+		std::array<VkImage, MaxFrameInFlight> m_SwapChainImages;
+		std::array<VkImageView, MaxFrameInFlight> m_SwapChainImageViews;
+		std::array<VkSampler, MaxFrameInFlight> m_SwapChainImageSamplers;
 
 		std::unique_ptr<VulkanImage> m_DepthImage;
 		std::unique_ptr<VulkanImage> m_ColorImage;
 
-		std::vector<VkFramebuffer> m_SwapChainFramebuffers;
+		std::array<VkFramebuffer, MaxFrameInFlight> m_SwapChainFramebuffers;
 	};
 }

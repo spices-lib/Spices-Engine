@@ -4,7 +4,7 @@
 namespace Spiecs {
 
 	std::unique_ptr<SystemManager> SystemManager::m_SystemManager;
-	std::unordered_map<std::string, System*> SystemManager::m_Identities;
+	std::unordered_map<std::string, std::unique_ptr<System>> SystemManager::m_Identities;
 
 	SystemManager::SystemManager()
 	{

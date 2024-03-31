@@ -11,18 +11,12 @@ namespace Spiecs {
 	public:
 		VulkanCommandPool(VulkanState& vulkanState, uint32_t graphicqueuefamily);
 		virtual ~VulkanCommandPool();
-
-		VulkanCommandPool(const VulkanCommandPool&) = delete;
-		VulkanCommandPool& operator=(const VulkanCommandPool&) = delete;
 	};
 
 	class VulkanCommandBuffer : public VulkanObject
 	{
 	public:
 		VulkanCommandBuffer(VulkanState& vulkanState);
-
-		VulkanCommandBuffer(const VulkanCommandBuffer&) = delete;
-		VulkanCommandBuffer& operator=(const VulkanCommandBuffer&) = delete;
 
 		template<typename T>
 		static void CustomCmd(VulkanState& vulkanState, T func);

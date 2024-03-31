@@ -15,10 +15,10 @@ namespace Spiecs {
 		m_VulkanRenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_VulkanDevice);
 		m_VulkanSwapChain = std::make_unique<VulkanSwapChain>(m_VulkanState, m_VulkanDevice);
 
-		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder(m_VulkanState)
+		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
 			.SetMaxSets(MaxFrameInFlight)
 			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MaxFrameInFlight)
-			.Build();
+			.Build(m_VulkanState);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
@@ -111,7 +111,7 @@ namespace Spiecs {
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex];
 
-		VkSemaphore signalSemaphores[] = { m_VulkanState.m_FrameSemaphore[frameInfo.m_FrameIndex] };
+		VkSemaphore signalSemaphores[] = { m_VulkanState.m_QueueSemaphore[frameInfo.m_FrameIndex] };
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
@@ -142,6 +142,5 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::DrawTest(FrameInfo& frameInfo)
 	{
-
 	}
 }
