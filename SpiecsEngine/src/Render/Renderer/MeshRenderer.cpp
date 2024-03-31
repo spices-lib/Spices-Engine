@@ -8,7 +8,7 @@ namespace Spiecs {
 	{
 		auto descriptorSetLayout = VulkanDescriptorSetLayout::Builder()
 			.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-			.build(m_VulkanState);
+			.Build(m_VulkanState);
 
 		std::vector<VkDescriptorSet> descriptorSet(MaxFrameInFlight);
 		/*for (int i = 0; i < descriptorSet.size(); i++)
@@ -35,7 +35,10 @@ namespace Spiecs {
 			nullptr
 		);*/
 
-
+		for (int i = 0; i < frameInfo.m_Meshes.size(); i++)
+		{
+			frameInfo.m_Meshes[i]
+		}
 	}
 
 	void MeshRenderer::CreatePipelineLayout()
@@ -65,8 +68,8 @@ namespace Spiecs {
 		pipelineConfig.pipelineLayout = m_PipelineLayout;
 		m_VulkanPipeline = std::make_unique<VulkanPipeline>(
 			m_VulkanState,
-			"shaders/simple_shader.vert.spv",
-			"shaders/simple_shader.frag.spv",
+			GetSahderPath("vert"),
+			GetSahderPath("frag"),
 			pipelineConfig
 		);
 	}

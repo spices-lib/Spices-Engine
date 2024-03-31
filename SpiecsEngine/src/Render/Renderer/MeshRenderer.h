@@ -6,11 +6,8 @@ namespace Spiecs {
 	class MeshRenderer : public Renderer
 	{
 	public:
-		MeshRenderer(VulkanState& vulkanState) : Renderer(vulkanState){};
+		MeshRenderer(const std::string& rendererName, VulkanState& vulkanState) : Renderer(rendererName, vulkanState){};
 		virtual ~MeshRenderer() {};
-
-		MeshRenderer(const MeshRenderer&) = delete;
-		MeshRenderer& operator=(const MeshRenderer&) = delete;
 
 		virtual void InitDescriptor() override;
 		virtual void Render(FrameInfo& frameInfo) override;

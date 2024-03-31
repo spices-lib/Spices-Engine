@@ -1,6 +1,8 @@
 #include "pchheader.h"
 #include "VulkanRenderBackend.h"
 
+#include "Render/Renderer/MeshRenderer.h"
+
 namespace Spiecs {
 
 	VulkanState VulkanRenderBackend::m_VulkanState;
@@ -19,10 +21,16 @@ namespace Spiecs {
 			.SetMaxSets(MaxFrameInFlight)
 			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MaxFrameInFlight)
 			.Build(m_VulkanState);
+
+		// TODO: Move to  
+		RendererManager::Get()
+			.Push<MeshRenderer>("MeshRenderer", m_VulkanState);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
 	{
+		RendererManager::Get()
+			.Pop("MeshRenderer");
 	}
 
 	void VulkanRenderBackend::RecreateSwapChain() {
@@ -142,5 +150,6 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::DrawTest(FrameInfo& frameInfo)
 	{
+		RendererManager::Run(frameInfo);
 	}
 }

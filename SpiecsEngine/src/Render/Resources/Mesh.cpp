@@ -12,6 +12,18 @@ namespace Spiecs {
 		m_Pack = FilePack(filePath);
 	}
 
+	void Mesh::Bind()
+	{
+		VkBuffer buffers[] = { vertexBuffer->getBuffer() };
+		VkDeviceSize offests[] = { 0 };
+		vkCmdBindVertexBuffers(commandbuffer, 0, 1, buffers, offests);
+
+		if (hasIndexBuffer)
+		{
+			vkCmdBindIndexBuffer(commandbuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		}
+	}
+
 	void SquarePack::OnCreatePack()
 	{
 		m_Vertices =
@@ -26,6 +38,7 @@ namespace Spiecs {
 	}
 
 	CustomPack::CustomPack(const std::vector<Vertex>& inVertices, const std::vector<uint32_t>& inIndices)
+		: MeshPack()
 	{
 		m_Vertices = inVertices;
 		m_Indices = inIndices;

@@ -1,15 +1,12 @@
 #include "pchheader.h"
 #include "RenderSystem.h"
-
-#include "Render/Renderer/MeshRenderer.h"
+#include "Render/Resources/Mesh.h"
 
 namespace Spiecs {
 
 	void RenderSystem::OnSystemInitialize()
 	{
 		m_RenderFrontend = std::make_unique<RenderFrontend>();
-
-		//m_Renderers
 
 		SPIECS_LOG("RenderSystem: Init Succeed");
 	}
@@ -24,6 +21,12 @@ namespace Spiecs {
 		FrameInfo frameInfo;
 		auto currentTime = std::chrono::high_resolution_clock::now();
 
+		SquarePack pack;
+		pack.OnCreatePack();
+		Mesh mesh(pack);
+
+		frameInfo.m_Meshes.push_back(std::move(mesh));
+
 		while (!m_RenderFrontend->isWindowClosed())
 		{
 			glfwPollEvents();
@@ -34,7 +37,7 @@ namespace Spiecs {
 			float gameTime = std::chrono::duration<float, std::chrono::seconds::period>(nowTime - beginTime).count();
 			currentTime = nowTime;
 
-			std::cout << "FPS: " << 1000 / frameTime << std::endl;
+			//std::cout << "FPS: " << 1000 / frameTime << std::endl;
 
 			m_RenderFrontend->beginFrame(frameInfo);
 

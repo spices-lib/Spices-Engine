@@ -22,7 +22,7 @@ namespace Spiecs {
                 uint32_t count = 1
             );
 
-            std::unique_ptr<VulkanDescriptorSetLayout> build(VulkanState& vulkanState) const;
+            std::unique_ptr<VulkanDescriptorSetLayout> Build(VulkanState& vulkanState) const;
 
         private:
             std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> m_Bindings{};

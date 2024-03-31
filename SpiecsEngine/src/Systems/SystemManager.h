@@ -33,7 +33,7 @@ namespace Spiecs {
 		static void Run();
 
 		template<typename T, typename ... Args>
-		SystemManager& PushSystem(const std::string& systemName)
+		SystemManager& PushSystem(const std::string& systemName, Args&& ... args)
 		{
 			// push system to map
 			if (m_Identities.find(systemName) != m_Identities.end())

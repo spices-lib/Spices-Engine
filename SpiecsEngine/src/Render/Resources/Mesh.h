@@ -22,7 +22,8 @@ namespace Spiecs {
 		std::vector<uint32_t> m_Indices;
 	};
 
-	class TransformComp
+	// TODO: Move to ECS
+	class TransformComponent
 	{
 	public:
 		glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
@@ -39,22 +40,11 @@ namespace Spiecs {
 		};
 	};
 
-	class Mesh : public TransformComp
-	{
-	public:
-		Mesh(MeshPack meshPack);
-		Mesh(const std::string& filePath);
-		virtual ~Mesh() {};
-
-		inline MeshPack& GetPack() { return m_Pack; };
-
-	private:
-		MeshPack m_Pack;
-	};
-
 	class SquarePack : public MeshPack
 	{
 	public:
+		SquarePack() : MeshPack() {};
+
 		virtual void OnCreatePack() override;
 	};
 
@@ -69,10 +59,28 @@ namespace Spiecs {
 	class FilePack : public MeshPack
 	{
 	public:
-		FilePack(const std::string& filePath) : m_Path(filePath) {};
+		FilePack(const std::string& filePath) : MeshPack(), m_Path(filePath) {};
 
 		virtual void OnCreatePack() override;
 	private:
 		std::string m_Path;
 	};
+
+
+
+	class Mesh
+	{
+	public:
+		Mesh(MeshPack meshPack);
+		Mesh(const std::string& filePath);
+		virtual ~Mesh() {};
+
+		inline MeshPack& GetPack() { return m_Pack; };
+		void Bind();
+
+	private:
+		MeshPack m_Pack;
+	};
+
+	
 }

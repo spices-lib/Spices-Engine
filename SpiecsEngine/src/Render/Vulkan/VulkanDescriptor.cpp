@@ -15,7 +15,7 @@ namespace Spiecs {
 		return *this;
 	}
 
-	std::unique_ptr<VulkanDescriptorSetLayout> VulkanDescriptorSetLayout::Builder::build(VulkanState& vulkanState) const
+	std::unique_ptr<VulkanDescriptorSetLayout> VulkanDescriptorSetLayout::Builder::Build(VulkanState& vulkanState) const
 	{
 		return std::make_unique<VulkanDescriptorSetLayout>(vulkanState, m_Bindings);
 	}
