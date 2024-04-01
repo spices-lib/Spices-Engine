@@ -13,7 +13,8 @@ namespace Spiecs {
 	{
 		// camera
 		Entity cameraentity = CreateEntity("EditorCamera");
-		cameraentity.AddComponent<CameraComponent>();
+		CameraComponent& camComp = cameraentity.AddComponent<CameraComponent>(true);
+		camComp.SetCamera(std::make_shared<Camera>());
 		TransformComponent transformComp = cameraentity.GetComponent<TransformComponent>();
 		transformComp.SetPostion({ 0.0f, 0.0f, -10.0f });
 

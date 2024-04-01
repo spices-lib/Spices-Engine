@@ -2,9 +2,10 @@
 #include "MeshRenderer.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "World/World/World.h"
+
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
-#include "World/Components/UUIDComponent.h"
+#include "World/Components/CameraComponent.h"
 
 namespace Spiecs {
 
@@ -39,15 +40,25 @@ namespace Spiecs {
 			nullptr
 		);*/
 
-		/*for (int i = 0; i < frameInfo.m_Meshes.size(); i++)
+		glm::mat4 viewMat = glm::mat4(1.0f);
+		glm::mat4 projectionMat = glm::mat4(1.0f);
+		auto camGroup = frameInfo.m_World->GetRegistry().group<TransformComponent>(entt::get<CameraComponent>);
+		for (auto entity : camGroup)
 		{
-			frameInfo.m_Meshes[i]->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
-		}*/
+			auto [transformComp, camComp] = camGroup.get<TransformComponent, CameraComponent>(entity);
+			
+			if (camComp.IsActived())
+			{
+				viewMat = transformComp.GetVMatrix();
+				projectionMat = camComp.GetCamera()->GetPMatrix();
+				break;
+			}
+		}
 
-		auto group = frameInfo.m_World->GetRegistry().group<TransformComponent>(entt::get<MeshComponent>);
-		for (auto entity : group)
+		auto meshGroup = frameInfo.m_World->GetRegistry().group<TransformComponent>(entt::get<MeshComponent>);
+		for (auto entity : meshGroup)
 		{
-			auto [transformComp, meshComp] = group.get<TransformComponent, MeshComponent>(entity);
+			auto [transformComp, meshComp] = meshGroup.get<TransformComponent, MeshComponent>(entity);
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		}
 	}

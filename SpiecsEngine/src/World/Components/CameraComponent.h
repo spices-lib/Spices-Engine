@@ -8,7 +8,7 @@ namespace Spiecs {
 	class CameraComponent : public Component
 	{
 	public:
-		CameraComponent() {};
+		CameraComponent(bool isActived = false) : m_IsActived(isActived) {};
 		virtual ~CameraComponent() {};
 
 		virtual void OnSerialize() override;
@@ -17,8 +17,10 @@ namespace Spiecs {
 
 		void SetCamera(std::shared_ptr<Camera> camera) { m_Camera = camera; };
 		std::shared_ptr<Camera> GetCamera() { return m_Camera; };
+		bool IsActived() { return m_IsActived; };
 
 	private:
 		std::shared_ptr<Camera> m_Camera;
+		bool m_IsActived = false;
 	};
 }
