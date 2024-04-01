@@ -19,6 +19,9 @@ namespace Spiecs {
 		virtual void OnSystemShutDown() override;
 		virtual void OnSystemUpdate() override;
 
+		// Temp:
+		VulkanState& GetState() { return m_RenderFrontend->GetState(); };
+
 	private:
 		std::unique_ptr<RenderFrontend> m_RenderFrontend;
 

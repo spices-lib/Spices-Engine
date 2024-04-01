@@ -37,7 +37,7 @@ namespace Spiecs {
 
 		for (int i = 0; i < frameInfo.m_Meshes.size(); i++)
 		{
-			frameInfo.m_Meshes[i]
+			frameInfo.m_Meshes[i]->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		}
 	}
 

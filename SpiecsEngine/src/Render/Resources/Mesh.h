@@ -1,26 +1,11 @@
 #pragma once
 #include "Core/Core.h"
-#include "Vertex.h"
+#include "MeshPack.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
 namespace Spiecs {
-
-	class MeshPack
-	{
-	public:
-		MeshPack() {};
-		virtual ~MeshPack() {};
-
-		virtual void OnCreatePack() {};
-
-		const std::vector<Vertex>& GetVertices() { return m_Vertices; };
-		const std::vector<uint32_t>& GetIndices() { return m_Indices; };
-	protected:
-		std::vector<Vertex> m_Vertices;
-		std::vector<uint32_t> m_Indices;
-	};
 
 	// TODO: Move to ECS
 	class TransformComponent
@@ -40,47 +25,33 @@ namespace Spiecs {
 		};
 	};
 
-	class SquarePack : public MeshPack
-	{
-	public:
-		SquarePack() : MeshPack() {};
-
-		virtual void OnCreatePack() override;
-	};
-
-	class CustomPack : public MeshPack
-	{
-	public:
-		CustomPack(const std::vector<Vertex>& inVertices, const std::vector<uint32_t>& inIndices);
-
-		virtual void OnCreatePack() override {};
-	};
-
-	class FilePack : public MeshPack
-	{
-	public:
-		FilePack(const std::string& filePath) : MeshPack(), m_Path(filePath) {};
-
-		virtual void OnCreatePack() override;
-	private:
-		std::string m_Path;
-	};
-
-
-
 	class Mesh
 	{
 	public:
-		Mesh(MeshPack meshPack);
-		Mesh(const std::string& filePath);
+		class Builder
+		{
+		public:
+			Builder() {};
+
+			Builder& AddPack(std::shared_ptr<MeshPack> meshPack);
+			std::shared_ptr<Mesh> Build() const;
+
+		private:
+			std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
+			uint32_t m_PackNums;
+		};
+
+	public:
+		Mesh(std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPacks);
 		virtual ~Mesh() {};
 
-		inline MeshPack& GetPack() { return m_Pack; };
-		void Bind();
+		void Draw(VkCommandBuffer& commandBuffer);
 
 	private:
-		MeshPack m_Pack;
-	};
+		// Vertices Indices
+		std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
 
-	
+		// Materials
+		std::vector< std::shared_ptr<Material>> m_Materials;
+	};
 }

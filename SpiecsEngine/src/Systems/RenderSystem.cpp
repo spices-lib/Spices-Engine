@@ -18,14 +18,17 @@ namespace Spiecs {
 
 	void RenderSystem::OnSystemUpdate()
 	{
+		// init FrameInfo 
 		FrameInfo frameInfo;
 		auto currentTime = std::chrono::high_resolution_clock::now();
 
-		SquarePack pack;
-		pack.OnCreatePack();
-		Mesh mesh(pack);
+		// init meshes 
+		// TODO: Move to ECS
+		std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>(GetState());
+		pack->OnCreatePack();
+		std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
+		frameInfo.m_Meshes.push_back(mesh);
 
-		frameInfo.m_Meshes.push_back(std::move(mesh));
 
 		while (!m_RenderFrontend->isWindowClosed())
 		{

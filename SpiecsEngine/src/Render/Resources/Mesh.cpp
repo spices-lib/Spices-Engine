@@ -3,50 +3,28 @@
 
 namespace Spiecs {
 
-	Mesh::Mesh(MeshPack meshPack)
+	Mesh::Mesh(std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPack)
 		: m_Pack(meshPack)
 	{}
 
-	Mesh::Mesh(const std::string& filePath)
+	void Mesh::Draw(VkCommandBuffer& commandBuffer)
 	{
-		m_Pack = FilePack(filePath);
-	}
-
-	void Mesh::Bind()
-	{
-		VkBuffer buffers[] = { vertexBuffer->getBuffer() };
-		VkDeviceSize offests[] = { 0 };
-		vkCmdBindVertexBuffers(commandbuffer, 0, 1, buffers, offests);
-
-		if (hasIndexBuffer)
+		for (auto& pair : m_Pack)
 		{
-			vkCmdBindIndexBuffer(commandbuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+			pair.second->OnBind(commandBuffer);
+			pair.second->OnDraw(commandBuffer);
 		}
 	}
 
-	void SquarePack::OnCreatePack()
+	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)
 	{
-		m_Vertices =
-		{
-			{ {-1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ { 1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
-			{ { 1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ {-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }}
-		};
-
-		m_Indices = { 0, 1, 2, 2, 3, 0 };
+		m_Pack[m_PackNums] = meshPack;
+		return *this;
 	}
 
-	CustomPack::CustomPack(const std::vector<Vertex>& inVertices, const std::vector<uint32_t>& inIndices)
-		: MeshPack()
+	std::shared_ptr<Mesh> Mesh::Builder::Build() const
 	{
-		m_Vertices = inVertices;
-		m_Indices = inIndices;
-	}
-
-	void FilePack::OnCreatePack()
-	{
-		// TODO:
+		return  std::make_shared<Mesh>(m_Pack);
 	}
 
 }

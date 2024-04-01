@@ -23,6 +23,9 @@ namespace Spiecs {
 
 		void DrawTest(FrameInfo& frameInfo);
 
+		// Temp:
+		VulkanState& GetState() { return m_RenderBackend->GetState(); };
+
 	private:
 		std::unique_ptr<VulkanRenderBackend> m_RenderBackend;
 

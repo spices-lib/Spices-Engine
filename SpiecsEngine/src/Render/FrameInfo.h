@@ -13,6 +13,6 @@ namespace Spiecs {
 		uint32_t m_FrameIndex = 0;
 		uint32_t m_Imageindex = 0;
 
-		std::vector<Mesh> m_Meshes;
+		std::vector<std::shared_ptr<Mesh>> m_Meshes;
 	};
 }
