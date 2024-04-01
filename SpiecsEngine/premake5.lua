@@ -20,6 +20,9 @@ project "SpiecsEngine"
 		
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
+
+		"vendor/tinyobjloader/**.cpp",
+		"vendor/tinyobjloader/**.h",
 	}
 
 	defines
@@ -37,6 +40,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.tinyobjloader}",
 	}
 
 	links
@@ -47,6 +51,9 @@ project "SpiecsEngine"
 	}
 
 	filter "files:vendor/stb_image/**.cpp"
+	flags { "NoPCH" }
+
+	filter "files:vendor/tinyobjloader/**.cpp"
 	flags { "NoPCH" }
 
 	filter "system:windows"

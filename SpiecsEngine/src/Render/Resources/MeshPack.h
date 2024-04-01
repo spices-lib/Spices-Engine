@@ -3,6 +3,7 @@
 #include "Vertex.h"
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Material.h"
+#include "Render/Resources/Loader/MeshLoader.h"
 
 namespace Spiecs {
 
@@ -29,13 +30,15 @@ namespace Spiecs {
 	protected:
 		VulkanState& m_VulkanState;
 
-		std::vector<Vertex> m_Vertices;
-		std::vector<uint32_t> m_Indices;
+		std::vector<Vertex> m_Vertices{};
+		std::vector<uint32_t> m_Indices{};
 
 		std::unique_ptr<VulkanBuffer> m_VertexBuffer;
 		std::unique_ptr<VulkanBuffer> m_IndicesBuffer;
 
 		std::shared_ptr<Material> m_Material;
+
+		friend class MeshLoader;
 	};
 
 	class SquarePack : public MeshPack

@@ -20,7 +20,8 @@ namespace Spiecs {
 
 	void FilePack::OnCreatePack()
 	{
-		// TODO:
+		MeshLoader::Load(m_Path, this);
+		CreateBuffer();
 	}
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)

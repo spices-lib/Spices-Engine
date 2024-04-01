@@ -34,8 +34,9 @@ namespace Spiecs {
 		m_RuntimeWorld = std::make_shared<RuntimeWorld>();
 
 		// temp TODO: Remove
-		m_EditorWorld->OnPreActivate();
-		m_EditorWorld->OnActivate();
-		m_EditorWorld->OnDeactivate();
+		//m_EditorWorld->OnPreActivate();
+		//m_EditorWorld->OnActivate();
+		//m_EditorWorld->OnDeactivate();
+		SystemManager::Run();
 	}
 }

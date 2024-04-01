@@ -1,7 +1,7 @@
 #include "pchheader.h"
 #include "VulkanShaderModule.h"
 
-#include "Core/FileLibrary.h"
+#include "Core/Library/FileLibrary.h"
 
 namespace Spiecs {
 

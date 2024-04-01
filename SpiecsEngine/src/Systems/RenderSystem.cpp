@@ -24,7 +24,7 @@ namespace Spiecs {
 
 		// init meshes 
 		// TODO: Move to ECS
-		std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>(GetState());
+		std::shared_ptr<FilePack> pack = std::make_shared<FilePack>(GetState(), "111");
 		pack->OnCreatePack();
 		std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 		frameInfo.m_Meshes.push_back(mesh);
