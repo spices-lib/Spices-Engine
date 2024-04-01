@@ -9,7 +9,7 @@ namespace Spiecs {
 	class Entity
 	{
 	public:
-		Entity() {};
+		Entity(const std::string& entityName) : m_EntityName(entityName) {};
 		virtual ~Entity() {};
 
 		template<typename T, typename... Args>
@@ -41,5 +41,6 @@ namespace Spiecs {
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		std::shared_ptr<World> m_World;
+		std::string m_EntityName;
 	};
 }

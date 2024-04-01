@@ -14,7 +14,9 @@ namespace Spiecs {
 		virtual void OnActivate() = 0;
 		virtual void OnDeactivate() = 0;
 
+		// empty entity
 		Entity CreateEntity(const std::string& name);
+		void DestroyEntity(Entity entity);
 
 	private:
 		template<typename T>
