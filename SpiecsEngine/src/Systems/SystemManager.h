@@ -42,7 +42,7 @@ namespace Spiecs {
 				__debugbreak();
 			}
 
-			m_Identities[systemName] = std::unique_ptr<System>(reinterpret_cast<System*>(new T(systemName, std::forward<Args>(args)...)));
+			m_Identities[systemName] = std::unique_ptr<System>(new T(systemName, std::forward<Args>(args)...));
 
 			// system init
 			m_Identities[systemName]->OnSystemInitialize();
