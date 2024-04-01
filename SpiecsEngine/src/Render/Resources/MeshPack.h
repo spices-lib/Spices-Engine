@@ -12,6 +12,9 @@ namespace Spiecs {
 		MeshPack(VulkanState& vulkanState) : m_VulkanState(vulkanState) {};
 		virtual ~MeshPack() {};
 
+		MeshPack(const MeshPack&) = delete;
+		MeshPack& operator=(const MeshPack&) = delete;
+
 		virtual void OnCreatePack() {};
 
 		void OnBind(VkCommandBuffer& commandBuffer);

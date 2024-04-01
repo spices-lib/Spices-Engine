@@ -40,7 +40,7 @@ namespace Spiecs {
 			glfwGetFramebufferSize(m_VulkanState.m_Windows, &width, &height);
 			glfwWaitEvents();
 		}
-		std::cout << width << height << std::endl;
+		std::cout << width << "  " << height << std::endl;
 		vkDeviceWaitIdle(m_VulkanState.m_Device);
 		m_VulkanDevice->RequerySwapChainSupport();
 
@@ -71,7 +71,7 @@ namespace Spiecs {
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = m_VulkanState.m_RenderPass;
-		renderPassInfo.framebuffer = m_VulkanSwapChain->GetFramebuffer(frameInfo.m_FrameIndex);
+		renderPassInfo.framebuffer = m_VulkanSwapChain->GetFramebuffer(frameInfo.m_Imageindex);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = m_VulkanDevice->GetSwapChainSupport().extent;
 

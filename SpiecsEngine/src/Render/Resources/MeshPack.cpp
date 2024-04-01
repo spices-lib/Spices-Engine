@@ -7,10 +7,10 @@ namespace Spiecs {
 	{
 		m_Vertices =
 		{
-			{ {-1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ { 1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
-			{ { 1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ {-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f},{1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }}
+			{ {-1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
+			{ { 1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
+			{ { 1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
+			{ {-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }}
 		};
 
 		m_Indices = { 0, 1, 2, 2, 3, 0 };
@@ -40,7 +40,7 @@ namespace Spiecs {
 	{
 		// vertex buffer
 		{
-			VkDeviceSize bufferSize = m_Vertices.size();
+			VkDeviceSize bufferSize = sizeof(Vertex) * m_Vertices.size();
 
 			VulkanBuffer stagingBuffer(m_VulkanState, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 

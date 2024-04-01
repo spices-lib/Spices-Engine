@@ -36,6 +36,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.entt}",
 	}
 
 	links

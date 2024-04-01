@@ -235,6 +235,8 @@ namespace Spiecs {
 			for (const auto& availablePresentMode : swapChainSupportDetails.presentModes) {
 				if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
 					swapChainSupportDetails.presentMode = availablePresentMode;
+					find = true;
+					break;
 				}
 			}
 
