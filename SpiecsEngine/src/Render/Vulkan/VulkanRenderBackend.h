@@ -32,7 +32,7 @@ namespace Spiecs {
 		void DrawTest(FrameInfo& frameInfo);
 
 		// Temp:
-		VulkanState& GetState() { return m_VulkanState; };
+		static VulkanState& GetState() { return m_VulkanState; };
 
 	private:
 		void RecreateSwapChain();

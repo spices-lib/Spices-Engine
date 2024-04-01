@@ -18,17 +18,7 @@ namespace Spiecs {
 
 	void RenderSystem::OnSystemUpdate()
 	{
-		// init FrameInfo 
-		FrameInfo frameInfo;
 		auto currentTime = std::chrono::high_resolution_clock::now();
-
-		// init meshes 
-		// TODO: Move to ECS
-		std::shared_ptr<FilePack> pack = std::make_shared<FilePack>(GetState(), "111");
-		pack->OnCreatePack();
-		std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
-		frameInfo.m_Meshes.push_back(mesh);
-
 
 		while (!m_RenderFrontend->isWindowClosed())
 		{
@@ -42,13 +32,13 @@ namespace Spiecs {
 
 			//std::cout << "FPS: " << 1000 / frameTime << std::endl;
 
-			m_RenderFrontend->beginFrame(frameInfo);
+			m_RenderFrontend->beginFrame(FrameInfo::Get());
 
-			m_RenderFrontend->DrawTest(frameInfo);
+			m_RenderFrontend->DrawTest(FrameInfo::Get());
 
-			m_RenderFrontend->endFrame(frameInfo);
+			m_RenderFrontend->endFrame(FrameInfo::Get());
 
-			frameInfo.m_FrameIndex = (frameInfo.m_FrameIndex + 1) % MaxFrameInFlight;
+			FrameInfo::Get().m_FrameIndex = (FrameInfo::Get().m_FrameIndex + 1) % MaxFrameInFlight;
 		}
 
 		m_RenderFrontend->WaitIdle();

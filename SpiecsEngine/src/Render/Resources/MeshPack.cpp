@@ -1,5 +1,6 @@
 #include "pchheader.h"
 #include "MeshPack.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
@@ -43,14 +44,14 @@ namespace Spiecs {
 		{
 			VkDeviceSize bufferSize = sizeof(Vertex) * m_Vertices.size();
 
-			VulkanBuffer stagingBuffer(m_VulkanState, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VulkanBuffer stagingBuffer(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 			void* data;
-			vkMapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
+			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
 			memcpy(data, m_Vertices.data(), (size_t)bufferSize);
-			vkUnmapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory());
+			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory());
 
-			m_VertexBuffer = std::make_unique<VulkanBuffer>(m_VulkanState, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+			m_VertexBuffer = std::make_unique<VulkanBuffer>(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 			m_VertexBuffer->CopyBuffer(stagingBuffer.Get(), m_VertexBuffer->Get(), bufferSize);
 		}
@@ -59,14 +60,14 @@ namespace Spiecs {
 		{
 			VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_Indices.size();
 
-			VulkanBuffer stagingBuffer(m_VulkanState, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VulkanBuffer stagingBuffer(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 			void* data;
-			vkMapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
+			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
 			memcpy(data, m_Indices.data(), (size_t)bufferSize);
-			vkUnmapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory());
+			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory());
 
-			m_IndicesBuffer = std::make_unique<VulkanBuffer>(m_VulkanState, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+			m_IndicesBuffer = std::make_unique<VulkanBuffer>(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 			m_IndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_IndicesBuffer->Get(), bufferSize);
 		}

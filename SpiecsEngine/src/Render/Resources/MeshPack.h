@@ -10,7 +10,7 @@ namespace Spiecs {
 	class MeshPack
 	{
 	public:
-		MeshPack(VulkanState& vulkanState) : m_VulkanState(vulkanState) {};
+		MeshPack() {};
 		virtual ~MeshPack() {};
 
 		MeshPack(const MeshPack&) = delete;
@@ -28,7 +28,6 @@ namespace Spiecs {
 		void CreateBuffer();
 
 	protected:
-		VulkanState& m_VulkanState;
 
 		std::vector<Vertex> m_Vertices{};
 		std::vector<uint32_t> m_Indices{};
@@ -44,7 +43,7 @@ namespace Spiecs {
 	class SquarePack : public MeshPack
 	{
 	public:
-		SquarePack(VulkanState& vulkanState) : MeshPack(vulkanState) {};
+		SquarePack() {};
 
 		virtual void OnCreatePack() override;
 	};
@@ -52,7 +51,7 @@ namespace Spiecs {
 	class FilePack : public MeshPack
 	{
 	public:
-		FilePack(VulkanState& vulkanState, const std::string& filePath) : MeshPack(vulkanState), m_Path(filePath) {};
+		FilePack(const std::string& filePath) : m_Path(filePath) {};
 
 		virtual void OnCreatePack() override;
 	private:

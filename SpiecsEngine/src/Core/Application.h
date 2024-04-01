@@ -18,7 +18,6 @@ namespace Spiecs {
 
 		void Run();
 	private:
-		std::shared_ptr<EditorWorld> m_EditorWorld;
-		std::shared_ptr<RuntimeWorld> m_RuntimeWorld;
+		
 	};
 }

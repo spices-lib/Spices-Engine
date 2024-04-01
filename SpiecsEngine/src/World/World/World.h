@@ -1,8 +1,11 @@
 #pragma once
 #include "Core/Core.h"
-#include "World/Entity.h"
+#include "Core/UUID.h"
+#include "entt.hpp"
 
 namespace Spiecs {
+
+	class Entity;
 
 	class World
 	{
@@ -15,8 +18,11 @@ namespace Spiecs {
 		virtual void OnDeactivate() = 0;
 
 		// empty entity
-		Entity CreateEntity(const std::string& name);
+		Entity CreateEntity(const std::string& name = "None");
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = "None");
 		void DestroyEntity(Entity entity);
+
+		entt::registry& GetRegistry() { return m_Registry; };
 
 	private:
 		template<typename T>
@@ -24,6 +30,9 @@ namespace Spiecs {
 
 	protected:
 		entt::registry m_Registry;
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
+
+		friend class Entity;
 	};
 
 	template<typename T>

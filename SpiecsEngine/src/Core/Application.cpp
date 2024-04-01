@@ -1,5 +1,6 @@
 #include "pchheader.h"
 #include "Application.h"
+#include "Render/FrameInfo.h"
 #include "Systems/SystemManager.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/MaterialSystem.h"
@@ -30,13 +31,11 @@ namespace Spiecs {
 	void Application::Run()
 	{
 		// init our world
-		m_EditorWorld = std::make_shared<EditorWorld>();
-		m_RuntimeWorld = std::make_shared<RuntimeWorld>();
+		FrameInfo::Get().m_World = std::make_shared<EditorWorld>();
 
 		// temp TODO: Remove
-		//m_EditorWorld->OnPreActivate();
-		//m_EditorWorld->OnActivate();
-		//m_EditorWorld->OnDeactivate();
-		SystemManager::Run();
+		FrameInfo::Get().m_World->OnPreActivate();
+		FrameInfo::Get().m_World->OnActivate();
+		FrameInfo::Get().m_World->OnDeactivate();
 	}
 }

@@ -1,15 +1,21 @@
 #pragma once
 #include "Core/Core.h"
 #include "entt.hpp"
+#include "World/Components/UUIDComponent.h"
+#include "World/World.h"
+#include <string>
 
 namespace Spiecs {
-
-	class World;
 
 	class Entity
 	{
 	public:
-		Entity(const std::string& entityName) : m_EntityName(entityName) {};
+		Entity(entt::entity handle, World* world, const std::string& entityName)
+			: m_EntityName(entityName)
+			, m_EntityHandle(handle)
+			, m_World(world)
+		{};
+
 		virtual ~Entity() {};
 
 		template<typename T, typename... Args>
@@ -38,9 +44,26 @@ namespace Spiecs {
 			return m_World->m_Registry.all_of<T>(m_EntityHandle);
 		}
 
+		UUID GetUUID() { return GetComponent<UUIDComponent>().GetUUID(); }
+		const std::string& GetName() { m_EntityName; }
+
+		operator bool() const { return m_EntityHandle != entt::null; };
+		operator uint32_t() const { return (uint32_t)m_EntityHandle; };
+		operator entt::entity() const { return m_EntityHandle; };
+
+		bool operator ==(const Entity& other) const
+		{
+			return m_EntityHandle == other.m_EntityHandle && m_World == other.m_World;
+		};
+
+		bool operator !=(const Entity& other) const
+		{
+			return !operator==(other);
+		};
+
 	private:
 		entt::entity m_EntityHandle{ entt::null };
-		std::shared_ptr<World> m_World;
+		World* m_World;
 		std::string m_EntityName;
 	};
 }

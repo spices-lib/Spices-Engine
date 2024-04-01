@@ -1,6 +1,10 @@
 #include "pchheader.h"
 #include "MeshRenderer.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
+#include "World/World/World.h"
+#include "World/Components/MeshComponent.h"
+#include "World/Components/TransformComponent.h"
+#include "World/Components/UUIDComponent.h"
 
 namespace Spiecs {
 
@@ -35,9 +39,16 @@ namespace Spiecs {
 			nullptr
 		);*/
 
-		for (int i = 0; i < frameInfo.m_Meshes.size(); i++)
+		/*for (int i = 0; i < frameInfo.m_Meshes.size(); i++)
 		{
 			frameInfo.m_Meshes[i]->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+		}*/
+
+		auto group = frameInfo.m_World->GetRegistry().group<TransformComponent>(entt::get<MeshComponent>);
+		for (auto entity : group)
+		{
+			auto [transformComp, meshComp] = group.get<TransformComponent, MeshComponent>(entity);
+			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		}
 	}
 
