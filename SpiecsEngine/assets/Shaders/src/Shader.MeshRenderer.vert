@@ -7,8 +7,16 @@ layout(location = 2) in vec3 color;
 layout(location = 3) in vec2 texCoord;
 
 // push constant
+layout(push_constant) uniform Push{
+	mat4 model;
+} push;
 
 // uniform buffer
+layout(set = 0, binding = 0) uniform UniformBuffer {
+    mat4 projection;
+    mat4 view;
+} ubo;
+
 
 // vertex output
 layout(location = 0) out vec3 fragColor;
@@ -16,6 +24,6 @@ layout(location = 0) out vec3 fragColor;
 // main
 void main()
 {
-    gl_Position = vec4(position, 1.0);
+    gl_Position = push.model * vec4(position, 1.0);
     fragColor = color;
 }

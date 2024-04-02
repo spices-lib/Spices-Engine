@@ -30,6 +30,16 @@ namespace Spiecs {
 		});
 	}
 
+	void VulkanBuffer::Map(VkDeviceSize size, VkDeviceSize offset)
+	{
+		VK_CHECK(vkMapMemory(m_VulkanState.m_Device, m_BufferMemory, offset, size, 0, &m_LocalMemory));
+	}
+
+	VkDescriptorBufferInfo VulkanBuffer::GetBufferInfo(VkDeviceSize size, VkDeviceSize offset)
+	{
+		return VkDescriptorBufferInfo{ m_Buffer , offset, size };
+	}
+
 	void VulkanBuffer::CreateBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 	{
 		m_DeviceSize = size;

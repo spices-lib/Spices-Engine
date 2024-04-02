@@ -32,7 +32,7 @@ namespace Spiecs {
 		VulkanDescriptorSetLayout(VulkanState& vulkanState, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
 		virtual ~VulkanDescriptorSetLayout();
 
-        VkDescriptorSetLayout& GetDescriptorSetLayout() { return m_DescriptorSetLayout; };
+        VkDescriptorSetLayout GetDescriptorSetLayout() { return m_DescriptorSetLayout; };
 
 	private:
         VkDescriptorSetLayout m_DescriptorSetLayout;
@@ -51,7 +51,7 @@ namespace Spiecs {
             Builder& AddPoolSize(VkDescriptorType descriptorType, uint32_t count);
             Builder& SetPoolFlags(VkDescriptorPoolCreateFlags flags);
             Builder& SetMaxSets(uint32_t count);
-            std::unique_ptr<VulkanDescriptorPool> Build(VulkanState& vulkanState) const;
+            std::shared_ptr<VulkanDescriptorPool> Build(VulkanState& vulkanState) const;
 
         private:
             std::vector<VkDescriptorPoolSize> m_PoolSizes{};

@@ -2,7 +2,9 @@
 #include "Core/Core.h"
 #include "Render/Vulkan/VulkanPipeline.h"
 #include "Render/Vulkan/VulkanUtils.h"
+#include "Render/Vulkan/Vulkanbuffer.h"
 #include "Render/FrameInfo.h"
+#include "Render/Vulkan/VulkanDescriptor.h"
 
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
@@ -17,18 +19,20 @@ namespace Spiecs {
 	class Renderer
 	{
 	public:
-		Renderer(const std::string& rendererName, VulkanState& vulkanState);
+		Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool);
 		virtual ~Renderer();
 
 		Renderer(const Renderer&) = delete;
 		Renderer& operator=(const Renderer&) = delete;
 
-		virtual void InitDescriptor() {};
+		
 		virtual void Render(FrameInfo& frameInfo) {};
 
 		virtual void OnSystemInitialize();
 
 	private:
+		virtual void InitDescriptor() {};
+		virtual void InitUniformBuffer() {};
 		virtual void CreatePipelineLayout() {};
 		virtual void CreatePipeline(VkRenderPass renderPass) {};
 
@@ -39,15 +43,17 @@ namespace Spiecs {
 		inline void IterWorldComp(FrameInfo& frameInfo, F func);
 
 	protected:
+		// vulkan state
 		VulkanState& m_VulkanState;
+		std::shared_ptr<VulkanDescriptorPool> m_DesctiptorPool;
 
-
+		// pipeline
 		VkPipelineLayout m_PipelineLayout;
 		std::unique_ptr<VulkanPipeline> m_VulkanPipeline;
 		
+		// descriptorset
 		std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts;
 		std::vector<VkDescriptorSet> m_DescriptorSets;
-
 
 		std::string m_RendererName;
 	};

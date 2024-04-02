@@ -24,7 +24,7 @@ namespace Spiecs {
 
 		// TODO: Move to  
 		RendererManager::Get()
-			.Push<MeshRenderer>("MeshRenderer", m_VulkanState);
+			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()

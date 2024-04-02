@@ -69,9 +69,9 @@ namespace Spiecs {
 		return *this;
 	}
 
-	std::unique_ptr<VulkanDescriptorPool> VulkanDescriptorPool::Builder::Build(VulkanState& vulkanState) const
+	std::shared_ptr<VulkanDescriptorPool> VulkanDescriptorPool::Builder::Build(VulkanState& vulkanState) const
 	{
-		return std::make_unique<VulkanDescriptorPool>(vulkanState, m_MaxSets, m_PoolFlags, m_PoolSizes);
+		return std::make_shared<VulkanDescriptorPool>(vulkanState, m_MaxSets, m_PoolFlags, m_PoolSizes);
 	}
 
 	VulkanDescriptorPool::VulkanDescriptorPool(VulkanState& vulkanState, uint32_t maxSets, VkDescriptorPoolCreateFlags poolFlags, const std::vector<VkDescriptorPoolSize>& poolSizes)

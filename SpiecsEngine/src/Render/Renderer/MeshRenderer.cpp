@@ -5,59 +5,101 @@
 
 namespace Spiecs {
 
+	struct MeshRendererPushConstant
+	{
+		glm::mat4 model;
+	};
+
+	struct MeshRendererUniformBuffer
+	{
+		glm::mat4 view;
+		glm::mat4 projection;
+	};
+
+	void MeshRenderer::InitUniformBuffer()
+	{
+		m_UniformBuffers.resize(MaxFrameInFlight);
+		for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			m_UniformBuffers[i] = std::make_unique<VulkanBuffer>(
+				m_VulkanState,
+				sizeof(MeshRendererUniformBuffer),
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+			);
+			m_UniformBuffers[i]->Map();
+		}
+	}
+
 	void MeshRenderer::InitDescriptor()
 	{
 		auto descriptorSetLayout = VulkanDescriptorSetLayout::Builder()
 			.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
 			.Build(m_VulkanState);
 
-		std::vector<VkDescriptorSet> descriptorSet(MaxFrameInFlight);
-		/*for (int i = 0; i < descriptorSet.size(); i++)
+		m_DescriptorSetLayouts = { descriptorSetLayout ->GetDescriptorSetLayout() };
+
+		m_DescriptorSets.resize(MaxFrameInFlight);
+		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			auto bufferInfo = uboBuffers[i]->descriptorInfo();
-			VulkanDescriptorWriter(*descriptorSetLayout, *globalPool)
+			auto bufferInfo = m_UniformBuffers[i]->GetBufferInfo();
+			VulkanDescriptorWriter(*descriptorSetLayout, *m_DesctiptorPool)
 				.WriteBuffer(0, &bufferInfo)
-				.Build(descriptorSet[i]);
-		}*/
+				.Build(m_DescriptorSets[i]);
+		}
 	}
 
 	void MeshRenderer::Render(FrameInfo& frameInfo)
 	{
 		m_VulkanPipeline->Bind(frameInfo.m_FrameIndex);
 
-		/*vkCmdBindDescriptorSets(
+		vkCmdBindDescriptorSets(
 			m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_PipelineLayout,
 			0,
-			static_cast<uint32_t>(m_DescriptorSets.size()),
-			m_DescriptorSets.data(),
+			1,
+			&m_DescriptorSets[frameInfo.m_FrameIndex],
 			0,
 			nullptr
-		);*/
+		);
 
 		auto& [viewMatrix, projectionMatrix] =  GetActiveCameraMatrix(frameInfo);
 
 		IterWorldComp<MeshComponent>(frameInfo, [&](TransformComponent& transComp, uint64_t uuid, MeshComponent& meshComp) {
 			glm::mat4& modelMatrix = transComp.GetMMatrix();
+
+			MeshRendererPushConstant push{};
+			push.model = modelMatrix;
+
+			vkCmdPushConstants(
+				m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
+				m_PipelineLayout,
+				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				0,
+				sizeof(MeshRendererPushConstant),
+				&push
+			);
+
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+
 			return false;
 		});
 	}
 
 	void MeshRenderer::CreatePipelineLayout()
 	{
-		/*VkPushConstantRange pushConstantRange{};
+		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		pushConstantRange.offset = 0;
-		pushConstantRange.size = sizeof(SimplePushConstantData);*/
+		pushConstantRange.size = sizeof(MeshRendererPushConstant);
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(m_DescriptorSetLayouts.size());
 		pipelineLayoutInfo.pSetLayouts = m_DescriptorSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
 	}

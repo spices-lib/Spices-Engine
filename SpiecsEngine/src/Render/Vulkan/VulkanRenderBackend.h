@@ -46,6 +46,6 @@ namespace Spiecs {
 		std::unique_ptr<VulkanCommandBuffer> m_VulkanCommandBuffer;
 		std::unique_ptr<VulkanRenderPass> m_VulkanRenderPass;
 		std::unique_ptr<VulkanSwapChain> m_VulkanSwapChain;
-		std::unique_ptr<VulkanDescriptorPool> m_VulkanDescriptorPool;
+		std::shared_ptr<VulkanDescriptorPool> m_VulkanDescriptorPool;
 	};
 }

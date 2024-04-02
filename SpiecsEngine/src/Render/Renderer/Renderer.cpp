@@ -3,9 +3,10 @@
 
 namespace Spiecs {
 
-	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState)
+	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool)
 		: m_RendererName(rendererName)
 		, m_VulkanState(vulkanState) 
+		, m_DesctiptorPool(desctiptorPool)
 	{}
 
 	Renderer::~Renderer()
@@ -15,6 +16,7 @@ namespace Spiecs {
 
 	void Renderer::OnSystemInitialize()
 	{
+		InitUniformBuffer();
 		InitDescriptor();
 		CreatePipelineLayout();
 		CreatePipeline(m_VulkanState.m_RenderPass);
