@@ -4,6 +4,11 @@
 #include "Render/Vulkan/VulkanUtils.h"
 #include "Render/FrameInfo.h"
 
+#include "World/Components/MeshComponent.h"
+#include "World/Components/TransformComponent.h"
+#include "World/Components/CameraComponent.h"
+#include "World/Components/UUIDComponent.h"
+
 #include <memory>
 #include <unordered_map>
 
@@ -29,6 +34,10 @@ namespace Spiecs {
 
 	protected:
 		std::string GetSahderPath(const std::string& shaderType);
+
+		template<typename T, typename F>
+		inline void IterWorldComp(FrameInfo& frameInfo, F func);
+
 	protected:
 		VulkanState& m_VulkanState;
 
@@ -92,4 +101,21 @@ namespace Spiecs {
 		static std::unique_ptr<RendererManager> m_RendererManager;
 		static std::unordered_map<std::string, std::unique_ptr<Renderer>> m_Identities;
 	};
+
+	template<typename T, typename F>
+	inline void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
+	{
+		// group inter will be bug
+		auto& view = frameInfo.m_World->GetRegistry().view<T>();
+		for (auto& e : view)
+		{
+			TransformComponent& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
+			UUIDComponent& uuidComp = frameInfo.m_World->GetRegistry().get<UUIDComponent>(e);
+			T& tComp = frameInfo.m_World->GetRegistry().get<T>(e);
+
+			bool isIterBreak = func(transComp, uuidComp.GetUUID(), tComp);
+
+			if (isIterBreak) break;
+		}
+	}
 }

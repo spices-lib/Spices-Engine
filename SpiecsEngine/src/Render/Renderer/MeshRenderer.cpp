@@ -3,10 +3,6 @@
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "World/World/World.h"
 
-#include "World/Components/MeshComponent.h"
-#include "World/Components/TransformComponent.h"
-#include "World/Components/CameraComponent.h"
-
 namespace Spiecs {
 
 	void MeshRenderer::InitDescriptor()
@@ -40,27 +36,13 @@ namespace Spiecs {
 			nullptr
 		);*/
 
-		glm::mat4 viewMat = glm::mat4(1.0f);
-		glm::mat4 projectionMat = glm::mat4(1.0f);
-		auto camGroup = frameInfo.m_World->GetRegistry().group<TransformComponent>(entt::get<CameraComponent>);
-		for (auto entity : camGroup)
-		{
-			auto [transformComp, camComp] = camGroup.get<TransformComponent, CameraComponent>(entity);
-			
-			if (camComp.IsActived())
-			{
-				viewMat = transformComp.GetVMatrix();
-				projectionMat = camComp.GetCamera()->GetPMatrix();
-				break;
-			}
-		}
+		auto& [viewMatrix, projectionMatrix] =  GetActiveCameraMatrix(frameInfo);
 
-		auto meshGroup = frameInfo.m_World->GetRegistry().group<TransformComponent>(entt::get<MeshComponent>);
-		for (auto entity : meshGroup)
-		{
-			auto [transformComp, meshComp] = meshGroup.get<TransformComponent, MeshComponent>(entity);
+		IterWorldComp<MeshComponent>(frameInfo, [&](TransformComponent& transComp, uint64_t uuid, MeshComponent& meshComp) {
+			glm::mat4& modelMatrix = transComp.GetMMatrix();
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
-		}
+			return false;
+		});
 	}
 
 	void MeshRenderer::CreatePipelineLayout()
@@ -94,6 +76,23 @@ namespace Spiecs {
 			GetSahderPath("frag"),
 			pipelineConfig
 		);
+	}
+
+	std::pair<glm::mat4, glm::mat4> MeshRenderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
+	{
+		glm::mat4 viewMat = glm::mat4(1.0f);
+		glm::mat4 projectionMat = glm::mat4(1.0f);
+
+		IterWorldComp<CameraComponent>(frameInfo, [&](TransformComponent& transComp, uint64_t uuid, CameraComponent& camComp) {
+			if (camComp.IsActived())
+			{
+				viewMat = transComp.GetVMatrix();
+				projectionMat = camComp.GetCamera()->GetPMatrix();
+				return true;
+			}
+		});
+
+		return std::make_pair(viewMat, projectionMat);
 	}
 
 }

@@ -17,7 +17,6 @@ namespace Spiecs {
 
 	Entity World::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
-
 		Entity entity(m_Registry.create(), this, name);
 		entity.AddComponent<UUIDComponent>();
 		entity.AddComponent<TransformComponent>();

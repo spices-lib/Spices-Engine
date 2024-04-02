@@ -1,6 +1,8 @@
 #pragma once
 #include "Renderer.h"
 
+#include <glm/glm.hpp>
+
 namespace Spiecs {
 
 	class MeshRenderer : public Renderer
@@ -16,5 +18,7 @@ namespace Spiecs {
 		virtual void CreatePipelineLayout() override;
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
 
+	private:
+		std::pair<glm::mat4, glm::mat4> GetActiveCameraMatrix(FrameInfo& frameInfo);
 	};
 }

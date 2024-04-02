@@ -23,7 +23,7 @@ namespace Spiecs {
 		void DestroyEntity(Entity entity);
 
 		entt::registry& GetRegistry() { return m_Registry; };
-
+		
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

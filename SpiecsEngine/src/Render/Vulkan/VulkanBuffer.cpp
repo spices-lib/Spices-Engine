@@ -30,7 +30,6 @@ namespace Spiecs {
 		});
 	}
 
-
 	void VulkanBuffer::CreateBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 	{
 		m_DeviceSize = size;
