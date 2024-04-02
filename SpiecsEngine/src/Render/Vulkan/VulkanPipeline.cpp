@@ -12,8 +12,6 @@ namespace Spiecs {
 
 	VulkanPipeline::~VulkanPipeline()
 	{
-		vkDestroyShaderModule(m_VulkanState.m_Device, m_VertShaderModule->Get(), nullptr);
-		vkDestroyShaderModule(m_VulkanState.m_Device, m_FragShaderModule->Get(), nullptr);
 		vkDestroyPipeline(m_VulkanState.m_Device, m_Pipeline, nullptr);
 	}
 

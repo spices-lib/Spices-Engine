@@ -31,24 +31,6 @@ namespace Spiecs {
 		}
 	}
 
-	void MeshRenderer::InitDescriptor()
-	{
-		auto descriptorSetLayout = VulkanDescriptorSetLayout::Builder()
-			.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-			.Build(m_VulkanState);
-
-		m_DescriptorSetLayouts = { descriptorSetLayout ->GetDescriptorSetLayout() };
-
-		m_DescriptorSets.resize(MaxFrameInFlight);
-		for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			auto bufferInfo = m_UniformBuffers[i]->GetBufferInfo();
-			VulkanDescriptorWriter(*descriptorSetLayout, *m_DesctiptorPool)
-				.WriteBuffer(0, &bufferInfo)
-				.Build(m_DescriptorSets[i]);
-		}
-	}
-
 	void MeshRenderer::Render(FrameInfo& frameInfo)
 	{
 		m_VulkanPipeline->Bind(frameInfo.m_FrameIndex);
@@ -89,6 +71,21 @@ namespace Spiecs {
 
 	void MeshRenderer::CreatePipelineLayout()
 	{
+		auto descriptorSetLayout = VulkanDescriptorSetLayout::Builder()
+			.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
+			.Build(m_VulkanState);
+
+		m_DescriptorSetLayouts = { descriptorSetLayout->GetDescriptorSetLayout() };
+
+		m_DescriptorSets.resize(MaxFrameInFlight);
+		for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			auto bufferInfo = m_UniformBuffers[i]->GetBufferInfo();
+			VulkanDescriptorWriter(*descriptorSetLayout, *m_DesctiptorPool)
+				.WriteBuffer(0, &bufferInfo)
+				.Build(m_DescriptorSets[i]);
+		}
+
 		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		pushConstantRange.offset = 0;

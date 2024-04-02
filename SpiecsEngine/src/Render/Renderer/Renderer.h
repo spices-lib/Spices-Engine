@@ -31,7 +31,6 @@ namespace Spiecs {
 		virtual void OnSystemInitialize();
 
 	private:
-		virtual void InitDescriptor() {};
 		virtual void InitUniformBuffer() {};
 		virtual void CreatePipelineLayout() {};
 		virtual void CreatePipeline(VkRenderPass renderPass) {};

@@ -17,7 +17,6 @@ namespace Spiecs {
 	void Renderer::OnSystemInitialize()
 	{
 		InitUniformBuffer();
-		InitDescriptor();
 		CreatePipelineLayout();
 		CreatePipeline(m_VulkanState.m_RenderPass);
 	}

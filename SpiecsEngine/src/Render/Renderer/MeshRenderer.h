@@ -16,7 +16,6 @@ namespace Spiecs {
 
 	private:
 		virtual void InitUniformBuffer() override;
-		virtual void InitDescriptor() override;
 		virtual void CreatePipelineLayout() override;
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
 

@@ -21,6 +21,8 @@ namespace Spiecs {
 
 	Application::~Application()
 	{
+		FrameInfo::Get().m_World = nullptr;
+
 		SystemManager::Get()
 			.PopSystem("RenderSystem")
 			.PopSystem("MeshSystem")
