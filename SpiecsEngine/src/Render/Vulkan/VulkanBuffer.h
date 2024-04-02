@@ -16,6 +16,9 @@ namespace Spiecs {
 		inline VkBuffer& Get() { return m_Buffer; };
 		void Map(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 		VkDescriptorBufferInfo GetBufferInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+		void WriteToBuffer(void* data, VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+		void Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+
 	private:
 		void CreateBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
 	private:

@@ -40,6 +40,28 @@ namespace Spiecs {
 		return VkDescriptorBufferInfo{ m_Buffer , offset, size };
 	}
 
+	void VulkanBuffer::WriteToBuffer(void* data, VkDeviceSize size, VkDeviceSize offset)
+	{
+		if (size == VK_WHOLE_SIZE) {
+			memcpy(m_LocalMemory, data, m_DeviceSize);
+		}
+		else {
+			char* memOffset = (char*)m_LocalMemory;
+			memOffset += offset;
+			memcpy(memOffset, data, size);
+		}
+	}
+
+	void VulkanBuffer::Flush(VkDeviceSize size, VkDeviceSize offset)
+	{
+		VkMappedMemoryRange mappedRange = {};
+		mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		mappedRange.memory = m_BufferMemory;
+		mappedRange.offset = offset;
+		mappedRange.size = size;
+		VK_CHECK(vkFlushMappedMemoryRanges(m_VulkanState.m_Device, 1, &mappedRange));
+	}
+
 	void VulkanBuffer::CreateBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 	{
 		m_DeviceSize = size;

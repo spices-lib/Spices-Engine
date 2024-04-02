@@ -12,17 +12,23 @@ namespace Spiecs {
 	const std::string defaultOBJMeshPath = SPIECS_ENGINE_ASSETS_PATH + "Meshes/src/obj/";
 	const std::string defaultFBXMeshPath = SPIECS_ENGINE_ASSETS_PATH + "Meshes/src/fbx/";
 
+	const char MeshLoaderSignSatrt[100] = "#ItisSpiecsMeshSign: DataStart";
+	const char MeshLoaderSignOver[100] = "#ItisSpiecsMeshSign: DateOver";
+
 	bool MeshLoader::Load(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		LoadFromSASSET(defaultBinMeshPath + fileName + ".sasset", outMeshPack);
-		LoadFromOBJ(defaultOBJMeshPath + fileName + ".obj", outMeshPack);
-		LoadFromFBX(defaultFBXMeshPath + fileName + ".fbx", outMeshPack);
-
-		return true;
+		if      ( LoadFromSASSET(  defaultBinMeshPath + fileName + ".sasset", outMeshPack) ) return true;
+		else if ( LoadFromOBJ(     defaultOBJMeshPath + fileName + ".obj",    outMeshPack) ) return true;
+		else if ( LoadFromFBX(     defaultFBXMeshPath + fileName + ".fbx",    outMeshPack) ) return true;
+		else return false;
 	}
 
 	bool MeshLoader::LoadFromOBJ(const std::string& filepath, MeshPack* outMeshPack)
 	{
+		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) {
+			return false;
+		}
+
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
@@ -30,7 +36,7 @@ namespace Spiecs {
 
 		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str()))
 		{
-			throw std::runtime_error(warn + err);
+			return false;
 		}
 
 		outMeshPack->m_Vertices.clear();
@@ -114,11 +120,12 @@ namespace Spiecs {
 
 		uint64_t readed = 0;
 
-		uint32_t type = -1;
-		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &type, &readed);
+		char startSign[100];
+		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &startSign, &readed);
 
-		if (type != 0)
+		if (!StringLibrary::StringsEqual(startSign, MeshLoaderSignSatrt))
 		{
+			FileLibrary::FileLibrary_Close(&f);
 			return false;
 		}
 
@@ -132,6 +139,15 @@ namespace Spiecs {
 
 		FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &readed);
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &readed);
+
+		char overSign[100];
+		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
+
+		if (!StringLibrary::StringsEqual(overSign, MeshLoaderSignOver))
+		{
+			FileLibrary::FileLibrary_Close(&f);
+			return false;
+		}
 
 		FileLibrary::FileLibrary_Close(&f);
 
@@ -152,8 +168,7 @@ namespace Spiecs {
 
 		uint64_t written = 0;
 
-		uint32_t type = 0;
-		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &type, &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignSatrt, &written);
 
 		uint32_t verticesCount =  outMeshPack->m_Vertices.size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
@@ -163,6 +178,8 @@ namespace Spiecs {
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &written);
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &written);
+
+		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignOver, &written);
 
 		FileLibrary::FileLibrary_Close(&f);
 

@@ -12,14 +12,14 @@ namespace Spiecs {
 		FBX = 2,     // FBX TYPE
 		SASSET = 3   // BINARY TYPE
 	};
-
+	
 	class MeshLoader
 	{
 	public:
 		static bool Load(const std::string& fileName, MeshPack* outMeshPack);
 
 	private:
-		static bool LoadFromOBJ(const std::string& filepathh, MeshPack* outMeshPack);
+		static bool LoadFromOBJ(const std::string& filepath, MeshPack* outMeshPack);
 		static bool LoadFromFBX(const std::string& filepath, MeshPack* outMeshPack);
 		static bool LoadFromSASSET(const std::string& filepath, MeshPack* outMeshPack);
 		static bool WriteSASSET(const std::string& filepath, MeshPack* outMeshPack);

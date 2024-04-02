@@ -7,13 +7,13 @@ namespace Spiecs {
 
 	struct MeshRendererPushConstant
 	{
-		glm::mat4 model;
+		glm::mat4 model = glm::mat4(1.0f);
 	};
 
 	struct MeshRendererUniformBuffer
 	{
-		glm::mat4 view;
-		glm::mat4 projection;
+		glm::mat4 projection = glm::mat4(1.0f);
+		glm::mat4 view = glm::mat4(1.0f);
 	};
 
 	void MeshRenderer::InitUniformBuffer()
@@ -48,8 +48,14 @@ namespace Spiecs {
 
 		auto& [viewMatrix, projectionMatrix] =  GetActiveCameraMatrix(frameInfo);
 
+		MeshRendererUniformBuffer ubo{};
+		ubo.view = viewMatrix;
+		ubo.projection = projectionMatrix;
+		m_UniformBuffers[frameInfo.m_FrameIndex]->WriteToBuffer(&ubo);
+		m_UniformBuffers[frameInfo.m_FrameIndex]->Flush();
+
 		IterWorldComp<MeshComponent>(frameInfo, [&](TransformComponent& transComp, uint64_t uuid, MeshComponent& meshComp) {
-			glm::mat4& modelMatrix = transComp.GetMMatrix();
+			glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			MeshRendererPushConstant push{};
 			push.model = modelMatrix;
@@ -125,7 +131,7 @@ namespace Spiecs {
 		IterWorldComp<CameraComponent>(frameInfo, [&](TransformComponent& transComp, uint64_t uuid, CameraComponent& camComp) {
 			if (camComp.IsActived())
 			{
-				viewMat = transComp.GetVMatrix();
+				viewMat = glm::inverse(transComp.GetModelMatrix());
 				projectionMat = camComp.GetCamera()->GetPMatrix();
 				return true;
 			}

@@ -18,4 +18,9 @@ namespace Spiecs {
 
         return result;
 	}
+
+    bool StringLibrary::StringsEqual(const char* str0, const char* str1)
+    {
+        return strcmp(str0, str1) == 0;
+    }
 }

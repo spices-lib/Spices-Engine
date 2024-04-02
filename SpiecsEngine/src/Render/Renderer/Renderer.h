@@ -114,9 +114,7 @@ namespace Spiecs {
 		auto& view = frameInfo.m_World->GetRegistry().view<T>();
 		for (auto& e : view)
 		{
-			TransformComponent& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
-			UUIDComponent& uuidComp = frameInfo.m_World->GetRegistry().get<UUIDComponent>(e);
-			T& tComp = frameInfo.m_World->GetRegistry().get<T>(e);
+			auto& [tComp, transComp, uuidComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent, UUIDComponent>(e);
 
 			bool isIterBreak = func(transComp, uuidComp.GetUUID(), tComp);
 
