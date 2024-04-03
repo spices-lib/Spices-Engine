@@ -9,13 +9,15 @@ layout(push_constant) uniform Push{
 } push;
 
 // uniform buffer
-layout(set = 0, binding = 0) uniform UniformBuffer {
+layout(set = 1, binding = 1) uniform UniformBuffer {
     mat4 projection;
     mat4 view;
 } ubo;
 
 // frag output
 layout(location = 0) out vec4 outColor;
+
+// constant
 
 // main
 void main()

@@ -20,6 +20,9 @@ layout(set = 0, binding = 0) uniform UniformBuffer {
 // vertex output
 layout(location = 0) out vec3 fragColor;
 
+// constant
+
+
 // main
 void main()
 {

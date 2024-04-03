@@ -2,9 +2,11 @@
 #include "Core/Core.h"
 #include "Render/Vulkan/VulkanPipeline.h"
 #include "Render/Vulkan/VulkanUtils.h"
-#include "Render/Vulkan/Vulkanbuffer.h"
+#include "Render/Vulkan/VulkanBuffer.h"
+#include "Render/Vulkan/VulkanImage.h"
 #include "Render/FrameInfo.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
+#include "RendererManager.h"
 
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
@@ -25,15 +27,22 @@ namespace Spiecs {
 		Renderer(const Renderer&) = delete;
 		Renderer& operator=(const Renderer&) = delete;
 
-		
-		virtual void Render(FrameInfo& frameInfo) {};
+		virtual void Render(FrameInfo& frameInfo) = 0;
 
-		virtual void OnSystemInitialize();
+		void OnSystemInitialize();
 
 	private:
-		virtual void InitUniformBuffer() {};
-		virtual void CreatePipelineLayout() {};
-		virtual void CreatePipeline(VkRenderPass renderPass) {};
+		// TODO: specific renderpass
+		virtual void CreateRenderPass() = 0;
+
+		// specific localdescriptor
+		virtual void CreateLocalDescriptor() = 0;
+
+		// specific desctiptor layout
+		virtual void CreatePipelineLayout() = 0;
+
+		// specific pipeline
+		virtual void CreatePipeline(VkRenderPass renderPass) = 0;
 
 	protected:
 		std::string GetSahderPath(const std::string& shaderType);
@@ -41,70 +50,29 @@ namespace Spiecs {
 		template<typename T, typename F>
 		inline void IterWorldComp(FrameInfo& frameInfo, F func);
 
+	private:
+		struct DescriptorResource
+		{
+			std::vector<VkDescriptorSet> m_DescriptorSets{};
+		};
+
 	protected:
 		// vulkan state
 		VulkanState& m_VulkanState;
 		std::shared_ptr<VulkanDescriptorPool> m_DesctiptorPool;
 
+		// TODO: renderpass
+		// VkRenderPass m_RenderPass;
+
+		// descriptorset
+		std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts{};
+		std::array<DescriptorResource, MaxFrameInFlight> m_Resource{};
+
 		// pipeline
 		VkPipelineLayout m_PipelineLayout;
 		std::unique_ptr<VulkanPipeline> m_VulkanPipeline;
 		
-		// descriptorset
-		std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts;
-		std::vector<VkDescriptorSet> m_DescriptorSets;
-
 		std::string m_RendererName;
-	};
-
-	class RendererManager
-	{
-	public:
-		RendererManager() {};
-		virtual ~RendererManager() {};
-
-		static RendererManager& Get();
-		static void Run(FrameInfo& frameInfo);
-
-		template<typename T, typename ... Args>
-		RendererManager& Push(const std::string& rendererName, Args&& ... args)
-		{
-			// push system to map
-			if (m_Identities.find(rendererName) != m_Identities.end())
-			{
-				std::cout << "ERROR: " << rendererName << " has been pushed" << std::endl;
-				__debugbreak();
-			}
-
-			m_Identities[rendererName] = std::unique_ptr<Renderer>(reinterpret_cast<Renderer*>(new T(rendererName, std::forward<Args>(args)...)));
-			m_Identities[rendererName]->OnSystemInitialize();
-
-			// system init
-			std::cout << "INFO: " << rendererName << " pushed" << std::endl;
-
-			return *m_RendererManager;
-		}
-
-		RendererManager& Pop(const std::string& rendererName)
-		{
-			// pop system from map
-			if (m_Identities.find(rendererName) == m_Identities.end())
-			{
-				std::cout << "ERROR: " << rendererName << " has been poped" << std::endl;
-				__debugbreak();
-			}
-
-			// system shutdown
-			std::cout << "INFO: " << rendererName << " poped" << std::endl;
-
-			m_Identities.erase(rendererName);
-
-			return *m_RendererManager;
-		}
-
-	private:
-		static std::unique_ptr<RendererManager> m_RendererManager;
-		static std::unordered_map<std::string, std::unique_ptr<Renderer>> m_Identities;
 	};
 
 	template<typename T, typename F>
