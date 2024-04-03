@@ -1,7 +1,10 @@
 #pragma once
 #include "Core/Core.h"
+#include "Core/Library/StringLibrary.h"
 
 namespace Spiecs {
+
+	using Type = std::reference_wrapper<const std::type_info>;
 
 	class System
 	{
@@ -33,8 +36,12 @@ namespace Spiecs {
 		static void Run();
 
 		template<typename T, typename ... Args>
-		SystemManager& PushSystem(const std::string& systemName, Args&& ... args)
+		SystemManager& PushSystem(Args&& ... args)
 		{
+			Type type = typeid(T);
+			const std::vector<std::string>& outSplit = StringLibrary::SplitString(type.get().name(), ':');
+			std::string systemName = outSplit[outSplit.size() - 1];
+
 			// push system to map
 			if (m_Identities.find(systemName) != m_Identities.end())
 			{

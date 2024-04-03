@@ -5,7 +5,7 @@ layout(location = 0) in vec3 fragColor;
 
 // push constant
 layout(push_constant) uniform Push{
-	mat4 ModelMatrix;
+	mat4 model;
 } push;
 
 // uniform buffer

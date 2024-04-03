@@ -32,7 +32,7 @@ namespace Spiecs {
 		VulkanDescriptorSetLayout(VulkanState& vulkanState, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
 		virtual ~VulkanDescriptorSetLayout();
 
-        VkDescriptorSetLayout GetDescriptorSetLayout() { return m_DescriptorSetLayout; };
+        VkDescriptorSetLayout& GetDescriptorSetLayout() { return m_DescriptorSetLayout; };
 
 	private:
         VkDescriptorSetLayout m_DescriptorSetLayout;

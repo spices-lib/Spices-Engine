@@ -13,10 +13,10 @@ namespace Spiecs {
 	{
 		// Init All Systems
 		SystemManager::Get()
-			.PushSystem<RenderSystem>("RenderSystem")
-			.PushSystem<MeshSystem>("MeshSystem")
-			.PushSystem<MaterialSystem>("MaterialSystem")
-			.PushSystem<UISystem>("UISystem");
+			.PushSystem<RenderSystem>()
+			.PushSystem<MeshSystem>()
+			.PushSystem<MaterialSystem>()
+			.PushSystem<UISystem>();
 	}
 
 	Application::~Application()
