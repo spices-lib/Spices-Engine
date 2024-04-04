@@ -26,16 +26,15 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.CreateCollection<SpecificCollection>()
-		.AddBuffer<VertUniformBuffer>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
-		.AddBuffer<FragUniformBuffer>(1, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddPushConstant<PushConstant>()
+		.AddBuffer<VertUniformBuffer>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+		.AddBuffer<VertUniformBuffer>(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<FragUniformBuffer>(1, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
 	void MeshRenderer::CreatePipeline(VkRenderPass renderPass)
 	{
-		assert(m_PipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
-
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = renderPass;
@@ -74,6 +73,9 @@ namespace Spiecs {
 		FragUniformBuffer fragubo{};
 		fragubo.view = projectionMatrix;
 		fragubo.projection = viewMatrix;
+		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 0)->WriteToBuffer(&vertubo);
+		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 0)->Flush();
+
 		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 1)->WriteToBuffer(&fragubo);
 		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 1)->Flush();
 
@@ -115,19 +117,19 @@ namespace Spiecs {
 		return std::make_pair(viewMat, projectionMat);
 	}
 
-	VkDescriptorBufferInfo MeshRenderer::SpecificCollection::GetSpecificBufferInfo(uint32_t set, uint32_t binding)
+	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
-		if (set == 0 && binding == 0) return m_VertUniformBuffer->GetBufferInfo();
-		if (set == 1 && binding == 1) return m_FragUniformBuffer->GetBufferInfo();
+		if (set == 0 && binding == 0) return m_VertUniformBuffer;
+		if (set == 1 && binding == 0) return m_FragUniformBuffer0;
+		if (set == 1 && binding == 1) return m_FragUniformBuffer;
 
 		__debugbreak();
 		SPIECS_LOG("Out of Range");
 	}
 
-	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
+	std::vector<std::unique_ptr<VulkanImage>>& MeshRenderer::SpecificCollection::GetTexture(uint32_t set, uint32_t binding)
 	{
-		if (set == 0 && binding == 0) return m_VertUniformBuffer;
-		if (set == 1 && binding == 1) return m_FragUniformBuffer;
+		if (set == 1 && binding == 0) return m_FragTexture2Ds;
 
 		__debugbreak();
 		SPIECS_LOG("Out of Range");

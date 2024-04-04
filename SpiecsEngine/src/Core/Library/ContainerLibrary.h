@@ -17,6 +17,5 @@ namespace Spiecs {
 				vector.resize(newSize);
 			}
 		};
-
 	};
 }

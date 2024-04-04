@@ -3,6 +3,14 @@
 
 namespace Spiecs {
 
+	VulkanDescriptorSetLayout::Builder::Builder(VulkanDescriptorSetLayout* oldLayout)
+	{
+		if (oldLayout)
+		{
+			m_Bindings = oldLayout->m_Bindings;
+		}
+	}
+
 	VulkanDescriptorSetLayout::Builder& VulkanDescriptorSetLayout::Builder::AddBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, uint32_t count)
 	{
 		assert(m_Bindings.count(binding) == 0 && "Binding already in use");

@@ -46,14 +46,13 @@ namespace Spiecs {
 	protected:
 		std::string GetSahderPath(const std::string& shaderType);
 
-		//void AddDescriptor();
-
 		template<typename T, typename F>
 		inline void IterWorldComp(FrameInfo& frameInfo, F func);
 
 	private:
 		struct DescriptorResource
 		{
+			// each set
 			std::vector<VkDescriptorSet> m_DescriptorSets{};
 		};
 
@@ -72,6 +71,12 @@ namespace Spiecs {
 			inline PipelineLayoutBuilder& AddBuffer(
 				uint32_t set, 
 				uint32_t binding, 
+				VkShaderStageFlags stageFlags
+			);
+
+			inline PipelineLayoutBuilder& AddTexture2D(
+				uint32_t set,
+				uint32_t binding,
 				VkShaderStageFlags stageFlags
 			);
 
@@ -94,8 +99,8 @@ namespace Spiecs {
 			Collection() {};
 			virtual ~Collection() {};
 
-			virtual VkDescriptorBufferInfo GetSpecificBufferInfo(uint32_t set, uint32_t binding) = 0;
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) = 0;
+			virtual std::vector<std::unique_ptr<VulkanImage>>& GetTexture(uint32_t set, uint32_t binding) = 0;
 		};
 
 	protected:
@@ -166,7 +171,7 @@ namespace Spiecs {
 		// descriptorset layout
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorSetLayout>>(m_VulkanLayouts, set + 1);
 
-		m_VulkanLayouts[set] = VulkanDescriptorSetLayout::Builder()
+		m_VulkanLayouts[set] = VulkanDescriptorSetLayout::Builder(m_VulkanLayouts[set].get())
 			.AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags)
 			.Build(m_Renderer->m_VulkanState);
 
@@ -176,13 +181,12 @@ namespace Spiecs {
 
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
+			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, set + 1);
 
-			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, binding + 1);
-
-			auto bufferInfo = m_Renderer->m_Collections[i]->GetSpecificBufferInfo(set, binding);
+			auto bufferInfo = m_Renderer->m_Collections[i]->GetBuffer(set, binding)->GetBufferInfo();
 			VulkanDescriptorWriter(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool)
 				.WriteBuffer(binding, &bufferInfo)
-				.Build(m_Renderer->m_Resource[i].m_DescriptorSets[binding]);
+				.Build(m_Renderer->m_Resource[i].m_DescriptorSets[set]);
 		}
 
 		return *this;

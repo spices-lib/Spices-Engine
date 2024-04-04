@@ -14,6 +14,7 @@ namespace Spiecs {
         {
         public:
             Builder() {};
+            Builder(VulkanDescriptorSetLayout* oldLayout);
 
             Builder& AddBinding(
                 uint32_t binding,

@@ -30,11 +30,13 @@ namespace Spiecs {
 			std::unique_ptr<VulkanBuffer> m_VertUniformBuffer;
 
 			// fragStage
+			std::vector<std::unique_ptr<VulkanImage>> m_FragTexture2Ds;
+			std::unique_ptr<VulkanBuffer> m_FragUniformBuffer0;
 			std::unique_ptr<VulkanBuffer> m_FragUniformBuffer;
 
 		public:
-			virtual VkDescriptorBufferInfo GetSpecificBufferInfo(uint32_t set, uint32_t binding) override;
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) override;
+			virtual std::vector<std::unique_ptr<VulkanImage>>& GetTexture(uint32_t set, uint32_t binding) override;
 		};
 	};
 }
