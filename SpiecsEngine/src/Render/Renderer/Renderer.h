@@ -52,7 +52,6 @@ namespace Spiecs {
 	private:
 		struct DescriptorResource
 		{
-			// each set
 			std::vector<VkDescriptorSet> m_DescriptorSets{};
 		};
 
@@ -88,6 +87,7 @@ namespace Spiecs {
 		private:
 			Renderer* m_Renderer;
 			std::vector<std::unique_ptr<VulkanDescriptorSetLayout>> m_VulkanLayouts{};
+			std::vector<std::unique_ptr<VulkanDescriptorWriter>> m_VulkanLayoutWriters{};
 
 			bool isUsePushConstant = false;
 			VkPushConstantRange m_PushConstantRange{};
@@ -168,6 +168,7 @@ namespace Spiecs {
 			m_Renderer->m_Collections[i]->GetBuffer(set, binding)->Map();
 		}
 
+
 		// descriptorset layout
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorSetLayout>>(m_VulkanLayouts, set + 1);
 
@@ -179,15 +180,22 @@ namespace Spiecs {
 
 		m_Renderer->m_DescriptorSetLayouts[set] = m_VulkanLayouts[set]->GetDescriptorSetLayout();
 
-		for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, set + 1);
 
-			auto bufferInfo = m_Renderer->m_Collections[i]->GetBuffer(set, binding)->GetBufferInfo();
-			VulkanDescriptorWriter(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool)
-				.WriteBuffer(binding, &bufferInfo)
-				.Build(m_Renderer->m_Resource[i].m_DescriptorSets[set]);
+
+		// writers
+		auto bufferInfo = m_Renderer->m_Collections[0]->GetBuffer(set, binding)->GetBufferInfo();
+		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_VulkanLayoutWriters, set + 1);
+
+		if (m_VulkanLayoutWriters[set])
+		{
+			auto writters = m_VulkanLayoutWriters[set]->GetWritters();
+			m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool, writters);
 		}
+		else
+		{
+			m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool);
+		}
+		m_VulkanLayoutWriters[set]->WriteBuffer(binding, &bufferInfo);
 
 		return *this;
 	}

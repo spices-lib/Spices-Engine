@@ -27,7 +27,7 @@ layout(location = 0) out vec4 outColor;
 // main
 void main()
 {
-    float x = ubo.projection[0].x + ubo0.view[0].x;
+    float x = ubo0.projection[0].x + ubo0.view[0].x;
 
     outColor = vec4(fragColor, 1.0);
 }

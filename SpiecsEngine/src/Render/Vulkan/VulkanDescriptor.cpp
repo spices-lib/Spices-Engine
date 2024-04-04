@@ -137,6 +137,12 @@ namespace Spiecs {
 
 
 
+	VulkanDescriptorWriter::VulkanDescriptorWriter(VulkanDescriptorSetLayout& setLayout, VulkanDescriptorPool& pool, const std::vector<VkWriteDescriptorSet>& writters)
+		: m_SetLayout(setLayout), m_Pool(pool)
+	{
+		M_Writes = writters;
+	}
+
 	VulkanDescriptorWriter& VulkanDescriptorWriter::WriteBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
 	{
 		assert(m_SetLayout.m_Bindings.count(binding) == 1 && "Layout does not contain specified binding");

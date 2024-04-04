@@ -66,6 +66,19 @@ namespace Spiecs {
 
 	void Renderer::PipelineLayoutBuilder::Build()
 	{
+		// create descriptor set
+		for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			int setSize = m_VulkanLayoutWriters.size();
+			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, setSize);
+
+			for (int j = 0; j < setSize; j++)
+			{
+				m_VulkanLayoutWriters[j]->Build(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
+			}
+		}
+
+		// create pipelinelayout
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(m_Renderer->m_DescriptorSetLayouts.size());

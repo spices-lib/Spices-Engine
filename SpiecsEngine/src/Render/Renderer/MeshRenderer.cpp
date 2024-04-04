@@ -28,7 +28,7 @@ namespace Spiecs {
 		.CreateCollection<SpecificCollection>()
 		.AddPushConstant<PushConstant>()
 		.AddBuffer<VertUniformBuffer>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
-		.AddBuffer<VertUniformBuffer>(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<FragUniformBuffer>(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<FragUniformBuffer>(1, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
@@ -73,7 +73,7 @@ namespace Spiecs {
 		FragUniformBuffer fragubo{};
 		fragubo.view = projectionMatrix;
 		fragubo.projection = viewMatrix;
-		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 0)->WriteToBuffer(&vertubo);
+		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 0)->WriteToBuffer(&fragubo);
 		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 0)->Flush();
 
 		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 1)->WriteToBuffer(&fragubo);
