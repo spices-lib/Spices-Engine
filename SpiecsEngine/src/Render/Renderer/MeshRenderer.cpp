@@ -67,16 +67,20 @@ namespace Spiecs {
 		VertUniformBuffer vertubo{};
 		vertubo.view = viewMatrix;
 		vertubo.projection = projectionMatrix;
-		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(0, 0)->WriteToBuffer(&vertubo);
-		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(0, 0)->Flush();
-
+		
 		FragUniformBuffer fragubo{};
 		fragubo.view = projectionMatrix;
 		fragubo.projection = viewMatrix;
+
+		FragUniformBuffer fragubo1{};
+
+		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(0, 0)->WriteToBuffer(&vertubo);
+		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(0, 0)->Flush();
+
 		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 0)->WriteToBuffer(&fragubo);
 		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 0)->Flush();
 
-		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 1)->WriteToBuffer(&fragubo);
+		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 1)->WriteToBuffer(&fragubo1);
 		m_Collections[frameInfo.m_FrameIndex]->GetBuffer(1, 1)->Flush();
 
 		IterWorldComp<MeshComponent>(frameInfo, [&](TransformComponent& transComp, MeshComponent& meshComp) {

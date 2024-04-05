@@ -15,7 +15,7 @@ namespace Spiecs {
 		inline VkDeviceMemory& GetMomory() { return m_BufferMemory; };
 		inline VkBuffer& Get() { return m_Buffer; };
 		void Map(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
-		VkDescriptorBufferInfo GetBufferInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+		VkDescriptorBufferInfo* GetBufferInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 		void WriteToBuffer(void* data, VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 		void Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 
@@ -30,5 +30,7 @@ namespace Spiecs {
 		VkDeviceMemory m_BufferMemory;
 
 		void* m_LocalMemory = nullptr;
+
+		VkDescriptorBufferInfo m_BufferInfo{};
 	};
 }

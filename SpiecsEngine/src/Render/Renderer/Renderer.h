@@ -85,6 +85,7 @@ namespace Spiecs {
 			void Build();
 
 		private:
+		public:
 			Renderer* m_Renderer;
 			std::vector<std::unique_ptr<VulkanDescriptorSetLayout>> m_VulkanLayouts{};
 			std::vector<std::unique_ptr<VulkanDescriptorWriter>> m_VulkanLayoutWriters{};
@@ -182,7 +183,7 @@ namespace Spiecs {
 
 
 
-		// writers
+		//// writers
 		auto bufferInfo = m_Renderer->m_Collections[0]->GetBuffer(set, binding)->GetBufferInfo();
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_VulkanLayoutWriters, set + 1);
 
@@ -195,7 +196,7 @@ namespace Spiecs {
 		{
 			m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool);
 		}
-		m_VulkanLayoutWriters[set]->WriteBuffer(binding, &bufferInfo);
+		m_VulkanLayoutWriters[set]->WriteBuffer(binding, bufferInfo);
 
 		return *this;
 	}

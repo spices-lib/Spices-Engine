@@ -88,7 +88,7 @@ namespace Spiecs {
         bool Build(VkDescriptorSet& set);
         void OverWrite(VkDescriptorSet& set);
 
-        inline std::vector<VkWriteDescriptorSet>& GetWritters() { return M_Writes; };
+        inline const std::vector<VkWriteDescriptorSet>& GetWritters() const { return M_Writes; };
 
     private:
         VulkanDescriptorSetLayout& m_SetLayout;

@@ -35,9 +35,13 @@ namespace Spiecs {
 		VK_CHECK(vkMapMemory(m_VulkanState.m_Device, m_BufferMemory, offset, size, 0, &m_LocalMemory));
 	}
 
-	VkDescriptorBufferInfo VulkanBuffer::GetBufferInfo(VkDeviceSize size, VkDeviceSize offset)
+	VkDescriptorBufferInfo* VulkanBuffer::GetBufferInfo(VkDeviceSize size, VkDeviceSize offset)
 	{
-		return VkDescriptorBufferInfo{ m_Buffer , offset, size };
+		m_BufferInfo.buffer = m_Buffer;
+		m_BufferInfo.offset = offset;
+		m_BufferInfo.range = size;
+
+		return &m_BufferInfo;
 	}
 
 	void VulkanBuffer::WriteToBuffer(void* data, VkDeviceSize size, VkDeviceSize offset)
