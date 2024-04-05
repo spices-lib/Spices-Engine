@@ -26,10 +26,10 @@ namespace Spiecs {
 
 		//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
 		std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-		pack->OnCreatePack();
+		pack->GetMaterial()->LoadMaterial("TestMaterial");
 		std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 		meshComp.SetMesh(mesh);
-
+		
 		// skybox
 
 	}

@@ -32,8 +32,5 @@ namespace Spiecs {
 	private:
 		// Vertices Indices
 		std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
-
-		// Materials
-		std::vector< std::shared_ptr<Material>> m_Materials;
 	};
 }

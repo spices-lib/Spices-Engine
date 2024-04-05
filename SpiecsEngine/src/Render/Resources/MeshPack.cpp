@@ -25,6 +25,11 @@ namespace Spiecs {
 		CreateBuffer();
 	}
 
+	MeshPack::MeshPack()
+	{
+		m_Material = std::make_shared<Material>();
+	}
+
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)
 	{
 		VkBuffer buffers[] = { m_VertexBuffer->Get() };

@@ -18,6 +18,8 @@ namespace Spiecs {
 
 	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)
 	{
+		meshPack->OnCreatePack();
+
 		m_Pack[m_PackNums] = meshPack;
 		return *this;
 	}

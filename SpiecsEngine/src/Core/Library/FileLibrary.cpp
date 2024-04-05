@@ -76,6 +76,18 @@ namespace Spiecs {
 		return false;
 	}
 
+	bool FileLibrary::FileLibrary_Read_Line(FileHandle* handle, uint64_t max_length, char** line_buf, uint64_t* out_line_length)
+	{
+		if (handle->handle && line_buf && out_line_length && max_length > 0) {
+			char* buf = *line_buf;
+			if (fgets(buf, max_length, (FILE*)handle->handle) != 0) {
+				*out_line_length = strlen(*line_buf);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	bool FileLibrary::FileLibrary_Read_all_bytes(FileHandle* handle, char* out_bytes, uint64_t* out_bytes_read)
 	{
 		if (handle->handle && out_bytes && out_bytes_read) {
@@ -99,6 +111,22 @@ namespace Spiecs {
 			}
 			fflush((FILE*)handle->handle);
 			return true;
+		}
+		return false;
+	}
+
+	bool FileLibrary::FileLibrary_Write_Line(FileHandle* handle, const char* text)
+	{
+		if (handle->handle) {
+			int result = fputs(text, (FILE*)handle->handle);
+			if (result != EOF) {
+				result = fputc('\n', (FILE*)handle->handle);
+			}
+
+			// Make sure to flush the stream so it is written to the file immediately.
+			// This prevents data loss in the event of a crash.
+			fflush((FILE*)handle->handle);
+			return result != EOF;
 		}
 		return false;
 	}

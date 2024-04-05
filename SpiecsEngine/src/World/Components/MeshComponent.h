@@ -2,7 +2,6 @@
 #include "Core/Core.h"
 #include "Component.h"
 #include "Render/Resources/Mesh.h"
-#include "Render/Resources/Material.h"
 
 #include <memory>
 
@@ -23,6 +22,5 @@ namespace Spiecs {
 
 	private:
 		std::shared_ptr<Mesh> m_Mesh;
-		std::vector<Material> m_Materials;
 	};
 }

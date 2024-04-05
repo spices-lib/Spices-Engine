@@ -5,7 +5,6 @@
 
 namespace Spiecs {
 
-#define GET_NAME(cls) ::std::string(#cls) 
 #define SPIECS_LOG(...) ::std::cout << __VA_ARGS__ << std::endl
 
 #define ASSERT(expr)                                                 \

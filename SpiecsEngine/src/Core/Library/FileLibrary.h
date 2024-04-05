@@ -22,7 +22,9 @@ namespace Spiecs {
         static void FileLibrary_Close(FileHandle* handle);
         static bool FileLibrary_Size(FileHandle* handle, uint64_t* out_size);
         static bool FileLibrary_Read(FileHandle* handle, uint64_t data_size, void* out_data, uint64_t* out_bytes_read);
+        static bool FileLibrary_Read_Line(FileHandle* handle, uint64_t max_length, char** line_buf, uint64_t* out_line_length);
         static bool FileLibrary_Read_all_bytes(FileHandle* handle, char* out_bytes, uint64_t* out_bytes_read);
         static bool FileLibrary_Write(FileHandle* handle, uint64_t data_size, const void* data, uint64_t* out_bytes_written);
+        static bool FileLibrary_Write_Line(FileHandle* handle, const char* text);
     };
 }
