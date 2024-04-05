@@ -8,7 +8,7 @@
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "RendererManager.h"
 #include "Core/Library/ContainerLibrary.h"
-
+#include "World/World/World.h"
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
 #include "World/Components/CameraComponent.h"
@@ -36,7 +36,6 @@ namespace Spiecs {
 		// TODO: specific renderpass
 		virtual void CreateRenderPass() = 0;
 
-
 		// specific desctiptor layout
 		virtual void CreatePipelineLayoutAndDescriptor() = 0;
 
@@ -49,6 +48,8 @@ namespace Spiecs {
 		template<typename T, typename F>
 		inline void IterWorldComp(FrameInfo& frameInfo, F func);
 
+		std::pair<glm::mat4, glm::mat4> GetActiveCameraMatrix(FrameInfo& frameInfo);
+
 	private:
 		struct DescriptorResource
 		{
@@ -60,7 +61,6 @@ namespace Spiecs {
 		{
 		public:
 			PipelineLayoutBuilder(Renderer* renderer) : m_Renderer(renderer) {};
-
 			virtual ~PipelineLayoutBuilder() {};
 
 			template<typename T>
@@ -92,6 +92,23 @@ namespace Spiecs {
 
 			bool isUsePushConstant = false;
 			VkPushConstantRange m_PushConstantRange{};
+		};
+
+		class RenderBehaverBuilder
+		{
+		public:
+			RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame);
+			virtual ~RenderBehaverBuilder() {};
+
+			template<typename T, typename F>
+			void UpdatePushConstant(F func);
+
+			template<typename T, typename F>
+			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
+
+		private:
+			Renderer* m_Renderer;
+			uint32_t m_CurrentFrame;
 		};
 
 		struct Collection 
@@ -211,5 +228,39 @@ namespace Spiecs {
 		m_PushConstantRange.size = sizeof(T);
 
 		return *this;
+	}
+
+	template<typename T, typename F>
+	inline void Renderer::RenderBehaverBuilder::UpdatePushConstant(F func)
+	{
+		// create pushconstant
+		T push{};
+
+		// write in data
+		func(push);
+
+		// update 
+		vkCmdPushConstants(
+			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			m_Renderer->m_PipelineLayout,
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			0,
+			sizeof(T),
+			&push
+		);
+	}
+
+	template<typename T, typename F>
+	inline void Renderer::RenderBehaverBuilder::UpdateBuffer(uint32_t set, uint32_t binding, F func)
+	{
+		// create uniform buffer object
+		T ubo{};
+
+		// write in data
+		func(ubo);
+
+		// update
+		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->WriteToBuffer(&ubo);
+		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->Flush();
 	}
 }

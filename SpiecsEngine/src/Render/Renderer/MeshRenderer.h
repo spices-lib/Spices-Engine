@@ -20,7 +20,6 @@ namespace Spiecs {
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
 
 	private:
-		std::pair<glm::mat4, glm::mat4> GetActiveCameraMatrix(FrameInfo& frameInfo);
 
 	private:
 		struct SpecificCollection : public Collection
@@ -31,7 +30,6 @@ namespace Spiecs {
 
 			// fragStage
 			std::vector<std::unique_ptr<VulkanImage>> m_FragTexture2Ds;
-			std::unique_ptr<VulkanBuffer> m_FragUniformBuffer0;
 			std::unique_ptr<VulkanBuffer> m_FragUniformBuffer;
 
 		public:

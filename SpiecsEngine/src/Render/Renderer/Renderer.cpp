@@ -1,7 +1,6 @@
 #include "pchheader.h"
 #include "Renderer.h"
 
-
 namespace Spiecs {
 
 	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool)
@@ -25,6 +24,23 @@ namespace Spiecs {
 	std::string Renderer::GetSahderPath(const std::string& shaderType)
 	{
 		return SPIECS_ENGINE_ASSETS_PATH + "Shaders/spv/Shader." + m_RendererName + "." + shaderType + ".spv";
+	}
+
+	std::pair<glm::mat4, glm::mat4> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
+	{
+		glm::mat4 viewMat = glm::mat4(1.0f);
+		glm::mat4 projectionMat = glm::mat4(1.0f);
+
+		IterWorldComp<CameraComponent>(frameInfo, [&](TransformComponent& transComp, CameraComponent& camComp) {
+			if (camComp.IsActived())
+			{
+				viewMat = glm::inverse(transComp.GetModelMatrix());
+				projectionMat = camComp.GetCamera()->GetPMatrix();
+				return true;
+			}
+			});
+
+		return std::make_pair(viewMat, projectionMat);
 	}
 
 	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddTexture2D(uint32_t set, uint32_t binding, VkShaderStageFlags stageFlags)
@@ -93,6 +109,26 @@ namespace Spiecs {
 		}
 
 		VK_CHECK(vkCreatePipelineLayout(m_Renderer->m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &m_Renderer->m_PipelineLayout));
+	}
+
+	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame)
+		: m_Renderer(renderer)
+		, m_CurrentFrame(currentFrame)
+	{
+		// bind pipeline
+		renderer->m_VulkanPipeline->Bind(currentFrame);
+
+		// bind descriptorsets
+		vkCmdBindDescriptorSets(
+			renderer->m_VulkanState.m_CommandBuffer[currentFrame],
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			renderer->m_PipelineLayout,
+			0,
+			renderer->m_Resource[0].m_DescriptorSets.size(),
+			renderer->m_Resource[currentFrame].m_DescriptorSets.data(),
+			0,
+			nullptr
+		);
 	}
 
 }
