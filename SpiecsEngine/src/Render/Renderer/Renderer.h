@@ -73,7 +73,8 @@ namespace Spiecs {
 				VkShaderStageFlags stageFlags
 			);
 
-			inline PipelineLayoutBuilder& AddTexture2D(
+			template<typename T>
+			inline PipelineLayoutBuilder& AddTexture(
 				uint32_t set,
 				uint32_t binding,
 				VkShaderStageFlags stageFlags
@@ -118,7 +119,7 @@ namespace Spiecs {
 			virtual ~Collection() {};
 
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) = 0;
-			virtual std::vector<std::unique_ptr<VulkanImage>>& GetTexture(uint32_t set, uint32_t binding) = 0;
+			virtual std::unique_ptr<VulkanImage>& GetImage(uint32_t set, uint32_t binding) = 0;
 		};
 
 	protected:
@@ -148,7 +149,7 @@ namespace Spiecs {
 	template<typename T, typename F>
 	inline void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
 	{
-		// group inter will be bug
+		// group iter will be bug
 		auto& view = frameInfo.m_World->GetRegistry().view<T>();
 		for (auto& e : view)
 		{
@@ -199,8 +200,7 @@ namespace Spiecs {
 		m_Renderer->m_DescriptorSetLayouts[set] = m_VulkanLayouts[set]->GetDescriptorSetLayout();
 
 
-
-		//// writers
+		// writers
 		auto bufferInfo = m_Renderer->m_Collections[0]->GetBuffer(set, binding)->GetBufferInfo();
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_VulkanLayoutWriters, set + 1);
 
@@ -214,6 +214,49 @@ namespace Spiecs {
 			m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool);
 		}
 		m_VulkanLayoutWriters[set]->WriteBuffer(binding, bufferInfo);
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddTexture(uint32_t set, uint32_t binding, VkShaderStageFlags stageFlags)
+	{
+		// local data
+		for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			m_Renderer->m_Collections[i]->GetImage(set, binding) = std::make_unique<VulkanImage>(
+				m_Renderer->m_VulkanState,
+				SPIECS_ENGINE_ASSETS_PATH + "Textures/src/street.jpg"
+			);
+		}
+
+
+		// descriptorset layout
+		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorSetLayout>>(m_VulkanLayouts, set + 1);
+
+		m_VulkanLayouts[set] = VulkanDescriptorSetLayout::Builder(m_VulkanLayouts[set].get())
+			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags)
+			.Build(m_Renderer->m_VulkanState);
+
+		ContainerLibrary::Resize<VkDescriptorSetLayout>(m_Renderer->m_DescriptorSetLayouts, set + 1);
+
+		m_Renderer->m_DescriptorSetLayouts[set] = m_VulkanLayouts[set]->GetDescriptorSetLayout();
+
+
+		// writers
+		auto imageInfo = m_Renderer->m_Collections[0]->GetImage(set, binding)->GetImageInfo();
+		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_VulkanLayoutWriters, set + 1);
+
+		if (m_VulkanLayoutWriters[set])
+		{
+			auto writters = m_VulkanLayoutWriters[set]->GetWritters();
+			m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool, writters);
+		}
+		else
+		{
+			m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool);
+		}
+		m_VulkanLayoutWriters[set]->WriteImage(binding, imageInfo);
 
 		return *this;
 	}

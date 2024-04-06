@@ -15,7 +15,7 @@ namespace Spiecs {
 		VkImageView& GetView() { return m_ImageView; };
 
 	public:
-		VkDescriptorImageInfo GetImageInfo(VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		VkDescriptorImageInfo* GetImageInfo(VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		void TransitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 		void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 		void GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight);
@@ -33,5 +33,7 @@ namespace Spiecs {
 		VkDeviceMemory m_ImageMemory;
 		VkImageView m_ImageView;
 		VkSampler m_TextureSampler;
+
+		VkDescriptorImageInfo m_ImageInfo{};
 	};
 }

@@ -20,15 +20,31 @@ namespace Spiecs {
 		transformComp.SetPostion({ 0.0f, 0.0f, -10.0f });
 		
 		// mesh
-		Entity& meshentity = CreateEntity("DefaultMesh");
-		MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-		TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+		{
+			Entity& meshentity = CreateEntity("DefaultMesh");
+			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 
-		//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
-		std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-		pack->GetMaterial()->LoadMaterial("TestMaterial");
-		std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
-		meshComp.SetMesh(mesh);
+			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
+			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			pack->GetMaterial()->LoadMaterial("TestMaterial");
+			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
+			meshComp.SetMesh(mesh);
+		}
+
+		{
+			// mesh2
+			Entity& meshentity = CreateEntity("DefaultMesh");
+			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+			transformComp1.SetPostion({1.5f, 1.5f, 0.0f});
+
+			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
+			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			pack->GetMaterial()->LoadMaterial("TestMaterial");
+			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
+			meshComp.SetMesh(mesh);
+		}
 		
 		// skybox
 

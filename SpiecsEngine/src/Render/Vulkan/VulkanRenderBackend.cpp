@@ -20,7 +20,7 @@ namespace Spiecs {
 		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
 			.SetMaxSets(2000)
 			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
-			.AddPoolSize(VK_DESCRIPTOR_TYPE_SAMPLER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
 			.Build(m_VulkanState);
 
 		// TODO: Move to  

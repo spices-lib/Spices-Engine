@@ -1,6 +1,5 @@
 #include "pchheader.h"
 #include "Material.h"
-#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
@@ -27,9 +26,6 @@ namespace Spiecs {
 	{
 		if (m_VertShaderPath.empty()) __debugbreak();
 		if (m_FragShaderPath.empty()) __debugbreak();
-
-		m_VertShaderModule = std::make_unique<VulkanShaderModule>(VulkanRenderBackend::GetState(), m_VertShaderPath);
-		m_FragShaderModule = std::make_unique<VulkanShaderModule>(VulkanRenderBackend::GetState(), m_FragShaderPath);
 
 		for (int i = 0; i < m_TexturePaths.size(); i++)
 		{

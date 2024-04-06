@@ -67,14 +67,13 @@ namespace Spiecs {
 		vkFreeMemory(m_VulkanState.m_Device, m_ImageMemory, nullptr);
 	}
 
-	VkDescriptorImageInfo VulkanImage::GetImageInfo(VkImageLayout imageLayout)
+	VkDescriptorImageInfo* VulkanImage::GetImageInfo(VkImageLayout imageLayout)
 	{
-		VkDescriptorImageInfo imageInfo = VkDescriptorImageInfo{};
-		imageInfo.imageLayout = imageLayout;
-		imageInfo.imageView = m_ImageView;
-		imageInfo.sampler = m_TextureSampler;
+		m_ImageInfo.imageLayout = imageLayout;
+		m_ImageInfo.imageView = m_ImageView;
+		m_ImageInfo.sampler = m_TextureSampler;
 
-		return imageInfo;
+		return &m_ImageInfo;
 	}
 
 	void VulkanImage::TransitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)

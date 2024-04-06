@@ -17,7 +17,11 @@ namespace Spiecs {
 	void Renderer::OnSystemInitialize()
 	{
 		CreateRenderPass();
+
+
 		CreatePipelineLayoutAndDescriptor();
+
+
 		CreatePipeline(m_VulkanState.m_RenderPass);
 	}
 
@@ -35,49 +39,13 @@ namespace Spiecs {
 			if (camComp.IsActived())
 			{
 				viewMat = glm::inverse(transComp.GetModelMatrix());
+				viewMat[1][1] *= -1; // in vulkan, we need reverse y axis;
 				projectionMat = camComp.GetCamera()->GetPMatrix();
 				return true;
 			}
 			});
 
 		return std::make_pair(viewMat, projectionMat);
-	}
-
-	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddTexture2D(uint32_t set, uint32_t binding, VkShaderStageFlags stageFlags)
-	{
-		// local data
-		for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			ContainerLibrary::Resize<std::unique_ptr<VulkanImage>>(m_Renderer->m_Collections[i]->GetTexture(set, binding), 1);
-
-			m_Renderer->m_Collections[i]->GetTexture(set, binding)[0] = std::make_unique<VulkanImage>(
-				m_Renderer->m_VulkanState,
-				SPIECS_ENGINE_ASSETS_PATH + "Textures/street.jpg"
-			);
-		}
-
-		// descriptorset layout
-		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorSetLayout>>(m_VulkanLayouts, set + 1);
-
-		m_VulkanLayouts[set] = VulkanDescriptorSetLayout::Builder()
-			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags)
-			.Build(m_Renderer->m_VulkanState);
-
-		ContainerLibrary::Resize<VkDescriptorSetLayout>(m_Renderer->m_DescriptorSetLayouts, set + 1);
-
-		m_Renderer->m_DescriptorSetLayouts[set] = m_VulkanLayouts[set]->GetDescriptorSetLayout();
-
-		for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, binding + 1);
-
-			auto imageInfo = m_Renderer->m_Collections[i]->GetTexture(set, binding)[0]->GetImageInfo();
-			VulkanDescriptorWriter(*m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool)
-				.WriteImage(binding, &imageInfo)
-				.Build(m_Renderer->m_Resource[i].m_DescriptorSets[binding]);
-		}
-
-		return *this;
 	}
 
 	void Renderer::PipelineLayoutBuilder::Build()
@@ -118,8 +86,8 @@ namespace Spiecs {
 		// bind pipeline
 		renderer->m_VulkanPipeline->Bind(currentFrame);
 
-		// bind descriptorsets
-		vkCmdBindDescriptorSets(
+		// bind descriptorsets all sets
+		/*vkCmdBindDescriptorSets(
 			renderer->m_VulkanState.m_CommandBuffer[currentFrame],
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			renderer->m_PipelineLayout,
@@ -128,7 +96,7 @@ namespace Spiecs {
 			renderer->m_Resource[currentFrame].m_DescriptorSets.data(),
 			0,
 			nullptr
-		);
+		);*/
 	}
 
 }

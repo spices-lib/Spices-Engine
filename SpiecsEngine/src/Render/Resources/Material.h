@@ -39,9 +39,6 @@ namespace Spiecs {
 		std::array<float, 3> m_TextureIntensity;
 
 		// BuildData
-		std::unique_ptr<VulkanShaderModule> m_VertShaderModule;
-		std::unique_ptr<VulkanShaderModule> m_FragShaderModule;
-
 		std::array<std::unique_ptr<Texture2D>, 3> m_Textures;
 	};
 }
