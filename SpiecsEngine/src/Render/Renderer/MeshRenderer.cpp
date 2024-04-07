@@ -9,15 +9,10 @@ namespace Spiecs {
 		glm::mat4 model = glm::mat4(1.0f);
 	};
 
-	struct VertUniformBuffer
+	struct VertRendererUBO
 	{
 		glm::mat4 projection = glm::mat4(1.0f);
 		glm::mat4 view = glm::mat4(1.0f);
-	};
-
-	struct FragUniformBuffer
-	{
-		
 	};
 
 	void MeshRenderer::CreatePipelineLayoutAndDescriptor()
@@ -25,7 +20,7 @@ namespace Spiecs {
 		PipelineLayoutBuilder{ this }
 		.CreateCollection<SpecificCollection>()
 		.AddPushConstant<PushConstant>()
-		.AddBuffer<VertUniformBuffer>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+		.AddBuffer<VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
@@ -48,9 +43,20 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex };
 
+		vkCmdBindDescriptorSets(
+			m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			m_PipelineLayout,
+			0,
+			1,
+			&m_Resource[frameInfo.m_FrameIndex].m_DescriptorSets[0],
+			0,
+			nullptr
+		);
+
 		auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 
-		builder.UpdateBuffer<VertUniformBuffer>(0, 0, [&](auto& ubo) {
+		builder.UpdateBuffer<VertRendererUBO>(0, 0, [&](auto& ubo) {
 			ubo.view = viewMatrix;
 			ubo.projection = projectionMatrix;
 		});
@@ -63,19 +69,10 @@ namespace Spiecs {
 				push.model = modelMatrix;
 			});
 
-			// bind descriptorsets all sets
-			vkCmdBindDescriptorSets(
-				m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
-				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				m_PipelineLayout,
-				0,
-				m_Resource[0].m_DescriptorSets.size(),
-				m_Resource[frameInfo.m_FrameIndex].m_DescriptorSets.data(),
-				0,
-				nullptr
-			);
-
-			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](std::shared_ptr<Material> material) {
+				//builder.UpdateTexture<Texture2D>(1, 0, material->GetTextures()[0]);
+				builder.UpdateDescriptorSets();
+			});
 
 			return false;
 		});
@@ -83,7 +80,7 @@ namespace Spiecs {
 
 	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
-		if (set == 0 && binding == 0) return m_VertUniformBuffer;
+		if (set == 0 && binding == 0) return m_VertRendererUBO;
 
 		__debugbreak();
 		SPIECS_LOG("Out of Range");

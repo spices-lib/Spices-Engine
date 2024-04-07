@@ -43,7 +43,8 @@ namespace Spiecs {
 				projectionMat = camComp.GetCamera()->GetPMatrix();
 				return true;
 			}
-			});
+			return false;
+		});
 
 		return std::make_pair(viewMat, projectionMat);
 	}
@@ -53,12 +54,12 @@ namespace Spiecs {
 		// create descriptor set
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			int setSize = m_VulkanLayoutWriters.size();
+			int setSize = m_Renderer->m_VulkanLayoutWriters.size();
 			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, setSize);
 
 			for (int j = 0; j < setSize; j++)
 			{
-				m_VulkanLayoutWriters[j]->Build(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
+				m_Renderer->m_VulkanLayoutWriters[j]->Build(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
 			}
 		}
 
@@ -84,19 +85,79 @@ namespace Spiecs {
 		, m_CurrentFrame(currentFrame)
 	{
 		// bind pipeline
-		renderer->m_VulkanPipeline->Bind(currentFrame);
+		BindPipeline();
 
 		// bind descriptorsets all sets
-		/*vkCmdBindDescriptorSets(
-			renderer->m_VulkanState.m_CommandBuffer[currentFrame],
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			renderer->m_PipelineLayout,
+		//BindAllBufferTyepDescriptorSet();
+	}
+
+	void Renderer::RenderBehaverBuilder::BindPipeline()
+	{
+		m_Renderer->m_VulkanPipeline->Bind(m_CurrentFrame);
+	}
+
+	void Renderer::RenderBehaverBuilder::BindAllBufferTyepDescriptorSet()
+	{
+
+		/*vkUpdateDescriptorSets(
+			m_Renderer->m_VulkanState.m_Device,
+			bindings,
+			m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().data(),
 			0,
-			renderer->m_Resource[0].m_DescriptorSets.size(),
-			renderer->m_Resource[currentFrame].m_DescriptorSets.data(),
+			nullptr
+		);*/
+
+		/*vkCmdBindDescriptorSets(
+			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			m_Renderer->m_PipelineLayout,
+			0,
+			1,
+			&m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[i],
 			0,
 			nullptr
 		);*/
 	}
 
+	void Renderer::RenderBehaverBuilder::UpdateDescriptorSets()
+	{
+
+		/*for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			int setSize = m_Renderer->m_VulkanLayoutWriters.size();
+			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, setSize);
+
+			for (int j = 0; j < setSize; j++)
+			{
+				m_Renderer->m_VulkanLayoutWriters[j]->OverWrite(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
+			}
+		}*/
+
+		/*vkCmdBindDescriptorSets(
+			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			m_Renderer->m_PipelineLayout,
+			0,
+			m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets.size(),
+			m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets.data(),
+			0,
+			nullptr
+		);*/
+
+		// test only update this
+
+
+		m_Renderer->m_VulkanLayoutWriters[1]->OverWrite(m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[1]);
+
+		vkCmdBindDescriptorSets(
+			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			m_Renderer->m_PipelineLayout,
+			1,
+			1,
+			&m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[1],
+			0,
+			nullptr
+		);
+	}
 }

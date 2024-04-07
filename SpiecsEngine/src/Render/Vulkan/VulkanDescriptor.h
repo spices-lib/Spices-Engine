@@ -84,11 +84,12 @@ namespace Spiecs {
 
         VulkanDescriptorWriter& WriteBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
         VulkanDescriptorWriter& WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
+        VulkanDescriptorWriter& ReWriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
 
         bool Build(VkDescriptorSet& set);
         void OverWrite(VkDescriptorSet& set);
 
-        inline const std::vector<VkWriteDescriptorSet>& GetWritters() const { return M_Writes; };
+        inline std::vector<VkWriteDescriptorSet>& GetWritters() { return M_Writes; };
 
     private:
         VulkanDescriptorSetLayout& m_SetLayout;

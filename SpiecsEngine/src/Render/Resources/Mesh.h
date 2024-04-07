@@ -27,10 +27,23 @@ namespace Spiecs {
 		Mesh(std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPacks);
 		virtual ~Mesh() {};
 
-		void Draw(VkCommandBuffer& commandBuffer);
+		template<typename F>
+		void Draw(VkCommandBuffer& commandBuffer, F func);
 
 	private:
 		// Vertices Indices
 		std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
 	};
+
+	template<typename F>
+	inline void Mesh::Draw(VkCommandBuffer& commandBuffer, F func)
+	{
+		for (auto& pair : m_Pack)
+		{
+			func(pair.second->GetMaterial());
+
+			pair.second->OnBind(commandBuffer);
+			pair.second->OnDraw(commandBuffer);
+		}
+	}
 }

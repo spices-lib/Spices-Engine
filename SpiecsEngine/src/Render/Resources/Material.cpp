@@ -32,7 +32,7 @@ namespace Spiecs {
 			if (m_TextureIsUse[i].value())
 			{
 				if (m_TexturePaths[i].empty()) __debugbreak();
-				m_Textures[i] = std::make_unique<Texture2D>(m_TexturePaths[i]);
+				m_Textures[i] = std::make_shared<Texture2D>(m_TexturePaths[i]);
 			}
 		}
 	}

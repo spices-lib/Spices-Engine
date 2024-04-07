@@ -41,7 +41,7 @@ namespace Spiecs {
 
 			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
 			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-			pack->GetMaterial()->LoadMaterial("TestMaterial");
+			pack->GetMaterial()->LoadMaterial("TestMaterial1");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 		}

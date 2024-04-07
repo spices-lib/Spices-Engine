@@ -7,15 +7,6 @@ namespace Spiecs {
 		: m_Pack(meshPack)
 	{}
 
-	void Mesh::Draw(VkCommandBuffer& commandBuffer)
-	{
-		for (auto& pair : m_Pack)
-		{
-			pair.second->OnBind(commandBuffer);
-			pair.second->OnDraw(commandBuffer);
-		}
-	}
-
 	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)
 	{
 		meshPack->OnCreatePack();

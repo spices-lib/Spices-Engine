@@ -185,6 +185,21 @@ namespace Spiecs {
 		return *this;
 	}
 
+	VulkanDescriptorWriter& VulkanDescriptorWriter::ReWriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
+	{
+		auto& bindingDescription = m_SetLayout.m_Bindings[binding];
+
+		VkWriteDescriptorSet write{};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.descriptorType = bindingDescription.descriptorType;
+		write.dstBinding = binding;
+		write.pImageInfo = imageInfo;
+		write.descriptorCount = 1;
+
+		M_Writes[binding] = write;
+		return *this;
+	}
+
 	bool VulkanDescriptorWriter::Build(VkDescriptorSet& set)
 	{
 		bool success = m_Pool.allocateDescriptor(m_SetLayout.GetDescriptorSetLayout(), set);

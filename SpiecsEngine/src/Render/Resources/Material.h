@@ -19,6 +19,8 @@ namespace Spiecs {
 		void LoadMaterial(const std::string& materialPath);
 		void Reload();
 		
+		const std::array<std::shared_ptr<Texture2D>, 3>& GetTextures() { return m_Textures; };
+
 	private:
 		void BuildMaterial();
 
@@ -39,6 +41,6 @@ namespace Spiecs {
 		std::array<float, 3> m_TextureIntensity;
 
 		// BuildData
-		std::array<std::unique_ptr<Texture2D>, 3> m_Textures;
+		std::array<std::shared_ptr<Texture2D>, 3> m_Textures;
 	};
 }

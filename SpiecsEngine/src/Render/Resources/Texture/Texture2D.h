@@ -11,6 +11,8 @@ namespace Spiecs {
 		Texture2D(const std::string& texturePath);
 		virtual ~Texture2D() {};
 
+		std::unique_ptr<VulkanImage>& GetResources() { return m_Resources; };
+
 	private:
 		std::unique_ptr<VulkanImage> m_Resources;
 	};

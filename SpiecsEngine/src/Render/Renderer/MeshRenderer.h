@@ -26,7 +26,7 @@ namespace Spiecs {
 		{
 		private:
 			// vertexStage
-			std::unique_ptr<VulkanBuffer> m_VertUniformBuffer;
+			std::unique_ptr<VulkanBuffer> m_VertRendererUBO;
 
 			// fragStage
 			std::unique_ptr<VulkanImage> m_FragTexture;
