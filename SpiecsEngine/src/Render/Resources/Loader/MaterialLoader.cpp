@@ -68,8 +68,14 @@ namespace Spiecs {
 				if (data[1] == "")      { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
 				if (data[1] != "None")
 				{
+					if (data.size() == 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
+					if (data[2] == "") { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
 					outMaterial->m_TextureIsUse[0] = true;
 					outMaterial->m_TexturePaths[0] = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/" + data[1];
+					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
+					if (vec.size() != 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
+					outMaterial->m_TextureSetBinding[0][0] = std::stoi(vec[0]);
+					outMaterial->m_TextureSetBinding[0][1] = std::stoi(vec[1]);
 					continue;
 				}
 				else
@@ -89,8 +95,14 @@ namespace Spiecs {
 				if (data[1] == "")        { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
 				if (data[1] != "None")
 				{
+					if (data.size() == 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
+					if (data[2] == "") { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
 					outMaterial->m_TextureIsUse[1] = true;
 					outMaterial->m_TexturePaths[1] = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/" + data[1];
+					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
+					if (vec.size() != 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
+					outMaterial->m_TextureSetBinding[0][0] = std::stoi(vec[0]);
+					outMaterial->m_TextureSetBinding[0][1] = std::stoi(vec[1]);
 					continue;
 				}
 				else
@@ -110,8 +122,14 @@ namespace Spiecs {
 				if (data[1] == "")         { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
 				if (data[1] != "None")
 				{
+					if (data.size() == 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
+					if (data[2] == "") { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
 					outMaterial->m_TextureIsUse[2] = true;
 					outMaterial->m_TexturePaths[2] = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/" + data[1];
+					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
+					if (vec.size() != 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
+					outMaterial->m_TextureSetBinding[0][0] = std::stoi(vec[0]);
+					outMaterial->m_TextureSetBinding[0][1] = std::stoi(vec[1]);
 					continue;
 				}
 				else

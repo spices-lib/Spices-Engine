@@ -33,11 +33,13 @@ namespace Spiecs {
 
 		// Temp:
 		static VulkanState& GetState() { return m_VulkanState; };
+		static std::shared_ptr<VulkanDescriptorPool> GetDescriptorPool() { return m_VulkanDescriptorPool; };
 
 	private:
 		void RecreateSwapChain();
 	private:
 		static VulkanState m_VulkanState;
+		static std::shared_ptr<VulkanDescriptorPool> m_VulkanDescriptorPool;
 
 		std::unique_ptr<VulkanWindows> m_VulkanWindows;
 		std::unique_ptr<VulkanInstance> m_VulkanInstance;
@@ -46,6 +48,6 @@ namespace Spiecs {
 		std::unique_ptr<VulkanCommandBuffer> m_VulkanCommandBuffer;
 		std::unique_ptr<VulkanRenderPass> m_VulkanRenderPass;
 		std::unique_ptr<VulkanSwapChain> m_VulkanSwapChain;
-		std::shared_ptr<VulkanDescriptorPool> m_VulkanDescriptorPool;
+		
 	};
 }

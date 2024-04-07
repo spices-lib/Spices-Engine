@@ -22,6 +22,8 @@ namespace Spiecs {
 		void CreateImageView(VkFormat format, VkImageAspectFlags aspectFlags);
 		void CreateSampler();
 		void CreateImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels);
+		void CreateDescriptorSet(uint32_t set, uint32_t binding);
+		VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; };
 
 	private:
 		int m_Width;
@@ -35,5 +37,6 @@ namespace Spiecs {
 		VkSampler m_TextureSampler;
 
 		VkDescriptorImageInfo m_ImageInfo{};
+		VkDescriptorSet m_DescriptorSet{};
 	};
 }

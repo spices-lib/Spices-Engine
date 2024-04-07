@@ -22,6 +22,17 @@ namespace Spiecs {
 		BuildMaterial();
 	}
 
+	VkDescriptorSet& Material::GetTextureDescriptorSet(uint32_t set, uint32_t binding)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (m_TextureSetBinding[i][0] == set && m_TextureSetBinding[i][1] == binding)
+			{
+				return m_Textures[i]->GetResources()->GetDescriptorSet();
+			}
+		}
+	}
+
 	void Material::BuildMaterial()
 	{
 		if (m_VertShaderPath.empty()) __debugbreak();
@@ -33,6 +44,7 @@ namespace Spiecs {
 			{
 				if (m_TexturePaths[i].empty()) __debugbreak();
 				m_Textures[i] = std::make_shared<Texture2D>(m_TexturePaths[i]);
+				m_Textures[i]->GetResources()->CreateDescriptorSet(m_TextureSetBinding[i][0], m_TextureSetBinding[i][1]);
 			}
 		}
 	}

@@ -88,7 +88,7 @@ namespace Spiecs {
 		BindPipeline();
 
 		// bind descriptorsets all sets
-		//BindAllBufferTyepDescriptorSet();
+		BindAllBufferTyepDescriptorSet();
 	}
 
 	void Renderer::RenderBehaverBuilder::BindPipeline()
@@ -98,64 +98,37 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindAllBufferTyepDescriptorSet()
 	{
+		int setCount = m_Renderer->m_VulkanLayoutWriters.size();
+		for (int i = 0; i < setCount; i++)
+		{
+			bool IsPureBufferTypeSet = true;
 
-		/*vkUpdateDescriptorSets(
-			m_Renderer->m_VulkanState.m_Device,
-			bindings,
-			m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().data(),
-			0,
-			nullptr
-		);*/
+			int bindingCount = m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().size();
+			for (int j = 0; j < bindingCount; j++)
+			{
+				if (m_Renderer->m_VulkanLayoutWriters[i]->GetWritters()[j].descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+				{
+					IsPureBufferTypeSet = false;
+					break;
+				}
+			}
 
-		/*vkCmdBindDescriptorSets(
-			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_Renderer->m_PipelineLayout,
-			0,
-			1,
-			&m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[i],
-			0,
-			nullptr
-		);*/
+			if (IsPureBufferTypeSet)
+			{
+				BindDescriptorSet(i, m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[i]);
+			}
+		}
 	}
 
-	void Renderer::RenderBehaverBuilder::UpdateDescriptorSets()
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(uint32_t set, VkDescriptorSet& descriptorset)
 	{
-
-		/*for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			int setSize = m_Renderer->m_VulkanLayoutWriters.size();
-			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, setSize);
-
-			for (int j = 0; j < setSize; j++)
-			{
-				m_Renderer->m_VulkanLayoutWriters[j]->OverWrite(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
-			}
-		}*/
-
-		/*vkCmdBindDescriptorSets(
-			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_Renderer->m_PipelineLayout,
-			0,
-			m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets.size(),
-			m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets.data(),
-			0,
-			nullptr
-		);*/
-
-		// test only update this
-
-
-		m_Renderer->m_VulkanLayoutWriters[1]->OverWrite(m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[1]);
-
 		vkCmdBindDescriptorSets(
 			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_Renderer->m_PipelineLayout,
+			set,
 			1,
-			1,
-			&m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[1],
+			&descriptorset,
 			0,
 			nullptr
 		);

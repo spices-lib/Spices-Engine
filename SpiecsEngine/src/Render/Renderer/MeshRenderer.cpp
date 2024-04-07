@@ -43,17 +43,6 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex };
 
-		vkCmdBindDescriptorSets(
-			m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_PipelineLayout,
-			0,
-			1,
-			&m_Resource[frameInfo.m_FrameIndex].m_DescriptorSets[0],
-			0,
-			nullptr
-		);
-
 		auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 
 		builder.UpdateBuffer<VertRendererUBO>(0, 0, [&](auto& ubo) {
@@ -69,9 +58,8 @@ namespace Spiecs {
 				push.model = modelMatrix;
 			});
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](std::shared_ptr<Material> material) {
-				//builder.UpdateTexture<Texture2D>(1, 0, material->GetTextures()[0]);
-				builder.UpdateDescriptorSets();
+			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](auto material) {
+				builder.BindDescriptorSet(1, material->GetTextureDescriptorSet(1, 0));
 			});
 
 			return false;

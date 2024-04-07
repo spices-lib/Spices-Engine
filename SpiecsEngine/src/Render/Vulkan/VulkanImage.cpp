@@ -2,6 +2,8 @@
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanCommandBuffer.h"
+#include "VulkanDescriptor.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 #include "stb_image.h"
 
@@ -339,4 +341,14 @@ namespace Spiecs {
 		vkBindImageMemory(vulkanState.m_Device, m_Image, m_ImageMemory, 0);
 	}
 
+	void VulkanImage::CreateDescriptorSet(uint32_t set, uint32_t binding)
+	{
+		std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder{}
+			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+			.Build(m_VulkanState);
+
+		VulkanDescriptorWriter{ *setLayout, *VulkanRenderBackend::GetDescriptorPool() }
+			.WriteImage(binding, GetImageInfo())
+			.Build(m_DescriptorSet);
+	}
 }

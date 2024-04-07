@@ -101,16 +101,13 @@ namespace Spiecs {
 
 			void BindPipeline();
 			void BindAllBufferTyepDescriptorSet();
-			void UpdateDescriptorSets();
+			void BindDescriptorSet(uint32_t set, VkDescriptorSet& descriptorset);
 
 			template<typename T, typename F>
 			void UpdatePushConstant(F func);
 
 			template<typename T, typename F>
 			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
-
-			template<typename T>
-			void UpdateTexture(uint32_t set, uint32_t binding, std::shared_ptr<Texture2D> texture);
 
 		private:
 			Renderer* m_Renderer;
@@ -312,34 +309,5 @@ namespace Spiecs {
 		// update
 		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->WriteToBuffer(&ubo);
 		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->Flush();
-	}
-
-	template<typename T>
-	inline void Renderer::RenderBehaverBuilder::UpdateTexture(uint32_t set, uint32_t binding, std::shared_ptr<Texture2D> texture)
-	{
-		auto imageInfo = texture->GetResources()->GetImageInfo();
-		m_Renderer->m_VulkanLayoutWriters[set]->ReWriteImage(binding, imageInfo);
-
-		//int bindings = m_Renderer->m_VulkanLayoutWriters[set]->GetWritters().size();
-		/*vkUpdateDescriptorSets(
-			m_Renderer->m_VulkanState.m_Device,
-			bindings,
-			m_Renderer->m_VulkanLayoutWriters[set]->GetWritters().data(),
-			0,
-			nullptr
-		);*/
-
-		//m_Renderer->m_VulkanLayoutWriters[set]->OverWrite(m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[set]);
-
-		/*vkCmdBindDescriptorSets(
-			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_Renderer->m_PipelineLayout,
-			0,
-			1,
-			&m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[set],
-			0,
-			nullptr
-		);*/
 	}
 }

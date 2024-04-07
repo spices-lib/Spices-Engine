@@ -5,7 +5,7 @@ vertShader=MeshRenderer;
 fragShader=MeshRenderer;
 
 # Texture
-diffuseTexture=nicolas.jpg;
+diffuseTexture=nicolas.jpg=1,0;
 normalTexture=None=0.2,0.2,0.2;
 specularTexture=None=0.5,0.6,0.7;
 
