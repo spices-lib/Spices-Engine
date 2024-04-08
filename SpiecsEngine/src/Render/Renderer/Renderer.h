@@ -159,7 +159,7 @@ namespace Spiecs {
 		{
 			auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
 
-			bool isIterBreak = func(transComp, tComp);
+			bool isIterBreak = func((int)e, transComp, tComp);
 
 			if (isIterBreak) break;
 		}

@@ -10,6 +10,8 @@ layout(location = 0) out vec4 outColor;
 // push constant
 layout(push_constant) uniform Push{
 	mat4 model;
+	int entityID;
+	int meshpackID;
 } push;
 
 // uniform buffer

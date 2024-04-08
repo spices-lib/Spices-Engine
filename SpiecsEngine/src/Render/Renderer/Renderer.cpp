@@ -35,7 +35,7 @@ namespace Spiecs {
 		glm::mat4 viewMat = glm::mat4(1.0f);
 		glm::mat4 projectionMat = glm::mat4(1.0f);
 
-		IterWorldComp<CameraComponent>(frameInfo, [&](TransformComponent& transComp, CameraComponent& camComp) {
+		IterWorldComp<CameraComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, CameraComponent& camComp) {
 			if (camComp.IsActived())
 			{
 				viewMat = glm::inverse(transComp.GetModelMatrix());

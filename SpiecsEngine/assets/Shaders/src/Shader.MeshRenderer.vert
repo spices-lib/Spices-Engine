@@ -13,6 +13,8 @@ layout(location = 1) out vec2 fragTexCoord;
 // push constant
 layout(push_constant) uniform Push{
 	mat4 model;
+    int entityID;
+    int meshpackID;
 } push;
 
 // uniform buffer

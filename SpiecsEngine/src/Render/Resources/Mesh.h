@@ -20,7 +20,7 @@ namespace Spiecs {
 
 		private:
 			std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
-			uint32_t m_PackNums;
+			uint32_t m_PackNums = 0;
 		};
 
 	public:
@@ -40,7 +40,7 @@ namespace Spiecs {
 	{
 		for (auto& pair : m_Pack)
 		{
-			func(pair.second->GetMaterial());
+			func(pair.first, pair.second->GetMaterial());
 
 			pair.second->OnBind(commandBuffer);
 			pair.second->OnDraw(commandBuffer);

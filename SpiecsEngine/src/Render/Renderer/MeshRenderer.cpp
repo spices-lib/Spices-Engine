@@ -7,6 +7,8 @@ namespace Spiecs {
 	struct PushConstant
 	{
 		glm::mat4 model = glm::mat4(1.0f);
+		int entityID = -1;
+		int meshpackID = -1;
 	};
 
 	struct VertRendererUBO
@@ -50,15 +52,16 @@ namespace Spiecs {
 			ubo.projection = projectionMatrix;
 		});
 
-		IterWorldComp<MeshComponent>(frameInfo, [&](TransformComponent& transComp, MeshComponent& meshComp) {
+		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			// bind push constant
-			builder.UpdatePushConstant<PushConstant>([&](auto& push) {
-				push.model = modelMatrix;
-			});
+			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+				builder.UpdatePushConstant<PushConstant>([&](auto& push) {
+					push.model = modelMatrix;
+					push.entityID = entityId;
+					push.meshpackID = meshpackId;
+				});
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](auto material) {
 				builder.BindDescriptorSet(1, material->GetTextureDescriptorSet(1, 0));
 			});
 
