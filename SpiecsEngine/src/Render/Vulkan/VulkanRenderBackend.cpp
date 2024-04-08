@@ -31,6 +31,8 @@ namespace Spiecs {
 
 	VulkanRenderBackend::~VulkanRenderBackend()
 	{
+		m_VulkanDescriptorPool = nullptr;
+
 		RendererManager::Get()
 			.Pop("MeshRenderer");
 	}
