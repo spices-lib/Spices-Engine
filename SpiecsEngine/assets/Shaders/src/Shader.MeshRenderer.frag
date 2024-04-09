@@ -1,8 +1,12 @@
 #version 460
 
 // frag input
-layout(location = 0) in vec3 fragColor;
-layout(location = 1) in vec2 fragTexCoord;
+layout(location = 0) in struct FragInput {
+    vec3 position;
+    vec3 normal;
+    vec3 color;
+    vec2 texCoord;
+} fragInput;
 
 // frag output
 layout(location = 0) out vec4 outColor;
@@ -32,6 +36,6 @@ const int specularTexture = 2;
 // main
 void main()
 {
-    outColor = texture(samplers[diffuseTexture], fragTexCoord);
+    outColor = texture(samplers[diffuseTexture], fragInput.texCoord);
 	//outColor.xyz = pow(outColor.xyz, vec3(1.0 / 2.2));
 }

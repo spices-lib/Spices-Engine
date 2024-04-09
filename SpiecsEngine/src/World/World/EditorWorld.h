@@ -11,7 +11,7 @@ namespace Spiecs {
 		virtual ~EditorWorld() {};
 
 		virtual void OnPreActivate() override;
-		virtual void OnActivate() override;
+		virtual void OnActivate(TimeStep ts) override;
 		virtual void OnDeactivate() override;
 
 	private:

@@ -3,9 +3,10 @@
 #include "Render/FrameInfo.h"
 #include "Systems/SystemManager.h"
 #include "Systems/RenderSystem.h"
-#include "Systems/MaterialSystem.h"
-#include "Systems/MeshSystem.h"
 #include "Systems/UISystem.h"
+#include "Systems/NativeScriptSystem.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
+
 
 namespace Spiecs {
 
@@ -13,9 +14,8 @@ namespace Spiecs {
 	{
 		// Init All Systems
 		SystemManager::Get()
+			.PushSystem<NativeScriptSystem>()
 			.PushSystem<RenderSystem>()
-			.PushSystem<MeshSystem>()
-			.PushSystem<MaterialSystem>()
 			.PushSystem<UISystem>();
 	}
 
@@ -24,10 +24,9 @@ namespace Spiecs {
 		FrameInfo::Get().m_World = nullptr;
 
 		SystemManager::Get()
+			.PopSystem("UISystem")
 			.PopSystem("RenderSystem")
-			.PopSystem("MeshSystem")
-			.PopSystem("MaterialSystem")
-			.PopSystem("UISystem");
+			.PopSystem("NativeScriptSystem");
 	}
 
 	void Application::Run()
@@ -37,7 +36,20 @@ namespace Spiecs {
 
 		// temp TODO: Remove
 		FrameInfo::Get().m_World->OnPreActivate();
-		FrameInfo::Get().m_World->OnActivate();
+
+
+		TimeStep ts;
+
+		while (!glfwWindowShouldClose(VulkanRenderBackend::GetState().m_Windows))
+		{
+			glfwPollEvents();
+
+			ts.Flush();
+			FrameInfo::Get().m_World->OnActivate(ts);
+		}
+
+		VulkanRenderBackend::WaitIdle();
+
 		FrameInfo::Get().m_World->OnDeactivate();
 	}
 }

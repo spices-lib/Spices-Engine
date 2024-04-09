@@ -4,11 +4,11 @@
 
 namespace Spiecs {
 
-	class UISystem : public System
+	class NativeScriptSystem : public System
 	{
 	public:
-		UISystem(const std::string& systemName) : System(systemName) {};
-		virtual ~UISystem() override {};
+		NativeScriptSystem(const std::string& systemName) : System(systemName) {};
+		virtual ~NativeScriptSystem() override {};
 
 		virtual void OnSystemInitialize() override;
 		virtual void OnSystemShutDown() override;

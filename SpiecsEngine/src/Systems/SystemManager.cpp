@@ -17,8 +17,11 @@ namespace Spiecs {
 		return *m_SystemManager;
 	}
 
-	void SystemManager::Run()
+	void SystemManager::Run(TimeStep ts)
 	{
-		m_Identities["RenderSystem"]->OnSystemUpdate();
+		for (auto& pair : m_Identities)
+		{
+			pair.second->OnSystemUpdate(ts);
+		}
 	}
 }

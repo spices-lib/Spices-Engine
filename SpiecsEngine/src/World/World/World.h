@@ -14,7 +14,7 @@ namespace Spiecs {
 		virtual ~World() {};
 
 		virtual void OnPreActivate() = 0;
-		virtual void OnActivate() = 0;
+		virtual void OnActivate(TimeStep ts) = 0;
 		virtual void OnDeactivate() = 0;
 
 		// empty entity

@@ -9,7 +9,7 @@ namespace Spiecs {
 	void UISystem::OnSystemShutDown()
 	{
 	}
-	void UISystem::OnSystemUpdate()
+	void UISystem::OnSystemUpdate(TimeStep ts)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		SPIECS_LOG("UISystem :: fin");

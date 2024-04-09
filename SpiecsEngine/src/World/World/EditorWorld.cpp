@@ -50,9 +50,9 @@ namespace Spiecs {
 
 	}
 
-	void EditorWorld::OnActivate()
+	void EditorWorld::OnActivate(TimeStep ts)
 	{
-		SystemManager::Run();
+		SystemManager::Run(ts);
 	}
 
 	void EditorWorld::OnDeactivate()

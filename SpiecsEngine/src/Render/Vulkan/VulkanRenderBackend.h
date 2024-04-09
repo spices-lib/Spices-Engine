@@ -24,7 +24,7 @@ namespace Spiecs {
 		VulkanRenderBackend& operator=(const VulkanRenderBackend&) = delete;
 
 		bool isWindowClosed() { return glfwWindowShouldClose(m_VulkanState.m_Windows); };
-		void WaitIdle() { vkDeviceWaitIdle(m_VulkanState.m_Device); };
+		static void WaitIdle() { vkDeviceWaitIdle(m_VulkanState.m_Device); };
 
 		void beginFrame(FrameInfo& frameInfo);
 		void endFrame(FrameInfo& frameInfo);

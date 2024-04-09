@@ -7,8 +7,12 @@ layout(location = 2) in vec3 color;
 layout(location = 3) in vec2 texCoord;
 
 // vertex output
-layout(location = 0) out vec3 fragColor;
-layout(location = 1) out vec2 fragTexCoord;
+layout(location = 0) out struct FragInput{
+    vec3 position;
+    vec3 normal;
+    vec3 color;
+    vec2 texCoord;
+} vertOut;
 
 // push constant
 layout(push_constant) uniform Push{
@@ -26,12 +30,15 @@ layout(set = 0, binding = 0) uniform UniformBuffer {
 // constant
 
 
-// vertex output
-
 // main
 void main()
 {
+    mat3 m3model = mat3(push.model);
+
+    vertOut.position = m3model * position;
+    vertOut.normal = normalize(m3model * normal);
+    vertOut.color = color;
+    vertOut.texCoord = texCoord;
+    
     gl_Position = ubo.projection * ubo.view * push.model * vec4(position, 1.0);
-    fragColor = color;
-    fragTexCoord = texCoord;
 }

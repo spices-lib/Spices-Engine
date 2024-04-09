@@ -17,7 +17,7 @@ namespace Spiecs {
 
 		virtual void OnSystemInitialize() {};
 		virtual void OnSystemShutDown() {};
-		virtual void OnSystemUpdate() {};
+		virtual void OnSystemUpdate(TimeStep ts) {};
 
 	protected:
 		std::string m_SystemName;
@@ -33,7 +33,7 @@ namespace Spiecs {
 		SystemManager& operator=(const SystemManager&) = delete;
 
 		static SystemManager& Get();
-		static void Run();
+		static void Run(TimeStep ts);
 
 		template<typename T, typename ... Args>
 		SystemManager& PushSystem(Args&& ... args)
