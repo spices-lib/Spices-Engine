@@ -49,6 +49,8 @@ namespace Spiecs {
 		inline void IterWorldComp(FrameInfo& frameInfo, F func);
 
 		std::pair<glm::mat4, glm::mat4> GetActiveCameraMatrix(FrameInfo& frameInfo);
+		DirectionalLightComponent::DirectionalLight GetDirectionalLight(FrameInfo& frameInfo);
+		std::array<PointLightComponent::PointLight, 10> GetPointLight(FrameInfo& frameInfo);
 
 	private:
 		struct DescriptorResource

@@ -1,0 +1,14 @@
+#include "pchheader.h"
+#include "DirectionalLightComponent.h"
+
+namespace Spiecs {
+	void DirectionalLightComponent::OnSerialize()
+	{
+	}
+	void DirectionalLightComponent::OnDeSerialize()
+	{
+	}
+	void DirectionalLightComponent::OnComponentAdded()
+	{
+	}
+}

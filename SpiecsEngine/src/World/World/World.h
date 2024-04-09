@@ -3,6 +3,14 @@
 #include "Core/UUID.h"
 #include "entt.hpp"
 
+#include "World/Components/CameraComponent.h"
+#include "World/Components/TransformComponent.h"
+#include "World/Components/MeshComponent.h"
+#include "World/Components/TagComponent.h"
+#include "World/Components/UUIDComponent.h"
+#include "World/Components/DirectionalLightComponent.h"
+#include "World/Components/PointLightComponent.h"
+
 namespace Spiecs {
 
 	class Entity;

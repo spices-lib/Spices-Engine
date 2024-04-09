@@ -27,11 +27,10 @@ namespace Spiecs {
 		private:
 			// vertexStage
 			std::unique_ptr<VulkanBuffer> m_VertRendererUBO;
+			std::unique_ptr<VulkanBuffer> m_LightUBO;
 
 			// fragStage
-			std::unique_ptr<VulkanImage> m_FragTexture0;
-			std::unique_ptr<VulkanImage> m_FragTexture1;
-			std::unique_ptr<VulkanImage> m_FragTexture2;
+			std::unique_ptr<VulkanImage> m_FragTexture;
 
 		public:
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) override;

@@ -2,12 +2,6 @@
 #include "World.h"
 #include "World/Entity.h"
 
-#include "World/Components/CameraComponent.h"
-#include "World/Components/MeshComponent.h"
-#include "World/Components/TagComponent.h"
-#include "World/Components/TransformComponent.h"
-#include "World/Components/UUIDComponent.h"
-
 namespace Spiecs {
 
 	Entity World::CreateEntity(const std::string& name)

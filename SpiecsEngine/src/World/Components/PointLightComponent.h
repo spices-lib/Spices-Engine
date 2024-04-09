@@ -1,22 +1,35 @@
 #pragma once
 #include "Core/Core.h"
 #include "Component.h"
-#include "World/PointLight.h"
+#include "glm/glm.hpp"
 
 namespace Spiecs {
 
-	class PointLightComponent : Component
+	class PointLightComponent : public Component
 	{
 	public:
+		struct PointLight
+		{
+			glm::vec3 color{ 1.0f, 1.0f, 1.0f };
+			float intensity = 1.0;
+			float constantf = 1.0;
+			float linear = 0.35;
+			float quadratic = 0.44;
+		};
+
+	public:
 		PointLightComponent() {};
+		PointLightComponent(const PointLight& pointLight) : m_PointLight(pointLight) {};
+
 		virtual ~PointLightComponent() {};
 
-		virtual void OnSerialize() = 0;
-		virtual void OnDeSerialize() = 0;
-		virtual void OnComponentAdded() = 0;
+		virtual void OnSerialize() override;
+		virtual void OnDeSerialize() override;
+		virtual void OnComponentAdded() override;
+
+		PointLight& GetLight() { return m_PointLight; };
 
 	private:
-		std::unique_ptr<PointLight> m_PointLight;
+		PointLight m_PointLight{};
 	};
-
 }

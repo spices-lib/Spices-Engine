@@ -17,6 +17,12 @@ namespace Spiecs {
 		glm::mat4 view = glm::mat4(1.0f);
 	};
 
+	struct LightUBO
+	{
+		DirectionalLightComponent::DirectionalLight directionalLight;
+		std::array<PointLightComponent::PointLight, 10> pointLights;
+	};
+
 	void MeshRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
@@ -24,6 +30,7 @@ namespace Spiecs {
 		.AddPushConstant<PushConstant>()
 		.AddBuffer<VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<LightUBO>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -45,11 +52,15 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex };
 
-		auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-
 		builder.UpdateBuffer<VertRendererUBO>(0, 0, [&](auto& ubo) {
+			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 			ubo.view = viewMatrix;
 			ubo.projection = projectionMatrix;
+		});
+
+		builder.UpdateBuffer<LightUBO>(2, 0, [&](auto& ubo) {
+			ubo.directionalLight = GetDirectionalLight(frameInfo);
+			ubo.pointLights = GetPointLight(frameInfo);
 		});
 
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
@@ -72,6 +83,7 @@ namespace Spiecs {
 	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
 		if (set == 0 && binding == 0) return m_VertRendererUBO;
+		if (set == 2 && binding == 0) return m_LightUBO;
 
 		__debugbreak();
 		SPIECS_LOG("Out of Range");
@@ -79,9 +91,7 @@ namespace Spiecs {
 
 	std::unique_ptr<VulkanImage>& MeshRenderer::SpecificCollection::GetImage(uint32_t set, uint32_t binding)
 	{
-		if (set == 1 && binding == 0) return m_FragTexture0;
-		if (set == 1 && binding == 1) return m_FragTexture1;
-		if (set == 1 && binding == 2) return m_FragTexture2;
+		if (set == 0 && binding == 0) return m_FragTexture;
 
 		__debugbreak();
 		SPIECS_LOG("Out of Range");

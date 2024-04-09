@@ -49,6 +49,37 @@ namespace Spiecs {
 		return std::make_pair(viewMat, projectionMat);
 	}
 
+	DirectionalLightComponent::DirectionalLight Renderer::GetDirectionalLight(FrameInfo& frameInfo)
+	{
+		DirectionalLightComponent::DirectionalLight directionalLight;
+		IterWorldComp<DirectionalLightComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, DirectionalLightComponent& dirlightComp) {
+			directionalLight = dirlightComp.GetLight();
+			return true;
+		});
+
+		return directionalLight;
+	}
+
+	std::array<PointLightComponent::PointLight, 10> Renderer::GetPointLight(FrameInfo& frameInfo)
+	{
+		std::vector<PointLightComponent::PointLight> pointLights;
+		std::array<PointLightComponent::PointLight, 10> pointLightsArray;
+
+		IterWorldComp<PointLightComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, PointLightComponent& plightComp) {
+			PointLightComponent::PointLight pointLight = plightComp.GetLight();
+			pointLights.push_back(std::move(pointLight));
+			return false;
+		});
+		
+		for (int i = 0; i < pointLights.size(); i++)
+		{
+			if (i == 10) break;
+			pointLightsArray[i] = pointLights[i];
+		}
+
+		return pointLightsArray;
+	}
+
 	void Renderer::PipelineLayoutBuilder::Build()
 	{
 		// create descriptor set
@@ -59,7 +90,10 @@ namespace Spiecs {
 
 			for (int j = 0; j < setSize; j++)
 			{
-				m_Renderer->m_VulkanLayoutWriters[j]->Build(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
+				if (m_Renderer->m_VulkanLayoutWriters[j])
+				{
+					m_Renderer->m_VulkanLayoutWriters[j]->Build(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
+				}
 			}
 		}
 
@@ -102,6 +136,8 @@ namespace Spiecs {
 		for (int i = 0; i < setCount; i++)
 		{
 			bool IsPureBufferTypeSet = true;
+
+			if (!m_Renderer->m_VulkanLayoutWriters[i]) continue;
 
 			int bindingCount = m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().size();
 			for (int j = 0; j < bindingCount; j++)
