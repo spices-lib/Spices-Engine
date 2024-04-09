@@ -37,7 +37,7 @@ namespace Spiecs {
 		while (FileLibrary::FileLibrary_Read_Line(&f, 1023, &p, &line_length))
 		{
 			// Skip blank lines and comments.
-			if (line_length < 1 || line_buf[0] == '#') {
+			if (line_length < 1 || line_buf[0] == '#' || (line_buf[0] == '/r' && line_buf[1] == '/n')) {
 				line_number++;
 				continue;
 			}
@@ -62,87 +62,9 @@ namespace Spiecs {
 			}
 
 			// Texture
-			if (data[0] == "diffuseTexture")
-			{
-				if (data.size() == 1)   { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-				if (data[1] == "")      { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-				if (data[1] != "None")
-				{
-					if (data.size() == 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					if (data[2] == "") { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureIsUse[0] = true;
-					outMaterial->m_TexturePaths[0] = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/" + data[1];
-					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
-					if (vec.size() != 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureSetBinding[0][0] = std::stoi(vec[0]);
-					outMaterial->m_TextureSetBinding[0][1] = std::stoi(vec[1]);
-					continue;
-				}
-				else
-				{
-					if(data.size() == 2)   { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					if(data[2] == "")      { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
-					if(vec.size() != 3)    { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureIsUse[0] = false;
-					outMaterial->m_TextureV3[0] = { std::stof(vec[0]), std::stof(vec[1]), std::stof(vec[2]) };
-					continue;
-				}
-			}
-			if (data[0] == "normalTexture")
-			{
-				if (data.size() == 1)     { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-				if (data[1] == "")        { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-				if (data[1] != "None")
-				{
-					if (data.size() == 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					if (data[2] == "") { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureIsUse[1] = true;
-					outMaterial->m_TexturePaths[1] = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/" + data[1];
-					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
-					if (vec.size() != 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureSetBinding[0][0] = std::stoi(vec[0]);
-					outMaterial->m_TextureSetBinding[0][1] = std::stoi(vec[1]);
-					continue;
-				}
-				else
-				{
-					if (data.size() == 2)   { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					if (data[2] == "")      { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
-					if (vec.size() != 3)    { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureIsUse[1] = false;
-					outMaterial->m_TextureV3[1] = { std::stof(vec[0]), std::stof(vec[1]), std::stof(vec[2]) };
-					continue;
-				}
-			}
-			if (data[0] == "specularTexture")
-			{
-				if (data.size() == 1)      { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-				if (data[1] == "")         { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-				if (data[1] != "None")
-				{
-					if (data.size() == 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					if (data[2] == "") { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureIsUse[2] = true;
-					outMaterial->m_TexturePaths[2] = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/" + data[1];
-					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
-					if (vec.size() != 2) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureSetBinding[0][0] = std::stoi(vec[0]);
-					outMaterial->m_TextureSetBinding[0][1] = std::stoi(vec[1]);
-					continue;
-				}
-				else
-				{
-					if (data.size() == 2)   { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					if (data[2] == "")      { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					std::vector<std::string> vec = StringLibrary::SplitString(data[2], ',');
-					if (vec.size() != 3)    { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); }
-					outMaterial->m_TextureIsUse[2] = false;
-					outMaterial->m_TextureV3[2] = { std::stof(vec[0]), std::stof(vec[1]), std::stof(vec[2]) };
-					continue;
-				}
-			}
+			LoadTextureConfig(data, "diffuseTexture", 0, outMaterial);
+			LoadTextureConfig(data, "normalTexture", 1, outMaterial);
+			LoadTextureConfig(data, "specularTexture", 2, outMaterial);
 
 			// Parameter
 			if (data[0] == "diffuseIntensity")
@@ -207,6 +129,32 @@ namespace Spiecs {
 		}
 
 		FileLibrary::FileLibrary_Close(&f);
+
+		return true;
+	}
+
+	bool MaterialLoader::LoadTextureConfig(const std::vector<std::string>& config, const std::string& name, uint32_t arrayIndex, Material* outMaterial)
+	{
+		if (config[0] != name) { return false; }
+		if (config.size() != 3) { __debugbreak(); return false; }
+		if (config[2] == "") { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); return false; }
+		if (config[1] != "None")
+		{
+			outMaterial->m_TextureIsUse[arrayIndex] = true;
+			outMaterial->m_TexturePaths[arrayIndex] = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/" + config[1];
+			std::vector<std::string> vec = StringLibrary::SplitString(config[2], ',');
+			if (vec.size() != 3) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); return false; }
+			outMaterial->m_TextureSetBinding[arrayIndex][0] = std::stoi(vec[0]);
+			outMaterial->m_TextureSetBinding[arrayIndex][1] = std::stoi(vec[1]);
+			outMaterial->m_TextureSetBinding[arrayIndex][2] = std::stoi(vec[2]);
+		}
+		else
+		{
+			std::vector<std::string> vec = StringLibrary::SplitString(config[2], ',');
+			if (vec.size() != 3) { SPIECS_LOG("MaterialLoad Error: No Value");  __debugbreak(); return false; }
+			outMaterial->m_TextureIsUse[arrayIndex] = false;
+			outMaterial->m_TextureV3[arrayIndex] = { std::stof(vec[0]), std::stof(vec[1]), std::stof(vec[2]) };
+		}
 
 		return true;
 	}

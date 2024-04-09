@@ -29,7 +29,9 @@ namespace Spiecs {
 			std::unique_ptr<VulkanBuffer> m_VertRendererUBO;
 
 			// fragStage
-			std::unique_ptr<VulkanImage> m_FragTexture;
+			std::unique_ptr<VulkanImage> m_FragTexture0;
+			std::unique_ptr<VulkanImage> m_FragTexture1;
+			std::unique_ptr<VulkanImage> m_FragTexture2;
 
 		public:
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) override;

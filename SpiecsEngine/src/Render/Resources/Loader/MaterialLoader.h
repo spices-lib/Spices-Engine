@@ -20,5 +20,8 @@ namespace Spiecs {
 	private:
 		static bool LoadFromMaterial(const std::string& filepath, Material* outMaterial);
 		static bool LoadFromSASSET(const std::string& filepath, Material* outMaterial);
+
+	private:
+		static bool LoadTextureConfig(const std::vector<std::string>& config, const std::string& name, uint32_t arrayIndex, Material* outMaterial);
 	};
 }

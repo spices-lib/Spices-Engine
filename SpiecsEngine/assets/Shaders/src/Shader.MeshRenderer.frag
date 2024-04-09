@@ -20,12 +20,18 @@ layout(push_constant) uniform Push{
 //    mat4 view;
 //} ubo;
 
-layout(set = 1, binding = 0) uniform sampler2D texSampler;
+layout(set = 1, binding = 0) uniform sampler2D samplers[3];
 
 // constant
+
+
+const int diffuseTexture = 0;
+const int normalTexture = 1;
+const int specularTexture = 2;
 
 // main
 void main()
 {
-    outColor = texture(texSampler, fragTexCoord);
+    outColor = texture(samplers[diffuseTexture], fragTexCoord);
+	//outColor.xyz = pow(outColor.xyz, vec3(1.0 / 2.2));
 }

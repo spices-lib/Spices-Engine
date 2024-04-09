@@ -30,8 +30,10 @@ namespace Spiecs {
 		std::array<VkImageView, MaxFrameInFlight> m_SwapChainImageViews;
 		std::array<VkSampler, MaxFrameInFlight> m_SwapChainImageSamplers;
 
-		std::unique_ptr<VulkanImage> m_DepthImage;
 		std::unique_ptr<VulkanImage> m_ColorImage;
+		std::unique_ptr<VulkanImage> m_DepthImage;
+		// m_SwapChainImages[i]
+
 
 		std::array<VkFramebuffer, MaxFrameInFlight> m_SwapChainFramebuffers;
 	};

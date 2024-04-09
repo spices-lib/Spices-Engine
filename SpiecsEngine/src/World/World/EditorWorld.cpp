@@ -17,7 +17,7 @@ namespace Spiecs {
 		camComp.SetCamera(std::make_shared<Camera>());
 		camComp.GetCamera()->SetPerspective(glm::radians(45.0f), 0.001f, 1000.0f, 1.333);
 		TransformComponent& transformComp = cameraentity.GetComponent<TransformComponent>();
-		transformComp.SetPostion({ 0.0f, 0.0f, -10.0f });
+		transformComp.SetPostion({ 0.0f, 0.0f, -3.0f });
 		
 		// mesh
 		{
@@ -27,11 +27,11 @@ namespace Spiecs {
 
 			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
 			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-			pack->GetMaterial()->LoadMaterial("TestMaterial");
+			pack->GetMaterial()->LoadMaterial("MeshRenderer.1");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 		}
-
+		
 		{
 			// mesh2
 			Entity& meshentity = CreateEntity("DefaultMesh");
@@ -41,7 +41,7 @@ namespace Spiecs {
 
 			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
 			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-			pack->GetMaterial()->LoadMaterial("TestMaterial1");
+			pack->GetMaterial()->LoadMaterial("MeshRenderer.0");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 		}

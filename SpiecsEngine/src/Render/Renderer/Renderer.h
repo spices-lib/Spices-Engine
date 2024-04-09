@@ -77,6 +77,7 @@ namespace Spiecs {
 			inline PipelineLayoutBuilder& AddTexture(
 				uint32_t set,
 				uint32_t binding,
+				uint32_t arrayNum,
 				VkShaderStageFlags stageFlags
 			);
 
@@ -223,23 +224,23 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddTexture(uint32_t set, uint32_t binding, VkShaderStageFlags stageFlags)
+	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddTexture(uint32_t set, uint32_t binding, uint32_t arrayNum, VkShaderStageFlags stageFlags)
 	{
 		// local data
-		for (int i = 0; i < MaxFrameInFlight; i++)
+		/*for (int i = 0; i < MaxFrameInFlight; i++)
 		{
 			m_Renderer->m_Collections[i]->GetImage(set, binding) = std::make_unique<VulkanImage>(
 				m_Renderer->m_VulkanState,
 				SPIECS_ENGINE_ASSETS_PATH + "Textures/src/street.jpg"
 			);
-		}
+		}*/
 
 
 		// descriptorset layout
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorSetLayout>>(m_Renderer->m_VulkanLayouts, set + 1);
 
 		m_Renderer->m_VulkanLayouts[set] = VulkanDescriptorSetLayout::Builder(m_Renderer->m_VulkanLayouts[set].get())
-			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags)
+			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, arrayNum)
 			.Build(m_Renderer->m_VulkanState);
 
 		ContainerLibrary::Resize<VkDescriptorSetLayout>(m_Renderer->m_DescriptorSetLayouts, set + 1);
@@ -248,7 +249,7 @@ namespace Spiecs {
 
 
 		// writers
-		auto imageInfo = m_Renderer->m_Collections[0]->GetImage(set, binding)->GetImageInfo();
+		/*auto imageInfo = m_Renderer->m_Collections[0]->GetImage(set, binding)->GetImageInfo();
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_Renderer->m_VulkanLayoutWriters, set + 1);
 
 		if (m_Renderer->m_VulkanLayoutWriters[set])
@@ -260,7 +261,7 @@ namespace Spiecs {
 		{
 			m_Renderer->m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_Renderer->m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool);
 		}
-		m_Renderer->m_VulkanLayoutWriters[set]->WriteImage(binding, imageInfo);
+		m_Renderer->m_VulkanLayoutWriters[set]->WriteImage(binding, imageInfo);*/
 
 		return *this;
 	}

@@ -1,0 +1,19 @@
+#commment
+
+# Shader
+# shaderStage=shaderName
+vertShader=MeshRenderer;
+fragShader=MeshRenderer;
+
+# Texture
+# 1. textureSlot=textureFilePath=textureDescriptorSet(set,binding,arrayindex)
+# 2. textureSlot=None=vector4
+diffuseTexture=metal_sheet_xhtnbhlg/xhtnbhlg_4K_Albedo.jpg=1,0,0;
+normalTexture=metal_sheet_xhtnbhlg/xhtnbhlg_4K_Normal.jpg=1,0,1;
+specularTexture=metal_sheet_xhtnbhlg/xhtnbhlg_4K_Specular.jpg=1,0,2;
+
+# Paramter
+# 1. parameterName=value
+diffuseIntensity=1;
+normalIntensity=1;
+specularIntensity=1;

@@ -23,7 +23,7 @@ namespace Spiecs {
 		.CreateCollection<SpecificCollection>()
 		.AddPushConstant<PushConstant>()
 		.AddBuffer<VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
-		.AddTexture<Texture2D>(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -62,7 +62,7 @@ namespace Spiecs {
 					push.meshpackID = meshpackId;
 				});
 
-				builder.BindDescriptorSet(1, material->GetTextureDescriptorSet(1, 0));
+				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
 			});
 
 			return false;
@@ -79,7 +79,9 @@ namespace Spiecs {
 
 	std::unique_ptr<VulkanImage>& MeshRenderer::SpecificCollection::GetImage(uint32_t set, uint32_t binding)
 	{
-		if (set == 1 && binding == 0) return m_FragTexture;
+		if (set == 1 && binding == 0) return m_FragTexture0;
+		if (set == 1 && binding == 1) return m_FragTexture1;
+		if (set == 1 && binding == 2) return m_FragTexture2;
 
 		__debugbreak();
 		SPIECS_LOG("Out of Range");

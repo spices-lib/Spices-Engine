@@ -19,6 +19,7 @@ namespace Spiecs {
 		void LoadMaterial(const std::string& materialPath);
 		void Reload();
 		VkDescriptorSet& GetTextureDescriptorSet(uint32_t set, uint32_t binding);
+		VkDescriptorSet& GetMaterialDescriptorSet() { return m_DescriptorSet; };
 
 		const std::array<std::shared_ptr<Texture2D>, 3>& GetTextures() { return m_Textures; };
 
@@ -37,12 +38,14 @@ namespace Spiecs {
 		std::array<std::optional<bool>, 3> m_TextureIsUse;
 		std::array<std::string, 3> m_TexturePaths;
 		std::array<glm::vec3, 3> m_TextureV3{};
-		std::array<uint32_t[2], 3> m_TextureSetBinding{};
+		std::array<uint32_t[3], 3> m_TextureSetBinding{};
 
 		// Parameter
 		std::array<float, 3> m_TextureIntensity;
 
 		// BuildData
 		std::array<std::shared_ptr<Texture2D>, 3> m_Textures;
+
+		VkDescriptorSet m_DescriptorSet;
 	};
 }
