@@ -10,6 +10,9 @@ namespace Spiecs {
 		TimeStep();
 		virtual ~TimeStep() {};
 
+		TimeStep(const TimeStep&) = delete;
+		TimeStep& operator=(const TimeStep&) = delete;
+
 		float ft() { return m_FrameTime; };
 		float gt() { return m_GameTime; };
 

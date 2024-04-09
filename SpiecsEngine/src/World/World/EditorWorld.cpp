@@ -39,8 +39,8 @@ namespace Spiecs {
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 			transformComp1.SetPostion({1.5f, 1.5f, 0.0f});
 
-			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
-			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
+			//std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
 			pack->GetMaterial()->LoadMaterial("MeshRenderer.0");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
@@ -48,9 +48,15 @@ namespace Spiecs {
 		
 		// skybox
 
+
+		// pointlight
+
+
+		// directionallight
+
 	}
 
-	void EditorWorld::OnActivate(TimeStep ts)
+	void EditorWorld::OnActivate(TimeStep& ts)
 	{
 		SystemManager::Run(ts);
 	}

@@ -12,8 +12,8 @@ namespace Spiecs {
 	void TimeStep::Flush()
 	{
 		auto nowTime = std::chrono::high_resolution_clock::now();
-		float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(nowTime - m_LastTime).count();
-		float gameTime = std::chrono::duration<float, std::chrono::seconds::period>(nowTime - m_StartTime).count();
+		m_FrameTime = std::chrono::duration<float, std::chrono::seconds::period>(nowTime - m_LastTime).count();
+		m_GameTime = std::chrono::duration<float, std::chrono::seconds::period>(nowTime - m_StartTime).count();
 		m_LastTime = nowTime;
 	}
 }

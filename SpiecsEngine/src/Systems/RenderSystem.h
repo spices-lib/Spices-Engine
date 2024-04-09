@@ -17,7 +17,7 @@ namespace Spiecs {
 
 		virtual void OnSystemInitialize() override;
 		virtual void OnSystemShutDown() override;
-		virtual void OnSystemUpdate(TimeStep ts) override;
+		virtual void OnSystemUpdate(TimeStep& ts) override;
 
 		// Temp:
 		VulkanState& GetState() { return m_RenderFrontend->GetState(); };

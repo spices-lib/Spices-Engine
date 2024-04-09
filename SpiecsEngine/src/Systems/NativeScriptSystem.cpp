@@ -16,7 +16,7 @@ namespace Spiecs {
 
 	}
 
-	void NativeScriptSystem::OnSystemUpdate(TimeStep ts)
+	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{
 		auto& view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
 		for (auto& e : view)

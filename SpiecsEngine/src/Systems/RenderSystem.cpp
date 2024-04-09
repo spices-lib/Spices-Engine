@@ -16,7 +16,7 @@ namespace Spiecs {
 
 	}
 
-	void RenderSystem::OnSystemUpdate(TimeStep ts)
+	void RenderSystem::OnSystemUpdate(TimeStep& ts)
 	{
 		
 

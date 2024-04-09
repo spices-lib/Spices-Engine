@@ -45,6 +45,7 @@ namespace Spiecs {
 			glfwPollEvents();
 
 			ts.Flush();
+			
 			FrameInfo::Get().m_World->OnActivate(ts);
 		}
 

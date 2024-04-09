@@ -14,7 +14,7 @@ namespace Spiecs {
 		virtual ~World() {};
 
 		virtual void OnPreActivate() = 0;
-		virtual void OnActivate(TimeStep ts) = 0;
+		virtual void OnActivate(TimeStep& ts) = 0;
 		virtual void OnDeactivate() = 0;
 
 		// empty entity
@@ -37,5 +37,7 @@ namespace Spiecs {
 
 	template<typename T>
 	inline void World::OnComponentAdded(Entity entity, T& component)
-	{}
+	{
+		component.OnComponentAdded();
+	}
 }

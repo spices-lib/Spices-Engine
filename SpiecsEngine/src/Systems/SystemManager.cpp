@@ -17,7 +17,7 @@ namespace Spiecs {
 		return *m_SystemManager;
 	}
 
-	void SystemManager::Run(TimeStep ts)
+	void SystemManager::Run(TimeStep& ts)
 	{
 		for (auto& pair : m_Identities)
 		{

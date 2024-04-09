@@ -8,7 +8,7 @@ namespace Spiecs {
 
 	}
 
-	void RuntimeWorld::OnActivate(TimeStep ts)
+	void RuntimeWorld::OnActivate(TimeStep& ts)
 	{
 
 	}
