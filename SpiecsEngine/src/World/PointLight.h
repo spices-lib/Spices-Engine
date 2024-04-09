@@ -13,7 +13,7 @@ namespace Spiecs {
 	private:
 		glm::vec3 m_Color{ 1.0f, 1.0f, 1.0f };
 		float m_Intensity = 1.0;
-		float m_Constant = 1.0;
+		float m_Constantf = 1.0;
 		float m_Linear = 0.35;
 		float m_Quadratic = 0.44;
 	};
