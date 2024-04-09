@@ -10,7 +10,8 @@ namespace Spiecs {
 	public:
 		struct PointLight
 		{
-			glm::vec3 color{ 1.0f, 1.0f, 1.0f };
+			glm::vec3 color{ 1.0f };
+			glm::vec3 position{ 0.0f };
 			float intensity = 1.0;
 			float constantf = 1.0;
 			float linear = 0.35;

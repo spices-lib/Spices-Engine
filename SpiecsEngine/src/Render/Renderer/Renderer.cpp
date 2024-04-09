@@ -67,6 +67,7 @@ namespace Spiecs {
 
 		IterWorldComp<PointLightComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, PointLightComponent& plightComp) {
 			PointLightComponent::PointLight pointLight = plightComp.GetLight();
+			pointLight.position = transComp.GetPosition();
 			pointLights.push_back(std::move(pointLight));
 			return false;
 		});

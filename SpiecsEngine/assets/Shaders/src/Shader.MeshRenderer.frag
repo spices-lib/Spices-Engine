@@ -24,7 +24,27 @@ layout(push_constant) uniform Push{
 //    mat4 view;
 //} ubo;
 
+struct PointLight {
+    vec3 color;
+    vec3 position;
+    float intensity;
+    float constantf;
+    float linear;
+    float quadratic;
+};
+
+struct DirectionalLight {
+    vec3 direction;
+    vec3 color;
+    float intensity;
+};
+
 layout(set = 1, binding = 0) uniform sampler2D samplers[3];
+layout(set = 2, binding = 0) uniform Light {
+    DirectionalLight directionalLight;
+    PointLight pointLights[10];
+} light;
+
 
 // constant
 

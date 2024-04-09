@@ -21,7 +21,11 @@ namespace Spiecs {
 		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; CalMatrix();  };
 		void SetScale(glm::vec3 scale) { m_Scale = scale; CalMatrix(); };
 
-		glm::mat4 GetModelMatrix() { return m_ModelMatrix; };
+		glm::mat4& GetModelMatrix() { return m_ModelMatrix; };
+
+		glm::vec3& GetPosition() { return m_Position; };
+		glm::vec3& GetRotation() { return m_Rotation; };
+		glm::vec3& GetScale() { return m_Scale; };
 
 	private:
 		void CalMatrix();
