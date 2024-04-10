@@ -1,0 +1,11 @@
+#commment
+
+# Shader
+# shaderStage=shaderName
+vertShader=SkyBoxRenderer;
+fragShader=SkyBoxRenderer;
+
+# Texture
+# 1. textureSlot=textureFilePath=textureDescriptorSet
+# 2. textureSlot=None=vector4
+diffuseTexture=stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg=1,0,0;

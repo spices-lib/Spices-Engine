@@ -10,6 +10,7 @@
 #include "World/Components/UUIDComponent.h"
 #include "World/Components/DirectionalLightComponent.h"
 #include "World/Components/PointLightComponent.h"
+#include "World/Components/SkyBoxComponent.h"
 
 namespace Spiecs {
 

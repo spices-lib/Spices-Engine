@@ -46,8 +46,8 @@ const int normalTexture = 1;
 const int specularTexture = 2;
 
 // function
-vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection);
-vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPosition, vec3 viewDirection);
+//vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection);
+//vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPosition, vec3 viewDirection);
 
 // main
 void main()
@@ -55,46 +55,46 @@ void main()
     outColor = texture(samplers[diffuseTexture], fragInput.texCoord);
 }
 
-vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection) {
-    float diffuseFactor = max(dot(normal, -light.direction), 0.0);
-
-    vec3 halfDirection = normalize(viewDirection - light.direction);
-    float specularFactor = pow(max(dot(halfDirection, normal), 0.0), object_ubo.shininess);
-
-    vec4 diffuse = texture(samplers[diffuseTexture], fragInput.texCoord);
-    vec4 ambient = vec4(vec3(in_dto.ambient * object_ubo.diffuse_colour), diff_samp.a);
-    vec4 diffuse = vec4(vec3(light.colour * diffuse_factor), diff_samp.a);
-    vec4 specular = vec4(vec3(light.colour * specular_factor), diff_samp.a);
-
-    diffuse *= diff_samp;
-    ambient *= diff_samp;
-    specular *= vec4(texture(samplers[SAMP_SPECULAR], in_dto.tex_coord).rgb, diffuse.a);
-}
-
-vec4 calculate_point_light(point_light light, vec3 normal, vec3 frag_position, vec3 view_direction) {
-    vec3 light_direction = normalize(light.position - frag_position);
-    float diff = max(dot(normal, light_direction), 0.0);
-
-    vec3 reflect_direction = reflect(-light_direction, normal);
-    float spec = pow(max(dot(view_direction, reflect_direction), 0.0), object_ubo.shininess);
-
-    // Calculate attenuation, or light falloff over distance.
-    float distance = length(light.position - frag_position);
-    float attenuation = 1.0 / (light.constant_f + light.linear * distance + light.quadratic * (distance * distance));
-
-    vec4 ambient = in_dto.ambient;
-    vec4 diffuse = light.colour * diff;
-    vec4 specular = light.colour * spec;
-
-    if (in_mode == 0) {
-        vec4 diff_samp = texture(samplers[SAMP_DIFFUSE], in_dto.tex_coord);
-        diffuse *= diff_samp;
-        ambient *= diff_samp;
-        specular *= vec4(texture(samplers[SAMP_SPECULAR], in_dto.tex_coord).rgb, diffuse.a);
-    }
-
-    ambient *= attenuation;
-    diffuse *= attenuation;
-    specular *= attenuation;
-    return (ambient + diffuse + specular);
-}
+//vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection) {
+//    float diffuseFactor = max(dot(normal, -light.direction), 0.0);
+//
+//    vec3 halfDirection = normalize(viewDirection - light.direction);
+//    float specularFactor = pow(max(dot(halfDirection, normal), 0.0), object_ubo.shininess);
+//
+//    vec4 diffuse = texture(samplers[diffuseTexture], fragInput.texCoord);
+//    vec4 ambient = vec4(vec3(in_dto.ambient * object_ubo.diffuse_colour), diff_samp.a);
+//    vec4 diffuse = vec4(vec3(light.colour * diffuse_factor), diff_samp.a);
+//    vec4 specular = vec4(vec3(light.colour * specular_factor), diff_samp.a);
+//
+//    diffuse *= diff_samp;
+//    ambient *= diff_samp;
+//    specular *= vec4(texture(samplers[SAMP_SPECULAR], in_dto.tex_coord).rgb, diffuse.a);
+//}
+//
+//vec4 calculate_point_light(point_light light, vec3 normal, vec3 frag_position, vec3 view_direction) {
+//    vec3 light_direction = normalize(light.position - frag_position);
+//    float diff = max(dot(normal, light_direction), 0.0);
+//
+//    vec3 reflect_direction = reflect(-light_direction, normal);
+//    float spec = pow(max(dot(view_direction, reflect_direction), 0.0), object_ubo.shininess);
+//
+//    // Calculate attenuation, or light falloff over distance.
+//    float distance = length(light.position - frag_position);
+//    float attenuation = 1.0 / (light.constant_f + light.linear * distance + light.quadratic * (distance * distance));
+//
+//    vec4 ambient = in_dto.ambient;
+//    vec4 diffuse = light.colour * diff;
+//    vec4 specular = light.colour * spec;
+//
+//    if (in_mode == 0) {
+//        vec4 diff_samp = texture(samplers[SAMP_DIFFUSE], in_dto.tex_coord);
+//        diffuse *= diff_samp;
+//        ambient *= diff_samp;
+//        specular *= vec4(texture(samplers[SAMP_SPECULAR], in_dto.tex_coord).rgb, diffuse.a);
+//    }
+//
+//    ambient *= attenuation;
+//    diffuse *= attenuation;
+//    specular *= attenuation;
+//    return (ambient + diffuse + specular);
+//}
