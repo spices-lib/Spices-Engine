@@ -1,5 +1,5 @@
-project "SpiecsEngine"
-	kind "StaticLib"
+project "SpiecsGame"
+	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "On"
@@ -7,32 +7,21 @@ project "SpiecsEngine"
 	targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "Pchheader.h"
-	pchsource "src/Pchheader.cpp"
-
 	files
 	{
 		"src/**.h",
 		"src/**.cpp",
-
-		"vendor/stb_image/**.h",
-		"vendor/stb_image/**.cpp",
-		
-		"vendor/glm/glm/**.hpp",
-		"vendor/glm/glm/**.inl",
-
-		"vendor/tinyobjloader/**.cpp",
-		"vendor/tinyobjloader/**.h",
 	}
 
 	defines
 	{
-		'SPIECS_ENGINE_ASSETS_PATH=std::string("%{wks.location}/SpiecsEngine/assets/")',
+		'SPIECS_GAME_ASSETS_PATH=std::string("%{wks.location}/SpiecsGame/assets/")',
 		"RENDERAPI_VULKAN"
 	}
 
 	includedirs
 	{
+		"%{wks.location}/SpiecsEngine/src",
 		"src",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.VulkanSDK}",
@@ -45,27 +34,11 @@ project "SpiecsEngine"
 
 	links
 	{
-		"GLFW",
-		"%{Library.VulkanSDK}",
-		"imgui"
+		"SpiecsEngine"
 	}
-
-	filter "files:vendor/stb_image/**.cpp"
-	flags { "NoPCH" }
-
-	filter "files:vendor/tinyobjloader/**.cpp"
-	flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"
-
-		defines
-		{
-		}
-
-		links
-		{
-		}
 
 	filter "configurations:Debug"
 		defines "SPIECS_DEBUG"

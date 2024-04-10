@@ -1,4 +1,4 @@
-#include "pchheader.h"
+#include "Pchheader.h"
 #include "SpriteComponent.h"
 
 namespace Spiecs {

@@ -20,4 +20,8 @@ namespace Spiecs {
 	private:
 		
 	};
+
+	std::shared_ptr<World> CreateWorld();
 }
+
+extern std::shared_ptr<Spiecs::World> Spiecs::CreateWorld();

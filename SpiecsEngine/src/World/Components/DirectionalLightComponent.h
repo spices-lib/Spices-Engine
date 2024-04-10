@@ -10,8 +10,8 @@ namespace Spiecs {
 	public:
 		struct DirectionalLight
 		{
-			glm::vec3 direction{ 1.0f };
-			glm::vec3 color{ 1.0f };
+			alignas(16) glm::vec3 direction{ 1.0f };
+			alignas(16) glm::vec3 color{ 1.0f };
 			float intensity = 1.0f;
 		};
 

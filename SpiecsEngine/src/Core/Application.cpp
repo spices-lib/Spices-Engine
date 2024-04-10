@@ -1,4 +1,4 @@
-#include "pchheader.h"
+#include "Pchheader.h"
 #include "Application.h"
 #include "Render/FrameInfo.h"
 #include "Systems/SystemManager.h"
@@ -32,7 +32,7 @@ namespace Spiecs {
 	void Application::Run()
 	{
 		// init our world
-		FrameInfo::Get().m_World = std::make_shared<EditorWorld>();
+		FrameInfo::Get().m_World = CreateWorld();
 
 		// temp TODO: Remove
 		FrameInfo::Get().m_World->OnPreActivate();

@@ -1,6 +1,6 @@
 workspace "SpiecsEngine"
 	architecture "x64"
-	startproject "SpiecsEngine"
+	startproject "SpiecsGame"
 
 	configurations
 	{
@@ -13,6 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "lib.lua"
 
 include "SpiecsEngine"
+include "SpiecsGame"
 
 group "Dependencies"
 	include "SpiecsEngine/vendor/GLFW/"
