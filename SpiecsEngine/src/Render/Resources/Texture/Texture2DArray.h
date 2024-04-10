@@ -7,6 +7,7 @@ namespace Spiecs {
 	{
 	public:
 		Texture2DArray() {};
+		Texture2DArray(const std::string& path);
 		virtual ~Texture2DArray() {};
 	};
 }

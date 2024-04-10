@@ -12,6 +12,7 @@ namespace Spiecs {
 	VulkanImage::VulkanImage(VulkanState& vulkanState, const std::string& filePath)
 		: VulkanObject(vulkanState)
 	{
+#ifdef 0
 		int texChannels;
 		stbi_uc* pixels = stbi_load(filePath.c_str(), &m_Width, &m_Height, &texChannels, STBI_rgb_alpha);
 		m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(m_Width, m_Height)))) + 1;
@@ -51,6 +52,7 @@ namespace Spiecs {
 		CreateImageView(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 
 		CreateSampler();
+#endif
 	}
 
 	VulkanImage::VulkanImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels)

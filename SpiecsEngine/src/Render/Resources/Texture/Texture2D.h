@@ -1,19 +1,17 @@
 #pragma once
 #include "Core/Core.h"
-#include "Render/Vulkan/VulkanImage.h"
+#include "Texture.h"
 
 namespace Spiecs {
 
-	class Texture2D
+	class Texture2D : public Texture
 	{
 	public:
 		Texture2D() {};
-		Texture2D(const std::string& texturePath);
+		Texture2D(const std::string& path);
 		virtual ~Texture2D() {};
 
-		std::unique_ptr<VulkanImage>& GetResources() { return m_Resource; };
-
 	private:
-		std::unique_ptr<VulkanImage> m_Resource;
+		friend class TextureLoader;
 	};
 }

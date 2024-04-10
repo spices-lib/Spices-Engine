@@ -3,7 +3,7 @@
 #include "Texture/Texture2D.h"
 #include "Render/Resources/Loader/MaterialLoader.h"
 #include "Render/Vulkan/VulkanShaderModule.h"
-#include "Render/Resources/Texture/Texture2D.h"
+#include "Render/Resources/Texture/Texture.h"
 #include "glm/glm.hpp"
 
 #include <optional>
@@ -21,7 +21,7 @@ namespace Spiecs {
 		VkDescriptorSet& GetTextureDescriptorSet(uint32_t set, uint32_t binding);
 		VkDescriptorSet& GetMaterialDescriptorSet() { return m_DescriptorSet; };
 
-		const std::array<std::shared_ptr<Texture2D>, 3>& GetTextures() { return m_Textures; };
+		const std::array<std::shared_ptr<Texture>, 3>& GetTextures() { return m_Textures; };
 
 	private:
 		void BuildMaterial();
@@ -44,7 +44,7 @@ namespace Spiecs {
 		std::array<float, 3> m_TextureIntensity;
 
 		// BuildData
-		std::array<std::shared_ptr<Texture2D>, 3> m_Textures;
+		std::array<std::shared_ptr<Texture>, 3> m_Textures;
 
 		VkDescriptorSet m_DescriptorSet;
 	};

@@ -4,8 +4,9 @@
 
 namespace Spiecs {
 
-	Texture2D::Texture2D(const std::string& texturePath)
+	Texture2D::Texture2D(const std::string& path)
+		: Texture(path)
 	{
-		m_Resources = std::make_unique<VulkanImage>(VulkanRenderBackend::GetState(), texturePath);
+		TextureLoader::Load(m_ResourcePath, this);
 	}
 }

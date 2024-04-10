@@ -25,11 +25,12 @@ namespace Spiecs {
 
 	VkDescriptorSet& Material::GetTextureDescriptorSet(uint32_t set, uint32_t binding)
 	{
+		// Not Used
 		for (int i = 0; i < 3; i++)
 		{
 			if (m_TextureSetBinding[i][0] == set && m_TextureSetBinding[i][1] == binding)
 			{
-				return m_Textures[i]->GetResources()->GetDescriptorSet();
+				return m_Textures[i]->GetResource<VulkanImage>()->GetDescriptorSet();
 			}
 		}
 	}
@@ -50,7 +51,7 @@ namespace Spiecs {
 				if (m_TexturePaths[i].empty()) __debugbreak();
 				m_Textures[i] = std::make_shared<Texture2D>(m_TexturePaths[i]);
 				int index = m_TextureSetBinding[i][2];
-				imageInfos[index] = *m_Textures[i]->GetResources()->GetImageInfo();
+				imageInfos[index] = *m_Textures[i]->GetResource<VulkanImage>()->GetImageInfo();
 			}
 		}
 

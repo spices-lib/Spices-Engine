@@ -3,5 +3,10 @@
 
 namespace Spiecs {
 
+	Texture2DArray::Texture2DArray(const std::string& path)
+		: Texture2D(path)
+	{
+	
+	}
 
 }

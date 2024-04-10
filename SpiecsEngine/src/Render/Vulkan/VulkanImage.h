@@ -38,5 +38,7 @@ namespace Spiecs {
 
 		VkDescriptorImageInfo m_ImageInfo{};
 		VkDescriptorSet m_DescriptorSet{};
+
+		friend class TextureLoader;
 	};
 }
