@@ -1,5 +1,7 @@
 #include "GameEditorWorld.h"
 #include "World/Entity.h"
+#include "Render/Resources/Loader/MaterialLoader.h"
+#include "Render/Material/MeshMaterial.h"
 
 namespace Spiecs {
 
@@ -15,7 +17,7 @@ namespace Spiecs {
 
 			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
 			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-			pack->GetMaterial()->LoadMaterial("MeshRenderer.1");
+			pack->SetMaterial(std::make_shared<MeshMaterial>("MeshRenderer.0"));
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 		}
@@ -29,7 +31,7 @@ namespace Spiecs {
 
 			std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
 			//std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-			pack->GetMaterial()->LoadMaterial("MeshRenderer.0");
+			pack->SetMaterial(std::make_shared<MeshMaterial>("MeshRenderer.1"));
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 		}

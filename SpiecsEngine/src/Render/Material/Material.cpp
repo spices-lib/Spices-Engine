@@ -3,15 +3,23 @@
 
 namespace Spiecs {
 
-	void Material::LoadMaterial(const std::string& materialPath)
+	Material::Material(const std::string& materialPath)
+		: m_MaterialPath(materialPath)
 	{
-		m_MaterialPath = materialPath;
-
-		MaterialLoader::Load(materialPath, this);
-		BuildMaterial();
+		Dserialize();
 	}
 
-	void Material::Reload()
+	void Material::Serialize()
+	{
+		if (m_MaterialPath.empty())
+		{
+			SPIECS_LOG("Please do not do that!");
+		}
+
+		// TODO: 
+	}
+
+	void Material::Dserialize()
 	{
 		if (m_MaterialPath.empty())
 		{
@@ -19,6 +27,5 @@ namespace Spiecs {
 		}
 
 		MaterialLoader::Load(m_MaterialPath, this);
-		BuildMaterial();
 	}
 }

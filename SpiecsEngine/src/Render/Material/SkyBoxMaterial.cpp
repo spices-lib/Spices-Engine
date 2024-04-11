@@ -1,17 +1,17 @@
 #include "Pchheader.h"
-#include "MeshMaterial.h"
+#include "SkyBoxMaterial.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
-	void MeshMaterial::BuildMaterial()
+	void SkyBoxMaterial::BuildMaterial()
 	{
 		if (m_Shaders["vertShader"].empty()) __debugbreak();
 		if (m_Shaders["fragShader"].empty()) __debugbreak();
 
 		VulkanDescriptorSetLayout::Builder setLayoutBuilder = VulkanDescriptorSetLayout::Builder()
-			.AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 3);
-		std::array<VkDescriptorImageInfo, 3> imageInfos{};
+			.AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+		std::array<VkDescriptorImageInfo, 1> imageInfos{};
 
 		for (auto& pair : m_TextureParams)
 		{
@@ -19,7 +19,7 @@ namespace Spiecs {
 
 			if (tp.isInUse.has_value() && tp.isInUse.value())
 			{
-				if(tp.texturePath.empty()) __debugbreak();
+				if (tp.texturePath.empty()) __debugbreak();
 
 				tp.texture = std::make_shared<Texture2D>(tp.texturePath);
 				imageInfos[tp.index] = *tp.texture->GetResource<VulkanImage>()->GetImageInfo();
@@ -40,4 +40,5 @@ namespace Spiecs {
 
 		vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
 	}
+
 }

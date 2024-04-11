@@ -28,10 +28,11 @@ namespace Spiecs {
 
 	public:
 		Material() {};
+		Material(const std::string& materialPath);
 		virtual ~Material() {};
 
-		void LoadMaterial(const std::string& materialPath);
-		void Reload();
+		void Serialize();
+		void Dserialize();
 
 		VkDescriptorSet& GetMaterialDescriptorSet() { return m_DescriptorSet; };
 		std::unordered_map<std::string, std::string>& GetShaderPath() { return m_Shaders; };
@@ -41,6 +42,7 @@ namespace Spiecs {
 		virtual void BuildMaterial() {};
 
 		friend class MaterialLoader;
+		friend class MeshPack;
 
 	protected:
 

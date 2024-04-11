@@ -1,6 +1,9 @@
 #pragma once
 #include "Core/Core.h"
 #include "Component.h"
+#include "Render/Resources/Mesh.h"
+
+#include <memory>
 
 namespace Spiecs {
 
@@ -8,7 +11,7 @@ namespace Spiecs {
 	{
 	public:
 		SkyBoxComponent() {};
-		SkyBoxComponent(const std::string& path) : m_MaterialPath(path) {};
+		SkyBoxComponent(const std::string& path);
 		virtual ~SkyBoxComponent() {};
 
 		virtual void OnSerialize() override;
@@ -16,6 +19,6 @@ namespace Spiecs {
 		virtual void OnComponentAdded() override;
 
 	private:
-		std::string m_MaterialPath;
+		std::shared_ptr<Mesh> m_Mesh;
 	};
 }

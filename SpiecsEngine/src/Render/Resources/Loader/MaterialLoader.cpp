@@ -15,6 +15,10 @@ namespace Spiecs {
 	const char LoaderSignSatrt[100] = "#ItisSpiecsMaterialSign: DataStart";
 	const char LoaderSignOver[100] = "#ItisSpiecsMaterialSign: DateOver";
 
+	static void SerializeShaderConfig(YAML::Emitter& out, const std::string& shaderStage, const std::string& shaderPath);
+	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param);
+	static void DserializeShaderConfig(YAML::Emitter& out, Material* material);
+
 	bool MaterialLoader::Load(const std::string& fileName, Material* outMaterial)
 	{
 		if (LoadFromSASSET(defaultBinMaterialPath + "Material." + fileName + ".sasset", outMaterial)) return true;
@@ -35,11 +39,26 @@ namespace Spiecs {
 		}
 
 		std::string materialName = data["Material"].as<std::string>();
-		outMaterial->m_Shaders["vertShader"] = data["vertShader"].as<std::string>();
-		outMaterial->m_Shaders["fragShader"] = data["fragShader"].as<std::string>();
-		outMaterial->m_TextureParams["diffuse"] = data["diffuse"].as<Material::TextureParam>();
-		outMaterial->m_TextureParams["normal"] = data["normal"].as<Material::TextureParam>();
-		outMaterial->m_TextureParams["specular"] = data["specular"].as<Material::TextureParam>();
+
+		auto shaders = data["Shaders"];
+		if (shaders)
+		{
+			for (auto shader : shaders)
+			{
+				outMaterial->m_Shaders[shader["ShaderStage"].as<std::string>()] = shader["ShaderPath"].as<std::string>();
+			}
+		}
+
+		auto textures = data["Textures"];
+		if (textures)
+		{
+			for (auto texture : textures)
+			{
+				outMaterial->m_TextureParams[texture["TextureName"].as<std::string>()] = texture["TextureParam"].as<Material::TextureParam>();
+			}
+		}
+
+		return true;
 	}
 
 	bool MaterialLoader::LoadFromSASSET(const std::string& filepath, Material* outMaterial)
@@ -92,9 +111,9 @@ namespace Spiecs {
 		out << YAML::EndSeq;
 
 		out << YAML::Key << "Textures" << YAML::Value << YAML::BeginSeq;
-		SerializeTextureConfig(out, "diffuse", { 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg", 1, 0, 0, { 1, 1, 1 }, 1 });
-		SerializeTextureConfig(out, "normal", { 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg", 1, 0, 1, {1, 1, 1}, 1 });
-		SerializeTextureConfig(out, "specular", { 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg", 1, 0, 2, {1, 1, 1}, 1 });
+		SerializeTextureConfig(out, "diffuse", { 1, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg", 1, 0, 0, { 1, 1, 1 }, 1 });
+		SerializeTextureConfig(out, "normal", { 1, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg", 1, 0, 1, {1, 1, 1}, 1 });
+		SerializeTextureConfig(out, "specular", { 1, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg", 1, 0, 2, {1, 1, 1}, 1 });
 		out << YAML::EndSeq;
 
 		YAML::EndMap;
@@ -105,7 +124,7 @@ namespace Spiecs {
 		return true;
 	}
 
-	static void SerializeShaderConfig(YAML::Emitter& out, const std::string& shaderStage, const std::string& shaderPath)
+	void SerializeShaderConfig(YAML::Emitter& out, const std::string& shaderStage, const std::string& shaderPath)
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "ShaderStage" << YAML::Value << shaderStage;
@@ -113,7 +132,7 @@ namespace Spiecs {
 		out << YAML::EndMap;
 	}
 
-	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param)
+	void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param)
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "TextureName" << YAML::Value << name;
@@ -121,7 +140,7 @@ namespace Spiecs {
 		out << YAML::EndMap;
 	}
 
-	static void DserializeShaderConfig(YAML::Emitter& out, Material* material)
+	void DserializeShaderConfig(YAML::Emitter& out, Material* material)
 	{
 
 	}

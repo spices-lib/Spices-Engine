@@ -2,14 +2,13 @@
 #include "Core/Core.h"
 #include "Material.h"
 
-#include <optional>
-
 namespace Spiecs {
 
 	class MeshMaterial : public Material
 	{
 	public:
 		MeshMaterial() {};
+		MeshMaterial(const std::string& materialPath) : Material(materialPath) {};
 		virtual ~MeshMaterial() {};
 
 	private:

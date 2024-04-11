@@ -22,6 +22,7 @@ namespace Spiecs {
 		static bool LoadFromSASSET(const std::string& filepath, Material* outMaterial);
 
 	private:
+	public:
 		static bool SaveDefaultMaterial();
 	};
 }

@@ -10,13 +10,17 @@
 
 namespace Spiecs {
 
+	const std::string defaultTexturePath = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/";
+
 	void TextureLoader::Load(const std::string& filePath, Texture2D* outTexture)
 	{
+		const std::string _filePath = defaultTexturePath + filePath;
+
 		outTexture->m_Resource = std::make_shared<VulkanImage>(VulkanRenderBackend::GetState());
 		auto resourceptr = outTexture->GetResource<VulkanImage>();
 
 		int texChannels;
-		stbi_uc* pixels = stbi_load(filePath.c_str(), &resourceptr->m_Width, &resourceptr->m_Height, &texChannels, STBI_rgb_alpha);
+		stbi_uc* pixels = stbi_load(_filePath.c_str(), &resourceptr->m_Width, &resourceptr->m_Height, &texChannels, STBI_rgb_alpha);
 		resourceptr->m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(resourceptr->m_Width, resourceptr->m_Height)))) + 1;
 
 		VkDeviceSize imageSize = resourceptr->m_Width * resourceptr->m_Height * 4;
@@ -58,5 +62,6 @@ namespace Spiecs {
 
 	void TextureLoader::Load(const std::string& filePath, Texture2DCube* outTexture)
 	{
+		const std::string _filePath = defaultTexturePath + filePath;
 	}
 }

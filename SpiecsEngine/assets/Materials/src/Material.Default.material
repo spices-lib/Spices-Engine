@@ -1,4 +1,4 @@
-Material: MeshRenderer.0
+Material: Default
 Shaders:
   - ShaderStage: vertShader
     ShaderPath: MeshRenderer

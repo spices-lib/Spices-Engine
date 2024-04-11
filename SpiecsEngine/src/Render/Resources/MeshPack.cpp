@@ -19,15 +19,31 @@ namespace Spiecs {
 		CreateBuffer();
 	}
 
+	void BoxPack::OnCreatePack()
+	{
+		m_Vertices =
+		{
+			{ {-1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
+			{ { 1.0f,  1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
+			{ { 1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
+			{ {-1.0f, -1.0f, 0.0f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }}
+		};
+
+		m_Indices = { 0, 1, 2, 2, 3, 0 };
+
+		CreateBuffer();
+	}
+
 	void FilePack::OnCreatePack()
 	{
 		MeshLoader::Load(m_Path, this);
 		CreateBuffer();
 	}
 
-	MeshPack::MeshPack()
+	void MeshPack::SetMaterial(std::shared_ptr<Material> material)
 	{
-		m_Material = std::make_shared<Material>();
+		m_Material = material;
+		m_Material->BuildMaterial();
 	}
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)
@@ -77,4 +93,6 @@ namespace Spiecs {
 			m_IndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_IndicesBuffer->Get(), bufferSize);
 		}
 	}
+
+	
 }

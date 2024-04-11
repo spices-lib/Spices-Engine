@@ -1,18 +1,13 @@
-#commment
-
-# Shader
-# shaderStage=shaderName
-vertShader=MeshRenderer;
-fragShader=MeshRenderer;
-
-# Texture
-# 1. textureidentify=texturename=textureSlot=textureFilePath=textureDescriptorSet
-texture=diffuseTexture=0=stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg=1,0,0;
-texture=normalTexture=0=stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg=1,0,1;
-texture=specularTexture=0=stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg=1,0,2;
-
-# Paramter
-# 1. parameterName=value
-diffuseIntensity=1;
-normalIntensity=1;
-specularIntensity=1;
+Material: MeshRenderer.1
+Shaders:
+  - ShaderStage: vertShader
+    ShaderPath: MeshRenderer
+  - ShaderStage: fragShader
+    ShaderPath: MeshRenderer
+Textures:
+  - TextureName: diffuse
+    TextureParam: [1, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Albedo.jpg, 1, 0, 0, [1, 1, 1], 1]
+  - TextureName: normal
+    TextureParam: [1, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Normal.jpg, 1, 0, 1, [1, 1, 1], 1]
+  - TextureName: specular
+    TextureParam: [1, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Specular.jpg, 1, 0, 2, [1, 1, 1], 1]

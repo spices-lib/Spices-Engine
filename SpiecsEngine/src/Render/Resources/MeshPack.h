@@ -10,14 +10,14 @@ namespace Spiecs {
 	class MeshPack
 	{
 	public:
-		MeshPack();
+		MeshPack() {};
 		virtual ~MeshPack() {};
 
 		MeshPack(const MeshPack&) = delete;
 		MeshPack& operator=(const MeshPack&) = delete;
 
 		virtual void OnCreatePack() {};
-		void SetMaterial(std::shared_ptr<Material> material) { m_Material = material; };
+		void SetMaterial(std::shared_ptr<Material> material);
 		inline std::shared_ptr<Material> GetMaterial() { return m_Material; };
 
 		void OnBind(VkCommandBuffer& commandBuffer);
@@ -46,6 +46,14 @@ namespace Spiecs {
 	{
 	public:
 		SquarePack() : MeshPack() {};
+
+		virtual void OnCreatePack() override;
+	};
+
+	class BoxPack : public MeshPack
+	{
+	public:
+		BoxPack() : MeshPack() {};
 
 		virtual void OnCreatePack() override;
 	};
