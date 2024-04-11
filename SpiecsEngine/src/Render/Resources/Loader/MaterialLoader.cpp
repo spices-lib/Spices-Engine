@@ -85,16 +85,44 @@ namespace Spiecs {
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Material" << YAML::Value << "Default";
-		out << YAML::Key << "vertShader" << YAML::Value << "MeshRenderer";
-		out << YAML::Key << "fragShader" << YAML::Value << "MeshRenderer";
-		out << YAML::Key << "diffuse" << YAML::Value << Material::TextureParam { 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg", 1, 0, 0, { 1, 1, 1 }, 1 };
-		out << YAML::Key << "normal" << YAML::Value << Material::TextureParam{ 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg", 1, 0, 1, {1, 1, 1}, 1 };
-		out << YAML::Key << "specular" << YAML::Value << Material::TextureParam{ 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg", 1, 0, 2, {1, 1, 1}, 1 };
+
+		out << YAML::Key << "Shaders" << YAML::Value << YAML::BeginSeq;
+		SerializeShaderConfig(out, "vertShader", "MeshRenderer");
+		SerializeShaderConfig(out, "fragShader", "MeshRenderer");
+		out << YAML::EndSeq;
+
+		out << YAML::Key << "Textures" << YAML::Value << YAML::BeginSeq;
+		SerializeTextureConfig(out, "diffuse", { 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg", 1, 0, 0, { 1, 1, 1 }, 1 });
+		SerializeTextureConfig(out, "normal", { 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg", 1, 0, 1, {1, 1, 1}, 1 });
+		SerializeTextureConfig(out, "specular", { 0, nullptr, "stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg", 1, 0, 2, {1, 1, 1}, 1 });
+		out << YAML::EndSeq;
+
 		YAML::EndMap;
 
 		std::ofstream fout(outFilePath);
 		fout << out.c_str();
 
 		return true;
+	}
+
+	static void SerializeShaderConfig(YAML::Emitter& out, const std::string& shaderStage, const std::string& shaderPath)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "ShaderStage" << YAML::Value << shaderStage;
+		out << YAML::Key << "ShaderPath" << YAML::Value << shaderPath;
+		out << YAML::EndMap;
+	}
+
+	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "TextureName" << YAML::Value << name;
+		out << YAML::Key << "TextureParam" << YAML::Value << param;
+		out << YAML::EndMap;
+	}
+
+	static void DserializeShaderConfig(YAML::Emitter& out, Material* material)
+	{
+
 	}
 }
