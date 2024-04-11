@@ -6,6 +6,7 @@ IncludeDir["glm"] = "%{wks.location}/SpiecsEngine/vendor/glm"
 IncludeDir["ImGui"] = "%{wks.location}/SpiecsEngine/vendor/imgui"
 IncludeDir["entt"] = "%{wks.location}/SpiecsEngine/vendor/entt/include"
 IncludeDir["tinyobjloader"] = "%{wks.location}/SpiecsEngine/vendor/tinyobjloader"
+IncludeDir["yaml_cpp"] = "%{wks.location}/SpiecsEngine/vendor/yaml-cpp/include"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "C:/VulkanSDK/1.3.275.0/Lib"

@@ -6,11 +6,10 @@ vertShader=MeshRenderer;
 fragShader=MeshRenderer;
 
 # Texture
-# 1. textureSlot=textureFilePath=textureDescriptorSet
-# 2. textureSlot=None=vector4
-diffuseTexture=stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg=1,0,0;
-normalTexture=stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg=1,0,1;
-specularTexture=stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg=1,0,2;
+# 1. textureidentify=texturename=textureSlot=textureFilePath=textureDescriptorSet
+texture=diffuseTexture=0=stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg=1,0,0;
+texture=normalTexture=0=stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg=1,0,1;
+texture=specularTexture=0=stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg=1,0,2;
 
 # Paramter
 # 1. parameterName=value

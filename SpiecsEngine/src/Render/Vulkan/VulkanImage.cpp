@@ -12,7 +12,7 @@ namespace Spiecs {
 	VulkanImage::VulkanImage(VulkanState& vulkanState, const std::string& filePath)
 		: VulkanObject(vulkanState)
 	{
-#ifdef 0
+#if 0
 		int texChannels;
 		stbi_uc* pixels = stbi_load(filePath.c_str(), &m_Width, &m_Height, &texChannels, STBI_rgb_alpha);
 		m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(m_Width, m_Height)))) + 1;

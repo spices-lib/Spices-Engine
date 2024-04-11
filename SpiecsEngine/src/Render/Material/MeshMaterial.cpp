@@ -1,50 +1,19 @@
 #include "Pchheader.h"
-#include "Material.h"
+#include "MeshMaterial.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
-	void Material::LoadMaterial(const std::string& materialPath)
+	void MeshMaterial::BuildMaterial()
 	{
-		m_MaterialPath = materialPath;
-
-		MaterialLoader::Load(materialPath, this);
-		BuildMaterial();
-	}
-
-	void Material::Reload()
-	{
-		if (m_MaterialPath.empty())
-		{
-			SPIECS_LOG("Please do not do that!");
-		}
-
-		MaterialLoader::Load(m_MaterialPath, this);
-		BuildMaterial();
-	}
-
-	VkDescriptorSet& Material::GetTextureDescriptorSet(uint32_t set, uint32_t binding)
-	{
-		// Not Used
-		for (int i = 0; i < 3; i++)
-		{
-			if (m_TextureSetBinding[i][0] == set && m_TextureSetBinding[i][1] == binding)
-			{
-				return m_Textures[i]->GetResource<VulkanImage>()->GetDescriptorSet();
-			}
-		}
-	}
-
-	void Material::BuildMaterial()
-	{
-		if (m_VertShaderPath.empty()) __debugbreak();
-		if (m_FragShaderPath.empty()) __debugbreak();
+		if (m_Shaders["vertShader"].empty()) __debugbreak();
+		if (m_Shaders["fragShader"].empty()) __debugbreak();
 
 		VulkanDescriptorSetLayout::Builder setLayoutBuilder = VulkanDescriptorSetLayout::Builder()
 			.AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 3);
 		std::array<VkDescriptorImageInfo, 3> imageInfos{};
 
-		for (int i = 0; i < 3; i++)
+		/*for (int i = 0; i < 3; i++)
 		{
 			if (m_TextureIsUse[i].has_value() && m_TextureIsUse[i].value())
 			{
@@ -53,7 +22,7 @@ namespace Spiecs {
 				int index = m_TextureSetBinding[i][2];
 				imageInfos[index] = *m_Textures[i]->GetResource<VulkanImage>()->GetImageInfo();
 			}
-		}
+		}*/
 
 		std::unique_ptr<VulkanDescriptorSetLayout> setLayout = setLayoutBuilder.Build(VulkanRenderBackend::GetState());
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Vertex.h"
-#include "Material.h"
+#include "Render/Material/Material.h"
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Render/Resources/Loader/MeshLoader.h"
 

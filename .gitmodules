@@ -4,3 +4,6 @@
 [submodule "SpiecsEngine/vendor/GLFW"]
 	path = SpiecsEngine/vendor/GLFW
 	url = https://github.com/TheCherno/glfw
+[submodule "SpiecsEngine/vendor/yaml-cpp"]
+	path = SpiecsEngine/vendor/yaml-cpp
+	url = https://github.com/spiecs/yaml-cpp

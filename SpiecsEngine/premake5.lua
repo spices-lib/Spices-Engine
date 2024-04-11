@@ -41,13 +41,15 @@ project "SpiecsEngine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.tinyobjloader}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links
 	{
 		"GLFW",
 		"%{Library.VulkanSDK}",
-		"imgui"
+		"imgui",
+		"yaml-cpp",
 	}
 
 	filter "files:vendor/stb_image/**.cpp"
