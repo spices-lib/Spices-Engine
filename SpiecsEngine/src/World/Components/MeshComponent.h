@@ -15,7 +15,6 @@ namespace Spiecs {
 
 		virtual void OnSerialize() override;
 		virtual void OnDeSerialize() override;
-		virtual void OnComponentAdded() override;
 
 		void SetMesh(std::shared_ptr<Mesh> mesh) { m_Mesh = mesh; };
 		std::shared_ptr<Mesh> GetMesh() { return m_Mesh; };

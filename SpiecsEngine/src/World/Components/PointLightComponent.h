@@ -26,7 +26,6 @@ namespace Spiecs {
 
 		virtual void OnSerialize() override;
 		virtual void OnDeSerialize() override;
-		virtual void OnComponentAdded() override;
 
 		PointLight& GetLight() { return m_PointLight; };
 

@@ -16,11 +16,6 @@ namespace Spiecs {
 
 	}
 
-	void TransformComponent::OnComponentAdded()
-	{
-
-	}
-
 	void TransformComponent::CalMatrix()
 	{
 		glm::mat4 rotation = glm::toMat4(glm::quat(m_Rotation));

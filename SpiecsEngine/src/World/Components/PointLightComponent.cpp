@@ -8,7 +8,4 @@ namespace Spiecs {
 	void PointLightComponent::OnDeSerialize()
 	{
 	}
-	void PointLightComponent::OnComponentAdded()
-	{
-	}
 }

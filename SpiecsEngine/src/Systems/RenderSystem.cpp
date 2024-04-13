@@ -8,6 +8,7 @@ namespace Spiecs {
 	{
 		m_RenderFrontend = std::make_unique<RenderFrontend>();
 
+
 		SPIECS_LOG("RenderSystem: Init Succeed");
 	}
 

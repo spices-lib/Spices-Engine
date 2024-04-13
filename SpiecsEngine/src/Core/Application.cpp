@@ -12,11 +12,15 @@ namespace Spiecs {
 
 	Application::Application()
 	{
-		// Init All Systems
-		SystemManager::Get()
-			.PushSystem<NativeScriptSystem>()
-			.PushSystem<RenderSystem>()
-			.PushSystem<UISystem>();
+		/**
+		* @brief there has a vert interesting bug
+		* .Get() return Null
+		* Init All Systems
+		*/
+		SystemManager().Get()
+		.PushSystem<NativeScriptSystem>()
+		.PushSystem<RenderSystem>()
+		.PushSystem<UISystem>();
 	}
 
 	Application::~Application()
@@ -33,6 +37,7 @@ namespace Spiecs {
 	{
 		// init our world
 		FrameInfo::Get().m_World = CreateWorld();
+
 
 		// temp TODO: Remove
 		FrameInfo::Get().m_World->OnPreActivate();

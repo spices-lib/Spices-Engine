@@ -1,5 +1,6 @@
 #include "Pchheader.h"
 #include "SystemManager.h"
+#include "Core/Event/Event.h"
 
 namespace Spiecs {
 
@@ -8,8 +9,13 @@ namespace Spiecs {
 
 	SystemManager::SystemManager()
 	{
-		m_SystemManager = std::unique_ptr<SystemManager>(this);
+		//m_SystemManager = std::unique_ptr<SystemManager>(this);
 		m_Identities.empty();
+
+		/**
+		* @brief Set Golbal EventCallBack
+		*/
+		Event::SetEventCallbackFn(BIND_EVENT_FN(SystemManager::OnEvent));
 	}
 
 	SystemManager& SystemManager::Get()
@@ -22,6 +28,14 @@ namespace Spiecs {
 		for (auto& pair : m_Identities)
 		{
 			pair.second->OnSystemUpdate(ts);
+		}
+	}
+
+	void SystemManager::OnEvent(Event& event)
+	{
+		for (auto& pair : m_Identities)
+		{
+			pair.second->OnEvent(event);
 		}
 	}
 }

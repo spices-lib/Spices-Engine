@@ -13,9 +13,4 @@ namespace Spiecs {
 
 	}
 
-	void CameraComponent::OnComponentAdded()
-	{
-
-	}
-
 }

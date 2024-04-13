@@ -8,7 +8,7 @@ namespace Spiecs {
 	void GameEditorWorld::OnPreActivate()
 	{
 		EditorWorld::OnPreActivate();
-
+		
 		// mesh
 		{
 			Entity& meshentity = CreateEntity("DefaultMesh");
@@ -21,7 +21,7 @@ namespace Spiecs {
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 		}
-
+		
 		// mesh2
 		{
 			Entity& meshentity = CreateEntity("DefaultMesh");
@@ -35,7 +35,7 @@ namespace Spiecs {
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 		}
-
+		
 		// pointlight
 		{
 			Entity& plightentity = CreateEntity("PointLight");

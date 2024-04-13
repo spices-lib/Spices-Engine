@@ -9,10 +9,12 @@
 #include "RendererManager.h"
 #include "Core/Library/ContainerLibrary.h"
 #include "World/World/World.h"
+
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
 #include "World/Components/CameraComponent.h"
 #include "World/Components/UUIDComponent.h"
+#include "World/Components/SkyBoxComponent.h"
 
 #include <memory>
 #include <unordered_map>
@@ -124,7 +126,6 @@ namespace Spiecs {
 			virtual ~Collection() {};
 
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) = 0;
-			virtual std::unique_ptr<VulkanImage>& GetImage(uint32_t set, uint32_t binding) = 0;
 		};
 
 	protected:

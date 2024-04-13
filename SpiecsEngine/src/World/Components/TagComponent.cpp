@@ -13,8 +13,4 @@ namespace Spiecs {
 
 	}
 
-	void TagComponent::OnComponentAdded()
-	{
-
-	}
 }

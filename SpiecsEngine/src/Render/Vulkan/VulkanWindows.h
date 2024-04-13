@@ -14,7 +14,8 @@ namespace Spiecs {
 		void SetResized(bool b) { m_WindowsResized = b; };
 
 	private:
-		static void WindowsResizeCallback(GLFWwindow* window, int width, int height);
+		void SetInternalCallBack();
+
 	private:
 
 		uint32_t m_Width;

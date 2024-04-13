@@ -8,7 +8,5 @@ namespace Spiecs {
 	void DirectionalLightComponent::OnDeSerialize()
 	{
 	}
-	void DirectionalLightComponent::OnComponentAdded()
-	{
-	}
+
 }

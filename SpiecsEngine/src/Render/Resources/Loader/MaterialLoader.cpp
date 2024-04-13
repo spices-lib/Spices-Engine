@@ -17,7 +17,6 @@ namespace Spiecs {
 
 	static void SerializeShaderConfig(YAML::Emitter& out, const std::string& shaderStage, const std::string& shaderPath);
 	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param);
-	static void DserializeShaderConfig(YAML::Emitter& out, Material* material);
 
 	bool MaterialLoader::Load(const std::string& fileName, Material* outMaterial)
 	{
@@ -138,10 +137,5 @@ namespace Spiecs {
 		out << YAML::Key << "TextureName" << YAML::Value << name;
 		out << YAML::Key << "TextureParam" << YAML::Value << param;
 		out << YAML::EndMap;
-	}
-
-	void DserializeShaderConfig(YAML::Emitter& out, Material* material)
-	{
-
 	}
 }

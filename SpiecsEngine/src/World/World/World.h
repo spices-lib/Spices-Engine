@@ -23,6 +23,7 @@ namespace Spiecs {
 		virtual ~World() {};
 
 		virtual void OnPreActivate() = 0;
+
 		virtual void OnActivate(TimeStep& ts) = 0;
 		virtual void OnDeactivate() = 0;
 
@@ -35,7 +36,7 @@ namespace Spiecs {
 		
 	private:
 		template<typename T>
-		void OnComponentAdded(Entity entity, T& component);
+		void OnComponentAdded(Entity* entity, T& component);
 
 	protected:
 		entt::registry m_Registry;
@@ -45,8 +46,8 @@ namespace Spiecs {
 	};
 
 	template<typename T>
-	inline void World::OnComponentAdded(Entity entity, T& component)
+	inline void World::OnComponentAdded(Entity* entity, T& component)
 	{
-		component.OnComponentAdded();
+		component.OnComponentAdded(*entity);
 	}
 }

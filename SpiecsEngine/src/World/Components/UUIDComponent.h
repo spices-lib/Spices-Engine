@@ -13,7 +13,6 @@ namespace Spiecs {
 
 		virtual void OnSerialize();
 		virtual void OnDeSerialize();
-		virtual void OnComponentAdded();
 
 		void SetUUID(UUID uuid) { m_uuid = uuid; };
 		UUID GetUUID() { return m_uuid; };

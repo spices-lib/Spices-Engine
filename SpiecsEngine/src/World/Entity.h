@@ -11,8 +11,7 @@ namespace Spiecs {
 	{
 	public:
 		Entity(entt::entity handle, World* world, const std::string& entityName)
-			: m_EntityName(entityName)
-			, m_EntityHandle(handle)
+			: m_EntityHandle(handle)
 			, m_World(world)
 		{};
 
@@ -22,7 +21,7 @@ namespace Spiecs {
 		T& AddComponent(Args&&... args)
 		{
 			T& component = m_World->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			m_World->OnComponentAdded<T>(*this, component);
+			m_World->OnComponentAdded<T>(this, component);
 			return component;
 		}
 
@@ -45,7 +44,6 @@ namespace Spiecs {
 		}
 
 		UUID GetUUID() { return GetComponent<UUIDComponent>().GetUUID(); }
-		const std::string& GetName() { m_EntityName; }
 
 		operator bool() const { return m_EntityHandle != entt::null; };
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; };
@@ -64,6 +62,5 @@ namespace Spiecs {
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		World* m_World;
-		std::string m_EntityName;
 	};
 }

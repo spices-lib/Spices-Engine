@@ -8,7 +8,7 @@ namespace Spiecs {
 	{
 		// Use SpherePack Instead
 		std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>();
-		pack->SetMaterial(std::make_shared<SkyBoxMaterial>("SkyBoxRenderer"));
+		pack->SetMaterial(std::make_shared<SkyBoxMaterial>(path));
 		m_Mesh = Mesh::Builder().AddPack(pack).Build();
 	}
 
@@ -17,10 +17,6 @@ namespace Spiecs {
 	}
 
 	void SkyBoxComponent::OnDeSerialize()
-	{
-	}
-
-	void SkyBoxComponent::OnComponentAdded()
 	{
 	}
 

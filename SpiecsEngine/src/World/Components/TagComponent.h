@@ -15,7 +15,6 @@ namespace Spiecs {
 
 		virtual void OnSerialize() override;
 		virtual void OnDeSerialize() override;
-		virtual void OnComponentAdded() override;
 
 		void AddTag(const std::string& tag) { m_Tags.insert(tag); };
 		void RemoveTag(const std::string& tag) { if (m_Tags.find(tag) != m_Tags.end()) m_Tags.erase(tag); };

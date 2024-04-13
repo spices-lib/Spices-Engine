@@ -13,6 +13,7 @@ namespace Spiecs {
 		virtual void OnSystemInitialize() override;
 		virtual void OnSystemShutDown() override;
 		virtual void OnSystemUpdate(TimeStep& ts) override;
+		virtual void OnEvent(Event& event) override;
 
 	private:
 	};

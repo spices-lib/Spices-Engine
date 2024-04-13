@@ -6,6 +6,8 @@ namespace Spiecs {
 
 	using Type = std::reference_wrapper<const std::type_info>;
 
+	class Event;
+
 	class System
 	{
 	public:
@@ -18,6 +20,7 @@ namespace Spiecs {
 		virtual void OnSystemInitialize() {};
 		virtual void OnSystemShutDown() {};
 		virtual void OnSystemUpdate(TimeStep& ts) {};
+		virtual void OnEvent(Event& event) {};
 
 	protected:
 		std::string m_SystemName;
@@ -34,6 +37,7 @@ namespace Spiecs {
 
 		static SystemManager& Get();
 		static void Run(TimeStep& ts);
+		void OnEvent(Event& event);
 
 		template<typename T, typename ... Args>
 		SystemManager& PushSystem(Args&& ... args)

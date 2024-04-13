@@ -2,6 +2,7 @@
 #include "VulkanRenderBackend.h"
 
 #include "Render/Renderer/MeshRenderer.h"
+#include "Render/Renderer/SkyBoxRenderer.h"
 
 namespace Spiecs {
 
@@ -26,7 +27,8 @@ namespace Spiecs {
 
 		// TODO: Move to  
 		RendererManager::Get()
-			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool);
+			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool)
+			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
@@ -34,7 +36,8 @@ namespace Spiecs {
 		m_VulkanDescriptorPool = nullptr;
 
 		RendererManager::Get()
-			.Pop("MeshRenderer");
+			.Pop("MeshRenderer")
+			.Pop("SkyBoxRenderer");
 	}
 
 	void VulkanRenderBackend::RecreateSwapChain() {

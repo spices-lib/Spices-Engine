@@ -92,12 +92,4 @@ namespace Spiecs {
 		__debugbreak();
 		SPIECS_LOG("Out of Range");
 	}
-
-	std::unique_ptr<VulkanImage>& MeshRenderer::SpecificCollection::GetImage(uint32_t set, uint32_t binding)
-	{
-		if (set == 0 && binding == 0) return m_FragTexture;
-
-		__debugbreak();
-		SPIECS_LOG("Out of Range");
-	}
 }

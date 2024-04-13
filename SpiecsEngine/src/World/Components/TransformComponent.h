@@ -15,11 +15,14 @@ namespace Spiecs {
 
 		virtual void OnSerialize();
 		virtual void OnDeSerialize();
-		virtual void OnComponentAdded();
 
 		void SetPostion(glm::vec3 position) { m_Position = position; CalMatrix(); };
 		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; CalMatrix();  };
 		void SetScale(glm::vec3 scale) { m_Scale = scale; CalMatrix(); };
+
+		void AddPostion(glm::vec3 position) { m_Position += position; CalMatrix(); };
+		void AddRotation(glm::vec3 rotation) { m_Rotation += rotation; CalMatrix(); };
+		void AddScale(glm::vec3 scale) { m_Scale += scale; CalMatrix(); };
 
 		glm::mat4& GetModelMatrix() { return m_ModelMatrix; };
 
