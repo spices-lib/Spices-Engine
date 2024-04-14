@@ -4,6 +4,7 @@
 #include "Render/FrameInfo.h"
 #include "Systems/SystemManager.h"
 #include "GamePlay/CameraController.h"
+#include "GamePlay/MeshController.h"
 
 namespace Spiecs {
 
@@ -14,9 +15,9 @@ namespace Spiecs {
 			Entity& cameraentity = CreateEntity("EditorCamera");
 			CameraComponent& camComp = cameraentity.AddComponent<CameraComponent>(true);
 			camComp.SetCamera(std::make_shared<Camera>());
-			camComp.GetCamera()->SetPerspective(glm::radians(45.0f), 0.001f, 1000.0f, 1.333);
+			camComp.GetCamera()->SetPerspective(glm::radians(45.0f), 0.001f, 1000.0f, 956.0f/601.0f);
 			TransformComponent& transformComp = cameraentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ 0.0f, 0.0f, -3.0f });
+			transformComp.SetPostion({ 0.0f, 0.0f, -2.0f });
 			cameraentity.AddComponent<NativeScriptComponent>(std::make_shared<CameraController>());
 		}
 		
@@ -25,7 +26,9 @@ namespace Spiecs {
 			Entity& skyboxentity = CreateEntity("SkyBox");
 			SkyBoxComponent& skyboxComp = skyboxentity.AddComponent<SkyBoxComponent>("SkyBoxRenderer");
 			TransformComponent& transformComp = skyboxentity.GetComponent<TransformComponent>();
-			transformComp.SetScale({1000, 1000, 1000});
+			transformComp.SetScale({100, 100, 100});
+
+			skyboxentity.AddComponent<NativeScriptComponent>(std::make_shared<MeshController>());
 		}
 
 		// directionallight

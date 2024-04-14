@@ -8,11 +8,11 @@
 
 namespace Spiecs {
 
-	class CameraController : public NativeScriptComponent
+	class MeshController : public NativeScriptComponent
 	{
 	public:
-		CameraController() {};
-		virtual ~CameraController() {};
+		MeshController() {};
+		virtual ~MeshController() {};
 
 		virtual void OnSerialize() override {};
 		virtual void OnDeSerialize() override {};
@@ -41,7 +41,6 @@ namespace Spiecs {
 		glm::vec3 CalculatePosition() const;
 
 	private:
-		std::any m_Camera;
 		std::any m_CameraTranComp;
 
 		// TODO: param

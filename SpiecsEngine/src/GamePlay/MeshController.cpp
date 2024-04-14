@@ -1,5 +1,5 @@
 #include "Pchheader.h"
-#include "CameraController.h"
+#include "MeshController.h"
 #include "World/Entity.h"
 #include "Render/FrameInfo.h"
 #include "Core/Input/KeyCodes.h"
@@ -8,14 +8,13 @@
 
 namespace Spiecs {
 
-	void CameraController::OnConstruction()
+	void MeshController::OnConstruction()
 	{
-		Entity entity( m_Owner, FrameInfo::Get().m_World.get(), "" );
+		Entity entity(m_Owner, FrameInfo::Get().m_World.get(), "");
 		m_CameraTranComp = &entity.GetComponent<TransformComponent>();
-		m_Camera = &entity.GetComponent<CameraComponent>().GetCamera();
 	}
 
-	void CameraController::OnTick(TimeStep& ts)
+	void MeshController::OnTick(TimeStep& ts)
 	{
 		/*if (Input::IsKeyPressed(Key::LeftAlt))
 		{
@@ -30,7 +29,7 @@ namespace Spiecs {
 			UpdateView();
 		}*/
 
-		/*glm::vec3 pos = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetPosition();
+		glm::vec3 pos = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetPosition();
 		glm::vec3 rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
 		if(Input::IsKeyPressed(Key::W))
 		{
@@ -50,11 +49,11 @@ namespace Spiecs {
 		}
 		else if (Input::IsKeyPressed(Key::E))
 		{
-			pos += GetUpDirection() * 2.0f * ts.ft();
+			pos -= GetUpDirection() * 2.0f * ts.ft();
 		}
 		else if (Input::IsKeyPressed(Key::C))
 		{
-			pos -= GetUpDirection() * 2.0f * ts.ft();
+			pos += GetUpDirection() * 2.0f * ts.ft();
 		}
 
 		if (Input::IsKeyPressed(Key::Right))
@@ -73,31 +72,39 @@ namespace Spiecs {
 		{
 			rot.x -= 1.0f * ts.ft();
 		}
+		else if (Input::IsKeyPressed(Key::D1))
+		{
+			rot.z += 1.0f * ts.ft();
+		}
+		else if (Input::IsKeyPressed(Key::D2))
+		{
+			rot.z -= 1.0f * ts.ft();
+		}
 
 		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPostion(pos);
-		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetRotation(rot);*/
+		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetRotation(rot);
 	}
 
-	void CameraController::OnEvent(Event& e)
+	void MeshController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 
-		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(CameraController::OnKeyPressed));
+		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(MeshController::OnKeyPressed));
 	}
 
-	bool CameraController::OnKeyPressed(KeyPressedEvent& e)
+	bool MeshController::OnKeyPressed(KeyPressedEvent& e)
 	{
 		return true;
 	}
 
-	void CameraController::MousePan(const glm::vec2& delta)
+	void MeshController::MousePan(const glm::vec2& delta)
 	{
 		auto [xSpeed, ySpeed] = PanSpeed();
 		m_FocalPoint += -GetRightDirection() * delta.x * xSpeed * m_Distance;
 		m_FocalPoint += GetUpDirection() * delta.y * ySpeed * m_Distance;
 	}
 
-	void CameraController::MouseRotate(const glm::vec2& delta)
+	void MeshController::MouseRotate(const glm::vec2& delta)
 	{
 		glm::vec3 rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
 		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
@@ -108,7 +115,7 @@ namespace Spiecs {
 		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetRotation(rot);
 	}
 
-	void CameraController::MouseZoom(float delta)
+	void MeshController::MouseZoom(float delta)
 	{
 		m_Distance -= delta * ZoomSpeed();
 		if (m_Distance < 1.0f)
@@ -118,7 +125,7 @@ namespace Spiecs {
 		}
 	}
 
-	std::pair<float, float> CameraController::PanSpeed() const
+	std::pair<float, float> MeshController::PanSpeed() const
 	{
 		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
@@ -129,12 +136,12 @@ namespace Spiecs {
 		return { xFactor, yFactor };
 	}
 
-	float CameraController::RotationSpeed() const
+	float MeshController::RotationSpeed() const
 	{
 		return 0.8f;
 	}
 
-	float CameraController::ZoomSpeed() const
+	float MeshController::ZoomSpeed() const
 	{
 		float distance = m_Distance * 0.2f;
 		distance = std::max(distance, 0.0f);
@@ -143,37 +150,37 @@ namespace Spiecs {
 		return speed;
 	}
 
-	void CameraController::UpdateView()
+	void MeshController::UpdateView()
 	{
 		glm::vec3 pos = CalculatePosition();
 		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPostion(pos);
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
-		
+
 		std::cout << pos.x << "  " << pos.y << "  " << pos.z << std::endl;
 
 	}
 
-	glm::vec3 CameraController::CalculatePosition() const
+	glm::vec3 MeshController::CalculatePosition() const
 	{
 		return m_FocalPoint - GetForwardDirection() * m_Distance;
 	}
 
-	glm::vec3 CameraController::GetUpDirection() const
+	glm::vec3 MeshController::GetUpDirection() const
 	{
 		return glm::rotate(GetOrientation(), glm::vec3(0.0f, -1.0f, 0.0f));
 	}
 
-	glm::vec3 CameraController::GetRightDirection() const
+	glm::vec3 MeshController::GetRightDirection() const
 	{
 		return glm::rotate(GetOrientation(), glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
-	glm::vec3 CameraController::GetForwardDirection() const
+	glm::vec3 MeshController::GetForwardDirection() const
 	{
 		return glm::rotate(GetOrientation(), glm::vec3(0.0f, 0.0f, 1.0f));
 	}
 
-	glm::quat CameraController::GetOrientation() const
+	glm::quat MeshController::GetOrientation() const
 	{
 		glm::vec3& rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
 		return glm::quat(glm::vec3(rot.x, rot.y, rot.z));
