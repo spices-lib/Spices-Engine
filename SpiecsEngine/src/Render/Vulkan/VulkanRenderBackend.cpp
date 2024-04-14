@@ -11,7 +11,7 @@ namespace Spiecs {
 
 	VulkanRenderBackend::VulkanRenderBackend()
 	{
-		m_VulkanWindows = std::make_unique<VulkanWindows>(m_VulkanState, 956, 601, "Spiecs Engine");
+		m_VulkanWindows = std::make_unique<VulkanWindows>(m_VulkanState, 1280, 720, "Spiecs Engine");
 		m_VulkanInstance = std::make_unique<VulkanInstance>(m_VulkanState, "app", "engine");
 		m_VulkanDevice = std::make_shared<VulkanDevice>(m_VulkanState);
 		m_VulkanCommandPool = std::make_unique<VulkanCommandPool>(m_VulkanState, m_VulkanDevice->GetQueueHelper().graphicqueuefamily.value());
@@ -27,8 +27,8 @@ namespace Spiecs {
 
 		// TODO: Move to  
 		RendererManager::Get()
-			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool)
-			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool);
+			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool)
+			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
@@ -36,8 +36,8 @@ namespace Spiecs {
 		m_VulkanDescriptorPool = nullptr;
 
 		RendererManager::Get()
-			.Pop("MeshRenderer")
-			.Pop("SkyBoxRenderer");
+			.Pop("SkyBoxRenderer")
+			.Pop("MeshRenderer");
 	}
 
 	void VulkanRenderBackend::RecreateSwapChain() {

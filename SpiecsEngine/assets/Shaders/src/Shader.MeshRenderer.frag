@@ -28,15 +28,25 @@ struct PointLight {
     float quadratic;
 };
 
+struct TextureParam {
+    int isInUse;
+    vec3 constant;
+    float intensity;
+};
+
 layout(set = 1, binding = 0) uniform sampler2D samplers[3];
 
-layout(set = 2, binding = 0) uniform DirectionalLight{
+layout(set = 2, binding = 0) uniform TextureParams {
+    TextureParam textureParam[3];
+} textureParams;
+
+layout(set = 2, binding = 1) uniform DirectionalLight{
     vec3 direction;
     vec3 color;
     float intensity;
 } directionalLight;
 
-layout(set = 2, binding = 1) uniform PointLights {
+layout(set = 2, binding = 2) uniform PointLights {
     PointLight pointLight[10];
 } pointLights;
 

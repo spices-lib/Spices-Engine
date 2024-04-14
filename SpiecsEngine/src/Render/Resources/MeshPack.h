@@ -45,17 +45,33 @@ namespace Spiecs {
 	class SquarePack : public MeshPack
 	{
 	public:
-		SquarePack() : MeshPack() {};
+		SquarePack(uint32_t rows = 2, uint32_t colums = 2)
+			: MeshPack(), m_Rows(rows), m_Colums(colums) {};
 
 		virtual void OnCreatePack() override;
+
+	private:
+		uint32_t m_Rows;
+		uint32_t m_Colums;
 	};
 
 	class BoxPack : public MeshPack
 	{
 	public:
-		BoxPack() : MeshPack() {};
+		virtual void OnCreatePack() override;
+	};
+
+	class SpherePack : public MeshPack
+	{
+	public:
+		SpherePack(uint32_t rows = 15, uint32_t colums = 24)
+			: MeshPack(), m_Rows(rows), m_Colums(colums) {};
 
 		virtual void OnCreatePack() override;
+
+	private:
+		uint32_t m_Rows;
+		uint32_t m_Colums;
 	};
 
 	class FilePack : public MeshPack

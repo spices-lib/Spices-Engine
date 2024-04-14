@@ -15,9 +15,9 @@ namespace Spiecs {
 			Entity& cameraentity = CreateEntity("EditorCamera");
 			CameraComponent& camComp = cameraentity.AddComponent<CameraComponent>(true);
 			camComp.SetCamera(std::make_shared<Camera>());
-			camComp.GetCamera()->SetPerspective(glm::radians(45.0f), 0.001f, 1000.0f, 956.0f/601.0f);
+			camComp.GetCamera()->SetPerspective(glm::radians(45.0f), 0.001f, 1000.0f, 1280.f/720.f);
 			TransformComponent& transformComp = cameraentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ 0.0f, 0.0f, -2.0f });
+			transformComp.SetPostion({ 0.0f, 0.0f, -5.0f });
 			cameraentity.AddComponent<NativeScriptComponent>(std::make_shared<CameraController>());
 		}
 		

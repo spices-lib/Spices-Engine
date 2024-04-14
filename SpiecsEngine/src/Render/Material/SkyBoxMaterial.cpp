@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "SkyBoxMaterial.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Render/Resources/Texture/Texture2DCube.h"
 
 namespace Spiecs {
 
@@ -21,7 +22,7 @@ namespace Spiecs {
 			{
 				if (tp.texturePath.empty()) __debugbreak();
 
-				tp.texture = std::make_shared<Texture2D>(tp.texturePath);
+				tp.texture = std::make_shared<Texture2DCube>(tp.texturePath);
 				imageInfos[tp.index] = *tp.texture->GetResource<VulkanImage>()->GetImageInfo();
 			}
 		}

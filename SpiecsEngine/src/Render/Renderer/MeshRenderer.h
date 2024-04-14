@@ -30,6 +30,7 @@ namespace Spiecs {
 			
 
 			// fragStage
+			std::unique_ptr<VulkanBuffer> m_TextureParamUBO;
 			std::unique_ptr<VulkanBuffer> m_DirectionalLightUBO;
 			std::unique_ptr<VulkanBuffer> m_PointLightUBO;
 

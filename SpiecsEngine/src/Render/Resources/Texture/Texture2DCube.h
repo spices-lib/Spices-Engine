@@ -10,5 +10,8 @@ namespace Spiecs {
 		Texture2DCube() {};
 		Texture2DCube(const std::string& path);
 		virtual ~Texture2DCube() {};
+
+	private:
+		friend class TextureLoader;
 	};
 }

@@ -6,4 +6,4 @@ Shaders:
     ShaderPath: SkyBoxRenderer
 Textures:
   - TextureName: diffuse
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg, 1, 0, 0, [1, 1, 1], 1]
+    TextureParam: [1, skybox/little_paris_eiffel_tower_4k.hdr, 1, 0, 0, [1, 1, 1], 1]

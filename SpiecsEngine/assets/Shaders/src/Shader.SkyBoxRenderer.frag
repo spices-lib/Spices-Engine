@@ -2,21 +2,33 @@
 
 // frag input
 layout(location = 0) in struct FragInput {
-    vec3 texCoord;
-    vec2 tempcoord;
-} vertOut;
+    vec3 localPos;
+} fragInput;
 
 // frag output
 layout(location = 0) out vec4 outColor;
 
-// constant
-const int diffuseTexture = 0;
-
 // uniform buffer
 layout(set = 1, binding = 0) uniform sampler2D samplers[1];
+
+// constant
+const int diffuseTexture = 0;
+const vec2 invAtan = vec2(0.1591, 0.3183);
+
+// functions
+vec2 SampleSphericalMap(vec3 v)
+{
+    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+    uv *= invAtan;
+    uv += 0.5;
+
+    uv.y = 1.0 - uv.y;
+    return uv;
+}
 
 // main
 void main()
 {
-    outColor = texture(samplers[diffuseTexture], vertOut.tempcoord);
+    vec2 uv = SampleSphericalMap(normalize(fragInput.localPos)); // make sure to normalize localPos
+    outColor = texture(samplers[diffuseTexture], uv);
 }

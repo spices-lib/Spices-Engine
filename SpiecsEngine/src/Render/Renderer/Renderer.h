@@ -60,6 +60,24 @@ namespace Spiecs {
 			std::vector<VkDescriptorSet> m_DescriptorSets{};
 		};
 
+	public:
+		/**
+		* @brief Copy from Class Material
+		*/
+		struct TextureParam
+		{
+			alignas(16) int isInUse;
+			glm::vec3 constant;
+			float intensity;
+
+			void CopyFromMaterial(const Material::TextureParam& materialTextureParam) 
+			{
+				isInUse = materialTextureParam.isInUse.has_value() ? materialTextureParam.isInUse.value() : 0;
+				constant = materialTextureParam.constant;
+				intensity = materialTextureParam.intensity;
+			}
+		};
+
 	protected:
 		class PipelineLayoutBuilder
 		{
