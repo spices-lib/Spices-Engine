@@ -16,27 +16,13 @@ namespace Spiecs {
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 
-			std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
-			//std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>(20, 20);
+			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
+			std::shared_ptr<SpherePack> pack = std::make_shared<SpherePack>(20, 20);
 			pack->SetMaterial(std::make_shared<MeshMaterial>("MeshRenderer.0"));
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
 			meshComp.SetMesh(mesh);
 
 			//meshentity.AddComponent<NativeScriptComponent>(std::make_shared<MeshController>());
-		}
-		
-		// mesh3
-		{
-			//Entity& meshentity = CreateEntity("DefaultMesh");
-			//MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-			//TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			//transformComp1.SetPostion({ 1.5f, 1.5f, 0.0f });
-
-			//std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("111");
-			////std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
-			//pack->SetMaterial(std::make_shared<MeshMaterial>("MeshRenderer.1"));
-			//std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
-			//meshComp.SetMesh(mesh);
 		}
 		
 		// pointlight

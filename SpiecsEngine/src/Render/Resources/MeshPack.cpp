@@ -217,7 +217,7 @@ namespace Spiecs {
 				float colRamp = j * 360.0 / float(m_Colums - 1); // 0 ~ 360
 
 				Vertex vt;
-				vt.position = { glm::sin(glm::radians(rowRamp)) * glm::sin(glm::radians(colRamp)), glm::cos(glm::radians(rowRamp)), glm::sin(glm::radians(rowRamp)) * glm::cos(glm::radians(colRamp)) };
+				vt.position = { glm::sin(glm::radians(rowRamp)) * glm::cos(glm::radians(colRamp)), glm::cos(glm::radians(rowRamp)), glm::sin(glm::radians(rowRamp)) * glm::sin(glm::radians(colRamp)) };
 				vt.normal = glm::normalize(vt.position);
 				vt.color = glm::vec3{ 1.0f };
 				vt.texCoord = { i / float(m_Rows), j / float(m_Colums) };
