@@ -18,6 +18,10 @@ namespace Spiecs {
 		virtual ~Camera() {};
 
 		void SetPerspective(float fov, float nearPlane, float farPlane, float aspectRatio);
+
+		void SetPerspective(float aspectRatio);
+
+
 		void SetOrthographic(float left, float right, float top, float bottom, float nearPlane, float farPlane);
 		glm::mat4 GetPMatrix() { return m_ProjectionMatrix; };
 

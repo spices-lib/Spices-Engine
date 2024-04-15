@@ -22,6 +22,11 @@ namespace Spiecs {
 		m_ProjectionMatrix[3][2] = -(farPlane * nearPlane) / (farPlane - nearPlane);
 	}
 
+	void Camera::SetPerspective(float aspectRatio)
+	{
+		SetPerspective(m_FOV, m_NearPlane, m_FarPlane, aspectRatio);
+	}
+
 	void Camera::SetOrthographic(float left, float right, float top, float bottom, float nearPlane, float farPlane)
 	{
 		m_ProjectionMatrix = glm::mat4{ 1.0f };

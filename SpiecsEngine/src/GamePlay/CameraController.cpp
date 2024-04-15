@@ -12,7 +12,7 @@ namespace Spiecs {
 	{
 		Entity entity( m_Owner, FrameInfo::Get().m_World.get(), "" );
 		m_CameraTranComp = &entity.GetComponent<TransformComponent>();
-		m_Camera = &entity.GetComponent<CameraComponent>().GetCamera();
+		m_Camera = entity.GetComponent<CameraComponent>().GetCamera();
 	}
 
 	void CameraController::OnTick(TimeStep& ts)
@@ -83,10 +83,19 @@ namespace Spiecs {
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(CameraController::OnKeyPressed));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(CameraController::OnWindowResized));
 	}
 
 	bool CameraController::OnKeyPressed(KeyPressedEvent& e)
 	{
+		return true;
+	}
+
+	bool CameraController::OnWindowResized(WindowResizeEvent& e)
+	{
+		float ratio = e.GetWidth() / float(e.GetHeight());
+		std::any_cast<std::shared_ptr<Camera>>(m_Camera)->SetPerspective(ratio);
+
 		return true;
 	}
 
