@@ -16,73 +16,16 @@ namespace Spiecs {
 
 	void MeshController::OnTick(TimeStep& ts)
 	{
-		/*if (Input::IsKeyPressed(Key::LeftAlt))
+		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 
-			if      (Input::IsMouseButtonPressed(Mouse::ButtonMiddle)) MousePan(delta);
+			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle)) { MousePan(delta); UpdateView(); }
 			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))   MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))  MouseZoom(delta.y);
-
-			UpdateView();
-		}*/
-
-		glm::vec3 pos = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetPosition();
-		glm::vec3 rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
-		if(Input::IsKeyPressed(Key::W))
-		{
-			pos += GetForwardDirection() * 2.0f * ts.ft();
+			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight)) { MouseZoom(delta.y); UpdateView(); }
 		}
-		else if (Input::IsKeyPressed(Key::S))
-		{
-			pos -= GetForwardDirection() * 2.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::A))
-		{
-			pos -= GetRightDirection() * 2.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::D))
-		{
-			pos += GetRightDirection() * 2.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::E))
-		{
-			pos -= GetUpDirection() * 2.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::C))
-		{
-			pos += GetUpDirection() * 2.0f * ts.ft();
-		}
-
-		if (Input::IsKeyPressed(Key::Right))
-		{
-			rot.y += 1.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::Left))
-		{
-			rot.y -= 1.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::Up))
-		{
-			rot.x += 1.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::Down))
-		{
-			rot.x -= 1.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::D1))
-		{
-			rot.z += 1.0f * ts.ft();
-		}
-		else if (Input::IsKeyPressed(Key::D2))
-		{
-			rot.z -= 1.0f * ts.ft();
-		}
-
-		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPostion(pos);
-		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetRotation(rot);
 	}
 
 	void MeshController::OnEvent(Event& e)
@@ -155,8 +98,6 @@ namespace Spiecs {
 		glm::vec3 pos = CalculatePosition();
 		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPostion(pos);
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
-
-		std::cout << pos.x << "  " << pos.y << "  " << pos.z << std::endl;
 
 	}
 

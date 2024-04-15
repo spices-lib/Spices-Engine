@@ -30,7 +30,7 @@ namespace Spiecs {
 	{
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
 		pipelineConfig.renderPass = renderPass;
 		pipelineConfig.pipelineLayout = m_PipelineLayout;
 		m_VulkanPipeline = std::make_unique<VulkanPipeline>(

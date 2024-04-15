@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "MeshPack.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Core/Library/ContainerLibrary.h"
 
 namespace Spiecs {
 
@@ -58,7 +59,31 @@ namespace Spiecs {
 		}
 	}
 
-	void SquarePack::OnCreatePack()
+	void MeshPack::ApplyMatrix(glm::mat4 matrix)
+	{
+		for (int i = 0; i < m_Vertices.size(); i++)
+		{
+			glm::vec4 newPos = matrix * glm::vec4(m_Vertices[i].position, 1.0f);
+			m_Vertices[i].position = { newPos.x, newPos.y, newPos.z };
+		}
+	}
+
+	void MeshPack::CopyToVertices(std::vector<Vertex>& vertices)
+	{
+		ContainerLibrary::Append<Vertex>(vertices, m_Vertices);
+	}
+
+	void MeshPack::CopyToIndices(std::vector<uint32_t>& indices, uint32_t offest)
+	{
+		for (int i = 0; i < m_Indices.size(); i++)
+		{
+			m_Indices[i] += offest;
+		}
+
+		ContainerLibrary::Append<uint32_t>(indices, m_Indices);
+	}
+
+	void SquarePack::OnCreatePack(bool isCreateBuffer)
 	{
 		for (int i = 0; i < m_Rows; i++)
 		{
@@ -96,71 +121,92 @@ namespace Spiecs {
 			}
 		}
 
-		CreateBuffer();
+		if (isCreateBuffer) CreateBuffer();
 	}
 
-	void BoxPack::OnCreatePack()
-	{
-		m_Vertices =
+	void BoxPack::OnCreatePack(bool isCreateBuffer)
+	{	
+		// Front
 		{
-			// Front
-			{ {-0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ { 0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }},
-			{ { 0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ {-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
+			SquarePack pack(m_Rows, m_Colums);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
+			pack.ApplyMatrix(tran);
+			pack.CopyToIndices(m_Indices, m_Indices.size());
+			pack.CopyToVertices(m_Vertices);
+			
+		}
 
-			// Back
-			{ { 0.5f,  0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ {-0.5f,  0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
-			{ {-0.5f, -0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ { 0.5f, -0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }},
+		// Back
+		{
+			SquarePack pack(m_Rows, m_Colums);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
+			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
+			pack.ApplyMatrix(tran * rot);
+			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToVertices(m_Vertices);
+			
+		}
 
-			// Left
-			{ {-0.5f,  0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ {-0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }},
-			{ {-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ {-0.5f, -0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
+		// Left
+		{
+			SquarePack pack(m_Rows, m_Colums);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
+			pack.ApplyMatrix(tran * rot);
+			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToVertices(m_Vertices);
+			
+		}
 
-			// Right
-			{ { 0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ { 0.5f,  0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }},
-			{ { 0.5f, -0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ { 0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
+		// Right
+		{
+			SquarePack pack(m_Rows, m_Colums);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
+			pack.ApplyMatrix(tran * rot);
+			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToVertices(m_Vertices);
+			
+		}
 
-			// Top
-			{ {-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ { 0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }},
-			{ { 0.5f, -0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ {-0.5f, -0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
+		// Top
+		{
+			SquarePack pack(m_Rows, m_Colums);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
+			pack.ApplyMatrix(tran * rot);
+			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToVertices(m_Vertices);
+			
+		}
 
-			// Bottum
-			{ { 0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  0.0f, 0.0f}, { 0.0f, 0.0f }},
-			{ {-0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, 1.0f}, {1.0f,  1.0f, 1.0f}, { 0.0f, 1.0f }},
-			{ {-0.5f,  0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  0.0f, 1.0f}, { 1.0f, 1.0f }},
-			{ { 0.5f,  0.5f,  0.5f}, {0.0f,  0.0f, 1.0f}, {0.0f,  1.0f, 0.0f}, { 1.0f, 0.0f }},
-		};
+		// Button
+		{
+			SquarePack pack(m_Rows, m_Colums);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
+			pack.ApplyMatrix(tran * rot);
+			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToVertices(m_Vertices);
+			
+		}
 
-		m_Indices = 
-		{ 
-			 0,  1,  2,  2,  3,  0, 
-			 4,  5,  6,  6,  7,  4,
-			 8,  9, 10, 10, 11,  8,
-			12, 13, 14, 14, 15, 12,
-			16, 17, 18, 18, 19, 16,
-			20, 21, 22, 22, 23, 20,
-
-		};
-
-		CreateBuffer();
+		if (isCreateBuffer) CreateBuffer();
 	}
 
-	void FilePack::OnCreatePack()
+	void FilePack::OnCreatePack(bool isCreateBuffer)
 	{
 		MeshLoader::Load(m_Path, this);
-		CreateBuffer();
+		if(isCreateBuffer) CreateBuffer();
 	}
 	
-	void SpherePack::OnCreatePack()
+	void SpherePack::OnCreatePack(bool isCreateBuffer)
 	{
 		for (int i = 0; i < m_Rows; i++)
 		{
@@ -198,7 +244,7 @@ namespace Spiecs {
 			}
 		}
 
-		CreateBuffer();
+		if (isCreateBuffer) CreateBuffer();
 	}
 
 }

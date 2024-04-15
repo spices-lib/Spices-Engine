@@ -18,6 +18,9 @@ namespace Spiecs {
 
 	void TransformComponent::CalMatrix()
 	{
+		/**
+		* @brief use raidans
+		*/
 		glm::mat4 rotation = glm::toMat4(glm::quat(m_Rotation));
 		m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Position) * rotation * glm::scale(glm::mat4(1.0f), m_Scale);
 	}

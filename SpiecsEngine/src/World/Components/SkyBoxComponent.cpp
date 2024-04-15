@@ -7,7 +7,7 @@ namespace Spiecs {
 	SkyBoxComponent::SkyBoxComponent(const std::string& path)
 	{
 		// Use SpherePack Instead
-		std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>();
+		std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>(2, 2);
 		pack->SetMaterial(std::make_shared<SkyBoxMaterial>(path));
 		m_Mesh = Mesh::Builder().AddPack(pack).Build();
 	}

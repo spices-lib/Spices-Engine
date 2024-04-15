@@ -21,7 +21,6 @@ namespace Spiecs {
 
 		void SetPerspective(float aspectRatio);
 
-
 		void SetOrthographic(float left, float right, float top, float bottom, float nearPlane, float farPlane);
 		glm::mat4 GetPMatrix() { return m_ProjectionMatrix; };
 
