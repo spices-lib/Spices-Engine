@@ -6,8 +6,8 @@ Shaders:
     ShaderPath: MeshRenderer
 Textures:
   - TextureName: diffuse
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg, 1, 0, 0, [1, 1, 1], 1]
+    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg, 1, 0, 0, [1, 0, 0], 1]
   - TextureName: normal
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg, 1, 0, 1, [1, 1, 1], 1]
+    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg, 1, 0, 1, [4, 5, 6], 1]
   - TextureName: specular
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg, 1, 0, 2, [1, 1, 1], 1]
+    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg, 1, 0, 2, [7, 8, 9], 1]

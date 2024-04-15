@@ -12,6 +12,7 @@ namespace Spiecs {
 		meshPack->OnCreatePack();
 
 		m_Pack[m_PackNums] = meshPack;
+		m_PackNums++;
 		return *this;
 	}
 

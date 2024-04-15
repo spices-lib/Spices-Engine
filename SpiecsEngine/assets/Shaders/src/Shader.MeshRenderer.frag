@@ -29,8 +29,8 @@ struct PointLight {
 };
 
 struct TextureParam {
-    int isInUse;
     vec3 constant;
+    int isInUse;
     float intensity;
 };
 
@@ -62,7 +62,14 @@ const int specularTexture = 2;
 // main
 void main()
 {
-    outColor = texture(samplers[diffuseTexture], fragInput.texCoord);
+    if (textureParams.textureParam[diffuseTexture].isInUse == 1)
+    {
+        outColor = texture(samplers[diffuseTexture], fragInput.texCoord) * textureParams.textureParam[diffuseTexture].intensity;
+    }
+    else
+    {
+        outColor = vec4(textureParams.textureParam[diffuseTexture].constant, 0.0f) * textureParams.textureParam[diffuseTexture].intensity;
+    }
 }
 
 //vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection) {

@@ -66,9 +66,9 @@ namespace Spiecs {
 		*/
 		struct TextureParam
 		{
-			alignas(16) int isInUse;
 			glm::vec3 constant;
-			float intensity;
+			int isInUse;
+			alignas(16) float intensity;
 
 			void CopyFromMaterial(const Material::TextureParam& materialTextureParam) 
 			{

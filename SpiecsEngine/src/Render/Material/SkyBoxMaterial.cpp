@@ -25,6 +25,10 @@ namespace Spiecs {
 				tp.texture = std::make_shared<Texture2DCube>(tp.texturePath);
 				imageInfos[tp.index] = *tp.texture->GetResource<VulkanImage>()->GetImageInfo();
 			}
+			else
+			{
+				// TODO: Load a Default Texture
+			}
 		}
 
 		std::unique_ptr<VulkanDescriptorSetLayout> setLayout = setLayoutBuilder.Build(VulkanRenderBackend::GetState());
