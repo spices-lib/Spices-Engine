@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "World/Components/Component.h"
-#include "Render/Resources/Mesh.h"
+#include "Resources/Mesh/Mesh.h"
 
 namespace Spiecs {
 

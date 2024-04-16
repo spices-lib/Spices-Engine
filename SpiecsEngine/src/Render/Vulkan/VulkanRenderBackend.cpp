@@ -91,11 +91,15 @@ namespace Spiecs {
 
 		vkCmdBeginRenderPass(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+		/**
+		* @brief Use Negative Viewport height filp here to handle axis difference.
+		* Remember enable device extension (VK_KHR_MAINTENANCE1)
+		*/
 		VkViewport viewport{};
 		viewport.x = 0.0f;
-		viewport.y = 0.0f;
+		viewport.y = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().extent.height);
 		viewport.width = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().extent.width);
-		viewport.height = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().extent.height);
+		viewport.height = -static_cast<float>(m_VulkanDevice->GetSwapChainSupport().extent.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);

@@ -22,7 +22,7 @@ namespace Spiecs {
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
-
+			
 			if      (Input::IsMouseButtonPressed(Mouse::ButtonMiddle)) MousePan(delta);
 			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))   MouseRotate(delta);
 			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))  MouseZoom(delta.y);
@@ -36,12 +36,21 @@ namespace Spiecs {
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(CameraController::OnKeyPressed));
+		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(CameraController::OnMouseScroll));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(CameraController::OnWindowResized));
 	}
 
 	bool CameraController::OnKeyPressed(KeyPressedEvent& e)
 	{
-		return true;
+		return false;
+	}
+
+	bool CameraController::OnMouseScroll(MouseScrolledEvent& e)
+	{
+		float delta = e.GetYOffest() * 0.1f;
+		MouseZoom(delta);
+		UpdateView();
+		return false;
 	}
 
 	bool CameraController::OnWindowResized(WindowResizeEvent& e)
@@ -49,7 +58,7 @@ namespace Spiecs {
 		float ratio = e.GetWidth() / float(e.GetHeight());
 		std::any_cast<std::shared_ptr<Camera>>(m_Camera)->SetPerspective(ratio);
 
-		return true;
+		return false;
 	}
 
 	void CameraController::MousePan(const glm::vec2& delta)
@@ -64,7 +73,7 @@ namespace Spiecs {
 		glm::vec3 rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
 		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 
-		rot.y += yawSign * delta.x * RotationSpeed();
+		rot.y -= yawSign * delta.x * RotationSpeed();
 		rot.x += delta.y * RotationSpeed();
 
 		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetRotation(rot);
@@ -72,7 +81,7 @@ namespace Spiecs {
 
 	void CameraController::MouseZoom(float delta)
 	{
-		m_Distance -= delta * ZoomSpeed();
+		m_Distance += delta * ZoomSpeed();
 		if (m_Distance < 1.0f)
 		{
 			m_FocalPoint += GetForwardDirection();

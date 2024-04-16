@@ -1,6 +1,6 @@
 #include "Pchheader.h"
 #include "SkyBoxComponent.h"
-#include "Render/Material/SkyBoxMaterial.h"
+#include "Resources/Material/SkyBoxMaterial.h"
 
 namespace Spiecs {
 

@@ -28,6 +28,7 @@ namespace Spiecs {
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMouseScroll(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 
 		void MousePan(const glm::vec2& delta);

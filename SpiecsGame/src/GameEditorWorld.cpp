@@ -1,7 +1,7 @@
 #include "GameEditorWorld.h"
 #include "World/Entity.h"
-#include "Render/Resources/Loader/MaterialLoader.h"
-#include "Render/Material/MeshMaterial.h"
+#include "Resources/Loader/MaterialLoader.h"
+#include "Resources/Material/MeshMaterial.h"
 #include "GamePlay/MeshController.h"
 
 namespace Spiecs {
@@ -15,8 +15,10 @@ namespace Spiecs {
 			Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+			//transformComp1.SetScale({0.01f, 0.01f, 0.01f});
 
-			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("111");
+			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("112");
+			//std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(20, 20);
 			pack1->SetMaterial(std::make_shared<MeshMaterial>("MeshRenderer.0"));
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);

@@ -1,6 +1,6 @@
 #include "Pchheader.h"
 #include "VulkanPipeline.h"
-#include "Render/Resources/Mesh.h"
+#include "Resources/Mesh/Mesh.h"
 
 namespace Spiecs {
 
@@ -35,7 +35,7 @@ namespace Spiecs {
 		configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
 		configInfo.rasterizationInfo.lineWidth = 1.0f;
 		configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-		configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+		configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // negative clockwise
 		configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
 		configInfo.rasterizationInfo.depthBiasConstantFactor = 0.0f;
 		configInfo.rasterizationInfo.depthBiasClamp = 0.0f;

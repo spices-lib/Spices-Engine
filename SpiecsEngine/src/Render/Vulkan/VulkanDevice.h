@@ -52,7 +52,8 @@ namespace Spiecs {
 	private:
 
 		std::vector<const char*> m_ExtensionProperties = {
-			VK_KHR_SWAPCHAIN_EXTENSION_NAME
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME,     // Swapchain Extension
+			VK_KHR_MAINTENANCE_1_EXTENSION_NAME, // Negative Viewpoet Extension
 		};
 
 		// queue 

@@ -1,6 +1,6 @@
 #pragma once
 #include <yaml-cpp/yaml.h>
-#include "Render/Material/Material.h"
+#include "Resources/Material/Material.h"
 #include <glm/glm.hpp>
 
 namespace YAML {

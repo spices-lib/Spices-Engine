@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Component.h"
-#include "Render/Resources/Mesh.h"
+#include "Resources/Mesh/Mesh.h"
 
 #include <memory>
 

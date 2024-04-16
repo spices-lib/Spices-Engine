@@ -40,7 +40,9 @@ namespace Spiecs {
 			{
 				viewMat = glm::inverse(transComp.GetModelMatrix());
 				projectionMat = camComp.GetCamera()->GetPMatrix();
-				projectionMat[1][1] *= -1; // in vulkan, we need reverse y axis;
+				//projectionMat[1][1] *= -1; // in vulkan, we need reverse y axis;
+				//projectionMat[0][0] *= -1; // in vulkan, we need reverse y axis;
+				//projectionMat[2][2] *= -1; // in vulkan, we need reverse y axis;
 				return true;
 			}
 			return false;

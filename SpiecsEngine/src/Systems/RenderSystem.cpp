@@ -1,13 +1,12 @@
 #include "Pchheader.h"
 #include "RenderSystem.h"
-#include "Render/Resources/Mesh.h"
+#include "Resources/Mesh/Mesh.h"
 
 namespace Spiecs {
 
 	void RenderSystem::OnSystemInitialize()
 	{
 		m_RenderFrontend = std::make_unique<RenderFrontend>();
-
 
 		SPIECS_LOG("RenderSystem: Init Succeed");
 	}
