@@ -3,7 +3,8 @@
 #include "Vertex.h"
 #include "Resources/Material/Material.h"
 #include "Render/Vulkan/VulkanBuffer.h"
-#include "Resources/Loader/MeshLoader.h"
+#include "Resources/ResourcePool/ResourcePool.h"
+#include "Resources/Material/MeshMaterial.h"
 
 namespace Spiecs {
 
@@ -17,7 +18,10 @@ namespace Spiecs {
 		MeshPack& operator=(const MeshPack&) = delete;
 
 		virtual void OnCreatePack(bool isCreateBuffer = true) {};
-		void SetMaterial(std::shared_ptr<Material> material);
+
+		template<typename T>
+		void SetMaterial(const std::string& materialPath);
+
 		inline std::shared_ptr<Material> GetMaterial() { return m_Material; };
 
 		void OnBind(VkCommandBuffer& commandBuffer);
@@ -57,6 +61,13 @@ namespace Spiecs {
 
 		friend class MeshLoader;
 	};
+
+	template<typename T>
+	inline void MeshPack::SetMaterial(const std::string& materialPath)
+	{
+		m_Material = ResourcePool<Material>::Load<T>(materialPath);
+		m_Material->BuildMaterial();
+	}
 
 	class SquarePack : public MeshPack
 	{
@@ -106,4 +117,6 @@ namespace Spiecs {
 	private:
 		std::string m_Path;
 	};
+
+	
 }

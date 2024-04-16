@@ -18,27 +18,30 @@ namespace Spiecs {
 		ResourcePool(const ResourcePool&) = delete;
 		ResourcePool& operator=(const ResourcePool&) = delete;
 
-		static bool Load(const std::string& path, std::shared_ptr<T> outResource, bool isAutoRelease = false, bool isCopy = false);
+		template<typename T1>
+		static std::shared_ptr<T> Load(const std::string& path, bool isCopy = false);
 
-	protected:
-		struct ResourcePack
-		{
-			UUID uuid;
-			std::any resource;
-		};
-
-	protected:
-		std::unordered_map<std::string, ResourcePack> m_Resources;
+	private:
+		static std::unordered_map<std::string, std::shared_ptr<T>> m_Resources;
 	};
 
 	template<typename T>
-	inline bool ResourcePool<T>::Load(const std::string& path, std::shared_ptr<T> outResource, bool isAutoRelease, bool isCopy)
+	std::unordered_map<std::string, std::shared_ptr<T>> ResourcePool<T>::m_Resources;
+
+	template<typename T>
+	template<typename T1>
+	inline std::shared_ptr<T> ResourcePool<T>::Load(const std::string& path, bool isCopy)
 	{
 		if (m_Resources.find(path) != m_Resources.end())
 		{
-			
+			return m_Resources[path];
 		}
+		else
+		{
+			m_Resources[path] = std::make_shared<T1>(path);
 
-		return false;
+			return m_Resources[path];
+		}
 	}
+
 }

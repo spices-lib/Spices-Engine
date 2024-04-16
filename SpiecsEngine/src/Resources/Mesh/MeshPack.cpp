@@ -2,14 +2,9 @@
 #include "MeshPack.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Core/Library/ContainerLibrary.h"
+#include "Resources/Loader/MeshLoader.h"
 
 namespace Spiecs {
-
-	void MeshPack::SetMaterial(std::shared_ptr<Material> material)
-	{
-		m_Material = material;
-		m_Material->BuildMaterial();
-	}
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)
 	{

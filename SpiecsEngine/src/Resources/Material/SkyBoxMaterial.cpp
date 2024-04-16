@@ -22,7 +22,7 @@ namespace Spiecs {
 			{
 				if (tp.texturePath.empty()) __debugbreak();
 
-				tp.texture = std::make_shared<Texture2DCube>(tp.texturePath);
+				tp.texture = ResourcePool<Texture>::Load<Texture2DCube>(tp.texturePath);
 				imageInfos[tp.index] = *tp.texture->GetResource<VulkanImage>()->GetImageInfo();
 			}
 			else

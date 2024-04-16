@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "MeshMaterial.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Resources/ResourcePool/ResourcePool.h"
 
 namespace Spiecs {
 
@@ -21,7 +22,7 @@ namespace Spiecs {
 			{
 				if(tp.texturePath.empty()) __debugbreak();
 
-				tp.texture = std::make_shared<Texture2D>(tp.texturePath);
+				tp.texture = ResourcePool<Texture>::Load<Texture2D>(tp.texturePath);
 				imageInfos[tp.index] = *tp.texture->GetResource<VulkanImage>()->GetImageInfo();
 			}
 			else

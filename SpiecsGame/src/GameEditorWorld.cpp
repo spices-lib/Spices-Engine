@@ -3,6 +3,7 @@
 #include "Resources/Loader/MaterialLoader.h"
 #include "Resources/Material/MeshMaterial.h"
 #include "GamePlay/MeshController.h"
+#include "Resources/ResourcePool/ResourcePool.h"
 
 namespace Spiecs {
 
@@ -19,7 +20,7 @@ namespace Spiecs {
 
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("112");
 			//std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(20, 20);
-			pack1->SetMaterial(std::make_shared<MeshMaterial>("MeshRenderer.0"));
+			pack1->SetMaterial<MeshMaterial>("MeshRenderer.0");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
 		}
