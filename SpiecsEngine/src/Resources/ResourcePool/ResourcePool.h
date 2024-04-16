@@ -21,6 +21,8 @@ namespace Spiecs {
 		template<typename T1>
 		static std::shared_ptr<T> Load(const std::string& path, bool isCopy = false);
 
+		static void Destroy();
+
 	private:
 		static std::unordered_map<std::string, std::shared_ptr<T>> m_Resources;
 	};
@@ -44,4 +46,9 @@ namespace Spiecs {
 		}
 	}
 
+	template<typename T>
+	inline void ResourcePool<T>::Destroy()
+	{
+		m_Resources.clear();
+	}
 }
