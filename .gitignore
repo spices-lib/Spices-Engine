@@ -5,6 +5,9 @@
 /SpiecsEngine/bin-int
 /SpiecsEngine/bin
 
+/Document/html
+/Document/latex
+
 *.user
 *.sln
 *.vcxproj
