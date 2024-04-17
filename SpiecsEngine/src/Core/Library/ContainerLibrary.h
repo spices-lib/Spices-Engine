@@ -1,15 +1,36 @@
+/**
+* @file ContainerLibrary.h.
+* @brief The ContainerLibrary Class Definitions.
+* @author Spiecs.
+*/
+
 #pragma once
 #include "Core/Core.h"
 
 namespace Spiecs {
 
+	/**
+	* @brief Container Static Function Library.
+	*/
 	class ContainerLibrary
 	{
 	public:
 
+		/**
+		* @brief Template Function.
+		* Expand Our Container to a Specific Size if Container's size is smaller than it.
+		* @param[in out] vector The Container we want to Expand size.
+		* @param[in] newSize The size we want to Specific.
+		*/
 		template<typename T>
 		static void Resize(std::vector<T>& vector, uint32_t newSize);
 
+		/**
+		* @brief Template Function.
+		* Append a Container to another.
+		* @param[std::vector<T>&] The Container we want to Append to.
+		* @param[const std::vector<T>&] The Container we want to Append from.
+		*/
 		template<typename T>
 		static void Append(std::vector<T>& dst, const std::vector<T>& src);
 	};

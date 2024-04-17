@@ -1,3 +1,9 @@
+/**
+* @file Application.cpp.
+* @brief The Application Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "Application.h"
 #include "Render/FrameInfo.h"
@@ -8,15 +14,14 @@
 #include "Systems/ResourceSystem.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
-
 namespace Spiecs {
 
 	Application::Application()
 	{
 		/**
-		* @brief there has a vert interesting bug
-		* .Get() return Null
-		* Init All Systems
+		* @brief Init all Systems.
+		* @attention SystemManager Class did not Constructor, it returns Null.
+		* @todo Fixing it.
 		*/
 		SystemManager().Get()
 		.PushSystem<NativeScriptSystem>()
@@ -27,8 +32,14 @@ namespace Spiecs {
 
 	Application::~Application()
 	{
+		/**
+		* @brief Destroy our Specific World.
+		*/
 		FrameInfo::Get().m_World = nullptr;
 
+		/**
+		* @brief Destroy all Systems.
+		*/
 		SystemManager::Get()
 			.PopSystem("ResourceSystem")
 			.PopSystem("UISystem")
@@ -38,27 +49,53 @@ namespace Spiecs {
 
 	void Application::Run()
 	{
-		// init our world
+		/**
+		* @brief Specify the current World, which created from Game.
+		* @todo Mult World Support.
+		*/
 		FrameInfo::Get().m_World = CreateWorld();
 
-
-		// temp TODO: Remove
+		/**
+		* @brief World OnPreActivate.
+		* @todo Remove.
+		*/
 		FrameInfo::Get().m_World->OnPreActivate();
 
-
+		/**
+		* @brief Init Golbal TimeStep Class.
+		*/
 		TimeStep ts;
 
+		/**
+		* @brief Golbal While Loop.
+		* @todo Multithreading.
+		*/
 		while (!glfwWindowShouldClose(VulkanRenderBackend::GetState().m_Windows))
 		{
+			/**
+			* @brief Wait for glfw events.
+			*/
 			glfwPollEvents();
 
+			/**
+			* @brief Update TimeStep.
+			*/
 			ts.Flush();
 			
+			/**
+			* @brief Activete Our Specific World.
+			*/
 			FrameInfo::Get().m_World->OnActivate(ts);
 		}
 
+		/**
+		* @brief Vulkan Device Idle.
+		*/
 		VulkanRenderBackend::WaitIdle();
 
+		/**
+		* @brief Deactivate Our Specific World.
+		*/
 		FrameInfo::Get().m_World->OnDeactivate();
 	}
 }

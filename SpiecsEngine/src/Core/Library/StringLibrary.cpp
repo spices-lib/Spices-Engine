@@ -1,3 +1,9 @@
+/**
+* @file StringLibrary.cpp.
+* @brief The StringLibrary Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "StringLibrary.h"
 

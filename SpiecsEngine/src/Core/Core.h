@@ -1,14 +1,32 @@
-#pragma once
+/**
+* @file Core.h.
+* @brief SpiecsEngine Core Macro.
+* @author Spiecs.
+*/
 
+#pragma once
 #include "TimeStep.h"
 
+/**
+* @brief GLFW macro.
+* This means we want use vulkan in glfw.
+* glfw will include vulkan headers automatically for us.
+*/
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 namespace Spiecs {
 
+/**
+* @brief Log macro.
+* @todo better Log System.
+*/
 #define SPIECS_LOG(...) ::std::cout << __VA_ARGS__ << std::endl
 
+/**
+* @brief Assert macro.
+* @todo better Assert System.
+*/
 #define ASSERT(expr)                                                 \
     {                                                                \
         if (expr) {                                                  \
@@ -18,6 +36,10 @@ namespace Spiecs {
         }                                                            \
     }
 
+/**
+* @brief Vulkan Check macro.
+* Verify Vulkan API Effectiveness.
+*/
 #define VK_CHECK(expr)               \
     {                                \
         ASSERT(expr == VK_SUCCESS); \
