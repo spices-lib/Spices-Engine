@@ -28,9 +28,11 @@ namespace Spiecs {
 
 		/**
 		* @brief Determine if the strings given are equal.
+		* Platform Specific.
 		* @param[in] str0.
 		* @param[in] str1.
 		* @return Returns true if equal.
+		* @todo Platform Implementation.
 		*/
 		static bool StringsEqual(const char* str0, const char* str1);
 	};

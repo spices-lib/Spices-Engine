@@ -1,8 +1,11 @@
+/**
+* @file FileLibrary.cpp
+* @brief The FileLibrary Class Implementation.
+* @author Travis Vroman.
+*/
+
 #include "Pchheader.h"
 #include "FileLibrary.h"
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 
 namespace Spiecs {
 

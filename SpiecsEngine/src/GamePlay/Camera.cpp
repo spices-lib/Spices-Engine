@@ -1,3 +1,9 @@
+/**
+* @file Camera.cpp.
+* @brief The Camera Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "Camera.h"
 

@@ -28,8 +28,8 @@ namespace Spiecs {
 		/**
 		* @brief Template Function.
 		* Append a Container to another.
-		* @param[std::vector<T>&] The Container we want to Append to.
-		* @param[const std::vector<T>&] The Container we want to Append from.
+		* @param[in out] dst The Container we want to Append to.
+		* @param[in] src The Container we want to Append from.
 		*/
 		template<typename T>
 		static void Append(std::vector<T>& dst, const std::vector<T>& src);
