@@ -1,3 +1,9 @@
+/**
+* @file CameraController.cpp.
+* @brief The CameraController Class Implementation.
+* @author The Cherno & Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "CameraController.h"
 #include "World/Entity.h"

@@ -11,7 +11,7 @@
 namespace Spiecs {
 
     /**
-    * @brief This Struct encapsulate FILE* handle pointers.
+    * @brief This Struct is FILE* handle pointer Warpper.
     */
     struct FileHandle {
 

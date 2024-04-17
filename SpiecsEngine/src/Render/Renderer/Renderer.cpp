@@ -16,12 +16,19 @@ namespace Spiecs {
 
 	void Renderer::OnSystemInitialize()
 	{
+		/**
+		* @brief create renderpass.
+		*/
 		CreateRenderPass();
 
-
+		/**
+		* @brief create pipeline layout and buffer type descriptor.
+		*/
 		CreatePipelineLayoutAndDescriptor();
 
-
+		/**
+		* @brief create pipeline.
+		*/
 		CreatePipeline(m_VulkanState.m_RenderPass);
 	}
 

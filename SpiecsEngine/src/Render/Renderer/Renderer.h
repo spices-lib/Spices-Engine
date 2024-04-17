@@ -1,3 +1,9 @@
+/**
+* @file Renderer.h
+* @brief The Renderer Class Definitions.
+* @author Spiecs.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "Render/Vulkan/VulkanPipeline.h"
@@ -21,52 +27,146 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief  Renderer Class.
+	* This class defines the basic behaver of renderer.
+	* When we add an new Renderer, we need inherit from this.
+	*/
 	class Renderer
 	{
 	public:
+
+		/**
+		* @brief Constructor Function.
+		* Init member veriables.
+		* @param[in] rendererName The name of this Renderer.
+		* @param[in] vulkanState The core vulkan objects that in use.
+		* @param[in] desctiptorPool The DesctiptorPool.
+		*/
 		Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool);
+
+		/**
+		* @brief Destructor Function.
+		* We destroy pipeline layout here.
+		*/
 		virtual ~Renderer();
 
+		/**
+		* @brief Copy Constructor Function.
+		* @note This Class not allowed copy behaver.
+		*/
 		Renderer(const Renderer&) = delete;
+
+		/**
+		* @brief Copy Assignment Operation.
+		* @note This Class not allowed copy behaver.
+		*/
 		Renderer& operator=(const Renderer&) = delete;
 
+		/**
+		* @brief The interface of how to render.
+		* @param[in] frameInfo The current frame data.
+		*/
 		virtual void Render(FrameInfo& frameInfo) = 0;
 
+		/**
+		* @brief The Function is called on this attached.
+		*/
 		void OnSystemInitialize();
 
 	private:
-		// TODO: specific renderpass
+
+		/**
+		* @brief The interface is called during OnSystemInitialize().
+		* Create specific renderpass.
+		* @todo Implementate specific renderpass
+		*/
 		virtual void CreateRenderPass() = 0;
 
-		// specific desctiptor layout
+		/**
+		* @brief The interface is called during OnSystemInitialize().
+		* Create specific pipelinelayout and buffer type descriptor.
+		*/
 		virtual void CreatePipelineLayoutAndDescriptor() = 0;
 
-		// specific pipeline
+		/**
+		* @brief The interface is called during OnSystemInitialize().
+		* Create specific pipeline.
+		* @param[in] renderPass Renderer specific renderpass.
+		*/
 		virtual void CreatePipeline(VkRenderPass renderPass) = 0;
 
 	protected:
+
+		/**
+		* @brief Get sahder path string.
+		* @param[in] shaderType What shader type is.
+		* @return Returns the sahder path string.
+		*/
 		std::string GetSahderPath(const std::string& shaderType);
 
+		/**
+		* @brief Iterater the specific Component in World.
+		* @param[in] T The specific Component class.
+		* @param[in] frameInfo The current frame data.
+		* @param[in] F The function pointer that need to execute during this function.
+		*/
 		template<typename T, typename F>
 		inline void IterWorldComp(FrameInfo& frameInfo, F func);
 
+		/**
+		* @brief Get The actived camera entity's view matrix and projection matrix.
+		* @param[in] frameInfo The current frame data.
+		* @return Returns a pair of view matrix and projection matrix.
+		*/
 		std::pair<glm::mat4, glm::mat4> GetActiveCameraMatrix(FrameInfo& frameInfo);
+
+		/**
+		* @brief Get DirectionalLightComponent's render data in World.
+		* @param[in] frameInfo The current frame data.
+		* @return Returns the only one DirectionalLight render data.
+		*/
 		DirectionalLightComponent::DirectionalLight GetDirectionalLight(FrameInfo& frameInfo);
+
+		/**
+		* @brief Get PointLightComponent's render data in World.
+		* @param[in] frameInfo The current frame data.
+		* @return Returns the 10 PointLight render data.
+		* @todo infinity pointlight.
+		*/
 		std::array<PointLightComponent::PointLight, 10> GetPointLight(FrameInfo& frameInfo);
 
 	private:
+
+		/**
+		* @brief The struct is VkDescriptorSet container Warpper.
+		* Specific for MaxFrameInFlight.
+		*/
 		struct DescriptorResource
 		{
+			/**
+			* @brief VkDescriptorSet vector.
+			* Each set per element.
+			*/
 			std::vector<VkDescriptorSet> m_DescriptorSets{};
 		};
 
 	public:
+
 		/**
-		* @brief Copy from Class Material
+		* @brief This struct is copyed from Material Class.
+		* Only remains the date that needs to be transfered to shaders.
 		*/
 		struct TextureParam
 		{
+			/**
+			* @brief The constant instead texture if isn't in use.
+			*/
 			glm::vec3 constant;
+
+			/**
+			* @brief 
+			*/
 			int isInUse;
 			alignas(16) float intensity;
 
