@@ -82,7 +82,7 @@ namespace Spiecs {
 			});
 
 		IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
-			glm::mat4& modelMatrix = transComp.GetModelMatrix();
+			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			skyboxComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.UpdatePushConstant<PushConstant>([&](auto& push) {

@@ -1,3 +1,9 @@
+/**
+* @file PointLightComponent.cpp.
+* @brief The PointLightComponent Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "PointLightComponent.h"
 

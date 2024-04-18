@@ -149,7 +149,7 @@ namespace Spiecs {
 
 	glm::quat CameraController::GetOrientation() const
 	{
-		glm::vec3& rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
+		const glm::vec3& rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
 		return glm::quat(glm::vec3(rot.x, rot.y, rot.z));
 	}
 }

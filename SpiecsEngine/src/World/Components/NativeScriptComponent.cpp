@@ -1,3 +1,9 @@
+/**
+* @file NativeScriptComponent.cpp.
+* @brief The NativeScriptComponent Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "NativeScriptComponent.h"
 
@@ -8,7 +14,7 @@ namespace Spiecs {
 		m_RealNScriptComp = realComp;
 	}
 
-	void NativeScriptComponent::OnComponentAdded(entt::entity entity)
+	void NativeScriptComponent::OnComponentAdded(const entt::entity& entity)
 	{
 		Component::OnComponentAdded(entity);
 

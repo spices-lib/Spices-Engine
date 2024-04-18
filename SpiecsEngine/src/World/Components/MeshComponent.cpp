@@ -1,3 +1,9 @@
+/**
+* @file MeshComponent.cpp.
+* @brief The MeshComponent Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "MeshComponent.h"
 

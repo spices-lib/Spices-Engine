@@ -1,3 +1,9 @@
+/**
+* @file SpriteComponent.cpp.
+* @brief The SpriteComponent Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "SpriteComponent.h"
 
