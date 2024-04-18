@@ -31,8 +31,10 @@ namespace Spiecs {
 
 		/**
 		* @brief Destructor Function.
+		* @attemtion Why Destructor causes bug here
+		* @todo fix it.
 		*/
-		virtual ~Vertex() {};
+		//virtual ~Vertex() = default;
 
 		/**
 		* @brief Vertex Position in local world.

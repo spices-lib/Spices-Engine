@@ -91,7 +91,7 @@ namespace Spiecs {
 
 				if (uniqueVertices.count(vertex) == 0) {
 					uniqueVertices[vertex] = static_cast<uint32_t>(outMeshPack->m_Vertices.size());
-					outMeshPack->m_Vertices.push_back(vertex);
+					outMeshPack->m_Vertices.push_back(std::move(vertex));
 				}
 
 				outMeshPack->m_Indices.push_back(uniqueVertices[vertex]);
