@@ -1,10 +1,23 @@
+/**
+* @file SystemManager.cpp.
+* @brief The System Class and SystemManager Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "SystemManager.h"
 #include "Core/Event/Event.h"
 
 namespace Spiecs {
 
+	/**
+	* @brief Defines the static SystemManager variable.
+	*/
 	std::unique_ptr<SystemManager> SystemManager::m_SystemManager;
+
+	/**
+	* @brief Defines the static System Map variable.
+	*/
 	std::unordered_map<std::string, std::unique_ptr<System>> SystemManager::m_Identities;
 
 	SystemManager::SystemManager()

@@ -1,3 +1,9 @@
+/**
+* @file ResourceSystem.cpp.
+* @brief The ResourceSystem Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "ResourceSystem.h"
 #include "Resources/ResourcePool/ResourcePool.h"
@@ -27,6 +33,10 @@ namespace Spiecs {
 	}
 
 	void ResourceSystem::OnSystemUpdate(TimeStep& ts)
+	{
+	}
+
+	void ResourceSystem::OnEvent(Event& event)
 	{
 	}
 

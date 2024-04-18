@@ -1,3 +1,9 @@
+/**
+* @file UISystem.cpp.
+* @brief The UISystem Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "UISystem.h"
 

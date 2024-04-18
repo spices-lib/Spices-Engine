@@ -1,3 +1,9 @@
+/**
+* @file NativeScriptSystem.cpp.
+* @brief The NativeScriptSystem Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "NativeScriptSystem.h"
 #include "Render/FrameInfo.h"
