@@ -1,73 +1,36 @@
+/**
+* @file VulkanInstance.cpp.
+* @brief The VulkanInstance Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "VulkanInstance.h"
 
 namespace Spiecs {
 
-	static VKAPI_ATTR VkBool32 VKAPI_CALL InstanceDebugCallback(
-		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-		VkDebugUtilsMessageTypeFlagsEXT messageType,
-		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-		void* pUserData) {
-
-		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-
-		return VK_FALSE;
-	}
-
 	VulkanInstance::VulkanInstance(VulkanState& vulkanState, const std::string& name, const std::string& enginename)
 		: VulkanObject(vulkanState)
 	{
-		// app info
-		VkApplicationInfo appInfo = {};
-		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = name.c_str();
-		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName = enginename.c_str();
-		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.apiVersion = VK_API_VERSION_1_0;
+		/**
+		* @brief Create VkApplicationInfo struct.
+		*/
+		VkApplicationInfo appInfo = CreateApplicationInfo(name, enginename);
 
-		// instance info
-		VkInstanceCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		createInfo.pApplicationInfo = &appInfo;
+		/**
+		* @brief Create VkInstanceCreateInfo struct.
+		*/
+		VkInstanceCreateInfo createInfo = CreateInstanceCreateInfo(appInfo);
 
-		// extension that need
-		uint32_t glfwExtensionCount = 0;
-		const char** glfwExtensions;
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+		/**
+		* @brief Get all instance extension requirements our engine needede.
+		*/
+		GetExtensionRequirements();
 
-		for (int i = 0; i < glfwExtensionCount; i++) {
-			m_ExtensionProperties.push_back(*glfwExtensions);
-			glfwExtensions++;
-		}
-
-#ifdef SPIECS_DEBUG
-		m_ExtensionProperties.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
-
-		// all extensions
-		uint32_t extensionCount = 0;
-		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-		std::vector<VkExtensionProperties> extensions(extensionCount);
-		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
-
-		// check extensions ok
-		bool fullmatch = true;
-		for (int i = 0; i < m_ExtensionProperties.size(); i++) {
-			const char* requiredextension = m_ExtensionProperties[i];
-			bool match = false;
-			for (int j = 0; j < extensionCount; j++)
-			{
-				VkExtensionProperties& target = extensions[j];
-				match = strcmp(requiredextension, target.extensionName) == 0;
-
-				if (match) break;
-			}
-			if (!match) fullmatch = false; break;
-		}
-
-		if (!fullmatch) return;
+		/**
+		* @brief Iter all our extensions, check whether all satisfied or not.
+		*/
+		if (!CheckExtensionRequirementsSatisfied()) return;
 
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(m_ExtensionProperties.size());
 		createInfo.ppEnabledExtensionNames = m_ExtensionProperties.data();
@@ -76,6 +39,7 @@ namespace Spiecs {
 		createInfo.pNext = nullptr;
 
 #ifdef SPIECS_DEBUG
+
 		m_LayerProperties = { "VK_LAYER_KHRONOS_validation" };
 
 		uint32_t layerCount;
@@ -136,6 +100,134 @@ namespace Spiecs {
 		}
 #endif
 		vkDestroyInstance(m_VulkanState.m_Instance, nullptr);
+	}
+
+	VkApplicationInfo VulkanInstance::CreateApplicationInfo(const std::string& name, const std::string& enginename)
+	{
+		/**
+		* @brief Instanced a VkApplicationInfo with default value.
+		*/
+		VkApplicationInfo appInfo = {};
+
+		/**
+		* @brief Fill in sType.
+		*/
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+
+		/**
+		* @brief Fill in pApplicationName.
+		*/
+		appInfo.pApplicationName = name.c_str();
+
+		/**
+		* @brief Fill in applicationVersion.
+		*/
+		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+
+		/**
+		* @brief Fill in pEngineName.
+		*/
+		appInfo.pEngineName = enginename.c_str();
+
+		/**
+		* @brief Fill in engineVersion.
+		*/
+		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+
+		/**
+		* @brief Fill in apiVersion.
+		*/
+		appInfo.apiVersion = VK_API_VERSION_1_0;
+
+		return appInfo;
+	}
+
+	VkInstanceCreateInfo VulkanInstance::CreateInstanceCreateInfo(const VkApplicationInfo& appInfo)
+	{
+		/**
+		* @brief Instanced a VkInstanceCreateInfo with default value.
+		*/
+		VkInstanceCreateInfo createInfo = {};
+
+		/**
+		* @brief Fill in sType.
+		*/
+		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+
+		/**
+		* @brief Fill in pApplicationInfo.
+		*/
+		createInfo.pApplicationInfo = &appInfo;
+
+		return createInfo;
+	}
+
+	void VulkanInstance::GetExtensionRequirements()
+	{
+		/**
+		* @brief Get glfw requirements.
+		*/
+		uint32_t glfwExtensionCount = 0;
+		const char** glfwExtensions;
+		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+		/**
+		* @brief Combine with our extensions requirements.
+		*/
+		for (int i = 0; i < glfwExtensionCount; i++) 
+		{
+			m_ExtensionProperties.push_back(*glfwExtensions);
+			glfwExtensions++;
+		}
+
+#ifdef SPIECS_DEBUG
+
+		/**
+		* @brief To enable validation layer, we need this instance extension.
+		*/
+		m_ExtensionProperties.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+#endif
+	}
+
+	bool VulkanInstance::CheckExtensionRequirementsSatisfied()
+	{
+		/**
+		* @brief Get all instance extensions that supported.
+		*/
+		uint32_t extensionCount = 0;
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> extensions(extensionCount);
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+
+		/**
+		* @brief Iter all our extensions, check whether all satisfied or not.
+		*/
+		bool fullmatch = true;
+		for (int i = 0; i < m_ExtensionProperties.size(); i++) {
+			const char* requiredextension = m_ExtensionProperties[i];
+			bool match = false;
+			for (int j = 0; j < extensionCount; j++)
+			{
+				VkExtensionProperties& target = extensions[j];
+				match = strcmp(requiredextension, target.extensionName) == 0;
+
+				if (match) break;
+			}
+			if (!match) fullmatch = false; break;
+		}
+
+		if (!fullmatch) return false;
+
+		return true;
+	}
+
+	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanInstance::InstanceDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
+	{
+		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+
+		return VK_FALSE;
 	}
 
 	void VulkanInstance::FillDebugMessengerCreateInfo()
