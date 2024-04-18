@@ -1,3 +1,9 @@
+/**
+* @file MeshMaterial.cpp.
+* @brief The MeshMaterial Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "MeshMaterial.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"

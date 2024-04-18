@@ -1,3 +1,9 @@
+/**
+* @file Material.cpp.
+* @brief The Material Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "Material.h"
 
@@ -15,8 +21,6 @@ namespace Spiecs {
 		{
 			SPIECS_LOG("Please do not do that!");
 		}
-
-		// TODO: 
 	}
 
 	void Material::Dserialize()

@@ -1,3 +1,9 @@
+/**
+* @file SkyBoxMaterial.cpp.
+* @brief The SkyBoxMaterial Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "SkyBoxMaterial.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
