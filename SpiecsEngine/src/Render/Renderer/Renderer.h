@@ -156,6 +156,9 @@ namespace Spiecs {
 		/**
 		* @brief This struct is copyed from Material Class.
 		* Only remains the date that needs to be transfered to shaders.
+		* Memory alignas 32 bytes.
+		* @see Material::TextureParam.
+		* @todo mutex lock.
 		*/
 		struct TextureParam
 		{
@@ -165,11 +168,20 @@ namespace Spiecs {
 			glm::vec3 constant;
 
 			/**
-			* @brief 
+			* @brief True if the Texture is in use.
 			*/
 			int isInUse;
+
+			/**
+			* @brief Texture intensity.
+			* Memory alignas 16 bytes.
+			*/
 			alignas(16) float intensity;
 
+			/**
+			* @brief Copy the data that needed to be transfered to shader from specific Material::TextureParam.
+			* @param[in] materialTextureParam The referenced original data.
+			*/
 			void CopyFromMaterial(const Material::TextureParam& materialTextureParam) 
 			{
 				isInUse = materialTextureParam.isInUse.has_value() ? materialTextureParam.isInUse.value() : 0;
@@ -179,15 +191,43 @@ namespace Spiecs {
 		};
 
 	protected:
+
+		/**
+		* @brief This class helps to build a vkpipelinelayout.
+		* Only instanced during CreatePipelineLayoutAndDescriptor().
+		*/
 		class PipelineLayoutBuilder
 		{
 		public:
+
+			/**
+			* @brief Constructor Function.
+			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			*/
 			PipelineLayoutBuilder(Renderer* renderer) : m_Renderer(renderer) {};
+
+			/**
+			* @brief Destructor Function.
+			*/
 			virtual ~PipelineLayoutBuilder() {};
 
+			/**
+			* @brief Create specific renderer buffer type collection for renderer.
+			* @param[in] T Specific collection struct.
+			* @return Returns this reference.
+			* @see Collection.
+			*/
 			template<typename T>
 			inline PipelineLayoutBuilder& CreateCollection();
 
+			/**
+			* @brief Create local buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
+			* @param[in] T Buffer struct.
+			* @param[in] set Which set this buffer wil use.
+			* @param[in] binding Which binding this buffer will use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @return Returns this reference.
+			*/
 			template<typename T>
 			inline PipelineLayoutBuilder& AddBuffer(
 				uint32_t set, 
@@ -195,6 +235,15 @@ namespace Spiecs {
 				VkShaderStageFlags stageFlags
 			);
 
+			/**
+			* @brief Add the texture set binding to descriptorsetlayout.
+			* @param[in] T Texture Type.
+			* @param[in] set Which set this texture wil use.
+			* @param[in] binding Which binding this texture wil use.
+			* @param[in] arrayNum Which arrayNum this texture wil use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @return Returns this reference.
+			*/
 			template<typename T>
 			inline PipelineLayoutBuilder& AddTexture(
 				uint32_t set,
@@ -203,84 +252,236 @@ namespace Spiecs {
 				VkShaderStageFlags stageFlags
 			);
 
+			/**
+			* @brief Set VkPushConstantRange by a specific pushconstant struct.
+			* @param[in] T Specific pushconstant struct.
+			* @return Returns this reference.
+			*/
 			template<typename T>
 			inline PipelineLayoutBuilder& AddPushConstant();
 
+			/**
+			* @brief Create all buffer type descriptor set.
+			* Create pipeline layout.
+			* @attention Texture type descriptor set is not created here, but in Material::BuildMaterial().
+			*/
 			void Build();
 
-		private:
 		public:
+
+			/**
+			* @brief Specific Renderer pointer.
+			* Passed while this class instanecd.
+			*/
 			Renderer* m_Renderer;
 			
+			/**
+			* @brief True if the specific renderer enable pushconstant in pipelinelayout. 
+			*/
 			bool isUsePushConstant = false;
+
+			/**
+			* @brief If isUsePushConstant is true, this variable must be filled.
+			*/
 			VkPushConstantRange m_PushConstantRange{};
 		};
 
+		/**
+		* @brief This class helps to bind pipeline and bind buffer.
+		* Only instanced during Render().
+		*/
 		class RenderBehaverBuilder
 		{
 		public:
+
+			/**
+			* @brief Constructor Function.
+			* Bind pipleine and all buffer type descriptorset.
+			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			* @param[in] currentFrame Passed from FrameInfo.
+			*/
 			RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame);
+
+			/**
+			* @brief Destructor Function.
+			*/
 			virtual ~RenderBehaverBuilder() {};
 
+		private:
+
+			/**
+			* @brief Bind the pipeline created by CreatePipeline().
+			* Called on RenderBehaverBuilder instanced.
+			*/
 			void BindPipeline();
+
+			/**
+			* @brief Bind all buffer type descriptorset.
+			* Called On RenderBehaverBuilder instanced.
+			*/
 			void BindAllBufferTyepDescriptorSet();
+
+		public:
+
+			/**
+			* @brief Bind one single descriptor.
+			* @param[in] set Which set the descriptor will use.
+			* @param[in] descriptorset Which descriptor will be binded.
+			* @attemtion For specific renderer, this API only used for texture bind.
+			*/
 			void BindDescriptorSet(uint32_t set, VkDescriptorSet& descriptorset);
 
+			/**
+			* @brief Update local pushconstant buffer.
+			* @param[in] T Specific push constant struct Type.
+			* @param[in] F A function pointer, which defines what data inside the buffer.
+			*/
 			template<typename T, typename F>
 			void UpdatePushConstant(F func);
 
+			/**
+			* @brief Update a local buffer.
+			* @param[in] T Specific buffer struct Type.
+			* @param[in] F A function pointer, which defines what data inside the buffer.
+			* @param[in] set Which set the descriptor will use.
+			* @param[in] binding Which binding the descriptor will use.
+			*/
 			template<typename T, typename F>
 			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
 
 		private:
+
+			/**
+			* @brief Specific Renderer pointer.
+			* Passed while this class instanecd.
+			*/
 			Renderer* m_Renderer;
+
+			/**
+			* @brief Current frame index.
+			* Passed while this class instanecd.
+			* @see FrameInfo.
+			*/
 			uint32_t m_CurrentFrame;
 		};
 
+		/**
+		* @brief This struct placed the local buffer data.Specific for every renderer.
+		* Needed to be inherited for specific renderer.
+		* @attention Only place buffer data here, not allowed texture data.
+		* Texture data is placed in Material::TextureParam.
+		*/
 		struct Collection 
 		{
 		public:
+
+			/**
+			* @brief Constructor Function.
+			*/
 			Collection() {};
+
+			/**
+			* @brief Destructor Function.
+			*/
 			virtual ~Collection() {};
 
+			/**
+			* @brief The interface of how to map the local buffer with specific set and binding.
+			*/
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) = 0;
 		};
 
 	protected:
-		// vulkan state
+		
+		/**
+		* @brief This variable is passed while renderer instaned.
+		*/
 		VulkanState& m_VulkanState;
+
+		/**
+		* @brief This variable is passed while renderer instaned.
+		*/
 		std::shared_ptr<VulkanDescriptorPool> m_DesctiptorPool;
 
-		// TODO: renderpass
-		// VkRenderPass m_RenderPass;
+		/**
+		* VkRenderPass m_RenderPass;
+		* @todo renderpass variable.
+		*/
 
-		// descriptorset
+		/**
+		* @brief This variable helps to set vkpipelinelayout.
+		* Each set per element.
+		* Fill with both buffer and texture.
+		*/
 		std::vector<std::unique_ptr<VulkanDescriptorSetLayout>> m_VulkanLayouts{};
+
+		/**
+		* @brief This variable helps to create descriptorset.
+		* Each set per element.
+		* @note Only fill with buffer.
+		*/
 		std::vector<std::unique_ptr<VulkanDescriptorWriter>> m_VulkanLayoutWriters{};
+
+		/**
+		* @brief VkDescriptorSetLayout used while create pipeline layout.
+		* Each set per element.
+		* Fill with both buffer and texture.
+		*/
 		std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts{};
+
+		/**
+		* @brief This variable is descriptor warpper.
+		* @note Only fill with buffer.
+		*/
 		std::array<DescriptorResource, MaxFrameInFlight> m_Resource{};
 
-		// localdescriptorbuffer
+		/**
+		* @brief This variable is local buffer warpper.
+		* @note Only fill with buffer.
+		*/
 		std::array<std::unique_ptr<Collection>, MaxFrameInFlight> m_Collections;
 
-		// pipeline
+		/**
+		* @brief Specific renderer pipelinelayout, defined by CreatePipelineLayoutAndDescriptor().
+		*/
 		VkPipelineLayout m_PipelineLayout;
+
+		/**
+		* @brief Specific renderer pipeline, defined by CreatePipeline().
+		*/
 		std::unique_ptr<VulkanPipeline> m_VulkanPipeline;
 		
+		/**
+		* @brief Specific renderer name, Passed by instanced.
+		*/
 		std::string m_RendererName;
 
+		/**
+		* @brief Allow this class access all data.
+		* Maybe remove.
+		*/
 		friend class PipelineLayoutBuilder;
 	};
 
 	template<typename T, typename F>
 	inline void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
 	{
-		// group iter will be bug
+		/**
+		* @brief Iter use view, not group.
+		* @attention Group result nullptr here.
+		*/
 		auto& view = frameInfo.m_World->GetRegistry().view<T>();
 		for (auto& e : view)
 		{
 			auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
 
+			/**
+			* @brief This function defined how we use these components.
+			* @param[in] e entityid.
+			* @param[in] transComp TransformComponent.
+			* @param[in] tComp TComponent.
+			* @return Returns true if need break for for loop.
+			*/
 			bool isIterBreak = func((int)e, transComp, tComp);
 
 			if (isIterBreak) break;
@@ -301,7 +502,9 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddBuffer(uint32_t set, uint32_t binding, VkShaderStageFlags stageFlags)
 	{
-		// local data
+		/**
+		* @breif Create local buffer for each Frame.
+		*/
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
 			m_Renderer->m_Collections[i]->GetBuffer(set, binding) = std::make_unique<VulkanBuffer>(
@@ -314,7 +517,9 @@ namespace Spiecs {
 		}
 
 
-		// descriptorset layout
+		/**
+		* @brief Create descriptorsetlayout.
+		*/
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorSetLayout>>(m_Renderer->m_VulkanLayouts, set + 1);
 
 		m_Renderer->m_VulkanLayouts[set] = VulkanDescriptorSetLayout::Builder(m_Renderer->m_VulkanLayouts[set].get())
@@ -326,7 +531,9 @@ namespace Spiecs {
 		m_Renderer->m_DescriptorSetLayouts[set] = m_Renderer->m_VulkanLayouts[set]->GetDescriptorSetLayout();
 
 
-		// writers
+		/**
+		* @brief Create descriptorWriter.
+		*/
 		auto bufferInfo = m_Renderer->m_Collections[0]->GetBuffer(set, binding)->GetBufferInfo();
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_Renderer->m_VulkanLayoutWriters, set + 1);
 
@@ -347,7 +554,10 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddTexture(uint32_t set, uint32_t binding, uint32_t arrayNum, VkShaderStageFlags stageFlags)
 	{
-		// local data
+		/**
+		* @breif Create local texture for each Frame.
+		* Not execute here.
+		*/
 		/*for (int i = 0; i < MaxFrameInFlight; i++)
 		{
 			m_Renderer->m_Collections[i]->GetImage(set, binding) = std::make_unique<VulkanImage>(
@@ -357,7 +567,9 @@ namespace Spiecs {
 		}*/
 
 
-		// descriptorset layout
+		/**
+		* @brief Create descriptorsetlayout.
+		*/
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorSetLayout>>(m_Renderer->m_VulkanLayouts, set + 1);
 
 		m_Renderer->m_VulkanLayouts[set] = VulkanDescriptorSetLayout::Builder(m_Renderer->m_VulkanLayouts[set].get())
@@ -369,7 +581,10 @@ namespace Spiecs {
 		m_Renderer->m_DescriptorSetLayouts[set] = m_Renderer->m_VulkanLayouts[set]->GetDescriptorSetLayout();
 
 
-		// writers
+		/**
+		* @brief Create descriptorWriter.
+		* Not execte here.
+		*/
 		/*auto imageInfo = m_Renderer->m_Collections[0]->GetImage(set, binding)->GetImageInfo();
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_Renderer->m_VulkanLayoutWriters, set + 1);
 
@@ -390,8 +605,14 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddPushConstant()
 	{
+		/**
+		* @brief Set variable.
+		*/
 		isUsePushConstant = true;
 
+		/**
+		* @brief Fill in data.
+		*/
 		m_PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		m_PushConstantRange.offset = 0;
 		m_PushConstantRange.size = sizeof(T);
@@ -402,13 +623,20 @@ namespace Spiecs {
 	template<typename T, typename F>
 	inline void Renderer::RenderBehaverBuilder::UpdatePushConstant(F func)
 	{
-		// create pushconstant
+		/**
+		* @breif Create pushconstant object.
+		*/
 		T push{};
 
-		// write in data
+		/**
+		* @breif Write in data
+		* @param[in] push pushconstant object.
+		*/
 		func(push);
 
-		// update 
+		/**
+		* @breif Update PushConstants
+		*/
 		vkCmdPushConstants(
 			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 			m_Renderer->m_PipelineLayout,
@@ -422,13 +650,20 @@ namespace Spiecs {
 	template<typename T, typename F>
 	inline void Renderer::RenderBehaverBuilder::UpdateBuffer(uint32_t set, uint32_t binding, F func)
 	{
-		// create uniform buffer object
+		/**
+		* @breif Create uniform buffer object
+		*/
 		T ubo{};
 
-		// write in data
+		/**
+		* @breif Write in data
+		* @param[in] uniform buffer object.
+		*/
 		func(ubo);
 
-		// update
+		/**
+		* @breif Update uniform buffer.
+		*/
 		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->WriteToBuffer(&ubo);
 		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->Flush();
 	}

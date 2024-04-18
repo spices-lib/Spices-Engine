@@ -1,3 +1,9 @@
+/**
+* @file Renderer.cpp
+* @brief The Renderer Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "Renderer.h"
 
@@ -47,9 +53,12 @@ namespace Spiecs {
 			{
 				viewMat = glm::inverse(transComp.GetModelMatrix());
 				projectionMat = camComp.GetCamera()->GetPMatrix();
-				//projectionMat[1][1] *= -1; // in vulkan, we need reverse y axis;
-				//projectionMat[0][0] *= -1; // in vulkan, we need reverse y axis;
-				//projectionMat[2][2] *= -1; // in vulkan, we need reverse y axis;
+
+				/**
+				* @brief Since we enable Negative viewport, we do not need reverse y axis here.
+				*/
+				//projectionMat[1][1] *= -1;
+
 				return true;
 			}
 			return false;
@@ -92,7 +101,9 @@ namespace Spiecs {
 
 	void Renderer::PipelineLayoutBuilder::Build()
 	{
-		// create descriptor set
+		/**
+		* @brief Create buffer type descriptor set
+		*/
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
 			int setSize = m_Renderer->m_VulkanLayoutWriters.size();
@@ -107,7 +118,9 @@ namespace Spiecs {
 			}
 		}
 
-		// create pipelinelayout
+		/**
+		* @brief Create pipelinelayout
+		*/
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(m_Renderer->m_DescriptorSetLayouts.size());
@@ -128,10 +141,8 @@ namespace Spiecs {
 		: m_Renderer(renderer)
 		, m_CurrentFrame(currentFrame)
 	{
-		// bind pipeline
 		BindPipeline();
 
-		// bind descriptorsets all sets
 		BindAllBufferTyepDescriptorSet();
 	}
 
