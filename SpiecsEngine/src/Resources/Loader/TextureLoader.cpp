@@ -1,15 +1,24 @@
+/**
+* @file TextureLoader.cpp.
+* @brief The TextureLoader Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "TextureLoader.h"
 #include "Render/Vulkan/VulkanImage.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
-#include "stb_image.h"
+#include <stb_image.h>
 
 #include "Resources/Texture/Texture2D.h"
 #include "Resources/Texture/Texture2DCube.h"
 
 namespace Spiecs {
 
+	/**
+	* @brief Const variable: Original Image File Path.
+	*/
 	const std::string defaultTexturePath = SPIECS_ENGINE_ASSETS_PATH + "Textures/src/";
 
 	void TextureLoader::Load(const std::string& filePath, Texture2D* outTexture)

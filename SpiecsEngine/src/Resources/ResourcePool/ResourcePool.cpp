@@ -1,7 +1,7 @@
 /**
 * @file ResourcePool.cpp.
 * @brief The ResourcePool Class Implementation.
-* @author The Cherno & Spiecs.
+* @author Spiecs.
 */
 
 #include "Pchheader.h"

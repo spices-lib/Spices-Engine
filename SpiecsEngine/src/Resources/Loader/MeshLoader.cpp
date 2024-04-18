@@ -1,3 +1,9 @@
+/**
+* @file MeshLoader.cpp.
+* @brief The MeshLoader Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "MeshLoader.h"
 #include "Resources/Mesh/MeshPack.h"
@@ -8,11 +14,29 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief Const variable: Bin Mesh File Path.
+	*/
 	const std::string defaultBinMeshPath = SPIECS_ENGINE_ASSETS_PATH + "Meshes/bin/";
+
+	/**
+	* @brief Const variable: OBJ Mesh File Path.
+	*/
 	const std::string defaultOBJMeshPath = SPIECS_ENGINE_ASSETS_PATH + "Meshes/src/obj/";
+
+	/**
+	* @brief Const variable: FBX Mesh File Path.
+	*/
 	const std::string defaultFBXMeshPath = SPIECS_ENGINE_ASSETS_PATH + "Meshes/src/fbx/";
 
+	/**
+	* @brief Const variable: Mesh File Confirm header staer.
+	*/
 	const char MeshLoaderSignSatrt[100] = "#ItisSpiecsMeshSign: DataStart";
+
+	/**
+	* @brief Const variable: Mesh File Confirm header over.
+	*/
 	const char MeshLoaderSignOver[100] = "#ItisSpiecsMeshSign: DateOver";
 
 	bool MeshLoader::Load(const std::string& fileName, MeshPack* outMeshPack)

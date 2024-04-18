@@ -1,3 +1,9 @@
+/**
+* @file MaterialLoader.cpp.
+* @brief The MaterialLoader Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "MaterialLoader.h"
 #include "Core/Library/FileLibrary.h"
@@ -7,15 +13,45 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief Const variable: Bin Material File Path.
+	*/
 	const std::string defaultBinMaterialPath = SPIECS_ENGINE_ASSETS_PATH + "Materials/bin/";
+
+	/**
+	* @brief Const variable: Original Material File Path.
+	*/
 	const std::string defaultMaterialPath = SPIECS_ENGINE_ASSETS_PATH + "Materials/src/";
 
+	/**
+	* @brief Const variable: Bin Shader File Path.
+	*/
 	const std::string defaultBinShaderPath = SPIECS_ENGINE_ASSETS_PATH + "Shaders/spv/";
 
+	/**
+	* @brief Const variable: Material File Confirm header staer.
+	*/
 	const char LoaderSignSatrt[100] = "#ItisSpiecsMaterialSign: DataStart";
+
+	/**
+	* @brief Const variable: Material File Confirm header over.
+	*/
 	const char LoaderSignOver[100] = "#ItisSpiecsMaterialSign: DateOver";
 
+	/**
+	* @brief Serialze Shader Config.
+	* @param[in out] out YAML Emitter.
+	* @param[in] shaderStage What Stage shader use.
+	* @param[in] shaderPath Shader path(short path).
+	*/
 	static void SerializeShaderConfig(YAML::Emitter& out, const std::string& shaderStage, const std::string& shaderPath);
+
+	/**
+	* @brief Serialze Texture Config.
+	* @param[in out] out YAML Emitter.
+	* @param[in] name Texture name.
+	* @param[in] param Texture parameter.
+	*/
 	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param);
 
 	bool MaterialLoader::Load(const std::string& fileName, Material* outMaterial)
