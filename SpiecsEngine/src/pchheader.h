@@ -1,3 +1,9 @@
+/**
+* @file Pchheader.h.
+* @brief Pre compiled header.
+* @author Spiecs.
+*/
+
 #pragma once
 
 // std
