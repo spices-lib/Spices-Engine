@@ -1,3 +1,9 @@
+/**
+* @file MeshPack.cpp.
+* @brief The MeshPack Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "MeshPack.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
@@ -54,7 +60,7 @@ namespace Spiecs {
 		}
 	}
 
-	void MeshPack::ApplyMatrix(glm::mat4 matrix)
+	void MeshPack::ApplyMatrix(const glm::mat4& matrix)
 	{
 		for (int i = 0; i < m_Vertices.size(); i++)
 		{

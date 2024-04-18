@@ -1,3 +1,9 @@
+/**
+* @file Vertex.cpp.
+* @brief The Vertex Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "Vertex.h"
 

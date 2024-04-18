@@ -1,3 +1,9 @@
+/**
+* @file Mesh.cpp.
+* @brief The Mesh Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "Mesh.h"
 
