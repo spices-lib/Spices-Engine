@@ -31,7 +31,6 @@ namespace Spiecs {
 
 		/**
 		* @brief Destructor Function.
-		* We destroy pipeline layout here.
 		*/
 		virtual ~MeshRenderer() {};
 

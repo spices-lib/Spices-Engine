@@ -1,3 +1,9 @@
+/**
+* @file RendererManager.cpp.
+* @brief The RendererManager Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "Renderer.h"
 #include "RendererManager.h"

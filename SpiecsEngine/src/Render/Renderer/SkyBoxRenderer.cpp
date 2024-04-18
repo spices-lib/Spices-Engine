@@ -1,18 +1,48 @@
+/**
+* @file SkyBoxRenderer.cpp.
+* @brief The SkyBoxRenderer Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "SkyBoxRenderer.h"
 
 namespace Spiecs {
 
+	/**
+	* @brief This struct is specific SkyBoxRenderer PsuhConstant
+	*/
 	struct PushConstant
 	{
+		/**
+		* @brief Meshpack ModelMatrix.
+		*/
 		glm::mat4 model = glm::mat4(1.0f);
+
+		/**
+		* @brief Entityid, cast from entt::entity.
+		*/
 		int entityID = -1;
+
+		/**
+		* @brief Meshpackid, from arrayindex of meshpack.
+		*/
 		int meshpackID = -1;
 	};
 
+	/**
+	* @brief VertexShader Stage uniform buffer data.
+	*/
 	struct VertRendererUBO
 	{
+		/**
+		* @brief Projection Matrix.
+		*/
 		glm::mat4 projection = glm::mat4(1.0f);
+
+		/**
+		* @brief View Matrix.
+		*/
 		glm::mat4 view = glm::mat4(1.0f);
 	};
 
