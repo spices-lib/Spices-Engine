@@ -1,3 +1,9 @@
+/**
+* @file MeshRenderer.h.
+* @brief The MeshRenderer Class Definitions.
+* @author Spiecs.
+*/
+
 #pragma once
 #include "Renderer.h"
 
@@ -5,36 +11,95 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief MeshRenderer Class.
+	* This class defines the mesh component render behaver.
+	*/
 	class MeshRenderer : public Renderer
 	{
 	public:
+
+		/**
+		* @brief Constructor Function.
+		* Init member veriables.
+		* @param[in] rendererName The name of this Renderer.
+		* @param[in] vulkanState The core vulkan objects that in use.
+		* @param[in] desctiptorPool The DesctiptorPool.
+		*/
 		MeshRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool) 
 			: Renderer(rendererName, vulkanState, desctiptorPool){};
+
+		/**
+		* @brief Destructor Function.
+		* We destroy pipeline layout here.
+		*/
 		virtual ~MeshRenderer() {};
 
+		/**
+		* @brief The interface is inherited from Renderer.
+		* @param[in] frameInfo The current frame data.
+		*/
 		virtual void Render(FrameInfo& frameInfo) override;
 
 	private:
+
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create specific renderpass.
+		* @todo Implementate specific renderpass
+		*/
 		virtual void CreateRenderPass() override {};
+
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create specific pipelinelayout and buffer type descriptor.
+		*/
 		virtual void CreatePipelineLayoutAndDescriptor() override;
+
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create specific pipeline.
+		* @param[in] renderPass Renderer specific renderpass.
+		*/
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
 
 	private:
 
-	private:
+		/**
+		* @brief This struct placed the local buffer data.Specific for Meshrenderer.
+		*/
 		struct SpecificCollection : public Collection
 		{
 		private:
-			// vertexStage
+
+			/**
+			* @brief VertexSahder Stage uniform buffer. 
+			*/
 			std::unique_ptr<VulkanBuffer> m_VertRendererUBO;
 			
-
-			// fragStage
+			/**
+			* @brief FragmentSahder Stage Textures.
+			*/
 			std::unique_ptr<VulkanBuffer> m_TextureParamUBO;
+
+			/**
+			* @brief FragmentSahder Stage uniform buffer.
+			*/
 			std::unique_ptr<VulkanBuffer> m_DirectionalLightUBO;
+
+			/**
+			* @brief FragmentSahder Stage uniform buffer.
+			*/
 			std::unique_ptr<VulkanBuffer> m_PointLightUBO;
 
 		public:
+
+			/**
+			* @brief The interface of how to map the local buffer with specific set and binding.
+			* @param[in] set Specific set.
+			* @param[in] binding Specific binding.
+			* @return Returns the local buffer smart pointor.
+			*/
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) override;
 		};
 	};

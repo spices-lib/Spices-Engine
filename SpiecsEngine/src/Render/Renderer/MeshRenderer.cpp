@@ -1,21 +1,52 @@
+/**
+* @file MeshRenderer.cpp.
+* @brief The MeshRenderer Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "MeshRenderer.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
 
 namespace Spiecs {
 
+	/**
+	* @brief This struct is specific MeshRenderer PsuhConstant
+	*/
 	struct PushConstant
 	{
+		/**
+		* @brief Meshpack ModelMatrix.
+		*/
 		glm::mat4 model = glm::mat4(1.0f);
+
+		/**
+		* @brief Entityid, cast from entt::entity.
+		*/
 		int entityID = -1;
+
+		/**
+		* @brief Meshpackid, from arrayindex of meshpack.
+		*/
 		int meshpackID = -1;
 	};
 
+	/**
+	* @brief This struct contains texture data copyed from Material.
+	*/
 	struct TextureParams
 	{
+		/**
+		* @brief MeshRenderer allows 3 texture in fragment shader.
+		*/
 		Renderer::TextureParam params[3];
 
 	public:
+
+		/**
+		* @brief Copy data from Material::TextureParam.
+		* @param[in] materialTexPars This is variable referenced From Material.
+		*/
 		void CopyFromMaterial(const std::unordered_map<std::string, Material::TextureParam>& materialTexPars)
 		{
 			for (auto& pair : materialTexPars)
@@ -25,14 +56,30 @@ namespace Spiecs {
 		}
 	};
 
+	/**
+	* @brief VertexShader Stage uniform buffer data.
+	*/
 	struct VertRendererUBO
 	{
+		/**
+		* @brief Projection Matrix.
+		*/
 		glm::mat4 projection = glm::mat4(1.0f);
+
+		/**
+		* @brief View Matrix.
+		*/
 		glm::mat4 view = glm::mat4(1.0f);
 	};
 
+	/**
+	* @brief PointLight Render Data.
+	*/
 	struct PointLightUBO
 	{
+		/**
+		* @brief Each data is copyed from PointLightComponent.
+		*/
 		std::array<PointLightComponent::PointLight, 10> pointLights;
 	};
 

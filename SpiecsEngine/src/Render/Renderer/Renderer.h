@@ -28,7 +28,7 @@
 namespace Spiecs {
 
 	/**
-	* @brief  Renderer Class.
+	* @brief Renderer Class.
 	* This class defines the basic behaver of renderer.
 	* When we add an new Renderer, we need inherit from this.
 	*/
@@ -387,6 +387,9 @@ namespace Spiecs {
 
 			/**
 			* @brief The interface of how to map the local buffer with specific set and binding.
+			* @param[in] set Specific set.
+			* @param[in] binding Specific binding.
+			* @return Returns the local buffer smart pointor.
 			*/
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) = 0;
 		};
