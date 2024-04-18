@@ -1,3 +1,9 @@
+/**
+* @file EditorWorld.cpp.
+* @brief The EditorWorld Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "EditorWorld.h"
 #include "World/Entity.h"

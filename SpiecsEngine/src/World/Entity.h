@@ -43,7 +43,7 @@ namespace Spiecs {
 			return m_World->m_Registry.all_of<T>(m_EntityHandle);
 		}
 
-		UUID GetUUID() { return GetComponent<UUIDComponent>().GetUUID(); }
+		const UUID GetUUID() { return GetComponent<UUIDComponent>().GetUUID(); }
 
 		operator bool() const { return m_EntityHandle != entt::null; };
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; };
