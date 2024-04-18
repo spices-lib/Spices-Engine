@@ -17,25 +17,27 @@ namespace Spiecs {
 	/**
 	* @brief This enum defines tree types of material file.
 	* @note But not in use now.
+	* @todo If enable this enum, cuse a conflict.
 	*/
-	enum MaterialExtension
-	{
-		/**
-		* @brief error type
-		*/
-		UNKNOWN = 0,
+	
+	//enum MaterialExtension
+	//{
+	//	/**
+	//	* @brief error type
+	//	*/
+	//	UNKNOWN = 0,
 
-		/**
-		* @brief material type
-		*/
-		MATERIAL = 1,
+	//	/**
+	//	* @brief material type
+	//	*/
+	//	MATERIAL = 1,
 
-		/**
-		* @brief binary type
-		*/
-		SASSET = 2,
-	};
-
+	//	/**
+	//	* @brief binary type
+	//	*/
+	//	SASSET = 2,
+	//};
+		
 	/**
 	* @brief MaterialLoader Class.
 	* This class only defines static function for load data from material file. 

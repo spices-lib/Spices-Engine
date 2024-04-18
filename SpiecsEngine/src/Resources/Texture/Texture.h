@@ -1,3 +1,9 @@
+/**
+* @file Texture.h.
+* @brief The Texture Class Definitions.
+* @author Spiecs.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "Resources/Loader/TextureLoader.h"
@@ -7,18 +13,53 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief Texture Class.
+	* This class defines the basic behaver of texture.
+	* When we add an new Texture, we need inherit from this.
+	*/
 	class Texture
 	{
 	public:
+
+		/**
+		* @brief Constructor Function.
+		*/
 		Texture() {};
+
+		/**
+		* @brief Constructor Function.
+		* Init class variable.
+		* Usually call it.
+		* @param[in] path Image Path in disk.
+		*/
 		Texture(const std::string& path) : m_ResourcePath(path) {};
+
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~Texture() {};
 
+		/**
+		* @brief Get Specific resource, usually is a wapper of VulkanImage.
+		* @param[in] T How to get the resource.
+		* @return Returns the pointer of T.
+		* @todo Only returns T.
+		*/
 		template<typename T>
 		std::shared_ptr<T> GetResource();
 
 	protected:
+
+		/**
+		* @brief Texture's resource, coule be any kind of type.
+		*/
 		std::any m_Resource;
+
+		/**
+		* @brief Texture's path in disk.
+		* @todo Multiple path container.
+		*/
 		std::string m_ResourcePath;
 	};
 
