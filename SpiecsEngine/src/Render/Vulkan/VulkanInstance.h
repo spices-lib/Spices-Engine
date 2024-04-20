@@ -13,6 +13,7 @@ namespace Spiecs {
 	/**
 	* @brief VulkanInstance Class.
 	* This class defines the VulkanInstance behaver.
+	* This class is just a wapper of vkinstance and vksurface.
 	*/
 	class VulkanInstance : public VulkanObject
 	{
@@ -20,7 +21,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Create vkinstance.
+		* Create vkinstance and vksurface.
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] name Application name.
 		* @param[in] enginename Engine name.

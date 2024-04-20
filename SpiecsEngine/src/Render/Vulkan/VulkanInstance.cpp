@@ -298,6 +298,9 @@ namespace Spiecs {
 
 	void VulkanInstance::CreateVulkanSurface()
 	{
+		/**
+		* @brief Create surface and set it global.
+		*/
 		VK_CHECK(glfwCreateWindowSurface(m_VulkanState.m_Instance, m_VulkanState.m_Windows, nullptr, &m_VulkanState.m_Surface));
 	}
 

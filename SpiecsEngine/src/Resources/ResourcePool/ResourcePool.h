@@ -57,7 +57,7 @@ namespace Spiecs {
 		* @param[in] isCopy Whether this resource needs copy rather than reference.
 		* @return Returns resource smart pointer.
 		*/
-		template<typename T1>
+		template<typename Ty>
 		static std::shared_ptr<T> Load(const std::string& path, bool isCopy = false);
 
 		/**
@@ -78,7 +78,7 @@ namespace Spiecs {
 	std::unordered_map<std::string, std::shared_ptr<T>> ResourcePool<T>::m_Resources;
 
 	template<typename T>
-	template<typename T1>
+	template<typename Ty>
 	inline std::shared_ptr<T> ResourcePool<T>::Load(const std::string& path, bool isCopy)
 	{
 		if (m_Resources.find(path) != m_Resources.end())
@@ -87,7 +87,7 @@ namespace Spiecs {
 		}
 		else
 		{
-			m_Resources[path] = std::make_shared<T1>(path);
+			m_Resources[path] = std::make_shared<Ty>(path);
 
 			return m_Resources[path];
 		}
