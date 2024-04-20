@@ -65,6 +65,30 @@ namespace Spiecs {
 		bool CheckExtensionRequirementsSatisfied();
 
 		/**
+		* @brief Get all instance layer requirements our engine needede.
+		* Source 1 : user Setting.
+		* @todo Configurable
+		*/
+		void GetLayerRequirements();
+
+		/**
+		* @brief Iter all our layers, check whether all satisfied or not.
+		* @return Returns true if all layers satisfied.
+		*/
+		bool ChecklayerRequirementsSatisfied();
+
+		/**
+		* @brief Set Vulkan's debug message callback function pointer.
+		* Working with DEBUG mode.
+		*/
+		void SetVulkanDebugCallbackFuncPointer();
+
+		/**
+		* @brief Create a Surface Object.
+		*/
+		void CreateVulkanSurface();
+
+		/**
 		* @brief Static function Called on a vulkan debug message transfered.
 		* @param[in] messageSeverity VkDebugUtilsMessageSeverityFlagBitsEXT.
 		* @param[in] messageType VkDebugUtilsMessageTypeFlagsEXT.
