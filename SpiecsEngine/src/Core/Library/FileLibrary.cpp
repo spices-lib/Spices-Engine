@@ -83,7 +83,7 @@ namespace Spiecs {
 	{
 		if (handle->handle && line_buf && out_line_length && max_length > 0) {
 			char* buf = *line_buf;
-			if (fgets(buf, max_length, (FILE*)handle->handle) != 0) {
+			if (fgets(buf, (int)max_length, (FILE*)handle->handle) != 0) {
 				*out_line_length = strlen(*line_buf);
 				return true;
 			}

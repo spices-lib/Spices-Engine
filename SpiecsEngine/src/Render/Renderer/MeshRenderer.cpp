@@ -156,7 +156,7 @@ namespace Spiecs {
 		if (set == 2 && binding == 1) return m_DirectionalLightUBO;
 		if (set == 2 && binding == 2) return m_PointLightUBO;
 		
-
+		return m_VertRendererUBO;
 		__debugbreak();
 		SPIECS_LOG("Out of Range");
 	}

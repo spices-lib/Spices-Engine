@@ -31,6 +31,7 @@ namespace Spiecs {
 	VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(VulkanState& vulkanState, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings)
 		: VulkanObject(vulkanState)
 		, m_Bindings(bindings)
+		, m_DescriptorSetLayout{}
 	{
 		std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};
 		for (auto& kv : bindings) {
@@ -215,7 +216,7 @@ namespace Spiecs {
 		for (auto& write : M_Writes) {
 			write.dstSet = set;
 		}
-		vkUpdateDescriptorSets(m_Pool.m_VulkanState.m_Device, M_Writes.size(), M_Writes.data(), 0, nullptr);
+		vkUpdateDescriptorSets(m_Pool.m_VulkanState.m_Device, static_cast<uint32_t>(M_Writes.size()), M_Writes.data(), 0, nullptr);
 	}
 
 }

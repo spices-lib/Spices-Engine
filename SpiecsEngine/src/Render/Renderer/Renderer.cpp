@@ -106,7 +106,7 @@ namespace Spiecs {
 		*/
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			int setSize = m_Renderer->m_VulkanLayoutWriters.size();
+			int setSize = (int)m_Renderer->m_VulkanLayoutWriters.size();
 			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, setSize);
 
 			for (int j = 0; j < setSize; j++)
@@ -153,14 +153,14 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindAllBufferTyepDescriptorSet()
 	{
-		int setCount = m_Renderer->m_VulkanLayoutWriters.size();
+		int setCount = (int)m_Renderer->m_VulkanLayoutWriters.size();
 		for (int i = 0; i < setCount; i++)
 		{
 			bool IsPureBufferTypeSet = true;
 
 			if (!m_Renderer->m_VulkanLayoutWriters[i]) continue;
 
-			int bindingCount = m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().size();
+			int bindingCount = (int)m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().size();
 			for (int j = 0; j < bindingCount; j++)
 			{
 				if (m_Renderer->m_VulkanLayoutWriters[i]->GetWritters()[j].descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)

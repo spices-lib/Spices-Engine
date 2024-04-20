@@ -22,7 +22,7 @@ namespace Spiecs {
 
 	void MeshPack::OnDraw(VkCommandBuffer& commandBuffer)
 	{
-		vkCmdDrawIndexed(commandBuffer, m_Indices.size(), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 	}
 
 	void MeshPack::CreateBuffer()
@@ -86,11 +86,11 @@ namespace Spiecs {
 
 	void SquarePack::OnCreatePack(bool isCreateBuffer)
 	{
-		for (int i = 0; i < m_Rows; i++)
+		for (uint32_t i = 0; i < m_Rows; i++)
 		{
 			float rowRamp = i / float(m_Rows - 1) - 0.5f;  // -0.5f ~ 0.5f
 
-			for (int j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Colums; j++)
 			{
 				float colRamp = j / float(m_Colums - 1) - 0.5f; // -0.5f ~ 0.5f
 
@@ -104,9 +104,9 @@ namespace Spiecs {
 			}
 		}
 
-		for (int i = 0; i < m_Rows; i++)
+		for (uint32_t i = 0; i < m_Rows; i++)
 		{
-			for (int j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Colums; j++)
 			{
 				if (i == (m_Rows - 1) || j == (m_Colums - 1)) continue;
 
@@ -133,7 +133,7 @@ namespace Spiecs {
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
 			pack.ApplyMatrix(tran);
-			pack.CopyToIndices(m_Indices, m_Indices.size());
+			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Indices.size()));
 			pack.CopyToVertices(m_Vertices);
 			
 		}
@@ -145,7 +145,7 @@ namespace Spiecs {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
 			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
 			pack.CopyToVertices(m_Vertices);
 			
 		}
@@ -157,7 +157,7 @@ namespace Spiecs {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
 			pack.CopyToVertices(m_Vertices);
 			
 		}
@@ -169,7 +169,7 @@ namespace Spiecs {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
 			pack.CopyToVertices(m_Vertices);
 			
 		}
@@ -181,7 +181,7 @@ namespace Spiecs {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
 			pack.CopyToVertices(m_Vertices);
 			
 		}
@@ -193,7 +193,7 @@ namespace Spiecs {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, m_Vertices.size());
+			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
 			pack.CopyToVertices(m_Vertices);
 			
 		}
@@ -209,13 +209,13 @@ namespace Spiecs {
 	
 	void SpherePack::OnCreatePack(bool isCreateBuffer)
 	{
-		for (int i = 0; i < m_Rows; i++)
+		for (uint32_t i = 0; i < m_Rows; i++)
 		{
 			float rowRamp = i / float(m_Rows - 1) * 180.0f; // 0 ~ 180
 
-			for (int j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Colums; j++)
 			{
-				float colRamp = j * 360.0 / float(m_Colums - 1); // 0 ~ 360
+				float colRamp = j * 360.0f / float(m_Colums - 1); // 0 ~ 360
 
 				Vertex vt;
 				vt.position = { glm::sin(glm::radians(rowRamp)) * glm::sin(glm::radians(colRamp)), glm::cos(glm::radians(rowRamp)), glm::sin(glm::radians(rowRamp)) * glm::cos(glm::radians(colRamp)) };
@@ -227,9 +227,9 @@ namespace Spiecs {
 			}
 		}
 
-		for (int i = 0; i < m_Rows; i++)
+		for (uint32_t i = 0; i < m_Rows; i++)
 		{
-			for (int j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Colums; j++)
 			{
 				if (i == (m_Rows - 1) || j == (m_Colums - 1)) continue;
 

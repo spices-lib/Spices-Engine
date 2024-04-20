@@ -47,7 +47,7 @@ namespace Spiecs {
 		write.dstBinding = 0;
 		write.dstSet = m_DescriptorSet;
 		write.pImageInfo = imageInfos.data();
-		write.descriptorCount = imageInfos.size();
+		write.descriptorCount = static_cast<uint32_t>(imageInfos.size());
 
 		vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
 	}

@@ -38,7 +38,7 @@ namespace Spiecs {
 	template<typename T>
 	inline void ContainerLibrary::Resize(std::vector<T>& vector, uint32_t newSize)
 	{
-		uint32_t size = vector.size();
+		uint32_t size = (uint32_t)vector.size();
 
 		if (size < newSize)
 		{

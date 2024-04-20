@@ -38,22 +38,22 @@ namespace Spiecs {
 			/**
 			* @brief Intensity of PointLight.
 			*/
-			float intensity = 1.0;
+			float intensity = 1.0f;
 
 			/**
 			* @brief Constantf of PointLight.
 			*/
-			float constantf = 1.0;
+			float constantf = 1.0f;
 
 			/**
 			* @brief Linear of PointLight.
 			*/
-			float linear = 0.35;
+			float linear = 0.35f;
 
 			/**
 			* @brief Quadratic of PointLight.
 			*/
-			float quadratic = 0.44;
+			float quadratic = 0.44f;
 		};
 
 	public:

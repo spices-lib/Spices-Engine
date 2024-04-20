@@ -154,7 +154,7 @@ namespace Spiecs {
 		* only one
 		* @todo multiple descriptor set.
 		*/
-		VkDescriptorSet m_DescriptorSet;
+		VkDescriptorSet m_DescriptorSet{};
 
 		/**
 		* @brief Shader path

@@ -101,5 +101,7 @@ namespace Spiecs {
 	std::unique_ptr<VulkanBuffer>& SkyBoxRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
 		if (set == 0 && binding == 0) return m_VertRendererUBO;
+
+		return m_VertRendererUBO;
 	}
 }

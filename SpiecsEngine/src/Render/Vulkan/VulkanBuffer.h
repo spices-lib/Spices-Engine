@@ -22,12 +22,12 @@ namespace Spiecs {
 	private:
 		void CreateBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
 	private:
-		VkDeviceSize m_DeviceSize;
-		VkBufferUsageFlags m_Uasge;
-		VkMemoryPropertyFlags m_Flags;
+		VkDeviceSize m_DeviceSize{};
+		VkBufferUsageFlags m_Uasge{};
+		VkMemoryPropertyFlags m_Flags{};
 
-		VkBuffer m_Buffer;
-		VkDeviceMemory m_BufferMemory;
+		VkBuffer m_Buffer{};
+		VkDeviceMemory m_BufferMemory{};
 
 		void* m_LocalMemory = nullptr;
 

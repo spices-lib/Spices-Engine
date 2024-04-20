@@ -26,15 +26,15 @@ namespace Spiecs {
 		VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; };
 
 	private:
-		int m_Width;
-		int m_Height;
+		int m_Width = 0;
+		int m_Height = 0;
 		int m_Layers = 1;
 
 		uint32_t m_MipLevels = 1;
-		VkImage m_Image;
-		VkDeviceMemory m_ImageMemory;
-		VkImageView m_ImageView;
-		VkSampler m_TextureSampler;
+		VkImage m_Image{};
+		VkDeviceMemory m_ImageMemory{};
+		VkImageView m_ImageView{};
+		VkSampler m_TextureSampler{};
 
 		VkDescriptorImageInfo m_ImageInfo{};
 		VkDescriptorSet m_DescriptorSet{};
