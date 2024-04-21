@@ -138,25 +138,6 @@ namespace Spiecs {
 				VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_SwapChainImageSamplers[i]));
 			}
 		}
-		SPIECS_LOG("SwapchainImageViews created succeed!!!");
-
-		{
-			VkFormat colorFormat = m_VulkanDevice->GetSwapChainSupport().format.format;
-
-			m_ColorImage = std::make_unique<VulkanImage>(
-				m_VulkanState,
-				m_VulkanDevice->GetSwapChainSupport().extent.width,
-				m_VulkanDevice->GetSwapChainSupport().extent.height,
-				m_VulkanDevice->GetMaxUsableSampleCount(),
-				colorFormat,
-				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				1);
-
-			m_ColorImage->CreateImageView(colorFormat, VK_IMAGE_ASPECT_COLOR_BIT);
-			m_ColorImage->CreateSampler();
-		}
 
 		{
 			VkFormat depthFormat = FindDepthFormat(m_VulkanState.m_PhysicalDevice);
@@ -165,7 +146,7 @@ namespace Spiecs {
 				m_VulkanState,
 				m_VulkanDevice->GetSwapChainSupport().extent.width,
 				m_VulkanDevice->GetSwapChainSupport().extent.height,
-				m_VulkanDevice->GetMaxUsableSampleCount(),
+				VK_SAMPLE_COUNT_1_BIT,
 				depthFormat,
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -182,7 +163,7 @@ namespace Spiecs {
 		}
 
 		for (size_t i = 0; i < m_SwapChainImageViews.size(); i++) {
-			std::array<VkImageView, 3> attachments[] = { m_ColorImage->GetView(), m_DepthImage->GetView(), m_SwapChainImageViews[i] };
+			std::array<VkImageView, 2> attachments[] = { m_SwapChainImageViews[i], m_DepthImage->GetView() };
 
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

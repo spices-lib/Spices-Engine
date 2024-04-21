@@ -13,13 +13,13 @@ namespace Spiecs {
 		*/
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = vulkanDevice->GetSwapChainSupport().format.format;
-		colorAttachment.samples = vulkanDevice->GetMaxUsableSampleCount();
+		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		VkAttachmentReference colorAttachmentRef{};
 		colorAttachmentRef.attachment = 0;
@@ -31,7 +31,7 @@ namespace Spiecs {
 		*/
 		VkAttachmentDescription depthAttachment{};
 		depthAttachment.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
-		depthAttachment.samples = vulkanDevice->GetMaxUsableSampleCount();
+		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -44,23 +44,6 @@ namespace Spiecs {
 		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 
-		/**
-		* @brief ColorResolveAttachment
-		*/
-		VkAttachmentDescription colorAttachmentResolve{};
-		colorAttachmentResolve.format = vulkanDevice->GetSwapChainSupport().format.format;
-		colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		VkAttachmentReference colorAttachmentResolveRef{};
-		colorAttachmentResolveRef.attachment = 2;
-		colorAttachmentResolveRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
 		std::vector<VkAttachmentReference> colorAttachments = { colorAttachmentRef };
 
 
@@ -69,9 +52,8 @@ namespace Spiecs {
 		subpass.colorAttachmentCount = colorAttachments.size();
 		subpass.pColorAttachments = colorAttachments.data();
 		subpass.pDepthStencilAttachment = &depthAttachmentRef;
-		subpass.pResolveAttachments = &colorAttachmentResolveRef;
 
-		std::array<VkAttachmentDescription, 3> attachments = { colorAttachment, depthAttachment, colorAttachmentResolve };
+		std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
 
 		VkSubpassDependency dependency{};
 		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -91,7 +73,6 @@ namespace Spiecs {
 		renderPassInfo.pDependencies = &dependency;
 
 		VK_CHECK(vkCreateRenderPass(m_VulkanState.m_Device, &renderPassInfo, nullptr, &m_VulkanState.m_RenderPass));
-		SPIECS_LOG("VkRenderPass created succeed!!!");
 	}
 
 	VulkanRenderPass::~VulkanRenderPass()
