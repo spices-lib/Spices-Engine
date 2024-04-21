@@ -1,98 +1,194 @@
+/**
+* @file VulkanRenderPass.cpp.
+* @brief The VulkanRenderPass Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "VulkanRenderPass.h"
-#include "VulkanSwapChain.h"
 
 namespace Spiecs {
 
 	VulkanRenderPass::VulkanRenderPass(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice)
 		: VulkanObject(vulkanState)
 		, m_VulkanDevice(vulkanDevice)
-	{
-		/**
-		* @brief ColorAttachment
-		*/
-		VkAttachmentDescription colorAttachment{};
-		colorAttachment.format = vulkanDevice->GetSwapChainSupport().format.format;
-		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		VkAttachmentReference colorAttachmentRef{};
-		colorAttachmentRef.attachment = 0;
-		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		/**
-		* @brief NormalAttachment
-		*/
-		VkAttachmentDescription normalAttachment{};
-		normalAttachment.format = vulkanDevice->GetSwapChainSupport().format.format;
-		normalAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		normalAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		normalAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		normalAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		normalAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		normalAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		normalAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		VkAttachmentReference normalAttachmentRef{};
-		normalAttachmentRef.attachment = 1;
-		normalAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		/**
-		* @brief DepthAttachment
-		*/
-		VkAttachmentDescription depthAttachment{};
-		depthAttachment.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
-		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-		VkAttachmentReference depthAttachmentRef{};
-		depthAttachmentRef.attachment = 2;
-		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-
-		std::vector<VkAttachmentReference> colorAttachments = { colorAttachmentRef, normalAttachmentRef };
-
-		VkSubpassDescription subpass{};
-		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpass.colorAttachmentCount = colorAttachments.size();
-		subpass.pColorAttachments = colorAttachments.data();
-		subpass.pDepthStencilAttachment = &depthAttachmentRef;
-
-		std::vector<VkAttachmentDescription> attachments = { colorAttachment, normalAttachment, depthAttachment };
-
-		VkSubpassDependency dependency{};
-		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-		dependency.srcAccessMask = 0;
-		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-
-		VkRenderPassCreateInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-		renderPassInfo.pAttachments = attachments.data();
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpass;
-		renderPassInfo.dependencyCount = 1;
-		renderPassInfo.pDependencies = &dependency;
-
-		VK_CHECK(vkCreateRenderPass(m_VulkanState.m_Device, &renderPassInfo, nullptr, &m_VulkanState.m_RenderPass));
-	}
+	{}
 
 	VulkanRenderPass::~VulkanRenderPass()
 	{
-		vkDestroyRenderPass(m_VulkanState.m_Device, m_VulkanState.m_RenderPass, nullptr);
+		/**
+		* @brief Destroy FrameBuffer.
+		*/
+		for (auto framebuffer : m_SwapChainFramebuffers) 
+		{
+			vkDestroyFramebuffer(m_VulkanState.m_Device, framebuffer, nullptr);
+		}
+
+		/**
+		* @brief Destroy RenderPass.
+		*/
+		vkDestroyRenderPass(m_VulkanState.m_Device, m_RenderPass, nullptr);
 	}
 
+	void VulkanRenderPass::Build()
+	{
+		/**
+		* @brief Instanced a VkSubpassDescription with default value.
+		*/
+		VkSubpassDescription subpass{};
+
+		/**
+		* @brief Fill in pipelineBindPoint.
+		*/
+		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+
+		/**
+		* @brief Fill in colorAttachmentCount.
+		*/
+		subpass.colorAttachmentCount = (uint32_t)m_ColorAttachmentRef.size();
+
+		/**
+		* @brief Fill in pColorAttachments.
+		*/
+		subpass.pColorAttachments = m_ColorAttachmentRef.data();
+
+		/**
+		* @brief Fill in pDepthStencilAttachment.
+		*/
+		subpass.pDepthStencilAttachment = &m_DepthAttachmentRef;
+
+		/**
+		* @brief Instanced a VkSubpassDependency with default value.
+		*/
+		VkSubpassDependency dependency{};
+
+		/**
+		* @brief Fill in srcSubpass.
+		*/
+		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+
+		/**
+		* @brief Fill in dstSubpass.
+		*/
+		dependency.dstSubpass = 0;
+
+		/**
+		* @brief Fill in srcStageMask.
+		*/
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+
+		/**
+		* @brief Fill in srcAccessMask.
+		*/
+		dependency.srcAccessMask = 0;
+
+		/**
+		* @brief Fill in dstStageMask.
+		*/
+		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+
+		/**
+		* @brief Fill in dstAccessMask.
+		*/
+		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+		/**
+		* @brief Instanced a VkRenderPassCreateInfo with default value.
+		*/
+		VkRenderPassCreateInfo renderPassInfo{};
+
+		/**
+		* @brief Fill in sType.
+		*/
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+
+		/**
+		* @brief Fill in attachmentCount.
+		*/
+		renderPassInfo.attachmentCount = static_cast<uint32_t>(m_Attachments.size());
+
+		/**
+		* @brief Fill in pAttachments.
+		*/
+		renderPassInfo.pAttachments = m_Attachments.data();
+
+		/**
+		* @brief Fill in subpassCount.
+		*/
+		renderPassInfo.subpassCount = 1;
+
+		/**
+		* @brief Fill in pSubpasses.
+		*/
+		renderPassInfo.pSubpasses = &subpass;
+
+		/**
+		* @brief Fill in dependencyCount.
+		*/
+		renderPassInfo.dependencyCount = 1;
+
+		/**
+		* @brief Fill in pDependencies.
+		*/
+		renderPassInfo.pDependencies = &dependency;
+
+		/**
+		* @brief CreateRenderPass.
+		*/
+		VK_CHECK(vkCreateRenderPass(m_VulkanState.m_Device, &renderPassInfo, nullptr, &m_RenderPass));
+
+		for (size_t i = 0; i < MaxFrameInFlight; i++)
+		{
+			/**
+			* @brief Add SwapChian's image to local variable.
+			*/
+			std::vector<VkImageView> attachments = m_AttachmentsView;
+			attachments.emplace(attachments.begin(), m_VulkanState.m_SwapChainImageViews[i]);
+
+			/**
+			* @brief Instanced a VkFramebufferCreateInfo with default value.
+			*/
+			VkFramebufferCreateInfo framebufferInfo{};
+
+			/**
+			* @brief Fill in sType.
+			*/
+			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+
+			/**
+			* @brief Fill in renderPass.
+			*/
+			framebufferInfo.renderPass = m_RenderPass;
+
+			/**
+			* @brief Fill in attachmentCount.
+			*/
+			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+
+			/**
+			* @brief Fill in pAttachments.
+			*/
+			framebufferInfo.pAttachments = attachments.data();
+
+			/**
+			* @brief Fill in width.
+			*/
+			framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
+
+			/**
+			* @brief Fill in height.
+			*/
+			framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+
+			/**
+			* @brief Fill in layers.
+			*/
+			framebufferInfo.layers = 1;
+
+			/**
+			* @brief CreateFrameBuffer.
+			*/
+			VK_CHECK(vkCreateFramebuffer(m_VulkanState.m_Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]));
+		}
+	}
 }

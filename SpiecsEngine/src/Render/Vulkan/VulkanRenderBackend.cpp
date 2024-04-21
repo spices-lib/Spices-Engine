@@ -16,7 +16,6 @@ namespace Spiecs {
 		m_VulkanDevice = std::make_shared<VulkanDevice>(m_VulkanState);
 		m_VulkanCommandPool = std::make_unique<VulkanCommandPool>(m_VulkanState, m_VulkanDevice->GetQueueHelper().graphicqueuefamily.value());
 		m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
-		m_VulkanRenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_VulkanDevice);
 		m_VulkanSwapChain = std::make_unique<VulkanSwapChain>(m_VulkanState, m_VulkanDevice);
 
 		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
@@ -27,8 +26,8 @@ namespace Spiecs {
 
 		// TODO: Move to  
 		RendererManager::Get()
-			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool)
-			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool);
+			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice)
+			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
@@ -53,6 +52,8 @@ namespace Spiecs {
 
 		m_VulkanSwapChain->Destroy();
 		m_VulkanSwapChain->Create();
+
+		RendererManager::Get().OnWindowResized();
 	}
 
 	void VulkanRenderBackend::beginFrame(FrameInfo& frameInfo)
@@ -75,23 +76,6 @@ namespace Spiecs {
 
 		VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo));
 
-		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_VulkanState.m_RenderPass;
-		renderPassInfo.framebuffer = m_VulkanSwapChain->GetFramebuffer(frameInfo.m_Imageindex);
-		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_VulkanDevice->GetSwapChainSupport().extent;
-
-		std::array<VkClearValue, 3> clearValues = {};
-		clearValues[0].color = { {0.1f, 0.1f, 0.1f, 1.0f} };
-		clearValues[1].color = { {0.1f, 0.1f, 0.1f, 1.0f} };
-		clearValues[2].depthStencil = { 1.0f, 0 };
-
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-		renderPassInfo.pClearValues = clearValues.data();
-
-		vkCmdBeginRenderPass(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
 		/**
 		* @brief Use Negative Viewport height filp here to handle axis difference.
 		* Remember enable device extension (VK_KHR_MAINTENANCE1)
@@ -113,8 +97,6 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::endFrame(FrameInfo& frameInfo)
 	{
-		vkCmdEndRenderPass(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
-
 		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]));
 
 		vkResetFences(m_VulkanState.m_Device, 1, &m_VulkanState.m_Fence[frameInfo.m_FrameIndex]);

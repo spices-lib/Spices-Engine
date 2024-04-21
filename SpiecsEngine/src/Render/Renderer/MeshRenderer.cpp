@@ -83,6 +83,39 @@ namespace Spiecs {
 		std::array<PointLightComponent::PointLight, 10> pointLights;
 	};
 
+	void MeshRenderer::CreateRenderPass()
+	{
+		/**
+		* @brief Declear an empty VulkanRenderPass Object.
+		*/
+		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device);
+
+		/**
+		* @brief Add SwapChian Attachment.
+		*/
+		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Add Normal Attachment.
+		*/
+		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Add ID Attachment.
+		*/
+		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Add Depth Attachment.
+		*/
+		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Create VkRenderPass, Resource, FrameBuffer.
+		*/
+		m_RenderPass->Build();
+	}
+
 	void MeshRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
@@ -102,6 +135,8 @@ namespace Spiecs {
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = renderPass;
 		pipelineConfig.pipelineLayout = m_PipelineLayout;
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
 		m_VulkanPipeline = std::make_unique<VulkanPipeline>(
 			m_VulkanState,
 			GetSahderPath("vert"),
@@ -147,6 +182,8 @@ namespace Spiecs {
 
 			return false;
 		});
+
+		builder.EndRenderPass();
 	}
 
 	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)

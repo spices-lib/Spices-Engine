@@ -25,4 +25,12 @@ namespace Spiecs {
 			pair.second->Render(frameInfo);
 		}
 	}
+
+	void RendererManager::OnWindowResized()
+	{
+		for (auto& pair : m_Identities)
+		{
+			pair.second->OnWindowResized();
+		}
+	}
 }

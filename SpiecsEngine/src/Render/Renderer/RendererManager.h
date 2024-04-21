@@ -46,6 +46,13 @@ namespace Spiecs {
 		static void Run(FrameInfo& frameInfo);
 
 		/**
+		* @brief This function is called on swapchian resized or out of data.
+		* Recreate all renderer renderpass, resource and framebuffer.
+		* @todo Event from glfw.
+		*/
+		static void OnWindowResized();
+
+		/**
 		* @brief Push a renderer to this manager, and initialize it.
 		* @param[in] T Specific Renderer Class.
 		* @param[in] rendererName Specific Renderer Name.

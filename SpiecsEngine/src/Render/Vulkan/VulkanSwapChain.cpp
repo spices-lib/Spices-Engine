@@ -78,19 +78,17 @@ namespace Spiecs {
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
 		VK_CHECK(vkCreateSwapchainKHR(m_VulkanState.m_Device, &createInfo, nullptr, &m_VulkanState.m_SwapChain));
-		SPIECS_LOG("VkSwapchainKHR create succeed!!!");
 
 		uint32_t imageCount = MaxFrameInFlight;
-		vkGetSwapchainImagesKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, &imageCount, m_SwapChainImages.data());
-		SPIECS_LOG("SwapchainImages getted!!!");
+		vkGetSwapchainImagesKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, &imageCount, m_VulkanState.m_SwapChainImages.data());
 
-		for (size_t i = 0; i < m_SwapChainImages.size(); i++) {
+		for (size_t i = 0; i < m_VulkanState.m_SwapChainImages.size(); i++) {
 
 			// imageview
 			{
 				VkImageViewCreateInfo createInfo{};
 				createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-				createInfo.image = m_SwapChainImages[i];
+				createInfo.image = m_VulkanState.m_SwapChainImages[i];
 
 				createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				createInfo.format = m_VulkanDevice->GetSwapChainSupport().format.format;
@@ -106,7 +104,7 @@ namespace Spiecs {
 				createInfo.subresourceRange.baseArrayLayer = 0;
 				createInfo.subresourceRange.layerCount = 1;
 
-				VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &createInfo, nullptr, &m_SwapChainImageViews[i]));
+				VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &createInfo, nullptr, &m_VulkanState.m_SwapChainImageViews[i]));
 			}
 
 			// Sampler
@@ -135,89 +133,18 @@ namespace Spiecs {
 				samplerInfo.minLod = 0;
 				samplerInfo.maxLod = static_cast<float>(0);
 
-				VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_SwapChainImageSamplers[i]));
+				VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_VulkanState.m_SwapChainImageSamplers[i]));
 			}
-		}
-
-		/**
-		* @brief Normal resource.
-		*/
-		{
-			VkFormat normalFormat = m_VulkanDevice->GetSwapChainSupport().format.format;
-
-			m_NormalImage = std::make_unique<VulkanImage>(
-				m_VulkanState,
-				m_VulkanDevice->GetSwapChainSupport().extent.width,
-				m_VulkanDevice->GetSwapChainSupport().extent.height,
-				VK_SAMPLE_COUNT_1_BIT,
-				normalFormat,
-				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				1
-			);
-			m_NormalImage->CreateImageView(normalFormat, VK_IMAGE_ASPECT_COLOR_BIT);
-			/*m_NormalImage->TransitionImageLayout(
-				normalFormat,
-				VK_IMAGE_LAYOUT_UNDEFINED,
-				VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL
-			);*/
-			m_NormalImage->CreateSampler();
-		}
-
-		/**
-		* @brief Depth resource.
-		*/
-		{
-			VkFormat depthFormat = FindDepthFormat(m_VulkanState.m_PhysicalDevice);
-
-			m_DepthImage = std::make_unique<VulkanImage>(
-				m_VulkanState,
-				m_VulkanDevice->GetSwapChainSupport().extent.width,
-				m_VulkanDevice->GetSwapChainSupport().extent.height,
-				VK_SAMPLE_COUNT_1_BIT,
-				depthFormat,
-				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				1
-			);
-			m_DepthImage->CreateImageView(depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
-			m_DepthImage->TransitionImageLayout(
-				depthFormat,
-				VK_IMAGE_LAYOUT_UNDEFINED,
-				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-			);
-			m_DepthImage->CreateSampler();
-		}
-
-		for (size_t i = 0; i < m_SwapChainImageViews.size(); i++) {
-			std::vector<VkImageView> attachments = { m_SwapChainImageViews[i], m_NormalImage->GetView(), m_DepthImage->GetView() };
-
-			VkFramebufferCreateInfo framebufferInfo{};
-			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = m_VulkanState.m_RenderPass;
-			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-			framebufferInfo.pAttachments = attachments.data();
-			framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
-			framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
-			framebufferInfo.layers = 1;
-
-			VK_CHECK(vkCreateFramebuffer(m_VulkanState.m_Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]));
 		}
 	}
 
 	void VulkanSwapChain::Destroy()
 	{
-		for (auto framebuffer : m_SwapChainFramebuffers) {
-			vkDestroyFramebuffer(m_VulkanState.m_Device, framebuffer, nullptr);
-		}
-
-		for (auto imageView : m_SwapChainImageViews) {
+		for (auto imageView : m_VulkanState.m_SwapChainImageViews) {
 			vkDestroyImageView(m_VulkanState.m_Device, imageView, nullptr);
 		}
 
-		for (auto sampler : m_SwapChainImageSamplers) {
+		for (auto sampler : m_VulkanState.m_SwapChainImageSamplers) {
 			vkDestroySampler(m_VulkanState.m_Device, sampler, nullptr);
 		}
 

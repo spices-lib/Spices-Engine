@@ -46,6 +46,39 @@ namespace Spiecs {
 		glm::mat4 view = glm::mat4(1.0f);
 	};
 
+	void SkyBoxRenderer::CreateRenderPass()
+	{
+		/**
+		* @brief Declear an empty VulkanRenderPass Object.
+		*/
+		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device);
+
+		/**
+		* @brief Add SwapChian Attachment.
+		*/
+		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Add Normal Attachment.
+		*/
+		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Add ID Attachment.
+		*/
+		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Add Depth Attachment.
+		*/
+		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {});
+
+		/**
+		* @brief Create VkRenderPass, Resource, FrameBuffer.
+		*/
+		m_RenderPass->Build();
+	}
+
 	void SkyBoxRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
@@ -63,6 +96,8 @@ namespace Spiecs {
 		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
 		pipelineConfig.renderPass = renderPass;
 		pipelineConfig.pipelineLayout = m_PipelineLayout;
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
 		m_VulkanPipeline = std::make_unique<VulkanPipeline>(
 			m_VulkanState,
 			GetSahderPath("vert"),
@@ -96,6 +131,8 @@ namespace Spiecs {
 
 			return false;
 		});
+
+		builder.EndRenderPass();
 	}
 
 	std::unique_ptr<VulkanBuffer>& SkyBoxRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)

@@ -50,36 +50,16 @@ namespace Spiecs {
 		configInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;
 		configInfo.multisampleInfo.alphaToOneEnable = VK_FALSE;
 
-		configInfo.colorBlendAttachment.push_back(VkPipelineColorBlendAttachmentState{});
-		configInfo.colorBlendAttachment[0].colorWriteMask =
-			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		configInfo.colorBlendAttachment[0].blendEnable = VK_FALSE;
-		configInfo.colorBlendAttachment[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		configInfo.colorBlendAttachment[0].dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		configInfo.colorBlendAttachment[0].colorBlendOp = VK_BLEND_OP_ADD;
-		configInfo.colorBlendAttachment[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		configInfo.colorBlendAttachment[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		configInfo.colorBlendAttachment[0].alphaBlendOp = VK_BLEND_OP_ADD;
-
-		configInfo.colorBlendAttachment.push_back(VkPipelineColorBlendAttachmentState{});
-		configInfo.colorBlendAttachment[1].colorWriteMask =
-			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		configInfo.colorBlendAttachment[1].blendEnable = VK_FALSE;
-		configInfo.colorBlendAttachment[1].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		configInfo.colorBlendAttachment[1].dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		configInfo.colorBlendAttachment[1].colorBlendOp = VK_BLEND_OP_ADD;
-		configInfo.colorBlendAttachment[1].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		configInfo.colorBlendAttachment[1].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		configInfo.colorBlendAttachment[1].alphaBlendOp = VK_BLEND_OP_ADD;
-
 		configInfo.colorBlendInfo = VkPipelineColorBlendStateCreateInfo{};
 		configInfo.colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		configInfo.colorBlendInfo.logicOpEnable = VK_FALSE;
 		configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;
-		configInfo.colorBlendInfo.attachmentCount = 2;
-		configInfo.colorBlendInfo.pAttachments = configInfo.colorBlendAttachment.data();
+
+		/**
+		* @brief Need Rewrite.
+		*/
+		configInfo.colorBlendInfo.attachmentCount = 0;
+		configInfo.colorBlendInfo.pAttachments = nullptr;
 		configInfo.colorBlendInfo.blendConstants[0] = 0.0f;
 		configInfo.colorBlendInfo.blendConstants[1] = 0.0f;
 		configInfo.colorBlendInfo.blendConstants[2] = 0.0f;

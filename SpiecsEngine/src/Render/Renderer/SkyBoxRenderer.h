@@ -25,8 +25,8 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		SkyBoxRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool)
-			: Renderer(rendererName, vulkanState, desctiptorPool) {};
+		SkyBoxRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device)
+			: Renderer(rendererName, vulkanState, desctiptorPool, device) {};
 
 		/**
 		* @brief Destructor Function.
@@ -44,9 +44,8 @@ namespace Spiecs {
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create specific renderpass.
-		* @todo Implementate specific renderpass
 		*/
-		virtual void CreateRenderPass() override {};
+		virtual void CreateRenderPass() override;
 
 		/**
 		* @brief The interface is inherited from Renderer.

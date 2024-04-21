@@ -88,15 +88,24 @@ namespace Spiecs {
 		VkQueue m_ComputeQueue;
 
 		/**
-		* @brief From VulkanRenderPass.
-		* @todo Remove, and defined from specific Renderer.
-		*/
-		VkRenderPass m_RenderPass;
-
-		/**
 		* @brief From VulkanSwapChain.
 		*/
 		VkSwapchainKHR m_SwapChain;
+
+		/**
+		* @brief The SwapChain's image, used for present.
+		*/
+		std::array<VkImage, MaxFrameInFlight> m_SwapChainImages;
+
+		/**
+		* @brief The SwapChain's imageView.
+		*/
+		std::array<VkImageView, MaxFrameInFlight> m_SwapChainImageViews;
+
+		/**
+		* @brief The SwapChain's imageSampler.
+		*/
+		std::array<VkSampler, MaxFrameInFlight> m_SwapChainImageSamplers;
 
 		/**
 		* @brief From VulkanCommandBuffer

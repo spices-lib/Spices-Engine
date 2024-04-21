@@ -9,10 +9,12 @@
 
 namespace Spiecs {
 
-	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool)
+	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device)
 		: m_RendererName(rendererName)
 		, m_VulkanState(vulkanState) 
 		, m_DesctiptorPool(desctiptorPool)
+		, m_Device(device)
+		, m_PipelineLayout{}
 	{}
 
 	Renderer::~Renderer()
@@ -35,7 +37,7 @@ namespace Spiecs {
 		/**
 		* @brief create pipeline.
 		*/
-		CreatePipeline(m_VulkanState.m_RenderPass);
+		CreatePipeline(m_RenderPass->Get());
 	}
 
 	std::string Renderer::GetSahderPath(const std::string& shaderType)
@@ -144,6 +146,8 @@ namespace Spiecs {
 		BindPipeline();
 
 		BindAllBufferTyepDescriptorSet();
+
+		BeginRenderPass();
 	}
 
 	void Renderer::RenderBehaverBuilder::BindPipeline()
@@ -175,6 +179,26 @@ namespace Spiecs {
 				BindDescriptorSet(i, m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[i]);
 			}
 		}
+	}
+
+	void Renderer::RenderBehaverBuilder::BeginRenderPass()
+	{
+		VkRenderPassBeginInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass = m_Renderer->m_RenderPass->Get();
+		renderPassInfo.framebuffer = m_Renderer->m_RenderPass->GetFramebuffer(m_CurrentFrame);
+		renderPassInfo.renderArea.offset = { 0, 0 };
+		renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().extent;
+
+		renderPassInfo.clearValueCount = (uint32_t)m_Renderer->m_RenderPass->GetClearValues().size();
+		renderPassInfo.pClearValues = m_Renderer->m_RenderPass->GetClearValues().data();
+
+		vkCmdBeginRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	}
+
+	void Renderer::RenderBehaverBuilder::EndRenderPass()
+	{
+		vkCmdEndRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
 	void Renderer::RenderBehaverBuilder::BindDescriptorSet(uint32_t set, VkDescriptorSet& descriptorset)

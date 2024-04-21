@@ -14,6 +14,7 @@
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "RendererManager.h"
 #include "Core/Library/ContainerLibrary.h"
+#include "Render/Vulkan/VulkanRenderPass.h"
 #include "World/World/World.h"
 
 #include "World/Components/MeshComponent.h"
@@ -43,7 +44,7 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool);
+		Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device);
 
 		/**
 		* @brief Destructor Function.
@@ -68,6 +69,11 @@ namespace Spiecs {
 		* @param[in] frameInfo The current frame data.
 		*/
 		virtual void Render(FrameInfo& frameInfo) = 0;
+
+		/**
+		* @brief Recreate VulkanRenderPass.
+		*/
+		void OnWindowResized() { CreateRenderPass(); };
 
 		/**
 		* @brief The Function is called on this attached.
@@ -349,6 +355,18 @@ namespace Spiecs {
 			template<typename T, typename F>
 			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
 
+			/**
+			* @brief Begin this Renderer's RenderPass.
+			* Call it auto.
+			*/
+			void BeginRenderPass();
+
+			/**
+			* @brief End this Renderer's RenderPass.
+			* Call it manually.
+			*/
+			void EndRenderPass();
+
 		private:
 
 			/**
@@ -406,10 +424,12 @@ namespace Spiecs {
 		*/
 		std::shared_ptr<VulkanDescriptorPool> m_DesctiptorPool;
 
+		std::shared_ptr<VulkanDevice> m_Device;
+
 		/**
-		* VkRenderPass m_RenderPass;
-		* @todo renderpass variable.
+		* @brief This variable is a Wapper of VkRenderPass.
 		*/
+		std::unique_ptr<VulkanRenderPass> m_RenderPass;
 
 		/**
 		* @brief This variable helps to set vkpipelinelayout.
@@ -447,7 +467,7 @@ namespace Spiecs {
 		/**
 		* @brief Specific renderer pipelinelayout, defined by CreatePipelineLayoutAndDescriptor().
 		*/
-		VkPipelineLayout m_PipelineLayout;
+		VkPipelineLayout m_PipelineLayout{};
 
 		/**
 		* @brief Specific renderer pipeline, defined by CreatePipeline().

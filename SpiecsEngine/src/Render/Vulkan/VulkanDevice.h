@@ -207,7 +207,7 @@ namespace Spiecs {
 		* @param[in] window The row pointer of GLFWwindow.
 		* @return Returns SwapChainSupportDetails.
 		*/
-		SwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface, GLFWwindow* window);
+		static SwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface, GLFWwindow* window);
 
 	private:
 
