@@ -139,6 +139,35 @@ namespace Spiecs {
 			}
 		}
 
+		/**
+		* @brief Normal resource.
+		*/
+		{
+			VkFormat normalFormat = m_VulkanDevice->GetSwapChainSupport().format.format;
+
+			m_NormalImage = std::make_unique<VulkanImage>(
+				m_VulkanState,
+				m_VulkanDevice->GetSwapChainSupport().extent.width,
+				m_VulkanDevice->GetSwapChainSupport().extent.height,
+				VK_SAMPLE_COUNT_1_BIT,
+				normalFormat,
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				1
+			);
+			m_NormalImage->CreateImageView(normalFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+			/*m_NormalImage->TransitionImageLayout(
+				normalFormat,
+				VK_IMAGE_LAYOUT_UNDEFINED,
+				VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL
+			);*/
+			m_NormalImage->CreateSampler();
+		}
+
+		/**
+		* @brief Depth resource.
+		*/
 		{
 			VkFormat depthFormat = FindDepthFormat(m_VulkanState.m_PhysicalDevice);
 
@@ -163,13 +192,13 @@ namespace Spiecs {
 		}
 
 		for (size_t i = 0; i < m_SwapChainImageViews.size(); i++) {
-			std::array<VkImageView, 2> attachments[] = { m_SwapChainImageViews[i], m_DepthImage->GetView() };
+			std::vector<VkImageView> attachments = { m_SwapChainImageViews[i], m_NormalImage->GetView(), m_DepthImage->GetView() };
 
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			framebufferInfo.renderPass = m_VulkanState.m_RenderPass;
-			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments->size());
-			framebufferInfo.pAttachments = attachments->data();
+			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+			framebufferInfo.pAttachments = attachments.data();
 			framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
 			framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
 			framebufferInfo.layers = 1;

@@ -25,6 +25,22 @@ namespace Spiecs {
 		colorAttachmentRef.attachment = 0;
 		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+		/**
+		* @brief NormalAttachment
+		*/
+		VkAttachmentDescription normalAttachment{};
+		normalAttachment.format = vulkanDevice->GetSwapChainSupport().format.format;
+		normalAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		normalAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		normalAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		normalAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		normalAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		normalAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		normalAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		VkAttachmentReference normalAttachmentRef{};
+		normalAttachmentRef.attachment = 1;
+		normalAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		/**
 		* @brief DepthAttachment
@@ -40,12 +56,11 @@ namespace Spiecs {
 		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		VkAttachmentReference depthAttachmentRef{};
-		depthAttachmentRef.attachment = 1;
+		depthAttachmentRef.attachment = 2;
 		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 
-		std::vector<VkAttachmentReference> colorAttachments = { colorAttachmentRef };
-
+		std::vector<VkAttachmentReference> colorAttachments = { colorAttachmentRef, normalAttachmentRef };
 
 		VkSubpassDescription subpass{};
 		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -53,7 +68,7 @@ namespace Spiecs {
 		subpass.pColorAttachments = colorAttachments.data();
 		subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
-		std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
+		std::vector<VkAttachmentDescription> attachments = { colorAttachment, normalAttachment, depthAttachment };
 
 		VkSubpassDependency dependency{};
 		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;

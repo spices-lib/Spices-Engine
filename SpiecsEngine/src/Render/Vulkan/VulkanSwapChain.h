@@ -104,9 +104,15 @@ namespace Spiecs {
 		std::array<VkSampler, MaxFrameInFlight> m_SwapChainImageSamplers;
 
 		/**
-		* @brief The FrameBuffer's attachment, used for MSAA.
+		* @brief The FrameBuffer's attachment, used for Normal.
 		*/
-		std::unique_ptr<VulkanImage> m_ColorImage;
+		std::unique_ptr<VulkanImage> m_NormalImage;
+
+		/**
+		* @brief The FrameBuffer's attachment, used for MSAA.
+		* @note MASS Color Image is not in use now.
+		*/
+		//std::unique_ptr<VulkanImage> m_ColorImage;
 
 		/**
 		* @brief The FrameBuffer's attachment, used for Depth.

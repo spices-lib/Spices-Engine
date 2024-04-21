@@ -10,6 +10,7 @@ layout(location = 0) in struct FragInput {
 
 // frag output
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outNormal;
 
 // push constant
 layout(push_constant) uniform Push{
@@ -70,6 +71,7 @@ void main()
     {
         outColor = vec4(textureParams.textureParam[diffuseTexture].constant, 0.0f) * textureParams.textureParam[diffuseTexture].intensity;
     }
+    outNormal = vec4(1.0f);
 }
 
 //vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection) {

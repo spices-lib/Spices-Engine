@@ -7,6 +7,7 @@ layout(location = 0) in struct FragInput {
 
 // frag output
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outNormal;
 
 // uniform buffer
 layout(set = 1, binding = 0) uniform sampler2D samplers[1];
@@ -30,4 +31,5 @@ void main()
 {
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPos)); // make sure to normalize localPos
     outColor = texture(samplers[diffuseTexture], uv);
+    outNormal = vec4(1.0f);
 }
