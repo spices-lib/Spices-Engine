@@ -72,8 +72,8 @@ void main()
     {
         outColor = vec4(textureParams.textureParam[diffuseTexture].constant, 0.0f) * textureParams.textureParam[diffuseTexture].intensity;
     }
-    outNormal = vec4(1.0f);
-    outID = vec4(1.0f);
+    outNormal = vec4(fragInput.normal, 1.0f);
+    outID = vec4(push.entityID, push.meshpackID, 0.0f, 0.0f);
 }
 
 //vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection) {

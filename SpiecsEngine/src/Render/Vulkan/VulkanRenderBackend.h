@@ -9,7 +9,6 @@
 #include "VulkanCommandBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanSwapChain.h"
-#include "VulkanPipeline.h"
 #include "VulkanDescriptor.h"
 
 namespace Spiecs {

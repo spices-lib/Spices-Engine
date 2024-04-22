@@ -8,8 +8,6 @@
 #include "Core/Core.h"
 #include "VulkanUtils.h"
 
-#include <functional>
-
 namespace Spiecs {
 	
 	/**

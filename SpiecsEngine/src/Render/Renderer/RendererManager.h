@@ -69,9 +69,9 @@ namespace Spiecs {
 				__debugbreak();
 			}
 
-			m_Identities[rendererName] = std::unique_ptr<Renderer>(reinterpret_cast<Renderer*>(new T(rendererName, std::forward<Args>(args)...)));
+			m_Identities[rendererName] = std::unique_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...));
 			m_Identities[rendererName]->OnSystemInitialize();
-
+			
 			/**
 			* @brief System init
 			*/

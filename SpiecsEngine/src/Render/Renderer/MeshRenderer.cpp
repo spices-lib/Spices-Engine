@@ -93,22 +93,31 @@ namespace Spiecs {
 		/**
 		* @brief Add SwapChian Attachment.
 		*/
-		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {});
+		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		});
 
 		/**
 		* @brief Add Normal Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {});
+		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		});
 
 		/**
 		* @brief Add ID Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {});
+		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		});
 
 		/**
 		* @brief Add Depth Attachment.
 		*/
-		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {});
+		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		});
 
 		/**
 		* @brief Create VkRenderPass, Resource, FrameBuffer.

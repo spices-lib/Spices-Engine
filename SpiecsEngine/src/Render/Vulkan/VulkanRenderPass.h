@@ -164,7 +164,7 @@ namespace Spiecs {
 		/**
 		* @brief Fill in loadOp.
 		*/
-		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 
 		/**
 		* @brief Fill in storeOp.
@@ -303,7 +303,7 @@ namespace Spiecs {
 		/**
 		* @brief Fill in loadOp.
 		*/
-		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 
 		/**
 		* @brief Fill in storeOp.
@@ -371,20 +371,18 @@ namespace Spiecs {
 		/**
 		* @brief Create Image Resource.
 		*/
-		VkFormat format = m_VulkanDevice->GetSwapChainSupport().format.format;
-
 		m_ColorAttachmentImage[attachmentName] = std::make_unique<VulkanImage>(
 			m_VulkanState,
 			m_VulkanDevice->GetSwapChainSupport().extent.width,
 			m_VulkanDevice->GetSwapChainSupport().extent.height,
 			attachmentDescription.samples,
-			format,
+			attachmentDescription.format,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			1
 		);
-		m_ColorAttachmentImage[attachmentName]->CreateImageView(format, VK_IMAGE_ASPECT_COLOR_BIT);
+		m_ColorAttachmentImage[attachmentName]->CreateImageView(attachmentDescription.format, VK_IMAGE_ASPECT_COLOR_BIT);
 		m_ColorAttachmentImage[attachmentName]->CreateSampler();
 
 		/**
@@ -466,7 +464,7 @@ namespace Spiecs {
 		/**
 		* @brief Fill in loadOp.
 		*/
-		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 
 		/**
 		* @brief Fill in storeOp.
@@ -534,22 +532,20 @@ namespace Spiecs {
 		/**
 		* @brief Depth resource.
 		*/
-		VkFormat depthFormat = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
-
 		m_DepthImage = std::make_unique<VulkanImage>(
 			m_VulkanState,
 			m_VulkanDevice->GetSwapChainSupport().extent.width,
 			m_VulkanDevice->GetSwapChainSupport().extent.height,
 			depthAttachment.samples,
-			depthFormat,
+			depthAttachment.format,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			1
 		);
-		m_DepthImage->CreateImageView(depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+		m_DepthImage->CreateImageView(depthAttachment.format, VK_IMAGE_ASPECT_DEPTH_BIT);
 		m_DepthImage->TransitionImageLayout(
-			depthFormat,
+			depthAttachment.format,
 			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 		);

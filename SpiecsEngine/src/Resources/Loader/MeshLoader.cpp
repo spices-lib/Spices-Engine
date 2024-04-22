@@ -194,10 +194,10 @@ namespace Spiecs {
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignSatrt, &written);
 
-		uint32_t verticesCount =  outMeshPack->m_Vertices.size();
+		uint32_t verticesCount = (uint32_t)outMeshPack->m_Vertices.size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
 
-		uint32_t indicesCount = outMeshPack->m_Indices.size();
+		uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices.size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &indicesCount, &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &written);

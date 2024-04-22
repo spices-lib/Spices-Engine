@@ -10,6 +10,13 @@ layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outID;
 
+// push constant
+layout(push_constant) uniform Push {
+    mat4 model;
+    int entityID;
+    int meshpackID;
+} push;
+
 // uniform buffer
 layout(set = 1, binding = 0) uniform sampler2D samplers[1];
 
@@ -32,6 +39,6 @@ void main()
 {
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPos)); // make sure to normalize localPos
     outColor = texture(samplers[diffuseTexture], uv);
-    outNormal = vec4(1.0f);
-    outID = vec4(1.0f);
+    outNormal = vec4(0.0f);
+    outID = vec4(push.entityID, push.meshpackID, 0.0f, 0.0f);
 }

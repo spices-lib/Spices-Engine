@@ -2,7 +2,6 @@
 #include "Core/Core.h"
 #include "Resources/Mesh/Mesh.h"
 
-#include <vector>
 #include <memory>
 
 namespace Spiecs {

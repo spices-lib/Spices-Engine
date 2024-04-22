@@ -5,8 +5,6 @@
 #include "VulkanDescriptor.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
-#include "stb_image.h"
-
 namespace Spiecs {
 
 	VulkanImage::VulkanImage(VulkanState& vulkanState, const std::string& filePath)

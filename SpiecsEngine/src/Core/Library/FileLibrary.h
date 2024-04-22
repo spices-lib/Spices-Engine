@@ -6,7 +6,6 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "vector"
 
 namespace Spiecs {
 

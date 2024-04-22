@@ -73,7 +73,7 @@ namespace Spiecs {
 		/**
 		* @brief Recreate VulkanRenderPass.
 		*/
-		void OnWindowResized() { CreateRenderPass(); };
+		void OnWindowResized() { m_RenderPass = nullptr; CreateRenderPass(); };
 
 		/**
 		* @brief The Function is called on this attached.
