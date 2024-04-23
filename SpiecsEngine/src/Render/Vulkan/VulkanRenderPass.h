@@ -460,7 +460,7 @@ namespace Spiecs {
 		/**
 		* @brief Fill in storeOp.
 		*/
-		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 
 		/**
 		* @brief Fill in stencilLoadOp.

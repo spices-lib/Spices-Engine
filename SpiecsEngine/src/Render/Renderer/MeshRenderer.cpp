@@ -93,12 +93,14 @@ namespace Spiecs {
 		/**
 		* @brief Add SwapChian Attachment.
 		*/
-		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {});
+		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {
+		});
 
 		/**
 		* @brief Add Normal Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {});
+		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {
+		});
 
 		/**
 		* @brief Add ID Attachment.
@@ -110,7 +112,8 @@ namespace Spiecs {
 		/**
 		* @brief Add Depth Attachment.
 		*/
-		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {});
+		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
+		});
 
 		/**
 		* @brief Create VkRenderPass, Resource, FrameBuffer.
