@@ -163,6 +163,9 @@ namespace Spiecs {
 
 		/**
 		* @brief Fill in storeOp.
+		* @note Just set VK_ATTACHMENT_STORE_OP_STORE always.
+		* Otherwise you will get a grid present image, which is different from swpachainimage shows,
+		* for vulkan has changed it's layout.
 		*/
 		attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 

@@ -58,6 +58,7 @@ namespace Spiecs {
 		m_VulkanSwapChain->Destroy();
 		m_VulkanSwapChain->Create();
 
+		m_RendererResourcePool->OnWindowResized(width, height);
 		RendererManager::Get().OnWindowResized();
 	}
 

@@ -37,6 +37,11 @@ namespace Spiecs {
 		static std::shared_ptr<VulkanDescriptorPool> GetDescriptorPool() { return m_VulkanDescriptorPool; };
 
 	private:
+
+		/**
+		* @brief Called On Viewport resized.
+		* @todo Event receive from global event function pointer.
+		*/
 		void RecreateSwapChain();
 	private:
 		static VulkanState m_VulkanState;
