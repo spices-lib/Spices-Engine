@@ -62,7 +62,7 @@ namespace Spiecs {
 		RendererManager::Get().OnWindowResized();
 	}
 
-	void VulkanRenderBackend::beginFrame(FrameInfo& frameInfo)
+	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)
 	{
 		vkWaitForFences(m_VulkanState.m_Device, 1, &m_VulkanState.m_Fence[frameInfo.m_FrameIndex], VK_TRUE, UINT64_MAX);
 		vkResetFences(m_VulkanState.m_Device, 1, &m_VulkanState.m_Fence[frameInfo.m_FrameIndex]);
@@ -101,7 +101,7 @@ namespace Spiecs {
 		vkCmdSetScissor(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &scissor);
 	}
 
-	void VulkanRenderBackend::endFrame(FrameInfo& frameInfo)
+	void VulkanRenderBackend::EndFrame(FrameInfo& frameInfo)
 	{
 		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]));
 

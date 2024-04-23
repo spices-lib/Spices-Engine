@@ -1,20 +1,21 @@
 /**
-* @file ResourceSystem.h.
-* @brief The ResourceSystem Class Definitions.
+* @file SlateSystem.h.
+* @brief The SlateSystem Class Definitions.
 * @author Spiecs.
 */
 
 #pragma once
 #include "Core/Core.h"
 #include "SystemManager.h"
+#include "Slate/SlateFrontend.h"
 
 namespace Spiecs {
 
 	/**
-	* @brief ResourceSystem Class.
-	* This class defines the specific behaver of RenderSystem.
+	* @brief SlateSystem Class.
+	* This class defines the specific behaver of SlateSystem.
 	*/
-	class UISystem : public System
+	class SlateSystem : public System
 	{
 	public:
 
@@ -24,12 +25,12 @@ namespace Spiecs {
 		* Usually call it.
 		* @param[in] systemName The System name.
 		*/
-		UISystem(const std::string& systemName) : System(systemName) {};
+		SlateSystem(const std::string& systemName) : System(systemName) {};
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~UISystem() override {};
+		virtual ~SlateSystem() override {};
 
 		/**
 		* @brief This interface defines the behaver on specific system initialized.
@@ -50,5 +51,7 @@ namespace Spiecs {
 		virtual void OnSystemUpdate(TimeStep& ts) override;
 
 	private:
+
+		std::unique_ptr<SlateFrontend> m_SlateFrontend;
 	};
 }

@@ -27,8 +27,8 @@ namespace Spiecs {
 		bool isWindowClosed() { return glfwWindowShouldClose(m_VulkanState.m_Windows); };
 		static void WaitIdle() { vkDeviceWaitIdle(m_VulkanState.m_Device); };
 
-		void beginFrame(FrameInfo& frameInfo);
-		void endFrame(FrameInfo& frameInfo);
+		void BeginFrame(FrameInfo& frameInfo);
+		void EndFrame(FrameInfo& frameInfo);
 
 		void DrawTest(FrameInfo& frameInfo);
 

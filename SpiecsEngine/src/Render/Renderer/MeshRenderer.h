@@ -6,7 +6,6 @@
 
 #pragma once
 #include "Renderer.h"
-
 #include <glm/glm.hpp>
 
 namespace Spiecs {

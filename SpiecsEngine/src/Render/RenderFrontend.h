@@ -18,8 +18,8 @@ namespace Spiecs {
 		bool isWindowClosed() { return m_RenderBackend->isWindowClosed(); };
 		void WaitIdle() { m_RenderBackend->WaitIdle(); };
 
-		void beginFrame(FrameInfo& frameInfo);
-		void endFrame(FrameInfo& frameInfo);
+		void BeginFrame(FrameInfo& frameInfo);
+		void EndFrame(FrameInfo& frameInfo);
 
 		void DrawTest(FrameInfo& frameInfo);
 

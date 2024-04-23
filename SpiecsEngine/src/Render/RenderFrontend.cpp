@@ -8,14 +8,14 @@ namespace Spiecs {
 		m_RenderBackend = std::make_unique<VulkanRenderBackend>();
 	}
 
-	void RenderFrontend::beginFrame(FrameInfo& frameInfo)
+	void RenderFrontend::BeginFrame(FrameInfo& frameInfo)
 	{
-		m_RenderBackend->beginFrame(frameInfo);
+		m_RenderBackend->BeginFrame(frameInfo);
 	}
 
-	void RenderFrontend::endFrame(FrameInfo& frameInfo)
+	void RenderFrontend::EndFrame(FrameInfo& frameInfo)
 	{
-		m_RenderBackend->endFrame(frameInfo);
+		m_RenderBackend->EndFrame(frameInfo);
 	}
 
 	void RenderFrontend::DrawTest(FrameInfo& frameInfo)
