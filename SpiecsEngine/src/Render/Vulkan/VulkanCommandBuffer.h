@@ -23,9 +23,8 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		* Create VkCommandPool.
 		* @param[in] vulkanState The global VulkanState.
-		* @param[in] graphicqueuefamily graphic queue identify.
 		*/
-		VulkanCommandPool(VulkanState& vulkanState, uint32_t graphicqueuefamily);
+		VulkanCommandPool(VulkanState& vulkanState);
 
 		/**
 		* @brief Destructor Function.

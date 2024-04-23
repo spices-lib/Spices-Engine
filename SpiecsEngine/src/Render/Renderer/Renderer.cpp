@@ -153,6 +153,8 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindPipeline()
 	{
+		if (!m_Renderer->m_VulkanPipeline) return;
+
 		m_Renderer->m_VulkanPipeline->Bind(m_CurrentFrame);
 	}
 

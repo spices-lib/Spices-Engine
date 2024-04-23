@@ -9,7 +9,7 @@
 
 namespace Spiecs {
 
-	VulkanCommandPool::VulkanCommandPool(VulkanState& vulkanState, uint32_t graphicqueuefamily)
+	VulkanCommandPool::VulkanCommandPool(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
 	{
 		/**
@@ -30,7 +30,7 @@ namespace Spiecs {
 		/**
 		* @brief Fill in queueFamilyIndex.
 		*/
-		poolInfo.queueFamilyIndex = graphicqueuefamily;
+		poolInfo.queueFamilyIndex = vulkanState.m_GraphicQueueFamily;
 
 		/**
 		* @brief  Create commandpool and set it global. 

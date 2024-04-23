@@ -67,6 +67,7 @@ namespace Spiecs {
         bool allocateDescriptor(const VkDescriptorSetLayout descriptorSetLayout, VkDescriptorSet& descriptor) const;
         void freeDescriptors(std::vector<VkDescriptorSet>& descriptors) const;
         void resetPool();
+        inline VkDescriptorPool& GetPool() { return m_DescriptorPool; };
 
     private:
         VkDescriptorPool m_DescriptorPool;

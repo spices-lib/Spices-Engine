@@ -71,6 +71,12 @@ namespace Spiecs {
 
 		/**
 		* @brief From VulkanDevice.
+		* ID for graphic queue
+		*/
+		uint32_t m_GraphicQueueFamily;
+
+		/**
+		* @brief From VulkanDevice.
 		* Queue for present windows
 		*/
 		VkQueue m_PresentQueue;

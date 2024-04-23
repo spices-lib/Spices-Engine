@@ -78,7 +78,7 @@ namespace Spiecs {
 		/**
 		* @brief The Function is called on this attached.
 		*/
-		void OnSystemInitialize();
+		virtual void OnSystemInitialize();
 
 	private:
 

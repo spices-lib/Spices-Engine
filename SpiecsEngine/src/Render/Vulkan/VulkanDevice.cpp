@@ -326,6 +326,7 @@ namespace Spiecs {
 			*/
 			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				m_QueueHelper.graphicqueuefamily = i;
+				m_VulkanState.m_GraphicQueueFamily = i;
 
 				VkBool32 presentSupport = false;
 				vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);

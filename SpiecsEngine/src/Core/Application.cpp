@@ -9,7 +9,6 @@
 #include "Render/FrameInfo.h"
 #include "Systems/SystemManager.h"
 #include "Systems/RenderSystem.h"
-#include "Systems/SlateSystem.h"
 #include "Systems/NativeScriptSystem.h"
 #include "Systems/ResourceSystem.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
@@ -26,7 +25,6 @@ namespace Spiecs {
 		SystemManager().Get()
 		.PushSystem<NativeScriptSystem>()
 		.PushSystem<RenderSystem>()
-		.PushSystem<SlateSystem>()
 		.PushSystem<ResourceSystem>();
 	}
 
@@ -42,7 +40,6 @@ namespace Spiecs {
 		*/
 		SystemManager::Get()
 			.PopSystem("ResourceSystem")
-			.PopSystem("SlateSystem")
 			.PopSystem("RenderSystem")
 			.PopSystem("NativeScriptSystem");
 	}

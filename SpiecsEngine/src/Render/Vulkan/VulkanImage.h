@@ -25,6 +25,8 @@ namespace Spiecs {
 		void CreateDescriptorSet(uint32_t set, uint32_t binding);
 		VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; };
 
+		static VkDescriptorSet CreateDescriptorSet(uint32_t set, uint32_t binding, VulkanState& vulkanState, VkDescriptorImageInfo imageInfo);
+
 	private:
 		int m_Width = 0;
 		int m_Height = 0;

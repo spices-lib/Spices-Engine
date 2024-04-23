@@ -4,6 +4,7 @@
 
 #include "Render/Renderer/MeshRenderer.h"
 #include "Render/Renderer/SkyBoxRenderer.h"
+#include "Render/Renderer/SlateRenderer.h"
 
 namespace Spiecs {
 
@@ -15,11 +16,12 @@ namespace Spiecs {
 		m_VulkanWindows = std::make_unique<VulkanWindows>(m_VulkanState, 1920, 1080, "Spiecs Engine");
 		m_VulkanInstance = std::make_unique<VulkanInstance>(m_VulkanState, "app", "engine");
 		m_VulkanDevice = std::make_shared<VulkanDevice>(m_VulkanState);
-		m_VulkanCommandPool = std::make_unique<VulkanCommandPool>(m_VulkanState, m_VulkanDevice->GetQueueHelper().graphicqueuefamily.value());
+		m_VulkanCommandPool = std::make_unique<VulkanCommandPool>(m_VulkanState);
 		m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
 		m_VulkanSwapChain = std::make_unique<VulkanSwapChain>(m_VulkanState, m_VulkanDevice);
 
 		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
+			.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
 			.SetMaxSets(2000)
 			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
 			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
@@ -30,7 +32,8 @@ namespace Spiecs {
 
 		RendererManager::Get()
 			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
+			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SlateRenderer>("SlateRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
@@ -40,6 +43,7 @@ namespace Spiecs {
 		m_VulkanDescriptorPool = nullptr;
 
 		RendererManager::Get()
+			.Pop("SlateRenderer")
 			.Pop("SkyBoxRenderer")
 			.Pop("MeshRenderer");
 	}

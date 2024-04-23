@@ -347,8 +347,30 @@ namespace Spiecs {
 			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.Build(m_VulkanState);
 
+		VulkanRenderBackend::GetDescriptorPool()->allocateDescriptor(setLayout->GetDescriptorSetLayout(), m_DescriptorSet);
+
+		VkWriteDescriptorSet write{};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		write.dstBinding = 0;
+		write.dstSet = m_DescriptorSet;
+		write.pImageInfo = GetImageInfo();
+		write.descriptorCount = 1;
+
+		vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
+	}
+
+	VkDescriptorSet VulkanImage::CreateDescriptorSet(uint32_t set, uint32_t binding, VulkanState& vulkanState, VkDescriptorImageInfo imageInfo)
+	{
+		std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder{}
+			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+			.Build(vulkanState);
+
+		VkDescriptorSet descriptorSet;
 		VulkanDescriptorWriter{ *setLayout, *VulkanRenderBackend::GetDescriptorPool() }
-			.WriteImage(binding, GetImageInfo())
-			.Build(m_DescriptorSet);
+			.WriteImage(binding, &imageInfo)
+			.Build(descriptorSet);
+
+		return descriptorSet;
 	}
 }

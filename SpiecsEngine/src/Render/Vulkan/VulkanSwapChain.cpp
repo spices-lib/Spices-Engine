@@ -55,7 +55,7 @@ namespace Spiecs {
 		createInfo.imageColorSpace = m_VulkanDevice->GetSwapChainSupport().format.colorSpace;
 		createInfo.imageExtent = m_VulkanDevice->GetSwapChainSupport().extent;
 		createInfo.imageArrayLayers = 1;
-		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 
 		uint32_t queueFamilyIndices[] = { m_VulkanDevice->GetQueueHelper().graphicqueuefamily.value(),
 			m_VulkanDevice->GetQueueHelper().presentqueuefamily.value() };
