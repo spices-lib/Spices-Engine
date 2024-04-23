@@ -9,6 +9,7 @@
 #include "VulkanUtils.h"
 #include "VulkanDevice.h"
 #include "VulkanSwapChain.h"
+#include "Render/RendererResource/RendererResourcePool.h"
 
 namespace Spiecs {
 
@@ -26,7 +27,7 @@ namespace Spiecs {
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] vulkanDevice The shared pointer of VulkanDevice.
 		*/
-		VulkanRenderPass(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice);
+		VulkanRenderPass(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice, std::shared_ptr<RendererResourcePool> rendererResourcePool);
 
 		/**
 		* @brief Destructor Function.
@@ -92,6 +93,8 @@ namespace Spiecs {
 		*/
 		std::shared_ptr<VulkanDevice> m_VulkanDevice;
 
+		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
+
 		/**
 		* @brief The RenderPass this class mainly manage.
 		*/
@@ -103,19 +106,9 @@ namespace Spiecs {
 		std::vector<VkAttachmentReference> m_ColorAttachmentRef;
 
 		/**
-		* @brief The FrameBuffer's attachment.
-		*/
-		std::unordered_map<std::string, std::unique_ptr<VulkanImage>> m_ColorAttachmentImage;
-
-		/**
 		* @brief The VkAttachmentReference of Depth Attachment.
 		*/
 		VkAttachmentReference m_DepthAttachmentRef{};
-
-		/**
-		* @brief The FrameBuffer's attachment, used for Depth.
-		*/
-		std::unique_ptr<VulkanImage> m_DepthImage;
 
 		/**
 		* @brief The array of VkAttachmentDescription.
@@ -163,6 +156,8 @@ namespace Spiecs {
 
 		/**
 		* @brief Fill in loadOp.
+		* @note Init With VK_ATTACHMENT_LOAD_OP_LOAD.
+		* Set VK_ATTACHMENT_LOAD_OP_CLEAR for the first renderpass.
 		*/
 		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 
@@ -183,8 +178,10 @@ namespace Spiecs {
 
 		/**
 		* @brief Fill in initialLayout.
+		* @note Init With VK_IMAGE_LAYOUT_PRESENT_SRC_KHR.
+		* Set VK_IMAGE_LAYOUT_UNDEFINED for the first renderpass.
 		*/
-		attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		/**
 		* @brief Fill in finalLayout.
@@ -302,6 +299,8 @@ namespace Spiecs {
 
 		/**
 		* @brief Fill in loadOp.
+		* @note Init With VK_ATTACHMENT_LOAD_OP_LOAD.
+		* Set VK_ATTACHMENT_LOAD_OP_CLEAR for the first renderpass.
 		*/
 		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 
@@ -322,8 +321,10 @@ namespace Spiecs {
 
 		/**
 		* @brief Fill in initialLayout.
+		* @note Init With VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL.
+		* Set VK_IMAGE_LAYOUT_UNDEFINED for the first renderpass.
 		*/
-		attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		/**
 		* @brief Fill in finalLayout.
@@ -369,26 +370,14 @@ namespace Spiecs {
 		m_ClearValues.push_back(std::move(clearValue));
 
 		/**
-		* @brief Create Image Resource.
-		*/
-		m_ColorAttachmentImage[attachmentName] = std::make_unique<VulkanImage>(
-			m_VulkanState,
-			m_VulkanDevice->GetSwapChainSupport().extent.width,
-			m_VulkanDevice->GetSwapChainSupport().extent.height,
-			attachmentDescription.samples,
-			attachmentDescription.format,
-			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			1
-		);
-		m_ColorAttachmentImage[attachmentName]->CreateImageView(attachmentDescription.format, VK_IMAGE_ASPECT_COLOR_BIT);
-		m_ColorAttachmentImage[attachmentName]->CreateSampler();
-
-		/**
 		* @brief Set View.
 		*/
-		m_AttachmentsView.push_back(m_ColorAttachmentImage[attachmentName]->GetView());
+		RendererResourceCreateInfo Info;
+		Info.description = attachmentDescription;
+		Info.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
+		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+
+		m_AttachmentsView.push_back(m_RendererResourcePool->AccessResource(attachmentName, Info));
 
 		/**
 		* @brief Instanced a VkPipelineColorBlendAttachmentState with default value.
@@ -463,6 +452,8 @@ namespace Spiecs {
 
 		/**
 		* @brief Fill in loadOp.
+		* @note Init With VK_ATTACHMENT_LOAD_OP_LOAD.
+		* Set VK_ATTACHMENT_LOAD_OP_CLEAR for the first renderpass.
 		*/
 		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 
@@ -483,8 +474,10 @@ namespace Spiecs {
 
 		/**
 		* @brief Fill in initialLayout.
+		* @note Init With VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
+		* Set VK_IMAGE_LAYOUT_UNDEFINED for the first renderpass.
 		*/
-		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		/**
 		* @brief Fill in finalLayout.
@@ -530,30 +523,14 @@ namespace Spiecs {
 		m_ClearValues.push_back(std::move(clearValue));
 
 		/**
-		* @brief Depth resource.
-		*/
-		m_DepthImage = std::make_unique<VulkanImage>(
-			m_VulkanState,
-			m_VulkanDevice->GetSwapChainSupport().extent.width,
-			m_VulkanDevice->GetSwapChainSupport().extent.height,
-			depthAttachment.samples,
-			depthAttachment.format,
-			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			1
-		);
-		m_DepthImage->CreateImageView(depthAttachment.format, VK_IMAGE_ASPECT_DEPTH_BIT);
-		m_DepthImage->TransitionImageLayout(
-			depthAttachment.format,
-			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-		);
-		m_DepthImage->CreateSampler();
-
-		/**
 		* @brief Set View.
 		*/
-		m_AttachmentsView.push_back(m_DepthImage->GetView());
+		RendererResourceCreateInfo Info;
+		Info.description = depthAttachment;
+		Info.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
+		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+		Info.isDepthResource = true;
+
+		m_AttachmentsView.push_back(m_RendererResourcePool->AccessDepthResource(Info));
 	}
 }

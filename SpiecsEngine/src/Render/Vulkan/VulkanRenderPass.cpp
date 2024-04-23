@@ -9,9 +9,10 @@
 
 namespace Spiecs {
 
-	VulkanRenderPass::VulkanRenderPass(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice)
+	VulkanRenderPass::VulkanRenderPass(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice, std::shared_ptr<RendererResourcePool> rendererResourcePool)
 		: VulkanObject(vulkanState)
 		, m_VulkanDevice(vulkanDevice)
+		, m_RendererResourcePool(rendererResourcePool)
 	{}
 
 	VulkanRenderPass::~VulkanRenderPass()

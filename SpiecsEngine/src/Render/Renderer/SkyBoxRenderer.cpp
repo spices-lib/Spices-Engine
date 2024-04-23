@@ -51,12 +51,13 @@ namespace Spiecs {
 		/**
 		* @brief Declear an empty VulkanRenderPass Object.
 		*/
-		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device);
+		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
 
 		/**
 		* @brief Add SwapChian Attachment.
 		*/
 		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
 
@@ -64,6 +65,7 @@ namespace Spiecs {
 		* @brief Add Normal Attachment.
 		*/
 		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
 
@@ -71,6 +73,7 @@ namespace Spiecs {
 		* @brief Add ID Attachment.
 		*/
 		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		});
@@ -79,6 +82,7 @@ namespace Spiecs {
 		* @brief Add Depth Attachment.
 		*/
 		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
 

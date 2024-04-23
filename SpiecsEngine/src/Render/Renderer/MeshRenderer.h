@@ -26,8 +26,8 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		MeshRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device)
-			: Renderer(rendererName, vulkanState, desctiptorPool, device){};
+		MeshRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
+			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool){};
 
 		/**
 		* @brief Destructor Function.

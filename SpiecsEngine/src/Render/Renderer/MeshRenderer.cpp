@@ -88,36 +88,29 @@ namespace Spiecs {
 		/**
 		* @brief Declear an empty VulkanRenderPass Object.
 		*/
-		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device);
+		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
 
 		/**
 		* @brief Add SwapChian Attachment.
 		*/
-		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		});
+		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {});
 
 		/**
 		* @brief Add Normal Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		});
+		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {});
 
 		/**
 		* @brief Add ID Attachment.
 		*/
 		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		});
 
 		/**
 		* @brief Add Depth Attachment.
 		*/
-		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		});
+		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {});
 
 		/**
 		* @brief Create VkRenderPass, Resource, FrameBuffer.

@@ -13,6 +13,8 @@
 
 namespace Spiecs {
 
+	class RendererResourcePool;
+
 	class VulkanRenderBackend
 	{
 	public:
@@ -39,6 +41,8 @@ namespace Spiecs {
 	private:
 		static VulkanState m_VulkanState;
 		static std::shared_ptr<VulkanDescriptorPool> m_VulkanDescriptorPool;
+
+		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 
 		std::unique_ptr<VulkanWindows> m_VulkanWindows;
 		std::unique_ptr<VulkanInstance> m_VulkanInstance;

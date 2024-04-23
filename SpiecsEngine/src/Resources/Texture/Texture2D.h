@@ -10,6 +10,8 @@
 
 namespace Spiecs {
 
+	struct RendererResourceCreateInfo;
+
 	/**
 	* @brief Texture2D Class.
 	* This class defines the basic behaver of texture2D.
@@ -22,6 +24,8 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		*/
 		Texture2D() {};
+
+		Texture2D(const RendererResourceCreateInfo& info);
 
 		/**
 		* @brief Constructor Function.

@@ -44,7 +44,7 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device);
+		Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool);
 
 		/**
 		* @brief Destructor Function.
@@ -425,6 +425,8 @@ namespace Spiecs {
 		std::shared_ptr<VulkanDescriptorPool> m_DesctiptorPool;
 
 		std::shared_ptr<VulkanDevice> m_Device;
+
+		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 
 		/**
 		* @brief This variable is a Wapper of VkRenderPass.

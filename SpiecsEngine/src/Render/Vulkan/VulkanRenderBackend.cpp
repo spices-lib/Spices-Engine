@@ -1,5 +1,6 @@
 #include "Pchheader.h"
 #include "VulkanRenderBackend.h"
+#include "Render/RendererResource/RendererResourcePool.h"
 
 #include "Render/Renderer/MeshRenderer.h"
 #include "Render/Renderer/SkyBoxRenderer.h"
@@ -25,13 +26,17 @@ namespace Spiecs {
 			.Build(m_VulkanState);
 
 		// TODO: Move to  
+		m_RendererResourcePool = std::make_shared<RendererResourcePool>();
+
 		RendererManager::Get()
-			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice)
-			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice);
+			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
 	{
+		m_RendererResourcePool = nullptr;
+
 		m_VulkanDescriptorPool = nullptr;
 
 		RendererManager::Get()

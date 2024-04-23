@@ -9,11 +9,12 @@
 
 namespace Spiecs {
 
-	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device)
+	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
 		: m_RendererName(rendererName)
 		, m_VulkanState(vulkanState) 
 		, m_DesctiptorPool(desctiptorPool)
 		, m_Device(device)
+		, m_RendererResourcePool(rendererResourcePool)
 		, m_PipelineLayout{}
 	{}
 
