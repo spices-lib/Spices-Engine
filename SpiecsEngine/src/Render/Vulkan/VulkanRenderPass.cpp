@@ -144,7 +144,11 @@ namespace Spiecs {
 			* @brief Add SwapChian's image to local variable.
 			*/
 			std::vector<VkImageView> attachments = m_AttachmentsView;
-			attachments.emplace(attachments.begin(), m_VulkanState.m_SwapChainImageViews[i]);
+
+			if (IsUseSwapChianImage)
+			{
+				attachments.emplace(attachments.begin(), m_VulkanState.m_SwapChainImageViews[i]);
+			}
 
 			/**
 			* @brief Instanced a VkFramebufferCreateInfo with default value.

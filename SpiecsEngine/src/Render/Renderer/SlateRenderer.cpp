@@ -13,24 +13,6 @@
 
 namespace Spiecs {
 
-	struct PushConstant
-	{
-		/**
-		* @brief Meshpack ModelMatrix.
-		*/
-		glm::mat4 model = glm::mat4(1.0f);
-
-		/**
-		* @brief Entityid, cast from entt::entity.
-		*/
-		int entityID = -1;
-
-		/**
-		* @brief Meshpackid, from arrayindex of meshpack.
-		*/
-		int meshpackID = -1;
-	};
-
 	void SlateRenderer::CreateRenderPass()
 	{
 		/**
@@ -45,6 +27,14 @@ namespace Spiecs {
 		});
 
 		/**
+		* @brief Add Slate Attachment.
+		*/
+		/*m_RenderPass->AddColorAttachment("Slate", [](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		});*/
+
+		/**
 		* @brief Add Depth Attachment.
 		*/
 		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
@@ -57,48 +47,43 @@ namespace Spiecs {
 	}
 
 	void SlateRenderer::CreatePipelineLayoutAndDescriptor()
-	{
-		PipelineLayoutBuilder{ this }
-		.AddPushConstant<PushConstant>()
-		.AddTexture<Texture2D>(0, 0, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.Build();
-	}
+	{}
 
 	void SlateRenderer::OnSystemInitialize()
 	{
 		Renderer::OnSystemInitialize();
 		InitImgui();
 
-		/*for (int i = 0; i < MaxFrameInFlight; i++)
+		auto texture = ResourcePool<Texture>::Load<Texture2D>("alexander.jpg");
+		auto info = texture->GetResource<VulkanImage>()->GetImageInfo();
+
+		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageView = m_VulkanState.m_SwapChainImageViews[i];
 			imageInfo.sampler = m_VulkanState.m_SwapChainImageSamplers[i];
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			m_DescriptorSet[i] = VulkanImage::CreateDescriptorSet(0, 0, m_VulkanState, imageInfo);
-		}*/
 
+			/*ID[i] = ImGui_ImplVulkan_AddTexture(
+				m_VulkanState.m_SwapChainImageSamplers[i],
+				m_VulkanState.m_SwapChainImageViews[i],
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);*/
 
-		m_TestImage = ResourcePool<Texture>::Load<Texture2D>("alexander.jpg");
-		m_TestImage->GetResource<VulkanImage>()->CreateDescriptorSet(1, 0);
-
-		m_DescriptorSet[0] = m_TestImage->GetResource<VulkanImage>()->GetDescriptorSet();
+			ID[i] = ImGui_ImplVulkan_AddTexture(
+				info->sampler,
+				info->imageView,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		}
 	}
 
 	void SlateRenderer::InitImgui()
 	{
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-		//io.ConfigViewportsNoAutoMerge = true;
-		//io.ConfigViewportsNoTaskBarIcon = true;
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsLight();
 
 		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -149,20 +134,19 @@ namespace Spiecs {
 	void SlateRenderer::EndImguiFrame(uint32_t index)
 	{
 		ImGui::Render();
-		ImDrawData* main_draw_data = ImGui::GetDrawData();
-		ImGui_ImplVulkan_RenderDrawData(main_draw_data, m_VulkanState.m_CommandBuffer[index]);
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_VulkanState.m_CommandBuffer[index]);
 	}
 
 	void SlateRenderer::Render(FrameInfo& frameInfo)
 	{
-		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex };
-		BeginImguiFrame();
-		
-		ImGui::ShowDemoWindow();
+		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex };
 
+		BeginImguiFrame();
+		ImGui::ShowDemoWindow();
 		{
 			ImGui::Begin("Viewport");
-			ImGui::Image(&m_DescriptorSet[0], ImVec2(100.0f, 100.0f));
+
+			ImGui::Image(ID[(frameInfo.m_FrameIndex-1) % MaxFrameInFlight], ImVec2(720.f, 480.f));
 			ImGui::End();
 		}
 

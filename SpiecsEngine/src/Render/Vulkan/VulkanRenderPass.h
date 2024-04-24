@@ -121,6 +121,11 @@ namespace Spiecs {
 		std::vector<VkClearValue> m_ClearValues{};
 
 		/**
+		* @brief True if we call AddSwapChainAttachment().
+		*/
+		bool IsUseSwapChianImage = false;
+
+		/**
 		* @brief The array of VkImageView.
 		*/
 		std::vector<VkImageView> m_AttachmentsView;
@@ -280,6 +285,11 @@ namespace Spiecs {
 		* @brief Add to local variable.
 		*/
 		m_ColorBlendAttachment.push_back(colorBlend);
+
+		/**
+		* @brief Set use Swapchain Image.
+		*/
+		IsUseSwapChianImage = true;
 	}
 
 	template<typename T>

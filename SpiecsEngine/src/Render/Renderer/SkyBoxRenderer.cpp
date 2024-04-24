@@ -137,11 +137,11 @@ namespace Spiecs {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 					push.meshpackID = meshpackId;
-					});
-
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
 				});
 
+				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
+			});
+				
 			return false;
 		});
 

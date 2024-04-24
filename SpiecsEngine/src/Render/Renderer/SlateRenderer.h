@@ -68,9 +68,9 @@ namespace Spiecs {
 		void EndImguiFrame(uint32_t index);
 
 	private:
+		typedef void* ImTextureID;
 
-		std::array<VkDescriptorSet, MaxFrameInFlight> m_DescriptorSet;
-		std::shared_ptr<Texture> m_TestImage;
+		std::array<ImTextureID, MaxFrameInFlight> ID;
 	};
 
 }
