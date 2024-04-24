@@ -56,7 +56,10 @@ namespace Spiecs {
 		/**
 		* @brief Fill in pDepthStencilAttachment.
 		*/
-		subpass.pDepthStencilAttachment = &m_DepthAttachmentRef;
+		if (isUseDpth)
+		{
+			subpass.pDepthStencilAttachment = &m_DepthAttachmentRef;
+		}
 
 		/**
 		* @brief Instanced a VkSubpassDependency with default value.

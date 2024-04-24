@@ -126,6 +126,11 @@ namespace Spiecs {
 		bool IsUseSwapChianImage = false;
 
 		/**
+		* @brief True if we call AddDepthAttachment().
+		*/
+		bool isUseDpth = false;
+
+		/**
 		* @brief The array of VkImageView.
 		*/
 		std::vector<VkImageView> m_AttachmentsView;
@@ -545,5 +550,7 @@ namespace Spiecs {
 		Info.isDepthResource = true;
 
 		m_AttachmentsView.push_back(m_RendererResourcePool->AccessDepthResource(Info));
+
+		isUseDpth = true;
 	}
 }

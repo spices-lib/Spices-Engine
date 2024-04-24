@@ -91,9 +91,9 @@ namespace Spiecs {
 		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
 
 		/**
-		* @brief Add SwapChian Attachment.
+		* @brief Add BaseColor Attachment.
 		*/
-		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("BaseColor", [](VkAttachmentDescription& description) {
 		});
 
 		/**

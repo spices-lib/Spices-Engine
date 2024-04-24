@@ -24,21 +24,15 @@ namespace Spiecs {
 		* @brief Add SwapChian Attachment.
 		*/
 		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {
-		});
-
-		/**
-		* @brief Add Slate Attachment.
-		*/
-		/*m_RenderPass->AddColorAttachment("Slate", [](VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		});*/
+		});
 
 		/**
 		* @brief Add Depth Attachment.
 		*/
-		m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
-		});
+		/*m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
+		});*/
 
 		/**
 		* @brief Create VkRenderPass, Resource, FrameBuffer.
@@ -64,15 +58,15 @@ namespace Spiecs {
 			imageInfo.sampler = m_VulkanState.m_SwapChainImageSamplers[i];
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-			/*ID[i] = ImGui_ImplVulkan_AddTexture(
+			ID[i] = ImGui_ImplVulkan_AddTexture(
 				m_VulkanState.m_SwapChainImageSamplers[i],
 				m_VulkanState.m_SwapChainImageViews[i],
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);*/
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-			ID[i] = ImGui_ImplVulkan_AddTexture(
+			/*ID[i] = ImGui_ImplVulkan_AddTexture(
 				info->sampler,
 				info->imageView,
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);*/
 		}
 	}
 
@@ -146,7 +140,8 @@ namespace Spiecs {
 		{
 			ImGui::Begin("Viewport");
 
-			ImGui::Image(ID[(frameInfo.m_FrameIndex-1) % MaxFrameInFlight], ImVec2(720.f, 480.f));
+			//ImGui::Image(ID[(frameInfo.m_Imageindex + 1) % MaxFrameInFlight], ImVec2(720.f, 480.f));
+
 			ImGui::End();
 		}
 
