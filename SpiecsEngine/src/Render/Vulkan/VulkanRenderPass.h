@@ -395,7 +395,7 @@ namespace Spiecs {
 		Info.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
 		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
 
-		m_AttachmentsView.push_back(m_RendererResourcePool->AccessResource(attachmentName, Info));
+		m_AttachmentsView.push_back(m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView);
 
 		/**
 		* @brief Instanced a VkPipelineColorBlendAttachmentState with default value.
@@ -549,7 +549,7 @@ namespace Spiecs {
 		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
 		Info.isDepthResource = true;
 
-		m_AttachmentsView.push_back(m_RendererResourcePool->AccessDepthResource(Info));
+		m_AttachmentsView.push_back(m_RendererResourcePool->AccessDepthResource(Info)->imageView);
 
 		isUseDpth = true;
 	}

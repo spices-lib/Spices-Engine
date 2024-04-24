@@ -21,7 +21,7 @@ namespace Spiecs {
 		}
 	}
 
-	VkImageView& RendererResourcePool::AccessResource(const std::string& name, const RendererResourceCreateInfo& info)
+	VkDescriptorImageInfo* RendererResourcePool::AccessResource(const std::string& name, const RendererResourceCreateInfo& info)
 	{
 		/**
 		* @brief Create one if isn't exist.
@@ -31,10 +31,15 @@ namespace Spiecs {
 			m_RendererResource[name] = std::make_unique<RendererResource>(info);
 		}
 
-		return m_RendererResource[name]->GetTexture()->GetResource<VulkanImage>()->GetView();
+		return m_RendererResource[name]->GetTexture()->GetResource<VulkanImage>()->GetImageInfo();
 	}
 
-	VkImageView& RendererResourcePool::AccessDepthResource(const RendererResourceCreateInfo& info)
+	std::shared_ptr<VulkanImage> RendererResourcePool::AccessRowResource(const std::string& name)
+	{
+		return m_RendererResource[name]->GetTexture()->GetResource<VulkanImage>();
+	}
+
+	VkDescriptorImageInfo* RendererResourcePool::AccessDepthResource(const RendererResourceCreateInfo& info)
 	{
 		/**
 		* @brief Create one if isn't exist.
@@ -44,6 +49,6 @@ namespace Spiecs {
 			m_RendererResource["Depth"] = std::make_unique<RendererResource>(info);
 		}
 
-		return m_RendererResource["Depth"]->GetTexture()->GetResource<VulkanImage>()->GetView();
+		return m_RendererResource["Depth"]->GetTexture()->GetResource<VulkanImage>()->GetImageInfo();
 	}
 }

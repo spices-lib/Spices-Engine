@@ -13,6 +13,7 @@ namespace Spiecs {
 		virtual ~VulkanImage();
 
 		VkImageView& GetView() { return m_ImageView; };
+		VkImage& GetImage() { return m_Image; };
 
 	public:
 		VkDescriptorImageInfo* GetImageInfo(VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

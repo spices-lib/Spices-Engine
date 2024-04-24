@@ -29,12 +29,6 @@ namespace Spiecs {
 		});
 
 		/**
-		* @brief Add Depth Attachment.
-		*/
-		/*m_RenderPass->AddDepthAttachment([](VkAttachmentDescription& description) {
-		});*/
-
-		/**
 		* @brief Create VkRenderPass, Resource, FrameBuffer.
 		*/
 		m_RenderPass->Build();
@@ -48,26 +42,13 @@ namespace Spiecs {
 		Renderer::OnSystemInitialize();
 		InitImgui();
 
-		auto texture = ResourcePool<Texture>::Load<Texture2D>("alexander.jpg");
-		auto info = texture->GetResource<VulkanImage>()->GetImageInfo();
+		m_ViewPort = std::make_unique<Texture2D>("street.jpg");
 
-		for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			VkDescriptorImageInfo imageInfo{};
-			imageInfo.imageView = m_VulkanState.m_SwapChainImageViews[i];
-			imageInfo.sampler = m_VulkanState.m_SwapChainImageSamplers[i];
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		//VkDescriptorImageInfo* info = m_RendererResourcePool->AccessResource("BaseColor");
+		VkDescriptorImageInfo* info = m_ViewPort->GetResource<VulkanImage>()->GetImageInfo();
 
-			ID[i] = ImGui_ImplVulkan_AddTexture(
-				m_VulkanState.m_SwapChainImageSamplers[i],
-				m_VulkanState.m_SwapChainImageViews[i],
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-			/*ID[i] = ImGui_ImplVulkan_AddTexture(
-				info->sampler,
-				info->imageView,
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);*/
-		}
+		
+		ID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
 	}
 
 	void SlateRenderer::InitImgui()
@@ -136,15 +117,16 @@ namespace Spiecs {
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex };
 
 		BeginImguiFrame();
+
 		ImGui::ShowDemoWindow();
 		{
 			ImGui::Begin("Viewport");
 
-			//ImGui::Image(ID[(frameInfo.m_Imageindex + 1) % MaxFrameInFlight], ImVec2(720.f, 480.f));
+			ImGui::Image(ID, ImVec2(720.f, 480.f));
 
 			ImGui::End();
 		}
-
+		
 		EndImguiFrame(frameInfo.m_FrameIndex);
 		builder.EndRenderPass();
 	}

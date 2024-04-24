@@ -70,7 +70,9 @@ namespace Spiecs {
 	private:
 		typedef void* ImTextureID;
 
-		std::array<ImTextureID, MaxFrameInFlight> ID;
+		ImTextureID ID;
+
+		std::unique_ptr<Texture2D> m_ViewPort;
 	};
 
 }
