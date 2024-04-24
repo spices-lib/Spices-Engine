@@ -122,7 +122,8 @@ namespace Spiecs {
 		{
 			ImGui::Begin("Viewport");
 
-			ImGui::Image(ID, ImVec2(720.f, 480.f));
+			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+			ImGui::Image(ID, ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
 
 			ImGui::End();
 		}
