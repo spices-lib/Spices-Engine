@@ -5,6 +5,7 @@
 #include "Render/Renderer/MeshRenderer.h"
 #include "Render/Renderer/SkyBoxRenderer.h"
 #include "Render/Renderer/SlateRenderer.h"
+#include "Render/Renderer/SceneComposeRenderer.h"
 
 namespace Spiecs {
 
@@ -33,6 +34,7 @@ namespace Spiecs {
 		RendererManager::Get()
 			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SceneComposeRenderer>("SceneComposeRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>("SlateRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 	}
 
@@ -44,6 +46,7 @@ namespace Spiecs {
 
 		RendererManager::Get()
 			.Pop("SlateRenderer")
+			.Pop("SceneComposeRenderer")
 			.Pop("SkyBoxRenderer")
 			.Pop("MeshRenderer");
 	}

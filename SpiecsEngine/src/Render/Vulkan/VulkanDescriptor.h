@@ -84,7 +84,7 @@ namespace Spiecs {
         VulkanDescriptorWriter(VulkanDescriptorSetLayout& setLayout, VulkanDescriptorPool& pool, const std::vector<VkWriteDescriptorSet>& writters);
 
         VulkanDescriptorWriter& WriteBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
-        VulkanDescriptorWriter& WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
+        VulkanDescriptorWriter& WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t imageNum = 1);
         VulkanDescriptorWriter& ReWriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
 
         bool Build(VkDescriptorSet& set);

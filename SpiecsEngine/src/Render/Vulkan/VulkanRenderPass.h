@@ -82,6 +82,13 @@ namespace Spiecs {
 		void AddDepthAttachment(T func);
 
 		/**
+		* @brief Add the Depth Image Attachment to RenderPass and FrameBuffer.
+		* @param[in] T The function pointer of how VkAttachmentDescription is.
+		*/
+		template<typename T>
+		void AddInputAttachment(const std::string& attachmentName, T func);
+
+		/**
 		* @brief Create RenderPss and FrameBuffer.
 		*/
 		void Build();
@@ -99,6 +106,11 @@ namespace Spiecs {
 		* @brief The RenderPass this class mainly manage.
 		*/
 		VkRenderPass m_RenderPass{};
+
+		/**
+		* @brief The array of VkAttachmentReference.
+		*/
+		std::vector<VkAttachmentReference> m_InputAttachmentRef;
 
 		/**
 		* @brief The array of VkAttachmentReference.
@@ -153,52 +165,24 @@ namespace Spiecs {
 		* @brief Instanced a VkAttachmentDescription with default value.
 		*/
 		VkAttachmentDescription attachmentDescription{};
-
-		/**
-		* @brief Fill in format.
-		*/
 		attachmentDescription.format = m_VulkanDevice->GetSwapChainSupport().format.format;
-
-		/**
-		* @brief Fill in samples.
-		*/
 		attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-
-		/**
-		* @brief Fill in loadOp.
-		* @note Init With VK_ATTACHMENT_LOAD_OP_LOAD.
-		* Set VK_ATTACHMENT_LOAD_OP_CLEAR for the first renderpass.
-		*/
 		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 
 		/**
-		* @brief Fill in storeOp.
 		* @note Just set VK_ATTACHMENT_STORE_OP_STORE always.
 		* Otherwise you will get a grid present image, which is different from swpachainimage shows,
 		* for vulkan has changed it's layout.
 		*/
 		attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-
-		/**
-		* @brief Fill in stencilLoadOp.
-		*/
 		attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-
-		/**
-		* @brief Fill in stencilStoreOp.
-		*/
 		attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 		/**
-		* @brief Fill in initialLayout.
 		* @note Init With VK_IMAGE_LAYOUT_PRESENT_SRC_KHR.
 		* Set VK_IMAGE_LAYOUT_UNDEFINED for the first renderpass.
 		*/
 		attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		/**
-		* @brief Fill in finalLayout.
-		*/
 		attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		/**
@@ -211,29 +195,13 @@ namespace Spiecs {
 		* @brief Instanced a VkAttachmentReference with default value.
 		*/
 		VkAttachmentReference attachmentRef{};
-
-		/**
-		* @brief Fill in attachment.
-		*/
 		attachmentRef.attachment = (uint32_t)m_ColorAttachmentRef.size();
-
-		/**
-		* @brief Fill in layout.
-		*/
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		
-		/**
-		* @brief Instanced a VkClearValue with default value.
-		*/
 		VkClearValue clearValue{};
-
-		/**
-		* @brief Fill in color.
-		*/
 		clearValue.color = { 0.1f, 0.1f, 0.1f, 1.0f };
 
 		/**
-		* @brief Fill in variable.
+		* @brief Add to local variable.
 		*/
 		m_ColorAttachmentRef.push_back(std::move(attachmentRef));
 		m_Attachments.push_back(std::move(attachmentDescription));
@@ -243,47 +211,15 @@ namespace Spiecs {
 		* @brief Instanced a VkPipelineColorBlendAttachmentState with default value.
 		*/
 		VkPipelineColorBlendAttachmentState colorBlend{};
-
-		/**
-		* @brief Fill in colorWriteMask.
-		*/
 		colorBlend.colorWriteMask =
 			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
 			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-
-		/**
-		* @brief Fill in blendEnable.
-		*/
 		colorBlend.blendEnable = VK_FALSE;
-
-		/**
-		* @brief Fill in srcColorBlendFactor.
-		*/
 		colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-
-		/**
-		* @brief Fill in dstColorBlendFactor.
-		*/
 		colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-
-		/**
-		* @brief Fill in colorBlendOp.
-		*/
 		colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
-
-		/**
-		* @brief Fill in srcAlphaBlendFactor.
-		*/
 		colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-
-		/**
-		* @brief Fill in dstAlphaBlendFactor.
-		*/
 		colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-
-		/**
-		* @brief Fill in alphaBlendOp.
-		*/
 		colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
 
 		/**
@@ -304,49 +240,13 @@ namespace Spiecs {
 		* @brief Instanced a VkAttachmentDescription with default value.
 		*/
 		VkAttachmentDescription attachmentDescription{};
-
-		/**
-		* @brief Fill in format.
-		*/
 		attachmentDescription.format = m_VulkanDevice->GetSwapChainSupport().format.format;
-
-		/**
-		* @brief Fill in samples.
-		*/
 		attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-
-		/**
-		* @brief Fill in loadOp.
-		* @note Init With VK_ATTACHMENT_LOAD_OP_LOAD.
-		* Set VK_ATTACHMENT_LOAD_OP_CLEAR for the first renderpass.
-		*/
 		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-
-		/**
-		* @brief Fill in storeOp.
-		*/
 		attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-
-		/**
-		* @brief Fill in stencilLoadOp.
-		*/
 		attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-
-		/**
-		* @brief Fill in stencilStoreOp.
-		*/
 		attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-
-		/**
-		* @brief Fill in initialLayout.
-		* @note Init With VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL.
-		* Set VK_IMAGE_LAYOUT_UNDEFINED for the first renderpass.
-		*/
 		attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		/**
-		* @brief Fill in finalLayout.
-		*/
 		attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		/**
@@ -359,29 +259,13 @@ namespace Spiecs {
 		* @brief Instanced a VkAttachmentReference with default value.
 		*/
 		VkAttachmentReference attachmentRef{};
-
-		/**
-		* @brief Fill in attachment.
-		*/
 		attachmentRef.attachment = (uint32_t)m_ColorAttachmentRef.size();
-
-		/**
-		* @brief Fill in layout.
-		*/
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		/**
-		* @brief Instanced a VkClearValue with default value.
-		*/
 		VkClearValue clearValue{};
-
-		/**
-		* @brief Fill in color.
-		*/
 		clearValue.color = { 0.1f, 0.1f, 0.1f, 1.0f };
 
 		/**
-		* @brief Fill in variable.
+		* @brief Add to local variable.
 		*/
 		m_ColorAttachmentRef.push_back(std::move(attachmentRef));
 		m_Attachments.push_back(std::move(attachmentDescription));
@@ -401,47 +285,15 @@ namespace Spiecs {
 		* @brief Instanced a VkPipelineColorBlendAttachmentState with default value.
 		*/
 		VkPipelineColorBlendAttachmentState colorBlend{};
-
-		/**
-		* @brief Fill in colorWriteMask.
-		*/
 		colorBlend.colorWriteMask =
 			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
 			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-
-		/**
-		* @brief Fill in blendEnable.
-		*/
 		colorBlend.blendEnable = VK_FALSE;
-
-		/**
-		* @brief Fill in srcColorBlendFactor.
-		*/
 		colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-
-		/**
-		* @brief Fill in dstColorBlendFactor.
-		*/
 		colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-
-		/**
-		* @brief Fill in colorBlendOp.
-		*/
 		colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
-
-		/**
-		* @brief Fill in srcAlphaBlendFactor.
-		*/
 		colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-
-		/**
-		* @brief Fill in dstAlphaBlendFactor.
-		*/
 		colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-
-		/**
-		* @brief Fill in alphaBlendOp.
-		*/
 		colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
 
 		/**
@@ -457,49 +309,23 @@ namespace Spiecs {
 		* @brief Instanced a VkAttachmentDescription with default value.
 		*/
 		VkAttachmentDescription depthAttachment{};
-
-		/**
-		* @brief Fill in format.
-		*/
 		depthAttachment.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
-
-		/**
-		* @brief Fill in samples.
-		*/
 		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
 		/**
-		* @brief Fill in loadOp.
 		* @note Init With VK_ATTACHMENT_LOAD_OP_LOAD.
 		* Set VK_ATTACHMENT_LOAD_OP_CLEAR for the first renderpass.
 		*/
 		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-
-		/**
-		* @brief Fill in storeOp.
-		*/
 		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-
-		/**
-		* @brief Fill in stencilLoadOp.
-		*/
 		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-
-		/**
-		* @brief Fill in stencilStoreOp.
-		*/
 		depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 		/**
-		* @brief Fill in initialLayout.
 		* @note Init With VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL.
 		* Set VK_IMAGE_LAYOUT_UNDEFINED for the first renderpass.
 		*/
 		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-		/**
-		* @brief Fill in finalLayout.
-		*/
 		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		/**
@@ -512,29 +338,17 @@ namespace Spiecs {
 		* @brief Instanced a VkAttachmentReference with default value.
 		*/
 		VkAttachmentReference depthAttachmentRef{};
-
-		/**
-		* @brief Fill in attachment.
-		*/
 		depthAttachmentRef.attachment = (uint32_t)m_ColorAttachmentRef.size();
-
-		/**
-		* @brief Fill in layout.
-		*/
 		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		/**
 		* @brief Instanced a VkClearValue with default value.
 		*/
 		VkClearValue clearValue{};
-
-		/**
-		* @brief Fill in depthStencil.
-		*/
 		clearValue.depthStencil = { 1.0f, 0 };
 		
 		/**
-		* @brief Fill in variable.
+		* @brief Add to local variable.
 		*/
 		m_DepthAttachmentRef = depthAttachmentRef;
 		m_Attachments.push_back(std::move(depthAttachment));
@@ -549,8 +363,63 @@ namespace Spiecs {
 		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
 		Info.isDepthResource = true;
 
+		/**
+		* @brief Add to local variable.
+		*/
 		m_AttachmentsView.push_back(m_RendererResourcePool->AccessDepthResource(Info)->imageView);
 
+		/**
+		* @brief Set use Depth.
+		*/
 		isUseDpth = true;
+	}
+
+	template<typename T>
+	inline void VulkanRenderPass::AddInputAttachment(const std::string& attachmentName, T func)
+	{
+		/**
+		* @brief Instanced a VkAttachmentDescription with default value.
+		*/
+		VkAttachmentDescription attachmentDescription{};
+		attachmentDescription.format = m_VulkanDevice->GetSwapChainSupport().format.format;
+		attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
+		attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		/**
+		* @brief Rewrite VkAttachmentDescription.
+		* @param[in] attachmentDescription VkAttachmentDescription Reference.
+		*/
+		func(attachmentDescription);
+
+		/**
+		* @brief Instanced a VkAttachmentReference with default value.
+		*/
+		VkAttachmentReference attachmentRef{};
+		attachmentRef.attachment = (uint32_t)m_InputAttachmentRef.size();
+		attachmentRef.layout = attachmentDescription.finalLayout;
+		VkClearValue clearValue{};
+		clearValue.color = { 0.1f, 0.1f, 0.1f, 1.0f };
+
+		/**
+		* @brief Add to local variable.
+		*/
+		m_InputAttachmentRef.push_back(std::move(attachmentRef));
+		m_Attachments.push_back(std::move(attachmentDescription));
+		m_ClearValues.push_back(std::move(clearValue));
+
+		/**
+		* @brief Set View.
+		*/
+		RendererResourceCreateInfo Info;
+		Info.description = attachmentDescription;
+		Info.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
+		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+
+		m_AttachmentsView.push_back(m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView);
 	}
 }

@@ -42,11 +42,7 @@ namespace Spiecs {
 		Renderer::OnSystemInitialize();
 		InitImgui();
 
-		m_ViewPort = std::make_unique<Texture2D>("street.jpg");
-
-		//VkDescriptorImageInfo* info = m_RendererResourcePool->AccessResource("BaseColor");
-		VkDescriptorImageInfo* info = m_ViewPort->GetResource<VulkanImage>()->GetImageInfo();
-
+		VkDescriptorImageInfo* info = m_RendererResourcePool->AccessResource("FinalColor");
 		
 		ID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
 	}

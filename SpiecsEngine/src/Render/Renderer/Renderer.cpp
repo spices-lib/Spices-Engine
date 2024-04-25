@@ -148,6 +148,8 @@ namespace Spiecs {
 
 		BindAllBufferTyepDescriptorSet();
 
+		BindInputDescriptorSet();
+
 		BeginRenderPass();
 	}
 
@@ -171,6 +173,32 @@ namespace Spiecs {
 			for (int j = 0; j < bindingCount; j++)
 			{
 				if (m_Renderer->m_VulkanLayoutWriters[i]->GetWritters()[j].descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+				{
+					IsPureBufferTypeSet = false;
+					break;
+				}
+			}
+
+			if (IsPureBufferTypeSet)
+			{
+				BindDescriptorSet(i, m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[i]);
+			}
+		}
+	}
+
+	void Renderer::RenderBehaverBuilder::BindInputDescriptorSet()
+	{
+		int setCount = (int)m_Renderer->m_VulkanLayoutWriters.size();
+		for (int i = 0; i < setCount; i++)
+		{
+			bool IsPureBufferTypeSet = true;
+
+			if (!m_Renderer->m_VulkanLayoutWriters[i]) continue;
+
+			int bindingCount = (int)m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().size();
+			for (int j = 0; j < bindingCount; j++)
+			{
+				if (m_Renderer->m_VulkanLayoutWriters[i]->GetWritters()[j].descriptorType != VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT)
 				{
 					IsPureBufferTypeSet = false;
 					break;

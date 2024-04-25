@@ -4,4 +4,7 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SkyBoxRenderer.vert -o Shader.SkyBoxRenderer.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SkyBoxRenderer.frag -o Shader.SkyBoxRenderer.frag.spv
 
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SceneComposeRenderer.vert -o Shader.SceneComposeRenderer.vert.spv
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SceneComposeRenderer.frag -o Shader.SceneComposeRenderer.frag.spv
+
 pause

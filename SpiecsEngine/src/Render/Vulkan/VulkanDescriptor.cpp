@@ -165,7 +165,7 @@ namespace Spiecs {
 		return *this;
 	}
 
-	VulkanDescriptorWriter& VulkanDescriptorWriter::WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
+	VulkanDescriptorWriter& VulkanDescriptorWriter::WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t imageNum)
 	{
 		assert(m_SetLayout.m_Bindings.count(binding) == 1 && "Layout does not contain specified binding");
 
@@ -180,7 +180,7 @@ namespace Spiecs {
 		write.descriptorType = bindingDescription.descriptorType;
 		write.dstBinding = binding;
 		write.pImageInfo = imageInfo;
-		write.descriptorCount = 1;
+		write.descriptorCount = imageNum;
 
 		M_Writes.push_back(write);
 		return *this;
