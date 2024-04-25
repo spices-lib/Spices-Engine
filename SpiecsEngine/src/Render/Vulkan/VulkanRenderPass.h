@@ -403,7 +403,7 @@ namespace Spiecs {
 		attachmentRef.attachment = (uint32_t)m_InputAttachmentRef.size();
 		attachmentRef.layout = attachmentDescription.finalLayout;
 		VkClearValue clearValue{};
-		clearValue.color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		/**
 		* @brief Add to local variable.
