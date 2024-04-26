@@ -10,6 +10,14 @@
 
 namespace Spiecs {
 
+	struct WindowInfo
+	{
+		uint32_t width;
+		uint32_t height;
+
+		std::string name;
+	};
+
 	/**
 	* @brief VulkanWindows Class.
 	* This class defines the windows behaver.
@@ -26,7 +34,7 @@ namespace Spiecs {
 		* @param[in] height Init viewport's height.
 		* @param[in] name Init viewport's title.
 		*/
-		VulkanWindows(VulkanState& vulkanState, uint32_t width, uint32_t height, const std::string& name);
+		VulkanWindows(VulkanState& vulkanState, const WindowInfo& initInfo);
 
 		/**
 		* @brief Destructor Function.
@@ -55,19 +63,10 @@ namespace Spiecs {
 	private:
 
 		/**
-		* @brief ViewPort's width.
+		* @brief Window's info.
+		* not viewport's info.
 		*/
-		uint32_t m_Width;
-
-		/**
-		* @brief ViewPort's height.
-		*/
-		uint32_t m_Height;
-
-		/**
-		* @brief ViewPort's name.
-		*/
-		std::string m_WindowsName;
+		WindowInfo m_WindowInfo;
 
 		/**
 		* @brief True if viewPort is resized.

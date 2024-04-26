@@ -101,8 +101,8 @@ namespace Spiecs {
 			framebufferInfo.renderPass = m_RenderPass;
 			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			framebufferInfo.pAttachments = attachments.data();
-			framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
-			framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+			framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+			framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
 			framebufferInfo.layers = 1;
 
 			/**

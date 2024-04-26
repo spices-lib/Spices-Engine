@@ -98,9 +98,15 @@ namespace Spiecs {
 		VkPresentModeKHR presentMode;
 
 		/**
-		* @brief The selected VkExtent2D.
+		* @brief The VkSurface Size.
 		*/
-		VkExtent2D extent;
+		VkExtent2D surfaceSize;
+
+		/**
+		* @brief The ViewPort Size.
+		* Init value. Reset by resize event.
+		*/
+		VkExtent2D viewPortSize = { 1280, 960 };
 	};
 
 	/**

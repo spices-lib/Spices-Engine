@@ -220,7 +220,7 @@ namespace Spiecs {
 		renderPassInfo.renderPass = m_Renderer->m_RenderPass->Get();
 		renderPassInfo.framebuffer = m_Renderer->m_RenderPass->GetFramebuffer(m_CurrentImage);
 		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().extent;
+		renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 
 		renderPassInfo.clearValueCount = (uint32_t)m_Renderer->m_RenderPass->GetClearValues().size();
 		renderPassInfo.pClearValues = m_Renderer->m_RenderPass->GetClearValues().data();

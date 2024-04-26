@@ -370,8 +370,9 @@ namespace Spiecs {
 		/**
 		* @brief Get VkExtent2D From VkSurfaceCapabilitiesKHR or glfwWindow.
 		*/
-		if (swapChainSupportDetails.capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
-			swapChainSupportDetails.extent = swapChainSupportDetails.capabilities.currentExtent;
+		if (swapChainSupportDetails.capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) 
+		{
+			swapChainSupportDetails.surfaceSize = swapChainSupportDetails.capabilities.currentExtent;
 		}
 		else
 		{
@@ -395,7 +396,7 @@ namespace Spiecs {
 				swapChainSupportDetails.capabilities.minImageExtent.height,
 				swapChainSupportDetails.capabilities.maxImageExtent.height);
 
-			swapChainSupportDetails.extent = actualExtent;
+			swapChainSupportDetails.surfaceSize = actualExtent;
 		}
 
 		/**

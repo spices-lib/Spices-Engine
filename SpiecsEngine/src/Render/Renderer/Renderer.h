@@ -78,8 +78,8 @@ namespace Spiecs {
 			m_RenderPass = nullptr;
 			CreateRenderPass(); 
 
-			m_VulkanPipeline = nullptr;
-			CreatePipeline(m_RenderPass->Get());
+			//m_VulkanPipeline = nullptr;
+			//CreatePipeline(m_RenderPass->Get());
 		};
 
 		/**
@@ -217,7 +217,7 @@ namespace Spiecs {
 			* @brief Constructor Function.
 			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			*/
-			PipelineLayoutBuilder(Renderer* renderer) : m_Renderer(renderer) {};
+			PipelineLayoutBuilder(Renderer* renderer);
 
 			/**
 			* @brief Destructor Function.
@@ -657,6 +657,14 @@ namespace Spiecs {
 		m_Renderer->m_VulkanLayoutWriters[set]->WriteImage(binding, imageInfo);*/
 
 		return *this;
+	}
+
+	inline Renderer::PipelineLayoutBuilder::PipelineLayoutBuilder(Renderer* renderer)
+		: m_Renderer(renderer)
+	{
+		m_Renderer->m_VulkanLayouts.clear();
+		m_Renderer->m_DescriptorSetLayouts.clear();
+		m_Renderer->m_VulkanLayoutWriters.clear();
 	}
 
 	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddInput(uint32_t set, uint32_t binding, uint32_t arrayNum, VkShaderStageFlags stageFlags, const std::vector<std::string>& inputAttachmentNames)

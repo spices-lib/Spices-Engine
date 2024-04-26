@@ -276,8 +276,8 @@ namespace Spiecs {
 		*/
 		RendererResourceCreateInfo Info;
 		Info.description = attachmentDescription;
-		Info.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
-		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+		Info.width = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+		Info.height = m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
 
 		m_AttachmentsView.push_back(m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView);
 
@@ -359,8 +359,8 @@ namespace Spiecs {
 		*/
 		RendererResourceCreateInfo Info;
 		Info.description = depthAttachment;
-		Info.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
-		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+		Info.width = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+		Info.height = m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
 		Info.isDepthResource = true;
 
 		/**
@@ -417,8 +417,8 @@ namespace Spiecs {
 		*/
 		RendererResourceCreateInfo Info;
 		Info.description = attachmentDescription;
-		Info.width = m_VulkanDevice->GetSwapChainSupport().extent.width;
-		Info.height = m_VulkanDevice->GetSwapChainSupport().extent.height;
+		Info.width = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+		Info.height = m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
 
 		m_AttachmentsView.push_back(m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView);
 	}

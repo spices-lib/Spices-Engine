@@ -44,13 +44,6 @@ namespace Spiecs {
 		InitImgui();
 	}
 
-	void SlateRenderer::OnWindowResized()
-	{
-		Renderer::OnWindowResized();
-		ShutdownImgui();
-		InitImgui();
-	}
-
 	void SlateRenderer::InitImgui()
 	{
 		ImGui::CreateContext();

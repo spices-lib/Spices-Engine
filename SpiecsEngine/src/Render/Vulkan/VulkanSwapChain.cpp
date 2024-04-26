@@ -53,7 +53,7 @@ namespace Spiecs {
 		createInfo.minImageCount = MaxFrameInFlight;
 		createInfo.imageFormat = m_VulkanDevice->GetSwapChainSupport().format.format;
 		createInfo.imageColorSpace = m_VulkanDevice->GetSwapChainSupport().format.colorSpace;
-		createInfo.imageExtent = m_VulkanDevice->GetSwapChainSupport().extent;
+		createInfo.imageExtent = m_VulkanDevice->GetSwapChainSupport().surfaceSize;
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 

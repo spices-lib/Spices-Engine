@@ -65,6 +65,12 @@ namespace Spiecs {
 		);
 	}
 
+	void SceneComposeRenderer::OnWindowResized()
+	{
+		Renderer::OnWindowResized();
+		CreatePipelineLayoutAndDescriptor();
+	}
+
 	void SceneComposeRenderer::Render(FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };

@@ -59,5 +59,7 @@ namespace Spiecs {
 		* @param[in] renderPass Renderer specific renderpass.
 		*/
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
+
+		virtual void OnWindowResized() override;
 	};
 }

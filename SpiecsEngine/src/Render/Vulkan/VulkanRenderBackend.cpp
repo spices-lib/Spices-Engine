@@ -9,13 +9,15 @@
 
 namespace Spiecs {
 
+	const WindowInfo initInfo{ 1920, 1080, "Spiecs Engine"};
+
 	VulkanState VulkanRenderBackend::m_VulkanState;
 	std::shared_ptr<VulkanDescriptorPool> VulkanRenderBackend::m_VulkanDescriptorPool;
 	std::shared_ptr<RendererResourcePool> VulkanRenderBackend::m_RendererResourcePool;
 
 	VulkanRenderBackend::VulkanRenderBackend()
 	{
-		m_VulkanWindows = std::make_unique<VulkanWindows>(m_VulkanState, 1920, 1080, "Spiecs Engine");
+		m_VulkanWindows = std::make_unique<VulkanWindows>(m_VulkanState, initInfo);
 		m_VulkanInstance = std::make_unique<VulkanInstance>(m_VulkanState, "app", "engine");
 		m_VulkanDevice = std::make_shared<VulkanDevice>(m_VulkanState);
 		m_VulkanCommandPool = std::make_unique<VulkanCommandPool>(m_VulkanState);
@@ -97,16 +99,16 @@ namespace Spiecs {
 		*/
 		VkViewport viewport{};
 		viewport.x = 0.0f;
-		viewport.y = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().extent.height);
-		viewport.width = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().extent.width);
-		viewport.height = -static_cast<float>(m_VulkanDevice->GetSwapChainSupport().extent.height);
+		viewport.y = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
+		viewport.width = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.width);
+		viewport.height = -static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
-		scissor.extent = m_VulkanDevice->GetSwapChainSupport().extent;
+		scissor.extent = m_VulkanDevice->GetSwapChainSupport().surfaceSize;
 		vkCmdSetScissor(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &scissor);
 	}
 

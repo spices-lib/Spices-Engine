@@ -13,8 +13,8 @@
 
 namespace Spiecs {
 
-	VulkanWindows::VulkanWindows(VulkanState& vulkanState, uint32_t width, uint32_t height, const std::string& name)
-		: VulkanObject(vulkanState), m_Width(width), m_Height(height), m_WindowsName(name)
+	VulkanWindows::VulkanWindows(VulkanState& vulkanState, const WindowInfo& initInfo)
+		: VulkanObject(vulkanState), m_WindowInfo(initInfo)
 	{
 		/**
 		* @brief glfw initialize.
@@ -34,7 +34,7 @@ namespace Spiecs {
 		/**
 		* @brief Create glfwWindow.
 		*/
-		vulkanState.m_Windows = glfwCreateWindow(m_Width, m_Height, m_WindowsName.c_str(), nullptr, nullptr);
+		vulkanState.m_Windows = glfwCreateWindow(initInfo.width, initInfo.height, initInfo.name.c_str(), nullptr, nullptr);
 
 		/**
 		* @brief Set glfw call back object pointer.
@@ -92,8 +92,8 @@ namespace Spiecs {
 			* @brief Set this class's variable.
 			*/
 			vulkanWindow->m_WindowsResized = true;
-			vulkanWindow->m_Width = width;
-			vulkanWindow->m_Height = height;
+			vulkanWindow->m_WindowInfo.width = width;
+			vulkanWindow->m_WindowInfo.height = height;
 
 			/**
 			* @brief Create an specific event.
