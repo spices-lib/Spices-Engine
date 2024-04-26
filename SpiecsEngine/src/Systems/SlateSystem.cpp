@@ -22,6 +22,7 @@ namespace Spiecs {
 		m_SlateRegister->Register<ImguiContentBrowser>();
 		m_SlateRegister->Register<ImguiProperty>();
 		m_SlateRegister->Register<ImguiStage>();
+		m_SlateRegister->Register<ImguiMainMenu>();
 		m_SlateRegister->Register<ImguiViewport>();
 	}
 

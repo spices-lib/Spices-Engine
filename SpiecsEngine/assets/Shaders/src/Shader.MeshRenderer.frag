@@ -11,13 +11,12 @@ layout(location = 0) in struct FragInput {
 // frag output
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
-layout(location = 2) out vec4 outID;
+layout(location = 2) out int outID;
 
 // push constant
 layout(push_constant) uniform Push{
 	mat4 model;
 	int entityID;
-	int meshpackID;
 } push;
 
 // uniform buffer
@@ -73,7 +72,7 @@ void main()
         outColor = vec4(textureParams.textureParam[diffuseTexture].constant, 0.0f) * textureParams.textureParam[diffuseTexture].intensity;
     }
     outNormal = vec4(fragInput.normal, 1.0f);
-    outID = vec4(push.entityID, push.meshpackID, 0.0f, 0.0f);
+    outID = push.entityID;
 }
 
 //vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection) {

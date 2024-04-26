@@ -6,6 +6,7 @@
 #include "Slate/Imgui/ImguiProperty.h"
 #include "Slate/Imgui/ImguiStage.h"
 #include "Slate/Imgui/ImguiViewport.h"
+#include "Slate/Imgui/ImguiMainMenu.h"
 
 #include <memory>
 #include <vector>

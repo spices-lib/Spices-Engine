@@ -24,11 +24,6 @@ namespace Spiecs {
 		* @brief Entityid, cast from entt::entity.
 		*/
 		int entityID = -1;
-
-		/**
-		* @brief Meshpackid, from arrayindex of meshpack.
-		*/
-		int meshpackID = -1;
 	};
 
 	/**
@@ -106,7 +101,7 @@ namespace Spiecs {
 		* @brief Add ID Attachment.
 		*/
 		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
-			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+			description.format = VK_FORMAT_R32_SINT;
 		});
 
 		/**
@@ -175,7 +170,6 @@ namespace Spiecs {
 				builder.UpdatePushConstant<PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
-					push.meshpackID = meshpackId;
 				});
 
 				builder.UpdateBuffer<TextureParams>(2, 0, [&](auto& ubo) {

@@ -15,7 +15,6 @@ layout(location = 0) out struct FragInput {
 layout(push_constant) uniform Push {
     mat4 model;
     int entityID;
-    int meshpackID;
 } push;
 
 // uniform buffer
