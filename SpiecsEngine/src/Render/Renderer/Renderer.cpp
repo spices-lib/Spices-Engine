@@ -140,9 +140,10 @@ namespace Spiecs {
 		VK_CHECK(vkCreatePipelineLayout(m_Renderer->m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &m_Renderer->m_PipelineLayout));
 	}
 
-	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame)
+	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame, uint32_t currentImage)
 		: m_Renderer(renderer)
 		, m_CurrentFrame(currentFrame)
+		, m_CurrentImage(currentImage)
 	{
 		BindPipeline();
 
@@ -217,7 +218,7 @@ namespace Spiecs {
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = m_Renderer->m_RenderPass->Get();
-		renderPassInfo.framebuffer = m_Renderer->m_RenderPass->GetFramebuffer(m_CurrentFrame);
+		renderPassInfo.framebuffer = m_Renderer->m_RenderPass->GetFramebuffer(m_CurrentImage);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().extent;
 

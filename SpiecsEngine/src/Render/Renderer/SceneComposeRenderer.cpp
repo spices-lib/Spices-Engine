@@ -67,7 +67,7 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::Render(FrameInfo& frameInfo)
 	{
-		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex };
+		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		vkCmdDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 3, 1, 0, 0);
 

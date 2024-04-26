@@ -24,9 +24,10 @@ namespace Spiecs {
 
 		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
 			.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
-			.SetMaxSets(2000)
-			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
-			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
+			.SetMaxSets(300)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 100)
 			.Build(m_VulkanState);
 
 		// TODO: Move to  
@@ -48,8 +49,8 @@ namespace Spiecs {
 		RendererManager::Get()
 			.Pop("SlateRenderer")
 			.Pop("SceneComposeRenderer")
-			.Pop("SkyBoxRenderer")
-			.Pop("MeshRenderer");
+			.Pop("MeshRenderer")
+			.Pop("SkyBoxRenderer");
 	}
 
 	void VulkanRenderBackend::RecreateSwapChain() {

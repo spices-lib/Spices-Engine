@@ -147,7 +147,7 @@ namespace Spiecs {
 
 	void MeshRenderer::Render(FrameInfo& frameInfo)
 	{
-		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex };
+		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.UpdateBuffer<VertRendererUBO>(0, 0, [&](auto& ubo) {
 			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);

@@ -73,7 +73,14 @@ namespace Spiecs {
 		/**
 		* @brief Recreate VulkanRenderPass.
 		*/
-		void OnWindowResized() { m_RenderPass = nullptr; CreateRenderPass(); };
+		virtual void OnWindowResized() 
+		{ 
+			m_RenderPass = nullptr;
+			CreateRenderPass(); 
+
+			m_VulkanPipeline = nullptr;
+			CreatePipeline(m_RenderPass->Get());
+		};
 
 		/**
 		* @brief The Function is called on this attached.
@@ -321,7 +328,7 @@ namespace Spiecs {
 			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			* @param[in] currentFrame Passed from FrameInfo.
 			*/
-			RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame);
+			RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame, uint32_t currentImage);
 
 			/**
 			* @brief Destructor Function.
@@ -399,6 +406,13 @@ namespace Spiecs {
 			* @see FrameInfo.
 			*/
 			uint32_t m_CurrentFrame;
+
+			/**
+			* @brief Current frame index.
+			* Passed while this class instanecd.
+			* @see FrameInfo.
+			*/
+			uint32_t m_CurrentImage;
 		};
 
 		/**

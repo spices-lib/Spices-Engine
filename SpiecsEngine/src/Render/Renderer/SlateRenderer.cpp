@@ -44,6 +44,13 @@ namespace Spiecs {
 		InitImgui();
 	}
 
+	void SlateRenderer::OnWindowResized()
+	{
+		Renderer::OnWindowResized();
+		ShutdownImgui();
+		InitImgui();
+	}
+
 	void SlateRenderer::InitImgui()
 	{
 		ImGui::CreateContext();
@@ -119,7 +126,7 @@ namespace Spiecs {
 
 	void SlateRenderer::Render(FrameInfo& frameInfo)
 	{
-		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex };
+		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		BeginImguiFrame();
 

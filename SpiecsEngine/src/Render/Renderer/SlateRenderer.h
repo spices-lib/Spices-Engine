@@ -61,6 +61,7 @@ namespace Spiecs {
 		virtual void CreatePipeline(VkRenderPass renderPass) override {};
 
 		virtual void OnSystemInitialize() override;
+		virtual void OnWindowResized() override;
 
 		void InitImgui();
 		void ShutdownImgui();
