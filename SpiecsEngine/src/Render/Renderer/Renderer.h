@@ -657,11 +657,11 @@ namespace Spiecs {
 
 		m_Renderer->m_DescriptorSetLayouts[set] = m_Renderer->m_VulkanLayouts[set]->GetDescriptorSetLayout();
 
-		std::vector<VkDescriptorImageInfo*> imageInfos{};
+		std::vector<VkDescriptorImageInfo> imageInfos{};
 
 		for (auto& pair : inputAttachmentNames)
 		{
-			imageInfos.push_back(m_Renderer->m_RendererResourcePool->AccessResource(pair));
+			imageInfos.push_back(*m_Renderer->m_RendererResourcePool->AccessResource(pair));
 		}
 
 		ContainerLibrary::Resize<std::unique_ptr<VulkanDescriptorWriter>>(m_Renderer->m_VulkanLayoutWriters, set + 1);
@@ -675,7 +675,7 @@ namespace Spiecs {
 		{
 			m_Renderer->m_VulkanLayoutWriters[set] = std::make_unique<VulkanDescriptorWriter>(*m_Renderer->m_VulkanLayouts[set], *m_Renderer->m_DesctiptorPool);
 		}
-		m_Renderer->m_VulkanLayoutWriters[set]->WriteImage(binding, imageInfos[0], imageInfos.size());
+		m_Renderer->m_VulkanLayoutWriters[set]->WriteInput(binding, imageInfos);
 
 		return *this;
 	}

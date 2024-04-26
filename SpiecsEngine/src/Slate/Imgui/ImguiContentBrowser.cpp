@@ -3,5 +3,10 @@
 
 namespace Spiecs {
 
+    void ImguiContentBrowser::OnRender()
+    {
+        ImGui::Begin("Content");
 
+        ImGui::End();
+    }
 }

@@ -165,24 +165,39 @@ namespace Spiecs {
 		return *this;
 	}
 
-	VulkanDescriptorWriter& VulkanDescriptorWriter::WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t imageNum)
+	VulkanDescriptorWriter& VulkanDescriptorWriter::WriteImage(uint32_t binding, std::vector<VkDescriptorImageInfo> imageInfo)
 	{
 		assert(m_SetLayout.m_Bindings.count(binding) == 1 && "Layout does not contain specified binding");
 
 		auto& bindingDescription = m_SetLayout.m_Bindings[binding];
 
-		assert(
-			bindingDescription.descriptorCount == 1 &&
-			"Binding single descriptor info, but binding expects multiple");
+		VkWriteDescriptorSet write{};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.descriptorType = bindingDescription.descriptorType;
+		write.dstBinding = binding;
+		write.pImageInfo = imageInfo.data();
+		write.descriptorCount = imageInfo.size();
+
+		M_Writes.push_back(write);
+		return *this;
+	}
+
+	VulkanDescriptorWriter& VulkanDescriptorWriter::WriteInput(uint32_t binding, const std::vector<VkDescriptorImageInfo>& imageInfo)
+	{
+		assert(m_InputImageInfo.size() == 0);
+
+		auto& bindingDescription = m_SetLayout.m_Bindings[binding];
 
 		VkWriteDescriptorSet write{};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.descriptorType = bindingDescription.descriptorType;
 		write.dstBinding = binding;
-		write.pImageInfo = imageInfo;
-		write.descriptorCount = imageNum;
+		write.pImageInfo = nullptr;
+		write.descriptorCount = 1;
 
 		M_Writes.push_back(write);
+
+		m_InputImageInfo = imageInfo;
 		return *this;
 	}
 
@@ -215,6 +230,12 @@ namespace Spiecs {
 	{
 		for (auto& write : M_Writes) {
 			write.dstSet = set;
+
+			if (write.descriptorType == VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT)
+			{
+				write.pImageInfo = m_InputImageInfo.data();
+				write.descriptorCount = m_InputImageInfo.size();
+			}
 		}
 		vkUpdateDescriptorSets(m_Pool.m_VulkanState.m_Device, static_cast<uint32_t>(M_Writes.size()), M_Writes.data(), 0, nullptr);
 	}

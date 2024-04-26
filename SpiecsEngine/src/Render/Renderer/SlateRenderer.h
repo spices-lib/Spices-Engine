@@ -68,11 +68,6 @@ namespace Spiecs {
 		void EndImguiFrame(uint32_t index);
 
 	private:
-		typedef void* ImTextureID;
-
-		ImTextureID ID;
-
-		std::unique_ptr<Texture2D> m_ViewPort;
 	};
 
 }

@@ -45,8 +45,7 @@ namespace Spiecs {
 	void SceneComposeRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
-		.AddInput(0, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor"})
-		.AddInput(0, 1, 1, VK_SHADER_STAGE_FRAGMENT_BIT, {"Normal"})
+		.AddInput(0, 0, 2, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal"})
 		.Build();
 	}
 

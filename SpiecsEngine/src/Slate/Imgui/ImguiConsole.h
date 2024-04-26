@@ -10,6 +10,9 @@ namespace Spiecs {
 		ImguiConsole() {};
 		virtual ~ImguiConsole() {};
 
+		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnRender() override;
+
 	private:
 	};
 }

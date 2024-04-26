@@ -35,6 +35,7 @@ namespace Spiecs {
 		// Temp:
 		static VulkanState& GetState() { return m_VulkanState; };
 		static std::shared_ptr<VulkanDescriptorPool> GetDescriptorPool() { return m_VulkanDescriptorPool; };;
+		static std::shared_ptr<RendererResourcePool> GetRendererResourcePool() { return m_RendererResourcePool; };
 
 	private:
 
@@ -46,7 +47,7 @@ namespace Spiecs {
 	private:
 		static VulkanState m_VulkanState;
 		static std::shared_ptr<VulkanDescriptorPool> m_VulkanDescriptorPool;
-		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
+		static std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 		
 		std::unique_ptr<VulkanWindows> m_VulkanWindows;
 		std::unique_ptr<VulkanInstance> m_VulkanInstance;

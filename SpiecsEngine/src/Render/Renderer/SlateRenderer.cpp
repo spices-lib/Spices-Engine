@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "SlateRenderer.h"
+#include "Systems/SlateSystem.h"
 
 #include <imgui.h>
 #include <backends/imgui_impl_vulkan.h>
@@ -41,17 +42,15 @@ namespace Spiecs {
 	{
 		Renderer::OnSystemInitialize();
 		InitImgui();
-
-		VkDescriptorImageInfo* info = m_RendererResourcePool->AccessResource("FinalColor");
-		
-		ID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
 	}
 
 	void SlateRenderer::InitImgui()
 	{
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
@@ -104,8 +103,18 @@ namespace Spiecs {
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)
 	{
+		ImGuiIO& io = ImGui::GetIO();
+
 		ImGui::Render();
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_VulkanState.m_CommandBuffer[index]);
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
 	}
 
 	void SlateRenderer::Render(FrameInfo& frameInfo)
@@ -114,16 +123,18 @@ namespace Spiecs {
 
 		BeginImguiFrame();
 
-		ImGui::ShowDemoWindow();
-		{
-			ImGui::Begin("Viewport");
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-			ImGui::Image(ID, ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
-
-			ImGui::End();
-		}
+		ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+		// Dockspace
+		ImGui::DockSpace(ImGui::GetID("MyDockspace"));
 		
+		SlateSystem::GetRegister()->OnRender();
+
+		ImGui::End();
+
 		EndImguiFrame(frameInfo.m_FrameIndex);
 		builder.EndRenderPass();
 	}

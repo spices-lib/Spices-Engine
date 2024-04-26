@@ -3,5 +3,10 @@
 
 namespace Spiecs {
 
+	void ImguiProperty::OnRender()
+	{
+		ImGui::Begin("Property");
 
+		ImGui::End();
+	}
 }

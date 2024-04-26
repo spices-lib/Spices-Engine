@@ -7,9 +7,13 @@ namespace Spiecs {
 	class ImguiViewport : public ImguiSlate
 	{
 	public:
-		ImguiViewport() {};
+		ImguiViewport();
 		virtual ~ImguiViewport() {};
 
+		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnRender() override;
+
 	private:
+		ImTextureID m_ViewportID;
 	};
 }

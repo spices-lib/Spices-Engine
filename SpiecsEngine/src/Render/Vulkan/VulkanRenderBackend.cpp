@@ -11,6 +11,7 @@ namespace Spiecs {
 
 	VulkanState VulkanRenderBackend::m_VulkanState;
 	std::shared_ptr<VulkanDescriptorPool> VulkanRenderBackend::m_VulkanDescriptorPool;
+	std::shared_ptr<RendererResourcePool> VulkanRenderBackend::m_RendererResourcePool;
 
 	VulkanRenderBackend::VulkanRenderBackend()
 	{

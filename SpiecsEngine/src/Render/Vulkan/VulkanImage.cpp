@@ -414,7 +414,7 @@ namespace Spiecs {
 
 		VkDescriptorSet descriptorSet;
 		VulkanDescriptorWriter{ *setLayout, *VulkanRenderBackend::GetDescriptorPool() }
-			.WriteImage(binding, &imageInfo)
+			.WriteImage(binding, { imageInfo })
 			.Build(descriptorSet);
 
 		return descriptorSet;

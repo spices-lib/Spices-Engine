@@ -3,4 +3,10 @@
 
 namespace Spiecs {
 
+    void ImguiStage::OnRender()
+    {
+        ImGui::Begin("Stage");
+
+        ImGui::End();
+    }
 }
