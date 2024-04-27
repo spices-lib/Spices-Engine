@@ -5,7 +5,7 @@ namespace Spiecs {
 
     void ImguiStage::OnRender()
     {
-        ImGui::Begin("Stage");
+        ImGui::Begin(m_PanelName.c_str());
 
         ImGui::End();
     }

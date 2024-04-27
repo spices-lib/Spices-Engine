@@ -18,12 +18,12 @@ namespace Spiecs {
 	{
 		m_SlateRegister = std::make_shared<SlateRegister>();
 
-		m_SlateRegister->Register<ImguiConsole>();
-		m_SlateRegister->Register<ImguiContentBrowser>();
-		m_SlateRegister->Register<ImguiProperty>();
-		m_SlateRegister->Register<ImguiStage>();
-		m_SlateRegister->Register<ImguiMainMenu>();
-		m_SlateRegister->Register<ImguiViewport>();
+		m_SlateRegister->Register<ImguiConsole>("Console");
+		m_SlateRegister->Register<ImguiContentBrowser>("Content");
+		m_SlateRegister->Register<ImguiProperty>("Property");
+		m_SlateRegister->Register<ImguiStage>("Stage");
+		m_SlateRegister->Register<ImguiMainMenu>("MainMenu");
+		m_SlateRegister->Register<ImguiViewport>("Viewport");
 	}
 
 	void SlateSystem::OnSystemShutDown()

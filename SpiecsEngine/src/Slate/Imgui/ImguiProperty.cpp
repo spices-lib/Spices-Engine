@@ -5,7 +5,7 @@ namespace Spiecs {
 
 	void ImguiProperty::OnRender()
 	{
-		ImGui::Begin("Property");
+		ImGui::Begin(m_PanelName.c_str());
 
 		ImGui::End();
 	}

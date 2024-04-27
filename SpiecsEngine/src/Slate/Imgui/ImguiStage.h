@@ -7,7 +7,7 @@ namespace Spiecs {
 	class ImguiStage : public ImguiSlate
 	{
 	public:
-		ImguiStage() {};
+		ImguiStage(const std::string& panelName) : ImguiSlate(panelName) {};
 		virtual ~ImguiStage() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

@@ -7,7 +7,7 @@ namespace Spiecs {
 	class ImguiViewport : public ImguiSlate
 	{
 	public:
-		ImguiViewport();
+		ImguiViewport(const std::string& panelName);
 		virtual ~ImguiViewport() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

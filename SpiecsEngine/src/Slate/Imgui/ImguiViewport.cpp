@@ -4,7 +4,8 @@
 
 namespace Spiecs {
 
-    ImguiViewport::ImguiViewport()
+    ImguiViewport::ImguiViewport(const std::string& panelName)
+        : ImguiSlate(panelName)
     {
         VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("FinalColor");
 
@@ -13,12 +14,18 @@ namespace Spiecs {
 
     void ImguiViewport::OnRender()
     {
-        ImguiSlate::OnRender();
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+        ImGui::Begin(m_PanelName.c_str());
 
-        ImGui::Begin("Viewport");
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        ImGui::Image(m_ViewportID, ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
+        m_PanelSize = ImGui::GetContentRegionAvail();
+
+        ImGui::Image((void*)m_ViewportID, m_PanelSize);
+
+        m_IsFocused = ImGui::IsWindowFocused();
+        m_IsHovered = ImGui::IsWindowHovered();
+
         ImGui::End();
+        ImGui::PopStyleVar();
     }
 
     void ImguiViewport::OnEvent(Event& event)

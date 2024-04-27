@@ -5,7 +5,7 @@ namespace Spiecs {
 
     void ImguiContentBrowser::OnRender()
     {
-        ImGui::Begin("Content");
+        ImGui::Begin(m_PanelName.c_str());
 
         ImGui::End();
     }

@@ -7,8 +7,7 @@ namespace Spiecs {
 
 	void ImguiConsole::OnRender()
 	{
-		ImGui::Begin("Console");
-
+		ImGui::Begin(m_PanelName.c_str());
 		ImGui::End();
 	}
 

@@ -14,14 +14,17 @@ namespace Spiecs{
 	class ImguiSlate
 	{
 	public:
-		ImguiSlate() {};
+		ImguiSlate(const std::string& panelName) : m_PanelName(panelName){};
 		virtual ~ImguiSlate() {};
 
 		virtual void OnUpdate(TimeStep& ts) = 0;
-		virtual void OnRender();
+		virtual void OnRender() = 0;
 		virtual void OnEvent(Event& event) = 0;
 
 	protected:
 		ImVec2 m_PanelSize;
+		std::string m_PanelName;
+		bool m_IsFocused = false;
+		bool m_IsHovered = false;
 	};
 }
