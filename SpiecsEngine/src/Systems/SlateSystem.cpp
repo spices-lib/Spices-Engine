@@ -37,5 +37,6 @@ namespace Spiecs {
 
 	void SlateSystem::OnEvent(Event& event)
 	{
+		m_SlateRegister->OnEvent(event);
 	}
 }

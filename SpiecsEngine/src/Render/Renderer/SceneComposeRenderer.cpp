@@ -68,6 +68,9 @@ namespace Spiecs {
 	void SceneComposeRenderer::OnWindowResized()
 	{
 		Renderer::OnWindowResized();
+
+		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
+
 		CreatePipelineLayoutAndDescriptor();
 	}
 

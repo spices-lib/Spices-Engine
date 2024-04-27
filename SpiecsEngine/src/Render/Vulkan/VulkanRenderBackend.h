@@ -2,7 +2,7 @@
 #include "Core/Core.h"
 #include "VulkanUtils.h"
 #include "Render/FrameInfo.h"
-
+#include "Core/Event/WindowEvent.h"
 #include "VulkanWindows.h"
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
@@ -31,6 +31,7 @@ namespace Spiecs {
 		void EndFrame(FrameInfo& frameInfo);
 
 		void DrawTest(FrameInfo& frameInfo);
+		void OnEvent(Event& event);
 
 		// Temp:
 		static VulkanState& GetState() { return m_VulkanState; };
@@ -39,6 +40,7 @@ namespace Spiecs {
 
 	private:
 
+		bool OnWindowResized(WindowOnResizedEvent& event);
 		/**
 		* @brief Called On Viewport resized.
 		* @todo Event receive from global event function pointer.

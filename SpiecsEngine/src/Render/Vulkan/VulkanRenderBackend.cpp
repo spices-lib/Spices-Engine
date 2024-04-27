@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "VulkanRenderBackend.h"
 #include "Render/RendererResource/RendererResourcePool.h"
+#include "Core/Event/WindowEvent.h"
 
 #include "Render/Renderer/MeshRenderer.h"
 #include "Render/Renderer/SkyBoxRenderer.h"
@@ -58,19 +59,22 @@ namespace Spiecs {
 	void VulkanRenderBackend::RecreateSwapChain() {
 		int width = 0, height = 0;
 		glfwGetFramebufferSize(m_VulkanState.m_Windows, &width, &height);
-		while (width == 0 || height == 0) {
+		while (width == 0 || height == 0) 
+		{
 			glfwGetFramebufferSize(m_VulkanState.m_Windows, &width, &height);
 			glfwWaitEvents();
 		}
-		std::cout << width << "  " << height << std::endl;
 		vkDeviceWaitIdle(m_VulkanState.m_Device);
-		m_VulkanDevice->RequerySwapChainSupport();
 
-		m_VulkanSwapChain->Destroy();
-		m_VulkanSwapChain->Create();
+		/**
+		* @brief Create an specific event.
+		*/
+		WindowOnResizedEvent event(width, height);
 
-		m_RendererResourcePool->OnWindowResized(width, height);
-		RendererManager::Get().OnWindowResized();
+		/**
+		* @brief Execute the global event function pointer by passing the specific event.
+		*/
+		Event::GetEventCallbackFn()(event);
 	}
 
 	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)
@@ -162,5 +166,25 @@ namespace Spiecs {
 	void VulkanRenderBackend::DrawTest(FrameInfo& frameInfo)
 	{
 		RendererManager::Run(frameInfo);
+	}
+
+	void VulkanRenderBackend::OnEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+
+		dispatcher.Dispatch<WindowOnResizedEvent>(BIND_EVENT_FN(VulkanRenderBackend::OnWindowResized));
+	}
+
+	bool VulkanRenderBackend::OnWindowResized(WindowOnResizedEvent& event)
+	{
+		m_VulkanDevice->RequerySwapChainSupport();
+
+		m_VulkanSwapChain->Destroy();
+		m_VulkanSwapChain->Create();
+
+		m_RendererResourcePool->OnWindowResized(event.GetWidth(), event.GetHeight());
+		RendererManager::Get().OnWindowResized();
+
+		return false;
 	}
 }

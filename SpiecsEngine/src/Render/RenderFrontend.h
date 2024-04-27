@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Render/FrameInfo.h"
-
+#include "Core/Event/Event.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
@@ -22,6 +22,7 @@ namespace Spiecs {
 		void EndFrame(FrameInfo& frameInfo);
 
 		void DrawTest(FrameInfo& frameInfo);
+		void OnEvent(Event& event);
 
 		// Temp:
 		VulkanState& GetState() { return VulkanRenderBackend::GetState(); };

@@ -55,6 +55,12 @@ namespace Spiecs {
 		virtual void OnSystemUpdate(TimeStep& ts) override;
 
 		/**
+		* @brief This interface defines the bahaver on golbal event function pointer is called.
+		* @param[in] event Event.
+		*/
+		virtual void OnEvent(Event& event) override;
+
+		/**
 		* @brief Get VulkanState.
 		* @return Returns the VulkanState.
 		*/

@@ -22,4 +22,9 @@ namespace Spiecs {
 	{
 		m_RenderBackend->DrawTest(frameInfo);
 	}
+
+	void RenderFrontend::OnEvent(Event& event)
+	{
+		m_RenderBackend->OnEvent(event);
+	}
 }

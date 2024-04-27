@@ -12,6 +12,10 @@ namespace Spiecs {
 
 		virtual void OnUpdate(TimeStep& ts) override {};
 		virtual void OnRender() override;
+		virtual void OnEvent(Event& event) override;
+
+	private:
+		bool OnWindowResized(WindowOnResizedEvent& event);
 
 	private:
 		ImTextureID m_ViewportID;

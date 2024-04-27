@@ -17,4 +17,11 @@ namespace Spiecs {
 			slate->OnRender();
 		}
 	}
+	void SlateRegister::OnEvent(Event& event)
+	{
+		for (auto& slate : m_Slates)
+		{
+			slate->OnEvent(event);
+		}
+	}
 }

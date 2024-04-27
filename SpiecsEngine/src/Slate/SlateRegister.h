@@ -37,6 +37,7 @@ namespace Spiecs {
 
 		void OnUpdate(TimeStep& ts);
 		void OnRender();
+		void OnEvent(Event& event);
 
 	private:
 		

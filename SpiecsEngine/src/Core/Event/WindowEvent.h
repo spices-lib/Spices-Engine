@@ -34,4 +34,27 @@ namespace Spiecs {
 		EVENT_CLASS_TYPE(WindowClose)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
+
+	class WindowOnResizedEvent : public Event
+	{
+	public:
+		WindowOnResizedEvent(unsigned int width, unsigned int height)
+			: m_Width(width), m_Height(height) {}
+
+		inline unsigned int GetWidth() const { return m_Width; }
+		inline unsigned int GetHeight() const { return m_Height; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowOnResizedEvent: " << m_Width << ", " << m_Height;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(WindowOnResized)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+
+	private:
+		unsigned int m_Width, m_Height;
+	};
 }

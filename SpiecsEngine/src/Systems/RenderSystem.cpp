@@ -35,4 +35,9 @@ namespace Spiecs {
 
 		FrameInfo::Get().m_FrameIndex = (FrameInfo::Get().m_FrameIndex + 1) % MaxFrameInFlight;
 	}
+
+	void RenderSystem::OnEvent(Event& event)
+	{
+		m_RenderFrontend->OnEvent(event);
+	}
 }
