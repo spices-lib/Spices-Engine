@@ -42,6 +42,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.tinyobjloader}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.rapidyaml}",
 	}
 
 	links
