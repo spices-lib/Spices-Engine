@@ -44,6 +44,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.rapidyaml}",
 		"%{IncludeDir.ImPlot}",
+		"%{IncludeDir.NvPerf}",
 	}
 
 	links
