@@ -43,6 +43,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.tinyobjloader}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.rapidyaml}",
+		"%{IncludeDir.ImPlot}",
 	}
 
 	links
@@ -51,6 +52,7 @@ project "SpiecsEngine"
 		"%{Library.VulkanSDK}",
 		"imgui",
 		"yaml-cpp",
+		"implot",
 	}
 
 	filter "files:vendor/stb_image/**.cpp"

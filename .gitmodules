@@ -7,3 +7,6 @@
 [submodule "SpiecsEngine/vendor/yaml-cpp"]
 	path = SpiecsEngine/vendor/yaml-cpp
 	url = https://github.com/spiecs/yaml-cpp
+[submodule "SpiecsEngine/vendor/implot"]
+	path = SpiecsEngine/vendor/implot
+	url = https://github.com/spiecs/implot
