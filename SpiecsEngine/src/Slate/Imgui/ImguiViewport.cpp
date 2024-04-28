@@ -14,8 +14,7 @@ namespace Spiecs {
 
     void ImguiViewport::OnRender()
     {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-        ImGui::Begin(m_PanelName.c_str());
+        BeginMainDock();
 
         m_PanelSize = ImGui::GetContentRegionAvail();
 
@@ -24,8 +23,7 @@ namespace Spiecs {
         m_IsFocused = ImGui::IsWindowFocused();
         m_IsHovered = ImGui::IsWindowHovered();
 
-        ImGui::End();
-        ImGui::PopStyleVar();
+        End();
     }
 
     void ImguiViewport::OnEvent(Event& event)
