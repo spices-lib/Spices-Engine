@@ -194,6 +194,6 @@ namespace Spiecs {
 		
 		return m_VertRendererUBO;
 		__debugbreak();
-		SPIECS_LOG("Out of Range");
+		SPIECS_CORE_INFO("Out of Range");
 	}
 }

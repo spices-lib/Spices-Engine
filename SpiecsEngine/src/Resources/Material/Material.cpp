@@ -19,7 +19,7 @@ namespace Spiecs {
 	{
 		if (m_MaterialPath.empty())
 		{
-			SPIECS_LOG("Please do not do that!");
+			SPIECS_CORE_INFO("Please do not do that!");
 		}
 	}
 
@@ -27,7 +27,7 @@ namespace Spiecs {
 	{
 		if (m_MaterialPath.empty())
 		{
-			SPIECS_LOG("Please do not do that!");
+			SPIECS_CORE_INFO("Please do not do that!");
 		}
 
 		MaterialLoader::Load(m_MaterialPath, this);

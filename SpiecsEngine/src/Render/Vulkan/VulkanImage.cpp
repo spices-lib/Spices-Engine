@@ -316,7 +316,7 @@ namespace Spiecs {
 		imageInfo.flags = 0;
 
 		VK_CHECK(vkCreateImage(vulkanState.m_Device, &imageInfo, nullptr, &m_Image));
-		SPIECS_LOG("VkImage created succeed!!!");
+		SPIECS_CORE_INFO("VkImage created succeed!!!");
 
 		// memory
 		VkMemoryRequirements memRequirements;

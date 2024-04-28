@@ -10,3 +10,6 @@
 [submodule "SpiecsEngine/vendor/implot"]
 	path = SpiecsEngine/vendor/implot
 	url = https://github.com/spiecs/implot
+[submodule "SpiecsEngine/vendor/spdlog"]
+	path = SpiecsEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog

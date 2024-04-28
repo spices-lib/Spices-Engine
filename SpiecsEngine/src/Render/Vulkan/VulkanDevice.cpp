@@ -16,7 +16,7 @@ namespace Spiecs {
 		* @brief Select one suitable physical device.
 		*/
 		if (!SelectPhysicalDevice(vulkanState.m_Instance, vulkanState.m_Surface, vulkanState.m_Windows)) {
-			SPIECS_LOG("failed select physical device!");
+			SPIECS_CORE_INFO("failed select physical device!");
 		}
 
 		/**
@@ -204,7 +204,7 @@ namespace Spiecs {
 				*/
 				m_SwapChainSupportDetails = QuerySwapChainSupport(physicalDevice, surface, window);
 
-				SPIECS_LOG("VkPhysicalDevice Selected!!!");
+				SPIECS_CORE_INFO("VkPhysicalDevice Selected!!!");
 				return true;
 			}
 		}

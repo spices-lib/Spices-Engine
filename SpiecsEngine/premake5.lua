@@ -46,6 +46,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.ImPlot}",
 		"%{IncludeDir.NvPerf}",
 		"%{IncludeDir.NvPerfUtility}",
+		"%{IncludeDir.spdlog}",
 	}
 
 	links

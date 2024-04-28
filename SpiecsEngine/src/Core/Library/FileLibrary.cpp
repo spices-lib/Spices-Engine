@@ -31,13 +31,13 @@ namespace Spiecs {
 			mode_str = binary ? "wb" : "w";
 		}
 		else {
-			SPIECS_LOG("Invalid mode passed while trying to open file");
+			SPIECS_CORE_INFO("Invalid mode passed while trying to open file");
 			return false;
 		}
 
 		FILE* file = fopen(path, mode_str);
 		if (!file) {
-			SPIECS_LOG("Error opening file");
+			SPIECS_CORE_INFO("Error opening file");
 			return false;
 		}
 

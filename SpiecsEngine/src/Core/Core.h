@@ -6,6 +6,7 @@
 
 #pragma once
 #include "TimeStep.h"
+#include "Log.h"
 
 /**
 * @brief GLFW macro.
@@ -16,12 +17,6 @@
 #include <GLFW/glfw3.h>
 
 namespace Spiecs {
-
-/**
-* @brief Log macro.
-* @todo better Log System.
-*/
-#define SPIECS_LOG(...) ::std::cout << __VA_ARGS__ << std::endl
 
 /**
 * @brief Assert macro.

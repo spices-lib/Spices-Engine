@@ -12,10 +12,6 @@ namespace Spiecs {
     void ImguiStage::OnRender()
     {
         Begin();
-
-
-        ImPlot::ShowDemoWindow();
-
         End();
     }
 }
