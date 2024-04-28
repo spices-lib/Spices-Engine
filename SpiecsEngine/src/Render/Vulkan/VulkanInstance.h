@@ -98,10 +98,10 @@ namespace Spiecs {
 		* @todo Butter Log.
 		*/
 		static VKAPI_ATTR VkBool32 VKAPI_CALL InstanceDebugCallback(
-			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-			VkDebugUtilsMessageTypeFlagsEXT messageType,
-			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-			void* pUserData
+			VkDebugUtilsMessageSeverityFlagBitsEXT          messageSeverity,
+			VkDebugUtilsMessageTypeFlagsEXT                 messageType,
+			const VkDebugUtilsMessengerCallbackDataEXT*     pCallbackData,
+			void*                                           pUserData
 		);
 
 		/**

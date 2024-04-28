@@ -306,14 +306,49 @@ namespace Spiecs {
 	}
 
 	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanInstance::InstanceDebugCallback(
-		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, 
-		VkDebugUtilsMessageTypeFlagsEXT messageType, 
-		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, 
-		void* pUserData
+		VkDebugUtilsMessageSeverityFlagBitsEXT         messageSeverity, 
+		VkDebugUtilsMessageTypeFlagsEXT                messageType, 
+		const VkDebugUtilsMessengerCallbackDataEXT*    pCallbackData, 
+		void*                                          pUserData
 	)
 	{
-		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+		/**
+		* @brief Format string.
+		*/
+		std::stringstream ss;
+		ss << "validation layer: " << pCallbackData->pMessage;
 
+		switch (messageSeverity)
+		{
+			/**
+			* @brief verbose, unknown level.
+			*/
+			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+				SPIECS_CORE_TRACE(ss.str());
+				break;
+
+			/**
+			* @brief info level.
+			*/
+			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+				SPIECS_CORE_INFO(ss.str());
+				break;
+
+			/**
+			* @brief warning level.
+			*/
+			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+				SPIECS_CORE_WARN(ss.str());
+				break;
+
+			/**
+			* @brief error level.
+			*/
+			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+				SPIECS_CORE_ERROR(ss.str());
+				break;
+		}
+	
 		return VK_FALSE;
 	}
 

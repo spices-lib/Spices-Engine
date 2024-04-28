@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Core/Library/StringLibrary.h"
+#include "Core/Library/ClassLibrary.h"
 
 namespace Spiecs {
 
@@ -90,12 +91,6 @@ namespace Spiecs {
 	public:
 
 		/**
-		* @brief Using Type instead std::reference_wrapper<const std::type_info>.
-		*/
-		using Type = std::reference_wrapper<const std::type_info>;
-	public:
-
-		/**
 		* @brief Constructor Function.
 		*/
 		SystemManager();
@@ -143,22 +138,26 @@ namespace Spiecs {
 		template<typename T, typename ... Args>
 		SystemManager& PushSystem(Args&& ... args)
 		{
-			Type type = typeid(T);
-			const std::vector<std::string>& outSplit = StringLibrary::SplitString(type.get().name(), ':');
-			std::string systemName = outSplit[outSplit.size() - 1];
+			std::string systemName = ClassLibrary::GetClassString(typeid(T));
 
 			// push system to map
 			if (m_Identities.find(systemName) != m_Identities.end())
 			{
-				std::cout << "ERROR: " << systemName << " has been pushed" << std::endl;
-				__debugbreak();
+				std::stringstream ss;
+				ss << systemName << " has been pushed ";
+
+				SPIECS_CORE_ERROR(ss.str());
 			}
 
 			m_Identities[systemName] = std::unique_ptr<System>(new T(systemName, std::forward<Args>(args)...));
 
 			// system init
 			m_Identities[systemName]->OnSystemInitialize();
-			std::cout << "INFO: " << systemName << " pushed" << std::endl;
+
+			std::stringstream ss;
+			ss << systemName << " pushed ";
+
+			SPIECS_CORE_INFO(ss.str());
 
 			return *m_SystemManager;
 		}
@@ -173,13 +172,19 @@ namespace Spiecs {
 			// pop system from map
 			if (m_Identities.find(systemName) == m_Identities.end())
 			{
-				std::cout << "ERROR: " << systemName << " has been poped" << std::endl;
-				__debugbreak();
+				std::stringstream ss;
+				ss << systemName << " has been poped ";
+
+				SPIECS_CORE_ERROR(ss.str());
 			}
 
 			// system shutdown
 			m_Identities[systemName]->OnSystemShutDown();
-			std::cout << "INFO: " << systemName << " poped" << std::endl;
+
+			std::stringstream ss;
+			ss << systemName << " poped ";
+
+			SPIECS_CORE_INFO(ss.str());
 
 			m_Identities.erase(systemName);
 

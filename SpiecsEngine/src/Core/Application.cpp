@@ -7,17 +7,24 @@
 #include "Pchheader.h"
 #include "Application.h"
 #include "Render/FrameInfo.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
+
+// System Header.
 #include "Systems/SystemManager.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/NativeScriptSystem.h"
 #include "Systems/ResourceSystem.h"
 #include "Systems/SlateSystem.h"
-#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
 	Application::Application()
 	{
+		/**
+		* @brief Init Log Class.
+		*/
+		Log::Init();
+
 		/**
 		* @brief Init all Systems.
 		* @attention SystemManager Class did not Constructor, it returns Null.

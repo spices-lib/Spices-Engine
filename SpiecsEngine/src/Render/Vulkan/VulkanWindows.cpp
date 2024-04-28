@@ -68,7 +68,7 @@ namespace Spiecs {
 		*/
 		glfwSetErrorCallback([](int error, const char* description) 
 		{
-			SPIECS_CORE_INFO(error);
+			//SPIECS_CORE_INFO(error);
 			SPIECS_CORE_INFO(description);
 		});
 

@@ -40,4 +40,9 @@ namespace Spiecs {
         ASSERT(expr == VK_SUCCESS); \
     }
 
+
+/**
+* @brief Using Type instead std::reference_wrapper<const std::type_info>.
+*/
+using ClassType = std::reference_wrapper<const std::type_info>;
 }

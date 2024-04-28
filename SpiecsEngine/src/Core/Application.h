@@ -6,8 +6,7 @@
 
 #pragma once
 #include "Core.h"
-#include "World/World/EditorWorld.h"
-#include "World/World/RuntimeWorld.h"
+#include "World/World/World.h"
 
 #include <memory>
 

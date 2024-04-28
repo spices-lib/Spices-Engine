@@ -12,13 +12,22 @@
 */
 int main() {
 
-	/**
-	* @brief Create Application
-	*/
-	auto engine = Spiecs::Application();
+	try 
+	{
+		/**
+		* @brief Create Application
+		*/
+		auto engine = Spiecs::Application();
 
-	/**
-	* @brief Application Run.
-	*/
-	engine.Run();
+		/**
+		* @brief Application Run.
+		*/
+		engine.Run();
+	}
+	catch (const std::exception& e) 
+	{
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
 }

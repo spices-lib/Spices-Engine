@@ -58,9 +58,17 @@ namespace Spiecs {
 		*/
 		virtual void OnEvent(Event& event) override;
 
+		/**
+		* @brief Get slate register.
+		* @return Returns the shared pointer of slate register.
+		*/
 		static std::shared_ptr<SlateRegister> GetRegister() { return m_SlateRegister; };
 
 	private:
+
+		/**
+		* @brief The slate register.
+		*/
 		static std::shared_ptr<SlateRegister> m_SlateRegister;
 	};
 }

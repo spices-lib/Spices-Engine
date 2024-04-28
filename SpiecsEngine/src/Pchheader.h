@@ -19,5 +19,6 @@
 #include <algorithm>
 #include <cassert>
 #include <fstream>
+#include <sstream>
 #include <filesystem>
 #include <random>

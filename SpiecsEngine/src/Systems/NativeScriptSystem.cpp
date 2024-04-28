@@ -14,14 +14,10 @@
 namespace Spiecs {
 
 	void NativeScriptSystem::OnSystemInitialize()
-	{
-
-	}
+	{}
 
 	void NativeScriptSystem::OnSystemShutDown()
-	{
-
-	}
+	{}
 
 	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{

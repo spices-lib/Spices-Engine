@@ -30,6 +30,7 @@ project "SpiecsGame"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.tinyobjloader}",
+		"%{IncludeDir.spdlog}",
 	}
 
 	links

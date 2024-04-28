@@ -25,14 +25,24 @@ namespace Spiecs {
 
 	void RenderSystem::OnSystemUpdate(TimeStep& ts)
 	{
-		//std::cout << "FPS: " << 1000 / frameTime << std::endl;
-
+		/**
+		* @brief Begin Render this frame.
+		*/
 		m_RenderFrontend->BeginFrame(FrameInfo::Get());
-
+		
+		/**
+		* @brief Render this frame.
+		*/
 		m_RenderFrontend->DrawTest(FrameInfo::Get());
 
+		/**
+		* @brief End Render this frame.
+		*/
 		m_RenderFrontend->EndFrame(FrameInfo::Get());
 
+		/**
+		* @brief Update frameindex.
+		*/
 		FrameInfo::Get().m_FrameIndex = (FrameInfo::Get().m_FrameIndex + 1) % MaxFrameInFlight;
 	}
 

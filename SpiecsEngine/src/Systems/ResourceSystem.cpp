@@ -27,9 +27,9 @@ namespace Spiecs {
 		/**
 		* @brief Release all Resources
 		*/
-		ResourcePool<Texture>::Destroy();
-		ResourcePool<Material>::Destroy();
-		ResourcePool<Mesh>::Destroy();
+		ResourcePool<Texture>  ::Destroy();
+		ResourcePool<Material> ::Destroy();
+		ResourcePool<Mesh>     ::Destroy();
 	}
 
 	void ResourceSystem::OnSystemUpdate(TimeStep& ts)
