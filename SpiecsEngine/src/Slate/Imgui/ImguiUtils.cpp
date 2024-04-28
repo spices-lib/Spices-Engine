@@ -1,6 +1,13 @@
+/**
+* @file ImguiSlate.cpp.
+* @brief The ImguiSlate Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "ImguiUtils.h"
 
+// Only once.
 #include <imgui.cpp>
 
 namespace Spiecs {
@@ -35,8 +42,8 @@ namespace Spiecs {
         // The central node is transparent, so that when UI is draw after, the image is visible
         // Auto Hide Bar, no title of the panel
         // Center is not dockable, that is for the scene
-        ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_AutoHideTabBar
-            | ImGuiDockNodeFlags_NoDockingInCentralNode;
+        ImGuiDockNodeFlags dockspaceFlags = 
+            ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoDockingInCentralNode;
 
         // Building the splitting of the dock space is done only once
         if (!ImGui::DockBuilderGetNode(dockspaceID))
@@ -75,7 +82,9 @@ namespace Spiecs {
 
         // The panel
         if (alpha < 1)
+        {
             ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
+        }
         ImGui::Begin(m_PanelName.c_str());
 	}
 
@@ -87,7 +96,9 @@ namespace Spiecs {
 
         // The panel
         if (alpha < 1)
+        {
             ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
+        }
         ImGui::Begin(m_PanelName.c_str());
     }
 }

@@ -1,3 +1,9 @@
+/**
+* @file SlateRegister.cpp.
+* @brief The SlateRegister Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "SlateRegister.h"
 

@@ -1,3 +1,9 @@
+/**
+* @file FrameInfo.h.
+* @brief The FrameInfo Class Definitions.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "FrameInfo.h"
 
@@ -9,5 +15,4 @@ namespace Spiecs
 	{
 		return m_FrameInfo;
 	}
-
 }

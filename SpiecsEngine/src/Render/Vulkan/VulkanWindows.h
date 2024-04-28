@@ -10,11 +10,24 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief This struct defiens the basic information of window.
+	*/
 	struct WindowInfo
 	{
+		/**
+		* @brief Window's width.
+		*/
 		uint32_t width;
+
+		/**
+		* @brief Window's height.
+		*/
 		uint32_t height;
 
+		/**
+		* @brief Window's name.
+		*/
 		std::string name;
 	};
 
@@ -30,9 +43,7 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		* Create Windows.
 		* @param[in] vulkanState The global VulkanState.
-		* @param[in] width Init viewport's width.
-		* @param[in] height Init viewport's height.
-		* @param[in] name Init viewport's title.
+		* @param[in] initInfo WindowInfo.
 		*/
 		VulkanWindows(VulkanState& vulkanState, const WindowInfo& initInfo);
 
