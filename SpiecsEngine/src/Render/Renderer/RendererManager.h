@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Render/FrameInfo.h"
+#include "Core/Library/ClassLibrary.h"
 
 namespace Spiecs {
 
@@ -58,15 +59,19 @@ namespace Spiecs {
 		* @param[in] rendererName Specific Renderer Name.
 		*/
 		template<typename T, typename ... Args>
-		RendererManager& Push(const std::string& rendererName, Args&& ... args)
+		RendererManager& Push(Args&& ... args)
 		{
+			std::string rendererName = ClassLibrary::GetClassString(typeid(T));
+
 			/**
 			* @brief Push system to map
 			*/
 			if (m_Identities.find(rendererName) != m_Identities.end())
 			{
-				std::cout << "ERROR: " << rendererName << " has been pushed" << std::endl;
-				__debugbreak();
+				std::stringstream ss;
+				ss << rendererName << " has been pushed ";
+
+				SPIECS_CORE_ERROR(ss.str());
 			}
 
 			m_Identities[rendererName] = std::unique_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...));
@@ -75,7 +80,9 @@ namespace Spiecs {
 			/**
 			* @brief System init
 			*/
-			std::cout << "INFO: " << rendererName << " pushed" << std::endl;
+			std::stringstream ss;
+			ss << rendererName << " pushed ";
+			SPIECS_CORE_INFO(ss.str());
 
 			return *m_RendererManager;
 		}
@@ -91,14 +98,19 @@ namespace Spiecs {
 			*/
 			if (m_Identities.find(rendererName) == m_Identities.end())
 			{
-				std::cout << "ERROR: " << rendererName << " has been poped" << std::endl;
-				__debugbreak();
+				std::stringstream ss;
+				ss << rendererName << " has been poped ";
+
+				SPIECS_CORE_ERROR(ss.str());
 			}
 
 			/**
 			* @brief System shutdown
 			*/
-			std::cout << "INFO: " << rendererName << " poped" << std::endl;
+			std::stringstream ss;
+			ss << rendererName << " poped ";
+
+			SPIECS_CORE_INFO(ss.str());
 
 			m_Identities.erase(rendererName);
 

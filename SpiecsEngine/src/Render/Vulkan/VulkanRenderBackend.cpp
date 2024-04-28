@@ -37,10 +37,10 @@ namespace Spiecs {
 		m_RendererResourcePool = std::make_shared<RendererResourcePool>();
 
 		RendererManager::Get()
-			.Push<SkyBoxRenderer>("SkyBoxRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<MeshRenderer>("MeshRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SceneComposeRenderer>("SceneComposeRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SlateRenderer>("SlateRenderer", m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
+			.Push<SkyBoxRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<MeshRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SceneComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SlateRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
