@@ -5,9 +5,7 @@ namespace Spiecs {
 
     ImguiStage::ImguiStage(const std::string& panelName)
         : ImguiSlate(panelName)
-    {
-        //ImPlot::SetImGuiContext(ImGui::CreateContext());
-    }
+    {}
 
     int bar_data[5] = {1, 2, 3, 4, 5};
 

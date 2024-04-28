@@ -44,6 +44,7 @@ namespace Spiecs {
 	{
 		// UI
 		ImGui::CreateContext();
+		ImPlot::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.IniFilename = nullptr;  // Avoiding the INI file
 		io.LogFilename = nullptr;
