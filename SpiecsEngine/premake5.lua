@@ -45,6 +45,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.rapidyaml}",
 		"%{IncludeDir.ImPlot}",
 		"%{IncludeDir.NvPerf}",
+		"%{IncludeDir.NvPerfUtility}",
 	}
 
 	links
@@ -54,6 +55,7 @@ project "SpiecsEngine"
 		"imgui",
 		"yaml-cpp",
 		"implot",
+		"%{Library.NvPerfUtility}",
 	}
 
 	filter "files:vendor/stb_image/**.cpp"

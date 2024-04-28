@@ -10,9 +10,12 @@ IncludeDir["yaml_cpp"] = "%{wks.location}/SpiecsEngine/vendor/yaml-cpp/include"
 IncludeDir["rapidyaml"] = "%{wks.location}/SpiecsEngine/vendor/rapidyaml"
 IncludeDir["ImPlot"] = "%{wks.location}/SpiecsEngine/vendor/implot"
 IncludeDir["NvPerf"] = "%{wks.location}/SpiecsEngine/vendor/NvPerf/include"
+IncludeDir["NvPerfUtility"] = "%{wks.location}/SpiecsEngine/vendor/NvPerfUtility/include"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "C:/VulkanSDK/1.3.275.0/Lib"
+LibraryDir["NvPerfUtility"] = "%{wks.location}/SpiecsEngine/vendor/NvPerfUtility/lib"
 
 Library = {}
 Library["VulkanSDK"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
+Library["NvPerfUtility"] = "%{LibraryDir.NvPerfUtility}/nvperf_grfx_host.dll"
