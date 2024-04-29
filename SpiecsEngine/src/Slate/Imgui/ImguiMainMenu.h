@@ -7,7 +7,7 @@ namespace Spiecs {
 	class ImguiMainMenu : public ImguiSlate
 	{
 	public:
-		ImguiMainMenu(const std::string& panelName) : ImguiSlate(panelName) {};
+		ImguiMainMenu(const std::string& panelName);
 		virtual ~ImguiMainMenu() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};
@@ -15,6 +15,10 @@ namespace Spiecs {
 		virtual void OnEvent(Event& event) override {};
 
 	private:
+		void BuildWindowMenu();
+
+	private:
+		ImTextureID m_ImageID;
 	};
 
 }
