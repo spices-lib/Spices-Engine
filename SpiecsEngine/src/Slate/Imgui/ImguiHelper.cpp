@@ -23,12 +23,16 @@ namespace Spiecs {
         style.Colors[ImGuiCol_Border]       = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
         style.Colors[ImGuiCol_FrameBg]      = ImVec4(0.05f, 0.05f, 0.05f, 0.5f);
 
+        // Botton
+        style.Colors[ImGuiCol_Button]       = style.Colors[ImGuiCol_WindowBg];
+        style.Colors[ImGuiCol_ButtonActive] = style.Colors[ImGuiCol_FrameBg];
+        style.Colors[ImGuiCol_ButtonHovered]= ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
+
         // Normal
         ImVec4                normal_color(0.465f, 0.465f, 0.525f, 1.0f);
         std::vector<ImGuiCol> to_change_nrm;
         to_change_nrm.push_back(ImGuiCol_Header);
         to_change_nrm.push_back(ImGuiCol_SliderGrab);
-        to_change_nrm.push_back(ImGuiCol_Button);
         to_change_nrm.push_back(ImGuiCol_CheckMark);
         to_change_nrm.push_back(ImGuiCol_ResizeGrip);
         to_change_nrm.push_back(ImGuiCol_TextSelectedBg);
@@ -44,7 +48,6 @@ namespace Spiecs {
         std::vector<ImGuiCol> to_change_act;
         to_change_act.push_back(ImGuiCol_HeaderActive);
         to_change_act.push_back(ImGuiCol_SliderGrabActive);
-        to_change_act.push_back(ImGuiCol_ButtonActive);
         to_change_act.push_back(ImGuiCol_ResizeGripActive);
         to_change_act.push_back(ImGuiCol_SeparatorActive);
         for (auto c : to_change_act)
@@ -56,7 +59,6 @@ namespace Spiecs {
         ImVec4                hovered_color(0.565f, 0.565f, 0.625f, 1.0f);
         std::vector<ImGuiCol> to_change_hover;
         to_change_hover.push_back(ImGuiCol_HeaderHovered);
-        to_change_hover.push_back(ImGuiCol_ButtonHovered);
         to_change_hover.push_back(ImGuiCol_FrameBgHovered);
         to_change_hover.push_back(ImGuiCol_ResizeGripHovered);
         to_change_hover.push_back(ImGuiCol_SeparatorHovered);

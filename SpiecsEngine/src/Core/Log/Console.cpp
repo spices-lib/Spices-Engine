@@ -65,7 +65,7 @@ namespace Spiecs {
 			break;
 		case spdlog::level::level_enum::warn:
 			helper.level = "warn";
-			helper.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			helper.color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
 			break;
 		case spdlog::level::level_enum::err:
 			helper.level = "error";

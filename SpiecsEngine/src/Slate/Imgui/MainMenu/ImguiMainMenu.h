@@ -5,6 +5,7 @@
 namespace Spiecs {
 
 	class ImguiWindow;
+	class ImguiCreateEntity;
 
 	class ImguiMainMenu : public ImguiSlate
 	{
@@ -17,6 +18,7 @@ namespace Spiecs {
 		virtual void OnEvent(Event& event) override {};
 
 	private:
+		std::shared_ptr<ImguiCreateEntity> m_Create;
 		std::shared_ptr<ImguiWindow> m_Window;
 	};
 

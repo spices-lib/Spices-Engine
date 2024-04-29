@@ -1,6 +1,9 @@
 #include "Pchheader.h"
 #include "ImguiConsole.h"
 #include "Core/Log/Console.h"
+#include "Resources/ResourcePool/ResourcePool.h"
+#include "Resources/Texture/Texture2D.h"
+#include "Render/Vulkan/VulkanImage.h"
 
 namespace Spiecs {
 
@@ -8,17 +11,44 @@ namespace Spiecs {
 		: ImguiSlate(panelName)
 		, m_Console(console)
 	{
+		LoadConsoleIcon(m_ConsoleIconID.clearConsoleIcon,       "slate/Console.ClearConsole.png"       );
+		LoadConsoleIcon(m_ConsoleIconID.openLogFileIcon,        "slate/Console.OpenLogFile.png"        );
+		LoadConsoleIcon(m_ConsoleIconID.openLogFolderIcon,      "slate/Console.OpenLogFolder.png"      );
+		LoadConsoleIcon(m_ConsoleIconID.enableCommandFieldIcon, "slate/Console.EnableCommandField.png" );
 
+		LoadConsoleIcon(m_ConsoleIconID.select,                 "slate/Console.Select.png"             );
+		LoadConsoleIcon(m_ConsoleIconID.verbose,                "slate/Console.Verbose.png"            );
+		LoadConsoleIcon(m_ConsoleIconID.info,                   "slate/Console.Info.png"               );
+		LoadConsoleIcon(m_ConsoleIconID.warning,                "slate/Console.Warning.png"            );
+		LoadConsoleIcon(m_ConsoleIconID.error,                  "slate/Console.Error.png"              );
 	}
 
 	void ImguiConsole::OnRender()
 	{
 		Begin();
 
-		if (ImGui::SmallButton("Clear")) { m_Console->Clear(); }
+		if (ImGui::ImageButton(m_ConsoleIconID.clearConsoleIcon, ImVec2(18, 18))) { m_Console->Clear(); }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.openLogFileIcon, ImVec2(18, 18))) { m_Console->Clear(); }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.openLogFolderIcon, ImVec2(18, 18))) { m_Console->Clear(); }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.enableCommandFieldIcon, ImVec2(18, 18))) { m_Console->Clear(); }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.select, ImVec2(18, 18))) { m_Console->Clear(); }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.verbose, ImVec2(18, 18))) { m_Level = 0; }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.info, ImVec2(18, 18))) { m_Level = 1; }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.warning, ImVec2(18, 18))) { m_Level = 2; }
+		ImGui::SameLine();
+		if (ImGui::ImageButton(m_ConsoleIconID.error, ImVec2(18, 18))) { m_Level = 3; }
+		ImGui::SameLine();
+		char search[128] = "";
+		if (ImGui::InputText("search", search, 128)) {}
 		ImGui::Separator();
 
-		m_Filter.Draw("Filter", -100.0f);
 
 		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
@@ -31,17 +61,44 @@ namespace Spiecs {
 			{
 				const InfoLevelHelper& helper = m_Console->GetInfos()[i];
 				ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
-				if (isFiltered)
+
+				switch (m_Level)
 				{
-					if (m_Filter.PassFilter(helper.str.c_str()))
+				default:
+				case 0:
+					if (helper.level == "verbose")
 					{
-						ImGui::TextUnformatted(helper.str.c_str());
+						ImGui::Image(m_ConsoleIconID.verbose, ImVec2(18, 18));
+						ImGui::SameLine();
+						ImGui::Text(helper.str.c_str());
+						break;
+					}
+				case 1:
+					if (helper.level == "info")
+					{
+						ImGui::Image(m_ConsoleIconID.info, ImVec2(12, 12));
+						ImGui::SameLine();
+						ImGui::Text(helper.str.c_str());
+						break;
+					}
+				case 2:
+					if (helper.level == "warning")
+					{
+						ImGui::Image(m_ConsoleIconID.warning, ImVec2(18, 18));
+						ImGui::SameLine();
+						ImGui::Text(helper.str.c_str());
+						break;
+					}
+				case 3:
+					if (helper.level == "error")
+					{
+						ImGui::Image(m_ConsoleIconID.error, ImVec2(18, 18));
+						ImGui::SameLine();
+						ImGui::Text(helper.str.c_str());
+						break;
 					}
 				}
-				else
-				{		
-					ImGui::TextUnformatted(helper.str.c_str());
-				}
+
 				ImGui::PopStyleColor();
 			}
 
@@ -65,6 +122,14 @@ namespace Spiecs {
 	int ImguiConsole::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 	{
 		return 0;
+	}
+
+	void ImguiConsole::LoadConsoleIcon(ImTextureID& id, const std::string& iconFile)
+	{
+		auto rowPtr = ResourcePool<Texture>::Load<Texture2D>(iconFile);
+		auto info = rowPtr->GetResource<VulkanImage>()->GetImageInfo();
+
+		id = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
 	}
 
 }

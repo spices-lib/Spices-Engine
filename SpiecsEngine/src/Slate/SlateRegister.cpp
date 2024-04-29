@@ -11,25 +11,25 @@ namespace Spiecs {
 
 	void SlateRegister::OnUpdate(TimeStep& ts)
 	{
-		for (auto& slate : m_SlatesRenderContainer)
+		for (auto& pair : m_SlatesRenderContainer)
 		{
-			slate->OnUpdate(ts);
+			pair.second->OnUpdate(ts);
 		}
 	}
 
 	void SlateRegister::OnRender()
 	{
-		for (auto& slate : m_SlatesRenderContainer)
+		for (auto& pair : m_SlatesRenderContainer)
 		{
-			slate->OnRender();
+			pair.second->OnRender();
 		}
 	}
 
 	void SlateRegister::OnEvent(Event& event)
 	{
-		for (auto& slate : m_SlatesEventContainer)
+		for (auto& pair : m_SlatesEventContainer)
 		{
-			slate->OnEvent(event);
+			pair.second->OnEvent(event);
 		}
 	}
 }

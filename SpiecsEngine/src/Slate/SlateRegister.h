@@ -14,11 +14,13 @@
 #include "Slate/Imgui/ImguiStage.h"
 #include "Slate/Imgui/ImguiViewport.h"
 #include "Slate/Imgui/MainMenu/ImguiMainMenu.h"
+#include "Slate/Imgui/ImguiFloattingInfo.h"
 
 // STL Header
 #include <memory>
 #include <vector>
 #include <any>
+#include <sstream>
 
 namespace Spiecs {
 
@@ -56,7 +58,7 @@ namespace Spiecs {
 		* @param[in] T Slate specific type.
 		*/
 		template<typename T, typename ... Args>
-		std::shared_ptr<T> Register(bool isPrimary, Args&& ... args);
+		std::shared_ptr<T> Register(bool isPrimary, const std::string& panelName, Args&& ... args);
 
 		/**
 		* @note This function is not in use now.
@@ -79,21 +81,28 @@ namespace Spiecs {
 		/**
 		* @brief The container of all slate handle.
 		*/
-		std::vector<std::shared_ptr<ImguiSlate>> m_SlatesEventContainer;
+		std::unordered_map<std::string, std::shared_ptr<ImguiSlate>> m_SlatesEventContainer;
 
 		/**
 		* @brief The container of all slate handle.
 		*/
-		std::vector<std::shared_ptr<ImguiSlate>> m_SlatesRenderContainer;
+		std::unordered_map<std::string, std::shared_ptr<ImguiSlate>> m_SlatesRenderContainer;
 	};
 
 	template<typename T, typename ...Args>
-	inline std::shared_ptr<T> SlateRegister::Register(bool isPrimary, Args && ...args)
+	inline std::shared_ptr<T> SlateRegister::Register(bool isPrimary, const std::string& panelName, Args && ...args)
 	{
-		std::shared_ptr<T> _T = std::make_shared<T>(std::forward<Args>(args)...);
-		m_SlatesEventContainer.push_back(_T);
+		if (m_SlatesEventContainer.find(panelName) != m_SlatesEventContainer.end())
+		{
+			std::stringstream ss;
+			ss << panelName << " Slate already registed, please check your code again.";
+			SPIECS_CORE_ERROR(ss.str());
+		}
 
-		if(isPrimary) m_SlatesRenderContainer.push_back(_T);
+		std::shared_ptr<T> _T = std::make_shared<T>(panelName, std::forward<Args>(args)...);
+		m_SlatesEventContainer[panelName] = _T;
+
+		if(isPrimary) m_SlatesRenderContainer[panelName] = _T;
 
 		return _T;
 	}

@@ -1,13 +1,16 @@
 #include "Pchheader.h"
 #include "ImguiMainMenu.h"
 #include "Systems/SlateSystem.h"
+
 #include "Window/ImguiWindow.h"
+#include "Create/ImguiCreateEntity.h"
 
 namespace Spiecs {
 
     ImguiMainMenu::ImguiMainMenu(const std::string& panelName)
         : ImguiSlate(panelName)
     {
+        m_Create = SlateSystem::GetRegister()->Register<ImguiCreateEntity>(false, "Create");
         m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>(false, "Window");
     }
 
@@ -33,10 +36,7 @@ namespace Spiecs {
                 if (ImGui::MenuItem("Paste", "CTRL+V")) {}
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Create"))
-            {
-                ImGui::EndMenu();
-            }
+            m_Create->OnRender();
             m_Window->OnRender();
             if (ImGui::BeginMenu("Tools"))
             {

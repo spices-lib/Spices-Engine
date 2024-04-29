@@ -62,18 +62,18 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 #ifdef SPIECS_DEBUG
 
 // Core log macros
-#define SPIECS_CORE_TRACE(...)    ::Spiecs::Log::GetCoreLogger()->trace      (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__)
-#define SPIECS_CORE_INFO(...)     ::Spiecs::Log::GetCoreLogger()->info       (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__)
-#define SPIECS_CORE_WARN(...)     ::Spiecs::Log::GetCoreLogger()->warn       (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__)
-#define SPIECS_CORE_ERROR(...)    ::Spiecs::Log::GetCoreLogger()->error      (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
-#define SPIECS_CORE_CRITICAL(...) ::Spiecs::Log::GetCoreLogger()->critical   (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
+#define SPIECS_CORE_TRACE(...)    ::Spiecs::Log::GetCoreLogger()->trace      (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__)
+#define SPIECS_CORE_INFO(...)     ::Spiecs::Log::GetCoreLogger()->info       (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__)
+#define SPIECS_CORE_WARN(...)     ::Spiecs::Log::GetCoreLogger()->warn       (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__)
+#define SPIECS_CORE_ERROR(...)    ::Spiecs::Log::GetCoreLogger()->error      (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
+#define SPIECS_CORE_CRITICAL(...) ::Spiecs::Log::GetCoreLogger()->critical   (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
 
 // Client log macros
-#define SPIECS_TRACE(...)         ::Spiecs::Log::GetClientLogger()->trace    (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__)
-#define SPIECS_INFO(...)          ::Spiecs::Log::GetClientLogger()->info     (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__)
-#define SPIECS_WARN(...)          ::Spiecs::Log::GetClientLogger()->warn     (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__)
-#define SPIECS_ERROR(...)         ::Spiecs::Log::GetClientLogger()->error    (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
-#define SPIECS_CRITICAL(...)      ::Spiecs::Log::GetClientLogger()->critical (__VA_ARGS__)   ;   Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
+#define SPIECS_TRACE(...)         ::Spiecs::Log::GetClientLogger()->trace    (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__)
+#define SPIECS_INFO(...)          ::Spiecs::Log::GetClientLogger()->info     (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__)
+#define SPIECS_WARN(...)          ::Spiecs::Log::GetClientLogger()->warn     (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__)
+#define SPIECS_ERROR(...)         ::Spiecs::Log::GetClientLogger()->error    (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
+#define SPIECS_CRITICAL(...)      ::Spiecs::Log::GetClientLogger()->critical (__VA_ARGS__)   ;   ::Spiecs::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
 
 #endif // SPIECS_DEBUG
 
