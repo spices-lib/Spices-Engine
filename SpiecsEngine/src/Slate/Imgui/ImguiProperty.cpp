@@ -6,6 +6,7 @@ namespace Spiecs {
 	void ImguiProperty::OnRender()
 	{
 		Begin();
+		ImGui::ShowDemoWindow();
 		End();
 	}
 }

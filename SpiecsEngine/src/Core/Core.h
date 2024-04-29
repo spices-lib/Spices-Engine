@@ -6,7 +6,7 @@
 
 #pragma once
 #include "TimeStep.h"
-#include "Log.h"
+#include "Log/Log.h"
 
 /**
 * @brief GLFW macro.

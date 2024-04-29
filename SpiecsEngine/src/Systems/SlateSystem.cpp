@@ -9,6 +9,7 @@
 #include "Render/FrameInfo.h"
 #include "World/World/World.h"
 #include "Core/Event/Event.h"
+#include "Core/Log/Console.h"
 
 namespace Spiecs {
 
@@ -19,7 +20,7 @@ namespace Spiecs {
 		m_SlateRegister = std::make_shared<SlateRegister>();
 
 		m_SlateRegister->Register<ImguiViewport>("Viewport");
-		m_SlateRegister->Register<ImguiConsole>("Console");
+		m_SlateRegister->Register<ImguiConsole>("Console", Console::Register("Console"));
 		m_SlateRegister->Register<ImguiContentBrowser>("Content");
 		m_SlateRegister->Register<ImguiProperty>("Property");
 		m_SlateRegister->Register<ImguiMainMenu>("MainMenu");

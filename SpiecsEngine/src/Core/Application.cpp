@@ -52,6 +52,12 @@ namespace Spiecs {
 			.PopSystem("SlateSystem")
 			.PopSystem("RenderSystem")
 			.PopSystem("NativeScriptSystem");
+
+
+		/**
+		* @brief Shutdown Log Class.
+		*/
+		Log::ShutDown();
 	}
 
 	void Application::Run()

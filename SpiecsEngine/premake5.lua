@@ -28,6 +28,7 @@ project "SpiecsEngine"
 	defines
 	{
 		'SPIECS_ENGINE_ASSETS_PATH=std::string("%{wks.location}/SpiecsEngine/assets/")',
+		'SPIECS_lOG_PATH=std::string("%{wks.location}/bin/Log/Log.log")',
 		"RENDERAPI_VULKAN"
 	}
 

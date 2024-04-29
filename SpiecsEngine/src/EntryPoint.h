@@ -4,7 +4,7 @@
 * @author Spiecs.
 */
 
-#include "Pchheader.h"
+#include "Core/Core.h"
 #include "core/Application.h"
 
 /**
@@ -24,7 +24,7 @@ int main() {
 		*/
 		engine.Run();
 	}
-	catch (const std::exception& e) 
+	catch (const spdlog::spdlog_ex& ex) 
 	{
 		return EXIT_FAILURE;
 	}
