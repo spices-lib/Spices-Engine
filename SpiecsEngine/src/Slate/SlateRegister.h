@@ -13,7 +13,7 @@
 #include "Slate/Imgui/ImguiProperty.h"
 #include "Slate/Imgui/ImguiStage.h"
 #include "Slate/Imgui/ImguiViewport.h"
-#include "Slate/Imgui/ImguiMainMenu.h"
+#include "Slate/Imgui/MainMenu/ImguiMainMenu.h"
 
 // STL Header
 #include <memory>
@@ -56,7 +56,7 @@ namespace Spiecs {
 		* @param[in] T Slate specific type.
 		*/
 		template<typename T, typename ... Args>
-		void Register(Args&& ... args);
+		std::shared_ptr<T> Register(bool isPrimary, Args&& ... args);
 
 		/**
 		* @note This function is not in use now.
@@ -79,12 +79,22 @@ namespace Spiecs {
 		/**
 		* @brief The container of all slate handle.
 		*/
-		std::vector<std::unique_ptr<ImguiSlate>> m_Slates;
+		std::vector<std::shared_ptr<ImguiSlate>> m_SlatesEventContainer;
+
+		/**
+		* @brief The container of all slate handle.
+		*/
+		std::vector<std::shared_ptr<ImguiSlate>> m_SlatesRenderContainer;
 	};
 
 	template<typename T, typename ...Args>
-	inline void SlateRegister::Register(Args && ...args)
+	inline std::shared_ptr<T> SlateRegister::Register(bool isPrimary, Args && ...args)
 	{
-		m_Slates.push_back(std::make_unique<T>(std::forward<Args>(args)...));
+		std::shared_ptr<T> _T = std::make_shared<T>(std::forward<Args>(args)...);
+		m_SlatesEventContainer.push_back(_T);
+
+		if(isPrimary) m_SlatesRenderContainer.push_back(_T);
+
+		return _T;
 	}
 }

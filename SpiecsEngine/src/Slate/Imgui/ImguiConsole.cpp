@@ -21,6 +21,7 @@ namespace Spiecs {
 		m_Filter.Draw("Filter", -100.0f);
 
 		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 		if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
@@ -46,7 +47,7 @@ namespace Spiecs {
 
 			ImGui::PopStyleVar();
 		}
-
+		ImGui::PopStyleColor();
 		ImGui::EndChild();
 		ImGui::Separator();
 

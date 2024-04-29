@@ -83,6 +83,8 @@ namespace Spiecs{
 		*/
 		void Begin(float alpha = 0.5f);
 
+		void Begin(const std::string& panelName, float alpha = 0.5f);
+
 		/**
 		* @brief End a slate.
 		*/

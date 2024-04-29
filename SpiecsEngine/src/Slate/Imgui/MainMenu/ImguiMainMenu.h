@@ -1,8 +1,10 @@
 #pragma once
 #include "Core/Core.h"
-#include "ImguiUtils.h"
+#include "../ImguiUtils.h"
 
 namespace Spiecs {
+
+	class ImguiWindow;
 
 	class ImguiMainMenu : public ImguiSlate
 	{
@@ -15,10 +17,7 @@ namespace Spiecs {
 		virtual void OnEvent(Event& event) override {};
 
 	private:
-		void BuildWindowMenu();
-
-	private:
-		ImTextureID m_ImageID;
+		std::shared_ptr<ImguiWindow> m_Window;
 	};
 
 }

@@ -1,18 +1,14 @@
 #include "Pchheader.h"
 #include "ImguiMainMenu.h"
-#include "Resources/ResourcePool/ResourcePool.h"
-#include "Resources/Texture/Texture2D.h"
-#include "Render/Vulkan/VulkanImage.h"
+#include "Systems/SlateSystem.h"
+#include "Window/ImguiWindow.h"
 
 namespace Spiecs {
 
     ImguiMainMenu::ImguiMainMenu(const std::string& panelName)
         : ImguiSlate(panelName)
     {
-        std::shared_ptr<Texture> t = ResourcePool<Texture>::Load<Texture2D>("street.jpg");
-        VkDescriptorImageInfo* info = t->GetResource<VulkanImage>()->GetImageInfo();
-
-        m_ImageID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
+        m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>(false, "Window");
     }
 
     void ImguiMainMenu::OnRender()
@@ -41,7 +37,7 @@ namespace Spiecs {
             {
                 ImGui::EndMenu();
             }
-            BuildWindowMenu();
+            m_Window->OnRender();
             if (ImGui::BeginMenu("Tools"))
             {
                 ImGui::EndMenu();
@@ -57,20 +53,4 @@ namespace Spiecs {
             ImGui::EndMainMenuBar();
         }
 	}
-
-    void ImguiMainMenu::BuildWindowMenu()
-    {
-        if (ImGui::BeginMenu("Window"))
-        {
-            if (ImGui::BeginMenu("Visualize"))
-            {
-                ImGui::Image(m_ImageID, ImVec2{ 100, 100 });
-                ImGui::Text("Hello");
-
-                ImGui::EndMenu();
-            }
-
-            ImGui::EndMenu();
-        }
-    }
 }
