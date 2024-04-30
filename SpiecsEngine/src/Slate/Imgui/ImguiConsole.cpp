@@ -68,32 +68,24 @@ namespace Spiecs {
 				case 0:
 					if (helper.level == "verbose")
 					{
-						ImGui::Image(m_ConsoleIconID.verbose, ImVec2(18, 18));
-						ImGui::SameLine();
 						ImGui::Text(helper.str.c_str());
 						break;
 					}
 				case 1:
 					if (helper.level == "info")
 					{
-						ImGui::Image(m_ConsoleIconID.info, ImVec2(12, 12));
-						ImGui::SameLine();
 						ImGui::Text(helper.str.c_str());
 						break;
 					}
 				case 2:
 					if (helper.level == "warning")
 					{
-						ImGui::Image(m_ConsoleIconID.warning, ImVec2(18, 18));
-						ImGui::SameLine();
 						ImGui::Text(helper.str.c_str());
 						break;
 					}
 				case 3:
 					if (helper.level == "error")
 					{
-						ImGui::Image(m_ConsoleIconID.error, ImVec2(18, 18));
-						ImGui::SameLine();
 						ImGui::Text(helper.str.c_str());
 						break;
 					}

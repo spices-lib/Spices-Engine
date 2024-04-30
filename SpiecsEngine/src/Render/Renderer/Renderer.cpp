@@ -221,9 +221,12 @@ namespace Spiecs {
 		renderPassInfo.renderPass = m_Renderer->m_RenderPass->Get();
 		renderPassInfo.framebuffer = m_Renderer->m_RenderPass->GetFramebuffer(m_CurrentImage);
 		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 
-		if (!m_Renderer->m_RenderPass->IsUseSwapChain() && SlateSystem::GetRegister())
+		if (m_Renderer->m_RenderPass->IsUseSwapChain() || !SlateSystem::GetRegister())
+		{
+			renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+		}
+		else
 		{
 			ImVec2 size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 			VkExtent2D extent = { size.x , size.y };

@@ -12,7 +12,7 @@ namespace Spiecs {
 		/**
 		* @brief The first frame, we will not get register pointer.
 		*/
-		if (!SlateSystem::GetRegister() || ts.gt() < 5.0) return;
+		if (!SlateSystem::GetRegister()) return;
 
 		if(!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
 
