@@ -43,7 +43,6 @@ namespace Spiecs {
 		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(CameraController::OnKeyPressed));
 		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(CameraController::OnMouseScroll));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(CameraController::OnWindowResized));
-		dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(CameraController::OnSlateResized));
 	}
 
 	bool CameraController::OnKeyPressed(KeyPressedEvent& e)
@@ -60,14 +59,6 @@ namespace Spiecs {
 	}
 
 	bool CameraController::OnWindowResized(WindowResizeEvent& e)
-	{
-		float ratio = e.GetWidth() / float(e.GetHeight());
-		std::any_cast<std::shared_ptr<Camera>>(m_Camera)->SetPerspective(ratio);
-
-		return false;
-	}
-
-	bool CameraController::OnSlateResized(SlateResizeEvent& e)
 	{
 		float ratio = e.GetWidth() / float(e.GetHeight());
 		std::any_cast<std::shared_ptr<Camera>>(m_Camera)->SetPerspective(ratio);

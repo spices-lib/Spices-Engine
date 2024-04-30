@@ -3,21 +3,25 @@
 #include "Systems/SlateSystem.h"
 #include "Slate/Imgui/ViewPort/ImguiViewport.h"
 #include "Core/Event/SlateEvent.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
-	void ViewPortResizeQueryer::QueryEvent()
+	void ViewPortResizeQueryer::QueryEvent(TimeStep& ts)
 	{
 		/**
 		* @brief The first frame, we will not get register pointer.
 		*/
-		if (!SlateSystem::GetRegister()) return;
+		if (!SlateSystem::GetRegister() || ts.gt() < 5.0) return;
 
 		if(!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
 
 		if (m_ViewPort->IsResizedThisFrame())
 		{
+			vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device);
+
 			SlateResizeEvent event(m_ViewPort->GetPanelSize().x, m_ViewPort->GetPanelSize().y);
+
 			Event::GetEventCallbackFn()(event);
 		}
 	}

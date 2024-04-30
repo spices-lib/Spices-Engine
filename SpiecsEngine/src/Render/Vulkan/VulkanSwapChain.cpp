@@ -82,7 +82,7 @@ namespace Spiecs {
 		uint32_t imageCount = MaxFrameInFlight;
 		vkGetSwapchainImagesKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, &imageCount, m_VulkanState.m_SwapChainImages.data());
 
-		for (size_t i = 0; i < m_VulkanState.m_SwapChainImages.size(); i++) {
+		for (size_t i = 0; i < MaxFrameInFlight; i++) {
 
 			// imageview
 			{

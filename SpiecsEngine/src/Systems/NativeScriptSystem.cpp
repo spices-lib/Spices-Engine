@@ -25,7 +25,10 @@ namespace Spiecs {
 
 	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{
-		m_ViewPortResizeQueryer->QueryEvent();
+		/**
+		* @brief Temp
+		*/
+		m_ViewPortResizeQueryer->QueryEvent(ts);
 
 		auto& view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
 		for (auto& e : view)

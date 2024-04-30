@@ -11,7 +11,7 @@ namespace Spiecs {
 		ViewPortResizeQueryer() {};
 		virtual ~ViewPortResizeQueryer() {};
 
-		void QueryEvent();
+		void QueryEvent(TimeStep& ts);
 
 	private:
 		std::shared_ptr<ImguiViewport> m_ViewPort;

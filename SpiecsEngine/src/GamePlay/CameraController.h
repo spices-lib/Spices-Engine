@@ -114,8 +114,6 @@ namespace Spiecs {
 		*/
 		bool OnWindowResized(WindowResizeEvent& e);
 
-		bool OnSlateResized(SlateResizeEvent& e);
-
 		/**
 		* @brief Calculate Camera Drag.
 		* @param[in] delta Mouse position delta on viewport during frams.

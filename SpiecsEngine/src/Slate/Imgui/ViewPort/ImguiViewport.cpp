@@ -36,10 +36,10 @@ namespace Spiecs {
     {
         EventDispatcher dispatcher(event);
 
-        dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(ImguiViewport::OnWindowResizeOver));
+        dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(ImguiViewport::OnSlateResize));
     }
 
-    bool ImguiViewport::OnWindowResizeOver(WindowResizeOverEvent& event)
+    bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
     {
         VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("FinalColor");
 
@@ -52,8 +52,6 @@ namespace Spiecs {
     {
         if (m_PanelSize.x != thisFrameSize.x || m_PanelSize.y != thisFrameSize.y)
         {
-            /*SlateResizeEvent event(thisFrameSize.x, thisFrameSize.y);
-            Event::GetEventCallbackFn()(event);*/
             isResized = true;
         }
         else

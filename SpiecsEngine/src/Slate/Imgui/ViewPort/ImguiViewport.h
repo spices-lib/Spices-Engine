@@ -20,7 +20,7 @@ namespace Spiecs {
 		bool IsResizedThisFrame() { return isResized; };
 
 	private:
-		bool OnWindowResizeOver(WindowResizeOverEvent& event);
+		bool OnSlateResize(SlateResizeEvent& event);
 		void QueryIsResizedThisFrame(ImVec2 thisFrameSize);
 
 	private:
