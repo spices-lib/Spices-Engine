@@ -24,7 +24,7 @@ namespace Spiecs {
 		void SetWindowState(bool isGBufferSlateOn) { m_IsGBufferSlateOn = isGBufferSlateOn; };
 
 	private:
-		bool OnWindowResized(WindowOnResizedEvent& event);
+		bool OnWindowResized(WindowResizeOverEvent& event);
 		void QueryGBufferID();
 
 	private:

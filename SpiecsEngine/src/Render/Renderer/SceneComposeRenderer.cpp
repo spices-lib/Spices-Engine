@@ -65,9 +65,9 @@ namespace Spiecs {
 		);
 	}
 
-	void SceneComposeRenderer::OnWindowResized()
+	void SceneComposeRenderer::OnSlateResize()
 	{
-		Renderer::OnWindowResized();
+		Renderer::OnSlateResize();
 
 		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
 

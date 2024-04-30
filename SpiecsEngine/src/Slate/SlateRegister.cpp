@@ -33,8 +33,8 @@ namespace Spiecs {
 		}
 	}
 
-	std::shared_ptr<ImguiSlate> SlateRegister::GetViewPort()
+	std::shared_ptr<ImguiViewport> SlateRegister::GetViewPort()
 	{
-		return m_SlatesRenderContainer["ViewPort"];
+		return std::static_pointer_cast<ImguiViewport>(m_SlatesRenderContainer["ViewPort"]);
 	}
 }

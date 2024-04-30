@@ -19,8 +19,8 @@ namespace Spiecs {
     void ImguiViewport::OnRender()
     {
         BeginMainDock();
-       
-        m_PanelSize = ImGui::GetContentRegionAvail();
+
+        QueryIsResizedThisFrame(ImGui::GetContentRegionAvail());
         m_PanelPos = ImGui::GetWindowPos();
            
         m_IsFocused = ImGui::IsWindowFocused();
@@ -36,15 +36,30 @@ namespace Spiecs {
     {
         EventDispatcher dispatcher(event);
 
-        dispatcher.Dispatch<WindowOnResizedEvent>(BIND_EVENT_FN(ImguiViewport::OnWindowResized));
+        dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(ImguiViewport::OnWindowResizeOver));
     }
 
-    bool ImguiViewport::OnWindowResized(WindowOnResizedEvent& event)
+    bool ImguiViewport::OnWindowResizeOver(WindowResizeOverEvent& event)
     {
         VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("FinalColor");
 
         m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
 
         return false;
+    }
+
+    void ImguiViewport::QueryIsResizedThisFrame(ImVec2 thisFrameSize)
+    {
+        if (m_PanelSize.x != thisFrameSize.x || m_PanelSize.y != thisFrameSize.y)
+        {
+            /*SlateResizeEvent event(thisFrameSize.x, thisFrameSize.y);
+            Event::GetEventCallbackFn()(event);*/
+            isResized = true;
+        }
+        else
+        {
+            isResized = false;
+        }
+        m_PanelSize = thisFrameSize;
     }
 }

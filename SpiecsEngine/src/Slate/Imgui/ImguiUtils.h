@@ -11,6 +11,7 @@
 #include "Core/Event/KeyEvent.h"
 #include "Core/Event/MouseEvent.h"
 #include "Core/Event/WindowEvent.h"
+#include "Core/Event/SlateEvent.h"
 
 // Helper Function Header.
 #include "ImguiHelper.h"
@@ -32,7 +33,7 @@ namespace Spiecs{
 		{
 			Left,    // The Left          on the window.
 			Right,   // The Right         on the window.
-			Up,      // The Up            on the window. 
+			Up,      // The Up            on the window.
 			Down,    // The Down          on the window.
 			Scene,   // The full screen   on the window.
 		};
@@ -106,7 +107,7 @@ namespace Spiecs{
 		/**
 		* @brief This slate's size.
 		*/
-		ImVec2 m_PanelSize;
+		ImVec2 m_PanelSize = { 1920, 1058 };
 
 		ImVec2 m_PanelPos;
 

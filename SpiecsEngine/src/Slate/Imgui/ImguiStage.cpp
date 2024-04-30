@@ -7,8 +7,6 @@ namespace Spiecs {
         : ImguiSlate(panelName)
     {}
 
-    int bar_data[5] = {1, 2, 3, 4, 5};
-
     void ImguiStage::OnRender()
     {
         Begin();

@@ -60,6 +60,6 @@ namespace Spiecs {
 		*/
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
 
-		virtual void OnWindowResized() override;
+		virtual void OnSlateResize() override;
 	};
 }

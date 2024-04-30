@@ -10,6 +10,7 @@
 #include "VulkanDevice.h"
 #include "VulkanSwapChain.h"
 #include "Render/RendererResource/RendererResourcePool.h"
+#include "Systems/SlateSystem.h"
 
 namespace Spiecs {
 
@@ -58,6 +59,8 @@ namespace Spiecs {
 		* @return Returns the array of VkPipelineColorBlendAttachmentState.
 		*/
 		inline std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlendAttachment; };
+
+		inline bool IsUseSwapChain() { return IsUseSwapChianImage; };
 
 		/**
 		* @brief Add the SwapChian's Image Attachment to RenderPass and FrameBuffer.
@@ -273,6 +276,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Set View.
+		* width, height here is a initialze value, only used for first call.
 		*/
 		RendererResourceCreateInfo Info;
 		Info.description = attachmentDescription;
@@ -356,6 +360,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Set View.
+		* width, height here is a initialze value, only used for first call.
 		*/
 		RendererResourceCreateInfo Info;
 		Info.description = depthAttachment;
@@ -414,6 +419,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Set View.
+		* width, height here is a initialze value, only used for first call.
 		*/
 		RendererResourceCreateInfo Info;
 		Info.description = attachmentDescription;

@@ -69,7 +69,7 @@ namespace Spiecs {
 		/**
 		* @brief Create an specific event.
 		*/
-		WindowOnResizedEvent event(width, height);
+		WindowResizeOverEvent event(width, height);
 
 		/**
 		* @brief Execute the global event function pointer by passing the specific event.
@@ -172,18 +172,26 @@ namespace Spiecs {
 	{
 		EventDispatcher dispatcher(event);
 
-		dispatcher.Dispatch<WindowOnResizedEvent>(BIND_EVENT_FN(VulkanRenderBackend::OnWindowResized));
+		dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(VulkanRenderBackend::OnWindowResizeOver));
+		dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(VulkanRenderBackend::OnSlateResize));
 	}
 
-	bool VulkanRenderBackend::OnWindowResized(WindowOnResizedEvent& event)
+	bool VulkanRenderBackend::OnWindowResizeOver(WindowResizeOverEvent& event)
 	{
 		m_VulkanDevice->RequerySwapChainSupport();
 
 		m_VulkanSwapChain->Destroy();
 		m_VulkanSwapChain->Create();
 
-		m_RendererResourcePool->OnWindowResized(event.GetWidth(), event.GetHeight());
-		RendererManager::Get().OnWindowResized();
+		RendererManager::Get().OnWindowResizeOver();
+
+		return false;
+	}
+
+	bool VulkanRenderBackend::OnSlateResize(SlateResizeEvent& event)
+	{
+		m_RendererResourcePool->OnSlateResize(event.GetWidth(), event.GetHeight());
+		RendererManager::Get().OnSlateResize();
 
 		return false;
 	}

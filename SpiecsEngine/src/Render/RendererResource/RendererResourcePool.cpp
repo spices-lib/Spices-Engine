@@ -10,7 +10,7 @@
 
 namespace Spiecs {
 
-	void RendererResourcePool::OnWindowResized(uint32_t width, uint32_t height)
+	void RendererResourcePool::OnSlateResize(uint32_t width, uint32_t height)
 	{
 		/**
 		* @brief Call all Resource's OnResized().

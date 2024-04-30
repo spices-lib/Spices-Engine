@@ -3,6 +3,10 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief Called when window resized.
+	* This Event registed by glfw window.
+	*/
 	class WindowResizeEvent : public Event
 	{
 	public:
@@ -35,10 +39,14 @@ namespace Spiecs {
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class WindowOnResizedEvent : public Event
+	/**
+	* @breif Called when window resized over.
+	* This Event registed by VkSwapchain.
+	*/
+	class WindowResizeOverEvent : public Event
 	{
 	public:
-		WindowOnResizedEvent(unsigned int width, unsigned int height)
+		WindowResizeOverEvent(unsigned int width, unsigned int height)
 			: m_Width(width), m_Height(height) {}
 
 		inline unsigned int GetWidth() const { return m_Width; }
@@ -47,11 +55,11 @@ namespace Spiecs {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "WindowOnResizedEvent: " << m_Width << ", " << m_Height;
+			ss << "WindowResizeOverEvent: " << m_Width << ", " << m_Height;
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(WindowOnResized)
+		EVENT_CLASS_TYPE(WindowResizeOver)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 
 	private:

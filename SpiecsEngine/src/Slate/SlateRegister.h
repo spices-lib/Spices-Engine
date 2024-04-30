@@ -76,7 +76,7 @@ namespace Spiecs {
 		*/
 		void OnEvent(Event& event);
 
-		std::shared_ptr<ImguiSlate> GetViewPort();
+		std::shared_ptr<ImguiViewport> GetViewPort();
 
 	private:
 		

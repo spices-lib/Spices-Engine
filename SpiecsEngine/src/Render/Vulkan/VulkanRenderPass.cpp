@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "VulkanRenderPass.h"
+#include "Slate/Imgui/ViewPort/ImguiViewport.h"
 
 namespace Spiecs {
 
@@ -101,8 +102,18 @@ namespace Spiecs {
 			framebufferInfo.renderPass = m_RenderPass;
 			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			framebufferInfo.pAttachments = attachments.data();
-			framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
-			framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
+
+			if (IsUseSwapChianImage || !SlateSystem::GetRegister())
+			{
+				framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+				framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
+			}
+			else
+			{
+				framebufferInfo.width = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x;
+				framebufferInfo.height = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y;
+			}
+			
 			framebufferInfo.layers = 1;
 
 			/**

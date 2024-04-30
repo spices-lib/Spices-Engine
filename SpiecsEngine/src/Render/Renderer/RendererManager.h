@@ -51,7 +51,9 @@ namespace Spiecs {
 		* Recreate all renderer renderpass, resource and framebuffer.
 		* @todo Event from glfw.
 		*/
-		static void OnWindowResized();
+		static void OnWindowResizeOver();
+
+		static void OnSlateResize();
 
 		/**
 		* @brief Push a renderer to this manager, and initialize it.

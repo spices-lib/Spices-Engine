@@ -44,13 +44,9 @@ namespace Spiecs {
 		*/
 		RendererResourcePool& operator=(const RendererResourcePool&) = delete;
 
-		/**
-		* @brief Called On SwapChian Resized.
-		* Event received from VulkanRenderBackeEnd.
-		* @param[in] width	The new width of this resource.
-		* @param[in] height	The new height of this resource.
-		*/
-		void OnWindowResized(uint32_t width, uint32_t height);
+
+		void OnSlateResize(uint32_t width, uint32_t height);
+
 
 		/**
 		* @brief Get Resource with specific name, create it if it have not been created.

@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "Renderer.h"
+#include "Systems/SlateSystem.h"
 
 namespace Spiecs {
 
@@ -221,6 +222,13 @@ namespace Spiecs {
 		renderPassInfo.framebuffer = m_Renderer->m_RenderPass->GetFramebuffer(m_CurrentImage);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+
+		if (!m_Renderer->m_RenderPass->IsUseSwapChain() && SlateSystem::GetRegister())
+		{
+			ImVec2 size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+			VkExtent2D extent = { size.x , size.y };
+			renderPassInfo.renderArea.extent = extent;
+		}
 
 		renderPassInfo.clearValueCount = (uint32_t)m_Renderer->m_RenderPass->GetClearValues().size();
 		renderPassInfo.pClearValues = m_Renderer->m_RenderPass->GetClearValues().data();

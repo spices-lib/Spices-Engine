@@ -3,6 +3,7 @@
 #include "VulkanUtils.h"
 #include "Render/FrameInfo.h"
 #include "Core/Event/WindowEvent.h"
+#include "Core/Event/SlateEvent.h"
 #include "VulkanWindows.h"
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
@@ -40,7 +41,8 @@ namespace Spiecs {
 
 	private:
 
-		bool OnWindowResized(WindowOnResizedEvent& event);
+		bool OnWindowResizeOver(WindowResizeOverEvent& event);
+		bool OnSlateResize(SlateResizeEvent& event);
 		/**
 		* @brief Called On Viewport resized.
 		* @todo Event receive from global event function pointer.

@@ -71,9 +71,14 @@ namespace Spiecs {
 		virtual void Render(FrameInfo& frameInfo) = 0;
 
 		/**
-		* @brief Recreate VulkanRenderPass.
+		* @brief Recreate Swapchain image.
 		*/
-		virtual void OnWindowResized() { CreateRenderPass(); };
+		virtual void OnWindowResizeOver() {};
+
+		/**
+		* @breif Recreate Framebuffer attachments.
+		*/
+		virtual void OnSlateResize() { CreateRenderPass(); };
 
 		/**
 		* @brief The Function is called on this attached.

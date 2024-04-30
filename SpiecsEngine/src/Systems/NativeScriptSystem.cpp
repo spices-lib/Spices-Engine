@@ -8,19 +8,25 @@
 #include "NativeScriptSystem.h"
 #include "Render/FrameInfo.h"
 #include "World/Components/NativeScriptComponent.h"
+#include "Slate/Imgui/ViewPort/ImguiViewport.h"
 #include "World/World/World.h"
 #include "Core/Event/Event.h"
+#include "SlateSystem.h"
 
 namespace Spiecs {
 
 	void NativeScriptSystem::OnSystemInitialize()
-	{}
+	{
+		m_ViewPortResizeQueryer = std::make_unique<ViewPortResizeQueryer>();
+	}
 
 	void NativeScriptSystem::OnSystemShutDown()
 	{}
 
 	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{
+		m_ViewPortResizeQueryer->QueryEvent();
+
 		auto& view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
 		for (auto& e : view)
 		{

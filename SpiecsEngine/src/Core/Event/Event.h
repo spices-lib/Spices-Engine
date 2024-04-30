@@ -9,8 +9,9 @@ namespace Spiecs {
 	enum class EventType
 	{
 		None = 0,
-		WindowClose, WindowResize, WindowOnResized, WindowFocus, WindowLostFocus, WindowMoved,
+		WindowClose, WindowResize, WindowResizeOver, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
+		SlateResize,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
@@ -19,10 +20,11 @@ namespace Spiecs {
 	{
 		None                      =  0,
 		EventCategoryApplication  =  (1 << 0),
-		EventCategoryInput        =  (1 << 1),
-		EventCategoryKeyboard     =  (1 << 2),
-		EventCategoryMouse        =  (1 << 3),
-		EventCategoryMouseButton  =  (1 << 4)
+		EventCategorySlate        =  (1 << 1),
+		EventCategoryInput        =  (1 << 2),
+		EventCategoryKeyboard     =  (1 << 3),
+		EventCategoryMouse        =  (1 << 4),
+		EventCategoryMouseButton  =  (1 << 5)
 	};
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\

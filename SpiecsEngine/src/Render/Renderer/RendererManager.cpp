@@ -26,11 +26,19 @@ namespace Spiecs {
 		}
 	}
 
-	void RendererManager::OnWindowResized()
+	void RendererManager::OnWindowResizeOver()
 	{
 		for (auto& pair : m_Identities)
 		{
-			pair.second->OnWindowResized();
+			pair.second->OnWindowResizeOver();
+		}
+	}
+
+	void RendererManager::OnSlateResize()
+	{
+		for (auto& pair : m_Identities)
+		{
+			pair.second->OnSlateResize();
 		}
 	}
 }

@@ -35,10 +35,10 @@ namespace Spiecs {
     void ImguiGBufferVisualizer::OnEvent(Event& event)
     {
         EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<WindowOnResizedEvent>(BIND_EVENT_FN(ImguiGBufferVisualizer::OnWindowResized));
+        dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(ImguiGBufferVisualizer::OnWindowResized));
     }
 
-    bool ImguiGBufferVisualizer::OnWindowResized(WindowOnResizedEvent& event)
+    bool ImguiGBufferVisualizer::OnWindowResized(WindowResizeOverEvent& event)
     {
         QueryGBufferID();
         return false;

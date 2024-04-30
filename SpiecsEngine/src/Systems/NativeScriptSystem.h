@@ -7,6 +7,8 @@
 #pragma once
 #include "Core/Core.h"
 #include "SystemManager.h"
+#include "EventQueryer/ViewPortResizeQueryer.h"
+#include <memory>
 
 namespace Spiecs {
 
@@ -56,5 +58,7 @@ namespace Spiecs {
 		virtual void OnEvent(Event& event) override;
 
 	private:
+
+		std::unique_ptr<ViewPortResizeQueryer> m_ViewPortResizeQueryer;
 	};
 }
