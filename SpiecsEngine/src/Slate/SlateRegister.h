@@ -12,9 +12,9 @@
 #include "Slate/Imgui/ImguiContentBrowser.h"
 #include "Slate/Imgui/ImguiProperty.h"
 #include "Slate/Imgui/ImguiStage.h"
-#include "Slate/Imgui/ImguiViewport.h"
+#include "Slate/Imgui/ViewPort/ImguiViewport.h"
 #include "Slate/Imgui/MainMenu/ImguiMainMenu.h"
-#include "Slate/Imgui/ImguiFloattingInfo.h"
+#include "Slate/Imgui/ViewPort/ImguiFloattingInfo.h"
 
 // STL Header
 #include <memory>
@@ -75,6 +75,8 @@ namespace Spiecs {
 		* @brief This function will be called on global Event function pointer is called.
 		*/
 		void OnEvent(Event& event);
+
+		std::shared_ptr<ImguiSlate> GetViewPort();
 
 	private:
 		

@@ -6,6 +6,7 @@ namespace Spiecs {
     void ImguiContentBrowser::OnRender()
     {
         Begin();
+        ImPlot::ShowDemoWindow();
         End();
     }
 }

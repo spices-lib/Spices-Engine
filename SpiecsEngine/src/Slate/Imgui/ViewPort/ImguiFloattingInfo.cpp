@@ -1,13 +1,15 @@
 #include "Pchheader.h"
 #include "ImguiFloattingInfo.h"
+#include "Systems/SlateSystem.h"
 
 namespace Spiecs {
 
     void ImguiFloattingInfo::OnRender()
     {
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImVec2 work_pos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
-        ImVec2 work_size = viewport->WorkSize;
+
+        ImVec2 work_pos = m_Owner->GetPanelPos(); // Use work area to avoid menu-bar/task-bar, if any!
+        ImVec2 work_size = m_Owner->GetPanelSize();
 
         static int location = 1;
         ImGuiIO& io = ImGui::GetIO();
@@ -28,7 +30,7 @@ namespace Spiecs {
         else if (location == -2)
         {
             // Center window
-            ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+            ImGui::SetNextWindowPos(work_pos + work_size * 0.5, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
             window_flags |= ImGuiWindowFlags_NoMove;
         }
         ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
@@ -36,7 +38,7 @@ namespace Spiecs {
         if (ImGui::Begin(m_PanelName.c_str(), &open, window_flags))
         {
             ImGui::Text("FPS: %.2f | Frame time: %.2f ms", io.Framerate, 1000.0f / io.Framerate);
-            ImGui::Text("ViewPort Size: ( %d, %d )", (int)viewport->WorkSize.x, (int)viewport->WorkSize.y);
+            ImGui::Text("ViewPort Size: ( %d, %d )", (int)work_size.x, (int)work_size.y);
             if (ImGui::IsMousePosValid())
                 ImGui::Text("Mouse Position: ( %d, %d )", (int)io.MousePos.x, (int)io.MousePos.y);
             else

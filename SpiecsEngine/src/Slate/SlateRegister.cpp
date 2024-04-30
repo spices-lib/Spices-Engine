@@ -32,4 +32,9 @@ namespace Spiecs {
 			pair.second->OnEvent(event);
 		}
 	}
+
+	std::shared_ptr<ImguiSlate> SlateRegister::GetViewPort()
+	{
+		return m_SlatesRenderContainer["ViewPort"];
+	}
 }

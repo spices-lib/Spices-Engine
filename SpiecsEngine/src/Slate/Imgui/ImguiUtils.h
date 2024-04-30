@@ -90,6 +90,12 @@ namespace Spiecs{
 		*/
 		void End() { ImGui::End(); ImGui::PopStyleVar(3); };
 
+	public:
+		ImVec2 GetPanelSize() { return m_PanelSize; };
+		ImVec2 GetPanelPos() { return m_PanelPos; };
+		bool IsFocused() { return m_IsFocused; };
+		bool IsHovered() { return m_IsHovered; };
+
 	protected:
 
 		/**
@@ -101,6 +107,8 @@ namespace Spiecs{
 		* @brief This slate's size.
 		*/
 		ImVec2 m_PanelSize;
+
+		ImVec2 m_PanelPos;
 
 		/**
 		* @brief This slate's name.

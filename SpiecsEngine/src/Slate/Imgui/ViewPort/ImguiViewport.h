@@ -1,8 +1,10 @@
 #pragma once
 #include "Core/Core.h"
-#include "ImguiUtils.h"
+#include "Slate/Imgui/ImguiUtils.h"
 
 namespace Spiecs {
+
+	class ImguiFloattingInfo;
 
 	class ImguiViewport : public ImguiSlate
 	{
@@ -19,5 +21,6 @@ namespace Spiecs {
 
 	private:
 		ImTextureID m_ViewportID;
+		std::shared_ptr<ImguiFloattingInfo> m_FloattingInfo;
 	};
 }
