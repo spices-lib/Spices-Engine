@@ -9,6 +9,12 @@ namespace Spiecs {
 		ImTextureID FinalColorID;
 		ImTextureID BaseColorID;
 		ImTextureID NormalID;
+
+		void Free() {
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(FinalColorID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(BaseColorID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
+		};
 	};
 
 	class ImguiGBufferVisualizer : public ImguiSlate

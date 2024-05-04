@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "Material.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
@@ -13,6 +14,11 @@ namespace Spiecs {
 		: m_MaterialPath(materialPath)
 	{
 		Dserialize();
+	}
+
+	Material::~Material()
+	{
+		vkFreeDescriptorSets(VulkanRenderBackend::GetState().m_Device, VulkanRenderBackend::GetDescriptorPool()->GetPool(), 1, &m_DescriptorSet);
 	}
 
 	void Material::Serialize()

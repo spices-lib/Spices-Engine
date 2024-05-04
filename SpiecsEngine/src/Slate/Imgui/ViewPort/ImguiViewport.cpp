@@ -41,6 +41,8 @@ namespace Spiecs {
 
     bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
     {
+        ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(m_ViewportID));
+
         VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("FinalColor");
 
         m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);

@@ -57,9 +57,13 @@ namespace Spiecs {
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
 
 			bool isFiltered = m_Filter.IsActive();
-			for (int i = 0; i < m_Console->GetInfos().size(); i++)
+			//for (int i = 0; i < m_Console->GetInfos().size(); i++)
+			int i = 0;
+			for(auto iter = m_Console->GetInfos().rbegin(); iter != m_Console->GetInfos().rend(); iter++)
 			{
-				const InfoLevelHelper& helper = m_Console->GetInfos()[i];
+				if (i == 50) break;
+
+				const InfoLevelHelper& helper = *iter;
 				ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 
 				switch (m_Level)
@@ -92,6 +96,8 @@ namespace Spiecs {
 				}
 
 				ImGui::PopStyleColor();
+
+				i++;
 			}
 
 			ImGui::PopStyleVar();

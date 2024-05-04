@@ -67,10 +67,24 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::OnSlateResize()
 	{
+		/**
+		* @brief Recreate RenderPass.
+		*/
 		Renderer::OnSlateResize();
 
+		/**
+		* @brief Free all descriptor this renderer holded.
+		*/
+		FreeResource();
+
+		/**
+		* @brief Destroy PipelineLayout.
+		*/
 		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
 
+		/**
+		* @brief Recreate PipelineLayout.
+		*/
 		CreatePipelineLayoutAndDescriptor();
 	}
 

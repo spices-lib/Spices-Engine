@@ -10,18 +10,27 @@
 
 namespace Spiecs {
 
-	Renderer::Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
-		: m_RendererName(rendererName)
-		, m_VulkanState(vulkanState) 
-		, m_DesctiptorPool(desctiptorPool)
-		, m_Device(device)
-		, m_RendererResourcePool(rendererResourcePool)
-		, m_PipelineLayout{}
+	Renderer::Renderer
+	(
+		const std::string&                     rendererName          , 
+		VulkanState&                           vulkanState           , 
+		std::shared_ptr<VulkanDescriptorPool>  desctiptorPool        , 
+		std::shared_ptr<VulkanDevice>          device                , 
+		std::shared_ptr<RendererResourcePool>  rendererResourcePool
+	)
+		: m_RendererName            (rendererName          )
+		, m_VulkanState             (vulkanState           ) 
+		, m_DesctiptorPool          (desctiptorPool        )
+		, m_Device                  (device                )
+		, m_RendererResourcePool    (rendererResourcePool  )
+		, m_PipelineLayout          {}
 	{}
 
 	Renderer::~Renderer()
 	{
 		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
+
+		FreeResource();
 	}
 
 	void Renderer::OnSystemInitialize()
@@ -45,6 +54,23 @@ namespace Spiecs {
 	std::string Renderer::GetSahderPath(const std::string& shaderType)
 	{
 		return SPIECS_ENGINE_ASSETS_PATH + "Shaders/spv/Shader." + m_RendererName + "." + shaderType + ".spv";
+	}
+
+	bool Renderer::FreeResource()
+	{
+		for (int i = 0; i < m_Resource.size(); i++)
+		{
+			auto& res = m_Resource[i];
+
+			for (int j = 0; j < res.m_DescriptorSets.size(); j++)
+			{
+				auto& des = res.m_DescriptorSets[j];
+
+				vkFreeDescriptorSets(m_VulkanState.m_Device, m_DesctiptorPool->GetPool(), 1, &des);
+			}
+		}
+
+		return true;
 	}
 
 	std::pair<glm::mat4, glm::mat4> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)

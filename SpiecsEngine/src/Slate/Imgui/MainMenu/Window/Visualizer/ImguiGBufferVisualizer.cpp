@@ -40,6 +40,8 @@ namespace Spiecs {
 
     bool ImguiGBufferVisualizer::OnWindowResized(WindowResizeOverEvent& event)
     {
+        m_GBufferID.Free();
+
         QueryGBufferID();
         return false;
     }

@@ -5,24 +5,29 @@
 */
 
 #pragma once
+// Core Header.
 #include "Core/Core.h"
+#include "RendererManager.h"
+#include "Core/Library/ContainerLibrary.h"
+
+// Vulkan Backend Header.
+#include "Render/FrameInfo.h"
 #include "Render/Vulkan/VulkanPipeline.h"
 #include "Render/Vulkan/VulkanUtils.h"
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Render/Vulkan/VulkanImage.h"
-#include "Render/FrameInfo.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
-#include "RendererManager.h"
-#include "Core/Library/ContainerLibrary.h"
 #include "Render/Vulkan/VulkanRenderPass.h"
-#include "World/World/World.h"
 
+// World Component Header.
+#include "World/World/World.h"
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
 #include "World/Components/CameraComponent.h"
 #include "World/Components/UUIDComponent.h"
 #include "World/Components/SkyBoxComponent.h"
 
+// STL Header
 #include <memory>
 #include <unordered_map>
 
@@ -42,9 +47,18 @@ namespace Spiecs {
 		* Init member veriables.
 		* @param[in] rendererName The name of this Renderer.
 		* @param[in] vulkanState The core vulkan objects that in use.
-		* @param[in] desctiptorPool The DesctiptorPool.
+		* @param[in] desctiptorPool The shared pointer of DesctiptorPool, used for allocate descriptor and free descriptor.
+		* @param[in] device The shared pointer of VulkanDevice, used for renderpass's formats query.
+		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for regist/access rendertarget.
 		*/
-		Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool);
+		Renderer
+		(
+			const std::string&                      rendererName            , 
+			VulkanState&                            vulkanState             , 
+			std::shared_ptr<VulkanDescriptorPool>   desctiptorPool          , 
+			std::shared_ptr<VulkanDevice>           device                  , 
+			std::shared_ptr<RendererResourcePool>   rendererResourcePool
+		);
 
 		/**
 		* @brief Destructor Function.
@@ -115,6 +129,8 @@ namespace Spiecs {
 		* @return Returns the sahder path string.
 		*/
 		std::string GetSahderPath(const std::string& shaderType);
+
+		bool FreeResource();
 
 		/**
 		* @brief Iterater the specific Component in World.
