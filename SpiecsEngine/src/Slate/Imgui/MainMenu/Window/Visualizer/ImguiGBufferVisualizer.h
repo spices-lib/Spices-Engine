@@ -21,7 +21,7 @@ namespace Spiecs {
 		virtual void OnRender() override;
 		virtual void OnEvent(Event& event) override;
 
-		void SetWindowState(bool isGBufferSlateOn) { m_IsGBufferSlateOn = isGBufferSlateOn; };
+		
 
 	private:
 		bool OnWindowResized(WindowResizeOverEvent& event);
@@ -30,6 +30,6 @@ namespace Spiecs {
 	private:
 		GBufferID m_GBufferID;
 
-		bool m_IsGBufferSlateOn = false;
+		
 	};
 }

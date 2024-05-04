@@ -92,6 +92,9 @@ namespace Spiecs{
 		void End() { ImGui::End(); ImGui::PopStyleVar(3); };
 
 	public:
+		void SetWindowState(bool isSlateOn) { m_IsSlateOn = isSlateOn; };
+
+	public:
 		ImVec2 GetPanelSize() { return m_PanelSize; };
 		ImVec2 GetPanelPos() { return m_PanelPos; };
 		bool IsFocused() { return m_IsFocused; };
@@ -125,5 +128,8 @@ namespace Spiecs{
 		* @brief True if Hovered.
 		*/
 		bool m_IsHovered = false;
+
+
+		bool m_IsSlateOn = false;
 	};
 }

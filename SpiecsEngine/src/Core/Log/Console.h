@@ -26,9 +26,9 @@ namespace Spiecs {
 
 	protected:
 		void sink_it_(const spdlog::details::log_msg& msg) override;
-		virtual void flush_() {};
+		virtual void flush_() { Clear(); };
 
-	private:
+	protected:
 		std::vector<InfoLevelHelper> m_LogInfos;
 	};
 }

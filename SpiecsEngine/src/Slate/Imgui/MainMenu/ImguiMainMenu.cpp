@@ -4,6 +4,7 @@
 
 #include "Window/ImguiWindow.h"
 #include "Create/ImguiCreateEntity.h"
+#include "Help/ImguiHelp.h"
 
 namespace Spiecs {
 
@@ -12,6 +13,7 @@ namespace Spiecs {
     {
         m_Create = SlateSystem::GetRegister()->Register<ImguiCreateEntity>(false, "Create");
         m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>(false, "Window");
+        m_Help = SlateSystem::GetRegister()->Register<ImguiHelp>(false, "Help");
     }
 
     void ImguiMainMenu::OnRender()
@@ -46,10 +48,7 @@ namespace Spiecs {
             {
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Help"))
-            {
-                ImGui::EndMenu();
-            }
+            m_Help->OnRender();
             ImGui::EndMainMenuBar();
         }
 	}

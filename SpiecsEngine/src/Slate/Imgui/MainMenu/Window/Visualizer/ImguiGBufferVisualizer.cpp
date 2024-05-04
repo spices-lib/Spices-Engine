@@ -12,7 +12,7 @@ namespace Spiecs {
 
     void ImguiGBufferVisualizer::OnRender()
     {
-        if (!m_IsGBufferSlateOn) return;
+        if (!m_IsSlateOn) return;
 
         Begin("GBuffer");
 

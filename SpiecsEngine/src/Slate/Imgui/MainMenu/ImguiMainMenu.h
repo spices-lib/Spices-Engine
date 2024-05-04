@@ -6,6 +6,7 @@ namespace Spiecs {
 
 	class ImguiWindow;
 	class ImguiCreateEntity;
+	class ImguiHelp;
 
 	class ImguiMainMenu : public ImguiSlate
 	{
@@ -20,6 +21,7 @@ namespace Spiecs {
 	private:
 		std::shared_ptr<ImguiCreateEntity> m_Create;
 		std::shared_ptr<ImguiWindow> m_Window;
+		std::shared_ptr<ImguiHelp> m_Help;
 	};
 
 }
