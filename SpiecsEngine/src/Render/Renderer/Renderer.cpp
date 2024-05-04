@@ -28,8 +28,14 @@ namespace Spiecs {
 
 	Renderer::~Renderer()
 	{
+		/**
+		* @brief Destroy PipelineLayout.
+		*/
 		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
 
+		/**
+		* @brief Free all descriptors.
+		*/
 		FreeResource();
 	}
 
@@ -53,20 +59,35 @@ namespace Spiecs {
 
 	std::string Renderer::GetSahderPath(const std::string& shaderType)
 	{
-		return SPIECS_ENGINE_ASSETS_PATH + "Shaders/spv/Shader." + m_RendererName + "." + shaderType + ".spv";
+		/**
+		* @brief Get full path of shader file.
+		*/
+		std::stringstream ss;
+		ss << SPIECS_ENGINE_ASSETS_PATH << "Shaders/spv/Shader." << m_RendererName << "." << shaderType << ".spv";
+
+		return ss.str();
 	}
 
 	bool Renderer::FreeResource()
 	{
+		/**
+		* @brief Iter frame's resource.
+		*/
 		for (int i = 0; i < m_Resource.size(); i++)
 		{
 			auto& res = m_Resource[i];
 
+			/**
+			* @brief Iter specific descriptor.
+			*/
 			for (int j = 0; j < res.m_DescriptorSets.size(); j++)
 			{
 				auto& des = res.m_DescriptorSets[j];
 
-				vkFreeDescriptorSets(m_VulkanState.m_Device, m_DesctiptorPool->GetPool(), 1, &des);
+				/**
+				* @brief Free it.
+				*/
+				VK_CHECK(vkFreeDescriptorSets(m_VulkanState.m_Device, m_DesctiptorPool->GetPool(), 1, &des));
 			}
 		}
 
@@ -75,12 +96,30 @@ namespace Spiecs {
 
 	std::pair<glm::mat4, glm::mat4> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
 	{
-		glm::mat4 viewMat = glm::mat4(1.0f);
+		/**
+		* @brief Init viewmatrix and projectionmatrix.
+		*/
+		glm::mat4 viewMat       = glm::mat4(1.0f);
 		glm::mat4 projectionMat = glm::mat4(1.0f);
 
-		IterWorldComp<CameraComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, CameraComponent& camComp) {
+		bool find = false;
+
+		/**
+		* @brief Iter CameraComponent, finding a active camera.
+		*/
+		IterWorldComp<CameraComponent>(
+			frameInfo, 
+			[&](
+			int                   entityId, 
+			TransformComponent&   transComp, 
+			CameraComponent&      camComp
+			){
+
 			if (camComp.IsActived())
 			{
+				/**
+				* @brief Viewmaterix is the inverse of camera's modelmatrix. 
+				*/
 				viewMat = glm::inverse(transComp.GetModelMatrix());
 				projectionMat = camComp.GetCamera()->GetPMatrix();
 
@@ -89,19 +128,56 @@ namespace Spiecs {
 				*/
 				//projectionMat[1][1] *= -1;
 
-				return true;
+				/**
+				* @brief Break if finded.
+				*/
+				find = true;
+				return find;
 			}
+
+			/**
+			* @brief Continue if not finded.
+			*/
 			return false;
 		});
+
+		/**
+		* @brief Throwout a warning if not a active camera.
+		*/
+		if (!find)
+		{
+			std::stringstream ss;
+			ss << m_RendererName << ": " << "not find a active camera in world, please check again";
+
+			SPIECS_CORE_WARN(ss.str());
+		}
 
 		return std::make_pair(viewMat, projectionMat);
 	}
 
 	DirectionalLightComponent::DirectionalLight Renderer::GetDirectionalLight(FrameInfo& frameInfo)
 	{
+		/**
+		* @breif Init a DirectionalLight.
+		*/
 		DirectionalLightComponent::DirectionalLight directionalLight;
-		IterWorldComp<DirectionalLightComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, DirectionalLightComponent& dirlightComp) {
+
+		/**
+		* @breif Iter DirectionalLightComponent, and just use the first one.
+		*/
+		IterWorldComp<DirectionalLightComponent>(
+			frameInfo, 
+			[&](
+			int                          entityId, 
+			TransformComponent&          transComp, 
+			DirectionalLightComponent&   dirlightComp
+			) {
+
 			directionalLight = dirlightComp.GetLight();
+
+			/**
+			* @breif Break.
+			*/
 			return true;
 		});
 
@@ -110,16 +186,32 @@ namespace Spiecs {
 
 	std::array<PointLightComponent::PointLight, 10> Renderer::GetPointLight(FrameInfo& frameInfo)
 	{
+		/**
+		* @brief Init a PointLight contioner.
+		*/
 		std::vector<PointLightComponent::PointLight> pointLights;
 		std::array<PointLightComponent::PointLight, 10> pointLightsArray;
 
-		IterWorldComp<PointLightComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, PointLightComponent& plightComp) {
+		/**
+		* @brief Iter PointLightComponent.
+		*/
+		IterWorldComp<PointLightComponent>(
+			frameInfo, 
+			[&](
+			int                   entityId, 
+			TransformComponent&   transComp, 
+			PointLightComponent&  plightComp
+			) {
+
 			PointLightComponent::PointLight pointLight = plightComp.GetLight();
 			pointLight.position = transComp.GetPosition();
 			pointLights.push_back(std::move(pointLight));
 			return false;
 		});
 		
+		/**
+		* @breif Select ten pointlight.
+		*/
 		for (int i = 0; i < pointLights.size(); i++)
 		{
 			if (i == 10) break;

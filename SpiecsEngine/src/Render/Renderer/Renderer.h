@@ -5,12 +5,13 @@
 */
 
 #pragma once
-// Core Header.
+/******************************Core Header**********************************************************/
 #include "Core/Core.h"
 #include "RendererManager.h"
 #include "Core/Library/ContainerLibrary.h"
+/***************************************************************************************************/
 
-// Vulkan Backend Header.
+/******************************Vulkan Backend Header************************************************/
 #include "Render/FrameInfo.h"
 #include "Render/Vulkan/VulkanPipeline.h"
 #include "Render/Vulkan/VulkanUtils.h"
@@ -18,18 +19,21 @@
 #include "Render/Vulkan/VulkanImage.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "Render/Vulkan/VulkanRenderPass.h"
+/***************************************************************************************************/
 
-// World Component Header.
+/******************************World Component Header***********************************************/
 #include "World/World/World.h"
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
 #include "World/Components/CameraComponent.h"
 #include "World/Components/UUIDComponent.h"
 #include "World/Components/SkyBoxComponent.h"
+/***************************************************************************************************/
 
-// STL Header
+/******************************STL Header***********************************************************/
 #include <memory>
 #include <unordered_map>
+/***************************************************************************************************/
 
 namespace Spiecs {
 
@@ -41,6 +45,8 @@ namespace Spiecs {
 	class Renderer
 	{
 	public:
+
+		/******************************Basic Function**************************************************/
 
 		/**
 		* @brief Constructor Function.
@@ -62,7 +68,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Destructor Function.
-		* We destroy pipeline layout here.
+		* We destroy pipeline layout and free descriptors that holed by this renderer here.
 		*/
 		virtual ~Renderer();
 
@@ -78,26 +84,43 @@ namespace Spiecs {
 		*/
 		Renderer& operator=(const Renderer&) = delete;
 
+		/***************************************************************************************************/
+
+		/******************************The interface do not needs override now******************************/
+
 		/**
-		* @brief The interface of how to render.
+		* @brief This interface is called on rendersystem is registed.
+		* Initialize the specific renderer's pipeline, renderpass. framebuffer, descriptor, and so on...
+		* @note Though this is a interface, Usually not makeing scene in overriding it.
+		*/
+		virtual void OnSystemInitialize();
+
+		/***************************************************************************************************/
+
+		/******************************The interface needs override*****************************************/
+
+		/**
+		* @brief The interface is called every frame.
+		* Defines what data needs to be renderer and how to render.
 		* @param[in] frameInfo The current frame data.
 		*/
 		virtual void Render(FrameInfo& frameInfo) = 0;
 
 		/**
-		* @brief Recreate Swapchain image.
+		* @brief This interface is called on Window resized over (regist by swapchain).
+		* If the specific renderer uses swpachianimage attachment during CreateRenderPass(), 
+		* this interface needs to override, call CreateRenderPass() here just will be fine.
 		*/
 		virtual void OnWindowResizeOver() {};
 
 		/**
-		* @breif Recreate Framebuffer attachments.
+		* @breif This interface is called on Viewport resize (regist by ImguiViewport).
+		* If the specific renderer uses the attachment that needs recreated during CreateRenderPass(), 
+		* this interface needs to override, call CreateRenderPass() here just will be fine.
+		* If the specific renderer uses the input attachment during CreateRenderPass(), 
+		* this interface needs to override, see SceneComposeRenderer::OnSlateResize() for sample.
 		*/
-		virtual void OnSlateResize() { CreateRenderPass(); };
-
-		/**
-		* @brief The Function is called on this attached.
-		*/
-		virtual void OnSystemInitialize();
+		virtual void OnSlateResize() {};
 
 	private:
 
@@ -121,7 +144,11 @@ namespace Spiecs {
 		*/
 		virtual void CreatePipeline(VkRenderPass renderPass) = 0;
 
+		/***************************************************************************************************/
+
 	protected:
+
+		/******************************Renderer Help Function**********************************************/
 
 		/**
 		* @brief Get sahder path string.
@@ -130,6 +157,11 @@ namespace Spiecs {
 		*/
 		std::string GetSahderPath(const std::string& shaderType);
 
+		/**
+		* @brief Free all descriptors that the specific renderer holded.
+		* Called during Destructor Function, and OnSlateResize() if renderpass uses input attachment.
+		* @return Returns true if free successfully.
+		*/
 		bool FreeResource();
 
 		/**
@@ -152,6 +184,7 @@ namespace Spiecs {
 		* @brief Get DirectionalLightComponent's render data in World.
 		* @param[in] frameInfo The current frame data.
 		* @return Returns the only one DirectionalLight render data.
+		* @todo Mutiple directional light.
 		*/
 		DirectionalLightComponent::DirectionalLight GetDirectionalLight(FrameInfo& frameInfo);
 
@@ -162,6 +195,10 @@ namespace Spiecs {
 		* @todo infinity pointlight.
 		*/
 		std::array<PointLightComponent::PointLight, 10> GetPointLight(FrameInfo& frameInfo);
+
+		/***************************************************************************************************/
+
+		/******************************Help Struct*********************************************************/
 
 	private:
 
@@ -217,7 +254,11 @@ namespace Spiecs {
 			}
 		};
 
+		/***************************************************************************************************/
+
 	protected:
+
+		/******************************Help Calss for quick build*******************************************/
 
 		/**
 		* @brief This class helps to build a vkpipelinelayout.
@@ -429,6 +470,8 @@ namespace Spiecs {
 			uint32_t m_CurrentImage;
 		};
 
+		/***************************************************************************************************/
+
 		/**
 		* @brief This struct placed the local buffer data.Specific for every renderer.
 		* Needed to be inherited for specific renderer.
@@ -555,6 +598,9 @@ namespace Spiecs {
 			*/
 			bool isIterBreak = func((int)e, transComp, tComp);
 
+			/**
+			* @brief Whether break this for loop.
+			*/
 			if (isIterBreak) break;
 		}
 	}

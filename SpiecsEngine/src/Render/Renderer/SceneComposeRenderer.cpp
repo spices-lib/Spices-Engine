@@ -70,7 +70,7 @@ namespace Spiecs {
 		/**
 		* @brief Recreate RenderPass.
 		*/
-		Renderer::OnSlateResize();
+		CreateRenderPass();
 
 		/**
 		* @brief Free all descriptor this renderer holded.
