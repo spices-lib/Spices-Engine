@@ -2,6 +2,8 @@
 #include "Core/Core.h"
 #include "VulkanUtils.h"
 
+#include <any>
+
 namespace Spiecs {
 
 	class VulkanImage : public VulkanObject
@@ -19,6 +21,7 @@ namespace Spiecs {
 		VkDescriptorImageInfo* GetImageInfo(VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		void TransitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 		void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+		void CopyImageTexelToBuffer(uint32_t x, uint32_t y, std::any out_rgba);
 		void GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight);
 		void CreateImageView(VkFormat format, VkImageAspectFlags aspectFlags);
 		void CreateSampler();
@@ -41,6 +44,8 @@ namespace Spiecs {
 
 		VkDescriptorImageInfo m_ImageInfo{};
 		VkDescriptorSet m_DescriptorSet{};
+
+		VkFormat m_Format;
 
 		friend class TextureLoader;
 	};

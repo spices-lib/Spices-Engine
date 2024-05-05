@@ -44,16 +44,8 @@ namespace Spiecs {
     {
         m_GBufferID.Free();
 
-        if (event.GetWidth() <= 500)
-        {
-            m_Height = 500;
-            m_Width = m_Height * event.GetWidth() / static_cast<float>(event.GetHeight());
-        }
-        else
-        {
-            m_Width = 500;
-            m_Height = m_Width * event.GetHeight() / static_cast<float>(event.GetWidth());
-        }
+        m_Width = 500;
+        m_Height = m_Width * event.GetHeight() / static_cast<float>(event.GetWidth());
 
         QueryGBufferID();
         return false;

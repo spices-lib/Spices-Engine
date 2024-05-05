@@ -7,14 +7,14 @@
 
 namespace Spiecs {
 
-	void ViewPortResizeQueryer::QueryEvent(TimeStep& ts)
+	void ViewPortResizeQueryer::OnTick(TimeStep& ts)
 	{
 		/**
 		* @brief The first frame, we will not get register pointer.
 		*/
 		if (!SlateSystem::GetRegister()) return;
 
-		if(!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
+		if (!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
 
 		if (m_ViewPort->IsResizedThisFrame())
 		{

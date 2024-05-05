@@ -7,7 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "SystemManager.h"
-#include "EventQueryer/ViewPortResizeQueryer.h"
+#include "Scripts/NativeScript.h"
 #include <memory>
 
 namespace Spiecs {
@@ -59,6 +59,6 @@ namespace Spiecs {
 
 	private:
 
-		std::unique_ptr<ViewPortResizeQueryer> m_ViewPortResizeQueryer;
+		std::unique_ptr<NativeScriptRegister> m_NativeScriptRegister;
 	};
 }

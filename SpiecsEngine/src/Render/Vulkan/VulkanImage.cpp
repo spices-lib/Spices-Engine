@@ -57,6 +57,7 @@ namespace Spiecs {
 		: VulkanObject(vulkanState)
 		, m_Width(width)
 		, m_Height(height)
+		, m_Format(format)
 	{
 		CreateImage(vulkanState, width, height, numSamples, format, tiling, usage, properties, mipLevels);
 	}
@@ -164,6 +165,67 @@ namespace Spiecs {
 		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
 			vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 		});
+	}
+
+	void VulkanImage::CopyImageTexelToBuffer(uint32_t x, uint32_t y, std::any out_rgba)
+	{
+		uint32_t channelsize = 4;
+
+		/**
+		* @todo Support all type;
+		*/
+		switch (m_Format)
+		{
+		case VK_FORMAT_R8G8B8A8_UNORM:
+			channelsize = 4;
+			break;
+		case VK_FORMAT_R32_SFLOAT:
+			channelsize = 1;
+			break;
+		}
+
+		VulkanBuffer stagingbuffer(
+			m_VulkanState, 
+			channelsize, 
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
+
+		TransitionImageLayout(
+			m_Format,
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+		);
+
+		VkBufferImageCopy region = {};
+		region.bufferOffset = 0;
+		region.bufferRowLength = 0;
+		region.bufferImageHeight = 0;
+
+		region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		region.imageSubresource.mipLevel = 0;
+		region.imageSubresource.baseArrayLayer = 0;
+		region.imageSubresource.layerCount = 1;
+
+		region.imageOffset.x = x;
+		region.imageOffset.y = y;
+		region.imageExtent = { 1, 1, 1 };
+
+		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+			vkCmdCopyImageToBuffer(commandBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, stagingbuffer.Get(), 1, &region);
+		});
+
+		TransitionImageLayout(
+			m_Format,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		);
+
+		void* data;
+		void* dst;
+		vkMapMemory(m_VulkanState.m_Device, stagingbuffer.GetMomory(), 0, channelsize, 0, &data);
+		memcpy(dst, data, static_cast<size_t>(channelsize));
+		vkUnmapMemory(m_VulkanState.m_Device, stagingbuffer.GetMomory());
 	}
 
 	void VulkanImage::GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight)
@@ -298,6 +360,7 @@ namespace Spiecs {
 	void VulkanImage::CreateImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels)
 	{
 		m_MipLevels = mipLevels;
+		m_Format = format;
 
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;

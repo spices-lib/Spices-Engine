@@ -38,7 +38,7 @@ namespace Spiecs {
 			throw std::runtime_error("failed to load texture image!");
 		}
 
-		VulkanBuffer stagingBuffer = VulkanBuffer(resourceptr->m_VulkanState, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VulkanBuffer stagingBuffer(resourceptr->m_VulkanState, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		void* data;
 		vkMapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMomory(), 0, imageSize, 0, &data);
@@ -86,7 +86,7 @@ namespace Spiecs {
 			throw std::runtime_error("failed to load texture image!");
 		}
 
-		VulkanBuffer stagingBuffer = VulkanBuffer(resourceptr->m_VulkanState, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VulkanBuffer stagingBuffer(resourceptr->m_VulkanState, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 		void* data;
 		vkMapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMomory(), 0, imageSize, 0, &data);

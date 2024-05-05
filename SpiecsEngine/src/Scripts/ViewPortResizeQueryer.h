@@ -1,17 +1,19 @@
 #pragma once
 #include "Core/Core.h"
+#include "NativeScript.h"
 
 namespace Spiecs {
 
 	class ImguiViewport;
 
-	class ViewPortResizeQueryer
+	class ViewPortResizeQueryer : public NativeScript
 	{
 	public:
 		ViewPortResizeQueryer() {};
 		virtual ~ViewPortResizeQueryer() {};
 
-		void QueryEvent(TimeStep& ts);
+		virtual void OnTick(TimeStep& ts);
+		virtual void OnEvent(Event& e) {};
 
 	private:
 		std::shared_ptr<ImguiViewport> m_ViewPort;

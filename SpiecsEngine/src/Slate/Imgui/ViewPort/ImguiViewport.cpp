@@ -39,6 +39,16 @@ namespace Spiecs {
         dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(ImguiViewport::OnSlateResize));
     }
 
+    std::pair<uint32_t, uint32_t> ImguiViewport::GetMousePosInViewport()
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        ImVec2 viewportPos = io.MousePos - m_PanelPos;
+
+        std::pair<uint32_t, uint32_t> pair = std::make_pair((uint32_t)viewportPos.x, (uint32_t)viewportPos.y);
+
+        return pair;
+    }
+
     bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
     {
         ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(m_ViewportID));

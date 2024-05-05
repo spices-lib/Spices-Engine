@@ -13,11 +13,18 @@
 #include "Core/Event/Event.h"
 #include "SlateSystem.h"
 
+
+#include "Scripts/ViewPortResizeQueryer.h"
+#include "Scripts/WorldPickIDQueryer.h"
+
 namespace Spiecs {
 
 	void NativeScriptSystem::OnSystemInitialize()
 	{
-		m_ViewPortResizeQueryer = std::make_unique<ViewPortResizeQueryer>();
+		m_NativeScriptRegister = std::make_unique<NativeScriptRegister>();
+
+		m_NativeScriptRegister->Register<ViewPortResizeQueryer>();
+		m_NativeScriptRegister->Register<WorldPickIDQueryer>();
 	}
 
 	void NativeScriptSystem::OnSystemShutDown()
@@ -26,10 +33,13 @@ namespace Spiecs {
 	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{
 		/**
-		* @brief Temp, query Slate resize event.
+		* @brief Update NativeScript( C++ );
 		*/
-		m_ViewPortResizeQueryer->QueryEvent(ts);
+		m_NativeScriptRegister->OnUpdate(ts);
 
+		/**
+		* @brief Update NativeScriptComponent( C++ in world );
+		*/
 		auto& view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
 		for (auto& e : view)
 		{
