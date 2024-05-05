@@ -9,6 +9,16 @@ namespace Spiecs {
 		ImTextureID FinalColorID;
 		ImTextureID BaseColorID;
 		ImTextureID NormalID;
+		
+		/**
+		* @brief ID Resource, pure red, so not show.
+		*/
+		ImTextureID IDID;
+
+		/**
+		* @brief Depth Resource, pure red, so not show.
+		*/
+		ImTextureID DepthID;
 
 		void Free() {
 			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(FinalColorID));
@@ -27,15 +37,13 @@ namespace Spiecs {
 		virtual void OnRender() override;
 		virtual void OnEvent(Event& event) override;
 
-		
-
 	private:
-		bool OnWindowResized(WindowResizeOverEvent& event);
+		bool OnSlateResized(SlateResizeEvent& event);
 		void QueryGBufferID();
 
 	private:
 		GBufferID m_GBufferID;
-
-		
+		float m_Width = 500;
+		float m_Height = 500;
 	};
 }

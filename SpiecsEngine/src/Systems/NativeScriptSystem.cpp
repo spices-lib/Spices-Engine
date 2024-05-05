@@ -26,7 +26,7 @@ namespace Spiecs {
 	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{
 		/**
-		* @brief Temp
+		* @brief Temp, query Slate resize event.
 		*/
 		m_ViewPortResizeQueryer->QueryEvent(ts);
 
@@ -41,6 +41,11 @@ namespace Spiecs {
 
 	void NativeScriptSystem::OnEvent(Event& event)
 	{
+		/**
+		* @breif Only active world's NativeScriptComponent event while viewport is hovered.
+		*/
+		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return;
+
 		auto& view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
 		for (auto& e : view)
 		{

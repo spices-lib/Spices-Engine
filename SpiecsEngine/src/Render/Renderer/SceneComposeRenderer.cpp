@@ -35,6 +35,23 @@ namespace Spiecs {
 		m_RenderPass->AddInputAttachment("Normal", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
+
+		/**
+		* @brief Add Normal Input Attachment.
+		*/
+		m_RenderPass->AddInputAttachment("Depth", [&](VkAttachmentDescription& description) {
+			description.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
+			description.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		});
+
+		/**
+		* @brief Add Normal Input Attachment.
+		*/
+		m_RenderPass->AddInputAttachment("ID", [](VkAttachmentDescription& description) {
+			description.format = VK_FORMAT_R32_SFLOAT;
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		});
 		
 		/**
 		* @brief Create VkRenderPass, Resource, FrameBuffer.
@@ -45,7 +62,7 @@ namespace Spiecs {
 	void SceneComposeRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
-		.AddInput(0, 0, 2, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal"})
+		.AddInput(0, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal", "ID" })
 		.Build();
 	}
 

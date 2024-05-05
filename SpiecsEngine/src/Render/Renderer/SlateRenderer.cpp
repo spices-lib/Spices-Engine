@@ -43,10 +43,29 @@ namespace Spiecs {
 	void SlateRenderer::InitImgui()
 	{
 		// UI
+
+		/**
+		* @brief Context, a concept of OpenGL, means OpenGL objects in used during a render stage.
+		* Likes VkInstance.
+		*/
 		ImGui::CreateContext();
+
+		/**
+		* @breif Init ImPlot Library's Context.
+		*/
 		ImPlot::CreateContext();
+
+		/**
+		* @breif Configuration of ImGui.
+		* Can Set custom UI style here.
+		*/
 		ImGuiIO& io = ImGui::GetIO();
-		io.IniFilename = nullptr;  // Avoiding the INI file
+
+		/**
+		* @brief ImGui Slate Layout cache file.
+		* Set nullptr, if not need.
+		*/
+		io.IniFilename = "SlateLayout.ini";
 		io.LogFilename = nullptr;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking

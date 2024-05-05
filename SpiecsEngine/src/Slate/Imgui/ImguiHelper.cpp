@@ -67,13 +67,12 @@ namespace Spiecs {
             style.Colors[c] = hovered_color;
         }
 
-
-        style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.465f, 0.465f, 0.465f, 1.0f);
-        style.Colors[ImGuiCol_TitleBg] = ImVec4(0.125f, 0.125f, 0.125f, 1.0f);
-        style.Colors[ImGuiCol_Tab] = ImVec4(0.05f, 0.05f, 0.05f, 0.5f);
-        style.Colors[ImGuiCol_TabHovered] = ImVec4(0.465f, 0.495f, 0.525f, 1.0f);
-        style.Colors[ImGuiCol_TabActive] = ImVec4(0.282f, 0.290f, 0.302f, 1.0f);
-        style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.465f, 0.465f, 0.465f, 0.350f);
+        style.Colors[ImGuiCol_TitleBgActive]      = ImVec4(0.465f, 0.465f, 0.465f, 1.0f);
+        style.Colors[ImGuiCol_TitleBg]            = ImVec4(0.125f, 0.125f, 0.125f, 1.0f);
+        style.Colors[ImGuiCol_Tab]                = ImVec4(0.05f, 0.05f, 0.05f, 0.5f);
+        style.Colors[ImGuiCol_TabHovered]         = ImVec4(0.465f, 0.495f, 0.525f, 1.0f);
+        style.Colors[ImGuiCol_TabActive]          = ImVec4(0.282f, 0.290f, 0.302f, 1.0f);
+        style.Colors[ImGuiCol_ModalWindowDimBg]   = ImVec4(0.465f, 0.465f, 0.465f, 0.350f);
 
         //Colors_ext[ImGuiColExt_Warning] = ImVec4 (1.0f, 0.43f, 0.35f, 1.0f);
 

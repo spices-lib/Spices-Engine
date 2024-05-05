@@ -119,6 +119,8 @@ namespace Spiecs{
 		*/
 		std::string m_PanelName;
 
+		bool m_IsOpen = true;
+
 		/**
 		* @brief True if Focuse.
 		*/

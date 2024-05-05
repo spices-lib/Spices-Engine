@@ -16,16 +16,18 @@ namespace Spiecs {
 
         Begin("GBuffer");
 
+        ImVec2 size = { m_Width , m_Height };
+
         ImGui::Text("FinalColor");
-        ImGui::Image(m_GBufferID.FinalColorID, ImVec2(500, 500));
+        ImGui::Image(m_GBufferID.FinalColorID, size);
         ImGui::Separator;
 
         ImGui::Text("BaseColor");
-        ImGui::Image(m_GBufferID.BaseColorID, ImVec2(500, 500));
+        ImGui::Image(m_GBufferID.BaseColorID, size);
         ImGui::Separator;
 
         ImGui::Text("Normal");
-        ImGui::Image(m_GBufferID.NormalID, ImVec2(500, 500));
+        ImGui::Image(m_GBufferID.NormalID, size);
         ImGui::Separator;
 
         End();
@@ -35,12 +37,23 @@ namespace Spiecs {
     void ImguiGBufferVisualizer::OnEvent(Event& event)
     {
         EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(ImguiGBufferVisualizer::OnWindowResized));
+        dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(ImguiGBufferVisualizer::OnSlateResized));
     }
 
-    bool ImguiGBufferVisualizer::OnWindowResized(WindowResizeOverEvent& event)
+    bool ImguiGBufferVisualizer::OnSlateResized(SlateResizeEvent& event)
     {
         m_GBufferID.Free();
+
+        if (event.GetWidth() <= 500)
+        {
+            m_Height = 500;
+            m_Width = m_Height * event.GetWidth() / static_cast<float>(event.GetHeight());
+        }
+        else
+        {
+            m_Width = 500;
+            m_Height = m_Width * event.GetHeight() / static_cast<float>(event.GetWidth());
+        }
 
         QueryGBufferID();
         return false;
@@ -49,11 +62,11 @@ namespace Spiecs {
     void ImguiGBufferVisualizer::QueryGBufferID()
     {
         VkDescriptorImageInfo* finalColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("FinalColor");
-        VkDescriptorImageInfo* basecClorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("BaseColor");
-        VkDescriptorImageInfo* normalInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Normal");
+        VkDescriptorImageInfo* basecClorInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("BaseColor" );
+        VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Normal"    );
 
         m_GBufferID.FinalColorID = ImGui_ImplVulkan_AddTexture(finalColorInfo->sampler, finalColorInfo->imageView, finalColorInfo->imageLayout);
-        m_GBufferID.BaseColorID = ImGui_ImplVulkan_AddTexture(basecClorInfo->sampler, basecClorInfo->imageView, basecClorInfo->imageLayout);
-        m_GBufferID.NormalID = ImGui_ImplVulkan_AddTexture(normalInfo->sampler, normalInfo->imageView, normalInfo->imageLayout);
+        m_GBufferID.BaseColorID  = ImGui_ImplVulkan_AddTexture(basecClorInfo->sampler , basecClorInfo->imageView , basecClorInfo->imageLayout );
+        m_GBufferID.NormalID     = ImGui_ImplVulkan_AddTexture(normalInfo->sampler    , normalInfo->imageView    , normalInfo->imageLayout    );
     }
 }

@@ -10,6 +10,7 @@
 #include "Render/FrameInfo.h"
 #include "Core/Input/Input.h"
 #include "Core/Input/MouseButtonCodes.h"
+#include "Systems/SlateSystem.h"
 
 namespace Spiecs {
 
@@ -22,6 +23,11 @@ namespace Spiecs {
 
 	void CameraController::OnTick(TimeStep& ts)
 	{
+		/**
+		* @breif Only update view while viewport is hovered.
+		*/
+		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return;
+
 		//if (Input::IsKeyPressed(Key::LeftAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };

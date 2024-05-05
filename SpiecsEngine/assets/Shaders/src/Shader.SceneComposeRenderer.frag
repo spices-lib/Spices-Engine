@@ -1,6 +1,6 @@
 #version 450
 
-layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[2];
+layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[4];
 //layout(input_attachment_index = 1, binding = 1) uniform subpassInput NormalColor;
 
 layout(set = 1, binding = 0) uniform Test {

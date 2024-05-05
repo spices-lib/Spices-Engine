@@ -101,7 +101,7 @@ namespace Spiecs {
 		* @brief Add ID Attachment.
 		*/
 		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
-			description.format = VK_FORMAT_R32_SINT;
+			description.format = VK_FORMAT_R32_SFLOAT;
 		});
 
 		/**

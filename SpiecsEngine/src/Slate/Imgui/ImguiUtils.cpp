@@ -90,17 +90,7 @@ namespace Spiecs {
 
     void ImguiSlate::Begin(float alpha)
     {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-        // The panel
-        if (alpha < 1)
-        {
-            ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
-        }
-
-        ImGui::Begin(m_PanelName.c_str());
+        Begin(m_PanelName, alpha);
     }
 
     void ImguiSlate::Begin(const std::string& panelName, float alpha)
@@ -115,6 +105,13 @@ namespace Spiecs {
             ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
         }
 
-        ImGui::Begin(panelName.c_str());
+        ImGui::Begin(panelName.c_str(), &m_IsOpen);
+
+        if (ImGui::BeginPopupContextItem())
+        {
+            if (ImGui::MenuItem("Close"))
+                m_IsOpen = false;
+            ImGui::EndPopup();
+        }
     }
 }

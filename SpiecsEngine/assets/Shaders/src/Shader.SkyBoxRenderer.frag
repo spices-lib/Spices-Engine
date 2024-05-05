@@ -8,7 +8,7 @@ layout(location = 0) in struct FragInput {
 // frag output
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
-layout(location = 2) out int outID;
+layout(location = 2) out float outID;
 
 // push constant
 layout(push_constant) uniform Push {
