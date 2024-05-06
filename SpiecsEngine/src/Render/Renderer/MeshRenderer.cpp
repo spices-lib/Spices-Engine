@@ -13,7 +13,7 @@ namespace Spiecs {
 	/**
 	* @brief This struct is specific MeshRenderer PsuhConstant
 	*/
-	struct PushConstant
+	struct MeshPushConstant
 	{
 		/**
 		* @brief Meshpack ModelMatrix.
@@ -103,6 +103,17 @@ namespace Spiecs {
 		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
 		});
+		
+		/**
+		* @brief Add SelectBuffer Attachment.
+		* Though we want use SelectBuffer with a sampler, we need transfrom shaderread layout here.
+		*/
+		m_RenderPass->AddColorAttachment("SelectBuffer", [](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format = VK_FORMAT_R32_SFLOAT;
+		});
 
 		/**
 		* @brief Add Depth Attachment.
@@ -120,7 +131,7 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.CreateCollection<SpecificCollection>()
-		.AddPushConstant<PushConstant>()
+		.AddPushConstant<MeshPushConstant>()
 		.AddBuffer<VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
@@ -167,7 +178,7 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.UpdatePushConstant<PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<MeshPushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

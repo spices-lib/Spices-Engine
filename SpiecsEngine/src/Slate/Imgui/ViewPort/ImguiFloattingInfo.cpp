@@ -2,6 +2,7 @@
 #include "ImguiFloattingInfo.h"
 #include "Systems/SlateSystem.h"
 #include "World/World/World.h"
+#include "World/Entity.h"
 
 namespace Spiecs {
 
@@ -45,8 +46,16 @@ namespace Spiecs {
             else
                 ImGui::Text("Mouse Position: <invalid>");
 
-            
-            m_FrameInfo.m_World->QueryEntitybyID();
+            if(FrameInfo::Get().m_SelectFrontEntityID.size() != 0)
+            {
+                Entity entity((entt::entity)FrameInfo::Get().m_SelectFrontEntityID[0], FrameInfo::Get().m_World.get());
+                std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
+
+                std::stringstream ss;
+                ss << "Select entity: " << entityName;
+
+                ImGui::Text(ss.str().c_str());
+            }
 
 
             if (ImGui::BeginPopupContextWindow())

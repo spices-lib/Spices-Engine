@@ -51,6 +51,8 @@ namespace Spiecs {
 
 	void NativeScriptSystem::OnEvent(Event& event)
 	{
+		m_NativeScriptRegister->OnEvent(event);
+
 		/**
 		* @breif Only active world's NativeScriptComponent event while viewport is hovered.
 		*/

@@ -17,7 +17,7 @@ namespace Spiecs {
 
 	Entity World::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
-		Entity entity(m_Registry.create(), this, name);
+		Entity entity(m_Registry.create(), this);
 
 		/**
 		* @brief Add UUIDComponent default.
@@ -30,8 +30,9 @@ namespace Spiecs {
 		entity.AddComponent<TransformComponent>();
 
 		/**
-		* @todo Add TagComponent default.
+		* @brief AddTagComponent default.
 		*/
+		entity.AddComponent<TagComponent>(name);
 
 		m_EntityMap[uuid] = entity;
 		return entity;

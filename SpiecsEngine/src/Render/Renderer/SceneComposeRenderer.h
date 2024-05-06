@@ -25,8 +25,13 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		SceneComposeRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
-			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) {};
+		SceneComposeRenderer(
+			const std::string& rendererName, 
+			VulkanState& vulkanState, 
+			std::shared_ptr<VulkanDescriptorPool> desctiptorPool, 
+			std::shared_ptr<VulkanDevice> device, 
+			std::shared_ptr<RendererResourcePool> rendererResourcePool
+		);
 
 		/**
 		* @brief Destructor Function.
@@ -61,5 +66,8 @@ namespace Spiecs {
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
 
 		virtual void OnSlateResize() override;
+
+	private:
+		std::unique_ptr<SquarePack> m_Square;
 	};
 }

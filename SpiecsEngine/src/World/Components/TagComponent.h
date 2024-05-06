@@ -17,7 +17,7 @@ namespace Spiecs {
 	* @brief TagComponent Class.
 	* This class defines the specific behaver of TagComponent.
 	*/
-	class TagComponent : Component
+	class TagComponent : public Component
 	{
 	public:
 
@@ -25,6 +25,11 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		*/
 		TagComponent() {};
+
+		/**
+		* @brief Constructor Function.
+		*/
+		TagComponent(const std::string& tag);
 
 		/**
 		* @brief Destructor Function.
@@ -59,7 +64,7 @@ namespace Spiecs {
 		* @brief Get the tags variable.
 		* @return Returns the tags variable.
 		*/
-		inline const std::set<std::string> GetTag() { return m_Tags; };
+		std::vector<std::string> GetTag();
 
 	private:
 

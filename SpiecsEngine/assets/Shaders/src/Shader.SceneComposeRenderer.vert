@@ -6,11 +6,20 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec3 color;
 layout(location = 3) in vec2 texCoord;
 
-out gl_PerVertex{
-	vec4 gl_Position;
-};
+// vertex output
+layout(location = 0) out struct FragInput{
+    vec2 texCoord;
+} vertOut;
+
+// push constant
+layout(push_constant) uniform Push {
+	vec2 viewPortPos;
+	vec2 viewPortSize;
+	vec2 windowSize;
+} push;
 
 void main()
 {
-	gl_Position = vec4(vec2((gl_VertexIndex << 1) & 2, gl_VertexIndex & 2) * 2.0f - 1.0f, 0.0f, 1.0f);
+	vertOut.texCoord = (texCoord * push.windowSize) / push.viewPortSize;
+	gl_Position = vec4(position * 2.0f, 1.0f);
 }

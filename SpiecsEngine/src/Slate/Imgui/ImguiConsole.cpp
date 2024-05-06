@@ -68,31 +68,30 @@ namespace Spiecs {
 
 				switch (m_Level)
 				{
-				default:
 				case 0:
-					if (helper.level == "verbose")
+					if (helper.level == "trace")
 					{
 						ImGui::Text(helper.str.c_str());
-						break;
 					}
+					break;
 				case 1:
 					if (helper.level == "info")
 					{
 						ImGui::Text(helper.str.c_str());
-						break;
 					}
+					break;
 				case 2:
 					if (helper.level == "warning")
 					{
 						ImGui::Text(helper.str.c_str());
-						break;
 					}
+					break;
 				case 3:
 					if (helper.level == "error")
 					{
 						ImGui::Text(helper.str.c_str());
-						break;
 					}
+					break;
 				}
 
 				ImGui::PopStyleColor();

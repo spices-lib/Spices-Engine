@@ -10,7 +10,7 @@ namespace Spiecs {
 
 	void MeshController::OnConstruction()
 	{
-		Entity entity(m_Owner, FrameInfo::Get().m_World.get(), "");
+		Entity entity(m_Owner, FrameInfo::Get().m_World.get());
 		m_CameraTranComp = &entity.GetComponent<TransformComponent>();
 	}
 

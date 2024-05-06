@@ -12,6 +12,7 @@ layout(location = 0) in struct FragInput {
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out float outID;
+layout(location = 3) out float outSelectBuffer;
 
 // push constant
 layout(push_constant) uniform Push{
@@ -73,6 +74,7 @@ void main()
     }
     outNormal = vec4(fragInput.normal, 1.0f);
     outID = push.entityID;
+    outSelectBuffer = push.entityID;
 }
 
 //vec4 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection) {

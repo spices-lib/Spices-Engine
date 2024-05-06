@@ -32,10 +32,8 @@ namespace Spiecs {
 		* Usually call it.
 		* @param[in] handle entt::entity, ESC identify.
 		* @param[in] world World pointer.
-		* @param[in] entityName Name.
-		* @todo Remove name.
 		*/
-		Entity(entt::entity handle, World* world, const std::string& entityName = "")
+		Entity(entt::entity handle, World* world)
 			: m_EntityHandle(handle)
 			, m_World(world)
 		{};

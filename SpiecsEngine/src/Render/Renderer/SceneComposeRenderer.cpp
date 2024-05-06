@@ -6,8 +6,29 @@
 
 #include "Pchheader.h"
 #include "SceneComposeRenderer.h"
+#include "Systems/SlateSystem.h"
 
 namespace Spiecs {
+
+	struct SceneComposePushConstant
+	{
+		glm::vec2 viewPortPos;
+		glm::vec2 viewPortSize;
+		glm::vec2 windowSize;
+	};
+
+	SceneComposeRenderer::SceneComposeRenderer(
+		const std::string&                       rendererName         , 
+		VulkanState&                             vulkanState          , 
+		std::shared_ptr<VulkanDescriptorPool>    desctiptorPool       , 
+		std::shared_ptr<VulkanDevice>            device               , 
+		std::shared_ptr<RendererResourcePool>    rendererResourcePool
+	)
+		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
+	{
+		m_Square = std::make_unique<SquarePack>();
+		m_Square->OnCreatePack();
+	}
 
 	void SceneComposeRenderer::CreateRenderPass()
 	{
@@ -46,7 +67,7 @@ namespace Spiecs {
 		});
 
 		/**
-		* @brief Add Normal Input Attachment.
+		* @brief Add ID Input Attachment.
 		*/
 		m_RenderPass->AddInputAttachment("ID", [](VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
@@ -62,8 +83,15 @@ namespace Spiecs {
 	void SceneComposeRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
-		.AddInput(0, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal", "ID" })
+		.AddPushConstant<SceneComposePushConstant>()
+		.AddInput(0, 0, 5, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal", "Depth", "ID"})
+		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
+
+		/**
+		* @brief create renderresource's descriptorset.
+		*/
+		m_RendererResourcePool->AccessRowResource("SelectBuffer")->CreateDescriptorSet(0);
 	}
 
 	void SceneComposeRenderer::CreatePipeline(VkRenderPass renderPass)
@@ -109,7 +137,19 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		vkCmdDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 3, 1, 0, 0);
+		ImVec2 viewPortPos = SlateSystem::GetRegister()->GetViewPort()->GetPanelPos();
+		ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+		VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
+		builder.UpdatePushConstant<SceneComposePushConstant>([&](auto& push) {
+			push.viewPortPos = { viewPortPos .x, viewPortPos .y };
+			push.viewPortSize = { viewPortSize.x, viewPortSize.y };
+			push.windowSize = { windowSize.width, windowSize.height };
+		});
+
+		builder.BindDescriptorSet(1, m_RendererResourcePool->AccessRowResource("SelectBuffer")->GetDescriptorSet());
+
+		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 
 		builder.EndRenderPass();
 	}

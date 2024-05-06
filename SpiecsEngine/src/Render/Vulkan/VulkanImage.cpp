@@ -18,6 +18,9 @@ namespace Spiecs {
 
 	VulkanImage::~VulkanImage()
 	{
+		
+		DestroyDescriptorSetLayout();
+
 		vkDestroySampler(m_VulkanState.m_Device, m_TextureSampler, nullptr);
 		vkDestroyImageView(m_VulkanState.m_Device, m_ImageView, nullptr);
 		vkDestroyImage(m_VulkanState.m_Device, m_Image, nullptr);
@@ -421,7 +424,7 @@ namespace Spiecs {
 		vkBindImageMemory(vulkanState.m_Device, m_Image, m_ImageMemory, 0);
 	}
 
-	void VulkanImage::CreateDescriptorSet(uint32_t set, uint32_t binding)
+	void VulkanImage::CreateDescriptorSet(uint32_t binding)
 	{
 		/*std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder{}
 			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
@@ -439,10 +442,12 @@ namespace Spiecs {
 
 		vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);*/
 
-		VkDescriptorSetLayout textureDescriptorSetLayout;
+		DestroyDescriptorSetLayout();
+
+		m_IsCreateSet = true;
 
 		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-		samplerLayoutBinding.binding = 0;
+		samplerLayoutBinding.binding = binding;
 		samplerLayoutBinding.descriptorCount = 1;
 		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		samplerLayoutBinding.pImmutableSamplers = nullptr;
@@ -453,7 +458,7 @@ namespace Spiecs {
 		layoutInfo.bindingCount = 1;
 		layoutInfo.pBindings = &samplerLayoutBinding;
 
-		if (vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &textureDescriptorSetLayout) != VK_SUCCESS) {
+		if (vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create texture descriptor set layout!");
 		}
 
@@ -462,7 +467,7 @@ namespace Spiecs {
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocInfo.descriptorPool = VulkanRenderBackend::GetDescriptorPool()->GetPool();
 		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = &textureDescriptorSetLayout;
+		allocInfo.pSetLayouts = &m_DescriptorSetLayout;
 
 		if (vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet) != VK_SUCCESS) {
 			throw std::runtime_error("failed to allocate descriptor sets!");
@@ -476,14 +481,21 @@ namespace Spiecs {
 		VkWriteDescriptorSet descriptorWrite{};
 		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite.dstSet = m_DescriptorSet;
-		descriptorWrite.dstBinding = 0;
+		descriptorWrite.dstBinding = binding;
 		descriptorWrite.dstArrayElement = 0;
 		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		descriptorWrite.descriptorCount = 1;
 		descriptorWrite.pImageInfo = &imageInfo;
 
 		vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &descriptorWrite, 0, nullptr);
+	}
 
+	void VulkanImage::DestroyDescriptorSetLayout()
+	{
+		if (m_IsCreateSet)
+		{
+			vkDestroyDescriptorSetLayout(m_VulkanState.m_Device, m_DescriptorSetLayout, nullptr);
+		}
 	}
 
 	VkDescriptorSet VulkanImage::CreateDescriptorSet(uint32_t set, uint32_t binding, VulkanState& vulkanState, VkDescriptorImageInfo imageInfo)

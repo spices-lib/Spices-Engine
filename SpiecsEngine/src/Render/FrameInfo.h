@@ -68,6 +68,10 @@ namespace Spiecs {
 		*/
 		uint32_t m_Imageindex = 0;
 
+		std::vector<int> m_SelectFrontEntityID{};
+
+		std::vector<int> m_SelectBackEntityID{};
+
 		/**
 		* @brief The shared pointer of specific world.
 		*/

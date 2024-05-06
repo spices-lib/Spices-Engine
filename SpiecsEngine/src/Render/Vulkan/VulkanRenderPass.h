@@ -201,7 +201,7 @@ namespace Spiecs {
 		attachmentRef.attachment = (uint32_t)m_ColorAttachmentRef.size();
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		VkClearValue clearValue{};
-		clearValue.color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		/**
 		* @brief Add to local variable.
@@ -265,7 +265,7 @@ namespace Spiecs {
 		attachmentRef.attachment = (uint32_t)m_ColorAttachmentRef.size();
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		VkClearValue clearValue{};
-		clearValue.color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		/**
 		* @brief Add to local variable.

@@ -12,7 +12,7 @@ namespace Spiecs {
 	/**
 	* @brief This struct is specific SkyBoxRenderer PsuhConstant
 	*/
-	struct PushConstant
+	struct SkyBoxPushConstant
 	{
 		/**
 		* @brief Meshpack ModelMatrix.
@@ -91,7 +91,7 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.CreateCollection<SpecificCollection>()
-		.AddPushConstant<PushConstant>()
+		.AddPushConstant<SkyBoxPushConstant>()
 		.AddBuffer<VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
@@ -128,7 +128,7 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			skyboxComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.UpdatePushConstant<PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<SkyBoxPushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
