@@ -7,7 +7,7 @@ namespace Spiecs {
 	class ImguiProperty : public ImguiSlate
 	{
 	public:
-		ImguiProperty(const std::string& panelName) : ImguiSlate(panelName) {};
+		ImguiProperty(const std::string& panelName, FrameInfo& frameInfo) : ImguiSlate(panelName, frameInfo) {};
 		virtual ~ImguiProperty() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

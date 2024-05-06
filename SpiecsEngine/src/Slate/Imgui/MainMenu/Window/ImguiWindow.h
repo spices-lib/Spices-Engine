@@ -9,7 +9,7 @@ namespace Spiecs {
 	class ImguiWindow : public ImguiSlate
 	{
 	public:
-		ImguiWindow(const std::string& panelName);
+		ImguiWindow(const std::string& panelName, FrameInfo& frameInfo);
 		virtual ~ImguiWindow() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

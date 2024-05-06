@@ -101,7 +101,7 @@ namespace Spiecs {
 			SPIECS_CORE_ERROR(ss.str());
 		}
 
-		std::shared_ptr<T> _T = std::make_shared<T>(panelName, std::forward<Args>(args)...);
+		std::shared_ptr<T> _T = std::make_shared<T>(panelName, FrameInfo::Get(), std::forward<Args>(args)...);
 		m_SlatesEventContainer[panelName] = _T;
 
 		if(isPrimary) m_SlatesRenderContainer[panelName] = _T;

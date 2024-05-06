@@ -6,8 +6,8 @@
 
 namespace Spiecs {
 
-    ImguiViewport::ImguiViewport(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiViewport::ImguiViewport(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {
         VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("FinalColor");
 

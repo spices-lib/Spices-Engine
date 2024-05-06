@@ -5,8 +5,8 @@
 
 namespace Spiecs {
 
-    ImguiWindow::ImguiWindow(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiWindow::ImguiWindow(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {
         m_Visualizer = SlateSystem::GetRegister()->Register<ImguiVisualizer>(false, "Visualizer");
     }

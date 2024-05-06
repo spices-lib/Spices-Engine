@@ -3,8 +3,8 @@
 
 namespace Spiecs {
 
-    ImguiStage::ImguiStage(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiStage::ImguiStage(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {}
 
     void ImguiStage::OnRender()

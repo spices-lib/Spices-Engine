@@ -79,7 +79,6 @@ namespace Spiecs {
 		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 		VK_CHECK(vkCreateBuffer(vulkanState.m_Device, &bufferInfo, nullptr, &m_Buffer));
-		SPIECS_CORE_INFO("VkBuffer created succeed!!!");
 
 		// ÄÚ´æ·ÖÅä
 		VkMemoryRequirements memRequirements;

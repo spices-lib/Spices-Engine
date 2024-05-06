@@ -7,7 +7,7 @@ namespace Spiecs {
 	class ImguiContentBrowser : public ImguiSlate
 	{
 	public:
-		ImguiContentBrowser(const std::string& panelName) : ImguiSlate(panelName) {};
+		ImguiContentBrowser(const std::string& panelName, FrameInfo& frameInfo) : ImguiSlate(panelName, frameInfo) {};
 		virtual ~ImguiContentBrowser() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

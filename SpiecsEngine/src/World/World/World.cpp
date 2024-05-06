@@ -42,4 +42,9 @@ namespace Spiecs {
 		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.GetUUID());
 	}
+
+	Entity World::QueryEntitybyID(uint32_t id)
+	{
+		return id == -1 ? Entity() : Entity((entt::entity)id, this);
+	}
 }

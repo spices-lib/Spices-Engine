@@ -8,8 +8,8 @@
 
 namespace Spiecs {
 
-    ImguiMainMenu::ImguiMainMenu(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiMainMenu::ImguiMainMenu(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {
         m_Create = SlateSystem::GetRegister()->Register<ImguiCreateEntity>(false, "Create");
         m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>(false, "Window");

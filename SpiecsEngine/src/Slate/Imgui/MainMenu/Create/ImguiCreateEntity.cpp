@@ -4,8 +4,8 @@
 
 namespace Spiecs {
 
-    ImguiCreateEntity::ImguiCreateEntity(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiCreateEntity::ImguiCreateEntity(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {
     }
 

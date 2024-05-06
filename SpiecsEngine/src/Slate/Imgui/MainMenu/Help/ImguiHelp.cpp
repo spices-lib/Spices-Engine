@@ -6,8 +6,8 @@
 
 namespace Spiecs {
 
-    ImguiHelp::ImguiHelp(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiHelp::ImguiHelp(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {
         m_About = SlateSystem::GetRegister()->Register<ImguiAbout>(true, "About SpiecsEngine");
     }

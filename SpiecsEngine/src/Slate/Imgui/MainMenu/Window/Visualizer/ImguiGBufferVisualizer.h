@@ -30,7 +30,7 @@ namespace Spiecs {
 	class ImguiGBufferVisualizer : public ImguiSlate
 	{
 	public:
-		ImguiGBufferVisualizer(const std::string& panelName);
+		ImguiGBufferVisualizer(const std::string& panelName, FrameInfo& frameInfo);
 		virtual ~ImguiGBufferVisualizer() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

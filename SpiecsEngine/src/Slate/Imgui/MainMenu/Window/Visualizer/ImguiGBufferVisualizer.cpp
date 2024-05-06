@@ -4,8 +4,8 @@
 
 namespace Spiecs {
 
-    ImguiGBufferVisualizer::ImguiGBufferVisualizer(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiGBufferVisualizer::ImguiGBufferVisualizer(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {
         QueryGBufferID();
     }

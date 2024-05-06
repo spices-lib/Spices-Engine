@@ -12,6 +12,7 @@
 #include "Core/Event/MouseEvent.h"
 #include "Core/Event/WindowEvent.h"
 #include "Core/Event/SlateEvent.h"
+#include "Render/FrameInfo.h"
 
 // Helper Function Header.
 #include "ImguiHelper.h"
@@ -45,7 +46,7 @@ namespace Spiecs{
 		* Init with Slate's name.
 		* @param[in] panelName The Slate's name.
 		*/
-		ImguiSlate(const std::string& panelName) : m_PanelName(panelName){};
+		ImguiSlate(const std::string& panelName, FrameInfo& frameInfo) : m_PanelName(panelName), m_FrameInfo(frameInfo) {};
 
 		/**
 		* @brief Destructor Function.
@@ -118,6 +119,11 @@ namespace Spiecs{
 		* @brief This slate's name.
 		*/
 		std::string m_PanelName;
+
+		/**
+		* @brief The FrameData reference.
+		*/
+		FrameInfo& m_FrameInfo;
 
 		bool m_IsOpen = true;
 

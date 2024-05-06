@@ -11,7 +11,7 @@ namespace Spiecs {
 	class ImguiMainMenu : public ImguiSlate
 	{
 	public:
-		ImguiMainMenu(const std::string& panelName);
+		ImguiMainMenu(const std::string& panelName, FrameInfo& frameInfo);
 		virtual ~ImguiMainMenu() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

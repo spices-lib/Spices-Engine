@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "ImguiFloattingInfo.h"
 #include "Systems/SlateSystem.h"
+#include "World/World/World.h"
 
 namespace Spiecs {
 
@@ -43,6 +44,11 @@ namespace Spiecs {
                 ImGui::Text("Mouse Position: ( %d, %d )", (int)io.MousePos.x, (int)io.MousePos.y);
             else
                 ImGui::Text("Mouse Position: <invalid>");
+
+            
+            m_FrameInfo.m_World->QueryEntitybyID();
+
+
             if (ImGui::BeginPopupContextWindow())
             {
                 if (ImGui::MenuItem("Custom", NULL, location == -1)) location = -1;

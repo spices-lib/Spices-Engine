@@ -23,6 +23,11 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
+		*/
+		Entity() {};
+
+		/**
+		* @brief Constructor Function.
 		* Init class variable.
 		* Usually call it.
 		* @param[in] handle entt::entity, ESC identify.
@@ -30,7 +35,7 @@ namespace Spiecs {
 		* @param[in] entityName Name.
 		* @todo Remove name.
 		*/
-		Entity(entt::entity handle, World* world, const std::string& entityName)
+		Entity(entt::entity handle, World* world, const std::string& entityName = "")
 			: m_EntityHandle(handle)
 			, m_World(world)
 		{};

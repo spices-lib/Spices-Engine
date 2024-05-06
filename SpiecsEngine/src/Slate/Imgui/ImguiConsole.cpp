@@ -7,8 +7,8 @@
 
 namespace Spiecs {
 
-	ImguiConsole::ImguiConsole(const std::string& panelName, std::shared_ptr<Console> console)
-		: ImguiSlate(panelName)
+	ImguiConsole::ImguiConsole(const std::string& panelName, FrameInfo& frameInfo, std::shared_ptr<Console> console)
+		: ImguiSlate(panelName, frameInfo)
 		, m_Console(console)
 	{
 		LoadConsoleIcon(m_ConsoleIconID.clearConsoleIcon,       "slate/Console.ClearConsole.png"       );

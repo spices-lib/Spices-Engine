@@ -9,7 +9,7 @@ namespace Spiecs {
 	class ImguiCreateEntity : public ImguiSlate
 	{
 	public:
-		ImguiCreateEntity(const std::string& panelName);
+		ImguiCreateEntity(const std::string& panelName, FrameInfo& frameInfo);
 		virtual ~ImguiCreateEntity() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

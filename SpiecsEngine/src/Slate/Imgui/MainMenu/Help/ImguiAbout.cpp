@@ -4,8 +4,8 @@
 
 namespace Spiecs {
 
-    ImguiAbout::ImguiAbout(const std::string& panelName)
-        : ImguiSlate(panelName)
+    ImguiAbout::ImguiAbout(const std::string& panelName, FrameInfo& frameInfo)
+        : ImguiSlate(panelName, frameInfo)
     {
     }
 

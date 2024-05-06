@@ -84,6 +84,9 @@ namespace Spiecs {
 		* @return Returns the Registry variable.
 		*/
 		inline entt::registry& GetRegistry() { return m_Registry; };
+
+
+		Entity QueryEntitybyID(uint32_t id);
 		
 	private:
 
