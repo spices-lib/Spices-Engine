@@ -7,52 +7,6 @@
 
 namespace Spiecs {
 
-	VulkanImage::VulkanImage(VulkanState& vulkanState, const std::string& filePath)
-		: VulkanObject(vulkanState)
-	{
-#if 0
-		int texChannels;
-		stbi_uc* pixels = stbi_load(filePath.c_str(), &m_Width, &m_Height, &texChannels, STBI_rgb_alpha);
-		m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(m_Width, m_Height)))) + 1;
-
-		VkDeviceSize imageSize = m_Width * m_Height * 4;
-
-		if (!pixels) {
-			throw std::runtime_error("failed to load texture image!");
-		}
-
-		VulkanBuffer stagingBuffer = VulkanBuffer(vulkanState, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-		void* data;
-		vkMapMemory(vulkanState.m_Device, stagingBuffer.GetMomory(), 0, imageSize, 0, &data);
-		memcpy(data, pixels, static_cast<size_t>(imageSize));
-		vkUnmapMemory(vulkanState.m_Device, stagingBuffer.GetMomory());
-
-		stbi_image_free(pixels);
-
-		CreateImage(
-			vulkanState,
-			m_Width,
-			m_Height,
-			VK_SAMPLE_COUNT_1_BIT,
-			VK_FORMAT_R8G8B8A8_UNORM,
-			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			m_MipLevels
-		);
-
-		TransitionImageLayout(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-		CopyBufferToImage(stagingBuffer.Get(), m_Image, static_cast<uint32_t>(m_Width), static_cast<uint32_t>(m_Height));
-		//TransitionImageLayout(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		GenerateMipmaps(VK_FORMAT_R8G8B8A8_UNORM, m_Width, m_Height);
-
-		CreateImageView(VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-
-		CreateSampler();
-#endif
-	}
-
 	VulkanImage::VulkanImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels)
 		: VulkanObject(vulkanState)
 		, m_Width(width)
@@ -99,20 +53,71 @@ namespace Spiecs {
 		barrier.srcAccessMask = 0;
 		barrier.dstAccessMask = 0;
 
+		/**
+		* @breif transform imagelayout from undefined to transferdst.
+		* Used during CopyBuffertoImage.
+		*/
 		if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
 			barrier.srcAccessMask = 0;
 			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
+			// Don't care what stage the pipeline is in at the start.
 			sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+			// Used for copying
 			destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		}
+
+		/**
+		* @breif transform imagelayout from undefined to transfersrc.
+		* Used during CopyImagetoBuffer.
+		*/
+		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+			barrier.srcAccessMask = 0;
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+			// Don't care what stage the pipeline is in at the start.
+			sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+			// Used for copying
+			destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
+
+		/**
+		* @breif transform imagelayout from transferdst to shaderread.
+		* Used combine with CopyBuffertoImage.
+		*/
 		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
 			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
+			// From a copying stage to...
 			sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+			// The fragment stage.
 			destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		}
+
+		/**
+		* @brief transform imagelayout from transfersrc to shaderread.
+		* Used combine with CopyImagetoBuffer.
+		*/
+		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			// From a copying stage to...
+			sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+			// The fragment stage.
+			destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+
+
+		/**
+		* @brief transfer imagelayout from undefined to depthattachment.
+		* Used during Creating depth renderresource.
+		*/
 		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
 			barrier.srcAccessMask = 0;
 			barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
@@ -167,30 +172,36 @@ namespace Spiecs {
 		});
 	}
 
-	void VulkanImage::CopyImageTexelToBuffer(uint32_t x, uint32_t y, std::any out_rgba)
+	void VulkanImage::CopyImageTexelToBuffer(uint32_t x, uint32_t y, void* out_rgba)
 	{
-		uint32_t channelsize = 4;
+		uint32_t channelsize = 32;
 
 		/**
 		* @todo Support all type;
 		*/
 		switch (m_Format)
 		{
-		case VK_FORMAT_R8G8B8A8_UNORM:
-			channelsize = 4;
+		case VK_FORMAT_B8G8R8A8_UNORM:  // 4 bytes.
+			channelsize = 32;
 			break;
-		case VK_FORMAT_R32_SFLOAT:
-			channelsize = 1;
+		case VK_FORMAT_R32_SFLOAT:      // 4 bytes.
+			channelsize = 32;
 			break;
 		}
 
+		/**
+		* @brief The temp buffer image date copy to.
+		*/
 		VulkanBuffer stagingbuffer(
 			m_VulkanState, 
-			channelsize, 
+			channelsize,
 			VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
+		/*
+		* @brief Transfer image layout from whatever to trasfersrc.
+		*/
 		TransitionImageLayout(
 			m_Format,
 			VK_IMAGE_LAYOUT_UNDEFINED,
@@ -215,6 +226,12 @@ namespace Spiecs {
 			vkCmdCopyImageToBuffer(commandBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, stagingbuffer.Get(), 1, &region);
 		});
 
+		/*
+		* @brief Transfer image layout from trasfersrc to shaderread.
+		* means only can get data from a shaderread layout image.
+		* @note In SpiecsEngine, we need transform layout to shaderread in scenecomposerenderer first,
+		* and after that, you can do this here.
+		*/
 		TransitionImageLayout(
 			m_Format,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
@@ -222,9 +239,9 @@ namespace Spiecs {
 		);
 
 		void* data;
-		void* dst;
+
 		vkMapMemory(m_VulkanState.m_Device, stagingbuffer.GetMomory(), 0, channelsize, 0, &data);
-		memcpy(dst, data, static_cast<size_t>(channelsize));
+		memcpy(out_rgba, data, static_cast<size_t>(channelsize));
 		vkUnmapMemory(m_VulkanState.m_Device, stagingbuffer.GetMomory());
 	}
 

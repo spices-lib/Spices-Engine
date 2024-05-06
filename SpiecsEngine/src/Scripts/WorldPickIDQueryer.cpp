@@ -6,6 +6,11 @@
 
 namespace Spiecs {
 
+	WorldPickIDQueryer::WorldPickIDQueryer()
+	{
+		m_WorldPickIDMemory = &m_WorldPickID[0];
+	}
+
 	void WorldPickIDQueryer::OnTick(TimeStep& ts)
 	{
 		/**
@@ -19,8 +24,7 @@ namespace Spiecs {
 		{
 			auto pair = m_ViewPort->GetMousePosInViewport();
 
-			void** out_rgba;
-			//VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, out_rgba);
+			VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
 		}
 	}
 }

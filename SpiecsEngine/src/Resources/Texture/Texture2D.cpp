@@ -25,7 +25,10 @@ namespace Spiecs {
 				info.description.samples,
 				info.description.format,
 				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT   |  // Can be used for ColorAttachment.
+				VK_IMAGE_USAGE_SAMPLED_BIT            |  // Can be used for ShaderRead.
+				VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT   |  // Can be used for InputAttachment.
+				VK_IMAGE_USAGE_TRANSFER_SRC_BIT,         // Can be used for TransferSrc.
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				1
 			);
@@ -44,7 +47,9 @@ namespace Spiecs {
 				info.description.samples,
 				info.description.format,
 				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT   | // Can be used for DepthAttachment.
+				VK_IMAGE_USAGE_SAMPLED_BIT                    | // Can be used for ShaderRead.
+				VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,            // Can be used for InputAttachment.
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				1
 			);

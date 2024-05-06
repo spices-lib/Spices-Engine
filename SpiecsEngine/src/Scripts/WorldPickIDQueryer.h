@@ -9,14 +9,15 @@ namespace Spiecs {
 	class WorldPickIDQueryer : public NativeScript
 	{
 	public:
-		WorldPickIDQueryer() {};
+		WorldPickIDQueryer();
 		virtual ~WorldPickIDQueryer() {};
 
 		virtual void OnTick(TimeStep& ts);
 		virtual void OnEvent(Event& e) {};
 
 	private:
-		uint32_t m_WorldPickID;
+		float m_WorldPickID[4];
+		float* m_WorldPickIDMemory;
 		std::shared_ptr<ImguiViewport> m_ViewPort;
 	};
 }
