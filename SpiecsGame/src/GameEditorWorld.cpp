@@ -12,7 +12,7 @@ namespace Spiecs {
 		EditorWorld::OnPreActivate();
 
 		// mesh1
-		/*{
+		{
 			Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -23,7 +23,7 @@ namespace Spiecs {
 			pack1->SetMaterial<MeshMaterial>("MeshRenderer.0");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
-		}*/
+		}
 
 		// mesh2
 		{

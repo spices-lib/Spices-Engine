@@ -155,6 +155,19 @@ namespace Spiecs {
 		return std::make_pair(viewMat, projectionMat);
 	}
 
+	void Renderer::GetSelectID(FrameInfo& frameInfo, std::array<glm::vec4, 20>& id)
+	{
+		for (int i = 0; i < id.size(); i++)
+		{
+			id[i] = glm::vec4(-1.0f, 0.0f, 0.0f, 0.0f);
+		}
+
+		for (int i = 0; i < frameInfo.m_SelectFrontEntityID.size(); i++)
+		{
+			id[i].x = frameInfo.m_SelectFrontEntityID[i];
+		}
+	}
+
 	DirectionalLightComponent::DirectionalLight Renderer::GetDirectionalLight(FrameInfo& frameInfo)
 	{
 		/**

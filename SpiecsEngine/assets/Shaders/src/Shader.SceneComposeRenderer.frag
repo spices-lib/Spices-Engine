@@ -9,9 +9,8 @@ layout(location = 0) out vec4 outColor;
 
 // push constant
 layout(push_constant) uniform Push {
-	vec2 viewPortPos;
-	vec2 viewPortSize;
-	vec2 windowSize;
+	vec4 gbufferSize;
+	vec4 windowSize;
 } push;
 
 layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[4];
@@ -20,6 +19,7 @@ layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
 
 float SampleWithOffest(vec2 uv_offest);
 float Sobel(float MatColor[3][3]);
+float EdgeClear(float mask);
 
 void main()
 {
@@ -31,7 +31,7 @@ void main()
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			if (SampleWithOffest(vec2(-1.0f + i, -1.0f + j)) / 1000000.0f < 1.0f)
+			if (SampleWithOffest(vec2(-1.0f + i, -1.0f + j)) > 0.5f)
 			{
 				colors[i][j] = 1;
 			}
@@ -42,22 +42,17 @@ void main()
 		}
 	}
 
-	//float outLine = Sobel(colors);
-	//outColor.xyz = vec3(outLine);
+	float outLine = Sobel(colors);
+	outLine = EdgeClear(outLine);
 
-	//outColor.xyz = vec3(SampleWithOffest(vec2(0.0f, 0.0f)));
-
-	if (texture(selectBuffer, fragInput.texCoord).x > 0.5f)
-	{
-		outColor.xyz = vec3(1.0f);
-	}
-	//outColor = vec4(fragInput.texCoord, 0.0f, 1.0f);
+	outColor.xyz = mix(outColor.xyz, vec3(1.0f, 1.0f, 0.0f), outLine);
 }
 
 float SampleWithOffest(vec2 uv_offest)
 {
-	vec2 viewPortLoca = fragInput.texCoord * push.viewPortSize + uv_offest;
-	return texture(selectBuffer, viewPortLoca / push.viewPortSize).x;
+	float outLineWidth = min(fwidth(fragInput.texCoord.x * push.gbufferSize.x), fwidth(fragInput.texCoord.y * push.gbufferSize.y));
+	vec2 uv = fragInput.texCoord + uv_offest * push.gbufferSize.zw * outLineWidth;
+	return texture(selectBuffer, uv).x;
 }
 
 float Sobel(float MatColor[3][3])
@@ -68,5 +63,19 @@ float Sobel(float MatColor[3][3])
 	float Gridy = -1.0f * MatColor[2][0] - 2.0f * MatColor[2][1] - 1.0f * MatColor[2][2] +
 		1.0f * MatColor[0][0] + 2.0f * MatColor[0][1] + 1.0f * MatColor[0][2];
 
-	return sqrt(Gridx * Gridx + Gridy * Gridy);
+	return smoothstep(0.0f, 1.0f, sqrt(Gridx * Gridx + Gridy * Gridy));
+}
+
+float EdgeClear(float mask)
+{
+	if (fragInput.texCoord.x < 0.001f || 
+		fragInput.texCoord.x > 0.999f || 
+		fragInput.texCoord.y < 0.001f || 
+		fragInput.texCoord.y > 0.999f
+		)
+	{
+		mask = 0.0f;
+	}
+
+	return mask;
 }

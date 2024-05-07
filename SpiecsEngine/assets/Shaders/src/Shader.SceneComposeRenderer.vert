@@ -13,13 +13,12 @@ layout(location = 0) out struct FragInput{
 
 // push constant
 layout(push_constant) uniform Push {
-	vec2 viewPortPos;
-	vec2 viewPortSize;
-	vec2 windowSize;
+	vec4 gbufferSize;
+	vec4 windowSize;
 } push;
 
 void main()
 {
-	vertOut.texCoord = (texCoord * push.windowSize) / push.viewPortSize;
+	vertOut.texCoord = (texCoord * push.windowSize.xy) / push.gbufferSize.xy;
 	gl_Position = vec4(position * 2.0f, 1.0f);
 }

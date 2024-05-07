@@ -10,73 +10,85 @@
 
 namespace Spiecs {
 
-	/**
-	* @brief This struct is specific MeshRenderer PsuhConstant
-	*/
-	struct MeshPushConstant
+	namespace MeshR
 	{
 		/**
-		* @brief Meshpack ModelMatrix.
+		* @brief This struct is specific MeshRenderer PsuhConstant
 		*/
-		glm::mat4 model = glm::mat4(1.0f);
-
-		/**
-		* @brief Entityid, cast from entt::entity.
-		*/
-		int entityID = -1;
-	};
-
-	/**
-	* @brief This struct contains texture data copyed from Material.
-	*/
-	struct TextureParams
-	{
-		/**
-		* @brief MeshRenderer allows 3 texture in fragment shader.
-		*/
-		Renderer::TextureParam params[3];
-
-	public:
-
-		/**
-		* @brief Copy data from Material::TextureParam.
-		* @param[in] materialTexPars This is variable referenced From Material.
-		*/
-		void CopyFromMaterial(const std::unordered_map<std::string, Material::TextureParam>& materialTexPars)
+		struct PushConstant
 		{
-			for (auto& pair : materialTexPars)
+			/**
+			* @brief Meshpack ModelMatrix.
+			*/
+			glm::mat4 model = glm::mat4(1.0f);
+
+			/**
+			* @brief Entityid, cast from entt::entity.
+			*/
+			int entityID = -1;
+		};
+
+		/**
+		* @brief This struct contains texture data copyed from Material.
+		*/
+		struct TextureParams
+		{
+			/**
+			* @brief MeshRenderer allows 3 texture in fragment shader.
+			*/
+			Renderer::TextureParam params[3];
+
+		public:
+
+			/**
+			* @brief Copy data from Material::TextureParam.
+			* @param[in] materialTexPars This is variable referenced From Material.
+			*/
+			void CopyFromMaterial(const std::unordered_map<std::string, Material::TextureParam>& materialTexPars)
 			{
-				params[pair.second.index].CopyFromMaterial(pair.second);
+				for (auto& pair : materialTexPars)
+				{
+					params[pair.second.index].CopyFromMaterial(pair.second);
+				}
 			}
-		}
-	};
-
-	/**
-	* @brief VertexShader Stage uniform buffer data.
-	*/
-	struct VertRendererUBO
-	{
-		/**
-		* @brief Projection Matrix.
-		*/
-		glm::mat4 projection = glm::mat4(1.0f);
+		};
 
 		/**
-		* @brief View Matrix.
+		* @brief VertexShader Stage uniform buffer data.
 		*/
-		glm::mat4 view = glm::mat4(1.0f);
-	};
+		struct VertRendererUBO
+		{
+			/**
+			* @brief Projection Matrix.
+			*/
+			glm::mat4 projection = glm::mat4(1.0f);
 
-	/**
-	* @brief PointLight Render Data.
-	*/
-	struct PointLightUBO
-	{
+			/**
+			* @brief View Matrix.
+			*/
+			glm::mat4 view = glm::mat4(1.0f);
+		};
+
 		/**
-		* @brief Each data is copyed from PointLightComponent.
+		* @brief VertexShader Stage uniform buffer select id data.
 		*/
-		std::array<PointLightComponent::PointLight, 10> pointLights;
-	};
+		struct FragSelectUBO
+		{
+			std::array<glm::vec4, 20> id;
+			//int num = 0;
+		};
+
+		/**
+		* @brief PointLight Render Data.
+		*/
+		struct PointLightUBO
+		{
+			/**
+			* @brief Each data is copyed from PointLightComponent.
+			*/
+			std::array<PointLightComponent::PointLight, 10> pointLights;
+		};
+	}
 
 	void MeshRenderer::CreateRenderPass()
 	{
@@ -131,12 +143,13 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.CreateCollection<SpecificCollection>()
-		.AddPushConstant<MeshPushConstant>()
-		.AddBuffer<VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+		.AddPushConstant<MeshR::PushConstant>()
+		.AddBuffer<MeshR::VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddBuffer<TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<MeshR::TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<DirectionalLightComponent::DirectionalLight>(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddBuffer<PointLightUBO>(2, 2, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<MeshR::PointLightUBO>(2, 2, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<MeshR::FragSelectUBO>(3, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -160,17 +173,21 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.UpdateBuffer<VertRendererUBO>(0, 0, [&](auto& ubo) {
+		builder.UpdateBuffer<MeshR::VertRendererUBO>(0, 0, [&](auto& ubo) {
 			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 			ubo.view = viewMatrix;
 			ubo.projection = projectionMatrix;
+		});
+
+		builder.UpdateBuffer<MeshR::FragSelectUBO>(3, 0, [&](auto& ubo) {
+			GetSelectID(frameInfo, ubo.id);
 		});
 
 		builder.UpdateBuffer<DirectionalLightComponent::DirectionalLight>(2, 1, [&](auto& ubo) {
 			ubo = GetDirectionalLight(frameInfo);
 		});
 
-		builder.UpdateBuffer<PointLightUBO>(2, 2, [&](auto& ubo) {
+		builder.UpdateBuffer<MeshR::PointLightUBO>(2, 2, [&](auto& ubo) {
 			ubo.pointLights = GetPointLight(frameInfo);
 		});
 
@@ -178,12 +195,12 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.UpdatePushConstant<MeshPushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<MeshR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
 
-				builder.UpdateBuffer<TextureParams>(2, 0, [&](auto& ubo) {
+				builder.UpdateBuffer<MeshR::TextureParams>(2, 0, [&](auto& ubo) {
 					ubo.CopyFromMaterial(material->GetTextureParams());
 				});
 
@@ -202,7 +219,8 @@ namespace Spiecs {
 		if (set == 2 && binding == 0) return m_TextureParamUBO;
 		if (set == 2 && binding == 1) return m_DirectionalLightUBO;
 		if (set == 2 && binding == 2) return m_PointLightUBO;
-		
+		if (set == 3 && binding == 0) return m_FragSelectUBO;
+
 		return m_VertRendererUBO;
 		__debugbreak();
 		SPIECS_CORE_INFO("Out of Range");

@@ -81,6 +81,8 @@ namespace Spiecs {
 			*/
 			std::unique_ptr<VulkanBuffer> m_TextureParamUBO;
 
+			std::unique_ptr<VulkanBuffer> m_FragSelectUBO;
+
 			/**
 			* @brief FragmentSahder Stage uniform buffer.
 			*/

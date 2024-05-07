@@ -12,9 +12,8 @@ namespace Spiecs {
 
 	struct SceneComposePushConstant
 	{
-		glm::vec2 viewPortPos;
-		glm::vec2 viewPortSize;
-		glm::vec2 windowSize;
+		glm::vec4 gbufferSize;
+		glm::vec4 windowSize;
 	};
 
 	SceneComposeRenderer::SceneComposeRenderer(
@@ -137,13 +136,11 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		ImVec2 viewPortPos = SlateSystem::GetRegister()->GetViewPort()->GetPanelPos();
-		ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+		ImVec2 gbufferSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 		VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
 		builder.UpdatePushConstant<SceneComposePushConstant>([&](auto& push) {
-			push.viewPortPos = { viewPortPos .x, viewPortPos .y };
-			push.viewPortSize = { viewPortSize.x, viewPortSize.y };
-			push.windowSize = { windowSize.width, windowSize.height };
+			push.gbufferSize = { gbufferSize.x, gbufferSize.y, 1.0f / gbufferSize.x, 1.0f / gbufferSize.y };
+			push.windowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
 		});
 
 		builder.BindDescriptorSet(1, m_RendererResourcePool->AccessRowResource("SelectBuffer")->GetDescriptorSet());
