@@ -10,12 +10,14 @@
 
 namespace Spiecs {
 
-	struct SceneComposePushConstant
-	{
-		glm::vec4 gbufferSize;
-		glm::vec4 windowSize;
-	};
+	namespace SceneComposeR {
 
+		struct PushConstant
+		{
+			glm::vec4 gbufferSize;
+			glm::vec4 windowSize;
+		};
+	}
 	SceneComposeRenderer::SceneComposeRenderer(
 		const std::string&                       rendererName         , 
 		VulkanState&                             vulkanState          , 
@@ -82,7 +84,7 @@ namespace Spiecs {
 	void SceneComposeRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
-		.AddPushConstant<SceneComposePushConstant>()
+		.AddPushConstant<SceneComposeR::PushConstant>()
 		.AddInput(0, 0, 5, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal", "Depth", "ID"})
 		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
@@ -138,7 +140,7 @@ namespace Spiecs {
 
 		ImVec2 gbufferSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 		VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
-		builder.UpdatePushConstant<SceneComposePushConstant>([&](auto& push) {
+		builder.UpdatePushConstant<SceneComposeR::PushConstant>([&](auto& push) {
 			push.gbufferSize = { gbufferSize.x, gbufferSize.y, 1.0f / gbufferSize.x, 1.0f / gbufferSize.y };
 			push.windowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
 		});
