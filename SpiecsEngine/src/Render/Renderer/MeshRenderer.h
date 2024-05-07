@@ -74,7 +74,7 @@ namespace Spiecs {
 			/**
 			* @brief VertexSahder Stage uniform buffer. 
 			*/
-			std::unique_ptr<VulkanBuffer> m_VertRendererUBO;
+			std::unique_ptr<VulkanBuffer> m_ViewUBO;
 			
 			/**
 			* @brief FragmentSahder Stage Textures.

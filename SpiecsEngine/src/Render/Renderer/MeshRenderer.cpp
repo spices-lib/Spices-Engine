@@ -10,8 +10,8 @@
 
 namespace Spiecs {
 
-	namespace MeshR
-	{
+	namespace MeshR {
+
 		/**
 		* @brief This struct is specific MeshRenderer PsuhConstant
 		*/
@@ -56,7 +56,7 @@ namespace Spiecs {
 		/**
 		* @brief VertexShader Stage uniform buffer data.
 		*/
-		struct VertRendererUBO
+		struct View
 		{
 			/**
 			* @brief Projection Matrix.
@@ -67,15 +67,6 @@ namespace Spiecs {
 			* @brief View Matrix.
 			*/
 			glm::mat4 view = glm::mat4(1.0f);
-		};
-
-		/**
-		* @brief VertexShader Stage uniform buffer select id data.
-		*/
-		struct FragSelectUBO
-		{
-			std::array<glm::vec4, 20> id;
-			//int num = 0;
 		};
 
 		/**
@@ -115,17 +106,6 @@ namespace Spiecs {
 		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
 		});
-		
-		/**
-		* @brief Add SelectBuffer Attachment.
-		* Though we want use SelectBuffer with a sampler, we need transfrom shaderread layout here.
-		*/
-		m_RenderPass->AddColorAttachment("SelectBuffer", [](VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format = VK_FORMAT_R32_SFLOAT;
-		});
 
 		/**
 		* @brief Add Depth Attachment.
@@ -144,12 +124,11 @@ namespace Spiecs {
 		PipelineLayoutBuilder{ this }
 		.CreateCollection<SpecificCollection>()
 		.AddPushConstant<MeshR::PushConstant>()
-		.AddBuffer<MeshR::VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+		.AddBuffer<MeshR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<MeshR::TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<DirectionalLightComponent::DirectionalLight>(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<MeshR::PointLightUBO>(2, 2, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddBuffer<MeshR::FragSelectUBO>(3, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -173,14 +152,10 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.UpdateBuffer<MeshR::VertRendererUBO>(0, 0, [&](auto& ubo) {
+		builder.UpdateBuffer<MeshR::View>(0, 0, [&](auto& ubo) {
 			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 			ubo.view = viewMatrix;
 			ubo.projection = projectionMatrix;
-		});
-
-		builder.UpdateBuffer<MeshR::FragSelectUBO>(3, 0, [&](auto& ubo) {
-			GetSelectID(frameInfo, ubo.id);
 		});
 
 		builder.UpdateBuffer<DirectionalLightComponent::DirectionalLight>(2, 1, [&](auto& ubo) {
@@ -215,14 +190,12 @@ namespace Spiecs {
 
 	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
-		if (set == 0 && binding == 0) return m_VertRendererUBO;
+		if (set == 0 && binding == 0) return m_ViewUBO;
 		if (set == 2 && binding == 0) return m_TextureParamUBO;
 		if (set == 2 && binding == 1) return m_DirectionalLightUBO;
 		if (set == 2 && binding == 2) return m_PointLightUBO;
-		if (set == 3 && binding == 0) return m_FragSelectUBO;
 
-		return m_VertRendererUBO;
-		__debugbreak();
-		SPIECS_CORE_INFO("Out of Range");
+		SPIECS_CORE_ERROR("MeshRenderer::Collection:: Out of Range");
+		return m_ViewUBO;
 	}
 }

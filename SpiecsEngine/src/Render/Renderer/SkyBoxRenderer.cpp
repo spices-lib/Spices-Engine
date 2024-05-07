@@ -30,7 +30,7 @@ namespace Spiecs {
 		/**
 		* @brief VertexShader Stage uniform buffer data.
 		*/
-		struct VertRendererUBO
+		struct View
 		{
 			/**
 			* @brief Projection Matrix.
@@ -96,7 +96,7 @@ namespace Spiecs {
 		PipelineLayoutBuilder{ this }
 		.CreateCollection<SpecificCollection>()
 		.AddPushConstant<SkyBoxR::PushConstant>()
-		.AddBuffer<SkyBoxR::VertRendererUBO>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+		.AddBuffer<SkyBoxR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
@@ -122,7 +122,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.UpdateBuffer<SkyBoxR::VertRendererUBO>(0, 0, [&](auto& ubo) {
+		builder.UpdateBuffer<SkyBoxR::View>(0, 0, [&](auto& ubo) {
 			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 			ubo.view = viewMatrix;
 			ubo.projection = projectionMatrix;
@@ -148,8 +148,9 @@ namespace Spiecs {
 
 	std::unique_ptr<VulkanBuffer>& SkyBoxRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
-		if (set == 0 && binding == 0) return m_VertRendererUBO;
+		if (set == 0 && binding == 0) return m_ViewUBO;
 
-		return m_VertRendererUBO;
+		SPIECS_CORE_ERROR("SkyBoxRenderer::Collection:: Out of Range");
+		return m_ViewUBO;
 	}
 }

@@ -15,7 +15,7 @@ layout(push_constant) uniform Push {
 
 layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[4];
 
-layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
+//layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
 
 float SampleWithOffest(vec2 uv_offest);
 float Sobel(float MatColor[3][3]);
@@ -52,7 +52,8 @@ float SampleWithOffest(vec2 uv_offest)
 {
 	float outLineWidth = min(fwidth(fragInput.texCoord.x * push.gbufferSize.x), fwidth(fragInput.texCoord.y * push.gbufferSize.y));
 	vec2 uv = fragInput.texCoord + uv_offest * push.gbufferSize.zw * outLineWidth;
-	return texture(selectBuffer, uv).x;
+	//return texture(selectBuffer, uv).x;
+	return 1.0f;
 }
 
 float Sobel(float MatColor[3][3])

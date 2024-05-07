@@ -12,7 +12,6 @@ layout(location = 0) in struct FragInput {
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out float outID;
-layout(location = 3) out float outSelectBuffer;
 
 // push constant
 layout(push_constant) uniform Push{
@@ -52,10 +51,6 @@ layout(set = 2, binding = 2) uniform PointLights {
     PointLight pointLight[10];
 } pointLights;
 
-layout(set = 3, binding = 0) uniform SelectUBO {
-    float id[20];
-} selectUBO;
-
 // constant
 const int diffuseTexture = 0;
 const int normalTexture = 1;
@@ -74,16 +69,4 @@ void main()
     }
     outNormal = vec4(fragInput.normal, 1.0f);
     outID = push.entityID;
-
-    outSelectBuffer = -1.0f;
-    for (int i = 0; i < 1; i++)
-    {
-        if (selectUBO.id[i] < -0.5f) break;
-
-        if (abs(push.entityID - selectUBO.id[i]) < 0.1f)
-        {
-            outSelectBuffer = selectUBO.id[i];
-            break;
-        }
-    }
 }

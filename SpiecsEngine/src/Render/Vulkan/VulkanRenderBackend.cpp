@@ -7,6 +7,7 @@
 #include "Render/Renderer/SkyBoxRenderer.h"
 #include "Render/Renderer/SlateRenderer.h"
 #include "Render/Renderer/SceneComposeRenderer.h"
+#include "Render/Renderer/WorldPickRenderer.h"
 
 namespace Spiecs {
 
@@ -39,6 +40,7 @@ namespace Spiecs {
 		RendererManager::Get()
 			.Push<SkyBoxRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<MeshRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<WorldPickRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SceneComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 	}
@@ -52,6 +54,7 @@ namespace Spiecs {
 		RendererManager::Get()
 			.Pop("SlateRenderer")
 			.Pop("SceneComposeRenderer")
+			.Pop("WorldPickRenderer")
 			.Pop("MeshRenderer")
 			.Pop("SkyBoxRenderer");
 	}

@@ -1,6 +1,6 @@
 /**
-* @file SkyBoxRenderer.h.
-* @brief The SkyBoxRenderer Class Definitions.
+* @file WorldPickRenderer.h.
+* @brief The WorldPickRenderer Class Definitions.
 * @author Spiecs.
 */
 
@@ -11,10 +11,10 @@
 namespace Spiecs {
 
 	/**
-	* @brief SkyBoxRenderer Class.
-	* This class defines the skybox component render behaver.
+	* @brief WorldPickRenderer Class.
+	* This class defines the picked entity render behaver.
 	*/
-	class SkyBoxRenderer : public Renderer
+	class WorldPickRenderer : public Renderer
 	{
 	public:
 
@@ -25,13 +25,19 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		SkyBoxRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
+		WorldPickRenderer(
+			const std::string&                    rendererName         , 
+			VulkanState&                          vulkanState          , 
+			std::shared_ptr<VulkanDescriptorPool> desctiptorPool       , 
+			std::shared_ptr<VulkanDevice>         device               , 
+			std::shared_ptr<RendererResourcePool> rendererResourcePool
+		)
 			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) {};
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SkyBoxRenderer() {};
+		virtual ~WorldPickRenderer() {};
 
 		/**
 		* @brief The interface is inherited from Renderer.
@@ -65,7 +71,7 @@ namespace Spiecs {
 	private:
 
 		/**
-		* @brief This struct placed the local buffer data.Specific for SkyBoxRenderer.
+		* @brief This struct placed the local buffer data.Specific for WorldPickRenderer.
 		*/
 		struct SpecificCollection : public Collection
 		{

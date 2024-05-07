@@ -24,7 +24,7 @@ layout(push_constant) uniform Push{
 layout(set = 0, binding = 0) uniform UniformBuffer {
     mat4 projection;
     mat4 view;
-} ubo;
+} view;
 
 // constant
 
@@ -39,5 +39,5 @@ void main()
     vertOut.color = color;
     vertOut.texCoord = texCoord;
     
-    gl_Position = ubo.projection * ubo.view * push.model * vec4(position, 1.0);
+    gl_Position = view.projection * view.view * push.model * vec4(position, 1.0);
 }
