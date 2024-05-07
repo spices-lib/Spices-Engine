@@ -79,6 +79,8 @@ namespace Spiecs {
 			m_Identities[rendererName] = std::unique_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...));
 			m_Identities[rendererName]->OnSystemInitialize();
 			
+			m_IterList.push_back(rendererName);
+
 			/**
 			* @brief System init
 			*/
@@ -130,6 +132,12 @@ namespace Spiecs {
 		* @brief A container contains all renderer.
 		*/
 		static std::unordered_map<std::string, std::unique_ptr<Renderer>> m_Identities;
+
+		/**
+		* @brief Used for iter m_Identities in correct order.
+		* @todo linkedhashmap.
+		*/
+		static std::vector<std::string> m_IterList;
 	};
 
 }

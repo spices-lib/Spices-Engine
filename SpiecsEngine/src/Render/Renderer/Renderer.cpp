@@ -155,18 +155,6 @@ namespace Spiecs {
 		return std::make_pair(viewMat, projectionMat);
 	}
 
-	std::unordered_map<int, int> Renderer::GetPickedID(FrameInfo& frameInfo)
-	{
-		std::unordered_map<int, int> idmap;
-
-		for (int i = 0; i < frameInfo.m_SelectFrontEntityID.size(); i++)
-		{
-			idmap[frameInfo.m_SelectFrontEntityID[i]] = i;
-		}
-
-		return idmap;
-	}
-
 	DirectionalLightComponent::DirectionalLight Renderer::GetDirectionalLight(FrameInfo& frameInfo)
 	{
 		/**
@@ -359,7 +347,7 @@ namespace Spiecs {
 		else
 		{
 			ImVec2 size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-			VkExtent2D extent = { size.x , size.y };
+			VkExtent2D extent = { static_cast<uint32_t>(size.x) , static_cast<uint32_t>(size.y) };
 			renderPassInfo.renderArea.extent = extent;
 		}
 

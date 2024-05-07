@@ -85,14 +85,14 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.AddPushConstant<SceneComposeR::PushConstant>()
-		.AddInput(0, 0, 5, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal", "Depth", "ID"})
-		//.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal", "Depth", "ID"})
+		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 
 		/**
 		* @brief create renderresource's descriptorset.
 		*/
-		//m_RendererResourcePool->AccessRowResource("SelectBuffer")->CreateDescriptorSet(0);
+		m_RendererResourcePool->AccessRowResource("SelectBuffer")->CreateDescriptorSet(0);
 	}
 
 	void SceneComposeRenderer::CreatePipeline(VkRenderPass renderPass)
@@ -145,7 +145,7 @@ namespace Spiecs {
 			push.windowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
 		});
 
-		//builder.BindDescriptorSet(1, m_RendererResourcePool->AccessRowResource("SelectBuffer")->GetDescriptorSet());
+		builder.BindDescriptorSet(1, m_RendererResourcePool->AccessRowResource("SelectBuffer")->GetDescriptorSet());
 
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);

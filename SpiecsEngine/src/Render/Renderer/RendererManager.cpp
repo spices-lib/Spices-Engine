@@ -12,6 +12,7 @@ namespace Spiecs {
 
 	std::unique_ptr<RendererManager> RendererManager::m_RendererManager;
 	std::unordered_map<std::string, std::unique_ptr<Renderer>> RendererManager::m_Identities;
+	std::vector<std::string> RendererManager::m_IterList;
 
 	RendererManager& RendererManager::Get()
 	{
@@ -20,9 +21,9 @@ namespace Spiecs {
 
 	void RendererManager::Run(FrameInfo& frameInfo)
 	{
-		for (auto& pair : m_Identities)
+		for (int i = 0; i < m_IterList.size(); i++)
 		{
-			pair.second->Render(frameInfo);
+			m_Identities[m_IterList[i]]->Render(frameInfo);
 		}
 	}
 

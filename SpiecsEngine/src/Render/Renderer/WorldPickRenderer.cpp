@@ -79,7 +79,6 @@ namespace Spiecs {
 	{
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
 		pipelineConfig.renderPass = renderPass;
 		pipelineConfig.pipelineLayout = m_PipelineLayout;
 		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
@@ -102,10 +101,8 @@ namespace Spiecs {
 			ubo.projection = projectionMatrix;
 		});
 
-		auto ids = GetPickedID(frameInfo);
-
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-			if (ids.find(entityId) == ids.end()) return false;
+			if (frameInfo.m_PickEntityID.find(entityId) == frameInfo.m_PickEntityID.end()) return false;
 
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 

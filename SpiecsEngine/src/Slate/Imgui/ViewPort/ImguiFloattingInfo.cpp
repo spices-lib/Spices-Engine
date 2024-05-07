@@ -46,18 +46,6 @@ namespace Spiecs {
             else
                 ImGui::Text("Mouse Position: <invalid>");
 
-            if(FrameInfo::Get().m_SelectFrontEntityID.size() != 0)
-            {
-                Entity entity((entt::entity)FrameInfo::Get().m_SelectFrontEntityID[0], FrameInfo::Get().m_World.get());
-                std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
-
-                std::stringstream ss;
-                ss << "Select entity: " << entityName;
-
-                ImGui::Text(ss.str().c_str());
-            }
-
-
             if (ImGui::BeginPopupContextWindow())
             {
                 if (ImGui::MenuItem("Custom", NULL, location == -1)) location = -1;

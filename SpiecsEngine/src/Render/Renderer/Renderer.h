@@ -180,8 +180,6 @@ namespace Spiecs {
 		*/
 		std::pair<glm::mat4, glm::mat4> GetActiveCameraMatrix(FrameInfo& frameInfo);
 
-		std::unordered_map<int, int> GetPickedID(FrameInfo& frameInfo);
-
 		/**
 		* @brief Get DirectionalLightComponent's render data in World.
 		* @param[in] frameInfo The current frame data.

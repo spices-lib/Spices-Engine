@@ -154,6 +154,8 @@ namespace Spiecs {
 			// system init
 			m_Identities[systemName]->OnSystemInitialize();
 
+			m_IterList.push_back(systemName);
+
 			std::stringstream ss;
 			ss << systemName << " pushed ";
 
@@ -202,5 +204,11 @@ namespace Spiecs {
 		* @brief Static System Map.
 		*/
 		static std::unordered_map<std::string, std::unique_ptr<System>> m_Identities;
+
+		/**
+		* @brief Used for iter m_Identities in correct order.
+		* @todo linkedhashmap.
+		*/
+		static std::vector<std::string> m_IterList;
 	};
 }

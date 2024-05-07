@@ -68,9 +68,12 @@ namespace Spiecs {
 		*/
 		uint32_t m_Imageindex = 0;
 
-		std::vector<int> m_SelectFrontEntityID{};
-
-		std::vector<int> m_SelectBackEntityID{};
+		/**
+		* @breif A container of mouse picked entityid.
+		* key means entityid.
+		* value entity tag 0
+		*/
+		std::unordered_map<int, std::string> m_PickEntityID{};
 
 		/**
 		* @brief The shared pointer of specific world.

@@ -35,30 +35,73 @@ namespace Spiecs {
 		if (m_ViewPort->IsHovered() && e.GetMouseButton() == Mouse::ButtonLeft)
 		{
 			/**
+			* @brief Add pick.
+			*/
+			if (Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift))
+			{
+				auto pair = m_ViewPort->GetMousePosInViewport();
+
+				VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
+
+				Entity entity((entt::entity)m_WorldPickID[0], FrameInfo::Get().m_World.get());
+				std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
+				
+				FrameInfo::Get().m_PickEntityID[static_cast<int>(m_WorldPickID[0])] = entityName;
+				
+				std::stringstream ss;
+				ss << "Select entity: " << entityName;
+
+				SPIECS_CORE_TRACE(ss.str());
+			}
+
+			/**
+			* @breif Sub pick.
+			*/
+			else if (Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl))
+			{
+				auto pair = m_ViewPort->GetMousePosInViewport();
+
+				VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
+
+				std::string entityName = FrameInfo::Get().m_PickEntityID[static_cast<int>(m_WorldPickID[0])];
+
+				FrameInfo::Get().m_PickEntityID.erase(static_cast<int>(m_WorldPickID[0]));
+
+				std::stringstream ss;
+				ss << "Deselect entity: " << entityName;
+
+				SPIECS_CORE_TRACE(ss.str());
+			}
+
+			/**
 			* @breif Single Select.
 			*/
-			FrameInfo::Get().m_SelectFrontEntityID.clear();
+			else
+			{
+				FrameInfo::Get().m_PickEntityID.clear();
 
-			auto pair = m_ViewPort->GetMousePosInViewport();
+				auto pair = m_ViewPort->GetMousePosInViewport();
 
-			VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);	
-			FrameInfo::Get().m_SelectFrontEntityID.push_back(static_cast<int>(m_WorldPickID[0]));
+				VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
 
-			Entity entity((entt::entity)m_WorldPickID[0], FrameInfo::Get().m_World.get());
-			std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
+				Entity entity((entt::entity)m_WorldPickID[0], FrameInfo::Get().m_World.get());
+				std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
 
-			std::stringstream ss;
-			ss << "Select entity: " << entityName;
+				FrameInfo::Get().m_PickEntityID[static_cast<int>(m_WorldPickID[0])] = entityName;
 
-			SPIECS_CORE_TRACE(ss.str());
+				std::stringstream ss;
+				ss << "Select entity: " << entityName;
+
+				SPIECS_CORE_TRACE(ss.str());
+			}
 		}
 
 		/**
 		* @breif Cancle Select.
 		*/
-		if (e.GetMouseButton() == Mouse::ButtonRight)
+		else if (e.GetMouseButton() == Mouse::ButtonRight)
 		{
-			FrameInfo::Get().m_SelectFrontEntityID.clear();
+			FrameInfo::Get().m_PickEntityID.clear();
 
 			SPIECS_CORE_TRACE("Cancel all selected entity");
 		}

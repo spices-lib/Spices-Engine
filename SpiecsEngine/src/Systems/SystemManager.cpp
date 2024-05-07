@@ -20,6 +20,8 @@ namespace Spiecs {
 	*/
 	std::unordered_map<std::string, std::unique_ptr<System>> SystemManager::m_Identities;
 
+	std::vector<std::string> SystemManager::m_IterList;
+
 	SystemManager::SystemManager()
 	{
 		//m_SystemManager = std::unique_ptr<SystemManager>(this);
@@ -38,9 +40,9 @@ namespace Spiecs {
 
 	void SystemManager::Run(TimeStep& ts)
 	{
-		for (auto& pair : m_Identities)
+		for (int i = 0; i < m_IterList.size(); i++)
 		{
-			pair.second->OnSystemUpdate(ts);
+			m_Identities[m_IterList[i]]->OnSystemUpdate(ts);
 		}
 	}
 
