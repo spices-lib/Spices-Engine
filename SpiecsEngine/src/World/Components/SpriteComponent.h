@@ -22,7 +22,15 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		SpriteComponent();
+		SpriteComponent() {};
+		
+		/**
+		* @brief Constructor Function.
+		* Init class variable.
+		* Usually call it.
+		* @param[in] path The SkyBoxMaterial file path.
+		*/
+		SpriteComponent(const std::string& path);
 
 		/**
 		* @brief Destructor Function.
@@ -41,6 +49,12 @@ namespace Spiecs {
 		*/
 		virtual void OnDeSerialize() override {};
 
+		/**
+		* @brief Get the Mesh variable.
+		* @return Returns the Mesh variable.
+		*/
+		inline std::shared_ptr<Mesh> GetMesh() { return m_Mesh; };
+		
 	private:
 
 		/**

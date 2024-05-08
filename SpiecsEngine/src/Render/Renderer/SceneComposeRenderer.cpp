@@ -44,7 +44,7 @@ namespace Spiecs {
 		*/
 		m_RenderPass->AddColorAttachment("SceneColor", [](VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		});
 
 		/************************************************************************************************/
@@ -84,14 +84,6 @@ namespace Spiecs {
 			description.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
-
-		/**
-		* @brief Add ID Input Attachment.
-		*/
-		m_RenderPass->AddInputAttachment("ID", [](VkAttachmentDescription& description) {
-			description.format = VK_FORMAT_R32_SFLOAT;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		});
 		
 		/************************************************************************************************/
 
@@ -105,7 +97,7 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.AddPushConstant<SceneComposeR::PushConstant>()
-		.AddInput(0, 0, 5, VK_SHADER_STAGE_FRAGMENT_BIT, {"Albedo", "Normal", "Specular", "Depth", "ID"})
+		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Albedo", "Normal", "Specular", "Depth"})
 		//.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 

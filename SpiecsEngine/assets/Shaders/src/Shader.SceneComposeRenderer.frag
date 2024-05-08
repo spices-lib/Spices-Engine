@@ -13,7 +13,7 @@ layout(push_constant) uniform Push {
 	vec4 windowSize;
 } push;
 
-layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[5];
+layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[4];
 
 //layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
 

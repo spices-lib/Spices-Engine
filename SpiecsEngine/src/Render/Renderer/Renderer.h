@@ -28,6 +28,7 @@
 #include "World/Components/CameraComponent.h"
 #include "World/Components/UUIDComponent.h"
 #include "World/Components/SkyBoxComponent.h"
+#include "World/Components/SpriteComponent.h"
 /***************************************************************************************************/
 
 /******************************STL Header***********************************************************/

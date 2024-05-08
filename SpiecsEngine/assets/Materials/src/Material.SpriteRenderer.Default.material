@@ -1,0 +1,9 @@
+﻿Material: SpriteRenderer.Default
+Shaders:
+  - ShaderStage: vertShader
+    ShaderPath: SpriteRenderer
+  - ShaderStage: fragShader
+    ShaderPath: SpriteRenderer
+Textures:
+  - TextureName: diffuse
+    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg, 1, 0, 0, [1, 1, 1], 1]
