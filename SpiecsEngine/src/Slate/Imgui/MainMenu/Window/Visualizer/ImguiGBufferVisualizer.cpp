@@ -18,16 +18,20 @@ namespace Spiecs {
 
         ImVec2 size = { m_Width , m_Height };
 
-        ImGui::Text("FinalColor");
-        ImGui::Image(m_GBufferID.FinalColorID, size);
+        ImGui::Text("SceneColor");
+        ImGui::Image(m_GBufferID.SceneColorID, size);
         ImGui::Separator;
 
-        ImGui::Text("BaseColor");
-        ImGui::Image(m_GBufferID.BaseColorID, size);
+        ImGui::Text("Albedo");
+        ImGui::Image(m_GBufferID.AlbedoID, size);
         ImGui::Separator;
 
         ImGui::Text("Normal");
         ImGui::Image(m_GBufferID.NormalID, size);
+        ImGui::Separator;
+
+        ImGui::Text("Specular");
+        ImGui::Image(m_GBufferID.SpecularID, size);
         ImGui::Separator;
 
         End();
@@ -53,12 +57,14 @@ namespace Spiecs {
 
     void ImguiGBufferVisualizer::QueryGBufferID()
     {
-        VkDescriptorImageInfo* finalColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("FinalColor");
-        VkDescriptorImageInfo* basecClorInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("BaseColor" );
+        VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
+        VkDescriptorImageInfo* albedoInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Albedo" );
         VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Normal"    );
+        VkDescriptorImageInfo* specularInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Specular"    );
 
-        m_GBufferID.FinalColorID = ImGui_ImplVulkan_AddTexture(finalColorInfo->sampler, finalColorInfo->imageView, finalColorInfo->imageLayout);
-        m_GBufferID.BaseColorID  = ImGui_ImplVulkan_AddTexture(basecClorInfo->sampler , basecClorInfo->imageView , basecClorInfo->imageLayout );
-        m_GBufferID.NormalID     = ImGui_ImplVulkan_AddTexture(normalInfo->sampler    , normalInfo->imageView    , normalInfo->imageLayout    );
+        m_GBufferID.SceneColorID = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
+        m_GBufferID.AlbedoID     = ImGui_ImplVulkan_AddTexture(albedoInfo->sampler     , albedoInfo->imageView     , albedoInfo->imageLayout      );
+        m_GBufferID.NormalID     = ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      );
+        m_GBufferID.SpecularID   = ImGui_ImplVulkan_AddTexture(specularInfo->sampler   , specularInfo->imageView   , specularInfo->imageLayout    );
     }
 }

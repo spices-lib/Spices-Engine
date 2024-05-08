@@ -7,8 +7,7 @@ layout(location = 0) in struct FragInput {
 
 // frag output
 layout(location = 0) out vec4 outColor;
-layout(location = 1) out vec4 outNormal;
-layout(location = 2) out float outID;
+layout(location = 1) out float outID;
 
 // push constant
 layout(push_constant) uniform Push {
@@ -38,6 +37,5 @@ void main()
 {
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPos)); // make sure to normalize localPos
     outColor = texture(samplers[diffuseTexture], uv);
-    outNormal = vec4(0.0f);
     outID = push.entityID;
 }

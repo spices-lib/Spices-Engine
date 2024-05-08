@@ -17,7 +17,9 @@ namespace Spiecs {
 			glm::vec4 gbufferSize;
 			glm::vec4 windowSize;
 		};
+
 	}
+
 	SceneComposeRenderer::SceneComposeRenderer(
 		const std::string&                       rendererName         , 
 		VulkanState&                             vulkanState          , 
@@ -35,19 +37,24 @@ namespace Spiecs {
 	{
 		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
 
+		/***********************************Written Buffer************************************************/
+
 		/**
 		* @brief Add FinalColor Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("FinalColor", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("SceneColor", [](VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
 
+		/************************************************************************************************/
+
+		/**********************************Data Buffer***************************************************/
+
 		/**
-		* @brief Add BaseColor Input Attachment.
+		* @brief Add Albedo Input Attachment.
 		*/
-		m_RenderPass->AddInputAttachment("BaseColor", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddInputAttachment("Albedo", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
 
@@ -57,6 +64,17 @@ namespace Spiecs {
 		m_RenderPass->AddInputAttachment("Normal", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
+
+		/**
+		* @brief Add Specular Input Attachment.
+		*/
+		m_RenderPass->AddInputAttachment("Specular", [](VkAttachmentDescription& description) {
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		});
+
+		/************************************************************************************************/
+
+		/******************************Just transform layout not in use**********************************/
 
 		/**
 		* @brief Add Normal Input Attachment.
@@ -75,6 +93,8 @@ namespace Spiecs {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
 		
+		/************************************************************************************************/
+
 		/**
 		* @brief Create VkRenderPass, Resource, FrameBuffer.
 		*/
@@ -85,14 +105,14 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.AddPushConstant<SceneComposeR::PushConstant>()
-		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"BaseColor", "Normal", "Depth", "ID"})
-		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddInput(0, 0, 5, VK_SHADER_STAGE_FRAGMENT_BIT, {"Albedo", "Normal", "Specular", "Depth", "ID"})
+		//.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 
 		/**
 		* @brief create renderresource's descriptorset.
 		*/
-		m_RendererResourcePool->AccessRowResource("SelectBuffer")->CreateDescriptorSet(0);
+		//m_RendererResourcePool->AccessRowResource("SelectBuffer")->CreateDescriptorSet(0);
 	}
 
 	void SceneComposeRenderer::CreatePipeline(VkRenderPass renderPass)
@@ -145,7 +165,7 @@ namespace Spiecs {
 			push.windowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
 		});
 
-		builder.BindDescriptorSet(1, m_RendererResourcePool->AccessRowResource("SelectBuffer")->GetDescriptorSet());
+		//builder.BindDescriptorSet(1, m_RendererResourcePool->AccessRowResource("SelectBuffer")->GetDescriptorSet());
 
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);

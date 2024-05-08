@@ -10,4 +10,7 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.WorldPickRenderer.vert -o Shader.WorldPickRenderer.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.WorldPickRenderer.frag -o Shader.WorldPickRenderer.frag.spv
 
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SpriteRenderer.vert -o Shader.SpriteRenderer.vert.spv
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SpriteRenderer.frag -o Shader.SpriteRenderer.frag.spv
+
 pause

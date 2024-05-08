@@ -13,20 +13,20 @@ layout(push_constant) uniform Push {
 	vec4 windowSize;
 } push;
 
-layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[4];
+layout(input_attachment_index = 0, binding = 0) uniform subpassInput GBuffer[5];
 
-layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
+//layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
 
-float SampleWithOffest(vec2 uv_offest);
-float Sobel(float MatColor[3][3]);
-float EdgeClear(float mask);
+//float SampleWithOffest(vec2 uv_offest);
+//float Sobel(float MatColor[3][3]);
+//float EdgeClear(float mask);
 
 void main()
 {
 	vec3 color = subpassLoad(GBuffer[0]).rgb;
 	outColor = vec4(color, 1.0f);
 
-	float colors[3][3];
+	/*float colors[3][3];
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
@@ -45,37 +45,37 @@ void main()
 	float outLine = Sobel(colors);
 	outLine = EdgeClear(outLine);
 
-	outColor.xyz = mix(outColor.xyz, vec3(1.0f, 1.0f, 0.0f), outLine);
+	outColor.xyz = mix(outColor.xyz, vec3(1.0f, 1.0f, 0.0f), outLine);*/
 }
 
-float SampleWithOffest(vec2 uv_offest)
-{
-	float outLineWidth = min(fwidth(fragInput.texCoord.x * push.gbufferSize.x), fwidth(fragInput.texCoord.y * push.gbufferSize.y));
-	vec2 uv = fragInput.texCoord + uv_offest * push.gbufferSize.zw * outLineWidth * 0.5f;
-	return texture(selectBuffer, uv).x;
-}
-
-float Sobel(float MatColor[3][3])
-{
-	float Gridx = -1.0f * MatColor[0][0] - 2.0f * MatColor[1][0] - 1.0f * MatColor[2][0] +
-		1.0f * MatColor[0][2] + 2.0f * MatColor[1][2] + 1.0f * MatColor[2][2];
-
-	float Gridy = -1.0f * MatColor[2][0] - 2.0f * MatColor[2][1] - 1.0f * MatColor[2][2] +
-		1.0f * MatColor[0][0] + 2.0f * MatColor[0][1] + 1.0f * MatColor[0][2];
-
-	return smoothstep(0.0f, 1.0f, sqrt(Gridx * Gridx + Gridy * Gridy));
-}
-
-float EdgeClear(float mask)
-{
-	if (fragInput.texCoord.x < 0.001f || 
-		fragInput.texCoord.x > 0.999f || 
-		fragInput.texCoord.y < 0.001f || 
-		fragInput.texCoord.y > 0.999f
-		)
-	{
-		mask = 0.0f;
-	}
-
-	return mask;
-}
+//float SampleWithOffest(vec2 uv_offest)
+//{
+//	float outLineWidth = min(fwidth(fragInput.texCoord.x * push.gbufferSize.x), fwidth(fragInput.texCoord.y * push.gbufferSize.y));
+//	vec2 uv = fragInput.texCoord + uv_offest * push.gbufferSize.zw * outLineWidth * 0.5f;
+//	return texture(selectBuffer, uv).x;
+//}
+//
+//float Sobel(float MatColor[3][3])
+//{
+//	float Gridx = -1.0f * MatColor[0][0] - 2.0f * MatColor[1][0] - 1.0f * MatColor[2][0] +
+//		1.0f * MatColor[0][2] + 2.0f * MatColor[1][2] + 1.0f * MatColor[2][2];
+//
+//	float Gridy = -1.0f * MatColor[2][0] - 2.0f * MatColor[2][1] - 1.0f * MatColor[2][2] +
+//		1.0f * MatColor[0][0] + 2.0f * MatColor[0][1] + 1.0f * MatColor[0][2];
+//
+//	return smoothstep(0.0f, 1.0f, sqrt(Gridx * Gridx + Gridy * Gridy));
+//}
+//
+//float EdgeClear(float mask)
+//{
+//	if (fragInput.texCoord.x < 0.001f || 
+//		fragInput.texCoord.x > 0.999f || 
+//		fragInput.texCoord.y < 0.001f || 
+//		fragInput.texCoord.y > 0.999f
+//		)
+//	{
+//		mask = 0.0f;
+//	}
+//
+//	return mask;
+//}

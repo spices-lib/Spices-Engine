@@ -89,15 +89,25 @@ namespace Spiecs {
 		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
 
 		/**
-		* @brief Add BaseColor Attachment.
+		* @brief Add Albedo Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("BaseColor", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("Albedo", [](VkAttachmentDescription& description) {
 		});
 
 		/**
 		* @brief Add Normal Attachment.
 		*/
 		m_RenderPass->AddColorAttachment("Normal", [](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		});
+
+		/**
+		* @brief Add Specular Attachment.
+		*/
+		m_RenderPass->AddColorAttachment("Specular", [](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
 
 		/**

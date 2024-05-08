@@ -11,7 +11,8 @@ layout(location = 0) in struct FragInput {
 // frag output
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
-layout(location = 2) out float outID;
+layout(location = 2) out vec4 outSpecular;
+layout(location = 3) out float outID;
 
 // push constant
 layout(push_constant) uniform Push{
@@ -52,21 +53,22 @@ layout(set = 2, binding = 2) uniform PointLights {
 } pointLights;
 
 // constant
-const int diffuseTexture = 0;
-const int normalTexture = 1;
-const int specularTexture = 2;
+#define ALBEDO 0
+#define NORMAL 1
+#define SPECULAR 2
 
 // main
 void main()
 {
-    if (textureParams.textureParam[diffuseTexture].isInUse == 1)
+    if (textureParams.textureParam[ALBEDO].isInUse == 1)
     {
-        outColor = texture(samplers[diffuseTexture], fragInput.texCoord) * textureParams.textureParam[diffuseTexture].intensity;
+        outColor = texture(samplers[ALBEDO], fragInput.texCoord) * textureParams.textureParam[ALBEDO].intensity;
     }
     else
     {
-        outColor = vec4(textureParams.textureParam[diffuseTexture].constant, 0.0f) * textureParams.textureParam[diffuseTexture].intensity;
+        outColor = vec4(textureParams.textureParam[ALBEDO].constant, 0.0f) * textureParams.textureParam[ALBEDO].intensity;
     }
     outNormal = vec4(fragInput.normal, 1.0f);
+    outSpecular = texture(samplers[SPECULAR], fragInput.texCoord);
     outID = push.entityID;
 }
