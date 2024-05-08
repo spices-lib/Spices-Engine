@@ -33,6 +33,10 @@ layout(set = 2, binding = 0) uniform TextureParams {
 // main
 void main()
 {
-    outSceneColor = vec4(texture(samplers, fragInput.texCoord).xyz, 0.5f);
+    vec4 texColor = texture(samplers, fragInput.texCoord);
+
+    if (texColor.w < 0.01f) discard;
+
+    outSceneColor = texColor;
     outID = push.entityID;
 }

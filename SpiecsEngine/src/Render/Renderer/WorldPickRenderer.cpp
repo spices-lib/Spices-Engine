@@ -26,6 +26,31 @@ namespace Spiecs {
 			*/
 			int entityID = -1;
 		};
+		
+		/**
+		* @brief This struct contains texture data copyed from Material.
+		*/
+		struct TextureParams
+		{
+			/**
+			* @brief MeshRenderer allows 1 texture in fragment shader.
+			*/
+			Renderer::TextureParam params[1];
+
+		public:
+
+			/**
+			* @brief Copy data from Material::TextureParam.
+			* @param[in] materialTexPars This is variable referenced From Material.
+			*/
+			void CopyFromMaterial(const std::unordered_map<std::string, Material::TextureParam>& materialTexPars)
+			{
+				for (auto& pair : materialTexPars)
+				{
+					params[pair.second.index].CopyFromMaterial(pair.second);
+				}
+			}
+		};
 
 		/**
 		* @brief VertexShader Stage uniform buffer data.
@@ -72,6 +97,8 @@ namespace Spiecs {
 			.CreateCollection<SpecificCollection>()
 			.AddPushConstant<WorldPickR::PushConstant>()
 			.AddBuffer<WorldPickR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+			.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+			.AddBuffer<WorldPickR::TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.Build();
 	}
 
@@ -96,8 +123,8 @@ namespace Spiecs {
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.UpdateBuffer<WorldPickR::View>(0, 0, [&](auto& ubo) {
-			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-			ubo.view = viewMatrix;
+			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+			ubo.view = glm::inverse(invViewMatrix);
 			ubo.projection = projectionMatrix;
 		});
 
@@ -111,6 +138,33 @@ namespace Spiecs {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
+
+				builder.UpdateBuffer<WorldPickR::TextureParams>(2, 0, [&](auto& ubo) {
+					ubo.params[0].constant = glm::vec3(1.0f);
+					ubo.params[0].isInUse = 0;
+					ubo.params[0].intensity = 1.0f;
+				});
+			});
+
+			return false;
+		});
+
+		IterWorldComp<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
+			if (frameInfo.m_PickEntityID.find(entityId) == frameInfo.m_PickEntityID.end()) return false;
+
+			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
+
+			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+				builder.UpdatePushConstant<WorldPickR::PushConstant>([&](auto& push) {
+					push.model = modelMatrix;
+					push.entityID = entityId;
+				});
+
+				builder.UpdateBuffer<WorldPickR::TextureParams>(2, 0, [&](auto& ubo) {
+					ubo.CopyFromMaterial(material->GetTextureParams());
+				});
+
+				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
 			});
 
 			return false;
@@ -122,6 +176,7 @@ namespace Spiecs {
 	std::unique_ptr<VulkanBuffer>& WorldPickRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
 		if (set == 0 && binding == 0) return m_ViewUBO;
+		if (set == 2 && binding == 0) return m_TextureParamUBO;
 
 		SPIECS_CORE_ERROR("WorldPickRenderer::Collection:: Out of Range");
 		return m_ViewUBO;

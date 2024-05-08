@@ -55,7 +55,7 @@ namespace Spiecs {
 		/**
 		* @brief Add Albedo Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("Albedo", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
@@ -115,8 +115,8 @@ namespace Spiecs {
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.UpdateBuffer<SkyBoxR::View>(0, 0, [&](auto& ubo) {
-			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-			ubo.view = viewMatrix;
+			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+			ubo.view = glm::inverse(invViewMatrix);
 			ubo.projection = projectionMatrix;
 			});
 

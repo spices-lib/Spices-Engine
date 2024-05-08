@@ -127,19 +127,32 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
+		glm::vec3 camPos;
 		builder.UpdateBuffer<SpriteR::View>(0, 0, [&](auto& ubo) {
-			auto& [viewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-			ubo.view = viewMatrix;
+			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+			camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1] , invViewMatrix[3][2] );
+			ubo.view = glm::inverse(invViewMatrix);
 			ubo.projection = projectionMatrix;
 		});
 
+		std::map<float, int> sortedEntity;
 		IterWorldComp<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
+			glm::vec3 dis = transComp.GetPosition() - camPos;
+			sortedEntity[glm::dot(dis, dis)] = entityId;
+
+			return false;
+		});
+
+		for (auto it = sortedEntity.rbegin(); it != sortedEntity.rend(); ++it)
+		{
+			auto& [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>((entt::entity)it->second);
+
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.UpdatePushConstant<SpriteR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
-					push.entityID = entityId;
+					push.entityID = it->second;
 				});
 
 				builder.UpdateBuffer<SpriteR::TextureParams>(2, 0, [&](auto& ubo) {
@@ -148,9 +161,7 @@ namespace Spiecs {
 
 				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
 			});
-
-			return false;
-		});
+		}
 
 		builder.EndRenderPass();
 	}

@@ -7,7 +7,7 @@ namespace Spiecs {
 	struct GBufferID
 	{
 		ImTextureID SceneColorID;
-		ImTextureID AlbedoID;
+		ImTextureID DiffuseID;
 		ImTextureID NormalID;
 		ImTextureID SpecularID;
 		
@@ -23,7 +23,7 @@ namespace Spiecs {
 
 		void Free() {
 			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SceneColorID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(AlbedoID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(DiffuseID));
 			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
 		};
 	};

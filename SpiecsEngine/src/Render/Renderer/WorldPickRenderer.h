@@ -82,6 +82,11 @@ namespace Spiecs {
 			*/
 			std::unique_ptr<VulkanBuffer> m_ViewUBO;
 
+			/**
+			* @brief FragmentSahder Stage Textures.
+			*/
+			std::unique_ptr<VulkanBuffer> m_TextureParamUBO;
+
 		public:
 
 			/**

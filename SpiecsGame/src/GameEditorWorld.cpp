@@ -52,16 +52,14 @@ namespace Spiecs {
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Default");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ 10.0f, 1.0f, -50.0f });
-			transformComp.SetScale({10.f, 10.f, 10.f});
+			transformComp.SetPostion({ 1.0f, 1.0f, -5.0f });
 		}
 		{
 			Entity& plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Default");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ -10.0f, -1.0f, 50.0f });
-			transformComp.SetScale({ 10.f, 10.f, 10.f });
+			transformComp.SetPostion({ -1.0f, -1.0f, 5.0f });
 		}
 	}
 

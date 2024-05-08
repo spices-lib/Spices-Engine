@@ -22,8 +22,8 @@ namespace Spiecs {
         ImGui::Image(m_GBufferID.SceneColorID, size);
         ImGui::Separator;
 
-        ImGui::Text("Albedo");
-        ImGui::Image(m_GBufferID.AlbedoID, size);
+        ImGui::Text("Diffuse");
+        ImGui::Image(m_GBufferID.DiffuseID, size);
         ImGui::Separator;
 
         ImGui::Text("Normal");
@@ -58,12 +58,12 @@ namespace Spiecs {
     void ImguiGBufferVisualizer::QueryGBufferID()
     {
         VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
-        VkDescriptorImageInfo* albedoInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Albedo" );
+        VkDescriptorImageInfo* diffuseInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Diffuse" );
         VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Normal"    );
         VkDescriptorImageInfo* specularInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Specular"    );
 
         m_GBufferID.SceneColorID = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
-        m_GBufferID.AlbedoID     = ImGui_ImplVulkan_AddTexture(albedoInfo->sampler     , albedoInfo->imageView     , albedoInfo->imageLayout      );
+        m_GBufferID.DiffuseID     = ImGui_ImplVulkan_AddTexture(diffuseInfo->sampler     , diffuseInfo->imageView     , diffuseInfo->imageLayout      );
         m_GBufferID.NormalID     = ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      );
         m_GBufferID.SpecularID   = ImGui_ImplVulkan_AddTexture(specularInfo->sampler   , specularInfo->imageView   , specularInfo->imageLayout    );
     }

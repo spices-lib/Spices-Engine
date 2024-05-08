@@ -99,7 +99,7 @@ namespace Spiecs {
 		/**
 		* @brief Init viewmatrix and projectionmatrix.
 		*/
-		glm::mat4 viewMat       = glm::mat4(1.0f);
+		glm::mat4 invViewMat       = glm::mat4(1.0f);
 		glm::mat4 projectionMat = glm::mat4(1.0f);
 
 		bool find = false;
@@ -120,7 +120,7 @@ namespace Spiecs {
 				/**
 				* @brief Viewmaterix is the inverse of camera's modelmatrix. 
 				*/
-				viewMat = glm::inverse(transComp.GetModelMatrix());
+				invViewMat = transComp.GetModelMatrix();
 				projectionMat = camComp.GetCamera()->GetPMatrix();
 
 				/**
@@ -152,7 +152,7 @@ namespace Spiecs {
 			SPIECS_CORE_WARN(ss.str());
 		}
 
-		return std::make_pair(viewMat, projectionMat);
+		return std::make_pair(invViewMat, projectionMat);
 	}
 
 	DirectionalLightComponent::DirectionalLight Renderer::GetDirectionalLight(FrameInfo& frameInfo)

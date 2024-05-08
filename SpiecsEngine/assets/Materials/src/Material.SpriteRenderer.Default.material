@@ -6,4 +6,4 @@ Shaders:
     ShaderPath: SpriteRenderer
 Textures:
   - TextureName: diffuse
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg, 1, 0, 0, [1, 1, 1], 1]
+    TextureParam: [1, component/S_LightPoint.PNG, 1, 0, 0, [1, 1, 1], 1]

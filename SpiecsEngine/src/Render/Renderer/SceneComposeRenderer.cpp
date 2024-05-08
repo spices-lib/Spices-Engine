@@ -54,7 +54,7 @@ namespace Spiecs {
 		/**
 		* @brief Add Albedo Input Attachment.
 		*/
-		m_RenderPass->AddInputAttachment("Albedo", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddInputAttachment("Diffuse", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
 
@@ -97,7 +97,7 @@ namespace Spiecs {
 	{
 		PipelineLayoutBuilder{ this }
 		.AddPushConstant<SceneComposeR::PushConstant>()
-		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Albedo", "Normal", "Specular", "Depth"})
+		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
 		//.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 
