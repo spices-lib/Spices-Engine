@@ -254,9 +254,11 @@ namespace Spiecs {
 
 		/**
 		* @brief Rewrite VkAttachmentDescription.
+		* @param[in] isEnableBlend True if this attachment enable alpha blend.
 		* @param[in] attachmentDescription VkAttachmentDescription Reference.
 		*/
-		func(attachmentDescription);
+		bool isEnableBlend = false;
+		func(isEnableBlend, attachmentDescription);
 
 		/**
 		* @brief Instanced a VkAttachmentReference with default value.
@@ -292,13 +294,27 @@ namespace Spiecs {
 		colorBlend.colorWriteMask =
 			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
 			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		colorBlend.blendEnable = VK_FALSE;
-		colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
-		colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+
+		if (!isEnableBlend)
+		{
+			colorBlend.blendEnable = VK_FALSE;
+			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+		}
+		else
+		{
+			colorBlend.blendEnable = VK_TRUE;
+			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+			colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+		}
 
 		/**
 		* @brief Add to local variable.

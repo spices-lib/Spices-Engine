@@ -67,7 +67,6 @@ namespace Spiecs {
 			*/
 			glm::mat4 view = glm::mat4(1.0f);
 		};
-
 	}
 
 	void SpriteRenderer::CreateRenderPass()
@@ -81,14 +80,15 @@ namespace Spiecs {
 		* @brief Add SceneColor Attachment.
 		* Though we want use SelectBuffer with a sampler, we need transfrom shaderread layout here.
 		*/
-		m_RenderPass->AddColorAttachment("SceneColor", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			isEnableBlend = true;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
 
 		/**
 		* @brief Add ID Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});

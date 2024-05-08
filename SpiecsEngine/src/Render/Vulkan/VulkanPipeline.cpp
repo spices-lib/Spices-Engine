@@ -87,21 +87,6 @@ namespace Spiecs {
 		configInfo.attributeDescriptions = Vertex::GetAttributeDescriptions();
 	}
 
-	void VulkanPipeline::EnableAlphaBlending(PipelineConfigInfo& configInfo)
-	{
-		/*configInfo.colorBlendAttachment = VkPipelineColorBlendAttachmentState{};
-		configInfo.colorBlendAttachment.colorWriteMask =
-			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		configInfo.colorBlendAttachment.blendEnable = VK_TRUE;
-		configInfo.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		configInfo.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		configInfo.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		configInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;*/
-	}
-
 	void VulkanPipeline::Bind(uint32_t frameIndex)
 	{
 		vkCmdBindPipeline(m_VulkanState.m_CommandBuffer[frameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);

@@ -56,7 +56,7 @@ namespace Spiecs {
 		* @brief Add SelectBuffer Attachment.
 		* Though we want use SelectBuffer with a sampler, we need transfrom shaderread layout here.
 		*/
-		m_RenderPass->AddColorAttachment("SelectBuffer", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("SelectBuffer", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;

@@ -55,7 +55,7 @@ namespace Spiecs {
 		/**
 		* @brief Add Albedo Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("Albedo", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("Albedo", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
@@ -63,7 +63,7 @@ namespace Spiecs {
 		/**
 		* @brief Add ID Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("ID", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			description.format = VK_FORMAT_R32_SFLOAT;

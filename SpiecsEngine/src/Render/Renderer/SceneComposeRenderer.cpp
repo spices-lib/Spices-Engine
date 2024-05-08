@@ -42,7 +42,7 @@ namespace Spiecs {
 		/**
 		* @brief Add FinalColor Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("SceneColor", [](VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		});

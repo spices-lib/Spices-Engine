@@ -18,17 +18,22 @@ layout(push_constant) uniform Push {
 } push;
 
 // uniform buffer
-layout(set = 0, binding = 0) uniform UniformBuffer {
+layout(set = 0, binding = 0) uniform View {
     mat4 projection;
     mat4 view;
 } view;
 
 // constant
 
-
 // main
 void main()
 {
+    vec3 cameraR = vec3(view.view[0][0], view.view[1][0], view.view[2][0]);
+    vec3 cameraU = vec3(view.view[0][1], view.view[1][1], view.view[2][1]);
+    vec3 cameraF = vec3(view.view[0][2], view.view[1][2], view.view[2][2]);
+
+    vec3 pos = position.x * cameraR + position.y * cameraU + position.z * cameraF;
+
     vertOut.texCoord = texCoord;
-    gl_Position = view.projection * view.view * push.model * vec4(position, 1.0);
+    gl_Position = view.projection * view.view  * push.model * vec4(pos, 1.0);
 }

@@ -175,7 +175,7 @@ namespace Spiecs {
 		* Source 1 : user Setting.
 		* @todo Configurable
 		*/
-		void GetFeatureRequirements();
+		bool GetFeatureRequirements(VkPhysicalDeviceFeatures& physicalDeviceFeature);
 
 		/**
 		* @brief Check all  Feature we need meet.

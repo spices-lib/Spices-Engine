@@ -227,17 +227,26 @@ namespace Spiecs {
 		return true;
 	}
 
-	void VulkanDevice::GetFeatureRequirements()
+	bool VulkanDevice::GetFeatureRequirements(VkPhysicalDeviceFeatures& physicalDeviceFeature)
 	{
 		/**
 		* @brief 启用纹理采样的各项异性
 		*/
-		m_DeviceFeatures.samplerAnisotropy = VK_TRUE;
-
+		if (physicalDeviceFeature.samplerAnisotropy) m_DeviceFeatures.samplerAnisotropy = VK_TRUE;
+		else return false;
 		/**
 		* @brief 启用实例着色（应对MSAA的缺点）
 		*/
-		m_DeviceFeatures.sampleRateShading = VK_TRUE;
+		if (physicalDeviceFeature.sampleRateShading) m_DeviceFeatures.sampleRateShading = VK_TRUE;
+		else return false;
+
+		/**
+		* @breif Enable Independent Attachment AlphaBlend State.
+		*/
+		if (physicalDeviceFeature.independentBlend) m_DeviceFeatures.independentBlend = VK_TRUE;
+		else return false;
+
+		return true;
 	}
 
 	bool VulkanDevice::IsFeatureMeetDemand(const VkPhysicalDevice& device)
@@ -252,9 +261,7 @@ namespace Spiecs {
 		* @brief Just return true for we do not need a specific feature supported now.
 		* @todo Configurable.
 		*/
-		GetFeatureRequirements();
-
-		return true;
+		return GetFeatureRequirements(deviceFeatures);
 	}
 
 	void VulkanDevice::GetExtensionRequirements()

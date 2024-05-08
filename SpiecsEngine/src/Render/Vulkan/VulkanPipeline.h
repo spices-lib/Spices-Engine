@@ -32,7 +32,6 @@ namespace Spiecs {
 		virtual ~VulkanPipeline();
 
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
-		static void EnableAlphaBlending(PipelineConfigInfo& configInfo);
 
 		void Bind(uint32_t frameIndex);
 
