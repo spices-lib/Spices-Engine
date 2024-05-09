@@ -1,20 +1,20 @@
 /**
-* @file MeshRenderer.h.
-* @brief The MeshRenderer Class Definitions.
+* @file SkyBoxRenderer.h.
+* @brief The SkyBoxRenderer Class Definitions.
 * @author Spiecs.
 */
 
 #pragma once
-#include "Renderer.h"
-#include <glm/glm.hpp>
+#include "Core/Core.h"
+#include "Render/Renderer/Renderer.h"
 
 namespace Spiecs {
 
 	/**
-	* @brief MeshRenderer Class.
-	* This class defines the mesh component render behaver.
+	* @brief SkyBoxRenderer Class.
+	* This class defines the skybox component render behaver.
 	*/
-	class MeshRenderer : public Renderer
+	class SkyBoxRenderer : public Renderer
 	{
 	public:
 
@@ -25,13 +25,13 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		MeshRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
-			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool){};
+		SkyBoxRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
+			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) {};
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~MeshRenderer() {};
+		virtual ~SkyBoxRenderer() {};
 
 		/**
 		* @brief The interface is inherited from Renderer.
@@ -65,33 +65,16 @@ namespace Spiecs {
 	private:
 
 		/**
-		* @brief This struct placed the local buffer data.Specific for Meshrenderer.
+		* @brief This struct placed the local buffer data.Specific for SkyBoxRenderer.
 		*/
 		struct SpecificCollection : public Collection
 		{
 		private:
 
 			/**
-			* @brief VertexSahder Stage uniform buffer. 
+			* @brief VertexSahder Stage uniform buffer.
 			*/
 			std::unique_ptr<VulkanBuffer> m_ViewUBO;
-			
-			/**
-			* @brief FragmentSahder Stage Textures.
-			*/
-			std::unique_ptr<VulkanBuffer> m_TextureParamUBO;
-
-			std::unique_ptr<VulkanBuffer> m_FragSelectUBO;
-
-			/**
-			* @brief FragmentSahder Stage uniform buffer.
-			*/
-			std::unique_ptr<VulkanBuffer> m_DirectionalLightUBO;
-
-			/**
-			* @brief FragmentSahder Stage uniform buffer.
-			*/
-			std::unique_ptr<VulkanBuffer> m_PointLightUBO;
 
 		public:
 
@@ -104,4 +87,5 @@ namespace Spiecs {
 			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) override;
 		};
 	};
+
 }

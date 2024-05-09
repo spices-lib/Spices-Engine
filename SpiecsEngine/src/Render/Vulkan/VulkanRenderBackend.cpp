@@ -3,12 +3,12 @@
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Core/Event/WindowEvent.h"
 
-#include "Render/Renderer/MeshRenderer.h"
-#include "Render/Renderer/SkyBoxRenderer.h"
-#include "Render/Renderer/SlateRenderer.h"
-#include "Render/Renderer/SceneComposeRenderer.h"
-#include "Render/Renderer/WorldPickRenderer.h"
-#include "Render/Renderer/SpriteRenderer.h"
+#include "Render/Renderer/SpecificRenderer/MeshRenderer.h"
+#include "Render/Renderer/SpecificRenderer/SkyBoxRenderer.h"
+#include "Render/Renderer/SpecificRenderer/SlateRenderer.h"
+#include "Render/Renderer/SpecificRenderer/SceneComposeRenderer.h"
+#include "Render/Renderer/SpecificRenderer/WorldPickRenderer.h"
+#include "Render/Renderer/SpecificRenderer/SpriteRenderer.h"
 
 namespace Spiecs {
 

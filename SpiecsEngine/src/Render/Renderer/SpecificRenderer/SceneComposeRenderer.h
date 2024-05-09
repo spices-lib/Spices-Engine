@@ -1,20 +1,20 @@
 /**
-* @file SlateRenderer.h.
-* @brief The SlateRenderer Class Definitions.
+* @file SceneComposeRenderer.h.
+* @brief The SceneComposeRenderer Class Definitions.
 * @author Spiecs.
 */
 
 #pragma once
-#include "Core/Core.h"
-#include "Renderer.h"
+#include "Render/Renderer/Renderer.h"
+
 
 namespace Spiecs {
 
 	/**
-	* @brief SlateRenderer Class.
-	* This class defines the imgui render behaver.
+	* @brief SceneComposeRenderer Class.
+	* This class defines how we compose the scene.
 	*/
-	class SlateRenderer : public Renderer
+	class SceneComposeRenderer : public Renderer
 	{
 	public:
 
@@ -25,13 +25,18 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		SlateRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
-			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) {};
+		SceneComposeRenderer(
+			const std::string& rendererName, 
+			VulkanState& vulkanState, 
+			std::shared_ptr<VulkanDescriptorPool> desctiptorPool, 
+			std::shared_ptr<VulkanDevice> device, 
+			std::shared_ptr<RendererResourcePool> rendererResourcePool
+		);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SlateRenderer() { ShutdownImgui(); };
+		virtual ~SceneComposeRenderer() {};
 
 		/**
 		* @brief The interface is inherited from Renderer.
@@ -58,19 +63,11 @@ namespace Spiecs {
 		* Create specific pipeline.
 		* @param[in] renderPass Renderer specific renderpass.
 		*/
-		virtual void CreatePipeline(VkRenderPass renderPass) override {};
+		virtual void CreatePipeline(VkRenderPass renderPass) override;
 
-		virtual void OnWindowResizeOver() override { CreateRenderPass(); };
-		virtual void OnSlateResize() override { CreateRenderPass(); };
-
-		virtual void OnSystemInitialize() override;
-
-		void InitImgui();
-		void ShutdownImgui();
-		void BeginImguiFrame();
-		void EndImguiFrame(uint32_t index);
+		virtual void OnSlateResize() override;
 
 	private:
+		std::unique_ptr<SquarePack> m_Square;
 	};
-
 }

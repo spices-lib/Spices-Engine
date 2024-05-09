@@ -1,20 +1,20 @@
 /**
-* @file SkyBoxRenderer.h.
-* @brief The SkyBoxRenderer Class Definitions.
+* @file SlateRenderer.h.
+* @brief The SlateRenderer Class Definitions.
 * @author Spiecs.
 */
 
 #pragma once
 #include "Core/Core.h"
-#include "Renderer.h"
+#include "Render/Renderer/Renderer.h"
 
 namespace Spiecs {
 
 	/**
-	* @brief SkyBoxRenderer Class.
-	* This class defines the skybox component render behaver.
+	* @brief SlateRenderer Class.
+	* This class defines the imgui render behaver.
 	*/
-	class SkyBoxRenderer : public Renderer
+	class SlateRenderer : public Renderer
 	{
 	public:
 
@@ -25,13 +25,13 @@ namespace Spiecs {
 		* @param[in] vulkanState The core vulkan objects that in use.
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
-		SkyBoxRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
+		SlateRenderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
 			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) {};
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SkyBoxRenderer() {};
+		virtual ~SlateRenderer() { ShutdownImgui(); };
 
 		/**
 		* @brief The interface is inherited from Renderer.
@@ -58,34 +58,19 @@ namespace Spiecs {
 		* Create specific pipeline.
 		* @param[in] renderPass Renderer specific renderpass.
 		*/
-		virtual void CreatePipeline(VkRenderPass renderPass) override;
+		virtual void CreatePipeline(VkRenderPass renderPass) override {};
 
+		virtual void OnWindowResizeOver() override { CreateRenderPass(); };
 		virtual void OnSlateResize() override { CreateRenderPass(); };
 
+		virtual void OnSystemInitialize() override;
+
+		void InitImgui();
+		void ShutdownImgui();
+		void BeginImguiFrame();
+		void EndImguiFrame(uint32_t index);
+
 	private:
-
-		/**
-		* @brief This struct placed the local buffer data.Specific for SkyBoxRenderer.
-		*/
-		struct SpecificCollection : public Collection
-		{
-		private:
-
-			/**
-			* @brief VertexSahder Stage uniform buffer.
-			*/
-			std::unique_ptr<VulkanBuffer> m_ViewUBO;
-
-		public:
-
-			/**
-			* @brief The interface of how to map the local buffer with specific set and binding.
-			* @param[in] set Specific set.
-			* @param[in] binding Specific binding.
-			* @return Returns the local buffer smart pointor.
-			*/
-			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) override;
-		};
 	};
 
 }
