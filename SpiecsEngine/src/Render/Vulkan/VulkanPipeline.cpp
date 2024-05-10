@@ -113,7 +113,7 @@ namespace Spiecs {
 		shaderStages[1].flags = 0;
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
-
+		
 		auto& bindingDescriptions = config.bindingDescriptions;
 		auto& attributeDescriptions = config.attributeDescriptions;
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};

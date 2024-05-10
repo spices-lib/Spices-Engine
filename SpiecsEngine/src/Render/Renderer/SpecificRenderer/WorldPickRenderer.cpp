@@ -94,12 +94,12 @@ namespace Spiecs {
 	void WorldPickRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
-			.CreateCollection<SpecificCollection>()
-			.AddPushConstant<WorldPickR::PushConstant>()
-			.AddBuffer<WorldPickR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
-			.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
-			.AddBuffer<WorldPickR::TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
-			.Build();
+		.CreateCollection<SpecificCollection>()
+		.AddPushConstant<WorldPickR::PushConstant>()
+		.AddBuffer<WorldPickR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<WorldPickR::TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.Build();
 	}
 
 	void WorldPickRenderer::CreatePipeline(VkRenderPass renderPass)

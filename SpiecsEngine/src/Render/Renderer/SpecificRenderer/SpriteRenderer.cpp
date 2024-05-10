@@ -82,7 +82,6 @@ namespace Spiecs {
 		*/
 		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			isEnableBlend = true;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		});
 
 		/**
