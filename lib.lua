@@ -12,6 +12,8 @@ IncludeDir["ImPlot"] = "%{wks.location}/SpiecsEngine/vendor/implot"
 IncludeDir["NvPerf"] = "%{wks.location}/SpiecsEngine/vendor/NvPerf/include"
 IncludeDir["NvPerfUtility"] = "%{wks.location}/SpiecsEngine/vendor/NvPerfUtility/include"
 IncludeDir["spdlog"] = "%{wks.location}/SpiecsEngine/vendor/spdlog/include"
+IncludeDir["googletest"] = "%{wks.location}/SpiecsTest/vendor/googletest/googletest/include"
+IncludeDir["googlemock"] = "%{wks.location}/SpiecsTest/vendor/googletest/googlemock/include"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "C:/VulkanSDK/1.3.275.0/Lib"

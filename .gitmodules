@@ -13,3 +13,6 @@
 [submodule "SpiecsEngine/vendor/spdlog"]
 	path = SpiecsEngine/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "SpiecsTest/vendor/googletest"]
+	path = SpiecsTest/vendor/googletest
+	url = https://github.com/spiecs/googletest
