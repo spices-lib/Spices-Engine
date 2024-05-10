@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "Render/FrameInfo.h"
 #include "Core/Library/ClassLibrary.h"
+#include "Core/Container/linked_unordered_map.h"
 
 namespace Spiecs {
 
@@ -131,13 +132,7 @@ namespace Spiecs {
 		/**
 		* @brief A container contains all renderer.
 		*/
-		static std::unordered_map<std::string, std::unique_ptr<Renderer>> m_Identities;
-
-		/**
-		* @brief Used for iter m_Identities in correct order.
-		* @todo linkedhashmap.
-		*/
-		static std::vector<std::string> m_IterList;
+		static scl::linked_unordered_map<std::string, std::unique_ptr<Renderer>> m_Identities;
 	};
 
 }

@@ -11,8 +11,7 @@
 namespace Spiecs {
 
 	std::unique_ptr<RendererManager> RendererManager::m_RendererManager;
-	std::unordered_map<std::string, std::unique_ptr<Renderer>> RendererManager::m_Identities;
-	std::vector<std::string> RendererManager::m_IterList;
+	scl::linked_unordered_map<std::string, std::unique_ptr<Renderer>> RendererManager::m_Identities;
 
 	RendererManager& RendererManager::Get()
 	{

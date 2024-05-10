@@ -76,7 +76,7 @@ namespace SpiecsTest {
 	/**
 	* @brief Testing if Find element successfully.
 	*/
-	TEST_F(linked_unordered_map_test, AddElement) {
+	TEST_F(linked_unordered_map_test, FindElement) {
 
 		/**
 		* @brief Testing if find a exist element successfully.
@@ -87,8 +87,8 @@ namespace SpiecsTest {
 		/**
 		* @brief Testing if find a not exist element successfully.
 		*/
-		auto v = c1.find(10);
-		EXPECT_EQ(v, nullptr);
+		v = c1.find(10);
+		EXPECT_EQ(&v, nullptr);
 	}
 
 	/**
@@ -108,10 +108,54 @@ namespace SpiecsTest {
 		c1.insert(1, "1");
 		EXPECT_EQ(c1.size(), 3);
 
+		/**
+		* @brief Testing if the insert element written successfully.
+		*/
 		auto v = c2.find(1.0f);
 		EXPECT_EQ(v, "1.0");
 		c2.insert(1.0f, "10.0");
 		v = c2.find(1.0f);
 		EXPECT_EQ(v, "10.0");
+	}
+
+	/**
+	* @brief Testing if Iter in correct order successfully.
+	*/
+	TEST_F(linked_unordered_map_test, IteratorOrder) {
+
+		/**
+		* @brief Testing the initialized container's order.
+		*/
+		std::vector<std::string> iterOrder0;
+		c0.for_each([&](const std::string& k, const std::string& v) {
+			iterOrder0.push_back(k);
+		});
+		EXPECT_EQ(iterOrder0[0], "aaa");
+		EXPECT_EQ(iterOrder0[1], "bbb");
+		EXPECT_EQ(iterOrder0[2], "ccc");
+
+		/**
+		* @brief Testing erase's influence in for_each order.
+		*/
+		std::vector<int> iterOrder1;
+		c1.erase(2);
+		c1.for_each([&](const int& k, const std::string& v) {
+			iterOrder1.push_back(k);
+		});
+		EXPECT_EQ(iterOrder1[0], 1);
+		EXPECT_EQ(iterOrder1[1], 3);
+
+		/**
+		* @brief Testing insert's influence in for_each order.
+		*/
+		std::vector<float> iterOrder2;
+		c2.insert(0.5f, "0.5");
+		c2.for_each([&](const float& k, const std::string& v) {
+			iterOrder2.push_back(k);
+		});
+		EXPECT_EQ(iterOrder2[0], 1.0f);
+		EXPECT_EQ(iterOrder2[1], 2.0f);
+		EXPECT_EQ(iterOrder2[2], 3.0f);
+		EXPECT_EQ(iterOrder2[3], 0.5f);
 	}
 }
