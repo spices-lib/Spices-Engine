@@ -40,9 +40,20 @@ namespace SpiecsTest {
 	* @brief Testing if initialize successfully.
 	*/
 	TEST_F(linked_unordered_map_test, Initialize) {
+
+		/**
+		* @brief Testing initialized container's size.
+		*/
 		EXPECT_EQ(c0.size(), 3);
 		EXPECT_EQ(c1.size(), 3);
 		EXPECT_EQ(c2.size(), 3);
+
+		/**
+		* @brief Testing initialized container's euqlity.
+		*/
+		EXPECT_EQ(c0.has_equalsize(), true);
+		EXPECT_EQ(c1.has_equalsize(), true);
+		EXPECT_EQ(c2.has_equalsize(), true);
 	}
 
 	/**
@@ -71,6 +82,13 @@ namespace SpiecsTest {
 		*/
 		c1.erase(10);
 		EXPECT_EQ(c1.size(), 2);
+
+		/**
+		* @brief Testing container's euqlity after remove element.
+		*/
+		EXPECT_EQ(c0.has_equalsize(), true);
+		EXPECT_EQ(c1.has_equalsize(), true);
+		EXPECT_EQ(c2.has_equalsize(), true);
 	}
 
 	/**
@@ -94,7 +112,14 @@ namespace SpiecsTest {
 		* @brief Testing if find a not exist element successfully.
 		*/
 		v = c2.find_value(10.0);
-		EXPECT_EQ(&v, nullptr);
+		EXPECT_EQ(v, "");
+
+		/**
+		* @brief Testing container's euqlity after find element.
+		*/
+		EXPECT_EQ(c0.has_equalsize(), true);
+		EXPECT_EQ(c1.has_equalsize(), true);
+		EXPECT_EQ(c2.has_equalsize(), true);
 	}
 
 	/**
@@ -122,6 +147,13 @@ namespace SpiecsTest {
 		c2.push_back(1.0f, "10.0");
 		v = c2.find_value(1.0f);
 		EXPECT_EQ(v, "10.0");
+
+		/**
+		* @brief Testing container's euqlity after add element.
+		*/
+		EXPECT_EQ(c0.has_equalsize(), true);
+		EXPECT_EQ(c1.has_equalsize(), true);
+		EXPECT_EQ(c2.has_equalsize(), true);
 	}
 
 	/**
@@ -163,5 +195,12 @@ namespace SpiecsTest {
 		EXPECT_EQ(iterOrder2[1], 2.0f);
 		EXPECT_EQ(iterOrder2[2], 3.0f);
 		EXPECT_EQ(iterOrder2[3], 0.5f);
+
+		/**
+		* @brief Testing container's euqlity after iter.
+		*/
+		EXPECT_EQ(c0.has_equalsize(), true);
+		EXPECT_EQ(c1.has_equalsize(), true);
+		EXPECT_EQ(c2.has_equalsize(), true);
 	}
 }

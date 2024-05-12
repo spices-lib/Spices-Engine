@@ -55,6 +55,13 @@ namespace scl
 		int size();
 
 		/**
+		* @brief Determain whether the container's element size is same.
+		* @return Returns true if the size of the keys_ and map_.
+		* @note Used for unit test, shou not be called during game.
+		*/
+		bool has_equalsize();
+
+		/**
 		* @brief Add a element to this container.
 		* @param[in] key K the key.
 		* @param[in] value V the value.
@@ -113,6 +120,12 @@ namespace scl
 	}
 
 	template<typename K, typename V>
+	inline bool linked_unordered_map<K, V>::has_equalsize()
+	{
+		return keys_.size() == map_.size();
+	}
+
+	template<typename K, typename V>
 	inline void linked_unordered_map<K, V>::push_back(const K& key, const V& value)
 	{
 		if (!has_key(key))
@@ -133,9 +146,11 @@ namespace scl
 	inline V& linked_unordered_map<K, V>::find_value(const K& key)
 	{
 		/**
-		* @attention Need call has_key() first, it does not call that dafault.
+		* @brief Get V from map_ only while it does has the key.
+		* Otherwise return a new V.
 		*/
-		return map_[key];
+		if(has_key(key)) return map_[key];
+		return V();
 	}
 
 	template<typename K, typename V>

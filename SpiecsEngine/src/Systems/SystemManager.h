@@ -142,7 +142,7 @@ namespace Spiecs {
 			std::string systemName = ClassLibrary::GetClassString(typeid(T));
 
 			// push system to map
-			if (m_Identities.find_value(systemName))
+			if (m_Identities.has_key(systemName))
 			{
 				std::stringstream ss;
 				ss << systemName << " has been pushed ";
