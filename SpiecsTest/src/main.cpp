@@ -1,6 +1,8 @@
 #include <iostream>
 #include <gmock/gmock.h>
-#include "linked_unordered_map_test.h"
+
+#include "Container/linked_unordered_map_test.h"
+#include "Library/ClassLibrary_test.h"
 
 int main(int argc, char** argv)
 {

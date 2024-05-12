@@ -1,4 +1,4 @@
-#include "EntryPoint.h"
+#include <EntryPoint.h>
 #include "GameEditorWorld.h"
 
 namespace Spiecs {

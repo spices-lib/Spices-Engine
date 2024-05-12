@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/Core.h"
-#include "World/World/EditorWorld.h"
+#include <Core/Core.h>
+#include <World/World/EditorWorld.h>
 
 namespace Spiecs {
 

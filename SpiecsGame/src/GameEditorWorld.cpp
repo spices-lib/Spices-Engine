@@ -1,9 +1,9 @@
 #include "GameEditorWorld.h"
-#include "World/Entity.h"
-#include "Resources/Loader/MaterialLoader.h"
-#include "Resources/Material/MeshMaterial.h"
-#include "GamePlay/MeshController.h"
-#include "Resources/ResourcePool/ResourcePool.h"
+#include <World/Entity.h>
+#include <Resources/Loader/MaterialLoader.h>
+#include <Resources/Material/MeshMaterial.h>
+#include <GamePlay/MeshController.h>
+#include <Resources/ResourcePool/ResourcePool.h>
 
 namespace Spiecs {
 
