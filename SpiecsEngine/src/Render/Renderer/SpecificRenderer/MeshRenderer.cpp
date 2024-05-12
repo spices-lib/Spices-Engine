@@ -29,31 +29,6 @@ namespace Spiecs {
 		};
 
 		/**
-		* @brief This struct contains texture data copyed from Material.
-		*/
-		struct TextureParams
-		{
-			/**
-			* @brief MeshRenderer allows 3 texture in fragment shader.
-			*/
-			Renderer::TextureParam params[3];
-
-		public:
-
-			/**
-			* @brief Copy data from Material::TextureParam.
-			* @param[in] materialTexPars This is variable referenced From Material.
-			*/
-			void CopyFromMaterial(const std::unordered_map<std::string, Material::TextureParam>& materialTexPars)
-			{
-				for (auto& pair : materialTexPars)
-				{
-					params[pair.second.index].CopyFromMaterial(pair.second);
-				}
-			}
-		};
-
-		/**
 		* @brief VertexShader Stage uniform buffer data.
 		*/
 		struct View
@@ -136,9 +111,8 @@ namespace Spiecs {
 		.AddPushConstant<MeshR::PushConstant>()
 		.AddBuffer<MeshR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddBuffer<MeshR::TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddBuffer<DirectionalLightComponent::DirectionalLight>(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddBuffer<MeshR::PointLightUBO>(2, 2, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<DirectionalLightComponent::DirectionalLight>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<MeshR::PointLightUBO>(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -185,11 +159,7 @@ namespace Spiecs {
 					push.entityID = entityId;
 				});
 
-				builder.UpdateBuffer<MeshR::TextureParams>(2, 0, [&](auto& ubo) {
-					ubo.CopyFromMaterial(material->GetTextureParams());
-				});
-
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
+				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet()[0]);
 			});
 
 			return false;
@@ -201,9 +171,8 @@ namespace Spiecs {
 	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
 		if (set == 0 && binding == 0) return m_ViewUBO;
-		if (set == 2 && binding == 0) return m_TextureParamUBO;
-		if (set == 2 && binding == 1) return m_DirectionalLightUBO;
-		if (set == 2 && binding == 2) return m_PointLightUBO;
+		if (set == 2 && binding == 0) return m_DirectionalLightUBO;
+		if (set == 2 && binding == 1) return m_PointLightUBO;
 
 		SPIECS_CORE_ERROR("MeshRenderer::Collection:: Out of Range");
 		return m_ViewUBO;

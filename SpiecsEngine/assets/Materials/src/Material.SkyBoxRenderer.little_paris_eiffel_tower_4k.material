@@ -1,0 +1,9 @@
+Material: SkyBoxRenderer.little_paris_eiffel_tower_4k
+Shaders:
+  - Stage: vertShader
+    Path: SkyBoxRenderer.Default
+  - Stage: fragShader
+    Path: SkyBoxRenderer.Default
+Textures:
+  - Name: diffuse
+    Value: [5, 0, 0, Texture2D, skybox/little_paris_eiffel_tower_4k.hdr]

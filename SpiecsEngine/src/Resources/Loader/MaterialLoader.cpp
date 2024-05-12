@@ -56,43 +56,98 @@ namespace Spiecs {
 
 	bool MaterialLoader::Load(const std::string& fileName, Material* outMaterial)
 	{
-		if (LoadFromSASSET(defaultBinMaterialPath + "Material." + fileName + ".sasset", outMaterial)) return true;
+		/**
+		* @brief Load from .sasset file first.
+		*/
+		if      (LoadFromSASSET(defaultBinMaterialPath + "Material." + fileName + ".sasset", outMaterial))  return true;
+
+		/**
+		* @brief Load from .material file second.
+		*/
 		else if (LoadFromMaterial(defaultMaterialPath + "Material." + fileName + ".material", outMaterial)) return true;
-		else return false;
+		
+		else
+		{
+			std::stringstream ss;
+			ss << "MaterialLoader: Could not find a valid file from the give filename: [" << fileName << "]";
+			
+			SPIECS_CORE_WARN(ss.str());
+			return false;
+		}
 	}
 
 	bool MaterialLoader::LoadFromMaterial(const std::string& filepath, Material* outMaterial)
 	{
+		/**
+		* @brief Read .material file as bytes.
+		*/
 		std::ifstream stream(filepath);
 		std::stringstream strStream;
 		strStream << stream.rdbuf();
 
+		/**
+		* @brief Explain bytes as a YAML::Node.
+		*/
 		YAML::Node data = YAML::Load(strStream.str());
+
+		/**
+		 * @brief Try get material name.
+		 */
 		if (!data["Material"])
 		{
+			std::stringstream ss;
+			ss << filepath << ":  Not find a Material Node.";
+			
+			SPIECS_CORE_ERROR(ss.str());
 			return false;
 		}
 
 		std::string materialName = data["Material"].as<std::string>();
 
-		auto shaders = data["Shaders"];
+		/**
+		 * @breif Try get shaders this material used.
+		 */
+		auto& shaders = data["Shaders"];
 		if (shaders)
 		{
-			for (auto shader : shaders)
+			for (auto& shader : shaders)
 			{
-				outMaterial->m_Shaders[shader["ShaderStage"].as<std::string>()] = shader["ShaderPath"].as<std::string>();
+				outMaterial->m_Shaders[shader["Stage"].as<std::string>()] = shader["Path"].as<std::string>();
 			}
 		}
+		else
+		{
+			std::stringstream ss;
+			ss << filepath << ":  Not find a Shaders Node.";
+			
+			SPIECS_CORE_ERROR(ss.str());
+			return false;
+		}
 
-		auto textures = data["Textures"];
+		/**
+		 * @breif Try get textures this material used.
+		 */
+		auto& textures = data["Textures"];
 		if (textures)
 		{
-			for (auto texture : textures)
+			for (auto& texture : textures)
 			{
-				outMaterial->m_TextureParams[texture["TextureName"].as<std::string>()] = texture["TextureParam"].as<Material::TextureParam>();
+				outMaterial->m_TextureParams[texture["Name"].as<std::string>()] = texture["Value"].as<Material::TextureParam>();
 			}
 		}
 
+		/**
+		 * @brief Try get parameters this material used.
+		 */
+		auto& parameters = data["Parameters"];
+		if(parameters)
+		{
+			for (auto& parameter : parameters)
+			{
+				outMaterial->m_ConstantParams[parameter["Name"].as<std::string>()] = parameter["Value"].as<Material::ConstantParam>();
+			}
+		}
+		
 		return true;
 	}
 
@@ -134,7 +189,7 @@ namespace Spiecs {
 
 	bool MaterialLoader::SaveDefaultMaterial()
 	{
-		const std::string outFilePath = SPIECS_ENGINE_ASSETS_PATH + "Materials/src/Material.Default.material";
+		/*const std::string outFilePath = SPIECS_ENGINE_ASSETS_PATH + "Materials/src/Material.Default.material";
 
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -154,7 +209,7 @@ namespace Spiecs {
 		YAML::EndMap;
 
 		std::ofstream fout(outFilePath);
-		fout << out.c_str();
+		fout << out.c_str();*/
 
 		return true;
 	}

@@ -26,31 +26,6 @@ namespace Spiecs {
 			*/
 			int entityID = -1;
 		};
-
-		/**
-		* @brief This struct contains texture data copyed from Material.
-		*/
-		struct TextureParams
-		{
-			/**
-			* @brief MeshRenderer allows 1 texture in fragment shader.
-			*/
-			Renderer::TextureParam params[1];
-
-		public:
-
-			/**
-			* @brief Copy data from Material::TextureParam.
-			* @param[in] materialTexPars This is variable referenced From Material.
-			*/
-			void CopyFromMaterial(const std::unordered_map<std::string, Material::TextureParam>& materialTexPars)
-			{
-				for (auto& pair : materialTexPars)
-				{
-					params[pair.second.index].CopyFromMaterial(pair.second);
-				}
-			}
-		};
 		
 		/**
 		* @brief VertexShader Stage uniform buffer data.
@@ -102,7 +77,6 @@ namespace Spiecs {
 			.AddPushConstant<SpriteR::PushConstant>()
 			.AddBuffer<SpriteR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 			.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
-			.AddBuffer<SpriteR::TextureParams>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.Build();
 	}
 
@@ -154,11 +128,7 @@ namespace Spiecs {
 					push.entityID = it->second;
 				});
 
-				builder.UpdateBuffer<SpriteR::TextureParams>(2, 0, [&](auto& ubo) {
-					ubo.CopyFromMaterial(material->GetTextureParams());
-				});
-
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
+				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet()[0]);
 			});
 		}
 
@@ -168,7 +138,6 @@ namespace Spiecs {
 	std::unique_ptr<VulkanBuffer>& SpriteRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
 	{
 		if (set == 0 && binding == 0) return m_ViewUBO;
-		if (set == 2 && binding == 0) return m_TextureParamUBO;
 
 		SPIECS_CORE_ERROR("SpriteRenderer::Collection:: Out of Range");
 		return m_ViewUBO;

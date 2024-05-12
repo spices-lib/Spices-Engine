@@ -1,13 +1,13 @@
 Material: Default
 Shaders:
-  - ShaderStage: vertShader
-    ShaderPath: MeshRenderer
-  - ShaderStage: fragShader
-    ShaderPath: MeshRenderer
+  - Stage: vertShader
+    Path: MeshRenderer.Default
+  - Stage: fragShader
+    Path: MeshRenderer.Default
 Textures:
-  - TextureName: diffuse
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg, 1, 0, 0, [1, 1, 1], 1]
-  - TextureName: normal
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg, 1, 0, 1, [1, 1, 1], 1]
-  - TextureName: specular
-    TextureParam: [1, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg, 1, 0, 2, [1, 1, 1], 1]
+  - Name: diffuse
+    Value: [1, 0, 0, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Albedo.jpg]
+  - Name: normal
+    Value: [1, 0, 1, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg]
+  - Name: specular
+    Value: [1, 0, 2, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg]

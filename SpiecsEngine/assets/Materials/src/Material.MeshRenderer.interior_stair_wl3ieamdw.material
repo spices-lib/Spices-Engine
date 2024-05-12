@@ -1,13 +1,22 @@
-Material: MeshRenderer.0
+Material: MeshRenderer.interior_stair_wl3ieamdw
 Shaders:
-  - ShaderStage: vertShader
-    ShaderPath: MeshRenderer
-  - ShaderStage: fragShader
-    ShaderPath: MeshRenderer
+  - Stage: vertShader
+    Path: MeshRenderer.Default
+  - Stage: fragShader
+    Path: MeshRenderer.Default
 Textures:
-  - TextureName: diffuse
-    TextureParam: [1, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg, 1, 0, 0, [1, 0, 0], 1]
-  - TextureName: normal
-    TextureParam: [1, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg, 1, 0, 1, [4, 5, 6], 1]
-  - TextureName: specular
-    TextureParam: [1, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg, 1, 0, 2, [7, 8, 9], 1]
+  - Name: diffuse
+    Value: [5, 0, 0, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]
+  - Name: normal
+    Value: [5, 0, 1, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg]
+  - Name: specular
+    Value: [5, 0, 2, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
+Parameters:
+  - Name: diffuseIntensity
+    Value: [6, 0, float4, [1.0, 2.0, 3.0, 4.0]]
+  - Name: normalIntensity
+    Value: [6, 0, float3, [4.0, 5.0, 6.0]]
+  - Name: specularIntensity
+    Value: [6, 0, float2, [7.0, 8.0]]
+  - Name: otherIntensity
+    Value: [6, 0, float, [9.0]]

@@ -70,6 +70,7 @@ namespace Spiecs {
 		* @param[in] filepath Material path in disk.
 		* @param[in out] outMaterial Material pointer, only pass this to it.
 		* @return Returns true if load data succssfully.
+		* @todo Finish it.
 		*/
 		static bool LoadFromSASSET(const std::string& filepath, Material* outMaterial);
 

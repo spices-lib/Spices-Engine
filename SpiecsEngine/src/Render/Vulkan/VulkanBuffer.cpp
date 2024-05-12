@@ -80,7 +80,7 @@ namespace Spiecs {
 
 		VK_CHECK(vkCreateBuffer(vulkanState.m_Device, &bufferInfo, nullptr, &m_Buffer));
 
-		// ÄÚ´æ·ÖÅä
+		// å†…å­˜åˆ†é…
 		VkMemoryRequirements memRequirements;
 		vkGetBufferMemoryRequirements(vulkanState.m_Device, m_Buffer, &memRequirements);
 

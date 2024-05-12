@@ -12,11 +12,12 @@
 #include "Resources/Texture/Texture.h"
 #include "glm/glm.hpp"
 
-#include <optional>
 #include <unordered_map>
 
 namespace Spiecs {
 
+	class VulkanBuffer;
+	
 	/**
 	* @brief Material Class.
 	* This class contains a banch of parameter and shader, alse descriptor.
@@ -25,26 +26,45 @@ namespace Spiecs {
 	{
 	public:
 
+		struct DescriptorSetBindingInfoHelp
+		{
+			enum Type
+			{
+				Buffer,
+				Image,
+			};
+			
+			uint32_t count;
+			uint32_t size;
+			Type type;
+		};
+		
 		/**
 		* @brief This struct's data is defined from .material file.
 		*/
 		struct TextureParam
 		{
-			/**
-			* @brief True if this texture is in use.
-			*/
-			std::optional<uint32_t> isInUse;
-
+			/********************Can not be Serialize*******************/
+			
 			/**
 			* @brief Texture shared pointer.
 			*/
 			std::shared_ptr<Texture> texture;
 
+			/***********************************************************/
+			
+			/********************Can be Serialize***********************/
+			
+			/**
+			* @brief Texture type.
+			*/
+			std::string textureType;
+			
 			/**
 			* @brief Texture path.
 			*/
 			std::string texturePath;
-
+			
 			/**
 			* @brief Which set this texture will use.
 			*/
@@ -60,17 +80,35 @@ namespace Spiecs {
 			*/
 			uint32_t index;
 
-			/**
-			* @breif If this texture is not used, use constant instead.
-			*/
-			glm::vec3 constant;
-
-			/**
-			* @brief The intensity of texture or constant.
-			*/
-			float intensity;
+			/***********************************************************/
 		};
 
+		/**
+		* @brief This struct's data is defined from .material file.
+		*/
+		struct ConstantParam
+		{
+			/**
+			* @brief Which set this texture will use.
+			*/
+			uint32_t set;
+
+			/**
+			* @breif Which binding this texture will use.
+			*/
+			uint32_t binding;
+			
+			/**
+			* @brief parameter type.
+			*/
+			std::string paramType;
+
+			/**
+			* @brief parameter value.
+			*/
+			std::any paramValue;
+		};
+		
 	public:
 
 		/**
@@ -104,23 +142,29 @@ namespace Spiecs {
 		void Dserialize();
 
 		/**
-		* @brief Get material texture descriptorset.
-		* @return Returns the texture descriptorSet.
+		* @brief Get material material descriptorset.
+		* @return Returns the material descriptorSet.
 		* @note Must call BuildMaterial() first.
 		*/
-		inline VkDescriptorSet& GetMaterialDescriptorSet() { return m_DescriptorSet; };
+		inline std::vector<VkDescriptorSet>& GetMaterialDescriptorSet() { return m_DescriptorSets; };
 
 		/**
 		* @brief Get material shader path.
 		* @return Returns all stage shader path that needed.
 		*/
-		inline std::unordered_map<std::string, std::string>& GetShaderPath() { return m_Shaders; };
+		inline const std::unordered_map<std::string, std::string>& GetShaderPath() { return m_Shaders; };
 
 		/**
 		* @brief Get material texture parameters.
 		* @return Returns the material texture parameters.
 		*/
 		inline std::unordered_map<std::string, TextureParam>& GetTextureParams() { return m_TextureParams; };
+
+		/**
+		* @brief Get material constant parameters.
+		* @return Returns the material constant parameters.
+		*/
+		inline std::unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; };
 
 	private:
 
@@ -129,7 +173,7 @@ namespace Spiecs {
 		* It defines how we build texture and descriptor set.
 		* @todo empty texture.
 		*/
-		virtual void BuildMaterial() {};
+		virtual void BuildMaterial();
 
 		/**
 		* @brief Allow MaterialLoader access all data.
@@ -154,7 +198,7 @@ namespace Spiecs {
 		* only one
 		* @todo multiple descriptor set.
 		*/
-		VkDescriptorSet m_DescriptorSet{};
+		std::vector<VkDescriptorSet> m_DescriptorSets{};
 
 		/**
 		* @brief Shader path
@@ -168,5 +212,13 @@ namespace Spiecs {
 		* @brief Texture parameters.
 		*/
 		std::unordered_map<std::string, TextureParam> m_TextureParams;
+
+		/**
+		* @brief Constant parameters.
+		*/
+		std::unordered_map<std::string, ConstantParam> m_ConstantParams;
+
+
+		std::unordered_map<std::pair<uint32_t, uint32_t>, std::shared_ptr<VulkanBuffer>> m_Buffers;
 	};
 }

@@ -6,7 +6,6 @@
 
 #include "Pchheader.h"
 #include "SkyBoxComponent.h"
-#include "Resources/Material/SkyBoxMaterial.h"
 
 namespace Spiecs {
 
@@ -16,7 +15,7 @@ namespace Spiecs {
 		* @brief Use SpherePack Instead
 		*/
 		std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>(2, 2);
-		pack->SetMaterial<SkyBoxMaterial>(path);
+		pack->SetMaterial<Material>(path);
 		m_Mesh = Mesh::Builder().AddPack(pack).Build();
 	}
 

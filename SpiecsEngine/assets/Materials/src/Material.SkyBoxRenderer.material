@@ -1,9 +1,0 @@
-Material: Default
-Shaders:
-  - ShaderStage: vertShader
-    ShaderPath: SkyBoxRenderer
-  - ShaderStage: fragShader
-    ShaderPath: SkyBoxRenderer
-Textures:
-  - TextureName: diffuse
-    TextureParam: [1, skybox/little_paris_eiffel_tower_4k.hdr, 1, 0, 0, [1, 1, 1], 1]

@@ -10,7 +10,6 @@
 #include "Resources/Material/Material.h"
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Resources/ResourcePool/ResourcePool.h"
-#include "Resources/Material/MeshMaterial.h"
 
 namespace Spiecs {
 

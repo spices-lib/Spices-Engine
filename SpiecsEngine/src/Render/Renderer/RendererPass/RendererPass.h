@@ -13,11 +13,11 @@ namespace Spiecs
 		virtual ~RendererPass() {};
 
 
-
 	private:
 
 		std::string m_PassName;
 		std::list<std::unique_ptr<RendererSubPass>> m_Passes;
+		
 		std::unique_ptr<VulkanRenderPass> m_RenderPass;
 	};
 }

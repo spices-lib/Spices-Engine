@@ -30,25 +30,15 @@ struct PointLight {
     float quadratic;
 };
 
-struct TextureParam {
-    vec3 constant;
-    int isInUse;
-    float intensity;
-};
-
 layout(set = 1, binding = 0) uniform sampler2D samplers[3];
 
-layout(set = 2, binding = 0) uniform TextureParams {
-    TextureParam textureParam[3];
-} textureParams;
-
-layout(set = 2, binding = 1) uniform DirectionalLight{
+layout(set = 2, binding = 0) uniform DirectionalLight{
     vec3 direction;
     vec3 color;
     float intensity;
 } directionalLight;
 
-layout(set = 2, binding = 2) uniform PointLights {
+layout(set = 2, binding = 1) uniform PointLights {
     PointLight pointLight[10];
 } pointLights;
 
@@ -60,14 +50,7 @@ layout(set = 2, binding = 2) uniform PointLights {
 // main
 void main()
 {
-    if (textureParams.textureParam[ALBEDO].isInUse == 1)
-    {
-        outColor = texture(samplers[ALBEDO], fragInput.texCoord) * textureParams.textureParam[ALBEDO].intensity;
-    }
-    else
-    {
-        outColor = vec4(textureParams.textureParam[ALBEDO].constant, 0.0f) * textureParams.textureParam[ALBEDO].intensity;
-    }
+    outColor = texture(samplers[ALBEDO], fragInput.texCoord);
     outNormal = vec4(fragInput.normal, 1.0f);
     outSpecular = texture(samplers[SPECULAR], fragInput.texCoord);
     outID = push.entityID;

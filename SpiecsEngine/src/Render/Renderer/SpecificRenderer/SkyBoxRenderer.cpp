@@ -129,7 +129,7 @@ namespace Spiecs {
 					push.entityID = entityId;
 				});
 
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
+				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet()[0]);
 			});
 				
 			return false;

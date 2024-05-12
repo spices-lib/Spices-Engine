@@ -215,46 +215,7 @@ namespace Spiecs {
 			*/
 			std::vector<VkDescriptorSet> m_DescriptorSets{};
 		};
-
-	public:
-
-		/**
-		* @brief This struct is copyed from Material Class.
-		* Only remains the date that needs to be transfered to shaders.
-		* Memory alignas 32 bytes.
-		* @see Material::TextureParam.
-		* @todo mutex lock.
-		*/
-		struct TextureParam
-		{
-			/**
-			* @brief The constant instead texture if isn't in use.
-			*/
-			glm::vec3 constant;
-
-			/**
-			* @brief True if the Texture is in use.
-			*/
-			int isInUse;
-
-			/**
-			* @brief Texture intensity.
-			* Memory alignas 16 bytes.
-			*/
-			alignas(16) float intensity;
-
-			/**
-			* @brief Copy the data that needed to be transfered to shader from specific Material::TextureParam.
-			* @param[in] materialTextureParam The referenced original data.
-			*/
-			void CopyFromMaterial(const Material::TextureParam& materialTextureParam) 
-			{
-				isInUse = materialTextureParam.isInUse.has_value() ? materialTextureParam.isInUse.value() : 0;
-				constant = materialTextureParam.constant;
-				intensity = materialTextureParam.intensity;
-			}
-		};
-
+	
 		/***************************************************************************************************/
 
 	protected:
