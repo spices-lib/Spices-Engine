@@ -16,17 +16,17 @@ namespace SpiecsTest {
 		*/
 		void SetUp() override {
 
-			c0.insert("aaa", "aaa");
-			c0.insert("bbb", "bbb");
-			c0.insert("ccc", "ccc");
+			c0.push_back("aaa", "aaa");
+			c0.push_back("bbb", "bbb");
+			c0.push_back("ccc", "ccc");
 
-			c1.insert(1, "1");
-			c1.insert(2, "2");
-			c1.insert(3, "3");
+			c1.push_back(1, "1");
+			c1.push_back(2, "2");
+			c1.push_back(3, "3");
 
-			c2.insert(1.0f, "1.0");
-			c2.insert(2.0f, "2.0");
-			c2.insert(3.0f, "3.0");
+			c2.push_back(1.0f, "1.0");
+			c2.push_back(2.0f, "2.0");
+			c2.push_back(3.0f, "3.0");
 		}
 
 		// void TearDown() override {}
@@ -81,13 +81,19 @@ namespace SpiecsTest {
 		/**
 		* @brief Testing if find a exist element successfully.
 		*/
-		auto v = c0.find("aaa");
+		auto v = c0.find_value("aaa");
 		EXPECT_EQ(v, "aaa");
 
 		/**
 		* @brief Testing if find a not exist element successfully.
 		*/
-		v = c1.find(10);
+		bool ishasvalue = c1.has_key(10);
+		EXPECT_EQ(ishasvalue, false);
+
+		/**
+		* @brief Testing if find a not exist element successfully.
+		*/
+		v = c2.find_value(10.0);
 		EXPECT_EQ(&v, nullptr);
 	}
 
@@ -99,22 +105,22 @@ namespace SpiecsTest {
 		/**
 		* @brief Testing if insert a new element successfully.
 		*/
-		c0.insert("ddd", "ddd");
+		c0.push_back("ddd", "ddd");
 		EXPECT_EQ(c0.size(), 4);
 
 		/**
 		* @brief Testing if insert a repeat element successfully.
 		*/
-		c1.insert(1, "1");
+		c1.push_back(1, "1");
 		EXPECT_EQ(c1.size(), 3);
 
 		/**
 		* @brief Testing if the insert element written successfully.
 		*/
-		auto v = c2.find(1.0f);
+		auto v = c2.find_value(1.0f);
 		EXPECT_EQ(v, "1.0");
-		c2.insert(1.0f, "10.0");
-		v = c2.find(1.0f);
+		c2.push_back(1.0f, "10.0");
+		v = c2.find_value(1.0f);
 		EXPECT_EQ(v, "10.0");
 	}
 
@@ -149,7 +155,7 @@ namespace SpiecsTest {
 		* @brief Testing insert's influence in for_each order.
 		*/
 		std::vector<float> iterOrder2;
-		c2.insert(0.5f, "0.5");
+		c2.push_back(0.5f, "0.5");
 		c2.for_each([&](const float& k, const std::string& v) {
 			iterOrder2.push_back(k);
 		});

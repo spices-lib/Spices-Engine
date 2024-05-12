@@ -18,14 +18,12 @@ namespace Spiecs {
 	/**
 	* @brief Defines the static System Map variable.
 	*/
-	std::unordered_map<std::string, std::unique_ptr<System>> SystemManager::m_Identities;
-
-	std::vector<std::string> SystemManager::m_IterList;
+	scl::linked_unordered_map<std::string, std::shared_ptr<System>> SystemManager::m_Identities;
 
 	SystemManager::SystemManager()
 	{
 		//m_SystemManager = std::unique_ptr<SystemManager>(this);
-		m_Identities.empty();
+		m_Identities.clear();
 
 		/**
 		* @brief Set Golbal EventCallBack
@@ -40,17 +38,15 @@ namespace Spiecs {
 
 	void SystemManager::Run(TimeStep& ts)
 	{
-		for (int i = 0; i < m_IterList.size(); i++)
-		{
-			m_Identities[m_IterList[i]]->OnSystemUpdate(ts);
-		}
+		m_Identities.for_each([&](auto& k, auto& v) {
+			v->OnSystemUpdate(ts);
+		});
 	}
 
 	void SystemManager::OnEvent(Event& event)
 	{
-		for (auto& pair : m_Identities)
-		{
-			pair.second->OnEvent(event);
-		}
+		m_Identities.for_each([&](auto& k, auto& v) {
+			v->OnEvent(event);
+		});
 	}
 }

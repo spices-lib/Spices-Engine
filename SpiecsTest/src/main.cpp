@@ -1,7 +1,5 @@
 #include <iostream>
 #include <gmock/gmock.h>
-//#include "simple_test.h"
-//#include "test_fixtures.h"
 #include "linked_unordered_map_test.h"
 
 int main(int argc, char** argv)

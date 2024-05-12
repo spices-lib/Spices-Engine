@@ -69,7 +69,7 @@ namespace Spiecs {
 			/**
 			* @brief Push system to map
 			*/
-			if (m_Identities.find(rendererName) != m_Identities.end())
+			if (m_Identities.has_key(rendererName))
 			{
 				std::stringstream ss;
 				ss << rendererName << " has been pushed ";
@@ -77,10 +77,8 @@ namespace Spiecs {
 				SPIECS_CORE_ERROR(ss.str());
 			}
 
-			m_Identities[rendererName] = std::unique_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...));
-			m_Identities[rendererName]->OnSystemInitialize();
-			
-			m_IterList.push_back(rendererName);
+			m_Identities.push_back(rendererName, std::shared_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...)));
+			m_Identities.find_value(rendererName)->OnSystemInitialize();
 
 			/**
 			* @brief System init
@@ -101,7 +99,7 @@ namespace Spiecs {
 			/**
 			* @brief Pop system to map
 			*/
-			if (m_Identities.find(rendererName) == m_Identities.end())
+			if (!m_Identities.has_key(rendererName))
 			{
 				std::stringstream ss;
 				ss << rendererName << " has been poped ";
@@ -132,7 +130,7 @@ namespace Spiecs {
 		/**
 		* @brief A container contains all renderer.
 		*/
-		static scl::linked_unordered_map<std::string, std::unique_ptr<Renderer>> m_Identities;
+		static scl::linked_unordered_map<std::string, std::shared_ptr<Renderer>> m_Identities;
 	};
 
 }

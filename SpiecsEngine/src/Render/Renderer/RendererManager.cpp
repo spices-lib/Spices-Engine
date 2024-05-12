@@ -11,7 +11,7 @@
 namespace Spiecs {
 
 	std::unique_ptr<RendererManager> RendererManager::m_RendererManager;
-	scl::linked_unordered_map<std::string, std::unique_ptr<Renderer>> RendererManager::m_Identities;
+	scl::linked_unordered_map<std::string, std::shared_ptr<Renderer>> RendererManager::m_Identities;
 
 	RendererManager& RendererManager::Get()
 	{
@@ -20,25 +20,22 @@ namespace Spiecs {
 
 	void RendererManager::Run(FrameInfo& frameInfo)
 	{
-		for (int i = 0; i < m_IterList.size(); i++)
-		{
-			m_Identities[m_IterList[i]]->Render(frameInfo);
-		}
+		m_Identities.for_each([&](auto& k, auto& v) {
+			v->Render(frameInfo);
+		});
 	}
 
 	void RendererManager::OnWindowResizeOver()
 	{
-		for (auto& pair : m_Identities)
-		{
-			pair.second->OnWindowResizeOver();
-		}
+		m_Identities.for_each([](auto& k, auto& v) {
+			v->OnWindowResizeOver();
+		});
 	}
 
 	void RendererManager::OnSlateResize()
 	{
-		for (auto& pair : m_Identities)
-		{
-			pair.second->OnSlateResize();
-		}
+		m_Identities.for_each([](auto& k, auto& v) {
+			v->OnSlateResize();
+		});
 	}
 }

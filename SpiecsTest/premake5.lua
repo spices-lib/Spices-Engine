@@ -21,6 +21,14 @@ project "SpiecsTest"
 	{
 		"%{wks.location}/SpiecsEngine/src",
 		"src",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.tinyobjloader}",
+		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.googletest}",
 		"%{IncludeDir.googlemock}",
 	}

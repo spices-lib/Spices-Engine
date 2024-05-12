@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "Core/Library/StringLibrary.h"
 #include "Core/Library/ClassLibrary.h"
+#include "Core/Container/linked_unordered_map.h"
 
 namespace Spiecs {
 
@@ -141,7 +142,7 @@ namespace Spiecs {
 			std::string systemName = ClassLibrary::GetClassString(typeid(T));
 
 			// push system to map
-			if (m_Identities.find(systemName) != m_Identities.end())
+			if (m_Identities.find_value(systemName))
 			{
 				std::stringstream ss;
 				ss << systemName << " has been pushed ";
@@ -149,12 +150,10 @@ namespace Spiecs {
 				SPIECS_CORE_ERROR(ss.str());
 			}
 
-			m_Identities[systemName] = std::unique_ptr<System>(new T(systemName, std::forward<Args>(args)...));
+			m_Identities.push_back(systemName, std::shared_ptr<System>(new T(systemName, std::forward<Args>(args)...)));
 
 			// system init
-			m_Identities[systemName]->OnSystemInitialize();
-
-			m_IterList.push_back(systemName);
+			m_Identities.find_value(systemName)->OnSystemInitialize();
 
 			std::stringstream ss;
 			ss << systemName << " pushed ";
@@ -172,7 +171,7 @@ namespace Spiecs {
 		SystemManager& PopSystem(const std::string& systemName)
 		{
 			// pop system from map
-			if (m_Identities.find(systemName) == m_Identities.end())
+			if (!m_Identities.has_key(systemName))
 			{
 				std::stringstream ss;
 				ss << systemName << " has been poped ";
@@ -181,7 +180,7 @@ namespace Spiecs {
 			}
 
 			// system shutdown
-			m_Identities[systemName]->OnSystemShutDown();
+			m_Identities.find_value(systemName)->OnSystemShutDown();
 
 			std::stringstream ss;
 			ss << systemName << " poped ";
@@ -203,12 +202,6 @@ namespace Spiecs {
 		/**
 		* @brief Static System Map.
 		*/
-		static std::unordered_map<std::string, std::unique_ptr<System>> m_Identities;
-
-		/**
-		* @brief Used for iter m_Identities in correct order.
-		* @todo linkedhashmap.
-		*/
-		static std::vector<std::string> m_IterList;
+		static scl::linked_unordered_map<std::string, std::shared_ptr<System>> m_Identities;
 	};
 }
