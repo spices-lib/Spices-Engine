@@ -14,6 +14,9 @@ namespace Spiecs {
 	Material::Material(const std::string& materialPath)
 		: m_MaterialPath(materialPath)
 	{
+		/**
+		* @breif Call Dserialize() while in Constructor.
+		*/
 		Dserialize();
 	}
 
