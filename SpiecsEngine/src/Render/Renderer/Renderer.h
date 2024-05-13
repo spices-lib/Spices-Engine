@@ -492,13 +492,6 @@ namespace Spiecs {
 		std::vector<std::unique_ptr<VulkanDescriptorSetLayout>> m_VulkanLayouts{};
 
 		/**
-		* @brief This variable helps to create descriptorset.
-		* Each set per element.
-		* @note Only fill with buffer.
-		*/
-		std::vector<std::unique_ptr<VulkanDescriptorWriter>> m_VulkanLayoutWriters{};
-
-		/**
 		* @brief VkDescriptorSetLayout used while create pipeline layout.
 		* Each set per element.
 		* Fill with both buffer and texture.
@@ -633,19 +626,6 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::PipelineLayoutBuilder& Renderer::PipelineLayoutBuilder::AddTexture(uint32_t set, uint32_t binding, uint32_t arrayNum, VkShaderStageFlags stageFlags)
 	{
-		/**
-		* @breif Create local texture for each Frame.
-		* Not execute here.
-		*/
-		/*for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			m_Renderer->m_Collections[i]->GetImage(set, binding) = std::make_unique<VulkanImage>(
-				m_Renderer->m_VulkanState,
-				SPIECS_ENGINE_ASSETS_PATH + "Textures/src/street.jpg"
-			);
-		}*/
-
-
 		/**
 		* @brief Create descriptorsetlayout.
 		*/

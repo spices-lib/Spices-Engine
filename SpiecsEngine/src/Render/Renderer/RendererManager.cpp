@@ -15,6 +15,11 @@ namespace Spiecs {
 
 	RendererManager& RendererManager::Get()
 	{
+		if(!m_RendererManager)
+		{
+			m_RendererManager = std::make_unique<RendererManager>();
+		}
+
 		return *m_RendererManager;
 	}
 

@@ -87,9 +87,9 @@ namespace YAML {
 	};
 
 	template<>
-	struct convert<Spiecs::Material::TextureParam>
+	struct convert<Spiecs::TextureParam>
 	{
-		static Node encode(const Spiecs::Material::TextureParam& param)
+		static Node encode(const Spiecs::TextureParam& param)
 		{
 			Node node;
 			node.push_back(param.set);
@@ -100,7 +100,7 @@ namespace YAML {
 			return node;
 		}
 
-		static bool decode(const Node& node, Spiecs::Material::TextureParam& param)
+		static bool decode(const Node& node, Spiecs::TextureParam& param)
 		{
 			if (!node.IsSequence() || node.size() != 5)
 			{
@@ -116,9 +116,9 @@ namespace YAML {
 	};
 
 	template<>
-	struct convert<Spiecs::Material::ConstantParam>
+	struct convert<Spiecs::ConstantParam>
 	{
-		static Node encode(const Spiecs::Material::ConstantParam& param)
+		static Node encode(const Spiecs::ConstantParam& param)
 		{
 			Node node;
 			node.push_back(param.set);
@@ -140,7 +140,7 @@ namespace YAML {
 			return node;
 		}
 
-		static bool decode(const Node& node, Spiecs::Material::ConstantParam& param)
+		static bool decode(const Node& node, Spiecs::ConstantParam& param)
 		{
 			if (!node.IsSequence() || node.size() != 4)
 			{
@@ -195,14 +195,14 @@ namespace Spiecs {
 		return out;
 	}
 
-	YAML::Emitter& operator<<(YAML::Emitter& out, const Material::TextureParam& p)
+	YAML::Emitter& operator<<(YAML::Emitter& out, const TextureParam& p)
 	{
 		out << YAML::Flow;
 		out << YAML::BeginSeq << p.set << p.binding << p.index << p.textureType << p.texturePath << YAML::EndSeq;
 		return out;
 	}
 
-	YAML::Emitter& operator<<(YAML::Emitter& out, const Material::ConstantParam& p)
+	YAML::Emitter& operator<<(YAML::Emitter& out, const ConstantParam& p)
 	{
 		out << YAML::Flow;
 		out << YAML::BeginSeq << p.set << p.binding << p.paramType;

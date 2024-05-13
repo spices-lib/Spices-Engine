@@ -18,6 +18,64 @@
 namespace Spiecs {
 
 	class VulkanBuffer;
+	class VulkanDescriptorSet;
+
+	/**
+	* @brief This struct's data is defined from .material file.
+	*/
+	struct TextureParam
+	{
+		/**
+		* @brief Texture type.
+		*/
+		std::string textureType;
+			
+		/**
+		* @brief Texture path.
+		*/
+		std::string texturePath;
+			
+		/**
+		* @brief Which set this texture will use.
+		*/
+		uint32_t set;
+
+		/**
+		* @breif Which binding this texture will use.
+		*/
+		uint32_t binding;
+
+		/**
+		* @breif Which arrayindex this texture will use.
+		*/
+		uint32_t index;
+	};
+
+	/**
+	* @brief This struct's data is defined from .material file.
+	*/
+	struct ConstantParam
+	{
+		/**
+		* @brief Which set this texture will use.
+		*/
+		uint32_t set;
+
+		/**
+		* @breif Which binding this texture will use.
+		*/
+		uint32_t binding;
+			
+		/**
+		* @brief parameter type.
+		*/
+		std::string paramType;
+
+		/**
+		* @brief parameter value.
+		*/
+		std::any paramValue;
+	};
 	
 	/**
 	* @brief Material Class.
@@ -35,79 +93,11 @@ namespace Spiecs {
 				Image,
 			};
 			
-			uint32_t count;
-			uint32_t size;
-			Type type;
-		};
-		
-		/**
-		* @brief This struct's data is defined from .material file.
-		*/
-		struct TextureParam
-		{
-			/********************Can not be Serialize*******************/
+			DescriptorSetBindingInfoHelp() {};
 			
-			/**
-			* @brief Texture shared pointer.
-			*/
-			std::shared_ptr<Texture> texture;
-
-			/***********************************************************/
-			
-			/********************Can be Serialize***********************/
-			
-			/**
-			* @brief Texture type.
-			*/
-			std::string textureType;
-			
-			/**
-			* @brief Texture path.
-			*/
-			std::string texturePath;
-			
-			/**
-			* @brief Which set this texture will use.
-			*/
-			uint32_t set;
-
-			/**
-			* @breif Which binding this texture will use.
-			*/
-			uint32_t binding;
-
-			/**
-			* @breif Which arrayindex this texture will use.
-			*/
-			uint32_t index;
-
-			/***********************************************************/
-		};
-
-		/**
-		* @brief This struct's data is defined from .material file.
-		*/
-		struct ConstantParam
-		{
-			/**
-			* @brief Which set this texture will use.
-			*/
-			uint32_t set;
-
-			/**
-			* @breif Which binding this texture will use.
-			*/
-			uint32_t binding;
-			
-			/**
-			* @brief parameter type.
-			*/
-			std::string paramType;
-
-			/**
-			* @brief parameter value.
-			*/
-			std::any paramValue;
+			uint32_t count = 0;
+			uint32_t size = 0;
+			Type type = Type::Buffer;
 		};
 		
 	public:
@@ -147,7 +137,7 @@ namespace Spiecs {
 		* @return Returns the material descriptorSet.
 		* @note Must call BuildMaterial() first.
 		*/
-		inline std::vector<VkDescriptorSet>& GetMaterialDescriptorSet() { return m_DescriptorSets; };
+		inline std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>>& GetMaterialDescriptorSet() { return m_DescriptorSets; };
 
 		/**
 		* @brief Get material shader path.
@@ -194,31 +184,36 @@ namespace Spiecs {
 		std::string m_MaterialPath;
 
 		/**
-		* @brief Descriptorset, usually is set 1 binding 0
-		* only contain texture
-		* only one
-		* @todo multiple descriptor set.
-		*/
-		std::vector<VkDescriptorSet> m_DescriptorSets{};
-
-		/**
 		* @brief Shader path
 		* 0 - vertshader
 		* 1 - fragshader
 		* ... othershader
+		* Key: shaderusage, Value: shaderfilename.
 		*/
 		std::unordered_map<std::string, std::string> m_Shaders;
 
 		/**
 		* @brief Texture parameters.
+		* Key: paramname, Value: paramvalue.
 		*/
 		std::unordered_map<std::string, TextureParam> m_TextureParams;
 
 		/**
 		* @brief Constant parameters.
+		* Key: paramname, Value: paramvalue.
 		*/
 		std::unordered_map<std::string, ConstantParam> m_ConstantParams;
 
+		/**
+		* @brief Material's Specific DescriptorSet.
+		* Key: set, Value: DescriptorSet.
+		*/
+		std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>> m_DescriptorSets;
+
+		/**
+		* @brief m_ConstantParams's VkBuffer.
+		* Key: set, Value: VkBuffer.
+		*/
 		std::unordered_map<Int2, std::shared_ptr<VulkanBuffer>> m_Buffers;
 	};
 }

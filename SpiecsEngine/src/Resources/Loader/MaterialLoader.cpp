@@ -52,7 +52,7 @@ namespace Spiecs {
 	* @param[in] name Texture name.
 	* @param[in] param Texture parameter.
 	*/
-	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param);
+	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const TextureParam& param);
 
 	bool MaterialLoader::Load(const std::string& fileName, Material* outMaterial)
 	{
@@ -132,7 +132,7 @@ namespace Spiecs {
 		{
 			for (auto& texture : textures)
 			{
-				outMaterial->m_TextureParams[texture["Name"].as<std::string>()] = texture["Value"].as<Material::TextureParam>();
+				outMaterial->m_TextureParams[texture["Name"].as<std::string>()] = texture["Value"].as<TextureParam>();
 			}
 		}
 
@@ -144,7 +144,7 @@ namespace Spiecs {
 		{
 			for (auto& parameter : parameters)
 			{
-				outMaterial->m_ConstantParams[parameter["Name"].as<std::string>()] = parameter["Value"].as<Material::ConstantParam>();
+				outMaterial->m_ConstantParams[parameter["Name"].as<std::string>()] = parameter["Value"].as<ConstantParam>();
 			}
 		}
 		
@@ -222,7 +222,7 @@ namespace Spiecs {
 		out << YAML::EndMap;
 	}
 
-	void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const Material::TextureParam& param)
+	void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const TextureParam& param)
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "TextureName" << YAML::Value << name;
