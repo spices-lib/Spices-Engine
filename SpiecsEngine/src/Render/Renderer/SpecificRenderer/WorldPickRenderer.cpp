@@ -128,11 +128,7 @@ namespace Spiecs {
 					push.entityID = entityId;
 				});
 
-				builder.UpdateBuffer<WorldPickR::TextureParams>(2, 0, [&](auto& ubo) {
-					ubo.CopyFromMaterial(material->GetTextureParams());
-				});
-
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet());
+				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet()[0]);
 			});
 
 			return false;

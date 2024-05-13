@@ -63,7 +63,7 @@ namespace Spiecs {
 		* @brief Get full path of shader file.
 		*/
 		std::stringstream ss;
-		ss << SPIECS_ENGINE_ASSETS_PATH << "Shaders/spv/Shader." << m_RendererName << "." << shaderType << ".spv";
+		ss << SPIECS_ENGINE_ASSETS_PATH << "Shaders/spv/Shader." << m_RendererName << ".Default." << shaderType << ".spv";
 
 		return ss.str();
 	}

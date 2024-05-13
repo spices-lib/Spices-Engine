@@ -20,19 +20,19 @@ namespace Spiecs {
 
         ImGui::Text("SceneColor");
         ImGui::Image(m_GBufferID.SceneColorID, size);
-        ImGui::Separator;
+        ImGui::Separator();
 
         ImGui::Text("Diffuse");
         ImGui::Image(m_GBufferID.DiffuseID, size);
-        ImGui::Separator;
+        ImGui::Separator();
 
         ImGui::Text("Normal");
         ImGui::Image(m_GBufferID.NormalID, size);
-        ImGui::Separator;
+        ImGui::Separator();
 
         ImGui::Text("Specular");
         ImGui::Image(m_GBufferID.SpecularID, size);
-        ImGui::Separator;
+        ImGui::Separator();
 
         End();
 

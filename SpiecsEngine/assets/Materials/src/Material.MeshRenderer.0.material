@@ -19,4 +19,4 @@ Parameters:
   - Name: specularIntensity
     Value: [2, 0, float2, [7.0, 8.0]]
   - Name: otherIntensity
-    Value: [2, 0, float, [9.0]]
+    Value: [2, 0, float, 9.0]

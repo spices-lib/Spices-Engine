@@ -142,11 +142,11 @@ namespace Spiecs {
 			ubo.projection = projectionMatrix;
 		});
 
-		builder.UpdateBuffer<DirectionalLightComponent::DirectionalLight>(2, 1, [&](auto& ubo) {
+		builder.UpdateBuffer<DirectionalLightComponent::DirectionalLight>(2, 0, [&](auto& ubo) {
 			ubo = GetDirectionalLight(frameInfo);
 		});
 
-		builder.UpdateBuffer<MeshR::PointLightUBO>(2, 2, [&](auto& ubo) {
+		builder.UpdateBuffer<MeshR::PointLightUBO>(2, 1, [&](auto& ubo) {
 			ubo.pointLights = GetPointLight(frameInfo);
 		});
 

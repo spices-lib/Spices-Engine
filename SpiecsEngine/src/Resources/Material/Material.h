@@ -10,8 +10,9 @@
 #include "Resources/Loader/MaterialLoader.h"
 #include "Render/Vulkan/VulkanShaderModule.h"
 #include "Resources/Texture/Texture.h"
-#include "glm/glm.hpp"
+#include "Core/Math/Math.h"
 
+#include <glm/glm.hpp>
 #include <unordered_map>
 
 namespace Spiecs {
@@ -218,7 +219,6 @@ namespace Spiecs {
 		*/
 		std::unordered_map<std::string, ConstantParam> m_ConstantParams;
 
-
-		std::unordered_map<std::pair<uint32_t, uint32_t>, std::shared_ptr<VulkanBuffer>> m_Buffers;
+		std::unordered_map<Int2, std::shared_ptr<VulkanBuffer>> m_Buffers;
 	};
 }

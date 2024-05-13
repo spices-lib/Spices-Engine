@@ -56,10 +56,9 @@ namespace Spiecs {
 			if(layouts.size() < tp.set + 1)              layouts.resize(tp.set + 1);
 			if(layouts[tp.set].size() < tp.binding + 1)  layouts[tp.set].resize(tp.binding + 1);
 
-			glm::max(layouts[tp.set][tp.binding].count, tp.index + 1);
-
+			layouts[tp.set][tp.binding].count = glm::max(layouts[tp.set][tp.binding].count, tp.index + 1);
 			layouts[tp.set][tp.binding].size = 0;
-			layouts[tp.set][tp.binding].type = DescriptorSetBindingInfoHelp::Type::Buffer;
+			layouts[tp.set][tp.binding].type = DescriptorSetBindingInfoHelp::Type::Image;
 		}
 		for(auto& pair : m_ConstantParams)
 		{
@@ -78,7 +77,7 @@ namespace Spiecs {
 			}
 
 			layouts[cp.set][cp.binding].count = 1;
-			layouts[cp.set][cp.binding].type = DescriptorSetBindingInfoHelp::Type::Image;
+			layouts[cp.set][cp.binding].type = DescriptorSetBindingInfoHelp::Type::Buffer;
 		}
 
 		std::vector<std::vector<std::vector<VkDescriptorImageInfo>>> imageInfos;
@@ -102,7 +101,8 @@ namespace Spiecs {
 		for(auto& pair : m_ConstantParams)
 		{
 			ConstantParam& cp = pair.second;
-			m_Buffers[std::make_pair(cp.set, cp.binding)] = nullptr;
+
+			m_Buffers[{cp.set, cp.binding} ] = nullptr;
 		}
 		
 		std::vector<std::vector<VkDescriptorBufferInfo>> bufferInfos;
@@ -110,15 +110,15 @@ namespace Spiecs {
 		{
 			pair.second = std::make_unique<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
-				layouts[pair.first.first][pair.first.second].size,
+				layouts[pair.first.x][pair.first.y].size,
 				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
 			);
 
-			if(bufferInfos.size() < pair.first.first + 1)                     bufferInfos.resize(pair.first.first + 1);
-			if(bufferInfos[pair.first.first].size() < pair.first.second + 1)  bufferInfos[pair.first.first].resize(pair.first.second + 1);
+			if(bufferInfos.size() < pair.first.x + 1)                     bufferInfos.resize(pair.first.x + 1);
+			if(bufferInfos[pair.first.x].size() < pair.first.y + 1)  bufferInfos[pair.first.x].resize(pair.first.y + 1);
 			
-			bufferInfos[pair.first.first][pair.first.second] = *pair.second->GetBufferInfo();
+			bufferInfos[pair.first.x][pair.first.y] = *pair.second->GetBufferInfo();
 		}
 		
 		for(int i = 0; i < layouts.size(); i++)
@@ -189,6 +189,8 @@ namespace Spiecs {
 				
 				vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
 			}
+
+			vkDestroyDescriptorSetLayout(VulkanRenderBackend::GetState().m_Device, m_DescriptorSetLayout, nullptr);
 		}
 	}
 }
