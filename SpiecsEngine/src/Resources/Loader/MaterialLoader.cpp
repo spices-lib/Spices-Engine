@@ -144,7 +144,7 @@ namespace Spiecs {
 		{
 			for (auto& parameter : parameters)
 			{
-				outMaterial->m_ConstantParams[parameter["Name"].as<std::string>()] = parameter["Value"].as<ConstantParam>();
+				outMaterial->m_ConstantParams.push_back(parameter["Name"].as<std::string>(), parameter["Value"].as<ConstantParam>());
 			}
 		}
 		

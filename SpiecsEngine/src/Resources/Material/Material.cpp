@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "Material.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Core/Reflect/TypeReflect.h"
 
 namespace Spiecs {
 
@@ -46,22 +47,12 @@ namespace Spiecs {
 			layouts[tp.set][tp.binding].size = 0;
 			layouts[tp.set][tp.binding].type = DescriptorSetBindingInfoHelp::Type::Image;
 		}
-		for(auto& pair : m_ConstantParams)
-		{
-			ConstantParam& cp = pair.second;
-
-			if     (cp.paramType == "float4") layouts[cp.set][cp.binding].size += sizeof(glm::vec4);
-			else if(cp.paramType == "float3") layouts[cp.set][cp.binding].size += sizeof(glm::vec3);
-			else if(cp.paramType == "float2") layouts[cp.set][cp.binding].size += sizeof(glm::vec2);
-			else if(cp.paramType == "float")  layouts[cp.set][cp.binding].size += sizeof(float);
-			else
-			{
-				SPIECS_CORE_WARN("Material::BuildMaterial(): Unknown paramType.");
-			}
-
-			layouts[cp.set][cp.binding].count = 1;
-			layouts[cp.set][cp.binding].type = DescriptorSetBindingInfoHelp::Type::Buffer;
-		}
+		
+		m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
+			layouts[v.set][v.binding].size += StrType2Size(v.paramType);
+			layouts[v.set][v.binding].count = 1;
+			layouts[v.set][v.binding].type = DescriptorSetBindingInfoHelp::Type::Buffer;
+		});
 
 		std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> imageInfos;
 		for(auto& pair : m_TextureParams)
@@ -81,13 +72,13 @@ namespace Spiecs {
 				SPIECS_CORE_ERROR("Material::BuildMaterial(): Invalid textureType.");
 			}
 		}
-		
-		for(auto& pair : m_ConstantParams)
-		{
-			ConstantParam& cp = pair.second;
 
-			m_Buffers[{cp.set, cp.binding} ] = nullptr;
-		}
+		m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
+			Int2 int2(v.set, v.binding);
+			
+			m_Buffers[int2] = nullptr;
+			m_Buffermemoryblocks[int2].AddElement(k, v.paramType);
+		});
 		
 		std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> bufferInfos;
 		for(auto& pair : m_Buffers)
@@ -101,6 +92,34 @@ namespace Spiecs {
 			pair.second->Map();
 			
 			bufferInfos[pair.first.x][pair.first.y] = *pair.second->GetBufferInfo();
+		}
+
+		for(auto& pair : m_Buffermemoryblocks)
+		{
+			pair.second.Build();
+			pair.second.for_each([&](const std::string& name, void* pt) {
+				ConstantParam& ref = m_ConstantParams.find_value(name);
+
+				size_t size;
+				switch(ref.paramType)
+				{
+				case "float4" :
+					*reinterpret_cast<glm::vec4*>(pt) = std::any_cast<glm::vec4>(ref.paramValue);
+					break;
+				case "float3" :
+					*reinterpret_cast<glm::vec4*>(pt) = glm::vec4(std::any_cast<glm::vec3>(ref.paramValue), 0.0f);
+					break;
+				case "float2" :
+					*reinterpret_cast<glm::vec2*>(pt) = std::any_cast<glm::vec2>(ref.paramValue);
+					break;
+				case "float" :
+					*reinterpret_cast<float*>(pt) = std::any_cast<float>(ref.paramValue);
+					break;
+				}
+			});
+
+			m_Buffers[pair.first]->WriteToBuffer(pair.second.GetAddr());
+			m_Buffers[pair.first]->Flush();
 		}
 		
 		for(auto& layout : layouts)

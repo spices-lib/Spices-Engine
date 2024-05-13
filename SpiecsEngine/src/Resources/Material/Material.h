@@ -11,6 +11,8 @@
 #include "Render/Vulkan/VulkanShaderModule.h"
 #include "Resources/Texture/Texture.h"
 #include "Core/Math/Math.h"
+#include "Core/Container/runtime_memory_block.h"
+#include "Core/Container/linked_unordered_map.h"
 
 #include <glm/glm.hpp>
 #include <unordered_map>
@@ -202,7 +204,7 @@ namespace Spiecs {
 		* @brief Constant parameters.
 		* Key: paramname, Value: paramvalue.
 		*/
-		std::unordered_map<std::string, ConstantParam> m_ConstantParams;
+		scl::linked_unordered_map<std::string, ConstantParam> m_ConstantParams;
 
 		/**
 		* @brief Material's Specific DescriptorSet.
@@ -215,5 +217,11 @@ namespace Spiecs {
 		* Key: set, Value: VkBuffer.
 		*/
 		std::unordered_map<Int2, std::shared_ptr<VulkanBuffer>> m_Buffers;
+
+		/**
+		* @brief m_Buffers's c++ data container.
+		* Key: set, Value: scl::runtime_memory_block.
+		*/
+		std::unordered_map<Int2, scl::runtime_memory_block> m_Buffermemoryblocks;
 	};
 }

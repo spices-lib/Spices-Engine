@@ -7,7 +7,7 @@
 
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE //±ØĞë¶¨ÒåÕâ¸öºê,²ÅÄÜÊä³öÎÄ¼şÃûºÍĞĞºÅ
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE //å¿…é¡»å®šä¹‰è¿™ä¸ªå®,æ‰èƒ½è¾“å‡ºæ–‡ä»¶åå’Œè¡Œå·
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)

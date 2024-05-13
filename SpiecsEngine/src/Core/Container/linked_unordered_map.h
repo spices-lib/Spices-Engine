@@ -10,8 +10,7 @@
 #include <list>
 #include <functional>
 
-namespace scl
-{
+namespace scl {
 	/**
 	* @brief The container combines hashmap and list together.
 	* Used in the case that we want iter in order.
