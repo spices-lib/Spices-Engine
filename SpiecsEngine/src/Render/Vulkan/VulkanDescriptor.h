@@ -79,7 +79,6 @@ namespace Spiecs {
         );
 
         void UpdateDescriptorSet(
-            ImageInfo& imageInfo,
             BufferInfo& bufferInfo
         );
         

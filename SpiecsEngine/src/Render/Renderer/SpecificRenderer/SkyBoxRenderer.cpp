@@ -27,22 +27,6 @@ namespace Spiecs {
 			int entityID = -1;
 		};
 
-		/**
-		* @brief VertexShader Stage uniform buffer data.
-		*/
-		struct View
-		{
-			/**
-			* @brief Projection Matrix.
-			*/
-			glm::mat4 projection = glm::mat4(1.0f);
-
-			/**
-			* @brief View Matrix.
-			*/
-			glm::mat4 view = glm::mat4(1.0f);
-		};
-
 	}
 
 	void SkyBoxRenderer::CreateRenderPass()
@@ -86,10 +70,9 @@ namespace Spiecs {
 	void SkyBoxRenderer::CreatePipelineLayoutAndDescriptor()
 	{
 		PipelineLayoutBuilder{ this }
-		.CreateCollection<SpecificCollection>()
-		.AddPushConstant<SkyBoxR::PushConstant>()
-		.AddBuffer<SkyBoxR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
-		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddSpecificRendererBinding()
+		.AddPreRenderer()
+		.AddMaterial()
 		.Build();
 	}
 
@@ -110,15 +93,11 @@ namespace Spiecs {
 		);
 	}
 
-	void SkyBoxRenderer::Render(FrameInfo& frameInfo)
+	void SkyBoxRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.UpdateBuffer<SkyBoxR::View>(0, 0, [&](auto& ubo) {
-			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-			ubo.view = glm::inverse(invViewMatrix);
-			ubo.projection = projectionMatrix;
-			});
+		builder.BindDescriptorSet(prerenderer-getdescriptor);
 
 		IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
@@ -136,13 +115,5 @@ namespace Spiecs {
 		});
 
 		builder.EndRenderPass();
-	}
-
-	std::unique_ptr<VulkanBuffer>& SkyBoxRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
-	{
-		if (set == 0 && binding == 0) return m_ViewUBO;
-
-		SPIECS_CORE_ERROR("SkyBoxRenderer::Collection:: Out of Range");
-		return m_ViewUBO;
 	}
 }

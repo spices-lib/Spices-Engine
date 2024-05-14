@@ -105,7 +105,7 @@ namespace Spiecs {
 		* Defines what data needs to be renderer and how to render.
 		* @param[in] frameInfo The current frame data.
 		*/
-		virtual void Render(FrameInfo& frameInfo) = 0;
+		virtual void Render(TimeStep& ts, FrameInfo& frameInfo) = 0;
 
 		/**
 		* @brief This interface is called on Window resized over (regist by swapchain).

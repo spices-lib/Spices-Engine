@@ -140,7 +140,7 @@ namespace Spiecs {
 		CreatePipelineLayoutAndDescriptor();
 	}
 
-	void SceneComposeRenderer::Render(FrameInfo& frameInfo)
+	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

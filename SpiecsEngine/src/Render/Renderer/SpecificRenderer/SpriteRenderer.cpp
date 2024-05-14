@@ -96,7 +96,7 @@ namespace Spiecs {
 		);
 	}
 
-	void SpriteRenderer::Render(FrameInfo& frameInfo)
+	void SpriteRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

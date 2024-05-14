@@ -15,7 +15,7 @@ namespace Spiecs {
 		* @brief Use SpherePack Instead
 		*/
 		std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>(2, 2);
-		pack->SetMaterial<Material>(path);
+		pack->SetMaterial(path);
 		m_Mesh = Mesh::Builder().AddPack(pack).Build();
 	}
 

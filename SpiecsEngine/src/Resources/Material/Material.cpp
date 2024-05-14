@@ -248,5 +248,7 @@ namespace Spiecs {
 			*/
 			m_DescriptorSets[layout.first]->UpdateDescriptorSet(imageInfos[layout.first], bufferInfos[layout.first]);
 		}
+
+
 	}
 }

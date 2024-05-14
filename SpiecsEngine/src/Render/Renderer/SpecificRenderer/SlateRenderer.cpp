@@ -130,7 +130,7 @@ namespace Spiecs {
 		}
 	}
 
-	void SlateRenderer::Render(FrameInfo& frameInfo)
+	void SlateRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

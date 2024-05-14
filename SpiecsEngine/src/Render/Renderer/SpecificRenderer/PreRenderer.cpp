@@ -127,7 +127,7 @@ namespace Spiecs {
 		m_DescriptorSets[0]->UpdateDescriptorSet(bufferInfos[0]);
 	}
 
-	void PreRenderer::Render(FrameInfo& frameInfo)
+	void PreRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 		ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
@@ -140,10 +140,17 @@ namespace Spiecs {
 		view.SceneTextureSize = { sceneTextureSize.x, sceneTextureSize.y, 1.0f / sceneTextureSize.x, 1.0f / sceneTextureSize.y };
 		view.WindowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
 
+		m_Buffers[{0, 0}]->WriteToBuffer(&view);
+		m_Buffers[{0, 0}]->Flush();
 
-
+		auto& [x, y] = SlateSystem::GetRegister()->GetViewPort()->GetMousePosInViewport();
 
 		PreR::Input input;
-		input.GameTime = 
+		input.GameTime = ts.gt();
+		input.FrameTime = ts.ft();
+		input.MousePos = glm::vec4((float)x, (float)y, 1.0f / float(x), 1.0f / float(y));
+
+		m_Buffers[{0, 1}]->WriteToBuffer(&input);
+		m_Buffers[{0, 1}]->Flush();
 	}
 }

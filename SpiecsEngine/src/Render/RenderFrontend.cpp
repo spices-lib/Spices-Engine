@@ -18,9 +18,9 @@ namespace Spiecs {
 		m_RenderBackend->EndFrame(frameInfo);
 	}
 
-	void RenderFrontend::DrawTest(FrameInfo& frameInfo)
+	void RenderFrontend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		m_RenderBackend->DrawTest(frameInfo);
+		m_RenderBackend->DrawTest(ts, frameInfo);
 	}
 
 	void RenderFrontend::OnEvent(Event& event)

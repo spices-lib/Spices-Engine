@@ -132,7 +132,7 @@ namespace Spiecs {
 		);
 	}
 
-	void MeshRenderer::Render(FrameInfo& frameInfo)
+	void MeshRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

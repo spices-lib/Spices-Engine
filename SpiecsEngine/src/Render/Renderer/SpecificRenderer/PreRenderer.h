@@ -35,7 +35,7 @@ namespace Spiecs {
          * @brief The interface is inherited from Renderer.
          * @param[in] frameInfo The current frame data.
          */
-        virtual void Render(FrameInfo& frameInfo) override;
+        virtual void Render(TimeStep& ts, FrameInfo& frameInfo) override;
 
     private:
 

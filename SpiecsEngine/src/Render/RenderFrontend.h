@@ -21,7 +21,7 @@ namespace Spiecs {
 		void BeginFrame(FrameInfo& frameInfo);
 		void EndFrame(FrameInfo& frameInfo);
 
-		void DrawTest(FrameInfo& frameInfo);
+		void DrawTest(TimeStep& ts, FrameInfo& frameInfo);
 		void OnEvent(Event& event);
 
 		// Temp:

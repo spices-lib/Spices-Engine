@@ -52,10 +52,8 @@ namespace Spiecs {
 
 		/**
 		* @brief Set specific material for this class.
-		* @param[in] T Specific material class.
 		* @param[in] materialPath Material path in disk.
 		*/
-		template<typename T>
 		void SetMaterial(const std::string& materialPath);
 
 		/**
@@ -147,13 +145,6 @@ namespace Spiecs {
 		*/
 		friend class MeshLoader;
 	};
-
-	template<typename T>
-	inline void MeshPack::SetMaterial(const std::string& materialPath)
-	{
-		m_Material = ResourcePool<Material>::Load<T>(materialPath);
-		m_Material->BuildMaterial();
-	}
 
 	/**
 	* @brief SquarePack Class.

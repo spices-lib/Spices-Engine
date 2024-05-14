@@ -37,7 +37,7 @@ namespace Spiecs {
 		* @brief The interface is inherited from Renderer.
 		* @param[in] frameInfo The current frame data.
 		*/
-		virtual void Render(FrameInfo& frameInfo) override;
+		virtual void Render(TimeStep& ts, FrameInfo& frameInfo) override;
 
 	private:
 
@@ -61,31 +61,6 @@ namespace Spiecs {
 		virtual void CreatePipeline(VkRenderPass renderPass) override;
 
 		virtual void OnSlateResize() override { CreateRenderPass(); };
-
-	private:
-
-		/**
-		* @brief This struct placed the local buffer data.Specific for SkyBoxRenderer.
-		*/
-		struct SpecificCollection : public Collection
-		{
-		private:
-
-			/**
-			* @brief VertexSahder Stage uniform buffer.
-			*/
-			std::unique_ptr<VulkanBuffer> m_ViewUBO;
-
-		public:
-
-			/**
-			* @brief The interface of how to map the local buffer with specific set and binding.
-			* @param[in] set Specific set.
-			* @param[in] binding Specific binding.
-			* @return Returns the local buffer smart pointor.
-			*/
-			virtual std::unique_ptr<VulkanBuffer>& GetBuffer(uint32_t set, uint32_t binding) override;
-		};
 	};
 
 }

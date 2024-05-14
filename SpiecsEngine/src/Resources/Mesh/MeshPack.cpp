@@ -25,6 +25,12 @@ namespace Spiecs {
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 	}
 
+	void MeshPack::SetMaterial(const std::string& materialPath)
+	{
+		m_Material = ResourcePool<Material>::Load<Material>(materialPath);
+		m_Material->BuildMaterial();
+	}
+
 	void MeshPack::CreateBuffer()
 	{
 		// vertex buffer
