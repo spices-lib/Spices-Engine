@@ -157,7 +157,7 @@ namespace Spiecs {
 		* @brief Get material constant parameters.
 		* @return Returns the material constant parameters.
 		*/
-		inline std::unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; };
+		inline scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; };
 
 	private:
 
@@ -216,7 +216,7 @@ namespace Spiecs {
 		* @brief m_ConstantParams's VkBuffer.
 		* Key: set, Value: VkBuffer.
 		*/
-		std::unordered_map<Int2, std::shared_ptr<VulkanBuffer>> m_Buffers;
+		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
 
 		/**
 		* @brief m_Buffers's c++ data container.

@@ -72,7 +72,7 @@ namespace Spiecs {
 		);
 	}
 
-	void WorldPickStage2Renderer::Render(FrameInfo& frameInfo)
+	void WorldPickStage2Renderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

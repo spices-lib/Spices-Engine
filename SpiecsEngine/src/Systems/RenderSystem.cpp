@@ -33,7 +33,7 @@ namespace Spiecs {
 		/**
 		* @brief Render this frame.
 		*/
-		m_RenderFrontend->DrawTest(FrameInfo::Get());
+		m_RenderFrontend->DrawTest(ts, FrameInfo::Get());
 
 		/**
 		* @brief End Render this frame.

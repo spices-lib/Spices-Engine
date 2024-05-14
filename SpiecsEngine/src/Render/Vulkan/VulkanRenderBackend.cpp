@@ -3,6 +3,7 @@
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Core/Event/WindowEvent.h"
 
+#include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/MeshRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SkyBoxRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SlateRenderer.h"
@@ -40,6 +41,7 @@ namespace Spiecs {
 		m_RendererResourcePool = std::make_shared<RendererResourcePool>();
 
 		RendererManager::Get()
+			.Push<PreRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SkyBoxRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<MeshRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SceneComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
@@ -62,7 +64,8 @@ namespace Spiecs {
 			.Pop("SpriteRenderer")
 			.Pop("SceneComposeRenderer")
 			.Pop("MeshRenderer")
-			.Pop("SkyBoxRenderer");
+			.Pop("SkyBoxRenderer")
+			.Pop("PreRenderer");
 	}
 
 	void VulkanRenderBackend::RecreateSwapChain() {
@@ -172,9 +175,9 @@ namespace Spiecs {
 
 	}
 
-	void VulkanRenderBackend::DrawTest(FrameInfo& frameInfo)
+	void VulkanRenderBackend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		RendererManager::Run(frameInfo);
+		RendererManager::Run(ts, frameInfo);
 	}
 
 	void VulkanRenderBackend::OnEvent(Event& event)

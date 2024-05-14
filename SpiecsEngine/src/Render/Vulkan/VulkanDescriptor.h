@@ -77,6 +77,11 @@ namespace Spiecs {
             ImageInfo&  imageInfo,
             BufferInfo& bufferInfo
         );
+
+        void UpdateDescriptorSet(
+            ImageInfo& imageInfo,
+            BufferInfo& bufferInfo
+        );
         
         VkDescriptorSet& Get() { return m_DescriptorSet; };
         

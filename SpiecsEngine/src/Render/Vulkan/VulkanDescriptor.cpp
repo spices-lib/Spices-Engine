@@ -115,23 +115,39 @@ namespace Spiecs {
 		for(auto& pair : m_Bindings)
 		{
 			VkWriteDescriptorSet write{};
-			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstBinding = pair.first;
-			write.dstSet = m_DescriptorSet;
-			write.descriptorType = pair.second.descriptorType;
+			write.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.dstBinding       = pair.first;
+			write.dstSet           = m_DescriptorSet;
+			write.descriptorType   = pair.second.descriptorType;
 
 			switch(write.descriptorType)
 			{
 			case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-				write.pImageInfo = imageInfo[pair.first].data();
-				write.descriptorCount = static_cast<uint32_t>(imageInfo[pair.first].size());
+				write.pImageInfo        = imageInfo[pair.first].data();
+				write.descriptorCount   = static_cast<uint32_t>(imageInfo[pair.first].size());
 				break;
 			case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-				write.pBufferInfo = &bufferInfo[pair.first];
-				write.descriptorCount = 1;
+				write.pBufferInfo       = &bufferInfo[pair.first];
+				write.descriptorCount   = 1;
 				break;
 			}
 			
+			vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &write, 0, nullptr);
+		}
+	}
+
+	void VulkanDescriptorSet::UpdateDescriptorSet(BufferInfo& bufferInfo)
+	{
+		for (auto& pair : m_Bindings)
+		{
+			VkWriteDescriptorSet write{};
+			write.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.dstBinding      = pair.first;
+			write.dstSet          = m_DescriptorSet;
+			write.descriptorType  = pair.second.descriptorType;
+			write.pBufferInfo     = &bufferInfo[pair.first];
+			write.descriptorCount = 1;
+
 			vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &write, 0, nullptr);
 		}
 	}

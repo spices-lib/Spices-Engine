@@ -45,7 +45,7 @@ namespace Spiecs {
 		* @brief All renderer Start to Render.
 		* @param[in] frameInfo The current frame data.
 		*/
-		static void Run(FrameInfo& frameInfo);
+		static void Run(TimeStep& ts, FrameInfo& frameInfo);
 
 		/**
 		* @brief This function is called on swapchian resized or out of data.
@@ -132,5 +132,4 @@ namespace Spiecs {
 		*/
 		static scl::linked_unordered_map<std::string, std::shared_ptr<Renderer>> m_Identities;
 	};
-
 }
