@@ -794,6 +794,11 @@ namespace Spiecs {
 		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->Flush();
 	}
 	template<typename T>
+	inline DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
+	{
+		// TODO: 在此处插入 return 语句
+	}
+	template<typename T>
 	inline DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddBuffer(uint32_t set, uint32_t binding, VkShaderStageFlags stageFlags)
 	{
 		// TODO: 在此处插入 return 语句
