@@ -13,38 +13,6 @@ namespace Spiecs {
 	namespace MeshR {
 
 		/**
-		* @brief This struct is specific MeshRenderer PsuhConstant
-		*/
-		struct PushConstant
-		{
-			/**
-			* @brief Meshpack ModelMatrix.
-			*/
-			glm::mat4 model = glm::mat4(1.0f);
-
-			/**
-			* @brief Entityid, cast from entt::entity.
-			*/
-			int entityID = -1;
-		};
-
-		/**
-		* @brief VertexShader Stage uniform buffer data.
-		*/
-		struct View
-		{
-			/**
-			* @brief Projection Matrix.
-			*/
-			glm::mat4 projection = glm::mat4(1.0f);
-
-			/**
-			* @brief View Matrix.
-			*/
-			glm::mat4 view = glm::mat4(1.0f);
-		};
-
-		/**
 		* @brief PointLight Render Data.
 		*/
 		struct PointLightUBO
@@ -104,11 +72,9 @@ namespace Spiecs {
 		m_RenderPass->Build();
 	}
 
-	void MeshRenderer::CreatePipelineLayoutAndDescriptor()
+	void MeshRenderer::CreateDescriptorSet()
 	{
 		PipelineLayoutBuilder{ this }
-		.CreateCollection<SpecificCollection>()
-		.AddPushConstant<MeshR::PushConstant>()
 		.AddBuffer<MeshR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<DirectionalLightComponent::DirectionalLight>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
@@ -116,31 +82,15 @@ namespace Spiecs {
 		.Build();
 	}
 
-	void MeshRenderer::CreatePipeline(VkRenderPass renderPass)
-	{
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass = renderPass;
-		pipelineConfig.pipelineLayout = m_PipelineLayout;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
-		m_VulkanPipeline = std::make_unique<VulkanPipeline>(
-			m_VulkanState,
-			GetSahderPath("vert"),
-			GetSahderPath("frag"),
-			pipelineConfig
-		);
-	}
-
 	void MeshRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.UpdateBuffer<MeshR::View>(0, 0, [&](auto& ubo) {
-			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-			ubo.view = glm::inverse(invViewMatrix);
-			ubo.projection = projectionMatrix;
-		});
+		builder.BeginRenderPass();
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
 
 		builder.UpdateBuffer<DirectionalLightComponent::DirectionalLight>(2, 0, [&](auto& ubo) {
 			ubo = GetDirectionalLight(frameInfo);
@@ -154,27 +104,19 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+				builder.BindPipeline(m_Pipelines[material->GetName()]);
+
 				builder.UpdatePushConstant<MeshR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
 
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet()[0]);
+				builder.BindDescriptorSet(material->GetMaterialDescriptorSet());
 			});
 
 			return false;
 		});
 
 		builder.EndRenderPass();
-	}
-
-	std::unique_ptr<VulkanBuffer>& MeshRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
-	{
-		if (set == 0 && binding == 0) return m_ViewUBO;
-		if (set == 2 && binding == 0) return m_DirectionalLightUBO;
-		if (set == 2 && binding == 1) return m_PointLightUBO;
-
-		SPIECS_CORE_ERROR("MeshRenderer::Collection:: Out of Range");
-		return m_ViewUBO;
 	}
 }

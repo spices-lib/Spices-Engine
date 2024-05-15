@@ -139,13 +139,13 @@ namespace Spiecs {
 		* @return Returns the material descriptorSet.
 		* @note Must call BuildMaterial() first.
 		*/
-		inline std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>>& GetMaterialDescriptorSet() { return m_DescriptorSets; };
+		std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>>& GetMaterialDescriptorSet();
 
 		/**
 		* @brief Get material shader path.
 		* @return Returns all stage shader path that needed.
 		*/
-		inline const std::unordered_map<std::string, std::string>& GetShaderPath() { return m_Shaders; };
+		inline std::string GetShaderPath(const std::string& stage) { return m_Shaders[stage]; };
 
 		/**
 		* @brief Get material texture parameters.
@@ -166,7 +166,7 @@ namespace Spiecs {
 		* It defines how we build texture and descriptor set.
 		* @todo empty texture.
 		*/
-		virtual void BuildMaterial();
+		void BuildMaterial();
 
 		/**
 		* @brief Allow MaterialLoader access all data.
@@ -205,12 +205,6 @@ namespace Spiecs {
 		* Key: paramname, Value: paramvalue.
 		*/
 		scl::linked_unordered_map<std::string, ConstantParam> m_ConstantParams;
-
-		/**
-		* @brief Material's Specific DescriptorSet.
-		* Key: set, Value: DescriptorSet.
-		*/
-		std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>> m_DescriptorSets;
 
 		/**
 		* @brief m_ConstantParams's VkBuffer.

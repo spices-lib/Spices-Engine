@@ -31,7 +31,7 @@ namespace Spiecs {
 		m_RenderPass->Build();
 	}
 
-	void SlateRenderer::CreatePipelineLayoutAndDescriptor()
+	void SlateRenderer::CreateDescriptorSet()
 	{}
 
 	void SlateRenderer::OnSystemInitialize()

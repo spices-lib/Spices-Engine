@@ -83,6 +83,7 @@ namespace Spiecs {
         );
         
         VkDescriptorSet& Get() { return m_DescriptorSet; };
+        VkDescriptorSetLayout& GetRowSetLayout() { return m_Layout.Get(); };
         
     private:
         std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> m_Bindings;

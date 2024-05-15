@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "Renderer.h"
 #include "Systems/SlateSystem.h"
+#include "Resources/ResourcePool/ResourcePool.h"
 
 namespace Spiecs {
 
@@ -23,21 +24,10 @@ namespace Spiecs {
 		, m_DesctiptorPool          (desctiptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
-		, m_PipelineLayout          {}
 	{}
 
 	Renderer::~Renderer()
-	{
-		/**
-		* @brief Destroy PipelineLayout.
-		*/
-		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
-
-		/**
-		* @brief Free all descriptors.
-		*/
-		FreeResource();
-	}
+	{}
 
 	void Renderer::OnSystemInitialize()
 	{
@@ -47,51 +37,122 @@ namespace Spiecs {
 		CreateRenderPass();
 
 		/**
-		* @brief create pipeline layout and buffer type descriptor.
+		* @brief create specific renderer descriptorset.
 		*/
-		CreatePipelineLayoutAndDescriptor();
+		CreateDescriptorSet();
+	}
+	
+	void Renderer::RegistyMaterial(const std::string& materialName)
+	{
+		/**
+		* @brief PreRenderer's DescriptorSetInfo.
+		*/
+		auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
 
 		/**
-		* @brief create pipeline.
+		* @brief SpecificRenderer's DescriptorSetInfo.
 		*/
-		CreatePipeline(m_RenderPass->Get());
+		auto specificRendererSetInfo = DescriptorSetManager::GetByName(m_RendererName);
+
+		/**
+		* @brief Material's DescriptorSetInfo.
+		*/
+		auto material = ResourcePool<Material>::Load<Material>(materialName);
+		auto materialSetInfo = material->GetMaterialDescriptorSet();
+
+		/**
+		* @breif Create PipelineLayout.
+		*/
+		VkPipelineLayout layout = CreatePipelineLayout(preRendererSetInfo, specificRendererSetInfo, materialSetInfo);
+
+		/**
+		* @brief Create Pipeline.
+		*/
+		m_Pipelines[materialName] = CreatePipeline(material, m_RenderPass->Get(), layout);
+
+		/**
+		* @breif Destroy PipelineLayout.
+		*/
+		vkDestroyPipelineLayout(m_VulkanState.m_Device, layout, nullptr);
 	}
 
-	std::string Renderer::GetSahderPath(const std::string& shaderType)
+	VkPipelineLayout Renderer::CreatePipelineLayout(
+		const DescriptorSetInfo& preRendererSetInfo, 
+		const DescriptorSetInfo& specificRendererSetInfo, 
+		const DescriptorSetInfo& materialSetInfo
+	)
+	{
+		/**
+		* @brief Instance a empty vector.
+		*/
+		std::vector<VkDescriptorSetLayout> rowSetLayouts;
+
+		/**
+		* @brief Add PreRenderer's DescriptorSetLayout..
+		*/
+		for (auto& pair : preRendererSetInfo)
+		{
+			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+		}
+
+		/**
+		* @brief Add SpecificRenderer's DescriptorSetLayout..
+		*/
+		for (auto& pair : specificRendererSetInfo)
+		{
+			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+		}
+
+		/**
+		* @brief Add Material's DescriptorSetLayout..
+		*/
+		for (auto& pair : materialSetInfo)
+		{
+			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+		}
+
+		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(rowSetLayouts.size());
+		pipelineLayoutInfo.pSetLayouts = rowSetLayouts.data();
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &m_PushConstantRange;
+
+		VkPipelineLayout pipelineLayout;
+		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout));
+
+		return pipelineLayout;
+	}
+	
+	std::shared_ptr<VulkanPipeline> Renderer::CreatePipeline(
+		std::shared_ptr<Material> material, 
+		VkRenderPass&             renderPass, 
+		VkPipelineLayout&         layout
+	)
+	{
+		PipelineConfigInfo pipelineConfig{};
+		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
+		pipelineConfig.renderPass                     = renderPass;
+		pipelineConfig.pipelineLayout                 = layout;
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments    = m_RenderPass->GetColorBlend().data();
+		return std::make_shared<VulkanPipeline>(
+			m_VulkanState,
+			GetSahderPath(material->GetShaderPath("vert"), "vert"),
+			GetSahderPath(material->GetShaderPath("frag"), "vert"),
+			pipelineConfig
+		);
+	}
+
+	std::string Renderer::GetSahderPath(const std::string& name, const std::string& shaderType)
 	{
 		/**
 		* @brief Get full path of shader file.
 		*/
 		std::stringstream ss;
-		ss << SPIECS_ENGINE_ASSETS_PATH << "Shaders/spv/Shader." << m_RendererName << ".Default." << shaderType << ".spv";
+		ss << SPIECS_ENGINE_ASSETS_PATH << "Shaders/spv/Shader." << name << "." << shaderType << ".spv";
 
 		return ss.str();
-	}
-
-	bool Renderer::FreeResource()
-	{
-		/**
-		* @brief Iter frame's resource.
-		*/
-		for (int i = 0; i < m_Resource.size(); i++)
-		{
-			auto& res = m_Resource[i];
-
-			/**
-			* @brief Iter specific descriptor.
-			*/
-			for (int j = 0; j < res.m_DescriptorSets.size(); j++)
-			{
-				auto& des = res.m_DescriptorSets[j];
-
-				/**
-				* @brief Free it.
-				*/
-				VK_CHECK(vkFreeDescriptorSets(m_VulkanState.m_Device, m_DesctiptorPool->GetPool(), 1, &des));
-			}
-		}
-
-		return true;
 	}
 
 	std::pair<glm::mat4, glm::mat4> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
@@ -264,13 +325,13 @@ namespace Spiecs {
 		, m_CurrentFrame(currentFrame)
 		, m_CurrentImage(currentImage)
 	{
-		BindPipeline();
+		//BindPipeline();
 
-		BindAllBufferTyepDescriptorSet();
+		//BindAllBufferTyepDescriptorSet();
 
-		BindInputDescriptorSet();
+		//BindInputDescriptorSet();
 
-		BeginRenderPass();
+		//BeginRenderPass();
 	}
 
 	void Renderer::RenderBehaverBuilder::BindPipeline()
@@ -374,5 +435,27 @@ namespace Spiecs {
 			0,
 			nullptr
 		);
+	}
+
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos)
+	{
+		for (auto pair : infos)
+		{
+			vkCmdBindDescriptorSets(
+				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				m_Renderer->m_PipelineLayout,
+				pair.first,
+				1,
+				&pair.second->Get(),
+				0,
+				nullptr
+			);
+		}
+	}
+
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
+	{
+		// TODO: 在此处插入 return 语句
 	}
 }

@@ -22,7 +22,7 @@ namespace Spiecs {
 
 		return *m_RendererManager;
 	}
-
+	
 	void RendererManager::Run(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		m_Identities.for_each([&](auto& k, auto& v) {

@@ -9,41 +9,6 @@
 
 namespace Spiecs {
 
-	namespace SpriteR {
-
-		/**
-		* @brief This struct is specific MeshRenderer PsuhConstant
-		*/
-		struct PushConstant
-		{
-			/**
-			* @brief Meshpack ModelMatrix.
-			*/
-			glm::mat4 model = glm::mat4(1.0f);
-
-			/**
-			* @brief Entityid, cast from entt::entity.
-			*/
-			int entityID = -1;
-		};
-		
-		/**
-		* @brief VertexShader Stage uniform buffer data.
-		*/
-		struct View
-		{
-			/**
-			* @brief Projection Matrix.
-			*/
-			glm::mat4 projection = glm::mat4(1.0f);
-
-			/**
-			* @brief View Matrix.
-			*/
-			glm::mat4 view = glm::mat4(1.0f);
-		};
-	}
-
 	void SpriteRenderer::CreateRenderPass()
 	{
 		/**
@@ -70,7 +35,7 @@ namespace Spiecs {
 		m_RenderPass->Build();
 	}
 
-	void SpriteRenderer::CreatePipelineLayoutAndDescriptor()
+	void SpriteRenderer::CreateDescriptorSet()
 	{
 		PipelineLayoutBuilder{ this }
 			.CreateCollection<SpecificCollection>()
@@ -78,22 +43,6 @@ namespace Spiecs {
 			.AddBuffer<SpriteR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
 			.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.Build();
-	}
-
-	void SpriteRenderer::CreatePipeline(VkRenderPass renderPass)
-	{
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass = renderPass;
-		pipelineConfig.pipelineLayout = m_PipelineLayout;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
-		m_VulkanPipeline = std::make_unique<VulkanPipeline>(
-			m_VulkanState,
-			GetSahderPath("vert"),
-			GetSahderPath("frag"),
-			pipelineConfig
-		);
 	}
 
 	void SpriteRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
@@ -133,13 +82,5 @@ namespace Spiecs {
 		}
 
 		builder.EndRenderPass();
-	}
-
-	std::unique_ptr<VulkanBuffer>& SpriteRenderer::SpecificCollection::GetBuffer(uint32_t set, uint32_t binding)
-	{
-		if (set == 0 && binding == 0) return m_ViewUBO;
-
-		SPIECS_CORE_ERROR("SpriteRenderer::Collection:: Out of Range");
-		return m_ViewUBO;
 	}
 }

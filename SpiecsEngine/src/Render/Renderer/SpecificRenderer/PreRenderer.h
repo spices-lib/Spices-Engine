@@ -23,8 +23,9 @@ namespace Spiecs {
             std::shared_ptr<VulkanDescriptorPool> desctiptorPool,
             std::shared_ptr<VulkanDevice>         device,
             std::shared_ptr<RendererResourcePool> rendererResourcePool
-        ) 
-            : Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) {};
+        )
+            : Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
+        {};
 
         /**
          * @brief Destructor Function.
@@ -45,26 +46,9 @@ namespace Spiecs {
         */
         virtual void CreateRenderPass() override {};
 
-        /**
-        * @brief The interface is inherited from Renderer.
-        * Create specific pipelinelayout and buffer type descriptor.
-        */
-        virtual void CreatePipelineLayoutAndDescriptor() override;
-
-        /**
-        * @brief The interface is inherited from Renderer.
-        * Create specific pipeline.
-        * @param[in] renderPass Renderer specific renderpass.
-        */
-        virtual void CreatePipeline(VkRenderPass renderPass) override {};
+        virtual void CreateDescriptorSet() override;
 
     private:
-        
-        /**
-        * @brief Material's Specific DescriptorSet.
-        * Key: set, Value: DescriptorSet.
-        */
-        std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>> m_DescriptorSets;
 
         /**
         * @brief m_ConstantParams's VkBuffer.

@@ -10,18 +10,6 @@
 
 namespace Spiecs {
 
-	namespace WorldPickStage2R {
-
-		/**
-		* @brief This struct is specific MeshRenderer PsuhConstant
-		*/
-		struct PushConstant
-		{
-			glm::vec4 gbufferSize;
-			glm::vec4 windowSize;
-		};
-	}
-
 	WorldPickStage2Renderer::WorldPickStage2Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
 		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
 	{
@@ -48,28 +36,12 @@ namespace Spiecs {
 		m_RendererResourcePool->AccessRowResource("SelectBuffer")->CreateDescriptorSet(0);
 	}
 
-	void WorldPickStage2Renderer::CreatePipelineLayoutAndDescriptor()
+	void WorldPickStage2Renderer::CreateDescriptorSet()
 	{
 		PipelineLayoutBuilder{ this }
 		.AddPushConstant<WorldPickStage2R::PushConstant>()
 		.AddTexture<Texture2D>(0, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
-	}
-
-	void WorldPickStage2Renderer::CreatePipeline(VkRenderPass renderPass)
-	{
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass = renderPass;
-		pipelineConfig.pipelineLayout = m_PipelineLayout;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
-		m_VulkanPipeline = std::make_unique<VulkanPipeline>(
-			m_VulkanState,
-			GetSahderPath("vert"),
-			GetSahderPath("frag"),
-			pipelineConfig
-		);
 	}
 
 	void WorldPickStage2Renderer::Render(TimeStep& ts, FrameInfo& frameInfo)

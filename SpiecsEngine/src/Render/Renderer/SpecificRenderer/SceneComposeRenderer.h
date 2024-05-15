@@ -52,18 +52,7 @@ namespace Spiecs {
 		*/
 		virtual void CreateRenderPass() override;
 
-		/**
-		* @brief The interface is inherited from Renderer.
-		* Create specific pipelinelayout and buffer type descriptor.
-		*/
-		virtual void CreatePipelineLayoutAndDescriptor() override;
-
-		/**
-		* @brief The interface is inherited from Renderer.
-		* Create specific pipeline.
-		* @param[in] renderPass Renderer specific renderpass.
-		*/
-		virtual void CreatePipeline(VkRenderPass renderPass) override;
+		virtual void CreateDescriptorSet() override;
 
 		virtual void OnSlateResize() override;
 

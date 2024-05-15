@@ -6,6 +6,22 @@ namespace Spiecs {
 	namespace PreR {
 
 		/**
+		* @brief This struct is specific SkyBoxRenderer PsuhConstant
+		*/
+		struct PushConstant
+		{
+			/**
+			* @brief Meshpack ModelMatrix.
+			*/
+			glm::mat4 model = glm::mat4(1.0f);
+
+			/**
+			* @brief Entityid, cast from entt::entity.
+			*/
+			int entityID = -1;
+		};
+
+		/**
 		* @breif Global View struct.
 		*/
 		struct View
@@ -59,8 +75,14 @@ namespace Spiecs {
 
 	}
 
-	void PreRenderer::CreatePipelineLayoutAndDescriptor()
+	void PreRenderer::CreateDescriptorSet()
 	{
+		DescriptorSetBuilder{ this }
+		.AddPushConstant<PreR::PushConstant>()
+		.AddBuffer<PreR::View>(0, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddBuffer<PreR::Input>(0, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
+		.Build();
+
 		/**
 		* @brief Container like that: Set - [ binding - VkDescriptorBufferInfo].
 		*/
@@ -111,24 +133,27 @@ namespace Spiecs {
 		*/
 		bufferInfos[0][1] = *m_Buffers[_01]->GetBufferInfo();
 
-
-		m_DescriptorSets[0] = std::make_shared<VulkanDescriptorSet>(m_VulkanState, m_DesctiptorPool);
-		m_DescriptorSets[0]->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
-		m_DescriptorSets[0]->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+		auto descriptorSet = DescriptorSetManager::Registy(m_RendererName, 0);
+		descriptorSet->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+		descriptorSet->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
 
 		/**
 		* @brief AllocateDescriptorSet for Pool.
 		*/
-		m_DescriptorSets[0]->BuildDescriptorSet();
+		descriptorSet->BuildDescriptorSet();
 
 		/**
 		* @brief UpdateDescriptorSet.
 		*/
-		m_DescriptorSets[0]->UpdateDescriptorSet(bufferInfos[0]);
+		descriptorSet->UpdateDescriptorSet(bufferInfos[0]);
 	}
 
 	void PreRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+
+		builder.UpdateBuffer();
+
 		auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 		ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 		VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;

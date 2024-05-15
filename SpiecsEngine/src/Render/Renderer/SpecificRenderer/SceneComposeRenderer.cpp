@@ -10,16 +10,6 @@
 
 namespace Spiecs {
 
-	namespace SceneComposeR {
-
-		struct PushConstant
-		{
-			glm::vec4 gbufferSize;
-			glm::vec4 windowSize;
-		};
-
-	}
-
 	SceneComposeRenderer::SceneComposeRenderer(
 		const std::string&                       rendererName         , 
 		VulkanState&                             vulkanState          , 
@@ -93,28 +83,12 @@ namespace Spiecs {
 		m_RenderPass->Build();
 	}
 
-	void SceneComposeRenderer::CreatePipelineLayoutAndDescriptor()
+	void SceneComposeRenderer::CreateDescriptorSet()
 	{
 		PipelineLayoutBuilder{ this }
 		.AddPushConstant<SceneComposeR::PushConstant>()
 		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
 		.Build();
-	}
-
-	void SceneComposeRenderer::CreatePipeline(VkRenderPass renderPass)
-	{
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass = renderPass;
-		pipelineConfig.pipelineLayout = m_PipelineLayout;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
-		m_VulkanPipeline = std::make_unique<VulkanPipeline>(
-			m_VulkanState,
-			GetSahderPath("vert"),
-			GetSahderPath("frag"),
-			pipelineConfig
-		);
 	}
 
 	void SceneComposeRenderer::OnSlateResize()

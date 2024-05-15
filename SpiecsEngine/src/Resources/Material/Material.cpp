@@ -8,6 +8,10 @@
 #include "Material.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Core/Reflect/TypeReflect.h"
+#include "Render/Renderer/DescriptorSetManager/DescriptorSetManager.h"
+#include "Render/Renderer/RendererManager.h"
+#include "Core/Library/StringLibrary.h"
+#include "Render/Renderer/Renderer.h"
 
 namespace Spiecs {
 
@@ -39,6 +43,11 @@ namespace Spiecs {
 		MaterialLoader::Load(m_MaterialPath, this);
 	}
 
+	std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>>& Material::GetMaterialDescriptorSet()
+	{
+		return DescriptorSetManager::GetByName(m_MaterialPath);
+	}
+
 	void Material::BuildMaterial()
 	{
 		/**
@@ -50,13 +59,13 @@ namespace Spiecs {
 		* @brief Fill in textureParams to layouts.
 		* Feel free to iter the container without order.
 		*/
-		for(auto& pair : m_TextureParams)
+		for (auto& pair : m_TextureParams)
 		{
 			TextureParam& tp = pair.second;
-			
+
 			layouts[tp.set][tp.binding].count = glm::max(layouts[tp.set][tp.binding].count, tp.index + 1);  // set to max num.
-			layouts[tp.set][tp.binding].size  = 0;                                                              // though it is a image param, set to 0
-			layouts[tp.set][tp.binding].type  = DescriptorSetBindingInfoHelp::Type::Image;                      // set to image type.
+			layouts[tp.set][tp.binding].size = 0;                                                              // though it is a image param, set to 0
+			layouts[tp.set][tp.binding].type = DescriptorSetBindingInfoHelp::Type::Image;                      // set to image type.
 		}
 
 		/**
@@ -66,8 +75,8 @@ namespace Spiecs {
 		m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
 			layouts[v.set][v.binding].count = 1;                                                               // set to 1, buffer type always 1.
 			layouts[v.set][v.binding].size += StrType2Size(v.paramType);                                       // set to add the size of value type.
-			layouts[v.set][v.binding].type  = DescriptorSetBindingInfoHelp::Type::Buffer;                      // set to buffer type.
-		});
+			layouts[v.set][v.binding].type = DescriptorSetBindingInfoHelp::Type::Buffer;                      // set to buffer type.
+			});
 
 		/**
 		* @brief Container like that: Set - [ binding - [imageInfo0, imageInfo1, imageInfo2...]].
@@ -77,7 +86,7 @@ namespace Spiecs {
 		/**
 		* @brief Fill in textureParams to imageInfos.
 		*/
-		for(auto& pair : m_TextureParams)
+		for (auto& pair : m_TextureParams)
 		{
 			TextureParam& tp = pair.second;
 
@@ -85,7 +94,7 @@ namespace Spiecs {
 			* @brief Only work with Texture2D now.
 			* @todo more type support, reflection.
 			*/
-			if(tp.textureType == "Texture2D")
+			if (tp.textureType == "Texture2D")
 			{
 				/**
 				* @brief Apply for a tecture from Texture's ResourcePool.
@@ -95,7 +104,7 @@ namespace Spiecs {
 				/**
 				* @brief Expand the vector to matched size.
 				*/
-				if(imageInfos[tp.set][tp.binding].size() < tp.index + 1)  imageInfos[tp.set][tp.binding].resize(tp.index + 1);
+				if (imageInfos[tp.set][tp.binding].size() < tp.index + 1)  imageInfos[tp.set][tp.binding].resize(tp.index + 1);
 
 				/**
 				* @brief Fill in imageinfo.
@@ -127,7 +136,7 @@ namespace Spiecs {
 			* @brief Create the key to map, and add element to value.
 			*/
 			m_Buffermemoryblocks[int2].AddElement(k, v.paramType);
-		});
+			});
 
 		/**
 		* @brief Container like that: Set - [ binding - VkDescriptorBufferInfo].
@@ -137,7 +146,7 @@ namespace Spiecs {
 		/**
 		* @brief Iter m_Buffers for creating VulkanBuffer and fill in VkDescriptorBufferInfo to bufferInfos.
 		*/
-		for(auto& pair : m_Buffers)
+		for (auto& pair : m_Buffers)
 		{
 			/**
 			* @brief Creating VulkanBuffer.
@@ -163,7 +172,7 @@ namespace Spiecs {
 		/**
 		* @brief Iter m_Buffermemoryblocks for filling data on m_ConstantParams.
 		*/
-		for(auto& pair : m_Buffermemoryblocks)
+		for (auto& pair : m_Buffermemoryblocks)
 		{
 			/**
 			* @brief Malloc the memory to this container.
@@ -199,7 +208,7 @@ namespace Spiecs {
 				{
 					*reinterpret_cast<float*>(pt) = std::any_cast<float>(ref.paramValue);
 				}
-			});
+				});
 
 			/**
 			* @brief Write the memeoryblock's data to m_Buffers.
@@ -215,25 +224,25 @@ namespace Spiecs {
 		/**
 		* @brief Iter layouts set for creating descriptorset.
 		*/
-		for(auto& layout : layouts)
+		for (auto& layout : layouts)
 		{
 			/**
 			* @brief Creating a empty VulkanDescriptorSet.
 			*/
-			m_DescriptorSets[layout.first] = std::make_shared<VulkanDescriptorSet>(VulkanRenderBackend::GetState(), VulkanRenderBackend::GetDescriptorPool());
+			auto descriptorSet = DescriptorSetManager::Registy(m_MaterialPath, layout.first);
 
 			/**
 			* @brief Iter layouts binding for Add Binding.
 			*/
-			for(auto& pair : layout.second)
+			for (auto& pair : layout.second)
 			{
-				switch(pair.second.type)
+				switch (pair.second.type)
 				{
 				case DescriptorSetBindingInfoHelp::Type::Image:
-					m_DescriptorSets[layout.first]->AddBinding(pair.first, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, pair.second.count);
+					descriptorSet->AddBinding(pair.first, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, pair.second.count);
 					break;
 				case DescriptorSetBindingInfoHelp::Type::Buffer:
-					m_DescriptorSets[layout.first]->AddBinding(pair.first, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, pair.second.count);
+					descriptorSet->AddBinding(pair.first, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, pair.second.count);
 					break;
 				}
 			}
@@ -241,14 +250,19 @@ namespace Spiecs {
 			/**
 			* @brief AllocateDescriptorSet for Pool.
 			*/
-			m_DescriptorSets[layout.first]->BuildDescriptorSet();
+			descriptorSet->BuildDescriptorSet();
 
 			/**
 			* @brief UpdateDescriptorSet.
 			*/
-			m_DescriptorSets[layout.first]->UpdateDescriptorSet(imageInfos[layout.first], bufferInfos[layout.first]);
+			descriptorSet->UpdateDescriptorSet(imageInfos[layout.first], bufferInfos[layout.first]);
 		}
 
-
+		/**
+		* @brief Create PipelineLayout.
+		*/
+		std::string rendererName = StringLibrary::SplitString(m_MaterialPath, '.')[0];
+		auto renderer = RendererManager::GetRenderer(rendererName);
+		renderer->RegistyMaterial(m_MaterialPath);
 	}
 }
