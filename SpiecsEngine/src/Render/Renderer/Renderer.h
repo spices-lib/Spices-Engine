@@ -346,13 +346,13 @@ namespace Spiecs {
 			* @param[in] stageFlags Which buffer stage this buffer will use.
 			* @return Returns this reference.
 			*/
-			/*DescriptorSetBuilder& AddInput(
+			DescriptorSetBuilder& AddInput(
 				uint32_t set,
 				uint32_t binding,
 				uint32_t arrayNum,
 				VkShaderStageFlags stageFlags,
 				const std::vector<std::string>& inputAttachmentNames
-			);*/
+			);
 
 			/**
 			* @brief Create all buffer type descriptor set.
@@ -469,8 +469,6 @@ namespace Spiecs {
 			sizeof(T),
 			&push
 		);
-
-		return *this;
 	}
 
 	template<typename T, typename F>
@@ -492,8 +490,6 @@ namespace Spiecs {
 		*/
 		m_Renderer->m_Buffers[{set, binding}]->WriteToBuffer(&ubo);
 		m_Renderer->m_Buffers[{set, binding}]->Flush();
-
-		return *this;
 	}
 
 	template<typename T>

@@ -350,18 +350,18 @@ namespace Spiecs {
 
 	}
 
-	//Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddInput(
-	//	uint32_t                         set                   ,
-	//	uint32_t                         binding               ,
-	//	uint32_t                         arrayNum              ,
-	//	VkShaderStageFlags               stageFlags            ,
-	//	const std::vector<std::string>&  inputAttachmentNames  
-	//)
-	//{
-	//	// TODO: 在此处插入 return 语句
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddInput(
+		uint32_t                         set                   ,
+		uint32_t                         binding               ,
+		uint32_t                         arrayNum              ,
+		VkShaderStageFlags               stageFlags            ,
+		const std::vector<std::string>&  inputAttachmentNames  
+	)
+	{
+		// TODO: 在此处插入 return 语句
 
-	//	return *this;
-	//}
+		return *this;
+	}
 
 	void Renderer::DescriptorSetBuilder::Build()
 	{
