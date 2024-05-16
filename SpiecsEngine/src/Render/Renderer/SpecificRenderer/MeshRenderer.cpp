@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "MeshRenderer.h"
+#include "PreRenderer.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
 
 namespace Spiecs {
@@ -104,9 +105,9 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.BindPipeline(m_Pipelines[material->GetName()]);
+				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<MeshR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

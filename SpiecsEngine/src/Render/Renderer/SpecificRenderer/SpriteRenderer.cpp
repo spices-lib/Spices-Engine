@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "SpriteRenderer.h"
+#include "PreRenderer.h"
 
 namespace Spiecs {
 
@@ -37,25 +38,25 @@ namespace Spiecs {
 
 	void SpriteRenderer::CreateDescriptorSet()
 	{
-		PipelineLayoutBuilder{ this }
-			.CreateCollection<SpecificCollection>()
-			.AddPushConstant<SpriteR::PushConstant>()
-			.AddBuffer<SpriteR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
-			.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
-			.Build();
+		DescriptorSetBuilder{ this }
+		.AddPushConstant<PreR::PushConstant>()
+		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.Build();
 	}
 
 	void SpriteRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
+		builder.BeginRenderPass();
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
+
 		glm::vec3 camPos;
-		builder.UpdateBuffer<SpriteR::View>(0, 0, [&](auto& ubo) {
-			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-			camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1] , invViewMatrix[3][2] );
-			ubo.view = glm::inverse(invViewMatrix);
-			ubo.projection = projectionMatrix;
-		});
+		auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+		camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
 
 		std::map<float, int> sortedEntity;
 		IterWorldComp<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
@@ -72,12 +73,12 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.UpdatePushConstant<SpriteR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = it->second;
 				});
 
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet()[0]);
+				builder.BindDescriptorSet(material->GetMaterialDescriptorSet());
 			});
 		}
 

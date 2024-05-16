@@ -26,10 +26,10 @@ namespace Spiecs {
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
 		WorldPickRenderer(
-			const std::string&                    rendererName         , 
-			VulkanState&                          vulkanState          , 
-			std::shared_ptr<VulkanDescriptorPool> desctiptorPool       , 
-			std::shared_ptr<VulkanDevice>         device               , 
+			const std::string& rendererName,
+			VulkanState& vulkanState,
+			std::shared_ptr<VulkanDescriptorPool> desctiptorPool,
+			std::shared_ptr<VulkanDevice>         device,
 			std::shared_ptr<RendererResourcePool> rendererResourcePool
 		)
 			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) {};
@@ -56,5 +56,6 @@ namespace Spiecs {
 		virtual void CreateDescriptorSet() override;
 
 		virtual void OnSlateResize() override { CreateRenderPass(); };
+	};
 
 }

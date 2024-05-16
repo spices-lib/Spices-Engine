@@ -19,7 +19,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Default Resource in different ResourccePool.
 		*/
-		ResourcePool<Texture>::Load<Texture2D>("nicolas.jpg");
+		ResourcePool<Texture>::Load<Texture2D>("default.jpg");
 	}
 
 	void ResourceSystem::OnSystemShutDown()

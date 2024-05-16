@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "WorldPickStage2Renderer.h"
+#include "PreRenderer.h"
 #include "Systems/SlateSystem.h"
 
 namespace Spiecs {
@@ -38,8 +39,8 @@ namespace Spiecs {
 
 	void WorldPickStage2Renderer::CreateDescriptorSet()
 	{
-		PipelineLayoutBuilder{ this }
-		.AddPushConstant<WorldPickStage2R::PushConstant>()
+		DescriptorSetBuilder{ this }
+		.AddPushConstant<PreR::PushConstant>()
 		.AddTexture<Texture2D>(0, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
@@ -48,14 +49,11 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		ImVec2 gbufferSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-		VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
-		builder.UpdatePushConstant<WorldPickStage2R::PushConstant>([&](auto& push) {
-			push.gbufferSize = { gbufferSize.x, gbufferSize.y, 1.0f / gbufferSize.x, 1.0f / gbufferSize.y };
-			push.windowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
-		});
+		builder.BeginRenderPass();
 
-		builder.BindDescriptorSet(0, m_RendererResourcePool->AccessRowResource("SelectBuffer")->GetDescriptorSet());
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
 
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);

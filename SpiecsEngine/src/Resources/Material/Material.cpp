@@ -13,6 +13,7 @@
 #include "Core/Library/StringLibrary.h"
 #include "Render/Renderer/Renderer.h"
 
+
 namespace Spiecs {
 
 	Material::Material(const std::string& materialPath)

@@ -13,13 +13,12 @@
 #include "Core/Math/Math.h"
 #include "Core/Container/runtime_memory_block.h"
 #include "Core/Container/linked_unordered_map.h"
-
+#include "Render/Vulkan/VulkanBuffer.h"
 #include <glm/glm.hpp>
 #include <unordered_map>
 
 namespace Spiecs {
 
-	class VulkanBuffer;
 	class VulkanDescriptorSet;
 
 	/**
@@ -120,7 +119,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Material();
+		virtual ~Material() {};
 
 		/**
 		* @brief Serialize this class data to a disk file(.material).

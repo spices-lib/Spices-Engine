@@ -6,6 +6,78 @@
 
 namespace Spiecs {
 
+	namespace PreR {
+
+		/**
+		* @brief This struct is specific SkyBoxRenderer PsuhConstant
+		*/
+		struct PushConstant
+		{
+			/**
+			* @brief Meshpack ModelMatrix.
+			*/
+			glm::mat4 model = glm::mat4(1.0f);
+
+			/**
+			* @brief Entityid, cast from entt::entity.
+			*/
+			int entityID = -1;
+		};
+
+		/**
+		* @breif Global View struct.
+		*/
+		struct View
+		{
+			/**
+			* @brief Projection Matrix.
+			*/
+			glm::mat4 projection = glm::mat4(1.0f);
+
+			/**
+			* @brief View Matrix.
+			*/
+			glm::mat4 view = glm::mat4(1.0f);
+
+			/**
+			* @brief inverse of View Matrix.
+			*/
+			glm::mat4 inView = glm::mat4(1.0f);
+
+			/**
+			* @brief SceneTexturesize(ViewportSize) in component xy, 1.0f / SceneTexturesize in component zw.
+			*/
+			glm::vec4 sceneTextureSize = glm::vec4(1.0f);
+
+			/**
+			* @brief WindowSize(ApplicationSize) in component xy, 1.0f / WindowSize in component zw.
+			*/
+			glm::vec4 windowSize = glm::vec4(1.0f);
+		};
+
+		/**
+		* @breif Global Input struct.
+		*/
+		struct Input
+		{
+			/**
+			* @brief Viewport's MousePos in component xy, 1.0f / MousePos in component zw.
+			*/
+			glm::vec4 mousePos = glm::vec4(1.0f);
+
+			/**
+			* @brief Game's time.
+			*/
+			float gameTime = 0.0f;
+
+			/**
+			* @brief Frame's time.
+			*/
+			float frameTime = 0.0f;
+		};
+
+	}
+
     class PreRenderer : public Renderer
     {
     public:
@@ -47,13 +119,6 @@ namespace Spiecs {
         virtual void CreateRenderPass() override {};
 
         virtual void CreateDescriptorSet() override;
-
-    private:
-
-        /**
-        * @brief m_ConstantParams's VkBuffer.
-        * Key: set, Value: VkBuffer.
-        */
-        std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
+        
     };
 }

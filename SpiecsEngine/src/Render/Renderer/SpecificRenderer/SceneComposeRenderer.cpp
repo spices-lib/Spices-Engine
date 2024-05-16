@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "SceneComposeRenderer.h"
+#include "PreRenderer.h"
 #include "Systems/SlateSystem.h"
 
 namespace Spiecs {
@@ -85,9 +86,8 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
-		PipelineLayoutBuilder{ this }
-		.AddPushConstant<SceneComposeR::PushConstant>()
-		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
+		DescriptorSetBuilder{ this }
+		//.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
 		.Build();
 	}
 
@@ -98,22 +98,11 @@ namespace Spiecs {
 		*/
 		CreateRenderPass();
 
-		/**
-		* @brief Recreate PipelineLayout.
-		*/
-		CreateDescriptorSet();
 	}
 
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
-
-		ImVec2 gbufferSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-		VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
-		builder.UpdatePushConstant<SceneComposeR::PushConstant>([&](auto& push) {
-			push.gbufferSize = { gbufferSize.x, gbufferSize.y, 1.0f / gbufferSize.x, 1.0f / gbufferSize.y };
-			push.windowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
-		});
 
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);

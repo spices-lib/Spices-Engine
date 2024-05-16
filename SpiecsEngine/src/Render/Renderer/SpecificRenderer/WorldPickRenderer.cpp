@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "WorldPickRenderer.h"
+#include "PreRenderer.h"
 
 namespace Spiecs {
 
@@ -32,10 +33,8 @@ namespace Spiecs {
 
 	void WorldPickRenderer::CreateDescriptorSet()
 	{
-		PipelineLayoutBuilder{ this }
-		.CreateCollection<SpecificCollection>()
-		.AddPushConstant<WorldPickR::PushConstant>()
-		.AddBuffer<WorldPickR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT)
+		DescriptorSetBuilder{ this }
+		.AddPushConstant<PreR::PushConstant>()
 		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
@@ -44,11 +43,11 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.UpdateBuffer<WorldPickR::View>(0, 0, [&](auto& ubo) {
-			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
-			ubo.view = glm::inverse(invViewMatrix);
-			ubo.projection = projectionMatrix;
-		});
+		builder.BeginRenderPass();
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
 
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			if (frameInfo.m_PickEntityID.find(entityId) == frameInfo.m_PickEntityID.end()) return false;
@@ -56,7 +55,7 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.UpdatePushConstant<WorldPickR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
@@ -71,12 +70,12 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.UpdatePushConstant<WorldPickR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
 
-				builder.BindDescriptorSet(1, material->GetMaterialDescriptorSet()[0]);
+				builder.BindDescriptorSet(material->GetMaterialDescriptorSet());
 			});
 
 			return false;

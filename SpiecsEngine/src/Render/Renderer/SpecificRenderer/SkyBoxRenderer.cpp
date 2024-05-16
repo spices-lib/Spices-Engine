@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "SkyBoxRenderer.h"
+#include "PreRenderer.h"
 
 namespace Spiecs {
 
@@ -49,7 +50,9 @@ namespace Spiecs {
 
 	void SkyBoxRenderer::CreateDescriptorSet()
 	{
-		// No SpecificRenderer DescriptorSet.
+		DescriptorSetBuilder{ this }
+		.AddPushConstant<PreR::PushConstant>()
+		.Build();
 	}
 
 	void SkyBoxRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
@@ -66,9 +69,9 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			skyboxComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.BindPipeline(m_Pipelines[material->GetName()]);
+				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<SkyBoxR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

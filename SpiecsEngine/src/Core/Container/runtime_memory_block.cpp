@@ -21,7 +21,7 @@ namespace scl {
         }
         
         object_[name] = size;
-        size += StrType2Size(type);
+        size += Spiecs::StrType2Size(type);
     }
 
     void runtime_memory_block::Build()
@@ -34,7 +34,7 @@ namespace scl {
     {
         for(auto& pair : object_)
         {
-            void* it = begin_ + pair.second;
+            void* it = (char*)begin_ + pair.second;
             fn(pair.first, it);
         }
     }

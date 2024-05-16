@@ -249,9 +249,6 @@ namespace Spiecs {
 			template<typename T, typename F>
 			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
 
-
-			void BindInputDescriptorSet();
-
 			/**
 			* @brief Begin this Renderer's RenderPass.
 			* Call it auto.
@@ -349,13 +346,13 @@ namespace Spiecs {
 			* @param[in] stageFlags Which buffer stage this buffer will use.
 			* @return Returns this reference.
 			*/
-			inline DescriptorSetBuilder& AddInput(
+			/*DescriptorSetBuilder& AddInput(
 				uint32_t set,
 				uint32_t binding,
 				uint32_t arrayNum,
 				VkShaderStageFlags stageFlags,
 				const std::vector<std::string>& inputAttachmentNames
-			);
+			);*/
 
 			/**
 			* @brief Create all buffer type descriptor set.
@@ -372,14 +369,8 @@ namespace Spiecs {
 			*/
 			Renderer* m_Renderer;
 
-			/**
-			* @brief True if the specific renderer enable pushconstant in pipelinelayout.
-			*/
-			bool isUsePushConstant = false;
-
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> m_BufferInfos;
 		};
-
 
 	protected:
 		
@@ -401,20 +392,6 @@ namespace Spiecs {
 		* @brief This variable is a Wapper of VkRenderPass.
 		*/
 		std::unique_ptr<VulkanRenderPass> m_RenderPass;
-
-		/**
-		* @brief This variable helps to set vkpipelinelayout.
-		* Each set per element.
-		* Fill with both buffer and texture.
-		*/
-		std::vector<std::unique_ptr<VulkanDescriptorSetLayout>> m_VulkanLayouts{};
-
-		/**
-		* @brief VkDescriptorSetLayout used while create pipeline layout.
-		* Each set per element.
-		* Fill with both buffer and texture.
-		*/
-		std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts{};
 		
 		/**
 		* @brief Specific renderer name, Passed by instanced.
@@ -425,12 +402,18 @@ namespace Spiecs {
 		* @brief Allow this class access all data.
 		* Maybe remove.
 		*/
-		friend class PipelineLayoutBuilder;
 		friend class DescriptorSetBuilder;
 
 		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 
 		VkPushConstantRange m_PushConstantRange{};
+
+		/**
+		* @brief True if the specific renderer enable pushconstant in pipelinelayout.
+		*/
+		bool isUsePushConstant = false;
+
+		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
 	};
 
 	template<typename T, typename F>
@@ -480,12 +463,14 @@ namespace Spiecs {
 		*/
 		vkCmdPushConstants(
 			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-			m_Renderer->m_PipelineLayout,
+			m_Renderer->m_Pipelines["Default"]->GetPipelineLayout(),
 			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
 			sizeof(T),
 			&push
 		);
+
+		return *this;
 	}
 
 	template<typename T, typename F>
@@ -505,8 +490,10 @@ namespace Spiecs {
 		/**
 		* @breif Update uniform buffer.
 		*/
-		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->WriteToBuffer(&ubo);
-		m_Renderer->m_Collections[m_CurrentFrame]->GetBuffer(set, binding)->Flush();
+		m_Renderer->m_Buffers[{set, binding}]->WriteToBuffer(&ubo);
+		m_Renderer->m_Buffers[{set, binding}]->Flush();
+
+		return *this;
 	}
 
 	template<typename T>
@@ -515,20 +502,24 @@ namespace Spiecs {
 		/**
 		* @brief Set variable.
 		*/
-		isUsePushConstant = true;
+		m_Renderer->isUsePushConstant = true;
 
 		/**
 		* @brief Fill in data.
 		*/
-		m_PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-		m_PushConstantRange.offset = 0;
-		m_PushConstantRange.size = sizeof(T);
+		m_Renderer->m_PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		m_Renderer->m_PushConstantRange.offset = 0;
+		m_Renderer->m_PushConstantRange.size = sizeof(T);
 
 		return *this;
 	}
 
 	template<typename T>
-	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddBuffer(uint32_t set, uint32_t binding, VkShaderStageFlags stageFlags)
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddBuffer(
+		uint32_t           set        , 
+		uint32_t           binding    , 
+		VkShaderStageFlags stageFlags
+	)
 	{
 		Int2 id(set, binding);
 
@@ -536,7 +527,7 @@ namespace Spiecs {
 		* @brief Creating VulkanBuffer.
 		*/
 		m_Renderer->m_Buffers[id] = std::make_unique<VulkanBuffer>(
-			m_VulkanState,
+			m_Renderer->m_VulkanState,
 			sizeof(T),
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
@@ -550,15 +541,23 @@ namespace Spiecs {
 		/**
 		* @brief fill in bufferInfos.
 		*/
-		m_BufferInfos[set][binding] = *m_Buffers[id]->GetBufferInfo();
+		m_BufferInfos[set][binding] = *m_Renderer->m_Buffers[id]->GetBufferInfo();
 
 		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
+
+		return *this;
 	}
 
 	template<typename T>
-	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddTexture(uint32_t set, uint32_t binding, uint32_t arrayNum, VkShaderStageFlags stageFlags)
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddTexture(
+		uint32_t           set        ,
+		uint32_t           binding    ,
+		uint32_t           arrayNum   ,
+		VkShaderStageFlags stageFlags )
 	{
 		// TODO: 在此处插入 return 语句
+
+		return *this;
 	}
 }
