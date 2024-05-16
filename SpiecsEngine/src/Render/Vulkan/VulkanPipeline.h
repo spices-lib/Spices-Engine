@@ -28,15 +28,23 @@ namespace Spiecs {
 	class VulkanPipeline : public VulkanObject
 	{
 	public:
-		VulkanPipeline(VulkanState& vulkanState, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config);
+		VulkanPipeline(
+			VulkanState&               vulkanState  ,
+			const std::string&         vertFilepath , 
+			const std::string&         fragFilepath , 
+			const PipelineConfigInfo&  config
+		);
+
 		virtual ~VulkanPipeline();
 
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
 		void Bind(uint32_t frameIndex);
+		VkPipelineLayout& GetPipelineLayout() { return m_PipelineLayout; };
 
 	private:
 		void CreateGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config);
+
 	private:
 
 		VkPipelineLayout m_PipelineLayout;

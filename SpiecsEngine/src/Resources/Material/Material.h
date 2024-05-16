@@ -134,6 +134,8 @@ namespace Spiecs {
 		*/
 		void Dserialize();
 
+		std::string& GetName() { return m_MaterialPath; };
+
 		/**
 		* @brief Get material material descriptorset.
 		* @return Returns the material descriptorSet.

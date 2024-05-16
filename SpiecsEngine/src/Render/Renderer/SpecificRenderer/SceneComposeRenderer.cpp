@@ -99,19 +99,9 @@ namespace Spiecs {
 		CreateRenderPass();
 
 		/**
-		* @brief Free all descriptor this renderer holded.
-		*/
-		FreeResource();
-
-		/**
-		* @brief Destroy PipelineLayout.
-		*/
-		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
-
-		/**
 		* @brief Recreate PipelineLayout.
 		*/
-		CreatePipelineLayoutAndDescriptor();
+		CreateDescriptorSet();
 	}
 
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

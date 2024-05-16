@@ -32,9 +32,9 @@ namespace Spiecs {
 		*/
 		SystemManager().Get()
 		.PushSystem<NativeScriptSystem>()
+		.PushSystem<ResourceSystem>()
 		.PushSystem<RenderSystem>()
-		.PushSystem<SlateSystem>()
-		.PushSystem<ResourceSystem>();
+		.PushSystem<SlateSystem>();
 	}
 
 	Application::~Application()
@@ -48,9 +48,9 @@ namespace Spiecs {
 		* @brief Destroy all Systems.
 		*/
 		SystemManager::Get()
-			.PopSystem("ResourceSystem")
 			.PopSystem("SlateSystem")
 			.PopSystem("RenderSystem")
+			.PopSystem("ResourceSystem")
 			.PopSystem("NativeScriptSystem");
 
 

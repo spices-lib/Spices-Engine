@@ -12,6 +12,7 @@ namespace Spiecs {
 
 	VulkanPipeline::~VulkanPipeline()
 	{
+		vkDestroyPipelineLayout(m_VulkanState.m_Device, m_PipelineLayout, nullptr);
 		vkDestroyPipeline(m_VulkanState.m_Device, m_Pipeline, nullptr);
 	}
 
@@ -94,6 +95,8 @@ namespace Spiecs {
 
 	void VulkanPipeline::CreateGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config)
 	{
+		m_PipelineLayout = config.pipelineLayout;
+
 		m_VertShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, vertFilepath);
 		m_FragShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, fragFilepath);
 

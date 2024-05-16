@@ -24,7 +24,12 @@ namespace Spiecs {
 		, m_DesctiptorPool          (desctiptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
-	{}
+	{
+		std::stringstream ss;
+		ss << m_RendererName << ".Default";
+
+		ResourcePool<Material>::Load<Material>(ss.str());
+	}
 
 	Renderer::~Renderer()
 	{}
@@ -63,17 +68,12 @@ namespace Spiecs {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		VkPipelineLayout layout = CreatePipelineLayout(preRendererSetInfo, specificRendererSetInfo, materialSetInfo);
+		VkPipelineLayout pipelinelayout = CreatePipelineLayout(preRendererSetInfo, specificRendererSetInfo, materialSetInfo);
 
 		/**
 		* @brief Create Pipeline.
 		*/
-		m_Pipelines[materialName] = CreatePipeline(material, m_RenderPass->Get(), layout);
-
-		/**
-		* @breif Destroy PipelineLayout.
-		*/
-		vkDestroyPipelineLayout(m_VulkanState.m_Device, layout, nullptr);
+		m_Pipelines[materialName] = CreatePipeline(material, m_RenderPass->Get(), pipelinelayout);
 	}
 
 	VkPipelineLayout Renderer::CreatePipelineLayout(
@@ -115,8 +115,14 @@ namespace Spiecs {
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(rowSetLayouts.size());
 		pipelineLayoutInfo.pSetLayouts = rowSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &m_PushConstantRange;
+		pipelineLayoutInfo.pushConstantRangeCount = 0;
+		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+
+		if (isUsePushConstant)
+		{
+			pipelineLayoutInfo.pushConstantRangeCount = 1;
+			pipelineLayoutInfo.pPushConstantRanges = &m_PushConstantRange;
+		}
 
 		VkPipelineLayout pipelineLayout;
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout));
@@ -282,115 +288,18 @@ namespace Spiecs {
 		return pointLightsArray;
 	}
 
-	void Renderer::PipelineLayoutBuilder::Build()
+	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(
+		Renderer*         renderer       , 
+		uint32_t          currentFrame   , 
+		uint32_t          currentImage   )
+		: m_Renderer(     renderer       )
+		, m_CurrentFrame( currentFrame   )
+		, m_CurrentImage( currentImage   )
+	{}
+
+	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName)
 	{
-		/**
-		* @brief Create buffer type descriptor set
-		*/
-		for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			int setSize = (int)m_Renderer->m_VulkanLayoutWriters.size();
-			ContainerLibrary::Resize<VkDescriptorSet>(m_Renderer->m_Resource[i].m_DescriptorSets, setSize);
-
-			for (int j = 0; j < setSize; j++)
-			{
-				if (m_Renderer->m_VulkanLayoutWriters[j])
-				{
-					m_Renderer->m_VulkanLayoutWriters[j]->Build(m_Renderer->m_Resource[i].m_DescriptorSets[j]);
-				}
-			}
-		}
-
-		/**
-		* @brief Create pipelinelayout
-		*/
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(m_Renderer->m_DescriptorSetLayouts.size());
-		pipelineLayoutInfo.pSetLayouts = m_Renderer->m_DescriptorSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
-
-		if (isUsePushConstant)
-		{
-			pipelineLayoutInfo.pushConstantRangeCount = 1;
-			pipelineLayoutInfo.pPushConstantRanges = &m_PushConstantRange;
-		}
-
-		VK_CHECK(vkCreatePipelineLayout(m_Renderer->m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &m_Renderer->m_PipelineLayout));
-	}
-
-	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame, uint32_t currentImage)
-		: m_Renderer(renderer)
-		, m_CurrentFrame(currentFrame)
-		, m_CurrentImage(currentImage)
-	{
-		//BindPipeline();
-
-		//BindAllBufferTyepDescriptorSet();
-
-		//BindInputDescriptorSet();
-
-		//BeginRenderPass();
-	}
-
-	void Renderer::RenderBehaverBuilder::BindPipeline()
-	{
-		if (!m_Renderer->m_VulkanPipeline) return;
-
-		m_Renderer->m_VulkanPipeline->Bind(m_CurrentFrame);
-	}
-
-	void Renderer::RenderBehaverBuilder::BindAllBufferTyepDescriptorSet()
-	{
-		int setCount = (int)m_Renderer->m_VulkanLayoutWriters.size();
-		for (int i = 0; i < setCount; i++)
-		{
-			bool IsPureBufferTypeSet = true;
-
-			if (!m_Renderer->m_VulkanLayoutWriters[i]) continue;
-
-			int bindingCount = (int)m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().size();
-			for (int j = 0; j < bindingCount; j++)
-			{
-				if (m_Renderer->m_VulkanLayoutWriters[i]->GetWritters()[j].descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
-				{
-					IsPureBufferTypeSet = false;
-					break;
-				}
-			}
-
-			if (IsPureBufferTypeSet)
-			{
-				BindDescriptorSet(i, m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[i]);
-			}
-		}
-	}
-
-	void Renderer::RenderBehaverBuilder::BindInputDescriptorSet()
-	{
-		int setCount = (int)m_Renderer->m_VulkanLayoutWriters.size();
-		for (int i = 0; i < setCount; i++)
-		{
-			bool IsPureBufferTypeSet = true;
-
-			if (!m_Renderer->m_VulkanLayoutWriters[i]) continue;
-
-			int bindingCount = (int)m_Renderer->m_VulkanLayoutWriters[i]->GetWritters().size();
-			for (int j = 0; j < bindingCount; j++)
-			{
-				if (m_Renderer->m_VulkanLayoutWriters[i]->GetWritters()[j].descriptorType != VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT)
-				{
-					IsPureBufferTypeSet = false;
-					break;
-				}
-			}
-
-			if (IsPureBufferTypeSet)
-			{
-				BindDescriptorSet(i, m_Renderer->m_Resource[m_CurrentFrame].m_DescriptorSets[i]);
-			}
-		}
+		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame);
 	}
 
 	void Renderer::RenderBehaverBuilder::BeginRenderPass()
@@ -423,20 +332,6 @@ namespace Spiecs {
 		vkCmdEndRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(uint32_t set, VkDescriptorSet& descriptorset)
-	{
-		vkCmdBindDescriptorSets(
-			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_Renderer->m_PipelineLayout,
-			set,
-			1,
-			&descriptorset,
-			0,
-			nullptr
-		);
-	}
-
 	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos)
 	{
 		for (auto pair : infos)
@@ -444,7 +339,7 @@ namespace Spiecs {
 			vkCmdBindDescriptorSets(
 				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				m_Renderer->m_PipelineLayout,
+				m_Renderer->m_Pipelines["Default"]->GetPipelineLayout(),
 				pair.first,
 				1,
 				&pair.second->Get(),
@@ -454,12 +349,27 @@ namespace Spiecs {
 		}
 	}
 
-
-	inline DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddInput(uint32_t set, uint32_t binding, uint32_t arrayNum, VkShaderStageFlags stageFlags, const std::vector<std::string>& inputAttachmentNames)
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddInput(uint32_t set, uint32_t binding, uint32_t arrayNum, VkShaderStageFlags stageFlags, const std::vector<std::string>& inputAttachmentNames)
 	{
 		// TODO: 在此处插入 return 语句
 	}
+
 	void Renderer::DescriptorSetBuilder::Build()
 	{
+		auto descriptorSets = DescriptorSetManager::GetByName(m_Renderer->m_RendererName);
+
+
+		for (auto& pair : descriptorSets)
+		{
+			/**
+			* @brief AllocateDescriptorSet for Pool.
+			*/
+			pair.second->BuildDescriptorSet();
+
+			/**
+			* @brief UpdateDescriptorSet.
+			*/
+			pair.second->UpdateDescriptorSet(m_BufferInfos[pair.first]);
+		}
 	}
 }

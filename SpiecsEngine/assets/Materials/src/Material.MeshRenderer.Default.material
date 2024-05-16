@@ -1,0 +1,22 @@
+Material: MeshRenderer.Default
+Shaders:
+  - Stage: vertShader
+    Path: MeshRenderer.Default
+  - Stage: fragShader
+    Path: MeshRenderer.Default
+Textures:
+  - Name: diffuse
+    Value: [1, 0, 0, Texture2D, default.jpg]
+  - Name: normal
+    Value: [1, 0, 1, Texture2D, default.jpg]
+  - Name: specular
+    Value: [1, 0, 2, Texture2D, default.jpg]
+Parameters:
+  - Name: diffuseIntensity
+    Value: [2, 0, float4, [1.0, 1.0, 1.0, 1.0]]
+  - Name: normalIntensity
+    Value: [2, 0, float3, [1.0, 1.0, 1.0]]
+  - Name: specularIntensity
+    Value: [2, 0, float2, [1.0, 1.0]]
+  - Name: otherIntensity
+    Value: [2, 0, float, 1.0]

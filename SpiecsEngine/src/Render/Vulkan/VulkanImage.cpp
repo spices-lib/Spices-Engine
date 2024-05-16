@@ -497,18 +497,4 @@ namespace Spiecs {
 			vkDestroyDescriptorSetLayout(m_VulkanState.m_Device, m_DescriptorSetLayout, nullptr);
 		}
 	}
-
-	VkDescriptorSet VulkanImage::CreateDescriptorSet(uint32_t set, uint32_t binding, VulkanState& vulkanState, VkDescriptorImageInfo imageInfo)
-	{
-		std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder{}
-			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-			.Build(vulkanState);
-
-		VkDescriptorSet descriptorSet;
-		VulkanDescriptorWriter{ *setLayout, *VulkanRenderBackend::GetDescriptorPool() }
-			.WriteImage(binding, { imageInfo })
-			.Build(descriptorSet);
-
-		return descriptorSet;
-	}
 }
