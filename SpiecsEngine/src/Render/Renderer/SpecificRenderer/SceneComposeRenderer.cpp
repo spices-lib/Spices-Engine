@@ -87,7 +87,7 @@ namespace Spiecs {
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
 		DescriptorSetBuilder{ this }
-		//.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
+		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
 		.Build();
 	}
 
@@ -104,6 +104,14 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
+		builder.BeginRenderPass();
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
+
+		builder.BindPipeline("SceneComposeRenderer.Default");
+		
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 

@@ -1,0 +1,9 @@
+﻿Material: SpriteRenderer.Default
+Shaders:
+  - Stage: vertShader
+    Path: SpriteRenderer.Default
+  - Stage: fragShader
+    Path: SpriteRenderer.Default
+Textures:
+  - Name: diffuse
+    Value: [5, 0, 0, Texture2D, default.jpg]

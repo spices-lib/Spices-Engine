@@ -77,7 +77,6 @@ namespace Spiecs {
 	{
 		DescriptorSetBuilder{ this }
 		.AddPushConstant<PreR::PushConstant>()
-		.AddTexture<Texture2D>(1, 0, 3, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<DirectionalLightComponent::DirectionalLight>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<MeshR::PointLightUBO>(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
