@@ -6,11 +6,17 @@ namespace scl {
     
     runtime_memory_block::~runtime_memory_block()
     {
-        free(begin_);
+        /**
+        * @brief Free the memoty that handled.
+        */
+        if(begin_) free(begin_);
     }
 
-    void runtime_memory_block::AddElement(const std::string& name, const std::string& type)
+    void runtime_memory_block::add_element(const std::string& name, const std::string& type)
     {
+        /**
+        * @brief Only allow add to object_ with parameter that has not added.
+        */
         if(object_.find(name) != object_.end())
         {
             std::stringstream ss;
@@ -19,22 +25,48 @@ namespace scl {
             SPIECS_CORE_WARN(ss.str());
             return;
         }
-        
-        object_[name] = size;
-        size += Spiecs::StrType2Size(type);
+
+        /**
+        * @brief Recording current parameter's position to object_.
+        */
+        object_[name] = bytes_;
+
+        /**
+        * @brief Add to bytes_ with parameter type.
+        */
+        bytes_ += Spiecs::StrType2Size(type);
     }
 
-    void runtime_memory_block::Build()
+    void runtime_memory_block::build()
     {
+        /**
+        * @brief Free the memory if begin_ has mallocked.
+        */
         if(begin_) free(begin_);
-        begin_ = malloc(size);
+
+        /**
+        * @brief Malloc memory to begin_ with bytes_.
+        */
+        begin_ = malloc(bytes_);
     }
 
     void runtime_memory_block::for_each(std::function<void(const std::string& name, void* pt)> fn)
     {
+        /**
+        * @brief Iter without order.
+        */
         for(auto& pair : object_)
         {
-            void* it = (char*)begin_ + pair.second;
+            /**
+            * @brief Move begin_ to correct position.
+            */
+            void* it = reinterpret_cast<char*>(begin_) + pair.second;
+
+            /**
+            * @brief The function pointer of how to explain the memory with parameter.
+            * @param[in] name The name of parameter.
+            * @param[in] pt The pointer of start of parameter occupied.
+            */
             fn(pair.first, it);
         }
     }

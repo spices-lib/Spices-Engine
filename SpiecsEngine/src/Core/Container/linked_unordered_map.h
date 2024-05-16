@@ -14,7 +14,7 @@ namespace scl {
 
 	/**
 	* @brief The container combines hashmap and list together.
-	* Used in the case that we want iter in order.
+	* Used in the case that we want iter a hashmap in order.
 	*/
 	template<typename K, typename V>
 	class linked_unordered_map
@@ -69,7 +69,7 @@ namespace scl {
 		void push_back(const K& key, const V& value);
 
 		/**
-		* @breif Find the value by key.
+		* @brief Find the value by key.
 		* @param[in] key K the key.
 		* @return Returns the value that founded.
 		*/
@@ -89,7 +89,7 @@ namespace scl {
 		void erase(const K& key);
 
 		/**
-		* @breif Iter the container in order.
+		* @brief Iter the container in order.
 		* @param[in] fn The function of how to iter the container.
 		*/
 		void for_each(std::function<void(const K&, const V&)> fn);
@@ -99,12 +99,12 @@ namespace scl {
 	inline void linked_unordered_map<K, V>::clear()
 	{
 		/**
-		* @breif Clear list.
+		* @brief Clear list.
 		*/
 		keys_.clear();
 
 		/**
-		* @breif Clear hashmap.
+		* @brief Clear hashmap.
 		*/
 		map_.clear();
 	}
@@ -131,13 +131,13 @@ namespace scl {
 		if (!has_key(key))
 		{
 			/**
-			* @breif Add to list.
+			* @brief Add to list.
 			*/
 			keys_.push_back(key);
 		}
 
 		/**
-		* @breif Update hashmap.
+		* @brief Update hashmap.
 		*/
 		map_[key] = value;
 	}
@@ -172,7 +172,7 @@ namespace scl {
 			keys_.remove(key);
 
 			/**
-			* @breif Remove from hashmap.
+			* @brief Remove from hashmap.
 			*/
 			map_.erase(it);
 		}

@@ -136,8 +136,8 @@ namespace Spiecs {
 			/**
 			* @brief Create the key to map, and add element to value.
 			*/
-			m_Buffermemoryblocks[int2].AddElement(k, v.paramType);
-			});
+			m_Buffermemoryblocks[int2].add_element(k, v.paramType);
+		});
 
 		/**
 		* @brief Container like that: Set - [ binding - VkDescriptorBufferInfo].
@@ -178,7 +178,7 @@ namespace Spiecs {
 			/**
 			* @brief Malloc the memory to this container.
 			*/
-			pair.second.Build();
+			pair.second.build();
 
 			/**
 			* @brief Iter the block's element and filling data.
@@ -214,7 +214,7 @@ namespace Spiecs {
 			/**
 			* @brief Write the memeoryblock's data to m_Buffers.
 			*/
-			m_Buffers[pair.first]->WriteToBuffer(pair.second.GetAddr());
+			m_Buffers[pair.first]->WriteToBuffer(pair.second.get_addr());
 
 			/**
 			* @brief Flush the m_Buffers's memory.
