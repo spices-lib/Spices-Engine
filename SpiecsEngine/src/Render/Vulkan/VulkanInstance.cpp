@@ -175,7 +175,7 @@ namespace Spiecs {
 		/**
 		* @brief Combine glfw extensions requirements.
 		*/
-		for (int i = 0; i < glfwExtensionCount; i++) 
+		for (uint32_t i = 0; i < glfwExtensionCount; i++) 
 		{
 			m_ExtensionProperties.push_back(*glfwExtensions);
 			glfwExtensions++;

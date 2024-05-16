@@ -97,7 +97,7 @@ namespace Spiecs {
 			DescriptorSetBindingInfoHelp() {};
 			
 			uint32_t count = 0;
-			uint32_t size = 0;
+			size_t size = 0;
 			Type type = Type::Buffer;
 		};
 		

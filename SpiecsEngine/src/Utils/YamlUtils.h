@@ -112,6 +112,8 @@ namespace YAML {
 			param.index = node[2].as<uint32_t>();
 			param.textureType = node[3].as<std::string>();
 			param.texturePath = node[4].as<std::string>();
+
+			return true;
 		}
 	};
 

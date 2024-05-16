@@ -52,7 +52,7 @@ namespace scl {
 		* @brief The container's element size.
 		* @return Returns the size of the container.
 		*/
-		int size();
+		size_t size();
 
 		/**
 		* @brief Determain whether the container's element size is same.
@@ -110,7 +110,7 @@ namespace scl {
 	}
 
 	template<typename K, typename V>
-	inline int linked_unordered_map<K, V>::size()
+	inline size_t linked_unordered_map<K, V>::size()
 	{
 		/**
 		* @brief Though we already does unit test, 

@@ -110,8 +110,8 @@ namespace Spiecs {
 			}
 			else
 			{
-				framebufferInfo.width = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x;
-				framebufferInfo.height = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y;
+				framebufferInfo.width = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
+				framebufferInfo.height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
 			}
 			
 			framebufferInfo.layers = 1;

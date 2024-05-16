@@ -20,7 +20,7 @@ namespace Spiecs {
 		{
 			vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device);
 
-			SlateResizeEvent event(m_ViewPort->GetPanelSize().x, m_ViewPort->GetPanelSize().y);
+			SlateResizeEvent event(static_cast<uint32_t>(m_ViewPort->GetPanelSize().x), static_cast<uint32_t>(m_ViewPort->GetPanelSize().y));
 
 			Event::GetEventCallbackFn()(event);
 		}

@@ -43,6 +43,8 @@ namespace Spiecs {
 
 			throw std::runtime_error("failed to find supported format!");
 		}
+
+		return candidates[0];
 	}
 
 	void VulkanSwapChain::Create()

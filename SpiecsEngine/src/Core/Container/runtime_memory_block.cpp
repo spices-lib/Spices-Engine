@@ -9,7 +9,7 @@ namespace scl {
         /**
         * @brief Free the memoty that handled.
         */
-        if(begin_) free(begin_);
+        if (begin_) free(begin_);
     }
 
     void runtime_memory_block::add_element(const std::string& name, const std::string& type)

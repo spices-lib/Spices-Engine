@@ -9,5 +9,8 @@ namespace Spiecs {
         else if (type == "float3") return sizeof(glm::vec4);
         else if (type == "float2") return sizeof(glm::vec2);
         else if (type == "float") return sizeof(float);
+
+        SPIECS_CORE_WARN("StrType2Size: Not supported type.");
+        return 0;
     };
 }

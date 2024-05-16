@@ -1,13 +1,11 @@
 #pragma once
 
-#include "Core/Core.h"
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE //必须定义这个宏,才能输出文件名和行号
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE // This Macro must be defined.
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
