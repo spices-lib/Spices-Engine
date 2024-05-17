@@ -25,15 +25,8 @@ namespace Spiecs {
 		, m_DesctiptorPool          (desctiptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
-	{
-		if (isLoadDefaultMaterial)
-		{
-			std::stringstream ss;
-			ss << m_RendererName << ".Default";
-
-			ResourcePool<Material>::Load<Material>(ss.str());
-		}
-	}
+		, m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
+	{}
 
 	Renderer::~Renderer()
 	{}
@@ -49,30 +42,49 @@ namespace Spiecs {
 		* @brief create specific renderer descriptorset.
 		*/
 		CreateDescriptorSet();
+
+		CreateDefaultMaterial();
 	}
 	
 	void Renderer::RegistyMaterial(const std::string& materialName)
 	{
 		/**
+		* @brief Instance a temp empty vector.
+		*/
+		std::vector<VkDescriptorSetLayout> rowSetLayouts;
+
+		/**
 		* @brief PreRenderer's DescriptorSetInfo.
 		*/
 		auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
+		for (auto& pair : preRendererSetInfo)
+		{
+			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+		}
 
 		/**
 		* @brief SpecificRenderer's DescriptorSetInfo.
 		*/
 		auto specificRendererSetInfo = DescriptorSetManager::GetByName(m_RendererName);
+		for (auto& pair : specificRendererSetInfo)
+		{
+			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+		}
 
 		/**
 		* @brief Material's DescriptorSetInfo.
 		*/
 		auto material = ResourcePool<Material>::Load<Material>(materialName);
 		auto materialSetInfo = material->GetMaterialDescriptorSet();
+		for (auto& pair : materialSetInfo)
+		{
+			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+		}
 
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		VkPipelineLayout pipelinelayout = CreatePipelineLayout(preRendererSetInfo, specificRendererSetInfo, materialSetInfo);
+		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts);
 
 		/**
 		* @brief Create Pipeline.
@@ -80,41 +92,20 @@ namespace Spiecs {
 		m_Pipelines[materialName] = CreatePipeline(material, m_RenderPass->Get(), pipelinelayout);
 	}
 
-	VkPipelineLayout Renderer::CreatePipelineLayout(
-		const DescriptorSetInfo& preRendererSetInfo, 
-		const DescriptorSetInfo& specificRendererSetInfo, 
-		const DescriptorSetInfo& materialSetInfo
-	)
+	void Renderer::CreateDefaultMaterial()
 	{
-		/**
-		* @brief Instance a empty vector.
-		*/
-		std::vector<VkDescriptorSetLayout> rowSetLayouts;
-
-		/**
-		* @brief Add PreRenderer's DescriptorSetLayout..
-		*/
-		for (auto& pair : preRendererSetInfo)
+		if (m_IsLoadDefaultMaterial)
 		{
-			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
-		}
+			std::stringstream ss;
+			ss << m_RendererName << ".Default";
 
-		/**
-		* @brief Add SpecificRenderer's DescriptorSetLayout..
-		*/
-		for (auto& pair : specificRendererSetInfo)
-		{
-			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+			auto material = ResourcePool<Material>::Load<Material>(ss.str());
+			material->BuildMaterial();
 		}
+	}
 
-		/**
-		* @brief Add Material's DescriptorSetLayout..
-		*/
-		for (auto& pair : materialSetInfo)
-		{
-			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
-		}
-
+	VkPipelineLayout Renderer::CreatePipelineLayout(std::vector<VkDescriptorSetLayout>& rowSetLayouts)
+	{
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(rowSetLayouts.size());
@@ -130,7 +121,7 @@ namespace Spiecs {
 
 		VkPipelineLayout pipelineLayout;
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout));
-
+	
 		return pipelineLayout;
 	}
 	
@@ -148,8 +139,8 @@ namespace Spiecs {
 		pipelineConfig.colorBlendInfo.pAttachments    = m_RenderPass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
-			GetSahderPath(material->GetShaderPath("vert"), "vert"),
-			GetSahderPath(material->GetShaderPath("frag"), "vert"),
+			GetSahderPath(material->GetShaderPath("vertShader"), "vert"),
+			GetSahderPath(material->GetShaderPath("fragShader"), "frag"),
 			pipelineConfig
 		);
 	}
@@ -343,7 +334,7 @@ namespace Spiecs {
 			vkCmdBindDescriptorSets(
 				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				m_Renderer->m_Pipelines["Default"]->GetPipelineLayout(),
+				m_Renderer->m_Pipelines[m_Renderer->m_RendererName + ".Default"]->GetPipelineLayout(),
 				pair.first,
 				1,
 				&pair.second->Get(),

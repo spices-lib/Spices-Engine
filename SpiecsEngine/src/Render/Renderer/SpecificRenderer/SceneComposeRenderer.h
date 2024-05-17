@@ -26,11 +26,11 @@ namespace Spiecs {
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
 		SceneComposeRenderer(
-			const std::string& rendererName, 
-			VulkanState& vulkanState, 
-			std::shared_ptr<VulkanDescriptorPool> desctiptorPool, 
-			std::shared_ptr<VulkanDevice> device, 
-			std::shared_ptr<RendererResourcePool> rendererResourcePool
+			const std::string&                     rendererName          , 
+			VulkanState&                           vulkanState           , 
+			std::shared_ptr<VulkanDescriptorPool>  desctiptorPool        , 
+			std::shared_ptr<VulkanDevice>          device                , 
+			std::shared_ptr<RendererResourcePool>  rendererResourcePool
 		);
 
 		/**

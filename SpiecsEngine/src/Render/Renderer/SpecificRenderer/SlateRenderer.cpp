@@ -134,6 +134,8 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
+		builder.BeginRenderPass();
+
 		BeginImguiFrame();
 
 		SlateSystem::GetRegister()->OnRender();

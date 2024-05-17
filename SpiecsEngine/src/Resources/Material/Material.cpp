@@ -49,6 +49,19 @@ namespace Spiecs {
 		return DescriptorSetManager::GetByName(m_MaterialPath);
 	}
 
+	std::string& Material::GetShaderPath(const std::string& stage)
+	{
+		if (m_Shaders.find(stage) == m_Shaders.end())
+		{
+			std::stringstream ss;
+			ss << "Material: " << m_MaterialPath << " : Not find sush shader: " << stage;
+
+			SPIECS_CORE_WARN(ss.str());
+		}
+
+		return m_Shaders[stage];
+	}
+
 	void Material::BuildMaterial()
 	{
 		/**
@@ -262,8 +275,8 @@ namespace Spiecs {
 		/**
 		* @brief Create PipelineLayout.
 		*/
-		std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
-		auto renderer = RendererManager::GetRenderer(sv[0]);
-		renderer->RegistyMaterial(sv[1]);
+		std::string sv = StringLibrary::SplitString(m_MaterialPath, '.')[0];
+		auto renderer = RendererManager::GetRenderer(sv);
+		renderer->RegistyMaterial(m_MaterialPath);
 	}
 }

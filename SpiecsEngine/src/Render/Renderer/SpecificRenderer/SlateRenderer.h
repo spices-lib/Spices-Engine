@@ -32,7 +32,7 @@ namespace Spiecs {
 			std::shared_ptr<VulkanDevice>          device                ,
 			std::shared_ptr<RendererResourcePool>  rendererResourcePool
 		)
-			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool) 
+			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool, false) 
 		{};
 
 		/**

@@ -20,8 +20,9 @@ namespace Spiecs {
 		/**
 		* @brief Add Albedo Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;  // tempory
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
 
@@ -53,6 +54,27 @@ namespace Spiecs {
 		DescriptorSetBuilder{ this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
+	}
+
+	std::shared_ptr<VulkanPipeline> SkyBoxRenderer::CreatePipeline(
+		std::shared_ptr<Material> material    , 
+		VkRenderPass&             renderPass  , 
+		VkPipelineLayout&         layout
+	)
+	{
+		PipelineConfigInfo pipelineConfig{};
+		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
+		pipelineConfig.renderPass = renderPass;
+		pipelineConfig.pipelineLayout = layout;
+		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
+		return std::make_shared<VulkanPipeline>(
+			m_VulkanState,
+			GetSahderPath(material->GetShaderPath("vertShader"), "vert"),
+			GetSahderPath(material->GetShaderPath("fragShader"), "frag"),
+			pipelineConfig
+		);
 	}
 
 	void SkyBoxRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

@@ -11,21 +11,21 @@ namespace Spiecs {
 		EditorWorld::OnPreActivate();
 
 		// mesh1
-		{
-			Entity& meshentity = CreateEntity("DefaultMesh");
-			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			//transformComp1.SetScale({0.01f, 0.01f, 0.01f});
+		//{
+		//	Entity& meshentity = CreateEntity("DefaultMesh");
+		//	MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+		//	TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+		//	//transformComp1.SetScale({0.01f, 0.01f, 0.01f});
 
-			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("112");
-			//std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(20, 20);
-			pack1->SetMaterial("MeshRenderer.0");
-			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-			meshComp.SetMesh(mesh);
-		}
+		//	std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("112");
+		//	//std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(20, 20);
+		//	pack1->SetMaterial("MeshRenderer.0");
+		//	std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
+		//	meshComp.SetMesh(mesh);
+		//}
 
 		// mesh2
-		{
+		/*{
 			Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -43,10 +43,10 @@ namespace Spiecs {
 			pack5->SetMaterial("MeshRenderer.interior_stair_wl3ieamdw");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
 			meshComp.SetMesh(mesh);
-		}
+		}*/
 		
 		// pointlight
-		{
+		/*{
 			Entity& plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.S_LightPoint");
@@ -59,7 +59,7 @@ namespace Spiecs {
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPostion({ -1.0f, -1.0f, 5.0f });
-		}
+		}*/
 	}
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)

@@ -146,7 +146,7 @@ namespace Spiecs {
 		* @brief Get material shader path.
 		* @return Returns all stage shader path that needed.
 		*/
-		inline std::string GetShaderPath(const std::string& stage) { return m_Shaders[stage]; };
+		std::string& GetShaderPath(const std::string& stage);
 
 		/**
 		* @brief Get material texture parameters.
@@ -159,8 +159,6 @@ namespace Spiecs {
 		* @return Returns the material constant parameters.
 		*/
 		inline scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; };
-
-	private:
 
 		/**
 		* @brief This interface need to be overwitten by specific material.

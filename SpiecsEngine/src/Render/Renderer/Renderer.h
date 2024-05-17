@@ -138,13 +138,11 @@ namespace Spiecs {
 
 		virtual void CreateDescriptorSet() = 0;
 
-		VkPipelineLayout CreatePipelineLayout(
-			const DescriptorSetInfo& preRendererSetInfo,
-			const DescriptorSetInfo& specificRendererSetInfo,
-			const DescriptorSetInfo& materialSetInfo
-		);
+		void CreateDefaultMaterial();
 
-		std::shared_ptr<VulkanPipeline> CreatePipeline(
+		VkPipelineLayout CreatePipelineLayout(std::vector<VkDescriptorSetLayout>& rowSetLayouts);
+
+		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
 			std::shared_ptr<Material> material, 
 			VkRenderPass&             renderPass, 
 			VkPipelineLayout&         layout
@@ -415,6 +413,8 @@ namespace Spiecs {
 		bool isUsePushConstant = false;
 
 		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
+
+		bool m_IsLoadDefaultMaterial;
 	};
 
 	template<typename T, typename F>
@@ -464,7 +464,7 @@ namespace Spiecs {
 		*/
 		vkCmdPushConstants(
 			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-			m_Renderer->m_Pipelines["Default"]->GetPipelineLayout(),
+			m_Renderer->m_Pipelines[m_Renderer->m_RendererName + ".Default"]->GetPipelineLayout(),
 			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
 			sizeof(T),

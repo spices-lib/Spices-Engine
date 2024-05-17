@@ -58,7 +58,7 @@ namespace Spiecs {
 		/**
 		* @breif Global Input struct.
 		*/
-		struct Input
+		struct SpiecsInput
 		{
 			/**
 			* @brief Viewport's MousePos in component xy, 1.0f / MousePos in component zw.

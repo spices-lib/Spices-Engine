@@ -56,6 +56,12 @@ namespace Spiecs {
 
 		virtual void CreateDescriptorSet() override;
 
+		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
+			std::shared_ptr<Material>  material    ,
+			VkRenderPass&              renderPass  ,
+			VkPipelineLayout&          layout
+		) override;
+
 		virtual void OnSlateResize() override { CreateRenderPass(); };
 	};
 

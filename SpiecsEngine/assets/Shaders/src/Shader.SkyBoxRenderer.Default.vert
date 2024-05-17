@@ -18,13 +18,21 @@ layout(push_constant) uniform Push {
 } push;
 
 // uniform buffer
-layout(set = 0, binding = 0) uniform UniformBuffer {
+layout(set = 0, binding = 0) uniform View {
     mat4 projection;
     mat4 view;
+    mat4 inView;
+    vec4 sceneTextureSize;
+    vec4 windowSize;
 } view;
 
-// constant
+layout(set = 0, binding = 1) uniform SpiecsInput {
+    vec4 mousePos;
+    float gameTime;
+    float frameTime;
+} spiecsInput;
 
+// constant
 
 // main
 void main()
