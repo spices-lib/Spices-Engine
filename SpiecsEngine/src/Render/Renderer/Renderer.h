@@ -350,7 +350,6 @@ namespace Spiecs {
 			DescriptorSetBuilder& AddInput(
 				uint32_t set,
 				uint32_t binding,
-				uint32_t arrayNum,
 				VkShaderStageFlags stageFlags,
 				const std::vector<std::string>& inputAttachmentNames
 			);
@@ -371,6 +370,7 @@ namespace Spiecs {
 			Renderer* m_Renderer;
 
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> m_BufferInfos;
+			std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> m_ImageInfos;
 		};
 
 	protected:

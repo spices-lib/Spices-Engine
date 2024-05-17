@@ -35,6 +35,7 @@ namespace Spiecs {
 		*/
 		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;  // tempory
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		});
 
@@ -87,7 +88,7 @@ namespace Spiecs {
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
 		DescriptorSetBuilder{ this }
-		.AddInput(0, 0, 4, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
+		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
 		.Build();
 	}
 
@@ -97,7 +98,6 @@ namespace Spiecs {
 		* @brief Recreate RenderPass.
 		*/
 		CreateRenderPass();
-
 	}
 
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

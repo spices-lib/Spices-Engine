@@ -35,8 +35,7 @@ namespace Spiecs {
 		/**
 		* @brief Add Albedo Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;  // tempory
+		m_RenderPass->AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 		});
 
 		/**

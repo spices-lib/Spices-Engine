@@ -368,12 +368,22 @@ namespace Spiecs {
 	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddInput(
 		uint32_t                         set                   ,
 		uint32_t                         binding               ,
-		uint32_t                         arrayNum              ,
 		VkShaderStageFlags               stageFlags            ,
 		const std::vector<std::string>&  inputAttachmentNames  
 	)
 	{
-		// TODO: 在此处插入 return 语句
+		/**
+		* @brief fill in imageInfos.
+		*/
+		for (int i = 0; i < inputAttachmentNames.size(); i++)
+		{
+			auto info = m_Renderer->m_RendererResourcePool->AccessResource(inputAttachmentNames[i]);
+
+			m_ImageInfos[set][binding].push_back(*info);
+		}
+
+		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, stageFlags, inputAttachmentNames.size());
 
 		return *this;
 	}
@@ -381,7 +391,6 @@ namespace Spiecs {
 	void Renderer::DescriptorSetBuilder::Build()
 	{
 		auto descriptorSets = DescriptorSetManager::GetByName(m_Renderer->m_RendererName);
-
 
 		for (auto& pair : descriptorSets)
 		{
@@ -393,7 +402,7 @@ namespace Spiecs {
 			/**
 			* @brief UpdateDescriptorSet.
 			*/
-			pair.second->UpdateDescriptorSet(m_BufferInfos[pair.first]);
+			pair.second->UpdateDescriptorSet(m_ImageInfos[pair.first], m_BufferInfos[pair.first]);
 		}
 	}
 }

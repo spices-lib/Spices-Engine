@@ -122,6 +122,7 @@ namespace Spiecs {
 
 			switch(write.descriptorType)
 			{
+			case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
 			case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
 				write.pImageInfo        = imageInfo[pair.first].data();
 				write.descriptorCount   = static_cast<uint32_t>(imageInfo[pair.first].size());
@@ -147,6 +148,22 @@ namespace Spiecs {
 			write.descriptorType  = pair.second.descriptorType;
 			write.pBufferInfo     = &bufferInfo[pair.first];
 			write.descriptorCount = 1;
+
+			vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &write, 0, nullptr);
+		}
+	}
+
+	void VulkanDescriptorSet::UpdateDescriptorSet(ImageInfo& imageInfo)
+	{
+		for (auto& pair : m_Bindings)
+		{
+			VkWriteDescriptorSet write{};
+			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.dstBinding = pair.first;
+			write.dstSet = m_DescriptorSet;
+			write.descriptorType = pair.second.descriptorType;
+			write.pImageInfo = imageInfo[pair.first].data();
+			write.descriptorCount = static_cast<uint32_t>(imageInfo[pair.first].size());
 
 			vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &write, 0, nullptr);
 		}
