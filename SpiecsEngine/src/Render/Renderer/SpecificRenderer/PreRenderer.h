@@ -90,13 +90,13 @@ namespace Spiecs {
         * @param[in] desctiptorPool The DesctiptorPool.
         */
         PreRenderer(
-            const std::string& rendererName,
-            VulkanState& vulkanState,
-            std::shared_ptr<VulkanDescriptorPool> desctiptorPool,
-            std::shared_ptr<VulkanDevice>         device,
-            std::shared_ptr<RendererResourcePool> rendererResourcePool
+            const std::string&                     rendererName,
+            VulkanState&                           vulkanState,
+            std::shared_ptr<VulkanDescriptorPool>  desctiptorPool,
+            std::shared_ptr<VulkanDevice>          device,
+            std::shared_ptr<RendererResourcePool>  rendererResourcePool
         )
-            : Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
+            : Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool, false)
         {};
 
         /**

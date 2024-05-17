@@ -17,7 +17,8 @@ namespace Spiecs {
 		VulkanState&                           vulkanState           , 
 		std::shared_ptr<VulkanDescriptorPool>  desctiptorPool        , 
 		std::shared_ptr<VulkanDevice>          device                , 
-		std::shared_ptr<RendererResourcePool>  rendererResourcePool
+		std::shared_ptr<RendererResourcePool>  rendererResourcePool  ,
+		bool isLoadDefaultMaterial
 	)
 		: m_RendererName            (rendererName          )
 		, m_VulkanState             (vulkanState           ) 
@@ -25,10 +26,13 @@ namespace Spiecs {
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
 	{
-		std::stringstream ss;
-		ss << m_RendererName << ".Default";
+		if (isLoadDefaultMaterial)
+		{
+			std::stringstream ss;
+			ss << m_RendererName << ".Default";
 
-		ResourcePool<Material>::Load<Material>(ss.str());
+			ResourcePool<Material>::Load<Material>(ss.str());
+		}
 	}
 
 	Renderer::~Renderer()

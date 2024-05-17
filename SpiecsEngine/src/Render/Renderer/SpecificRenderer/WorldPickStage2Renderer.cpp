@@ -11,7 +11,13 @@
 
 namespace Spiecs {
 
-	WorldPickStage2Renderer::WorldPickStage2Renderer(const std::string& rendererName, VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> desctiptorPool, std::shared_ptr<VulkanDevice> device, std::shared_ptr<RendererResourcePool> rendererResourcePool)
+	WorldPickStage2Renderer::WorldPickStage2Renderer(
+		const std::string&                     rendererName           , 
+		VulkanState&                           vulkanState            , 
+		std::shared_ptr<VulkanDescriptorPool>  desctiptorPool         , 
+		std::shared_ptr<VulkanDevice>          device                 , 
+		std::shared_ptr<RendererResourcePool>  rendererResourcePool
+	)
 		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
 	{
 		m_Square = std::make_unique<SquarePack>();
@@ -54,6 +60,8 @@ namespace Spiecs {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
+
+		builder.BindPipeline("WorldPickStage2Renderer.Default");
 
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);

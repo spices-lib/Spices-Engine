@@ -1,0 +1,6 @@
+Material: SceneComposeRenderer.Default
+Shaders:
+  - Stage: vertShader
+    Path: SceneComposeRenderer.Default
+  - Stage: fragShader
+    Path: SceneComposeRenderer.Default

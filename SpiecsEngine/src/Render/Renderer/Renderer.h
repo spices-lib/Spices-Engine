@@ -65,7 +65,8 @@ namespace Spiecs {
 			VulkanState&                            vulkanState             , 
 			std::shared_ptr<VulkanDescriptorPool>   desctiptorPool          , 
 			std::shared_ptr<VulkanDevice>           device                  , 
-			std::shared_ptr<RendererResourcePool>   rendererResourcePool
+			std::shared_ptr<RendererResourcePool>   rendererResourcePool    ,
+			bool isLoadDefaultMaterial = true
 		);
 
 		/**

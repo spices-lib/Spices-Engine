@@ -23,9 +23,9 @@ namespace Spiecs {
 		*/
 		m_RenderPass->AddColorAttachment("SelectBuffer", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format = VK_FORMAT_R32_SFLOAT;
+			description.finalLayout   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.loadOp        = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format        = VK_FORMAT_R32_SFLOAT;
 		});
 
 		m_RenderPass->Build();
@@ -55,6 +55,8 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+				builder.BindPipeline("WorldPickRenderer.Default");
+
 				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
@@ -70,6 +72,8 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+				builder.BindPipeline("WorldPickRenderer.Default");
+
 				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
