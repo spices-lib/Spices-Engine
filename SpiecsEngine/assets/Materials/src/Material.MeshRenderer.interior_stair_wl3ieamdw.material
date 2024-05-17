@@ -6,17 +6,17 @@ Shaders:
     Path: MeshRenderer.Default
 Textures:
   - Name: diffuse
-    Value: [5, 0, 0, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]
+    Value: [1, 0, 0, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]
   - Name: normal
-    Value: [5, 0, 1, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg]
+    Value: [1, 0, 1, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg]
   - Name: specular
-    Value: [5, 0, 2, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
+    Value: [1, 0, 2, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
 Parameters:
   - Name: diffuseIntensity
-    Value: [6, 0, float4, [1.0, 2.0, 3.0, 4.0]]
+    Value: [1, 1, float4, [1.0, 2.0, 3.0, 4.0]]
   - Name: normalIntensity
-    Value: [6, 0, float3, [4.0, 5.0, 6.0]]
+    Value: [1, 1, float3, [4.0, 5.0, 6.0]]
   - Name: specularIntensity
-    Value: [6, 0, float2, [7.0, 8.0]]
+    Value: [1, 1, float2, [7.0, 8.0]]
   - Name: otherIntensity
-    Value: [6, 0, float, 9.0]
+    Value: [1, 1, float, 9.0]

@@ -120,7 +120,7 @@ namespace Spiecs {
 			return *m_RendererManager;
 		}
 
-		static inline std::shared_ptr<Renderer> GetRenderer(const std::string name) { return m_Identities.find_value(name); };
+		static std::shared_ptr<Renderer> GetRenderer(const std::string name);
 
 	private:
 

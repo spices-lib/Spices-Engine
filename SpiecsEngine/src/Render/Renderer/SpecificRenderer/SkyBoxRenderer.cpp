@@ -22,7 +22,6 @@ namespace Spiecs {
 		*/
 		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;  // tempory
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		});
 
@@ -84,8 +83,6 @@ namespace Spiecs {
 		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
-
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
 
 		IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();

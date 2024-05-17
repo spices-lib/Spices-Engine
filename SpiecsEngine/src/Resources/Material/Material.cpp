@@ -70,6 +70,11 @@ namespace Spiecs {
 	void Material::BuildMaterial()
 	{
 		/**
+		* @brief If ReBuild, need clear old descripotrset first.
+		*/
+		DescriptorSetManager::UnLoad(m_MaterialPath);
+
+		/**
 		* @brief Container like that: Set - [ binding - [index - (type, count, size)]].
 		*/
 		std::unordered_map<uint32_t, std::unordered_map<uint32_t, DescriptorSetBindingInfoHelp>> layouts;

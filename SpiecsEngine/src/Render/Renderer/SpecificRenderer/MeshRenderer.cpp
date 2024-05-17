@@ -35,7 +35,8 @@ namespace Spiecs {
 		/**
 		* @brief Add Albedo Attachment.
 		*/
-		m_RenderPass->AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;  // tempory
 		});
 
 		/**
@@ -111,7 +112,7 @@ namespace Spiecs {
 					push.entityID = entityId;
 				});
 
-				builder.BindDescriptorSet(material->GetMaterialDescriptorSet());
+				builder.BindDescriptorSet(material->GetMaterialDescriptorSet(), material->GetName());
 			});
 
 			return false;

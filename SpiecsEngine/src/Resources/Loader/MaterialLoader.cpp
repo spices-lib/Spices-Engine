@@ -147,7 +147,7 @@ namespace Spiecs {
 				outMaterial->m_ConstantParams.push_back(parameter["Name"].as<std::string>(), parameter["Value"].as<ConstantParam>());
 			}
 		}
-		
+
 		return true;
 	}
 

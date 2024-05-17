@@ -81,7 +81,7 @@ namespace Spiecs {
 					}
 					break;
 				case 2:
-					if (helper.level == "warning")
+					if (helper.level == "warn")
 					{
 						ImGui::Text(helper.str.c_str());
 					}

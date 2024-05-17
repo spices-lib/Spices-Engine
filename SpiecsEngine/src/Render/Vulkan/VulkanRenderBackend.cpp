@@ -43,7 +43,7 @@ namespace Spiecs {
 		RendererManager::Get()
 			.Push<PreRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SkyBoxRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			//.Push<MeshRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<MeshRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			//.Push<SceneComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			//.Push<SpriteRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			//.Push<WorldPickRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
@@ -63,7 +63,7 @@ namespace Spiecs {
 			//.Pop("WorldPickRenderer")
 			//.Pop("SpriteRenderer")
 			//.Pop("SceneComposeRenderer")
-			//.Pop("MeshRenderer")
+			.Pop("MeshRenderer")
 			.Pop("SkyBoxRenderer")
 			.Pop("PreRenderer");
 	}

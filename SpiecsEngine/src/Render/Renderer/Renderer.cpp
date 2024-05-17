@@ -51,9 +51,10 @@ namespace Spiecs {
 	void Renderer::RegistyMaterial(const std::string& materialName)
 	{
 		/**
-		* @brief Instance a temp empty vector.
+		* @brief Instance a temp empty map for VkDescriptorSetLayout.
+		* Before turn it to a continus container, sorted is required.
 		*/
-		std::vector<VkDescriptorSetLayout> rowSetLayouts;
+		std::map<uint32_t, VkDescriptorSetLayout> sortedRowSetLayouts;
 
 		/**
 		* @brief PreRenderer's DescriptorSetInfo.
@@ -61,7 +62,7 @@ namespace Spiecs {
 		auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
 		for (auto& pair : preRendererSetInfo)
 		{
-			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout() ;
 		}
 
 		/**
@@ -70,7 +71,7 @@ namespace Spiecs {
 		auto specificRendererSetInfo = DescriptorSetManager::GetByName(m_RendererName);
 		for (auto& pair : specificRendererSetInfo)
 		{
-			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
 		}
 
 		/**
@@ -80,7 +81,17 @@ namespace Spiecs {
 		auto materialSetInfo = material->GetMaterialDescriptorSet();
 		for (auto& pair : materialSetInfo)
 		{
-			rowSetLayouts.push_back(pair.second->GetRowSetLayout());
+			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
+		}
+
+		/**
+		* @brief Instance a temp empty vector for VkDescriptorSetLayout.
+		*/
+		std::vector<VkDescriptorSetLayout> rowSetLayouts;
+
+		for (auto& pair : sortedRowSetLayouts)
+		{
+			rowSetLayouts.push_back(pair.second);
 		}
 
 		/**

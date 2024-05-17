@@ -25,7 +25,7 @@ namespace Spiecs {
 	{
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
-			m_DescriptorSets[name].clear();
+			m_DescriptorSets.erase(name);
 		}
 	}
 

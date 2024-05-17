@@ -43,4 +43,19 @@ namespace Spiecs {
 			v->OnSlateResize();
 		});
 	}
+
+	std::shared_ptr<Renderer> RendererManager::GetRenderer(const std::string name)
+	{
+		if (m_Identities.has_key(name))
+		{
+			return m_Identities.find_value(name);
+		}
+
+		std::stringstream ss;
+		ss << "RendererManager::GetRenderer: Not such a renderer called: " << name;
+
+		SPIECS_CORE_ERROR(ss.str());
+
+		return nullptr;
+	}
 }

@@ -32,7 +32,14 @@ struct PointLight {
 
 layout(set = 1, binding = 0) uniform sampler2D samplers[3];
 
-layout(set = 2, binding = 0) uniform DirectionalLight{
+layout(set = 1, binding = 1) uniform Parameter {
+    vec4 diffuseIntensity;
+    vec3 normalIntensity;
+    vec2 specularIntensity;
+    float otherIntensity;
+} parameter;
+
+layout(set = 2, binding = 0) uniform DirectionalLight {
     vec3 direction;
     vec3 color;
     float intensity;
