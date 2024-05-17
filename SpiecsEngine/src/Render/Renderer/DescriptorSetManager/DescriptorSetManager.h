@@ -14,6 +14,7 @@ namespace Spiecs {
 		virtual ~DescriptorSetManager() {};
 
 		static std::shared_ptr<VulkanDescriptorSet> Registy(const std::string& name, uint32_t set);
+		static void UnLoad(const std::string& name);
 
 		static DescriptorSetInfo& GetByName(const std::string& name);
 

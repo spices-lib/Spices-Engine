@@ -21,6 +21,14 @@ namespace Spiecs {
 		return m_DescriptorSets[name][set];
 	}
 
+	void DescriptorSetManager::UnLoad(const std::string& name)
+	{
+		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
+		{
+			m_DescriptorSets[name].clear();
+		}
+	}
+
 	DescriptorSetInfo& DescriptorSetManager::GetByName(const std::string& name)
 	{
 		return m_DescriptorSets[name];

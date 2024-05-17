@@ -25,6 +25,11 @@ namespace Spiecs {
 		Dserialize();
 	}
 
+	Material::~Material()
+	{
+		DescriptorSetManager::UnLoad(m_MaterialPath);
+	}
+
 	void Material::Serialize()
 	{
 		if (m_MaterialPath.empty())

@@ -119,7 +119,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Material() {};
+		virtual ~Material();
 
 		/**
 		* @brief Serialize this class data to a disk file(.material).

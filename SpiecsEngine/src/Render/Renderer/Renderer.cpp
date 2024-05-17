@@ -29,7 +29,9 @@ namespace Spiecs {
 	{}
 
 	Renderer::~Renderer()
-	{}
+	{
+		DescriptorSetManager::UnLoad(m_RendererName);
+	}
 
 	void Renderer::OnSystemInitialize()
 	{
