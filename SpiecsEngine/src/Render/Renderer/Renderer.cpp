@@ -331,12 +331,20 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos)
 	{
+		std::stringstream ss;
+		ss << m_Renderer->m_RendererName << ".Default";
+
+		BindDescriptorSet(infos, ss.str());
+	}
+
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name)
+	{
 		for (auto pair : infos)
 		{
 			vkCmdBindDescriptorSets(
 				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				m_Renderer->m_Pipelines[m_Renderer->m_RendererName + ".Default"]->GetPipelineLayout(),
+				m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
 				pair.first,
 				1,
 				&pair.second->Get(),
@@ -344,7 +352,6 @@ namespace Spiecs {
 				nullptr
 			);
 		}
-
 	}
 
 	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddInput(

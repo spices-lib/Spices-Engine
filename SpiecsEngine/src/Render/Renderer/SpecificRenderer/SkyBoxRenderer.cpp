@@ -98,9 +98,9 @@ namespace Spiecs {
 					push.entityID = entityId;
 				});
 
-				builder.BindDescriptorSet(material->GetMaterialDescriptorSet());
+				builder.BindDescriptorSet(material->GetMaterialDescriptorSet(), material->GetName());
 			});
-				
+			
 			return false;
 		});
 

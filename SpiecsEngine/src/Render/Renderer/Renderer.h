@@ -230,6 +230,8 @@ namespace Spiecs {
 
 			void BindDescriptorSet(DescriptorSetInfo& infos);
 
+			void BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name);
+
 			/**
 			* @brief Update local pushconstant buffer.
 			* @param[in] T Specific push constant struct Type.
