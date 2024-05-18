@@ -6,4 +6,4 @@ Shaders:
     Path: SpriteRenderer.Default
 Textures:
   - Name: diffuse
-    Value: [5, 0, 0, Texture2D, default.jpg]
+    Value: [1, 0, 0, Texture2D, default.jpg]

@@ -35,7 +35,6 @@ namespace Spiecs {
 		*/
 		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;  // tempory
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		});
 

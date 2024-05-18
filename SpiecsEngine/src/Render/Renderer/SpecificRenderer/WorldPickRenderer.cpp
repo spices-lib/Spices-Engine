@@ -35,7 +35,6 @@ namespace Spiecs {
 	{
 		DescriptorSetBuilder{ this }
 		.AddPushConstant<PreR::PushConstant>()
-		.AddTexture<Texture2D>(1, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -78,8 +77,6 @@ namespace Spiecs {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
-
-				builder.BindDescriptorSet(material->GetMaterialDescriptorSet());
 			});
 
 			return false;

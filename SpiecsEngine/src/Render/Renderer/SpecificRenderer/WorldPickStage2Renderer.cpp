@@ -46,9 +46,26 @@ namespace Spiecs {
 	void WorldPickStage2Renderer::CreateDescriptorSet()
 	{
 		DescriptorSetBuilder{ this }
-		.AddPushConstant<PreR::PushConstant>()
-		.AddTexture<Texture2D>(0, 0, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddAttachmentTexture(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"SelectBuffer"})
 		.Build();
+	}
+
+	void WorldPickStage2Renderer::OnSlateResize()
+	{
+		/**
+		* @brief Recreate RenderPass.
+		*/
+		CreateRenderPass();
+
+		/**
+		* @brief Free unused desctiptorSet and descriptorsetlayout.
+		*/
+		DescriptorSetManager::UnLoad(m_RendererName);
+
+		/**
+		* @brief Create descriptorSet again.
+		*/
+		CreateDescriptorSet();
 	}
 
 	void WorldPickStage2Renderer::Render(TimeStep& ts, FrameInfo& frameInfo)

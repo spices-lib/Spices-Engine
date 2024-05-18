@@ -336,8 +336,15 @@ namespace Spiecs {
 			inline DescriptorSetBuilder& AddTexture(
 				uint32_t set,
 				uint32_t binding,
-				uint32_t arrayNum,
-				VkShaderStageFlags stageFlags
+				VkShaderStageFlags stageFlags,
+				const std::vector<std::string>& textureNames
+			);
+
+			DescriptorSetBuilder& AddAttachmentTexture(
+				uint32_t set,
+				uint32_t binding,
+				VkShaderStageFlags stageFlags,
+				const std::vector<std::string>& textureNames
 			);
 
 			/**
@@ -552,9 +559,22 @@ namespace Spiecs {
 	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddTexture(
 		uint32_t           set        ,
 		uint32_t           binding    ,
-		uint32_t           arrayNum   ,
-		VkShaderStageFlags stageFlags )
+		VkShaderStageFlags stageFlags ,
+		const std::vector<std::string>& textureNames
+	)
 	{
+		/**
+		* @brief fill in imageInfos.
+		*/
+		for (int i = 0; i < textureNames.size(); i++)
+		{
+			std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(tp.texturePath);
+			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
+		}
+
+		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, inputAttachmentNames.size());
+
 		return *this;
 	}
 }

@@ -46,7 +46,7 @@ namespace Spiecs {
 		}
 		
 		// pointlight
-		/*{
+		{
 			Entity& plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.S_LightPoint");
@@ -59,7 +59,7 @@ namespace Spiecs {
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPostion({ -1.0f, -1.0f, 5.0f });
-		}*/
+		}
 	}
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)

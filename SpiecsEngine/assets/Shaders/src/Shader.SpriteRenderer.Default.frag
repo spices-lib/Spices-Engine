@@ -16,12 +16,6 @@ layout(push_constant) uniform Push {
 } push;
 
 // uniform buffer
-struct TextureParam {
-    vec3 constant;
-    int isInUse;
-    float intensity;
-};
-
 layout(set = 1, binding = 0) uniform sampler2D samplers;
 
 // constant

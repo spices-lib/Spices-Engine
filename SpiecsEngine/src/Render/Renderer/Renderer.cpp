@@ -365,6 +365,29 @@ namespace Spiecs {
 		}
 	}
 
+	Renderer:: DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddAttachmentTexture(
+		uint32_t                         set,
+		uint32_t                         binding,
+		VkShaderStageFlags               stageFlags,
+		const std::vector<std::string>& textureNames
+	)
+	{
+		/**
+		* @brief fill in imageInfos.
+		*/
+		for (int i = 0; i < textureNames.size(); i++)
+		{
+			auto info = m_Renderer->m_RendererResourcePool->AccessResource(textureNames[i]);
+
+			m_ImageInfos[set][binding].push_back(*info);
+		}
+
+		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
+
+		return *this;
+	}
+
 	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddInput(
 		uint32_t                         set                   ,
 		uint32_t                         binding               ,

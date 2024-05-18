@@ -15,8 +15,6 @@ layout(push_constant) uniform Push {
 } push;
 
 // uniform buffer
-layout(set = 1, binding = 0) uniform sampler2D samplers;
-
 
 // constant
 
@@ -27,5 +25,5 @@ void main()
 
     /*float alpha = texture(samplers, fragInput.texCoord).w;
     if (alpha < 0.01f) discard;
-    outPick = push.entityID; */
+    outPick = push.entityID;*/
 }

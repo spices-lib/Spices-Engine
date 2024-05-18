@@ -54,7 +54,7 @@ namespace Spiecs {
 
 		virtual void CreateDescriptorSet() override;
 
-		virtual void OnSlateResize() override { CreateRenderPass(); };
+		virtual void OnSlateResize() override;
 
 
 	private:

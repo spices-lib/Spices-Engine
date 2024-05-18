@@ -8,12 +8,23 @@ layout(location = 0) in struct FragInput {
 layout(location = 0) out vec4 outColor;
 
 // push constant
-layout(push_constant) uniform Push {
-	vec4 gbufferSize;
-	vec4 windowSize;
-} push;
 
-layout(set = 0, binding = 0) uniform sampler2D selectBuffer;
+// uniform buffer
+layout(set = 0, binding = 0) uniform View {
+	mat4 projection;
+	mat4 view;
+	mat4 inView;
+	vec4 sceneTextureSize;
+	vec4 windowSize;
+} view;
+
+layout(set = 0, binding = 1) uniform SpiecsInput {
+	vec4 mousePos;
+	float gameTime;
+	float frameTime;
+} spiecsInput;
+
+layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
 
 float SampleWithOffest(vec2 uv_offest);
 float Sobel(float MatColor[3][3]);
@@ -47,8 +58,8 @@ void main()
 
 float SampleWithOffest(vec2 uv_offest)
 {
-	float outLineWidth = min(fwidth(fragInput.texCoord.x * push.gbufferSize.x), fwidth(fragInput.texCoord.y * push.gbufferSize.y));
-	vec2 uv = fragInput.texCoord + uv_offest * push.gbufferSize.zw * outLineWidth * 0.5f;
+	float outLineWidth = min(fwidth(fragInput.texCoord.x * view.sceneTextureSize.x), fwidth(fragInput.texCoord.y * view.sceneTextureSize.y));
+	vec2 uv = fragInput.texCoord + uv_offest * view.sceneTextureSize.zw * outLineWidth * 0.5f;
 	return texture(selectBuffer, uv).x;
 }
 
