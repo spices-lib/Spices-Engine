@@ -98,6 +98,16 @@ namespace Spiecs {
 		* @brief Recreate RenderPass.
 		*/
 		CreateRenderPass();
+
+		/**
+		* @brief Free unused desctiptorSet and descriptorsetlayout.
+		*/
+		DescriptorSetManager::UnLoad(m_RendererName);
+
+		/**
+		* @brief Create descriptorSet again.
+		*/
+		CreateDescriptorSet();
 	}
 
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

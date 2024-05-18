@@ -22,7 +22,7 @@ layout(set = 0, binding = 1) uniform SpiecsInput {
 	float frameTime;
 } spiecsInput;
 
-layout(input_attachment_index = 1, binding = 0) uniform subpassInput GBuffer[4];
+layout(input_attachment_index = 1, set = 1, binding = 0) uniform subpassInput GBuffer[4];
 
 void main()
 {
