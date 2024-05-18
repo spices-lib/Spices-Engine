@@ -25,8 +25,6 @@ namespace Spiecs
 
 		std::string m_SubpassName;
 
-		VkPipelineLayout m_PipelineLayout{};
 
-		std::unique_ptr<VulkanPipeline> m_VulkanPipeline;
 	};
 }

@@ -8,14 +8,14 @@ namespace Spiecs {
     ImguiWindow::ImguiWindow(const std::string& panelName, FrameInfo& frameInfo)
         : ImguiSlate(panelName, frameInfo)
     {
-        //m_Visualizer = SlateSystem::GetRegister()->Register<ImguiVisualizer>(false, "Visualizer");
+        m_Visualizer = SlateSystem::GetRegister()->Register<ImguiVisualizer>(false, "Visualizer");
     }
 
     void ImguiWindow::OnRender()
     {
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
-            //m_Visualizer->OnRender();
+            m_Visualizer->OnRender();
 
             ImGui::EndMenu();
         }
