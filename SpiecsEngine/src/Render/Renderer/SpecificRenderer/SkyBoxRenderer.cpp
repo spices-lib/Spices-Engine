@@ -46,6 +46,26 @@ namespace Spiecs {
 		* @brief Create VkRenderPass, Resource, FrameBuffer.
 		*/
 		m_RenderPass->Build();
+
+
+
+		RendererPassBuilder{ "BassPass", this }
+		.AddSubPass("SkyBoxRenderSubPass")
+		.AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; 
+		})
+		.AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format = VK_FORMAT_R32_SFLOAT;
+		})
+		.AddDepthAttachment([](VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		})
+		.EndSubPass()
+		.Build();
 	}
 
 	void SkyBoxRenderer::CreateDescriptorSet()

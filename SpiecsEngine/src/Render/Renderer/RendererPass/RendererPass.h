@@ -1,8 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "RendererSubPass.h"
-
-#include <list>
+#include "Core/Container/linked_unordered_map.h"
 
 namespace Spiecs
 {
@@ -12,12 +11,39 @@ namespace Spiecs
 		RendererPass(const std::string& passName) : m_PassName(passName) {};
 		virtual ~RendererPass() {};
 
+		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
+		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName);
+
+
+		void AddAttachmentDescription(
+			const std::string&             attachmnetName , 
+			const VkAttachmentDescription& description    ,
+			const VkClearValue&            clearValue
+		);
+
+		void BuildRendererPass();
 
 	private:
 
+		/**
+		* @brief RenderPass's name.
+		*/
 		std::string m_PassName;
-		std::list<std::unique_ptr<RendererSubPass>> m_Passes;
+
+		/**
+		* @brief SubPass this RenderPass handled.
+		*/
+		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>> m_SubPasses;
 		
+		/**
+		* @brief VulkanRenderPass this RenderPass handled.
+		*/
 		std::unique_ptr<VulkanRenderPass> m_RenderPass;
+
+
+		scl::linked_unordered_map<std::string, VkAttachmentDescription> m_AttachmentDescriptions;
+
+
+		std::vector<VkClearValue> m_ClearValues;
 	};
 }

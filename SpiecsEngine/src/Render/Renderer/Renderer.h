@@ -10,6 +10,7 @@
 #include "RendererManager.h"
 #include "Core/Library/ContainerLibrary.h"
 #include "DescriptorSetManager/DescriptorSetManager.h"
+#include "Render/Renderer/RendererPass/RendererPass.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -199,90 +200,37 @@ namespace Spiecs {
 
 		/******************************Help Calss for quick build*******************************************/
 
-		/**
-		* @brief This class helps to bind pipeline and bind buffer.
-		* Only instanced during Render().
-		*/
-		class RenderBehaverBuilder
+		class RendererPassBuilder
 		{
 		public:
 
-			/**
-			* @brief Constructor Function.
-			* Bind pipleine and all buffer type descriptorset.
-			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
-			* @param[in] currentFrame Passed from FrameInfo.
-			*/
-			RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame, uint32_t currentImage);
+			RendererPassBuilder(const std::string& rendererPassName, Renderer*renderer);
 
-			/**
-			* @brief Destructor Function.
-			*/
-			virtual ~RenderBehaverBuilder() {};
+			virtual ~RendererPassBuilder() {};
 
-			/**
-			* @brief Bind the pipeline created by CreatePipeline().
-			* Called on RenderBehaverBuilder instanced.
-			*/
-			void BindPipeline(const std::string& materialName);
+			RendererPassBuilder& AddSubPass(const std::string& subPassName);
 
-		public:
+			template<typename T>
+			RendererPassBuilder& AddSwapChainAttachment(T func);
 
-			void BindDescriptorSet(DescriptorSetInfo& infos);
+			template<typename T>
+			RendererPassBuilder& AddColorAttachment(const std::string& attachmentName, T func);
 
-			void BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name);
+			template<typename T>
+			RendererPassBuilder& AddDepthAttachment(T func);
 
-			/**
-			* @brief Update local pushconstant buffer.
-			* @param[in] T Specific push constant struct Type.
-			* @param[in] F A function pointer, which defines what data inside the buffer.
-			*/
-			template<typename T, typename F>
-			void UpdatePushConstant(F func);
+			template<typename T>
+			RendererPassBuilder& AddInputAttachment(const std::string& attachmentName, T func);
 
-			/**
-			* @brief Update a local buffer.
-			* @param[in] T Specific buffer struct Type.
-			* @param[in] F A function pointer, which defines what data inside the buffer.
-			* @param[in] set Which set the descriptor will use.
-			* @param[in] binding Which binding the descriptor will use.
-			*/
-			template<typename T, typename F>
-			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
+			RendererPassBuilder& EndSubPass();
 
-			/**
-			* @brief Begin this Renderer's RenderPass.
-			* Call it auto.
-			*/
-			void BeginRenderPass();
-
-			/**
-			* @brief End this Renderer's RenderPass.
-			* Call it manually.
-			*/
-			void EndRenderPass();
+			void Build();
 
 		private:
-
-			/**
-			* @brief Specific Renderer pointer.
-			* Passed while this class instanecd.
-			*/
+			std::string m_RendererPassName;
 			Renderer* m_Renderer;
-
-			/**
-			* @brief Current frame index.
-			* Passed while this class instanecd.
-			* @see FrameInfo.
-			*/
-			uint32_t m_CurrentFrame;
-
-			/**
-			* @brief Current frame index.
-			* Passed while this class instanecd.
-			* @see FrameInfo.
-			*/
-			uint32_t m_CurrentImage;
+			std::shared_ptr<RendererPass> m_HandledRendererPass;
+			std::shared_ptr<RendererSubPass> m_HandledRendererSubPass;
 		};
 
 		class DescriptorSetBuilder
@@ -380,6 +328,92 @@ namespace Spiecs {
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> m_ImageInfos;
 		};
 
+		/**
+		* @brief This class helps to bind pipeline and bind buffer.
+		* Only instanced during Render().
+		*/
+		class RenderBehaverBuilder
+		{
+		public:
+
+			/**
+			* @brief Constructor Function.
+			* Bind pipleine and all buffer type descriptorset.
+			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			* @param[in] currentFrame Passed from FrameInfo.
+			*/
+			RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame, uint32_t currentImage);
+
+			/**
+			* @brief Destructor Function.
+			*/
+			virtual ~RenderBehaverBuilder() {};
+
+			/**
+			* @brief Bind the pipeline created by CreatePipeline().
+			* Called on RenderBehaverBuilder instanced.
+			*/
+			void BindPipeline(const std::string& materialName);
+
+		public:
+
+			void BindDescriptorSet(DescriptorSetInfo& infos);
+
+			void BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name);
+
+			/**
+			* @brief Update local pushconstant buffer.
+			* @param[in] T Specific push constant struct Type.
+			* @param[in] F A function pointer, which defines what data inside the buffer.
+			*/
+			template<typename T, typename F>
+			void UpdatePushConstant(F func);
+
+			/**
+			* @brief Update a local buffer.
+			* @param[in] T Specific buffer struct Type.
+			* @param[in] F A function pointer, which defines what data inside the buffer.
+			* @param[in] set Which set the descriptor will use.
+			* @param[in] binding Which binding the descriptor will use.
+			*/
+			template<typename T, typename F>
+			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
+
+			/**
+			* @brief Begin this Renderer's RenderPass.
+			* Call it auto.
+			*/
+			void BeginRenderPass();
+
+			/**
+			* @brief End this Renderer's RenderPass.
+			* Call it manually.
+			*/
+			void EndRenderPass();
+
+		private:
+
+			/**
+			* @brief Specific Renderer pointer.
+			* Passed while this class instanecd.
+			*/
+			Renderer* m_Renderer;
+
+			/**
+			* @brief Current frame index.
+			* Passed while this class instanecd.
+			* @see FrameInfo.
+			*/
+			uint32_t m_CurrentFrame;
+
+			/**
+			* @brief Current frame index.
+			* Passed while this class instanecd.
+			* @see FrameInfo.
+			*/
+			uint32_t m_CurrentImage;
+		};
+
 	protected:
 		
 		/**
@@ -396,10 +430,7 @@ namespace Spiecs {
 
 		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 
-		/**
-		* @brief This variable is a Wapper of VkRenderPass.
-		*/
-		std::unique_ptr<VulkanRenderPass> m_RenderPass;
+		std::unordered_map<std::string, std::shared_ptr<RendererPass>> m_Passes;
 		
 		/**
 		* @brief Specific renderer name, Passed by instanced.
@@ -411,6 +442,7 @@ namespace Spiecs {
 		* Maybe remove.
 		*/
 		friend class DescriptorSetBuilder;
+		friend class RendererPassBuilder;
 
 		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 
@@ -574,6 +606,126 @@ namespace Spiecs {
 
 		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, inputAttachmentNames.size());
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSwapChainAttachment(T func)
+	{
+		VkAttachmentDescription attachmentDescription{};
+		attachmentDescription.format         = m_Renderer->m_Device->GetSwapChainSupport().format.format;
+		attachmentDescription.samples        = VK_SAMPLE_COUNT_1_BIT;
+		attachmentDescription.loadOp         = VK_ATTACHMENT_LOAD_OP_LOAD;
+		attachmentDescription.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+		attachmentDescription.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachmentDescription.initialLayout  = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		attachmentDescription.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+		func(attachmentDescription);
+
+		VkClearValue clearValue{};
+		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+		m_HandledRendererPass->AddAttachmentDescription("SwapChainImage", attachmentDescription, clearValue);
+
+
+		VkAttachmentReference attachmentRef{};
+		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		m_HandledRendererSubPass->AddAttachmentReference("SwapChainImage", attachmentRef);
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddColorAttachment(
+		const std::string& attachmentName , 
+		T                  func
+	)
+	{
+		VkAttachmentDescription attachmentDescription{};
+		attachmentDescription.format            = m_VulkanDevice->GetSwapChainSupport().format.format;
+		attachmentDescription.samples           = VK_SAMPLE_COUNT_1_BIT;
+		attachmentDescription.loadOp            = VK_ATTACHMENT_LOAD_OP_LOAD;
+		attachmentDescription.storeOp           = VK_ATTACHMENT_STORE_OP_STORE;
+		attachmentDescription.stencilLoadOp     = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachmentDescription.stencilStoreOp    = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachmentDescription.initialLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachmentDescription.finalLayout       = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		bool isEnableBlend = false;
+		func(isEnableBlend, attachmentDescription);
+
+		VkClearValue clearValue{};
+		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+		m_HandledRendererPass->AddAttachmentDescription(attachmentName, attachmentDescription, clearValue);
+
+
+		VkAttachmentReference attachmentRef{};
+		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		m_HandledRendererSubPass->AddAttachmentReference(attachmentName, attachmentRef, clearValue);
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddDepthAttachment(T func)
+	{
+		VkAttachmentDescription depthAttachment{};
+		depthAttachment.format            = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
+		depthAttachment.samples           = VK_SAMPLE_COUNT_1_BIT;
+		depthAttachment.loadOp            = VK_ATTACHMENT_LOAD_OP_LOAD;
+		depthAttachment.storeOp           = VK_ATTACHMENT_STORE_OP_STORE;
+		depthAttachment.stencilLoadOp     = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		depthAttachment.stencilStoreOp    = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.initialLayout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		depthAttachment.finalLayout       = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		func(depthAttachment);
+
+		VkClearValue clearValue{};
+		clearValue.depthStencil = { 1.0f, 0 };
+
+		m_HandledRendererPass->AddAttachmentDescription("Depth", attachmentDescription, clearValue);
+
+		VkAttachmentReference depthAttachmentRef{};
+		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		m_HandledRendererSubPass->AdDepthAttachmentReference("Depth", depthAttachmentRef, clearValue);
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddInputAttachment(
+		const std::string& attachmentName , 
+		T                  func
+	)
+	{
+		VkAttachmentDescription attachmentDescription{};
+		attachmentDescription.format           = m_VulkanDevice->GetSwapChainSupport().format.format;
+		attachmentDescription.samples          = VK_SAMPLE_COUNT_1_BIT;
+		attachmentDescription.loadOp           = VK_ATTACHMENT_LOAD_OP_LOAD;
+		attachmentDescription.storeOp          = VK_ATTACHMENT_STORE_OP_STORE;
+		attachmentDescription.stencilLoadOp    = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachmentDescription.stencilStoreOp   = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachmentDescription.initialLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachmentDescription.finalLayout      = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		func(attachmentDescription);
+
+		VkClearValue clearValue{};
+		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+		m_HandledRendererPass->AddAttachmentDescription(attachmentName, attachmentDescription, clearValue);
+
+		VkAttachmentReference attachmentRef{};
+		attachmentRef.layout = attachmentDescription.finalLayout;
+		m_HandledRendererSubPass->AddInputAttachmentReference(attachmentName, attachmentRef);
 
 		return *this;
 	}

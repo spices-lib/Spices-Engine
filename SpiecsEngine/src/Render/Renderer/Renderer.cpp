@@ -428,4 +428,30 @@ namespace Spiecs {
 			pair.second->UpdateDescriptorSet(m_ImageInfos[pair.first], m_BufferInfos[pair.first]);
 		}
 	}
+
+	Renderer::RendererPassBuilder::RendererPassBuilder(const std::string& rendererPassName, Renderer* renderer)
+		: m_RendererPassName(rendererPassName)
+		, m_Renderer(renderer)
+	{
+		auto ptr = std::make_shared<RendererPass>(rendererPassName);
+		m_Renderer->m_Passes[rendererPassName] = ptr;
+		m_HandledRendererPass = ptr;
+	}
+
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(const std::string& subPassName)
+	{
+		m_HandledRendererSubPass = m_HandledRendererPass->AddSubPass(subPassName);
+		return *this;
+	}
+
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::EndSubPass()
+	{
+		m_HandledRendererSubPass->BuildSubPassDescription();
+		return *this;
+	}
+
+	void Renderer::RendererPassBuilder::Build()
+	{
+		m_HandledRendererPass->BuildRendererPass();
+	}
 }
