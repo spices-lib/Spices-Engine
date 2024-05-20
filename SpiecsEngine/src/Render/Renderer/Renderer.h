@@ -240,7 +240,11 @@ namespace Spiecs {
 			* @brief Constructor Function.
 			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			*/
-			DescriptorSetBuilder(Renderer* renderer) : m_Renderer(renderer) {};
+			DescriptorSetBuilder(
+				const std::string& rendererPassName ,
+				const std::string& subPassName      ,
+				Renderer*          renderer
+			);
 
 			/**
 			* @brief Destructor Function.
@@ -323,6 +327,7 @@ namespace Spiecs {
 			* Passed while this class instanecd.
 			*/
 			Renderer* m_Renderer;
+			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> m_BufferInfos;
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> m_ImageInfos;
@@ -446,14 +451,9 @@ namespace Spiecs {
 
 		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 
-		VkPushConstantRange m_PushConstantRange{};
+		
 
-		/**
-		* @brief True if the specific renderer enable pushconstant in pipelinelayout.
-		*/
-		bool isUsePushConstant = false;
-
-		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
+		
 
 		bool m_IsLoadDefaultMaterial;
 	};
@@ -537,17 +537,11 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
 	{
-		/**
-		* @brief Set variable.
-		*/
-		m_Renderer->isUsePushConstant = true;
-
-		/**
-		* @brief Fill in data.
-		*/
-		m_Renderer->m_PushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-		m_Renderer->m_PushConstantRange.offset = 0;
-		m_Renderer->m_PushConstantRange.size = sizeof(T);
+		m_HandledSubPass->SetPushConstant([&](auto& range) {
+			range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+			range.offset = 0;
+			range.size = sizeof(T);
+		});
 
 		return *this;
 	}
@@ -564,7 +558,7 @@ namespace Spiecs {
 		/**
 		* @brief Creating VulkanBuffer.
 		*/
-		m_Renderer->m_Buffers[id] = std::make_unique<VulkanBuffer>(
+		m_HandledSubPass->m_Buffers[id] = std::make_unique<VulkanBuffer>(
 			m_Renderer->m_VulkanState,
 			sizeof(T),
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -574,14 +568,14 @@ namespace Spiecs {
 		/**
 		* @brief Map with host memory and video memory.
 		*/
-		m_Renderer->m_Buffers[id]->Map();
+		m_HandledSubPass->m_Buffers[id]->Map();
 
 		/**
 		* @brief fill in bufferInfos.
 		*/
-		m_BufferInfos[set][binding] = *m_Renderer->m_Buffers[id]->GetBufferInfo();
+		m_BufferInfos[set][binding] = *m_HandledSubPass->m_Buffers[id]->GetBufferInfo();
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
+		auto descriptorSet = DescriptorSetManager::Registy(m_HandledSubPass->GetName(), set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
 
 		return *this;
@@ -604,7 +598,7 @@ namespace Spiecs {
 			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
 		}
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
+		auto descriptorSet = DescriptorSetManager::Registy(m_HandledSubPass->GetName(), set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, inputAttachmentNames.size());
 
 		return *this;
@@ -628,13 +622,13 @@ namespace Spiecs {
 		VkClearValue clearValue{};
 		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-		m_HandledRendererPass->AddAttachmentDescription("SwapChainImage", attachmentDescription, clearValue);
+		m_HandledRendererPass->AddAttachment("SwapChainImage", attachmentDescription, clearValue);
 
 
 		VkAttachmentReference attachmentRef{};
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AddAttachmentReference("SwapChainImage", attachmentRef);
+		m_HandledRendererSubPass->AddColorAttachmentReference("SwapChainImage", attachmentRef);
 
 		return *this;
 	}
@@ -661,13 +655,46 @@ namespace Spiecs {
 		VkClearValue clearValue{};
 		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-		m_HandledRendererPass->AddAttachmentDescription(attachmentName, attachmentDescription, clearValue);
+		RendererResourceCreateInfo Info;
+		Info.description = attachmentDescription;
+		Info.width = m_Renderer->m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+		Info.height = m_Renderer->m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
+
+		VkImageView& view = m_RendererResourcePool->AccessDepthResource(Info)->imageView;
+
+		m_HandledRendererPass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
 
 
 		VkAttachmentReference attachmentRef{};
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AddAttachmentReference(attachmentName, attachmentRef);
+		m_HandledRendererSubPass->AddColorAttachmentReference(attachmentName, attachmentRef);
+		
+		VkPipelineColorBlendAttachmentState colorBlend{};
+		colorBlend.colorWriteMask =
+			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+		if (!isEnableBlend)
+		{
+			colorBlend.blendEnable = VK_FALSE;
+			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+		}
+		else
+		{
+			colorBlend.blendEnable = VK_TRUE;
+			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+			colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+		}
 
 		return *this;
 	}
@@ -690,7 +717,15 @@ namespace Spiecs {
 		VkClearValue clearValue{};
 		clearValue.depthStencil = { 1.0f, 0 };
 
-		m_HandledRendererPass->AddAttachmentDescription("Depth", attachmentDescription, clearValue);
+		RendererResourceCreateInfo Info;
+		Info.description = depthAttachment;
+		Info.width = m_Renderer->m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+		Info.height = m_Renderer->m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
+		Info.isDepthResource = true;
+
+		VkImageView& view = m_RendererResourcePool->AccessDepthResource(Info)->imageView;
+
+		m_HandledRendererPass->AddAttachment("Depth", attachmentDescription, clearValue, view);
 
 		VkAttachmentReference depthAttachmentRef{};
 		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
@@ -721,7 +756,14 @@ namespace Spiecs {
 		VkClearValue clearValue{};
 		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-		m_HandledRendererPass->AddAttachmentDescription(attachmentName, attachmentDescription, clearValue);
+		RendererResourceCreateInfo Info;
+		Info.description = attachmentDescription;
+		Info.width = m_Renderer->m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+		Info.height = m_Renderer->m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
+
+		VkImageView& view = m_RendererResourcePool->AccessDepthResource(Info)->imageView;
+
+		m_HandledRendererPass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
 
 		VkAttachmentReference attachmentRef{};
 		attachmentRef.layout = attachmentDescription.finalLayout;

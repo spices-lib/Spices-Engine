@@ -20,9 +20,9 @@ namespace Spiecs {
 		return ptr;
 	}
 
-	void RendererPass::AddAttachmentDescription(
+	void RendererPass::AddAttachment(
 		const std::string&             attachmnetName , 
-		const VkAttachmentDescription& description    ,
+		const VkAttachmentDescription& description    , 
 		const VkClearValue&            clearValue
 	)
 	{
@@ -35,8 +35,24 @@ namespace Spiecs {
 			return;
 		}
 
+		if (attachmnetName == "SwapChainImage")
+		{
+			m_IsSwapChainImageInUse = true;
+		}
+
 		m_ClearValues.push_back(clearValue);
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
+	}
+
+	void RendererPass::AddAttachment(
+		const std::string&             attachmnetName , 
+		const VkAttachmentDescription& description    ,
+		const VkClearValue&            clearValue     ,
+		VkImageView&                   view
+	)
+	{
+		AddAttachment(attachmnetName, description, clearValue);
+		m_ImageViews.push_back(view);
 	}
 
 	void RendererPass::BuildRendererPass()
@@ -77,17 +93,20 @@ namespace Spiecs {
 		renderPassInfo.dependencyCount = subPassDepecdency.size();
 		renderPassInfo.pDependencies   = subPassDepecdency.data();
 
-		std::vector<std::string> attachmentNames;
-		m_AttachmentDescriptions.for_each([&](const std::string& name, const VkAttachmentDescription& description) {
-			attachmentNames.push_back(name);
-		});
+		if (m_AttachmentDescriptions.size() != m_ImageViews.size() + 1 && m_AttachmentDescriptions.size() != m_ImageViews.size())
+		{
+			std::stringstream ss;
+			ss << m_PassName << ": RendererPss Create Failed: Not enough imageview for attachment.";
+
+			SPIECS_CORE_ERROR(ss.str());
+		}
 
 		m_RenderPass = std::make_unique<VulkanRenderPass>(
 			VulkanRenderBackend::GetState(),
 			m_Device, 
-			VulkanRenderBackend::GetRendererResourcePool(), 
 			renderPassInfo, 
-			attachmentNames
+			m_ImageViews,
+			m_IsSwapChainImageInUse
 		);
 	}
 }

@@ -38,7 +38,7 @@ namespace Spiecs {
 		/**
 		* @brief create renderpass.
 		*/
-		CreateRenderPass();
+		CreateRendererPass();
 
 		/**
 		* @brief create specific renderer descriptorset.
@@ -365,6 +365,16 @@ namespace Spiecs {
 		}
 	}
 
+	Renderer::DescriptorSetBuilder::DescriptorSetBuilder(
+		const std::string& rendererPassName , 
+		const std::string& subPassName      , 
+		Renderer*          renderer
+	)
+		: m_Renderer(renderer)
+	{
+		m_HandledSubPass = renderer->m_Passes[rendererPassName]->GetSubPasses().find_value(subPassName);
+	}
+
 	Renderer:: DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddAttachmentTexture(
 		uint32_t                         set,
 		uint32_t                         binding,
@@ -405,7 +415,7 @@ namespace Spiecs {
 			m_ImageInfos[set][binding].push_back(*info);
 		}
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_Renderer->m_RendererName, set);
+		auto descriptorSet = DescriptorSetManager::Registy(m_HandledSubPass->GetName(), set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, stageFlags, inputAttachmentNames.size());
 
 		return *this;
@@ -413,7 +423,7 @@ namespace Spiecs {
 
 	void Renderer::DescriptorSetBuilder::Build()
 	{
-		auto descriptorSets = DescriptorSetManager::GetByName(m_Renderer->m_RendererName);
+		auto descriptorSets = DescriptorSetManager::GetByName(m_HandledSubPass->GetName());
 
 		for (auto& pair : descriptorSets)
 		{

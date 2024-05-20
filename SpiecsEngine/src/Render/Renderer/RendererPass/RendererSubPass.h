@@ -39,8 +39,12 @@ namespace Spiecs
 		void BuildFirstSubPassDependency();
 		void BuildSubPassDependency(uint32_t index);
 
+		template<typename T>
+		void SetPushConstant(T fn);
+
 		VkSubpassDescription& GetDescription() { return m_SubPassDescriptions; };
 		VkSubpassDependency& GetDependency() { return m_SubPassDependency; };
+		const std::string& GetName() { return m_SubpassName; };
 
 	private:
 
@@ -51,5 +55,19 @@ namespace Spiecs
 		scl::linked_unordered_map<std::string, VkAttachmentReference> m_ColorAttachmentReference;
 		scl::linked_unordered_map<std::string, VkAttachmentReference> m_DepthAttachmentReference;
 		scl::linked_unordered_map<std::string, VkAttachmentReference> m_InputAttachmentReference;
+
+		bool isUsePushConstant = false;
+		VkPushConstantRange m_PushConstantRange{};
+		
+
+		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
 	};
+
+	template<typename T>
+	inline void RendererSubPass::SetPushConstant(T fn)
+	{
+		isUsePushConstant = true;
+
+		fn(m_PushConstantRange);
+	}
 }

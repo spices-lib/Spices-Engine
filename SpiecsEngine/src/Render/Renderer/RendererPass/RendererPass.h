@@ -21,11 +21,17 @@ namespace Spiecs
 		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
 		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName);
 
+		void AddAttachment(
+			const std::string& attachmnetName,
+			const VkAttachmentDescription& description,
+			const VkClearValue& clearValue
+		);
 
-		void AddAttachmentDescription(
+		void AddAttachment(
 			const std::string&             attachmnetName , 
 			const VkAttachmentDescription& description    ,
-			const VkClearValue&            clearValue
+			const VkClearValue&            clearValue     ,
+			VkImageView&                   view
 		);
 
 		void BuildRendererPass();
@@ -50,7 +56,10 @@ namespace Spiecs
 		scl::linked_unordered_map<std::string, VkAttachmentDescription> m_AttachmentDescriptions;
 
 		std::vector<VkClearValue> m_ClearValues;
+		std::vector<VkImageView> m_ImageViews;
 
 		std::shared_ptr<VulkanDevice> m_Device;
+
+		bool m_IsSwapChainImageInUse = false;
 	};
 }
