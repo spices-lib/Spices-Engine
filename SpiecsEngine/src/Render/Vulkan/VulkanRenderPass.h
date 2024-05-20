@@ -28,7 +28,19 @@ namespace Spiecs {
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] vulkanDevice The shared pointer of VulkanDevice.
 		*/
-		VulkanRenderPass(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice, std::shared_ptr<RendererResourcePool> rendererResourcePool);
+		VulkanRenderPass(
+			VulkanState& vulkanState, 
+			std::shared_ptr<VulkanDevice> vulkanDevice, 
+			std::shared_ptr<RendererResourcePool> rendererResourcePool
+		);
+
+		VulkanRenderPass(
+			VulkanState& vulkanState,
+			std::shared_ptr<VulkanDevice> vulkanDevice,
+			std::shared_ptr<RendererResourcePool> rendererResourcePool,
+			VkRenderPassCreateInfo& createInfo,
+			const std::vector<std::string>& attachmentNames
+		);
 
 		/**
 		* @brief Destructor Function.

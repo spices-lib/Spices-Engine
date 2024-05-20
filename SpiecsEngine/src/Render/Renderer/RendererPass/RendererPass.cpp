@@ -1,5 +1,6 @@
 #include "Pchheader.h"
 #include "RendererPass.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
@@ -40,24 +41,53 @@ namespace Spiecs {
 
 	void RendererPass::BuildRendererPass()
 	{
-		VkSubpassDependency dependency{};
-		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-		dependency.srcAccessMask = 0;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		std::vector<VkAttachmentDescription> attachmentDescription;
+		m_AttachmentDescriptions.for_each([&](const std::string& name, const VkAttachmentDescription& description) {
+			attachmentDescription.push_back(description);
+		});
+
+		std::vector<VkSubpassDescription> subPassDescription;
+		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
+			subPassDescription.push_back(subpass->GetDescription());
+		});
+
+		std::vector<VkSubpassDependency> subPassDepecdency;
+		m_SubPasses.first()->BuildFirstSubPassDependency();
+		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
+			subPassDepecdency.push_back(subpass->GetDependency());
+		});
+
+		VkSubpassDependency outDependency{};
+		outDependency.srcSubpass      = m_SubPasses.size();
+		outDependency.dstSubpass      = VK_SUBPASS_EXTERNAL;
+		outDependency.srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		outDependency.dstStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		outDependency.srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		outDependency.dstAccessMask   = VK_ACCESS_MEMORY_READ_BIT;
+		outDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+		subPassDepecdency.push_back(outDependency);
 
 		VkRenderPassCreateInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(m_Attachments.size());
-		renderPassInfo.pAttachments = m_Attachments.data();
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpass;
-		renderPassInfo.dependencyCount = 1;
-		renderPassInfo.pDependencies = &dependency;
+		renderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachmentDescription.size());
+		renderPassInfo.pAttachments    = attachmentDescription.data();
+		renderPassInfo.subpassCount    = subPassDescription.size();
+		renderPassInfo.pSubpasses      = subPassDescription.data();
+		renderPassInfo.dependencyCount = subPassDepecdency.size();
+		renderPassInfo.pDependencies   = subPassDepecdency.data();
 
-		VK_CHECK(vkCreateRenderPass(m_VulkanState.m_Device, &renderPassInfo, nullptr, &m_RenderPass));
+		std::vector<std::string> attachmentNames;
+		m_AttachmentDescriptions.for_each([&](const std::string& name, const VkAttachmentDescription& description) {
+			attachmentNames.push_back(name);
+		});
 
+		m_RenderPass = std::make_unique<VulkanRenderPass>(
+			VulkanRenderBackend::GetState(),
+			m_Device, 
+			VulkanRenderBackend::GetRendererResourcePool(), 
+			renderPassInfo, 
+			attachmentNames
+		);
 	}
 }

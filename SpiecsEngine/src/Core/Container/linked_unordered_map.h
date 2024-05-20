@@ -25,7 +25,7 @@ namespace scl {
 		* @brief The container keeps iter in order.
 		*/
 		std::list<K> keys_;
-
+		
 		/**
 		* @breif The container keeps quick search.
 		*/
@@ -93,6 +93,32 @@ namespace scl {
 		* @param[in] fn The function of how to iter the container.
 		*/
 		void for_each(std::function<void(const K&, const V&)> fn);
+
+		/**
+		* @brief Get the previous element by the key.
+		* @param[in] key the key.
+		* @return Returns the previous element.
+		*/
+		V* prev_value(const K& key);
+
+		/**
+		* @brief Get the next element by the key.
+		* @param[in] key the key.
+		* @return Returns the next element.
+		*/
+		V* next_value(const K& key);
+
+		/**
+		* @brief Get the first element this container.
+		* @return Returns the first element finded.
+		*/
+		V& first();
+
+		/**
+		* @brief Get the end element this container.
+		* @return Returns the end element finded.
+		*/
+		V& end();
 	};
 
 	template<typename K, typename V>
@@ -190,5 +216,75 @@ namespace scl {
 			*/
 			fn(key, map_[key]);
 		}
+	}
+
+	template<typename K, typename V>
+	inline V* linked_unordered_map<K, V>::prev_value(const K& key)
+	{
+		if (!has_key(key))
+		{
+			return nullptr;
+		}
+
+		for (it = keys_.begin(); it != keys_.end(); it++)
+		{
+			if (*it == key)
+			{
+				if (it == keys_.begin())
+				{
+					return nullptr;
+				}
+				else
+				{
+					return it--;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
+	template<typename K, typename V>
+	inline V* linked_unordered_map<K, V>::next_value(const K& key)
+	{
+		if (!has_key(key))
+		{
+			return nullptr;
+		}
+
+		for (it = keys_.begin(); it != keys_.end(); it++)
+		{
+			if (*it == key)
+			{
+				if (it == keys_.end())
+				{
+					return nullptr;
+				}
+				else
+				{
+					return it++;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
+	template<typename K, typename V>
+	inline V& linked_unordered_map<K, V>::first()
+	{
+		if (size() == 0) return V();
+
+		auto it = keys_.begin();
+		return *it;
+	}
+
+	template<typename K, typename V>
+	inline V& linked_unordered_map<K, V>::end()
+	{
+		if (size() == 0) return V();
+
+		auto it = keys_.rbegin();
+		return *it;
 	}
 }

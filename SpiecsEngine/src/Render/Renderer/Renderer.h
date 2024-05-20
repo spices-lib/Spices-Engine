@@ -135,7 +135,7 @@ namespace Spiecs {
 		* Create specific renderpass.
 		* @todo Implementate specific renderpass
 		*/
-		virtual void CreateRenderPass() = 0;
+		virtual void CreateRendererPass() = 0;
 
 		virtual void CreateDescriptorSet() = 0;
 
@@ -667,7 +667,7 @@ namespace Spiecs {
 		VkAttachmentReference attachmentRef{};
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AddAttachmentReference(attachmentName, attachmentRef, clearValue);
+		m_HandledRendererSubPass->AddAttachmentReference(attachmentName, attachmentRef);
 
 		return *this;
 	}
@@ -695,7 +695,7 @@ namespace Spiecs {
 		VkAttachmentReference depthAttachmentRef{};
 		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AdDepthAttachmentReference("Depth", depthAttachmentRef, clearValue);
+		m_HandledRendererSubPass->AdDepthAttachmentReference("Depth", depthAttachmentRef);
 
 		return *this;
 	}

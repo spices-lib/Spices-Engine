@@ -447,6 +447,7 @@ namespace Spiecs {
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::EndSubPass()
 	{
 		m_HandledRendererSubPass->BuildSubPassDescription();
+		m_HandledRendererSubPass->BuildSubPassDependency(m_HandledRendererPass->GetSubPasses().size());
 		return *this;
 	}
 

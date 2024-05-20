@@ -35,14 +35,21 @@ namespace Spiecs
 		);
 
 		void BuildSubPassDescription();
+		
+		void BuildFirstSubPassDependency();
+		void BuildSubPassDependency(uint32_t index);
+
+		VkSubpassDescription& GetDescription() { return m_SubPassDescriptions; };
+		VkSubpassDependency& GetDependency() { return m_SubPassDependency; };
 
 	private:
 
 		std::string m_SubpassName;
 		VkSubpassDescription m_SubPassDescriptions{};
+		VkSubpassDependency m_SubPassDependency{};
 
-		std::unordered_map<std::string, VkAttachmentReference> m_ColorAttachmentReference;
-		std::unordered_map<std::string, VkAttachmentReference> m_DepthAttachmentReference;
-		std::unordered_map<std::string, VkAttachmentReference> m_InputAttachmentReference;
+		scl::linked_unordered_map<std::string, VkAttachmentReference> m_ColorAttachmentReference;
+		scl::linked_unordered_map<std::string, VkAttachmentReference> m_DepthAttachmentReference;
+		scl::linked_unordered_map<std::string, VkAttachmentReference> m_InputAttachmentReference;
 	};
 }

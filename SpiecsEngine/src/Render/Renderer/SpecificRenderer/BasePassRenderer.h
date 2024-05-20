@@ -47,12 +47,12 @@ namespace Spiecs {
 		virtual void Render(TimeStep& ts, FrameInfo& frameInfo) override;
 
 	private:
-
+		 
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create specific renderpass.
 		*/
-		virtual void CreateRenderPass() override;
+		virtual void CreateRendererPass() override;
 
 		virtual void CreateDescriptorSet() override;
 
@@ -62,7 +62,7 @@ namespace Spiecs {
 			VkPipelineLayout& layout
 		) override;
 
-		virtual void OnSlateResize() override { CreateRenderPass(); };
+		virtual void OnSlateResize() override { CreateRendererPass(); };
 	};
 
 }

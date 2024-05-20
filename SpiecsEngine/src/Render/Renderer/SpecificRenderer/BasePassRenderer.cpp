@@ -10,7 +10,7 @@
 
 namespace Spiecs {
 
-	void BasePassRenderer::CreateRenderPass()
+	void BasePassRenderer::CreateRendererPass()
 	{
 		RendererPassBuilder{ "BassPass", this }
 		.AddSubPass("SkyBox")
@@ -44,13 +44,45 @@ namespace Spiecs {
 		.AddDepthAttachment([](VkAttachmentDescription& description) {})
 		.EndSubPass()
 		.Build();
+
+
+		RendererPassBuilder{ "SceneCompose", this }
+		.AddSubPass("SceneCompose")
+		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		})
+		.AddInputAttachment("Diffuse", [](VkAttachmentDescription& description) {
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		})
+		.AddInputAttachment("Normal", [](VkAttachmentDescription& description) {
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		})
+		.AddInputAttachment("Specular", [](VkAttachmentDescription& description) {
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		})
+		.AddInputAttachment("Depth", [&](VkAttachmentDescription& description) {
+			description.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
+			description.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			})
+		.EndSubPass()
+		.Build();
 	}
 
 	void BasePassRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ this }
-			.AddPushConstant<PreR::PushConstant>()
-			.Build();
+		DescriptorSetBuilder{ "BassPass", "SkyBox", this }
+		.AddPushConstant<PreR::PushConstant>()
+		.Build();
+
+		DescriptorSetBuilder {"BassPass", "Mesh", this}
+		.AddPushConstant<PreR::PushConstant>()
+		.Build();
+
+		DescriptorSetBuilder{ "SceneCompose", "SceneCompose", this }
+		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Depth" })
+		.Build();
 	}
 
 	std::shared_ptr<VulkanPipeline> BasePassRenderer::CreatePipeline(
@@ -78,7 +110,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass();
+		builder.BeginRenderPass("BassPass");
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
@@ -98,6 +130,7 @@ namespace Spiecs {
 
 			return false;
 			});
+
 
 		builder.EndRenderPass();
 	}

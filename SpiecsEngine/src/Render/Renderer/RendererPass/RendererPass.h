@@ -8,7 +8,14 @@ namespace Spiecs
 	class RendererPass
 	{
 	public:
-		RendererPass(const std::string& passName) : m_PassName(passName) {};
+		RendererPass(
+			const std::string& passName, 
+			std::shared_ptr<VulkanDevice> vulkanDevice
+		) 
+			: m_PassName(passName)
+			, m_Device(vulkanDevice)
+		{};
+
 		virtual ~RendererPass() {};
 
 		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
@@ -40,10 +47,10 @@ namespace Spiecs
 		*/
 		std::unique_ptr<VulkanRenderPass> m_RenderPass;
 
-
 		scl::linked_unordered_map<std::string, VkAttachmentDescription> m_AttachmentDescriptions;
 
-
 		std::vector<VkClearValue> m_ClearValues;
+
+		std::shared_ptr<VulkanDevice> m_Device;
 	};
 }
