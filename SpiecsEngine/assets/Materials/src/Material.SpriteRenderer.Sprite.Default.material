@@ -1,4 +1,4 @@
-﻿Material: SpriteRenderer.S_LightPoint
+﻿Material: SpriteRenderer.Sprite.Default
 Shaders:
   - Stage: vertShader
     Path: SpriteRenderer.Default
@@ -6,4 +6,4 @@ Shaders:
     Path: SpriteRenderer.Default
 Textures:
   - Name: diffuse
-    Value: [1, 0, 0, Texture2D, component/S_LightPoint.PNG]
+    Value: [1, 0, 0, Texture2D, default.jpg]

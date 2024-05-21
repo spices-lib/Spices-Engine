@@ -36,11 +36,11 @@ namespace Spiecs {
 			std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw/interior_stair_wl3ieamdw_04");
 			std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw/interior_stair_wl3ieamdw_05");
 
-			pack1->SetMaterial("MeshRenderer.interior_stair_wl3ieamdw");
-			pack2->SetMaterial("MeshRenderer.interior_stair_wl3ieamdw");
-			pack3->SetMaterial("MeshRenderer.interior_stair_wl3ieamdw");
-			pack4->SetMaterial("MeshRenderer.interior_stair_wl3ieamdw");
-			pack5->SetMaterial("MeshRenderer.interior_stair_wl3ieamdw");
+			pack1->SetMaterial("BasePass.Mesh.interior_stair_wl3ieamdw");
+			pack2->SetMaterial("BasePass.Mesh.interior_stair_wl3ieamdw");
+			pack3->SetMaterial("BasePass.Mesh.interior_stair_wl3ieamdw");
+			pack4->SetMaterial("BasePass.Mesh.interior_stair_wl3ieamdw");
+			pack5->SetMaterial("BasePass.Mesh.interior_stair_wl3ieamdw");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
 			meshComp.SetMesh(mesh);
 		}
@@ -49,14 +49,14 @@ namespace Spiecs {
 		{
 			Entity& plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
-			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.S_LightPoint");
+			plightentity.AddComponent<SpriteComponent>("Sprite.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPostion({ 1.0f, 1.0f, -5.0f });
 		}
 		{
 			Entity& plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
-			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.S_LightPoint");
+			plightentity.AddComponent<SpriteComponent>("Sprite.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPostion({ -1.0f, -1.0f, 5.0f });
 		}

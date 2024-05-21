@@ -6,7 +6,7 @@ namespace Spiecs {
 
 	DescriptorManagerContainer DescriptorSetManager::m_DescriptorSets;
 
-	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registy(const std::string& name, uint32_t set)
+	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registy(const String2& name, uint32_t set)
 	{
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
@@ -21,7 +21,7 @@ namespace Spiecs {
 		return m_DescriptorSets[name][set];
 	}
 
-	void DescriptorSetManager::UnLoad(const std::string& name)
+	void DescriptorSetManager::UnLoad(const String2& name)
 	{
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
@@ -29,8 +29,14 @@ namespace Spiecs {
 		}
 	}
 
-	DescriptorSetInfo& DescriptorSetManager::GetByName(const std::string& name)
+	DescriptorSetInfo& DescriptorSetManager::GetByName(const String2& name)
 	{
 		return m_DescriptorSets[name];
+	}
+
+	DescriptorSetInfo& DescriptorSetManager::GetByName(const std::string& name)
+	{
+		auto str = String2(name, name);
+		return GetByName(str);
 	}
 }

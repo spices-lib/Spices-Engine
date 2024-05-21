@@ -1,4 +1,4 @@
-Material: WorldPickStage2Renderer.Default
+Material: WorldPickStage2Renderer.WorldPickStage2.Default
 Shaders:
   - Stage: vertShader
     Path: WorldPickStage2Renderer.Default

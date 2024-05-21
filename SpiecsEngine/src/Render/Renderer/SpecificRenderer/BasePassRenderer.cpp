@@ -48,11 +48,11 @@ namespace Spiecs {
 
 	void BasePassRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ "BassPass", "SkyBox", this }
+		DescriptorSetBuilder{ "SkyBox", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 
-		DescriptorSetBuilder {"BassPass", "Mesh", this}
+		DescriptorSetBuilder { "Mesh", this}
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 	}
@@ -68,8 +68,8 @@ namespace Spiecs {
 		pipelineConfig.renderPass = renderPass;
 		pipelineConfig.pipelineLayout = layout;
 		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments = m_RenderPass->GetColorBlend().data();
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_Pass.second->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments = m_Pass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
 			GetSahderPath(material->GetShaderPath("vertShader"), "vert"),
@@ -82,7 +82,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass("BassPass");
+		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

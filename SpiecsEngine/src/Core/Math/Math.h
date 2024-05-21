@@ -9,8 +9,8 @@ namespace Spiecs {
         Int2(const uint32_t& x, const uint32_t& y) : x(x), y(y) {};
         virtual ~Int2() {};
 
-        int x;
-        int y;
+        int x = 0;
+        int y = 0;
 
         bool operator==(const Int2& other) const {
             return x == other.x && y == other.y;

@@ -1,5 +1,6 @@
 #include "Pchheader.h"
 #include "RendererSubPass.h"
+#include "Render/Renderer/DescriptorSetManager/DescriptorSetManager.h"
 
 namespace Spiecs {
 
@@ -84,5 +85,10 @@ namespace Spiecs {
 		m_SubPassDependency.srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 		m_SubPassDependency.dstAccessMask   = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
 		m_SubPassDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+	}
+
+	void RendererSubPass::RegistyMaterial(const std::string& materialName, const String2& passName)
+	{
+
 	}
 }

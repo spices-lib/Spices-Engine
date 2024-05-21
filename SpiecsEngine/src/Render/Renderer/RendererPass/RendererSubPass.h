@@ -46,6 +46,8 @@ namespace Spiecs
 		VkSubpassDependency& GetDependency() { return m_SubPassDependency; };
 		const std::string& GetName() { return m_SubpassName; };
 
+		void RegistyMaterial(const std::string& materialName, const String2& passName);
+
 	private:
 
 		std::string m_SubpassName;
@@ -61,6 +63,8 @@ namespace Spiecs
 		
 
 		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
+
+		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 	};
 
 	template<typename T>

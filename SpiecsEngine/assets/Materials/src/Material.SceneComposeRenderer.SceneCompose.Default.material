@@ -1,4 +1,4 @@
-Material: SceneComposeRenderer.Default
+Material: SceneComposeRenderer.SceneCompose.Default
 Shaders:
   - Stage: vertShader
     Path: SceneComposeRenderer.Default

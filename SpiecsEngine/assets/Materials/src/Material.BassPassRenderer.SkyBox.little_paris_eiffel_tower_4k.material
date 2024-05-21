@@ -1,4 +1,4 @@
-Material: SkyBoxRenderer.little_paris_eiffel_tower_4k
+Material: BasePassRenderer.SkyBox.little_paris_eiffel_tower_4k
 Shaders:
   - Stage: vertShader
     Path: SkyBoxRenderer.Default

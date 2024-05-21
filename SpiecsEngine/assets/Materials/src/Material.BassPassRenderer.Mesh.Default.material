@@ -1,4 +1,4 @@
-Material: MeshRenderer.Default
+Material: BasePassRenderer.Mesh.Default
 Shaders:
   - Stage: vertShader
     Path: MeshRenderer.Default

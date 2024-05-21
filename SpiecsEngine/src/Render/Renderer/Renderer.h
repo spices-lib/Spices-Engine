@@ -128,6 +128,8 @@ namespace Spiecs {
 
 		void RegistyMaterial(const std::string& materialName);
 
+		std::shared_ptr<RendererPass>& GetPasses() { return m_Pass.second; };
+
 	private:
 
 		/**
@@ -161,6 +163,8 @@ namespace Spiecs {
 		* @return Returns the sahder path string.
 		*/
 		std::string GetSahderPath(const std::string& name, const std::string& shaderType);
+
+		
 
 		/**
 		* @brief Iterater the specific Component in World.
@@ -241,7 +245,6 @@ namespace Spiecs {
 			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			*/
 			DescriptorSetBuilder(
-				const std::string& rendererPassName ,
 				const std::string& subPassName      ,
 				Renderer*          renderer
 			);
@@ -327,6 +330,7 @@ namespace Spiecs {
 			* Passed while this class instanecd.
 			*/
 			Renderer* m_Renderer;
+			String2 m_PassID;
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> m_BufferInfos;
@@ -390,7 +394,7 @@ namespace Spiecs {
 			* @brief Begin this Renderer's RenderPass.
 			* Call it auto.
 			*/
-			void BeginRenderPass(const std::string& passName);
+			void BeginRenderPass();
 
 			/**
 			* @brief End this Renderer's RenderPass.
@@ -419,9 +423,6 @@ namespace Spiecs {
 			* @see FrameInfo.
 			*/
 			uint32_t m_CurrentImage;
-
-
-			std::shared_ptr<RendererPass> m_HandledPass;
 		};
 
 	protected:
@@ -440,7 +441,7 @@ namespace Spiecs {
 
 		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 
-		std::unordered_map<std::string, std::shared_ptr<RendererPass>> m_Passes;
+		std::pair<std::string, std::shared_ptr<RendererPass>> m_Pass;
 		
 		/**
 		* @brief Specific renderer name, Passed by instanced.
@@ -454,7 +455,7 @@ namespace Spiecs {
 		friend class DescriptorSetBuilder;
 		friend class RendererPassBuilder;
 
-		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
+		
 
 		
 
@@ -645,7 +646,7 @@ namespace Spiecs {
 	)
 	{
 		VkAttachmentDescription attachmentDescription{};
-		attachmentDescription.format            = m_VulkanDevice->GetSwapChainSupport().format.format;
+		attachmentDescription.format            = m_Renderer->m_VulkanDevice->GetSwapChainSupport().format.format;
 		attachmentDescription.samples           = VK_SAMPLE_COUNT_1_BIT;
 		attachmentDescription.loadOp            = VK_ATTACHMENT_LOAD_OP_LOAD;
 		attachmentDescription.storeOp           = VK_ATTACHMENT_STORE_OP_STORE;

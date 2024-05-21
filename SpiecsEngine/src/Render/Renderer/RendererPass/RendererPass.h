@@ -42,6 +42,8 @@ namespace Spiecs
 
 		inline std::vector<VkClearValue>& GetClearValues() { return m_ClearValues; };
 
+		inline scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
+
 	private:
 
 		/**

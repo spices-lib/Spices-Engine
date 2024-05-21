@@ -1,4 +1,4 @@
-Material: MeshRenderer.1
+Material: BasePassRenderer.Mesh.interior_stair_wl3ieamdw
 Shaders:
   - Stage: vertShader
     Path: MeshRenderer.Default
@@ -6,11 +6,11 @@ Shaders:
     Path: MeshRenderer.Default
 Textures:
   - Name: diffuse
-    Value: [1, 0, 0, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Albedo.jpg]
+    Value: [1, 0, 0, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]
   - Name: normal
-    Value: [1, 0, 1, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Normal.jpg]
+    Value: [1, 0, 1, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg]
   - Name: specular
-    Value: [1, 0, 2, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Specular.jpg]
+    Value: [1, 0, 2, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
 Parameters:
   - Name: diffuseIntensity
     Value: [1, 1, float4, [1.0, 2.0, 3.0, 4.0]]

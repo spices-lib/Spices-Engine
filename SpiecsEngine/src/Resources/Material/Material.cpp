@@ -285,8 +285,8 @@ namespace Spiecs {
 		/**
 		* @brief Create PipelineLayout.
 		*/
-		std::string sv = StringLibrary::SplitString(m_MaterialPath, '.')[0];
-		auto renderer = RendererManager::GetRenderer(sv);
-		renderer->RegistyMaterial(m_MaterialPath);
+		std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
+		auto renderer = RendererManager::GetRenderer(sv[0]);
+		subpass->RegistyMaterial(m_MaterialPath, { sv[0], sv[1] });
 	}
 }

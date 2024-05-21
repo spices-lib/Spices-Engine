@@ -1,4 +1,4 @@
-﻿Material: SkyBoxRenderer.Default
+﻿Material: BasePassRenderer.SkyBox.Default
 Shaders:
   - Stage: vertShader
     Path: SkyBoxRenderer.Default
