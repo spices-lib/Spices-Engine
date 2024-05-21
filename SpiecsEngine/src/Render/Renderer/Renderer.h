@@ -384,11 +384,13 @@ namespace Spiecs {
 			template<typename T, typename F>
 			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
 
+			void BeginNextSubPass();
+
 			/**
 			* @brief Begin this Renderer's RenderPass.
 			* Call it auto.
 			*/
-			void BeginRenderPass();
+			void BeginRenderPass(const std::string& passName);
 
 			/**
 			* @brief End this Renderer's RenderPass.
@@ -417,6 +419,9 @@ namespace Spiecs {
 			* @see FrameInfo.
 			*/
 			uint32_t m_CurrentImage;
+
+
+			std::shared_ptr<RendererPass> m_HandledPass;
 		};
 
 	protected:

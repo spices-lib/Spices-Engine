@@ -44,30 +44,6 @@ namespace Spiecs {
 		.AddDepthAttachment([](VkAttachmentDescription& description) {})
 		.EndSubPass()
 		.Build();
-
-
-		RendererPassBuilder{ "SceneCompose", this }
-		.AddSubPass("SceneCompose")
-		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		})
-		.AddInputAttachment("Diffuse", [](VkAttachmentDescription& description) {
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		})
-		.AddInputAttachment("Normal", [](VkAttachmentDescription& description) {
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		})
-		.AddInputAttachment("Specular", [](VkAttachmentDescription& description) {
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		})
-		.AddInputAttachment("Depth", [&](VkAttachmentDescription& description) {
-			description.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
-			description.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			})
-		.EndSubPass()
-		.Build();
 	}
 
 	void BasePassRenderer::CreateDescriptorSet()
@@ -78,10 +54,6 @@ namespace Spiecs {
 
 		DescriptorSetBuilder {"BassPass", "Mesh", this}
 		.AddPushConstant<PreR::PushConstant>()
-		.Build();
-
-		DescriptorSetBuilder{ "SceneCompose", "SceneCompose", this }
-		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Depth" })
 		.Build();
 	}
 
@@ -123,14 +95,32 @@ namespace Spiecs {
 				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
-					});
-
-				builder.BindDescriptorSet(material->GetMaterialDescriptorSet(), material->GetName());
 				});
 
-			return false;
+				builder.BindDescriptorSet(material->GetMaterialDescriptorSet(), material->GetName());
 			});
 
+			return false;
+		});
+
+		builder.BeginNextSubPass();
+
+		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
+
+			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+				builder.BindPipeline(material->GetName());
+
+				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+					push.model = modelMatrix;
+					push.entityID = entityId;
+				});
+
+				builder.BindDescriptorSet(material->GetMaterialDescriptorSet(), material->GetName());
+			});
+
+			return false;
+		});
 
 		builder.EndRenderPass();
 	}

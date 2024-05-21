@@ -10,30 +10,23 @@
 
 namespace Spiecs {
 
-	void WorldPickRenderer::CreateRenderPass()
+	void WorldPickRenderer::CreateRendererPass()
 	{
-		/**
-		* @brief Declear an empty VulkanRenderPass Object.
-		*/
-		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
-
-		/**
-		* @brief Add SelectBuffer Attachment.
-		* Though we want use SelectBuffer with a sampler, we need transfrom shaderread layout here.
-		*/
-		m_RenderPass->AddColorAttachment("SelectBuffer", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		RendererPassBuilder{ "WorldPick", this }
+		.AddSubPass("WorldPick")
+		.AddColorAttachment("SelectBuffer", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.finalLayout   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			description.loadOp        = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			description.format        = VK_FORMAT_R32_SFLOAT;
-		});
-
-		m_RenderPass->Build();
+		})
+		.EndSubPass()
+		.Build();
 	}
 
 	void WorldPickRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ this }
+		DescriptorSetBuilder{ "WorldPick", "WorldPick", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 	}
@@ -42,7 +35,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass();
+		builder.BeginRenderPass("WorldPick");
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

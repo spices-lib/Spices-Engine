@@ -52,11 +52,11 @@ namespace Spiecs {
 		* @brief The interface is inherited from Renderer.
 		* Create specific renderpass.
 		*/
-		virtual void CreateRenderPass() override;
+		virtual void CreateRendererPass() override;
 
 		virtual void CreateDescriptorSet() override;
 
-		virtual void OnSlateResize() override { CreateRenderPass(); };
+		virtual void OnSlateResize() override { CreateRendererPass(); };
 	};
 
 }

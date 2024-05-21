@@ -36,6 +36,12 @@ namespace Spiecs
 
 		void BuildRendererPass();
 
+		VkRenderPass& Get() { return m_RenderPass->Get(); };
+		VkFramebuffer& GetFramebuffer(uint32_t index) { return m_RenderPass->GetFramebuffer(index); };
+		inline const bool IsUseSwapChain() const { return m_IsSwapChainImageInUse; };
+
+		inline std::vector<VkClearValue>& GetClearValues() { return m_ClearValues; };
+
 	private:
 
 		/**

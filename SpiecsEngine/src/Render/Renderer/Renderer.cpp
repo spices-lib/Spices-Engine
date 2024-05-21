@@ -310,15 +310,22 @@ namespace Spiecs {
 		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame);
 	}
 
-	void Renderer::RenderBehaverBuilder::BeginRenderPass()
+	void Renderer::RenderBehaverBuilder::BeginNextSubPass()
 	{
+		vkCmdNextSubpass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], VK_SUBPASS_CONTENTS_INLINE);
+	}
+
+	void Renderer::RenderBehaverBuilder::BeginRenderPass(const std::string& passName)
+	{
+		m_HandledPass = m_Renderer->m_Passes[passName];
+
 		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_Renderer->m_RenderPass->Get();
-		renderPassInfo.framebuffer = m_Renderer->m_RenderPass->GetFramebuffer(m_CurrentImage);
+		renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass        = m_HandledPass->Get();
+		renderPassInfo.framebuffer       = m_HandledPass->GetFramebuffer(m_CurrentImage);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 
-		if (m_Renderer->m_RenderPass->IsUseSwapChain() || !SlateSystem::GetRegister())
+		if (m_HandledPass->IsUseSwapChain() || !SlateSystem::GetRegister())
 		{
 			renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 		}
@@ -329,8 +336,8 @@ namespace Spiecs {
 			renderPassInfo.renderArea.extent = extent;
 		}
 
-		renderPassInfo.clearValueCount = (uint32_t)m_Renderer->m_RenderPass->GetClearValues().size();
-		renderPassInfo.pClearValues = m_Renderer->m_RenderPass->GetClearValues().data();
+		renderPassInfo.clearValueCount = (uint32_t)m_HandledPass->GetClearValues().size();
+		renderPassInfo.pClearValues = m_HandledPass->GetClearValues().data();
 
 		vkCmdBeginRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}

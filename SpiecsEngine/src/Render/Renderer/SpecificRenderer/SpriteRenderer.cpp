@@ -10,35 +10,24 @@
 
 namespace Spiecs {
 
-	void SpriteRenderer::CreateRenderPass()
+	void SpriteRenderer::CreateRendererPass()
 	{
-		/**
-		* @brief Declear an empty VulkanRenderPass Object.
-		*/
-		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
-
-		/**
-		* @brief Add SceneColor Attachment.
-		* Though we want use SelectBuffer with a sampler, we need transfrom shaderread layout here.
-		*/
-		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		RendererPassBuilder{ "Sprite", this }
+		.AddSubPass("Sprite")
+		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			isEnableBlend = true;
-		});
-
-		/**
-		* @brief Add ID Attachment.
-		*/
-		m_RenderPass->AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		})
+		.AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		});
-		
-		m_RenderPass->Build();
+		})
+		.EndSubPass()
+		.Build();
 	}
 
 	void SpriteRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ this }
+		DescriptorSetBuilder{ "Sprite", "Sprite", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 	}
@@ -47,7 +36,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass();
+		builder.BeginRenderPass("Sprite");
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

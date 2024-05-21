@@ -10,7 +10,6 @@
 
 namespace Spiecs {
 
-
 	VulkanRenderPass::VulkanRenderPass(
 		VulkanState & vulkanState, 
 		std::shared_ptr<VulkanDevice> vulkanDevice,  

@@ -24,18 +24,15 @@ namespace Spiecs {
 		m_Square->OnCreatePack();
 	}
 
-	void WorldPickStage2Renderer::CreateRenderPass()
+	void WorldPickStage2Renderer::CreateRendererPass()
 	{
-		/**
-		* @brief Declear an empty VulkanRenderPass Object.
-		*/
-		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
-
-		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		RendererPassBuilder{ "WorldPickStage2", this }
+		.AddSubPass("WorldPickStage2")
+		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		});
-
-		m_RenderPass->Build();
+		})
+		.EndSubPass()
+		.Build();
 
 		/**
 		* @brief create renderresource's descriptorset.
@@ -45,7 +42,7 @@ namespace Spiecs {
 
 	void WorldPickStage2Renderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ this }
+		DescriptorSetBuilder{ "WorldPickStage2", "WorldPickStage2", this }
 		.AddAttachmentTexture(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"SelectBuffer"})
 		.Build();
 	}
@@ -55,7 +52,7 @@ namespace Spiecs {
 		/**
 		* @brief Recreate RenderPass.
 		*/
-		CreateRenderPass();
+		CreateRendererPass();
 
 		/**
 		* @brief Free unused desctiptorSet and descriptorsetlayout.
@@ -72,7 +69,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass();
+		builder.BeginRenderPass("WorldPickStage2");
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

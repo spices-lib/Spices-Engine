@@ -10,25 +10,16 @@
 
 namespace Spiecs {
 
-	void SlateRenderer::CreateRenderPass()
+	void SlateRenderer::CreateRendererPass()
 	{
-		/**
-		* @brief Declear an empty VulkanRenderPass Object.
-		*/
-		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
-
-		/**
-		* @brief Add SwapChian Attachment.
-		*/
-		m_RenderPass->AddSwapChainAttachment([](VkAttachmentDescription& description) {
+		RendererPassBuilder{ "Slate", this }
+		.AddSubPass("Slate")
+		.AddSwapChainAttachment([](VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		});
-
-		/**
-		* @brief Create VkRenderPass, Resource, FrameBuffer.
-		*/
-		m_RenderPass->Build();
+		})
+		.EndSubPass()
+		.Build();
 	}
 
 	void SlateRenderer::CreateDescriptorSet()
@@ -79,20 +70,20 @@ namespace Spiecs {
 		ImGui_ImplGlfw_InitForVulkan(m_VulkanState.m_Windows, true);
 
 		ImGui_ImplVulkan_InitInfo init_info = {};
-		init_info.Instance                 = m_VulkanState.m_Instance;
-		init_info.PhysicalDevice           = m_VulkanState.m_PhysicalDevice;
-		init_info.Device                   = m_VulkanState.m_Device;
-		init_info.QueueFamily              = m_VulkanState.m_GraphicQueueFamily;
-		init_info.Queue                    = m_VulkanState.m_GraphicQueue;
-		init_info.PipelineCache            = VK_NULL_HANDLE;
-		init_info.DescriptorPool           = m_DesctiptorPool->GetPool();
-		init_info.RenderPass               = m_RenderPass->Get();
-		init_info.Subpass                  = 0;
-		init_info.MinImageCount            = 2;
-		init_info.ImageCount               = MaxFrameInFlight;
-		init_info.MSAASamples              = VK_SAMPLE_COUNT_1_BIT;
-		init_info.Allocator                = VK_NULL_HANDLE;
-		init_info.CheckVkResultFn          = VK_NULL_HANDLE;
+		init_info.Instance                  = m_VulkanState.m_Instance;
+		init_info.PhysicalDevice            = m_VulkanState.m_PhysicalDevice;
+		init_info.Device                    = m_VulkanState.m_Device;
+		init_info.QueueFamily               = m_VulkanState.m_GraphicQueueFamily;
+		init_info.Queue                     = m_VulkanState.m_GraphicQueue;
+		init_info.PipelineCache             = VK_NULL_HANDLE;
+		init_info.DescriptorPool            = m_DesctiptorPool->GetPool();
+		init_info.RenderPass                = m_Passes["Slate"]->Get();
+		init_info.Subpass                   = 0;
+		init_info.MinImageCount             = 2;
+		init_info.ImageCount                = MaxFrameInFlight;
+		init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
+		init_info.Allocator                 = VK_NULL_HANDLE;
+		init_info.CheckVkResultFn           = VK_NULL_HANDLE;
 		ImGui_ImplVulkan_Init(&init_info);
 
 		ImGui_ImplVulkan_CreateFontsTexture();
@@ -134,7 +125,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass();
+		builder.BeginRenderPass("Slate");
 
 		BeginImguiFrame();
 

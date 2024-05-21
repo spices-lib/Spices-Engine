@@ -24,70 +24,36 @@ namespace Spiecs {
 		m_Square->OnCreatePack();
 	}
 
-	void SceneComposeRenderer::CreateRenderPass()
+	void SceneComposeRenderer::CreateRendererPass()
 	{
-		m_RenderPass = std::make_unique<VulkanRenderPass>(m_VulkanState, m_Device, m_RendererResourcePool);
-
-		/***********************************Written Buffer************************************************/
-
-		/**
-		* @brief Add FinalColor Attachment.
-		*/
-		m_RenderPass->AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		RendererPassBuilder{ "SceneCompose", this }
+		.AddSubPass("SceneCompose")
+		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		});
-
-		/************************************************************************************************/
-
-		/**********************************Data Buffer***************************************************/
-
-		/**
-		* @brief Add Albedo Input Attachment.
-		*/
-		m_RenderPass->AddInputAttachment("Diffuse", [](VkAttachmentDescription& description) {
+		})
+		.AddInputAttachment("Diffuse", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		});
-
-		/**
-		* @brief Add Normal Input Attachment.
-		*/
-		m_RenderPass->AddInputAttachment("Normal", [](VkAttachmentDescription& description) {
+		})
+		.AddInputAttachment("Normal", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		});
-
-		/**
-		* @brief Add Specular Input Attachment.
-		*/
-		m_RenderPass->AddInputAttachment("Specular", [](VkAttachmentDescription& description) {
+		})
+		.AddInputAttachment("Specular", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		});
-
-		/************************************************************************************************/
-
-		/******************************Just transform layout not in use**********************************/
-
-		/**
-		* @brief Add Normal Input Attachment.
-		*/
-		m_RenderPass->AddInputAttachment("Depth", [&](VkAttachmentDescription& description) {
+		})
+		.AddInputAttachment("Depth", [&](VkAttachmentDescription& description) {
 			description.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
 			description.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		});
-		
-		/************************************************************************************************/
-
-		/**
-		* @brief Create VkRenderPass, Resource, FrameBuffer.
-		*/
-		m_RenderPass->Build();
+		})
+		.EndSubPass()
+		.Build();
 	}
 
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ this }
-		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"Diffuse", "Normal", "Specular", "Depth"})
+		DescriptorSetBuilder{ "SceneCompose", "SceneCompose", this }
+		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Depth" })
 		.Build();
 	}
 
@@ -96,7 +62,7 @@ namespace Spiecs {
 		/**
 		* @brief Recreate RenderPass.
 		*/
-		CreateRenderPass();
+		CreateRendererPass();
 
 		/**
 		* @brief Free unused desctiptorSet and descriptorsetlayout.
@@ -113,7 +79,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass();
+		builder.BeginRenderPass("SceneCompose");
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
