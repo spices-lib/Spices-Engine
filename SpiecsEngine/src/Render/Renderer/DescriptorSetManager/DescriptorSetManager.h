@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
+#include "Core/Math/Math.h"
 
 namespace Spiecs {
 
@@ -14,7 +15,9 @@ namespace Spiecs {
 		virtual ~DescriptorSetManager() {};
 
 		static std::shared_ptr<VulkanDescriptorSet> Registy(const String2& name, uint32_t set);
+		static std::shared_ptr<VulkanDescriptorSet> Registy(const std::string& name, uint32_t set);
 		static void UnLoad(const String2& name);
+		static void UnLoad(const std::string& name);
 
 		static DescriptorSetInfo& GetByName(const String2& name);
 		static DescriptorSetInfo& GetByName(const std::string& name);

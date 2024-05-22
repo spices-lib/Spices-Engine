@@ -52,7 +52,7 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ "SceneCompose", "SceneCompose", this }
+		DescriptorSetBuilder{ "SceneCompose", this }
 		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Depth" })
 		.Build();
 	}
@@ -67,7 +67,7 @@ namespace Spiecs {
 		/**
 		* @brief Free unused desctiptorSet and descriptorsetlayout.
 		*/
-		DescriptorSetManager::UnLoad(m_RendererName);
+		UnloadDescriptorSets();
 
 		/**
 		* @brief Create descriptorSet again.
@@ -79,7 +79,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass("SceneCompose");
+		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

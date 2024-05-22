@@ -16,6 +16,20 @@ namespace Spiecs {
             return x == other.x && y == other.y;
         };
     };
+
+    struct String2
+    {
+        String2() {};
+        String2(const std::string& str0, const std::string& str1) : x(str0), y(str1) {};
+        virtual ~String2() {};
+
+        std::string x;
+        std::string y;
+
+        bool operator==(const String2& other) const {
+            return x == other.x && y == other.y;
+        };
+    };
 }
 
 namespace std {
@@ -27,6 +41,13 @@ namespace std {
         size_t operator()(Spiecs::Int2 const& info) const {
             return (hash<int>()(info.x) ^
                 (hash<int>()(info.y) << 1));
+        }
+    };
+
+    template<> struct hash<Spiecs::String2> {
+        size_t operator()(Spiecs::String2 const& info) const {
+            return (hash<std::string>()(info.x) ^
+                (hash<std::string>()(info.y) << 1));
         }
     };
 }

@@ -20,17 +20,16 @@ namespace Spiecs
 		virtual ~RendererSubPass() {};
 
 		void AddColorAttachmentReference(
-			const std::string&           attachmentName      , 
-			VkAttachmentReference&       attachmentReference
+			uint32_t                index,
+			VkAttachmentReference&  attachmentReference
 		);
 
 		void AdDepthAttachmentReference(
-			const std::string&           attachmentName      ,
-			VkAttachmentReference&       attachmentReference
+			uint32_t                 index,
+			VkAttachmentReference&   attachmentReference
 		);
 
 		void AddInputAttachmentReference(
-			const std::string&           attachmentName      ,
 			VkAttachmentReference&       attachmentReference
 		);
 
@@ -45,8 +44,12 @@ namespace Spiecs
 		VkSubpassDescription& GetDescription() { return m_SubPassDescriptions; };
 		VkSubpassDependency& GetDependency() { return m_SubPassDependency; };
 		const std::string& GetName() { return m_SubpassName; };
-
-		void RegistyMaterial(const std::string& materialName, const String2& passName);
+		void AddPipeline(const std::string& name, std::shared_ptr<VulkanPipeline> pipeline);
+		inline bool IsUsePushConstant() { return isUsePushConstant; };
+		inline VkPushConstantRange& GetPushConstant() { return m_PushConstantRange; };
+		inline std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>>& GetPipelines() { return m_Pipelines; };
+		inline std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>>& GetBuffers() { return m_Buffers; };
+		void SetBuffer(const Int2& i2, void* data);
 
 	private:
 
@@ -54,9 +57,9 @@ namespace Spiecs
 		VkSubpassDescription m_SubPassDescriptions{};
 		VkSubpassDependency m_SubPassDependency{};
 
-		scl::linked_unordered_map<std::string, VkAttachmentReference> m_ColorAttachmentReference;
-		scl::linked_unordered_map<std::string, VkAttachmentReference> m_DepthAttachmentReference;
-		scl::linked_unordered_map<std::string, VkAttachmentReference> m_InputAttachmentReference;
+		std::vector<VkAttachmentReference> m_ColorAttachmentReference;
+		std::vector<VkAttachmentReference> m_DepthAttachmentReference;
+		std::vector<VkAttachmentReference> m_InputAttachmentReference;
 
 		bool isUsePushConstant = false;
 		VkPushConstantRange m_PushConstantRange{};

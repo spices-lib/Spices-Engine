@@ -21,12 +21,22 @@ namespace Spiecs {
 		return m_DescriptorSets[name][set];
 	}
 
+	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registy(const std::string& name, uint32_t set)
+	{
+		return Registy({ name , name }, set);
+	}
+
 	void DescriptorSetManager::UnLoad(const String2& name)
 	{
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
 			m_DescriptorSets.erase(name);
 		}
+	}
+
+	void DescriptorSetManager::UnLoad(const std::string& name)
+	{
+		UnLoad({ name , name });
 	}
 
 	DescriptorSetInfo& DescriptorSetManager::GetByName(const String2& name)

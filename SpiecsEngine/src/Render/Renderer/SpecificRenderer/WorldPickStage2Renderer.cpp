@@ -42,7 +42,7 @@ namespace Spiecs {
 
 	void WorldPickStage2Renderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ "WorldPickStage2", "WorldPickStage2", this }
+		DescriptorSetBuilder{ "WorldPickStage2", this }
 		.AddAttachmentTexture(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"SelectBuffer"})
 		.Build();
 	}
@@ -57,7 +57,7 @@ namespace Spiecs {
 		/**
 		* @brief Free unused desctiptorSet and descriptorsetlayout.
 		*/
-		DescriptorSetManager::UnLoad(m_RendererName);
+		UnloadDescriptorSets();
 
 		/**
 		* @brief Create descriptorSet again.
@@ -69,7 +69,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass("WorldPickStage2");
+		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

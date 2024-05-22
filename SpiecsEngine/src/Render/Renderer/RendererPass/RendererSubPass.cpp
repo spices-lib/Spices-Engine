@@ -5,64 +5,40 @@
 namespace Spiecs {
 
 	void RendererSubPass::AddColorAttachmentReference(
-		const std::string&           attachmentName      , 
 		VkAttachmentReference&       attachmentReference
 	)
 	{
-		if (m_ColorAttachmentReference.has_key(attachmentName)) return;
-
 		attachmentReference.attachment = m_ColorAttachmentReference.size();
-		m_ColorAttachmentReference.push_back(attachmentName, attachmentReference);
+		m_ColorAttachmentReference.push_back(attachmentReference);
 	}
 
 	void RendererSubPass::AdDepthAttachmentReference(
-		const std::string&           attachmentName      , 
 		VkAttachmentReference&       attachmentReference
 	)
 	{
-		if (m_DepthAttachmentReference.has_key(attachmentName)) return;
-
 		attachmentReference.attachment = m_DepthAttachmentReference.size();
-		m_DepthAttachmentReference.push_back(attachmentName, attachmentReference);
+		m_DepthAttachmentReference.push_back(attachmentReference);
 	}
 
 	void RendererSubPass::AddInputAttachmentReference(
-		const std::string&           attachmentName      , 
 		VkAttachmentReference&       attachmentReference
 	)
 	{
-		if (m_InputAttachmentReference.has_key(attachmentName)) return;
-
 		attachmentReference.attachment = m_InputAttachmentReference.size();
-		m_InputAttachmentReference.push_back(attachmentName, attachmentReference);
+		m_InputAttachmentReference.push_back(attachmentReference);
 	}
 
 	void RendererSubPass::BuildSubPassDescription()
 	{
-		std::vector<VkAttachmentReference> color;
-		m_ColorAttachmentReference.for_each([&](const std::string& name, const VkAttachmentReference& ref) {
-			color.push_back(ref);
-		});
-
-		std::vector<VkAttachmentReference> depth;
-		m_DepthAttachmentReference.for_each([&](const std::string& name, const VkAttachmentReference& ref) {
-			depth.push_back(ref);
-		});
-
-		std::vector<VkAttachmentReference> input;
-		m_InputAttachmentReference.for_each([&](const std::string& name, const VkAttachmentReference& ref) {
-			input.push_back(ref);
-		});
-
 		m_SubPassDescriptions.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-		m_SubPassDescriptions.colorAttachmentCount    = color.size();
-		m_SubPassDescriptions.pColorAttachments       = color.data();
+		m_SubPassDescriptions.colorAttachmentCount    = m_ColorAttachmentReference.size();
+		m_SubPassDescriptions.pColorAttachments       = m_ColorAttachmentReference.data();
 
-		m_SubPassDescriptions.pDepthStencilAttachment = depth.size() != 0 ? depth.data() : nullptr;
+		m_SubPassDescriptions.pDepthStencilAttachment = m_DepthAttachmentReference.size() != 0 ? m_DepthAttachmentReference.data() : nullptr;
 
-		m_SubPassDescriptions.inputAttachmentCount    = input.size();
-		m_SubPassDescriptions.pInputAttachments       = input.data();
+		m_SubPassDescriptions.inputAttachmentCount    = m_InputAttachmentReference.size();
+		m_SubPassDescriptions.pInputAttachments       = m_InputAttachmentReference.data();
 	}
 
 	void RendererSubPass::BuildFirstSubPassDependency()
@@ -87,8 +63,14 @@ namespace Spiecs {
 		m_SubPassDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 	}
 
-	void RendererSubPass::RegistyMaterial(const std::string& materialName, const String2& passName)
+	void RendererSubPass::AddPipeline(const std::string& name, std::shared_ptr<VulkanPipeline> pipeline)
 	{
+		m_Pipelines[name] = pipeline;
+	}
 
+	void RendererSubPass::SetBuffer(const Int2& i2, void* data)
+	{
+		m_Buffers[i2]->WriteToBuffer(data);
+		m_Buffers[i2]->Flush();
 	}
 }

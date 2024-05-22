@@ -3,9 +3,17 @@
 
 namespace Spiecs {
 
+	void PreRenderer::CreateRendererPass()
+	{
+		RendererPassBuilder{ "PreRenderer", this }
+		.AddSubPass("PreRenderer")
+		.EndSubPass()	
+		.Build();
+	}
+
 	void PreRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ "PreRenderer", "PreRenderer", this }
+ 		DescriptorSetBuilder{ "PreRenderer", this }
 		.AddBuffer<PreR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddBuffer<PreR::SpiecsInput>(0, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();

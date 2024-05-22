@@ -26,7 +26,7 @@ namespace Spiecs {
 
 	void WorldPickRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ "WorldPick", "WorldPick", this }
+		DescriptorSetBuilder{ "WorldPick", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 	}
@@ -35,7 +35,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass("WorldPick");
+		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

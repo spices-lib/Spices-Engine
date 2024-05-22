@@ -68,7 +68,7 @@ namespace Spiecs {
 		pipelineConfig.renderPass = renderPass;
 		pipelineConfig.pipelineLayout = layout;
 		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_Pass.second->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_Pass->GetColorBlend().size();
 		pipelineConfig.colorBlendInfo.pAttachments = m_Pass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
@@ -103,7 +103,7 @@ namespace Spiecs {
 			return false;
 		});
 
-		builder.BeginNextSubPass();
+		builder.BeginNextSubPass("Mesh");
 
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();

@@ -24,12 +24,12 @@ namespace scl {
 		/**
 		* @brief The container keeps iter in order.
 		*/
-		std::list<K> keys_;
+		std::list<K> keys_ = {};
 		
 		/**
 		* @breif The container keeps quick search.
 		*/
-		std::unordered_map<K, V> map_;
+		std::unordered_map<K, V> map_ = {};
 
 	public:
 
@@ -271,20 +271,14 @@ namespace scl {
 	}
 
 	template<typename K, typename V>
-	inline V& linked_unordered_map<K, V>::first()
+	V& linked_unordered_map<K, V>::first()
 	{
-		if (size() == 0) return V();
-
-		auto it = keys_.begin();
-		return *it;
+		return map_[keys_.front()];
 	}
 
 	template<typename K, typename V>
-	inline V& linked_unordered_map<K, V>::end()
+	V& linked_unordered_map<K, V>::end()
 	{
-		if (size() == 0) return V();
-
-		auto it = keys_.rbegin();
-		return *it;
+		return map_[keys_.back()];
 	}
 }

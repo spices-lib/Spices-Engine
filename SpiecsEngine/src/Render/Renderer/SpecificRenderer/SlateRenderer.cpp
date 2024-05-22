@@ -77,7 +77,7 @@ namespace Spiecs {
 		init_info.Queue                     = m_VulkanState.m_GraphicQueue;
 		init_info.PipelineCache             = VK_NULL_HANDLE;
 		init_info.DescriptorPool            = m_DesctiptorPool->GetPool();
-		init_info.RenderPass                = m_Pass.second->Get();
+		init_info.RenderPass                = m_Pass->Get();
 		init_info.Subpass                   = 0;
 		init_info.MinImageCount             = 2;
 		init_info.ImageCount                = MaxFrameInFlight;
@@ -125,7 +125,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass("Slate");
+		builder.BeginRenderPass();
 
 		BeginImguiFrame();
 

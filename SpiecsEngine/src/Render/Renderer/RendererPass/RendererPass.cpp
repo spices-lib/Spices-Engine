@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "RendererPass.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Render/Renderer/DescriptorSetManager/DescriptorSetManager.h"
 
 namespace Spiecs {
 
@@ -20,10 +21,11 @@ namespace Spiecs {
 		return ptr;
 	}
 
-	void RendererPass::AddAttachment(
-		const std::string&             attachmnetName , 
-		const VkAttachmentDescription& description    , 
-		const VkClearValue&            clearValue
+	uint32_t RendererPass::AddAttachment(
+		const std::string&             attachmnetName         , 
+		const VkAttachmentDescription& description            , 
+		const VkClearValue&            clearValue             ,
+		const VkPipelineColorBlendAttachmentState& colorBlend
 	)
 	{
 		if (m_AttachmentDescriptions.has_key(attachmnetName))
@@ -31,8 +33,8 @@ namespace Spiecs {
 			std::stringstream ss;
 			ss << "RendererPass: " << m_PassName << ": Attachment: " << attachmnetName << " already added.";
 
-			SPIECS_CORE_WARN(ss.str());
-			return;
+			SPIECS_CORE_ERROR(ss.str());
+			return -1;
 		}
 
 		if (attachmnetName == "SwapChainImage")
@@ -41,18 +43,40 @@ namespace Spiecs {
 		}
 
 		m_ClearValues.push_back(clearValue);
+		m_ColorBlends.push_back(colorBlend);
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
+
+		return m_AttachmentDescriptions.size() - 1;
 	}
 
-	void RendererPass::AddAttachment(
-		const std::string&             attachmnetName , 
-		const VkAttachmentDescription& description    ,
-		const VkClearValue&            clearValue     ,
+	uint32_t RendererPass::AddAttachment(
+		const std::string&             attachmnetName         , 
+		const VkAttachmentDescription& description            ,
+		const VkClearValue&            clearValue             ,
+		const VkPipelineColorBlendAttachmentState& colorBlend ,
 		VkImageView&                   view
 	)
 	{
-		AddAttachment(attachmnetName, description, clearValue);
+		if (m_AttachmentDescriptions.has_key(attachmnetName))
+		{
+			std::stringstream ss;
+			ss << "RendererPass: " << m_PassName << ": Attachment: " << attachmnetName << " already added.";
+
+			SPIECS_CORE_ERROR(ss.str());
+			return -1;
+		}
+
+		if (attachmnetName == "SwapChainImage")
+		{
+			m_IsSwapChainImageInUse = true;
+		}
+
+		m_ClearValues.push_back(clearValue);
+		m_ColorBlends.push_back(colorBlend);
+		m_AttachmentDescriptions.push_back(attachmnetName, description);
 		m_ImageViews.push_back(view);
+
+		return m_AttachmentDescriptions.size() - 1;
 	}
 
 	void RendererPass::BuildRendererPass()
@@ -74,7 +98,7 @@ namespace Spiecs {
 		});
 
 		VkSubpassDependency outDependency{};
-		outDependency.srcSubpass      = m_SubPasses.size();
+		outDependency.srcSubpass      = m_SubPasses.size() - 1;
 		outDependency.dstSubpass      = VK_SUBPASS_EXTERNAL;
 		outDependency.srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		outDependency.dstStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;

@@ -121,7 +121,6 @@ namespace Spiecs {
 		}
 
 		static std::shared_ptr<Renderer> GetRenderer(const std::string name);
-		static std::shared_ptr<RendererSubPass> GetSubPass(const String2& passName);
 
 	private:
 

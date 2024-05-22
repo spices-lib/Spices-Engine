@@ -18,31 +18,33 @@ namespace Spiecs
 
 		virtual ~RendererPass() {};
 
-		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
+		inline scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
 		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName);
 
-		void AddAttachment(
-			const std::string& attachmnetName,
-			const VkAttachmentDescription& description,
-			const VkClearValue& clearValue
+		uint32_t AddAttachment(
+			const std::string& attachmnetName                     ,
+			const VkAttachmentDescription& description            ,
+			const VkClearValue& clearValue                        ,
+			const VkPipelineColorBlendAttachmentState& colorBlend
 		);
 
-		void AddAttachment(
-			const std::string&             attachmnetName , 
-			const VkAttachmentDescription& description    ,
-			const VkClearValue&            clearValue     ,
+		uint32_t AddAttachment(
+			const std::string&             attachmnetName         , 
+			const VkAttachmentDescription& description            ,
+			const VkClearValue&            clearValue             ,
+			const VkPipelineColorBlendAttachmentState& colorBlend ,
 			VkImageView&                   view
 		);
 
 		void BuildRendererPass();
 
 		VkRenderPass& Get() { return m_RenderPass->Get(); };
+		inline std::string& GetName() { return m_PassName; };
 		VkFramebuffer& GetFramebuffer(uint32_t index) { return m_RenderPass->GetFramebuffer(index); };
 		inline const bool IsUseSwapChain() const { return m_IsSwapChainImageInUse; };
 
 		inline std::vector<VkClearValue>& GetClearValues() { return m_ClearValues; };
-
-		inline scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
+		inline std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; };
 
 	private:
 
@@ -64,6 +66,8 @@ namespace Spiecs
 		scl::linked_unordered_map<std::string, VkAttachmentDescription> m_AttachmentDescriptions;
 
 		std::vector<VkClearValue> m_ClearValues;
+		std::vector<VkPipelineColorBlendAttachmentState> m_ColorBlends;
+
 		std::vector<VkImageView> m_ImageViews;
 
 		std::shared_ptr<VulkanDevice> m_Device;

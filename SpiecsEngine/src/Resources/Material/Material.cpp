@@ -287,6 +287,6 @@ namespace Spiecs {
 		*/
 		std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
 		auto renderer = RendererManager::GetRenderer(sv[0]);
-		subpass->RegistyMaterial(m_MaterialPath, { sv[0], sv[1] });
+		renderer->RegistyMaterial(m_MaterialPath, sv[1]);
 	}
 }

@@ -27,7 +27,7 @@ namespace Spiecs {
 
 	void SpriteRenderer::CreateDescriptorSet()
 	{
-		DescriptorSetBuilder{ "Sprite", "Sprite", this }
+		DescriptorSetBuilder{ "Sprite", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 	}
@@ -36,7 +36,7 @@ namespace Spiecs {
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.BeginRenderPass("Sprite");
+		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 

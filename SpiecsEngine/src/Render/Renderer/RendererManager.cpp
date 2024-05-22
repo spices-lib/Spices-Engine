@@ -58,21 +58,4 @@ namespace Spiecs {
 
 		return nullptr;
 	}
-
-	std::shared_ptr<RendererSubPass> RendererManager::GetSubPass(const String2& passName)
-	{
-		m_Identities.for_each([&](auto& k, auto& v) {
-			auto& passes = v->GetPasses();
-			if (passes.find(passName.str0) != passes.end())
-			{
-				auto& subpasses = passes[passName.str0]->GetSubPasses();
-				if (subpasses.has_key(passName.str1))
-				{
-					return subpasses.find_value(passName.str1);
-				}
-			}
-		});
-
-		return nullptr;
-	}
 }

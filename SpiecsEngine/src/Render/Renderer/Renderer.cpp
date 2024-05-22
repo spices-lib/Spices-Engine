@@ -29,9 +29,7 @@ namespace Spiecs {
 	{}
 
 	Renderer::~Renderer()
-	{
-		DescriptorSetManager::UnLoad(m_RendererName);
-	}
+	{}
 
 	void Renderer::OnSystemInitialize()
 	{
@@ -48,7 +46,7 @@ namespace Spiecs {
 		CreateDefaultMaterial();
 	}
 
-	void Renderer::RegistyMaterial(const std::string& materialName)
+	void Renderer::RegistyMaterial(const std::string& materialName, const std::string& subpassName)
 	{
 		/**
 		* @brief Instance a temp empty map for VkDescriptorSetLayout.
@@ -68,7 +66,7 @@ namespace Spiecs {
 		/**
 		* @brief SpecificRenderer's DescriptorSetInfo.
 		*/
-		auto specificRendererSetInfo = DescriptorSetManager::GetByName(m_RendererName);
+		auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subpassName});
 		for (auto& pair : specificRendererSetInfo)
 		{
 			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
@@ -97,12 +95,14 @@ namespace Spiecs {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts);
+		auto& subPass = m_Pass->GetSubPasses().find_value(subpassName);
+		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
 		* @brief Create Pipeline.
 		*/
-		m_Pipelines[materialName] = CreatePipeline(material, m_Pass.second->Get(), pipelinelayout);
+		auto& pipeline = CreatePipeline(material, m_Pass->Get(), pipelinelayout);
+		subPass->AddPipeline(materialName, pipeline);
 	}
 
 	void Renderer::CreateDefaultMaterial()
@@ -117,7 +117,7 @@ namespace Spiecs {
 		}
 	}
 
-	VkPipelineLayout Renderer::CreatePipelineLayout(std::vector<VkDescriptorSetLayout>& rowSetLayouts)
+	VkPipelineLayout Renderer::CreatePipelineLayout(std::vector<VkDescriptorSetLayout>& rowSetLayouts, std::shared_ptr<RendererSubPass> subPass)
 	{
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -126,10 +126,10 @@ namespace Spiecs {
 		pipelineLayoutInfo.pushConstantRangeCount = 0;
 		pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-		if (isUsePushConstant)
+		if (subPass->IsUsePushConstant())
 		{
 			pipelineLayoutInfo.pushConstantRangeCount = 1;
-			pipelineLayoutInfo.pPushConstantRanges = &m_PushConstantRange;
+			pipelineLayoutInfo.pPushConstantRanges = &subPass->GetPushConstant();
 		}
 
 		VkPipelineLayout pipelineLayout;
@@ -148,14 +148,22 @@ namespace Spiecs {
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass                     = renderPass;
 		pipelineConfig.pipelineLayout                 = layout;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_RenderPass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments    = m_RenderPass->GetColorBlend().data();
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_Pass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments    = m_Pass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
 			GetSahderPath(material->GetShaderPath("vertShader"), "vert"),
 			GetSahderPath(material->GetShaderPath("fragShader"), "frag"),
 			pipelineConfig
 		);
+	}
+
+	void Renderer::UnloadDescriptorSets()
+	{
+		m_Pass->GetSubPasses().for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
+			String2 s2(m_Pass->GetName(), name);
+			DescriptorSetManager::UnLoad(s2);
+		});
 	}
 
 	std::string Renderer::GetSahderPath(const std::string& name, const std::string& shaderType)
@@ -307,23 +315,27 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName)
 	{
-		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame);
+		m_HandledSubPass->GetPipelines()[materialName]->Bind(m_CurrentFrame);
 	}
 
-	void Renderer::RenderBehaverBuilder::BeginNextSubPass()
+	void Renderer::RenderBehaverBuilder::BeginNextSubPass(const std::string& subpassName)
 	{
+		m_HandledSubPass = m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
+
 		vkCmdNextSubpass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void Renderer::RenderBehaverBuilder::BeginRenderPass()
 	{
+		m_HandledSubPass = m_Renderer->m_Pass->GetSubPasses().first();
+
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass        = m_Renderer->m_Pass.second->Get();
-		renderPassInfo.framebuffer       = m_Renderer->m_Pass.second->GetFramebuffer(m_CurrentImage);
+		renderPassInfo.renderPass        = m_Renderer->m_Pass->Get();
+		renderPassInfo.framebuffer       = m_Renderer->m_Pass->GetFramebuffer(m_CurrentImage);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 
-		if (m_Renderer->m_Pass.second->IsUseSwapChain() || !SlateSystem::GetRegister())
+		if (m_Renderer->m_Pass->IsUseSwapChain() || !SlateSystem::GetRegister())
 		{
 			renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 		}
@@ -334,8 +346,8 @@ namespace Spiecs {
 			renderPassInfo.renderArea.extent = extent;
 		}
 
-		renderPassInfo.clearValueCount = (uint32_t)m_HandledPass->GetClearValues().size();
-		renderPassInfo.pClearValues = m_HandledPass->GetClearValues().data();
+		renderPassInfo.clearValueCount = (uint32_t)m_Renderer->m_Pass->GetClearValues().size();
+		renderPassInfo.pClearValues = m_Renderer->m_Pass->GetClearValues().data();
 
 		vkCmdBeginRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -360,7 +372,7 @@ namespace Spiecs {
 			vkCmdBindDescriptorSets(
 				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
+				m_HandledSubPass->GetPipelines()[name]->GetPipelineLayout(),
 				pair.first,
 				1,
 				&pair.second->Get(),
@@ -376,7 +388,8 @@ namespace Spiecs {
 	)
 		: m_Renderer(renderer)
 	{
-		m_HandledSubPass = renderer->m_Pass.second->GetSubPasses().find_value(subPassName);
+		m_HandledSubPass = renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 
 	Renderer:: DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddAttachmentTexture(
@@ -396,7 +409,7 @@ namespace Spiecs {
 			m_ImageInfos[set][binding].push_back(*info);
 		}
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_PassID, set);
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
 
 		return *this;
@@ -419,7 +432,7 @@ namespace Spiecs {
 			m_ImageInfos[set][binding].push_back(*info);
 		}
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_PassID, set);
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, stageFlags, inputAttachmentNames.size());
 
 		return *this;
@@ -427,7 +440,7 @@ namespace Spiecs {
 
 	void Renderer::DescriptorSetBuilder::Build()
 	{
-		auto descriptorSets = DescriptorSetManager::GetByName(m_PassID);
+		auto descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
 
 		for (auto& pair : descriptorSets)
 		{
@@ -447,25 +460,24 @@ namespace Spiecs {
 		: m_RendererPassName(rendererPassName)
 		, m_Renderer(renderer)
 	{
-		auto ptr = std::make_shared<RendererPass>(rendererPassName);
-		m_Renderer->m_Pass = std::make_pair(rendererPassName, ptr);
+		m_Renderer->m_Pass = std::make_shared<RendererPass>(rendererPassName, m_Renderer->m_Device);
 	}
 
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(const std::string& subPassName)
 	{
-		m_HandledRendererSubPass = m_Renderer->m_Pass.second->AddSubPass(subPassName);
+		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName);
 		return *this;
 	}
 
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::EndSubPass()
 	{
 		m_HandledRendererSubPass->BuildSubPassDescription();
-		m_HandledRendererSubPass->BuildSubPassDependency(m_Renderer->m_Pass.second->GetSubPasses().size());
+		m_HandledRendererSubPass->BuildSubPassDependency(m_Renderer->m_Pass->GetSubPasses().size() - 1);
 		return *this;
 	}
 
 	void Renderer::RendererPassBuilder::Build()
 	{
-		m_Renderer->m_Pass.second->BuildRendererPass();
+		m_Renderer->m_Pass->BuildRendererPass();
 	}
 }
