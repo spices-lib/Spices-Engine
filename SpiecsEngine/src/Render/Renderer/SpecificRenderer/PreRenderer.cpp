@@ -26,6 +26,8 @@ namespace Spiecs {
 		*/
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
+		builder.BeginRenderPass();
+
 		/**
 		* @brief Update View.
 		*/
@@ -51,5 +53,7 @@ namespace Spiecs {
 			ubo.frameTime = ts.ft();
 			ubo.mousePos = glm::vec4((float)x, (float)y, 1.0f / float(x), 1.0f / float(y));
 		});
+
+		builder.EndRenderPass();
 	}
 }

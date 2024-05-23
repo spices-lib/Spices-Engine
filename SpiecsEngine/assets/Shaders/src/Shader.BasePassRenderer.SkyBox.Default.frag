@@ -16,10 +16,9 @@ layout(push_constant) uniform Push {
 } push;
 
 // uniform buffer
-layout(set = 1, binding = 0) uniform sampler2D samplers[1];
+layout(set = 1, binding = 0) uniform sampler2D samplers;
 
 // constant
-const int diffuseTexture = 0;
 const vec2 invAtan = vec2(0.1591, 0.3183);
 
 // functions
@@ -36,6 +35,6 @@ vec2 SampleSphericalMap(vec3 v)
 void main()
 {
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPos)); // make sure to normalize localPos
-    outColor = texture(samplers[diffuseTexture], uv);
+    outColor = texture(samplers, uv);
     outID = push.entityID;
 }

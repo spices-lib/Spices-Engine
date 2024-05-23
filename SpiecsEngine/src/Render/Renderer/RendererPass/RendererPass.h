@@ -19,20 +19,18 @@ namespace Spiecs
 		virtual ~RendererPass() {};
 
 		inline scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
-		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName);
+		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName, uint32_t index);
 
 		uint32_t AddAttachment(
-			const std::string& attachmnetName                     ,
-			const VkAttachmentDescription& description            ,
-			const VkClearValue& clearValue                        ,
-			const VkPipelineColorBlendAttachmentState& colorBlend
+			const std::string&             attachmnetName ,
+			const VkAttachmentDescription& description    ,
+			const VkClearValue&            clearValue
 		);
 
 		uint32_t AddAttachment(
-			const std::string&             attachmnetName         , 
-			const VkAttachmentDescription& description            ,
-			const VkClearValue&            clearValue             ,
-			const VkPipelineColorBlendAttachmentState& colorBlend ,
+			const std::string&             attachmnetName  , 
+			const VkAttachmentDescription& description     ,
+			const VkClearValue&            clearValue      ,
 			VkImageView&                   view
 		);
 
@@ -44,7 +42,6 @@ namespace Spiecs
 		inline const bool IsUseSwapChain() const { return m_IsSwapChainImageInUse; };
 
 		inline std::vector<VkClearValue>& GetClearValues() { return m_ClearValues; };
-		inline std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; };
 
 	private:
 
@@ -66,7 +63,7 @@ namespace Spiecs
 		scl::linked_unordered_map<std::string, VkAttachmentDescription> m_AttachmentDescriptions;
 
 		std::vector<VkClearValue> m_ClearValues;
-		std::vector<VkPipelineColorBlendAttachmentState> m_ColorBlends;
+		
 
 		std::vector<VkImageView> m_ImageViews;
 

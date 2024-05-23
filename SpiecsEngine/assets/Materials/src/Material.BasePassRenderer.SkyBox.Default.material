@@ -1,9 +1,9 @@
 ﻿Material: BasePassRenderer.SkyBox.Default
 Shaders:
   - Stage: vertShader
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.SkyBox.Default
   - Stage: fragShader
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.SkyBox.Default
 Textures:
   - Name: diffuse
     Value: [1, 0, 0, Texture2D, skybox/little_paris_eiffel_tower_4k.hdr]

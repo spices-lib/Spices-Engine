@@ -16,19 +16,20 @@ namespace Spiecs
 	class RendererSubPass
 	{
 	public:
-		RendererSubPass(const std::string& subPassName) : m_SubpassName(subPassName) {};
+		RendererSubPass(const std::string& subPassName, uint32_t index) : m_SubpassName(subPassName), m_Index(index) {};
 		virtual ~RendererSubPass() {};
 
 		void AddColorAttachmentReference( 
-			const VkAttachmentReference&  attachmentReference
+			const VkAttachmentReference&               attachmentReference,
+			const VkPipelineColorBlendAttachmentState& colorBlend
 		);
 
 		void AdDepthAttachmentReference(
-			const VkAttachmentReference&   attachmentReference
+			const VkAttachmentReference&               attachmentReference
 		);
 
 		void AddInputAttachmentReference(
-			const VkAttachmentReference&   attachmentReference
+			const VkAttachmentReference&               attachmentReference
 		);
 
 		void BuildSubPassDescription();
@@ -48,16 +49,21 @@ namespace Spiecs
 		inline std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>>& GetPipelines() { return m_Pipelines; };
 		inline std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>>& GetBuffers() { return m_Buffers; };
 		void SetBuffer(const Int2& i2, void* data);
+		uint32_t GetIndex() { return m_Index; };
+		inline std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; };
 
 	private:
 
 		std::string m_SubpassName;
+		uint32_t m_Index;
 		VkSubpassDescription m_SubPassDescriptions{};
 		VkSubpassDependency m_SubPassDependency{};
 
 		std::vector<VkAttachmentReference> m_ColorAttachmentReference;
 		std::vector<VkAttachmentReference> m_DepthAttachmentReference;
 		std::vector<VkAttachmentReference> m_InputAttachmentReference;
+
+		std::vector<VkPipelineColorBlendAttachmentState> m_ColorBlends;
 
 		bool isUsePushConstant = false;
 		VkPushConstantRange m_PushConstantRange{};

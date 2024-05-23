@@ -20,16 +20,6 @@ layout(push_constant) uniform Push{
 	int entityID;
 } push;
 
-// uniform buffer
-struct PointLight {
-    vec3 color;
-    vec3 position;
-    float intensity;
-    float constantf;
-    float linear;
-    float quadratic;
-};
-
 layout(set = 1, binding = 0) uniform sampler2D samplers[3];
 
 layout(set = 1, binding = 1) uniform Parameter {
@@ -37,17 +27,7 @@ layout(set = 1, binding = 1) uniform Parameter {
     vec3 normalIntensity;
     vec2 specularIntensity;
     float otherIntensity;
-} parameter;
-
-layout(set = 2, binding = 0) uniform DirectionalLight {
-    vec3 direction;
-    vec3 color;
-    float intensity;
-} directionalLight;
-
-layout(set = 2, binding = 1) uniform PointLights {
-    PointLight pointLight[10];
-} pointLights;
+};
 
 // constant
 #define ALBEDO 0

@@ -101,7 +101,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Pipeline.
 		*/
-		auto& pipeline = CreatePipeline(material, pipelinelayout);
+		auto& pipeline = CreatePipeline(material, pipelinelayout, subPass);
 		subPass->AddPipeline(materialName, pipeline);
 	}
 
@@ -145,15 +145,17 @@ namespace Spiecs {
 	
 	std::shared_ptr<VulkanPipeline> Renderer::CreatePipeline(
 		std::shared_ptr<Material> material, 
-		VkPipelineLayout&         layout
+		VkPipelineLayout&         layout,
+		std::shared_ptr<RendererSubPass> subPass
 	)
 	{
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass                     = m_Pass->Get();
+		pipelineConfig.subpass                        = subPass->GetIndex();
 		pipelineConfig.pipelineLayout                 = layout;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_Pass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments    = m_Pass->GetColorBlend().data();
+		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)subPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
 			GetSahderPath(material->GetShaderPath("vertShader"), "vert"),
@@ -365,7 +367,7 @@ namespace Spiecs {
 	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos)
 	{
 		std::stringstream ss;
-		ss << m_Renderer->m_RendererName << ".Default";
+		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
 
 		BindDescriptorSet(infos, ss.str());
 	}
@@ -470,7 +472,8 @@ namespace Spiecs {
 
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(const std::string& subPassName)
 	{
-		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName);
+		uint32_t size = m_Renderer->m_Pass->GetSubPasses().size();
+		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, size);
 		return *this;
 	}
 

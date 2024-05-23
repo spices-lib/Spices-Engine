@@ -85,7 +85,7 @@ namespace Spiecs {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
 
-		builder.BindPipeline("SceneComposeRenderer.Default");
+		builder.BindPipeline("SceneComposeRenderer.SceneCompose.Default");
 		
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);

@@ -44,8 +44,8 @@ namespace Spiecs {
 			.Push<BasePassRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SceneComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SpriteRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<WorldPickRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<WorldPickRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 	}
 
@@ -57,8 +57,8 @@ namespace Spiecs {
 
 		RendererManager::Get()
 			.Pop("SlateRenderer")
-			.Pop("WorldPickStage2Renderer")
-			.Pop("WorldPickRenderer")
+			//.Pop("WorldPickStage2Renderer")
+			//.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
 			.Pop("SceneComposeRenderer")
 			.Pop("BasePassRenderer")

@@ -31,9 +31,11 @@ namespace Spiecs {
 			* @brief Add SwapChian's image to local variable.
 			*/
 
+			std::vector<VkImageView> views = imageViews;
+
 			if (isUseSwapChianImage)
 			{
-				imageViews.emplace(imageViews.begin(), m_VulkanState.m_SwapChainImageViews[i]);
+				views.emplace(views.begin(), m_VulkanState.m_SwapChainImageViews[i]);
 			}
 			
 			/**
@@ -42,8 +44,8 @@ namespace Spiecs {
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			framebufferInfo.renderPass = m_RenderPass;
-			framebufferInfo.attachmentCount = static_cast<uint32_t>(imageViews.size());
-			framebufferInfo.pAttachments = imageViews.data();
+			framebufferInfo.attachmentCount = static_cast<uint32_t>(views.size());
+			framebufferInfo.pAttachments = views.data();
 
 			if (isUseSwapChianImage || !SlateSystem::GetRegister())
 			{

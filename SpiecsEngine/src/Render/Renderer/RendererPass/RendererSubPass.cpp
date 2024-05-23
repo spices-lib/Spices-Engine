@@ -6,21 +6,23 @@
 namespace Spiecs {
 
 	void RendererSubPass::AddColorAttachmentReference(
-		const VkAttachmentReference&  attachmentReference
+		const VkAttachmentReference&               attachmentReference,
+		const VkPipelineColorBlendAttachmentState& colorBlend
 	)
 	{
 		m_ColorAttachmentReference.push_back(attachmentReference);
+		m_ColorBlends.push_back(colorBlend);
 	}
 
 	void RendererSubPass::AdDepthAttachmentReference(
-		const VkAttachmentReference&  attachmentReference
+		const VkAttachmentReference&               attachmentReference
 	)
 	{
 		m_DepthAttachmentReference.push_back(attachmentReference);
 	}
 
 	void RendererSubPass::AddInputAttachmentReference(
-		const VkAttachmentReference&  attachmentReference
+		const VkAttachmentReference&               attachmentReference
 	)
 	{
 		m_InputAttachmentReference.push_back(attachmentReference);

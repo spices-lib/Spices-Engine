@@ -75,7 +75,7 @@ namespace Spiecs {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
 
-		builder.BindPipeline("WorldPickStage2Renderer.Default");
+		builder.BindPipeline("WorldPickStage2Renderer.WorldPickStage2.Default");
 
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);

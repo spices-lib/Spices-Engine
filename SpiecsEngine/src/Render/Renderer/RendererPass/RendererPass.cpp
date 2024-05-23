@@ -5,7 +5,7 @@
 
 namespace Spiecs {
 
-	std::shared_ptr<RendererSubPass> RendererPass::AddSubPass(const std::string& subPassName)
+	std::shared_ptr<RendererSubPass> RendererPass::AddSubPass(const std::string& subPassName, uint32_t index)
 	{
 		if (m_SubPasses.has_key(subPassName))
 		{
@@ -16,16 +16,15 @@ namespace Spiecs {
 			return nullptr;
 		}
 
-		auto ptr = std::make_shared<RendererSubPass>(subPassName);
+		auto ptr = std::make_shared<RendererSubPass>(subPassName, index);
 		m_SubPasses.push_back(subPassName, ptr);
 		return ptr;
 	}
 
 	uint32_t RendererPass::AddAttachment(
-		const std::string&             attachmnetName         , 
-		const VkAttachmentDescription& description            , 
-		const VkClearValue&            clearValue             ,
-		const VkPipelineColorBlendAttachmentState& colorBlend
+		const std::string&             attachmnetName     , 
+		const VkAttachmentDescription& description        , 
+		const VkClearValue&            clearValue 
 	)
 	{
 		if (m_AttachmentDescriptions.has_key(attachmnetName))
@@ -51,17 +50,15 @@ namespace Spiecs {
 		}
 
 		m_ClearValues.push_back(clearValue);
-		m_ColorBlends.push_back(colorBlend);
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
 
 		return m_AttachmentDescriptions.size() - 1;
 	}
 
 	uint32_t RendererPass::AddAttachment(
-		const std::string&             attachmnetName         , 
-		const VkAttachmentDescription& description            ,
-		const VkClearValue&            clearValue             ,
-		const VkPipelineColorBlendAttachmentState& colorBlend ,
+		const std::string&             attachmnetName    , 
+		const VkAttachmentDescription& description       ,
+		const VkClearValue&            clearValue        ,
 		VkImageView&                   view
 	)
 	{
@@ -88,7 +85,6 @@ namespace Spiecs {
 		}
 
 		m_ClearValues.push_back(clearValue);
-		m_ColorBlends.push_back(colorBlend);
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
 		m_ImageViews.push_back(view);
 
