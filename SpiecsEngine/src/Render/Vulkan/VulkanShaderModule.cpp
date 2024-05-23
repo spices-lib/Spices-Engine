@@ -13,7 +13,7 @@ namespace Spiecs {
 
 		if (!fileHandle.is_valid)
 		{
-			throw std::runtime_error("failed to open file!");
+			SPIECS_CORE_ERROR("File is not exist.");
 		}
 
 		FileLibrary::FileLibrary_Open(filePath.c_str(), FILE_MODE_READ, 1, &fileHandle);

@@ -147,7 +147,6 @@ namespace Spiecs {
 
 		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
 			std::shared_ptr<Material> material, 
-			VkRenderPass&             renderPass, 
 			VkPipelineLayout&         layout
 		);
 
@@ -637,18 +636,18 @@ namespace Spiecs {
 		colorBlend.blendEnable = VK_FALSE;
 		colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
 		colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+		colorBlend.colorBlendOp        = VK_BLEND_OP_ADD;
 		colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
 		colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+		colorBlend.alphaBlendOp        = VK_BLEND_OP_ADD;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment("SwapChainImage", attachmentDescription, clearValue, colorBlend);
 
-
 		VkAttachmentReference attachmentRef{};
+		attachmentRef.attachment = index;
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AddColorAttachmentReference(index, attachmentRef);
+		m_HandledRendererSubPass->AddColorAttachmentReference(attachmentRef);
 
 		return *this;
 	}
@@ -682,23 +681,23 @@ namespace Spiecs {
 
 		if (!isEnableBlend)
 		{
-			colorBlend.blendEnable = VK_FALSE;
+			colorBlend.blendEnable         = VK_FALSE;
 			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
 			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-			colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.colorBlendOp        = VK_BLEND_OP_ADD;
 			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
 			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-			colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.alphaBlendOp        = VK_BLEND_OP_ADD;
 		}
 		else
 		{
-			colorBlend.blendEnable = VK_TRUE;
+			colorBlend.blendEnable         = VK_TRUE;
 			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
 			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-			colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.colorBlendOp        = VK_BLEND_OP_ADD;
 			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
 			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-			colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+			colorBlend.alphaBlendOp        = VK_BLEND_OP_ADD;
 		}
 
 		RendererResourceCreateInfo Info;
@@ -706,15 +705,15 @@ namespace Spiecs {
 		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 
-		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessDepthResource(Info)->imageView;
+		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, colorBlend, view);
 
-
 		VkAttachmentReference attachmentRef{};
+		attachmentRef.attachment = index;
 		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AddColorAttachmentReference(index, attachmentRef);
+		m_HandledRendererSubPass->AddColorAttachmentReference(attachmentRef);
 		
 		return *this;
 	}
@@ -760,9 +759,10 @@ namespace Spiecs {
 		uint32_t index = m_Renderer->m_Pass->AddAttachment("Depth", depthAttachment, clearValue, colorBlend, view);
 
 		VkAttachmentReference depthAttachmentRef{};
+		depthAttachmentRef.attachment = index;
 		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AdDepthAttachmentReference(index, depthAttachmentRef);
+		m_HandledRendererSubPass->AdDepthAttachmentReference(depthAttachmentRef);
 
 		return *this;
 	}
@@ -792,26 +792,27 @@ namespace Spiecs {
 		colorBlend.colorWriteMask =
 			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
 			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		colorBlend.blendEnable = VK_FALSE;
+		colorBlend.blendEnable         = VK_FALSE;
 		colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
 		colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.colorBlendOp = VK_BLEND_OP_ADD;
+		colorBlend.colorBlendOp        = VK_BLEND_OP_ADD;
 		colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
 		colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.alphaBlendOp = VK_BLEND_OP_ADD;
+		colorBlend.alphaBlendOp        = VK_BLEND_OP_ADD;
 
 		RendererResourceCreateInfo Info;
 		Info.description = attachmentDescription;
 		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 
-		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessDepthResource(Info)->imageView;
+		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, colorBlend, view);
 
 		VkAttachmentReference attachmentRef{};
+		attachmentRef.attachment = index;
 		attachmentRef.layout = attachmentDescription.finalLayout;
-		m_HandledRendererSubPass->AddInputAttachmentReference(index, attachmentRef);
+		m_HandledRendererSubPass->AddInputAttachmentReference(attachmentRef);
 
 		return *this;
 	}

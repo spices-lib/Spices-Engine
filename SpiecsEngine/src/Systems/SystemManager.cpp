@@ -40,6 +40,7 @@ namespace Spiecs {
 	{
 		m_Identities.for_each([&](auto& k, auto& v) {
 			v->OnSystemUpdate(ts);
+			return false;
 		});
 	}
 
@@ -47,6 +48,7 @@ namespace Spiecs {
 	{
 		m_Identities.for_each([&](auto& k, auto& v) {
 			v->OnEvent(event);
+			return false;
 		});
 	}
 }

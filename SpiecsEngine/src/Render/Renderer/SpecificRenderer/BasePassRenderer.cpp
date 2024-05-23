@@ -59,13 +59,12 @@ namespace Spiecs {
 
 	std::shared_ptr<VulkanPipeline> BasePassRenderer::CreatePipeline(
 		std::shared_ptr<Material> material,
-		VkRenderPass& renderPass,
 		VkPipelineLayout& layout
 	)
 	{
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass = renderPass;
+		pipelineConfig.renderPass = m_Pass->Get();
 		pipelineConfig.pipelineLayout = layout;
 		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
 		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_Pass->GetColorBlend().size();

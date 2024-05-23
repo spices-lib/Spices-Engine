@@ -19,18 +19,16 @@ namespace Spiecs
 		RendererSubPass(const std::string& subPassName) : m_SubpassName(subPassName) {};
 		virtual ~RendererSubPass() {};
 
-		void AddColorAttachmentReference(
-			uint32_t                index,
-			VkAttachmentReference&  attachmentReference
+		void AddColorAttachmentReference( 
+			const VkAttachmentReference&  attachmentReference
 		);
 
 		void AdDepthAttachmentReference(
-			uint32_t                 index,
-			VkAttachmentReference&   attachmentReference
+			const VkAttachmentReference&   attachmentReference
 		);
 
 		void AddInputAttachmentReference(
-			VkAttachmentReference&       attachmentReference
+			const VkAttachmentReference&   attachmentReference
 		);
 
 		void BuildSubPassDescription();

@@ -101,7 +101,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Pipeline.
 		*/
-		auto& pipeline = CreatePipeline(material, m_Pass->Get(), pipelinelayout);
+		auto& pipeline = CreatePipeline(material, pipelinelayout);
 		subPass->AddPipeline(materialName, pipeline);
 	}
 
@@ -109,11 +109,16 @@ namespace Spiecs {
 	{
 		if (m_IsLoadDefaultMaterial)
 		{
-			std::stringstream ss;
-			ss << m_RendererName << ".Default";
+			m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
 
-			auto material = ResourcePool<Material>::Load<Material>(ss.str());
-			material->BuildMaterial();
+				std::stringstream ss;
+				ss << m_RendererName << "." << K << ".Default";
+
+				auto material = ResourcePool<Material>::Load<Material>(ss.str());
+				material->BuildMaterial();
+
+				return false;
+			});
 		}
 	}
 
@@ -140,13 +145,12 @@ namespace Spiecs {
 	
 	std::shared_ptr<VulkanPipeline> Renderer::CreatePipeline(
 		std::shared_ptr<Material> material, 
-		VkRenderPass&             renderPass, 
 		VkPipelineLayout&         layout
 	)
 	{
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass                     = renderPass;
+		pipelineConfig.renderPass                     = m_Pass->Get();
 		pipelineConfig.pipelineLayout                 = layout;
 		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)m_Pass->GetColorBlend().size();
 		pipelineConfig.colorBlendInfo.pAttachments    = m_Pass->GetColorBlend().data();
@@ -163,6 +167,7 @@ namespace Spiecs {
 		m_Pass->GetSubPasses().for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			String2 s2(m_Pass->GetName(), name);
 			DescriptorSetManager::UnLoad(s2);
+			return false;
 		});
 	}
 

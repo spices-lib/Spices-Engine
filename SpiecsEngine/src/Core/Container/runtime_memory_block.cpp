@@ -50,7 +50,7 @@ namespace scl {
         begin_ = malloc(bytes_);
     }
 
-    void runtime_memory_block::for_each(std::function<void(const std::string& name, void* pt)> fn)
+    void runtime_memory_block::for_each(std::function<bool(const std::string& name, void* pt)> fn)
     {
         /**
         * @brief Iter without order.
@@ -67,7 +67,7 @@ namespace scl {
             * @param[in] name The name of parameter.
             * @param[in] pt The pointer of start of parameter occupied.
             */
-            fn(pair.first, it);
+            if(fn(pair.first, it)) break;
         }
     }
 }

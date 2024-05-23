@@ -100,7 +100,8 @@ namespace Spiecs {
 			layouts[v.set][v.binding].count = 1;                                                               // set to 1, buffer type always 1.
 			layouts[v.set][v.binding].size += StrType2Size(v.paramType);                                       // set to add the size of value type.
 			layouts[v.set][v.binding].type = DescriptorSetBindingInfoHelp::Type::Buffer;                      // set to buffer type.
-			});
+			return false;
+		});
 
 		/**
 		* @brief Container like that: Set - [ binding - [imageInfo0, imageInfo1, imageInfo2...]].
@@ -160,6 +161,8 @@ namespace Spiecs {
 			* @brief Create the key to map, and add element to value.
 			*/
 			m_Buffermemoryblocks[int2].add_element(k, v.paramType);
+
+			return false;
 		});
 
 		/**
@@ -232,7 +235,8 @@ namespace Spiecs {
 				{
 					*reinterpret_cast<float*>(pt) = std::any_cast<float>(ref.paramValue);
 				}
-				});
+				return false;
+			});
 
 			/**
 			* @brief Write the memeoryblock's data to m_Buffers.

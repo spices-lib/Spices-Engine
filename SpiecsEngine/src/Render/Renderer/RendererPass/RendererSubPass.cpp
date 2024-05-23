@@ -1,30 +1,28 @@
 #include "Pchheader.h"
 #include "RendererSubPass.h"
 #include "Render/Renderer/DescriptorSetManager/DescriptorSetManager.h"
+#include "Core/Library/ContainerLibrary.h"
 
 namespace Spiecs {
 
 	void RendererSubPass::AddColorAttachmentReference(
-		VkAttachmentReference&       attachmentReference
+		const VkAttachmentReference&  attachmentReference
 	)
 	{
-		attachmentReference.attachment = m_ColorAttachmentReference.size();
 		m_ColorAttachmentReference.push_back(attachmentReference);
 	}
 
 	void RendererSubPass::AdDepthAttachmentReference(
-		VkAttachmentReference&       attachmentReference
+		const VkAttachmentReference&  attachmentReference
 	)
 	{
-		attachmentReference.attachment = m_DepthAttachmentReference.size();
 		m_DepthAttachmentReference.push_back(attachmentReference);
 	}
 
 	void RendererSubPass::AddInputAttachmentReference(
-		VkAttachmentReference&       attachmentReference
+		const VkAttachmentReference&  attachmentReference
 	)
 	{
-		attachmentReference.attachment = m_InputAttachmentReference.size();
 		m_InputAttachmentReference.push_back(attachmentReference);
 	}
 

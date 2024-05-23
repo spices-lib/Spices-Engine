@@ -30,11 +30,19 @@ namespace Spiecs {
 	{
 		if (m_AttachmentDescriptions.has_key(attachmnetName))
 		{
-			std::stringstream ss;
-			ss << "RendererPass: " << m_PassName << ": Attachment: " << attachmnetName << " already added.";
-
-			SPIECS_CORE_ERROR(ss.str());
-			return -1;
+			uint32_t index = 0;
+			m_AttachmentDescriptions.for_each([&](const auto& K, const auto& V) {
+				if (K == attachmnetName)
+				{
+					return true;
+				}
+				else
+				{
+					index++;
+					return false;
+				}
+			});
+			return index;
 		}
 
 		if (attachmnetName == "SwapChainImage")
@@ -59,11 +67,19 @@ namespace Spiecs {
 	{
 		if (m_AttachmentDescriptions.has_key(attachmnetName))
 		{
-			std::stringstream ss;
-			ss << "RendererPass: " << m_PassName << ": Attachment: " << attachmnetName << " already added.";
-
-			SPIECS_CORE_ERROR(ss.str());
-			return -1;
+			uint32_t index = 0;
+			m_AttachmentDescriptions.for_each([&](const auto& K, const auto& V) {
+				if (K == attachmnetName)
+				{
+					return true;
+				}
+				else
+				{
+					index++;
+					return false;
+				}
+			});
+			return index;
 		}
 
 		if (attachmnetName == "SwapChainImage")
@@ -84,17 +100,20 @@ namespace Spiecs {
 		std::vector<VkAttachmentDescription> attachmentDescription;
 		m_AttachmentDescriptions.for_each([&](const std::string& name, const VkAttachmentDescription& description) {
 			attachmentDescription.push_back(description);
+			return false;
 		});
 
 		std::vector<VkSubpassDescription> subPassDescription;
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			subPassDescription.push_back(subpass->GetDescription());
+			return false;
 		});
 
 		std::vector<VkSubpassDependency> subPassDepecdency;
 		m_SubPasses.first()->BuildFirstSubPassDependency();
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			subPassDepecdency.push_back(subpass->GetDependency());
+			return false;
 		});
 
 		VkSubpassDependency outDependency{};
@@ -124,6 +143,7 @@ namespace Spiecs {
 
 			SPIECS_CORE_ERROR(ss.str());
 		}
+
 
 		m_RenderPass = std::make_unique<VulkanRenderPass>(
 			VulkanRenderBackend::GetState(),

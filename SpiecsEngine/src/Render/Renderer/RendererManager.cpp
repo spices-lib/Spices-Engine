@@ -27,6 +27,7 @@ namespace Spiecs {
 	{
 		m_Identities.for_each([&](auto& k, auto& v) {
 			v->Render(ts, frameInfo);
+			return false;
 		});
 	}
 
@@ -34,6 +35,7 @@ namespace Spiecs {
 	{
 		m_Identities.for_each([](auto& k, auto& v) {
 			v->OnWindowResizeOver();
+			return false;
 		});
 	}
 
@@ -41,6 +43,7 @@ namespace Spiecs {
 	{
 		m_Identities.for_each([](auto& k, auto& v) {
 			v->OnSlateResize();
+			return false;
 		});
 	}
 

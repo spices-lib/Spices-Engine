@@ -167,6 +167,7 @@ namespace SpiecsTest {
 		std::vector<std::string> iterOrder0;
 		c0.for_each([&](const std::string& k, const std::string& v) {
 			iterOrder0.push_back(k);
+			return false;
 		});
 		EXPECT_EQ(iterOrder0[0], "aaa");
 		EXPECT_EQ(iterOrder0[1], "bbb");
@@ -179,6 +180,7 @@ namespace SpiecsTest {
 		c1.erase(2);
 		c1.for_each([&](const int& k, const std::string& v) {
 			iterOrder1.push_back(k);
+			return false;
 		});
 		EXPECT_EQ(iterOrder1[0], 1);
 		EXPECT_EQ(iterOrder1[1], 3);
@@ -190,6 +192,7 @@ namespace SpiecsTest {
 		c2.push_back(0.5f, "0.5");
 		c2.for_each([&](const float& k, const std::string& v) {
 			iterOrder2.push_back(k);
+			return false;
 		});
 		EXPECT_EQ(iterOrder2[0], 1.0f);
 		EXPECT_EQ(iterOrder2[1], 2.0f);

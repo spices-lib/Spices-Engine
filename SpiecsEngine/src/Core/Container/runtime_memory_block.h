@@ -71,7 +71,7 @@ namespace scl {
         * @param[in] fn The function pointer of how to fill in data.
         * @noto Not Unit Test, so do not use it.
         */
-        void for_each(std::function<void(const std::string& name, void* pt)> fn);
+        void for_each(std::function<bool(const std::string& name, void* pt)> fn);
 
         /**
         * @brief Get value that explained by name.

@@ -58,7 +58,6 @@ namespace Spiecs {
 
 		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
 			std::shared_ptr<Material>  material,
-			VkRenderPass& renderPass,
 			VkPipelineLayout& layout
 		) override;
 

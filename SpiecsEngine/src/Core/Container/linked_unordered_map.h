@@ -92,7 +92,7 @@ namespace scl {
 		* @brief Iter the container in order.
 		* @param[in] fn The function of how to iter the container.
 		*/
-		void for_each(std::function<void(const K&, const V&)> fn);
+		void for_each(std::function<bool(const K&, const V&)> fn);
 
 		/**
 		* @brief Get the previous element by the key.
@@ -205,7 +205,7 @@ namespace scl {
 	}
 
 	template<typename K, typename V>
-	inline void linked_unordered_map<K, V>::for_each(std::function<void(const K&, const V&)> fn)
+	inline void linked_unordered_map<K, V>::for_each(std::function<bool(const K&, const V&)> fn)
 	{
 		for (const K& key : keys_)
 		{
@@ -213,8 +213,11 @@ namespace scl {
 			* @brief The function defines how to iter.
 			* @param[in] key K the key.
 			* @param[in] value V the value.
+			* @return Retunrs True if want break this for loop.
 			*/
-			fn(key, map_[key]);
+			bool isbreak = fn(key, map_[key]);
+			
+			if(isbreak) break;
 		}
 	}
 
