@@ -5,6 +5,15 @@
 
 namespace Spiecs {
 
+	RendererPass::~RendererPass()
+	{
+		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
+			String2 s2(m_PassName, name);
+			DescriptorSetManager::UnLoad(s2);
+			return false;
+		});
+	}
+
 	std::shared_ptr<RendererSubPass> RendererPass::AddSubPass(const std::string& subPassName, uint32_t index)
 	{
 		if (m_SubPasses.has_key(subPassName))

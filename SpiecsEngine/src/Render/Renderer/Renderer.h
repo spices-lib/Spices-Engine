@@ -166,8 +166,6 @@ namespace Spiecs {
 		*/
 		std::string GetSahderPath(const std::string& name, const std::string& shaderType);
 
-		void UnloadDescriptorSets();
-
 		/**
 		* @brief Iterater the specific Component in World.
 		* @param[in] T The specific Component class.

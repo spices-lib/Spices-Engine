@@ -59,11 +59,6 @@ namespace Spiecs {
 		CreateRendererPass();
 
 		/**
-		* @brief Free unused desctiptorSet and descriptorsetlayout.
-		*/
-		UnloadDescriptorSets();
-
-		/**
 		* @brief Create descriptorSet again.
 		*/
 		CreateDescriptorSet();
@@ -185,15 +180,6 @@ namespace Spiecs {
 			GetSahderPath(material->GetShaderPath("fragShader"), "frag"),
 			pipelineConfig
 		);
-	}
-
-	void Renderer::UnloadDescriptorSets()
-	{
-		m_Pass->GetSubPasses().for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
-			String2 s2(m_Pass->GetName(), name);
-			DescriptorSetManager::UnLoad(s2);
-			return false;
-		});
 	}
 
 	std::string Renderer::GetSahderPath(const std::string& name, const std::string& shaderType)

@@ -16,7 +16,7 @@ namespace Spiecs
 			, m_Device(vulkanDevice)
 		{};
 
-		virtual ~RendererPass() {};
+		virtual ~RendererPass();
 
 		inline scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
 		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName, uint32_t index);
