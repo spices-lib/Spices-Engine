@@ -43,11 +43,10 @@ namespace Spiecs
 		VkSubpassDescription& GetDescription() { return m_SubPassDescriptions; };
 		VkSubpassDependency& GetDependency() { return m_SubPassDependency; };
 		const std::string& GetName() { return m_SubpassName; };
-		void AddPipeline(const std::string& name, std::shared_ptr<VulkanPipeline> pipeline);
 		inline bool IsUsePushConstant() { return isUsePushConstant; };
 		inline VkPushConstantRange& GetPushConstant() { return m_PushConstantRange; };
-		inline std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>>& GetPipelines() { return m_Pipelines; };
-		inline std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>>& GetBuffers() { return m_Buffers; };
+
+		std::shared_ptr<VulkanBuffer>& GetBuffers(const Int2& i2) { return m_Buffers[i2]; };
 		void SetBuffer(const Int2& i2, void* data);
 		uint32_t GetIndex() { return m_Index; };
 		inline std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; };
@@ -68,10 +67,7 @@ namespace Spiecs
 		bool isUsePushConstant = false;
 		VkPushConstantRange m_PushConstantRange{};
 		
-
-		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
-
-		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
+		std::unordered_map<Int2, std::shared_ptr<VulkanBuffer>> m_Buffers;
 	};
 
 	template<typename T>

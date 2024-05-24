@@ -47,24 +47,6 @@ namespace Spiecs {
 		.Build();
 	}
 
-	void WorldPickStage2Renderer::OnSlateResize()
-	{
-		/**
-		* @brief Recreate RenderPass.
-		*/
-		CreateRendererPass();
-
-		/**
-		* @brief Free unused desctiptorSet and descriptorsetlayout.
-		*/
-		UnloadDescriptorSets();
-
-		/**
-		* @brief Create descriptorSet again.
-		*/
-		CreateDescriptorSet();
-	}
-
 	void WorldPickStage2Renderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
@@ -73,7 +55,7 @@ namespace Spiecs {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "WorldPickStage2" }));
 
 		builder.BindPipeline("WorldPickStage2Renderer.WorldPickStage2.Default");
 

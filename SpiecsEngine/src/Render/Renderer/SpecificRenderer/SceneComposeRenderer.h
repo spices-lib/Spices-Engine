@@ -53,9 +53,6 @@ namespace Spiecs {
 		virtual void CreateRendererPass() override;
 
 		virtual void CreateDescriptorSet() override;
-
-		virtual void OnSlateResize() override;
-
 	private:
 		std::unique_ptr<SquarePack> m_Square;
 	};

@@ -63,11 +63,6 @@ namespace Spiecs {
 		m_SubPassDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 	}
 
-	void RendererSubPass::AddPipeline(const std::string& name, std::shared_ptr<VulkanPipeline> pipeline)
-	{
-		m_Pipelines[name] = pipeline;
-	}
-
 	void RendererSubPass::SetBuffer(const Int2& i2, void* data)
 	{
 		m_Buffers[i2]->WriteToBuffer(data);

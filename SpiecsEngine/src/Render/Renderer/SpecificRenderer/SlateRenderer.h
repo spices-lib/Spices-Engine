@@ -56,9 +56,6 @@ namespace Spiecs {
 
 		virtual void CreateDescriptorSet() override;
 
-		virtual void OnWindowResizeOver() override { CreateRendererPass(); };
-		virtual void OnSlateResize() override { CreateRendererPass(); };
-
 		virtual void OnSystemInitialize() override;
 
 		void InitImgui();

@@ -140,7 +140,6 @@ namespace Spiecs {
 			SPIECS_CORE_ERROR(ss.str());
 		}
 
-
 		m_RenderPass = std::make_unique<VulkanRenderPass>(
 			VulkanRenderBackend::GetState(),
 			m_Device, 

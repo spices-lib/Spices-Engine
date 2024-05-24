@@ -61,8 +61,6 @@ namespace Spiecs {
 			VkPipelineLayout& layout,
 			std::shared_ptr<RendererSubPass> subPass
 		) override;
-
-		virtual void OnSlateResize() override { CreateRendererPass(); };
 	};
 
 }

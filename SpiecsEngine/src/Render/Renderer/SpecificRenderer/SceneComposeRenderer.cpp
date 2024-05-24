@@ -57,24 +57,6 @@ namespace Spiecs {
 		.Build();
 	}
 
-	void SceneComposeRenderer::OnSlateResize()
-	{
-		/**
-		* @brief Recreate RenderPass.
-		*/
-		CreateRendererPass();
-
-		/**
-		* @brief Free unused desctiptorSet and descriptorsetlayout.
-		*/
-		UnloadDescriptorSets();
-
-		/**
-		* @brief Create descriptorSet again.
-		*/
-		CreateDescriptorSet();
-	}
-
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
@@ -83,12 +65,13 @@ namespace Spiecs {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName(m_RendererName));
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SceneCompose" }));
 
 		builder.BindPipeline("SceneComposeRenderer.SceneCompose.Default");
 		
 		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+
 
 		builder.EndRenderPass();
 	}

@@ -115,7 +115,7 @@ namespace Spiecs {
 		* If the specific renderer uses swpachianimage attachment during CreateRenderPass(), 
 		* this interface needs to override, call CreateRenderPass() here just will be fine.
 		*/
-		virtual void OnWindowResizeOver() {};
+		void OnWindowResizeOver();
 
 		/**
 		* @breif This interface is called on Viewport resize (regist by ImguiViewport).
@@ -124,7 +124,7 @@ namespace Spiecs {
 		* If the specific renderer uses the input attachment during CreateRenderPass(), 
 		* this interface needs to override, see SceneComposeRenderer::OnSlateResize() for sample.
 		*/
-		virtual void OnSlateResize() {};
+		void OnSlateResize();
 
 		void RegistyMaterial(const std::string& materialName, const std::string& subpassName);
 
@@ -459,9 +459,7 @@ namespace Spiecs {
 		friend class RendererPassBuilder;
 
 		
-
-		
-
+		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 		
 
 		bool m_IsLoadDefaultMaterial;
@@ -518,7 +516,7 @@ namespace Spiecs {
 
 		vkCmdPushConstants(
 			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-			m_HandledSubPass->GetPipelines()[ss.str()]->GetPipelineLayout(),
+			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
 			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
 			sizeof(T),
@@ -570,7 +568,7 @@ namespace Spiecs {
 		/**
 		* @brief Creating VulkanBuffer.
 		*/
-		m_HandledSubPass->GetBuffers()[id] = std::make_unique<VulkanBuffer>(
+		m_HandledSubPass->GetBuffers(id) = std::make_unique<VulkanBuffer>(
 			m_Renderer->m_VulkanState,
 			sizeof(T),
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -580,14 +578,14 @@ namespace Spiecs {
 		/**
 		* @brief Map with host memory and video memory.
 		*/
-		m_HandledSubPass->GetBuffers()[id]->Map();
+		m_HandledSubPass->GetBuffers(id)->Map();
 
 		/**
 		* @brief fill in bufferInfos.
 		*/
-		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers()[id]->GetBufferInfo();
+		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_HandledSubPass->GetName(), set);
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
 
 		return *this;
@@ -606,12 +604,12 @@ namespace Spiecs {
 		*/
 		for (int i = 0; i < textureNames.size(); i++)
 		{
-			std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(tp.texturePath);
+			std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i]);
 			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
 		}
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_HandledSubPass->GetName(), set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, inputAttachmentNames.size());
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
 
 		return *this;
 	}

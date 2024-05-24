@@ -52,7 +52,7 @@ namespace Spiecs {
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 
-		DescriptorSetBuilder { "Mesh", this}
+		DescriptorSetBuilder{ "Mesh", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
 	}
@@ -87,6 +87,8 @@ namespace Spiecs {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
+
 		IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
@@ -105,6 +107,8 @@ namespace Spiecs {
 		});
 
 		builder.BeginNextSubPass("Mesh");
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();

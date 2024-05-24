@@ -11,7 +11,7 @@ layout(location = 0) out struct FragInput{
     vec2 texCoord;
 } vertOut;
 
-// push constant
+
 layout(set = 0, binding = 0) uniform View {
     mat4 projection;
     mat4 view;

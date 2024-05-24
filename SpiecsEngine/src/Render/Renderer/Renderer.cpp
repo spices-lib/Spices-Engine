@@ -46,6 +46,29 @@ namespace Spiecs {
 		CreateDefaultMaterial();
 	}
 
+	void Renderer::OnWindowResizeOver()
+	{
+		OnSlateResize();
+	}
+
+	void Renderer::OnSlateResize()
+	{
+		/**
+		* @brief Recreate RenderPass.
+		*/
+		CreateRendererPass();
+
+		/**
+		* @brief Free unused desctiptorSet and descriptorsetlayout.
+		*/
+		UnloadDescriptorSets();
+
+		/**
+		* @brief Create descriptorSet again.
+		*/
+		CreateDescriptorSet();
+	}
+
 	void Renderer::RegistyMaterial(const std::string& materialName, const std::string& subpassName)
 	{
 		/**
@@ -102,7 +125,7 @@ namespace Spiecs {
 		* @brief Create Pipeline.
 		*/
 		auto& pipeline = CreatePipeline(material, pipelinelayout, subPass);
-		subPass->AddPipeline(materialName, pipeline);
+		m_Pipelines[materialName] = pipeline;
 	}
 
 	void Renderer::CreateDefaultMaterial()
@@ -322,7 +345,7 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName)
 	{
-		m_HandledSubPass->GetPipelines()[materialName]->Bind(m_CurrentFrame);
+		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame);
 	}
 
 	void Renderer::RenderBehaverBuilder::BeginNextSubPass(const std::string& subpassName)
@@ -379,7 +402,7 @@ namespace Spiecs {
 			vkCmdBindDescriptorSets(
 				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				m_HandledSubPass->GetPipelines()[name]->GetPipelineLayout(),
+				m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
 				pair.first,
 				1,
 				&pair.second->Get(),
