@@ -23,6 +23,9 @@ project "SpiecsEngine"
 
 		"vendor/tinyobjloader/**.cpp",
 		"vendor/tinyobjloader/**.h",
+
+		"vendor/ImGuizmo/ImGuizmo.cpp",
+		"vendor/ImGuizmo/ImGuizmo.h"
 	}
 
 	defines
@@ -48,6 +51,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.NvPerf}",
 		"%{IncludeDir.NvPerfUtility}",
 		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links
@@ -64,6 +68,9 @@ project "SpiecsEngine"
 	flags { "NoPCH" }
 
 	filter "files:vendor/tinyobjloader/**.cpp"
+	flags { "NoPCH" }
+
+	filter "files:vendor/ImGuizmo/**.cpp"
 	flags { "NoPCH" }
 
 	filter "system:windows"

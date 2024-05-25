@@ -31,6 +31,7 @@ project "SpiecsGame"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.tinyobjloader}",
 		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links
