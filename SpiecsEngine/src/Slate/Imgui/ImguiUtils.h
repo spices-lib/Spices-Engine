@@ -46,7 +46,13 @@ namespace Spiecs{
 		* Init with Slate's name.
 		* @param[in] panelName The Slate's name.
 		*/
-		ImguiSlate(const std::string& panelName, FrameInfo& frameInfo) : m_PanelName(panelName), m_FrameInfo(frameInfo) {};
+		ImguiSlate(
+			const std::string& panelName, 
+			FrameInfo&         frameInfo
+		) 
+			: m_PanelName(panelName)
+			, m_FrameInfo(frameInfo) 
+		{};
 
 		/**
 		* @brief Destructor Function.

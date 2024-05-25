@@ -73,7 +73,7 @@ namespace Spiecs {
 		* key means entityid.
 		* value entity tag 0
 		*/
-		std::unordered_map<int, std::string> m_PickEntityID{};
+		scl::linked_unordered_map<int, std::string> m_PickEntityID{};
 
 		/**
 		* @brief The shared pointer of specific world.

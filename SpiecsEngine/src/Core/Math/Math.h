@@ -30,6 +30,13 @@ namespace Spiecs {
             return x == other.x && y == other.y;
         };
     };
+
+    bool DecomposeTransform(
+        const glm::mat4& transform, 
+        glm::vec3&       outTranslation, 
+        glm::vec3&       outRotation,
+        glm::vec3&       outScale
+    );
 }
 
 namespace std {

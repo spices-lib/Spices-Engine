@@ -119,6 +119,8 @@ namespace scl {
 		* @return Returns the end element finded.
 		*/
 		V& end();
+
+		K& endk();
 	};
 
 	template<typename K, typename V>
@@ -283,5 +285,11 @@ namespace scl {
 	V& linked_unordered_map<K, V>::end()
 	{
 		return map_[keys_.back()];
+	}
+
+	template<typename K, typename V>
+	K& linked_unordered_map<K, V>::endk()
+	{
+		return keys_.back();
 	}
 }

@@ -46,7 +46,7 @@ namespace Spiecs {
 				Entity entity((entt::entity)m_WorldPickID[0], FrameInfo::Get().m_World.get());
 				std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
 				
-				FrameInfo::Get().m_PickEntityID[static_cast<int>(m_WorldPickID[0])] = entityName;
+				FrameInfo::Get().m_PickEntityID.push_back(static_cast<int>(m_WorldPickID[0]), entityName);
 				
 				std::stringstream ss;
 				ss << "Select entity: " << entityName;
@@ -63,7 +63,7 @@ namespace Spiecs {
 
 				VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
 
-				std::string entityName = FrameInfo::Get().m_PickEntityID[static_cast<int>(m_WorldPickID[0])];
+				std::string entityName = FrameInfo::Get().m_PickEntityID.find_value(static_cast<int>(m_WorldPickID[0]));
 
 				FrameInfo::Get().m_PickEntityID.erase(static_cast<int>(m_WorldPickID[0]));
 
@@ -87,7 +87,7 @@ namespace Spiecs {
 				Entity entity((entt::entity)m_WorldPickID[0], FrameInfo::Get().m_World.get());
 				std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
 
-				FrameInfo::Get().m_PickEntityID[static_cast<int>(m_WorldPickID[0])] = entityName;
+				FrameInfo::Get().m_PickEntityID.push_back(static_cast<int>(m_WorldPickID[0]), entityName);
 
 				std::stringstream ss;
 				ss << "Select entity: " << entityName;

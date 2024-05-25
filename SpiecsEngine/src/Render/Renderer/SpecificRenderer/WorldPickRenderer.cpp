@@ -42,7 +42,7 @@ namespace Spiecs {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "WorldPick" }));
 
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-			if (frameInfo.m_PickEntityID.find(entityId) == frameInfo.m_PickEntityID.end()) return false;
+			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
 
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
@@ -59,7 +59,7 @@ namespace Spiecs {
 		});
 
 		IterWorldComp<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
-			if (frameInfo.m_PickEntityID.find(entityId) == frameInfo.m_PickEntityID.end()) return false;
+			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
 
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
