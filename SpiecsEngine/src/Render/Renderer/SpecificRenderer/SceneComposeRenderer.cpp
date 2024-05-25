@@ -11,6 +11,14 @@
 
 namespace Spiecs {
 
+	namespace SceneCR
+	{
+		struct LightsBuffer
+		{
+			std::array<Spiecs::PointLightComponent::PointLight, 1000> pointLights;
+		};
+	}
+
 	SceneComposeRenderer::SceneComposeRenderer(
 		const std::string&                       rendererName         , 
 		VulkanState&                             vulkanState          , 
@@ -41,6 +49,10 @@ namespace Spiecs {
 		.AddInputAttachment("Specular", [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
+		.AddInputAttachment("Position", [](VkAttachmentDescription& description) {
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		})
 		.AddInputAttachment("Depth", [&](VkAttachmentDescription& description) {
 			description.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
 			description.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
@@ -53,7 +65,8 @@ namespace Spiecs {
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
 		DescriptorSetBuilder{ "SceneCompose", this }
-		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Depth" })
+		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Position", "Depth" })
+		.AddStorageBuffer<SceneCR::LightsBuffer>(1, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -66,6 +79,10 @@ namespace Spiecs {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SceneCompose" }));
+
+		builder.UpdateStorageBuffer<SceneCR::LightsBuffer>(1, 1, [&](auto& ubo) {
+			GetPointLight(frameInfo, ubo.pointLights);
+		});
 
 		builder.BindPipeline("SceneComposeRenderer.SceneCompose.Default");
 		

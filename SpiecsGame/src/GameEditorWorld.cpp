@@ -15,7 +15,8 @@ namespace Spiecs {
 			Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			//transformComp1.SetScale({0.01f, 0.01f, 0.01f});
+			transformComp1.SetScale({ 25.0f, 25.0f, 25.0f });
+			transformComp1.SetPostion({ 0.0f, -5.0f, 0.0f });
 
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("112");
 			//std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(20, 20);
@@ -48,17 +49,17 @@ namespace Spiecs {
 		// pointlight
 		{
 			Entity& plightentity = CreateEntity("PointLight");
-			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
+			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>(glm::vec3(1.0f, 0.0f, 0.0f), 2.0f, 1.0f, 0.35f, 0.44f);
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ 1.0f, 1.0f, -5.0f });
+			transformComp.SetPostion({ 1.0f, 3.0f, -4.0f });
 		}
 		{
 			Entity& plightentity = CreateEntity("PointLight");
-			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
+			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>(glm::vec3(0.0f, 1.0f, 0.0f), 2.0f, 1.0f, 0.35f, 0.44f);
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ -1.0f, -1.0f, 5.0f });
+			transformComp.SetPostion({ -1.0f, 3.0f, 4.0f });
 		}
 	}
 

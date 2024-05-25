@@ -6,18 +6,13 @@ namespace Spiecs {
 	VulkanDescriptorPool::Builder& VulkanDescriptorPool::Builder::AddPoolSize(VkDescriptorType descriptorType, uint32_t count)
 	{
 		m_PoolSizes.push_back({ descriptorType, count });
+		m_MaxSets += count;
 		return *this;
 	}
 
 	VulkanDescriptorPool::Builder& VulkanDescriptorPool::Builder::SetPoolFlags(VkDescriptorPoolCreateFlags flags)
 	{
 		m_PoolFlags = flags;
-		return *this;
-	}
-
-	VulkanDescriptorPool::Builder& VulkanDescriptorPool::Builder::SetMaxSets(uint32_t count)
-	{
-		m_MaxSets = count;
 		return *this;
 	}
 
@@ -128,6 +123,7 @@ namespace Spiecs {
 				write.descriptorCount   = static_cast<uint32_t>(imageInfo[pair.first].size());
 				break;
 			case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+			case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
 				write.pBufferInfo       = &bufferInfo[pair.first];
 				write.descriptorCount   = 1;
 				break;

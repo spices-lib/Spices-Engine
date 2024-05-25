@@ -12,7 +12,8 @@ layout(location = 0) in struct FragInput {
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outSpecular;
-layout(location = 3) out float outID;
+layout(location = 3) out vec4 outPosition;
+layout(location = 4) out float outID;
 
 // push constant
 layout(push_constant) uniform Push{
@@ -37,8 +38,9 @@ layout(set = 1, binding = 1) uniform Parameter {
 // main
 void main()
 {
-    outColor = texture(samplers[ALBEDO], fragInput.texCoord);
-    outNormal = vec4(fragInput.normal, 1.0f);
+    outColor    = texture(samplers[ALBEDO], fragInput.texCoord);
+    outNormal   = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
     outSpecular = texture(samplers[SPECULAR], fragInput.texCoord);
-    outID = push.entityID;
+    outPosition = vec4(fragInput.position, 1.0f);
+    outID       = push.entityID;
 }

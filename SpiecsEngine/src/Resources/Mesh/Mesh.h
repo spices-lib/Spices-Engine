@@ -100,7 +100,6 @@ namespace Spiecs {
 	{
 		for (auto& pair : m_Pack)
 		{
-
 			/**
 			* @brief This function is used for bind material parameters.
 			* @param[in] meshpackId MeshPack index of array.

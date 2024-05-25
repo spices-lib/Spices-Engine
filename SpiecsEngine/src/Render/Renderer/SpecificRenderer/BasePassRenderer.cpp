@@ -18,6 +18,11 @@ namespace Spiecs {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
+		.AddColorAttachment("Position", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		})
 		.AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -37,6 +42,9 @@ namespace Spiecs {
 		.AddColorAttachment("Specular", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		})
+		.AddColorAttachment("Position", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
 		.AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
@@ -68,7 +76,7 @@ namespace Spiecs {
 		pipelineConfig.renderPass = m_Pass->Get();
 		pipelineConfig.subpass = subPass->GetIndex();
 		pipelineConfig.pipelineLayout = layout;
-		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
+		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
 		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)subPass->GetColorBlend().size();
 		pipelineConfig.colorBlendInfo.pAttachments = subPass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
@@ -114,6 +122,7 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+
 				builder.BindPipeline(material->GetName());
 
 				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {

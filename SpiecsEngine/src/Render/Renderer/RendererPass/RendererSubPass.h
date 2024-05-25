@@ -47,7 +47,7 @@ namespace Spiecs
 		inline VkPushConstantRange& GetPushConstant() { return m_PushConstantRange; };
 
 		std::shared_ptr<VulkanBuffer>& GetBuffers(const Int2& i2) { return m_Buffers[i2]; };
-		void SetBuffer(const Int2& i2, void* data);
+		void SetBuffer(const Int2& i2, void* data, uint64_t size = VK_WHOLE_SIZE, uint64_t offest = 0);
 		uint32_t GetIndex() { return m_Index; };
 		inline std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; };
 

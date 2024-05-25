@@ -55,13 +55,6 @@ namespace Spiecs {
             Builder& SetPoolFlags(VkDescriptorPoolCreateFlags flags);
 
             /**
-            * @brief Set the max descriptorset nums that this pool can assign.
-            * @param[in] count The the max descriptorset nums.
-            * @return Returns a reference of this.
-            */
-            Builder& SetMaxSets(uint32_t count);
-
-            /**
             * @brief Build a shared pointer of VulkanDescriptorPool.
             * @param[in] vulkanState The core vulkan objects that in use.
             * @return Returns the shared pointer of VulkanDescriptorPool.

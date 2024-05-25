@@ -196,7 +196,7 @@ namespace Spiecs {
 		* @return Returns the 10 PointLight render data.
 		* @todo infinity pointlight.
 		*/
-		std::array<PointLightComponent::PointLight, 10> GetPointLight(FrameInfo& frameInfo);
+		void GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat);
 
 		/***************************************************************************************************/
 
@@ -271,7 +271,14 @@ namespace Spiecs {
 			* @return Returns this reference.
 			*/
 			template<typename T>
-			inline DescriptorSetBuilder& AddBuffer(
+			inline DescriptorSetBuilder& AddUniformBuffer(
+				uint32_t set,
+				uint32_t binding,
+				VkShaderStageFlags stageFlags
+			);
+
+			template<typename T>
+			inline DescriptorSetBuilder& AddStorageBuffer(
 				uint32_t set,
 				uint32_t binding,
 				VkShaderStageFlags stageFlags
@@ -385,7 +392,10 @@ namespace Spiecs {
 			* @param[in] binding Which binding the descriptor will use.
 			*/
 			template<typename T, typename F>
-			void UpdateBuffer(uint32_t set, uint32_t binding, F func);
+			void UpdateUniformBuffer(uint32_t set, uint32_t binding, F func);
+
+			template<typename T, typename F>
+			void UpdateStorageBuffer(uint32_t set, uint32_t binding, F func);
 
 			void BeginNextSubPass(const std::string& subpassName);
 
@@ -523,7 +533,7 @@ namespace Spiecs {
 	}
 
 	template<typename T, typename F>
-	inline void Renderer::RenderBehaverBuilder::UpdateBuffer(uint32_t set, uint32_t binding, F func)
+	inline void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, F func)
 	{
 		/**
 		* @breif Create uniform buffer object
@@ -542,6 +552,26 @@ namespace Spiecs {
 		m_HandledSubPass->SetBuffer({ set, binding }, &ubo);
 	}
 
+	template<typename T, typename F>
+	inline void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, F func)
+	{
+		/**
+		* @breif Create uniform buffer object
+		*/
+		T ssbo{};
+
+		/**
+		* @breif Write in data
+		* @param[in] uniform buffer object.
+		*/
+		func(ssbo);
+
+		/**
+		* @breif Update uniform buffer.
+		*/
+		m_HandledSubPass->SetBuffer({ set, binding }, &ssbo);
+	}
+
 	template<typename T>
 	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
 	{
@@ -555,7 +585,7 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddBuffer(
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddUniformBuffer(
 		uint32_t           set        , 
 		uint32_t           binding    , 
 		VkShaderStageFlags stageFlags
@@ -585,6 +615,41 @@ namespace Spiecs {
 
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageBuffer(
+		uint32_t           set        , 
+		uint32_t           binding    , 
+		VkShaderStageFlags stageFlags
+	)
+	{
+		Int2 id(set, binding);
+
+		/**
+		* @brief Creating VulkanBuffer.
+		*/
+		m_HandledSubPass->GetBuffers(id) = std::make_unique<VulkanBuffer>(
+			m_Renderer->m_VulkanState,
+			sizeof(T),
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+		);
+
+		/**
+		* @brief Map with host memory and video memory.
+		*/
+		m_HandledSubPass->GetBuffers(id)->Map();
+
+		/**
+		* @brief fill in bufferInfos.
+		*/
+		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
+
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
 
 		return *this;
 	}

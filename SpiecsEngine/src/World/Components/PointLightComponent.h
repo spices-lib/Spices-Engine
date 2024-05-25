@@ -26,14 +26,14 @@ namespace Spiecs {
 		struct PointLight
 		{
 			/**
-			* @brief Color of PointLight.
-			*/
-			alignas(16) glm::vec3 color{ 1.0f };
-
-			/**
 			* @brief World Position of PointLight.
 			*/
 			alignas(16) glm::vec3 position{ 0.0f };
+
+			/**
+			* @brief Color of PointLight.
+			*/
+			alignas(16) glm::vec3 color{ 1.0f };
 
 			/**
 			* @brief Intensity of PointLight.
@@ -60,16 +60,21 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		*/
-		PointLightComponent() {};
-
-		/**
-		* @brief Constructor Function.
 		* Init class variable.
 		* Usually call it.
 		* @param[in] pointLight Use a pointLight struct Init this component.
 		*/
 		PointLightComponent(const PointLight& pointLight) : m_PointLight(pointLight) {};
+
+		PointLightComponent(
+			const glm::vec3& color = glm::vec3(1.0f),
+			float intensity = 1.0f,
+			float constantf = 1.0f,
+			float linear = 0.35f,
+			float quadratic = 0.44f
+		)
+			: m_PointLight{glm::vec3(0.0f), color, intensity, constantf, linear, quadratic}
+		{};
 
 		/**
 		* @brief Destructor Function.

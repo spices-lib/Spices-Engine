@@ -8,7 +8,8 @@ layout(location = 3) in vec2 texCoord;
 
 // vertex output
 layout(location = 0) out struct FragInput {
-    vec3 localPos;
+    vec3 localPosition;
+    vec3 worldPosition;
 } vertOut;
 
 // push constant
@@ -37,6 +38,10 @@ layout(set = 0, binding = 1) uniform SpiecsInput {
 // main
 void main()
 {
-    vertOut.localPos = position;
-    gl_Position = view.projection * view.view * push.model * vec4(position, 1.0);
+    vec4 pos = push.model * vec4(position, 1.0);
+
+    vertOut.localPosition = position;
+    vertOut.worldPosition = pos.xyz;
+
+    gl_Position = view.projection * view.view * pos;
 }

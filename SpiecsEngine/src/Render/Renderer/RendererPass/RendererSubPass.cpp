@@ -63,9 +63,9 @@ namespace Spiecs {
 		m_SubPassDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 	}
 
-	void RendererSubPass::SetBuffer(const Int2& i2, void* data)
+	void RendererSubPass::SetBuffer(const Int2& i2, void* data, uint64_t size, uint64_t offest)
 	{
-		m_Buffers[i2]->WriteToBuffer(data);
+		m_Buffers[i2]->WriteToBuffer(data, size, offest);
 		m_Buffers[i2]->Flush();
 	}
 }

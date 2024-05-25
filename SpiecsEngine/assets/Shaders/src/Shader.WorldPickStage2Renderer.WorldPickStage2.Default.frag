@@ -1,4 +1,4 @@
-#version 450
+#version 460
 
 // frag input
 layout(location = 0) in struct FragInput {

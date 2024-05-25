@@ -6,7 +6,7 @@ Shaders:
     Path: BasePassRenderer.Mesh.Default
 Textures:
   - Name: diffuse
-    Value: [1, 0, 0, Texture2D, nicolas.jpg]
+    Value: [1, 0, 0, Texture2D, default.jpg]
   - Name: normal
     Value: [1, 0, 1, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg]
   - Name: specular

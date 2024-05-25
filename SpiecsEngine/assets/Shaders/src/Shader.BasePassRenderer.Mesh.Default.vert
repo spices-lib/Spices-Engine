@@ -41,12 +41,14 @@ layout(set = 0, binding = 1) uniform SpiecsInput {
 // main
 void main()
 {
-    mat3 m3model = mat3(push.model);
+    vec3 normal = normalize((push.model * vec4(normal, 1.0f)).xyz);
 
-    vertOut.position = m3model * position;
-    vertOut.normal = normalize(m3model * normal);
+    vec4 pos = push.model * vec4(position, 1.0f);
+
+    vertOut.position = pos.xyz;
+    vertOut.normal = normal;
     vertOut.color = color;
     vertOut.texCoord = texCoord;
     
-    gl_Position = view.projection * view.view * push.model * vec4(position, 1.0);
+    gl_Position = view.projection * view.view * pos;
 }

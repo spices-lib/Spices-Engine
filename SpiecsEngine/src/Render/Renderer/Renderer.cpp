@@ -283,17 +283,12 @@ namespace Spiecs {
 		return directionalLight;
 	}
 
-	std::array<PointLightComponent::PointLight, 10> Renderer::GetPointLight(FrameInfo& frameInfo)
+	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat)
 	{
-		/**
-		* @brief Init a PointLight contioner.
-		*/
-		std::vector<PointLightComponent::PointLight> pointLights;
-		std::array<PointLightComponent::PointLight, 10> pointLightsArray;
-
 		/**
 		* @brief Iter PointLightComponent.
 		*/
+		int index = 0;
 		IterWorldComp<PointLightComponent>(
 			frameInfo, 
 			[&](
@@ -304,20 +299,10 @@ namespace Spiecs {
 
 			PointLightComponent::PointLight pointLight = plightComp.GetLight();
 			pointLight.position = transComp.GetPosition();
-			pointLights.push_back(std::move(pointLight));
+			pLightArrat[index] = std::move(pointLight);
+			index++;
 			return false;
 		});
-		
-		/**
-		* @breif Select ten pointlight.
-		*/
-		for (int i = 0; i < pointLights.size(); i++)
-		{
-			if (i == 10) break;
-			pointLightsArray[i] = pointLights[i];
-		}
-
-		return pointLightsArray;
 	}
 
 	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(

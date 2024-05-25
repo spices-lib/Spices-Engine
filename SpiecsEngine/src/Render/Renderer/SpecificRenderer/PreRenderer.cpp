@@ -14,8 +14,8 @@ namespace Spiecs {
 	void PreRenderer::CreateDescriptorSet()
 	{
  		DescriptorSetBuilder{ "PreRenderer", this }
-		.AddBuffer<PreR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddBuffer<PreR::SpiecsInput>(0, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddUniformBuffer<PreR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddUniformBuffer<PreR::SpiecsInput>(0, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -31,7 +31,7 @@ namespace Spiecs {
 		/**
 		* @brief Update View.
 		*/
-		builder.UpdateBuffer<PreR::View>(0, 0, [&](auto& ubo) {
+		builder.UpdateUniformBuffer<PreR::View>(0, 0, [&](auto& ubo) {
 			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 			ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 			VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
@@ -46,7 +46,7 @@ namespace Spiecs {
 		/**
 		* @brief Update Input.
 		*/
-		builder.UpdateBuffer<PreR::SpiecsInput>(0, 1, [&](auto& ubo) {
+		builder.UpdateUniformBuffer<PreR::SpiecsInput>(0, 1, [&](auto& ubo) {
 			auto& [x, y] = SlateSystem::GetRegister()->GetViewPort()->GetMousePosInViewport();
 
 			ubo.gameTime = ts.gt();
