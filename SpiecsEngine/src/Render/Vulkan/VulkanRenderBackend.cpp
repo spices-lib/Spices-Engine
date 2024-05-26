@@ -21,12 +21,12 @@ namespace Spiecs {
 
 	VulkanRenderBackend::VulkanRenderBackend()
 	{
-		m_VulkanWindows = std::make_unique<VulkanWindows>(m_VulkanState, initInfo);
-		m_VulkanInstance = std::make_unique<VulkanInstance>(m_VulkanState, "app", "engine");
-		m_VulkanDevice = std::make_shared<VulkanDevice>(m_VulkanState);
-		m_VulkanCommandPool = std::make_unique<VulkanCommandPool>(m_VulkanState);
+		m_VulkanWindows       = std::make_unique<VulkanWindows>(m_VulkanState, initInfo);
+		m_VulkanInstance      = std::make_unique<VulkanInstance>(m_VulkanState, "app", "engine");
+		m_VulkanDevice        = std::make_shared<VulkanDevice>(m_VulkanState);
+		m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>(m_VulkanState);
 		m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
-		m_VulkanSwapChain = std::make_unique<VulkanSwapChain>(m_VulkanState, m_VulkanDevice);
+		m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>(m_VulkanState, m_VulkanDevice);
 
 		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
 		.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
@@ -88,10 +88,27 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)
 	{
-		vkWaitForFences(m_VulkanState.m_Device, 1, &m_VulkanState.m_Fence[frameInfo.m_FrameIndex], VK_TRUE, UINT64_MAX);
-		vkResetFences(m_VulkanState.m_Device, 1, &m_VulkanState.m_Fence[frameInfo.m_FrameIndex]);
+		vkWaitForFences(
+			m_VulkanState.m_Device, 
+			1, 
+			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex], 
+			VK_TRUE, UINT64_MAX
+		);
+		vkResetFences(
+			m_VulkanState.m_Device, 
+			1, 
+			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
+		);
 
-		VkResult result = vkAcquireNextImageKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, UINT64_MAX, m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex], VK_NULL_HANDLE, &frameInfo.m_Imageindex);
+		VkResult result = vkAcquireNextImageKHR(
+			m_VulkanState.m_Device, 
+			m_VulkanState.m_SwapChain, 
+			UINT64_MAX, 
+			m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex], 
+			VK_NULL_HANDLE, 
+			&frameInfo.m_Imageindex
+		);
+
 		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
 			RecreateSwapChain();
 		}
@@ -111,10 +128,10 @@ namespace Spiecs {
 		* Remember enable device extension (VK_KHR_MAINTENANCE1)
 		*/
 		VkViewport viewport{};
-		viewport.x = 0.0f;
-		viewport.y = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
-		viewport.width = static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.width);
-		viewport.height = -static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
+		viewport.x        = 0.0f;
+		viewport.y        =  static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
+		viewport.width    =  static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.width);
+		viewport.height   = -static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);
@@ -129,35 +146,39 @@ namespace Spiecs {
 	{
 		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]));
 
-		vkResetFences(m_VulkanState.m_Device, 1, &m_VulkanState.m_Fence[frameInfo.m_FrameIndex]);
+		vkResetFences(
+			m_VulkanState.m_Device, 
+			1, 
+			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
+		);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-		VkSemaphore waitSemphores[] = { m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex]};
+		VkSemaphore waitSemphores[]       = { m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex]};
 		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
-		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.pWaitSemaphores = waitSemphores;
-		submitInfo.pWaitDstStageMask = waitStages;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex];
+		submitInfo.waitSemaphoreCount   = 1;
+		submitInfo.pWaitSemaphores      = waitSemphores;
+		submitInfo.pWaitDstStageMask    = waitStages;
+		submitInfo.commandBufferCount   = 1;
+		submitInfo.pCommandBuffers      = &m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex];
 
-		VkSemaphore signalSemaphores[] = { m_VulkanState.m_QueueSemaphore[frameInfo.m_FrameIndex] };
+		VkSemaphore signalSemaphores[]  = { m_VulkanState.m_QueueSemaphore[frameInfo.m_FrameIndex] };
 		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores = signalSemaphores;
+		submitInfo.pSignalSemaphores    = signalSemaphores;
 
 		VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]));
 
 		VkPresentInfoKHR presentInfo{};
-		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		presentInfo.waitSemaphoreCount = 1;
-		presentInfo.pWaitSemaphores = signalSemaphores;
+		presentInfo.sType               = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.waitSemaphoreCount  = 1;
+		presentInfo.pWaitSemaphores     = signalSemaphores;
 
-		VkSwapchainKHR swapChains[] = { m_VulkanState.m_SwapChain };
-		presentInfo.swapchainCount = 1;
-		presentInfo.pSwapchains = swapChains;
-		presentInfo.pImageIndices = &frameInfo.m_Imageindex;
+		VkSwapchainKHR swapChains[]     = { m_VulkanState.m_SwapChain };
+		presentInfo.swapchainCount      = 1;
+		presentInfo.pSwapchains         = swapChains;
+		presentInfo.pImageIndices       = &frameInfo.m_Imageindex;
 
 		presentInfo.pResults = nullptr;
 
@@ -169,7 +190,6 @@ namespace Spiecs {
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 			throw std::runtime_error::runtime_error("failed to present swap chain image!");
 		}
-
 	}
 
 	void VulkanRenderBackend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
@@ -192,6 +212,7 @@ namespace Spiecs {
 		m_VulkanSwapChain->Destroy();
 		m_VulkanSwapChain->Create();
 
+		m_RendererResourcePool->OnSlateResize(event.GetWidth(), event.GetHeight());
 		RendererManager::Get().OnWindowResizeOver();
 
 		return false;
