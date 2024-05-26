@@ -112,8 +112,6 @@ namespace Spiecs {
 		* @param[in] e Event Warpper.
 		* @return true if we need block the event
 		*/
-		bool OnWindowResizeOver(WindowResizeOverEvent& e);
-
 		bool OnSlateResized(SlateResizeEvent& e);
 
 		/**

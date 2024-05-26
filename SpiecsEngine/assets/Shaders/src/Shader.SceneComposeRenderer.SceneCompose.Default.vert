@@ -28,6 +28,6 @@ layout(set = 0, binding = 1) uniform SpiecsInput {
 
 void main()
 {
-	vertOut.texCoord = (texCoord * view.windowSize.xy) / view.sceneTextureSize.xy;
+	vertOut.texCoord = texCoord;
 	gl_Position = vec4(position * 2.0f, 1.0f);
 }

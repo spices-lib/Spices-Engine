@@ -2,6 +2,7 @@
 #include "VulkanRenderBackend.h"
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Core/Event/WindowEvent.h"
+#include "Systems/SlateSystem.h"
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/BasePassRenderer.h"
@@ -134,6 +135,21 @@ namespace Spiecs {
 		viewport.height   = -static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
+
+		/**
+		* @brief Though we draw world to viewport but not surface,
+		* Set Correct viewport here is necessary.
+		*/
+		if (SlateSystem::GetRegister())
+		{
+			ImVec2 viewPortPos  = SlateSystem::GetRegister()->GetViewPort()->GetPanelPos();
+			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+
+			viewport.y      =  viewPortSize.y;
+			viewport.width  =  viewPortSize.x;
+			viewport.height = -viewPortSize.y;
+		}
+
 		vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);
 
 		VkRect2D scissor{};
