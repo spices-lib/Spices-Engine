@@ -9,18 +9,29 @@ namespace Spiecs {
 	public:
 		ImguiGizmos(
 			const std::string& panelName,
-			FrameInfo&         frameInfo
+			FrameInfo&         frameInfo,
+			ImguiSlate*        owner
 		) 
 			: ImguiSlate(panelName, frameInfo) 
+			, m_Owner(owner)
 		{};
 
 		virtual ~ImguiGizmos() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};
 		virtual void OnRender() override;
-		virtual void OnEvent(Event& event) override {};
+		virtual void OnEvent(Event& event) override;
+
+	public:
+		bool IsOver() { return ImGuizmo::IsOver(); };
 
 	private:
-		ImGuizmo::OPERATION m_GizmoType;
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+	private:
+		ImguiSlate* m_Owner;
+
+		int m_GizmoType = -1;
+		bool bEnableGizmo = false;
 	};
 }

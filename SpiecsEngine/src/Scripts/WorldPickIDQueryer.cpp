@@ -32,7 +32,9 @@ namespace Spiecs {
 
 		if (!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
 
-		if (m_ViewPort->IsHovered() && e.GetMouseButton() == Mouse::ButtonLeft)
+		if (!m_ViewPort->IsHovered() || m_ViewPort->GetGizmo()->IsOver()) return false;
+
+		if (e.GetMouseButton() == Mouse::ButtonLeft)
 		{
 			/**
 			* @brief Add pick.
@@ -41,10 +43,16 @@ namespace Spiecs {
 			{
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
-				VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
+				VulkanRenderBackend::GetRendererResourcePool()
+				->AccessRowResource("ID")
+				->CopyImageTexelToBuffer(
+					pair.first, 
+					pair.second, 
+					reinterpret_cast<void*>(&m_WorldPickID[0])
+				);
 
 				Entity entity((entt::entity)m_WorldPickID[0], FrameInfo::Get().m_World.get());
-				std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
+				std::string entityName = *entity.GetComponent<TagComponent>().GetTag().begin();
 				
 				FrameInfo::Get().m_PickEntityID.push_back(static_cast<int>(m_WorldPickID[0]), entityName);
 				
@@ -61,7 +69,13 @@ namespace Spiecs {
 			{
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
-				VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
+				VulkanRenderBackend::GetRendererResourcePool()
+				->AccessRowResource("ID")
+				->CopyImageTexelToBuffer(
+					pair.first, 
+					pair.second, 
+					reinterpret_cast<void*>(&m_WorldPickID[0])
+				);
 
 				std::string entityName = FrameInfo::Get().m_PickEntityID.find_value(static_cast<int>(m_WorldPickID[0]));
 
@@ -82,10 +96,16 @@ namespace Spiecs {
 
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
-				VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource("ID")->CopyImageTexelToBuffer(pair.first, pair.second, (void*)&m_WorldPickID[0]);
+				VulkanRenderBackend::GetRendererResourcePool()
+				->AccessRowResource("ID")
+				->CopyImageTexelToBuffer(
+					pair.first, 
+					pair.second, 
+					reinterpret_cast<void*>(&m_WorldPickID[0])
+				);
 
 				Entity entity((entt::entity)m_WorldPickID[0], FrameInfo::Get().m_World.get());
-				std::string entityName = entity.GetComponent<TagComponent>().GetTag()[0];
+				std::string entityName = *entity.GetComponent<TagComponent>().GetTag().begin();
 
 				FrameInfo::Get().m_PickEntityID.push_back(static_cast<int>(m_WorldPickID[0]), entityName);
 

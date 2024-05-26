@@ -23,17 +23,4 @@ namespace Spiecs {
 	{
 
 	}
-
-	std::vector<std::string> TagComponent::GetTag()
-	{
-		std::vector<std::string> tags;
-
-		for (auto& elem : m_Tags)
-		{
-			tags.push_back(elem);
-		}
-
-		return tags;
-	}
-
 }

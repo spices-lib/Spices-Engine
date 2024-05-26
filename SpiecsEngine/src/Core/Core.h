@@ -14,7 +14,9 @@
 * glfw will include vulkan headers automatically for us.
 */
 #define GLFW_INCLUDE_VULKAN
+#define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
+#include <glfw/glfw3native.h>
 
 namespace Spiecs {
 

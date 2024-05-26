@@ -142,7 +142,6 @@ namespace Spiecs {
 		*/
 		if (SlateSystem::GetRegister())
 		{
-			ImVec2 viewPortPos  = SlateSystem::GetRegister()->GetViewPort()->GetPanelPos();
 			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 
 			viewport.y      =  viewPortSize.y;

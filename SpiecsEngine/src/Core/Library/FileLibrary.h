@@ -126,5 +126,8 @@ namespace Spiecs {
         * @return true if file hanle is vaild and succesfully write data.
         */
         static bool FileLibrary_Write_Line(FileHandle* handle, const char* text);
+
+
+        static std::string FileLibrary_OpenInExplore(const char* filter, HWND hwnd);
     };
 }

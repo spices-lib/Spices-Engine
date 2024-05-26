@@ -35,9 +35,6 @@ namespace Spiecs {
 		static int TextEditCallbackStub(ImGuiInputTextCallbackData* data);
 
 	private:
-		void LoadConsoleIcon(ImTextureID& id, const std::string& iconFile);
-
-	private:
 
 		std::shared_ptr<Console> m_Console;
 		ImGuiTextFilter m_Filter;

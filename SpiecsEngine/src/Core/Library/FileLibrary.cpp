@@ -7,6 +7,8 @@
 #include "Pchheader.h"
 #include "FileLibrary.h"
 
+#include <commdlg.h>
+
 namespace Spiecs {
 
 	bool FileLibrary::FileLibrary_Exists(const char* path)
@@ -132,5 +134,25 @@ namespace Spiecs {
 			return result != EOF;
 		}
 		return false;
+	}
+
+	std::string FileLibrary::FileLibrary_OpenInExplore(const char* filter, HWND hwnd)
+	{
+		OPENFILENAMEA ofn;    // common dialog box structure
+		CHAR szFile[260] = { 0 };   // if using TCHAR macros
+		// Initialize OPENFILENAME
+		ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
+		ofn.lStructSize = sizeof(OPENFILENAMEA);
+		ofn.hwndOwner = hwnd;
+		ofn.lpstrFile = szFile;
+		ofn.nMaxFile = sizeof(szFile);
+		ofn.lpstrFilter = filter;
+		ofn.nFilterIndex = 1;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+		if (GetOpenFileNameA(&ofn) == TRUE)
+		{
+			return ofn.lpstrFile;
+		}
+		return std::string();
 	}
 }

@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "ImguiUtils.h"
+#include "Render/Vulkan/VulkanImage.h"
 
 // Only once.
 #include <imgui.cpp>
@@ -113,5 +114,13 @@ namespace Spiecs {
                 m_IsOpen = false;
             ImGui::EndPopup();
         }
+    }
+
+    void ImguiSlate::LoadConsoleIcon(ImTextureID& id, const std::string& iconFile)
+    {
+        auto rowPtr = ResourcePool<Texture>::Load<Texture2D>(iconFile);
+        auto info = rowPtr->GetResource<VulkanImage>()->GetImageInfo();
+
+        id = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
     }
 }

@@ -7,7 +7,15 @@ namespace Spiecs {
 	class ImguiFloattingInfo : public ImguiSlate
 	{
 	public:
-		ImguiFloattingInfo(const std::string& panelName, FrameInfo& frameInfo, ImguiSlate* owner) : ImguiSlate(panelName, frameInfo), m_Owner(owner) {};
+		ImguiFloattingInfo(
+			const std::string& panelName, 
+			FrameInfo&         frameInfo, 
+			ImguiSlate*        owner
+		) 
+			: ImguiSlate(panelName, frameInfo)
+			, m_Owner(owner) 
+		{};
+
 		virtual ~ImguiFloattingInfo() {};
 
 		virtual void OnUpdate(TimeStep& ts) override {};

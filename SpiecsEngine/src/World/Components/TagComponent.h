@@ -64,7 +64,7 @@ namespace Spiecs {
 		* @brief Get the tags variable.
 		* @return Returns the tags variable.
 		*/
-		std::vector<std::string> GetTag();
+		inline const std::set<std::string>& GetTag() { return m_Tags; };
 
 	private:
 

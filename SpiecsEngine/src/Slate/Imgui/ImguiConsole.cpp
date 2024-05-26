@@ -3,7 +3,8 @@
 #include "Core/Log/Console.h"
 #include "Resources/ResourcePool/ResourcePool.h"
 #include "Resources/Texture/Texture2D.h"
-#include "Render/Vulkan/VulkanImage.h"
+#include "Core/Library/FileLibrary.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spiecs {
 
@@ -31,7 +32,12 @@ namespace Spiecs {
 		ImGui::SameLine();
 		if (ImGui::ImageButton(m_ConsoleIconID.openLogFileIcon, ImVec2(18, 18))) { m_Console->Clear(); }
 		ImGui::SameLine();
-		if (ImGui::ImageButton(m_ConsoleIconID.openLogFolderIcon, ImVec2(18, 18))) { m_Console->Clear(); }
+		if (ImGui::ImageButton(m_ConsoleIconID.openLogFolderIcon, ImVec2(18, 18))) { 
+			std::string filepath = FileLibrary::FileLibrary_OpenInExplore(
+				"Spiecs Log (*.log)\0*.log\0",
+				glfwGetWin32Window((GLFWwindow*)VulkanRenderBackend::GetState().m_Windows)
+			);
+		}
 		ImGui::SameLine();
 		if (ImGui::ImageButton(m_ConsoleIconID.enableCommandFieldIcon, ImVec2(18, 18))) { m_Console->Clear(); }
 		ImGui::SameLine();
@@ -52,6 +58,7 @@ namespace Spiecs {
 
 		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetStyleColorVec4(ImGuiCol_Border));
 		if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
@@ -71,25 +78,25 @@ namespace Spiecs {
 				case 0:
 					if (helper.level == "trace")
 					{
-						ImGui::Text(helper.str.c_str());
+						ImGui::Selectable(helper.str.c_str(), false);
 					}
 					break;
 				case 1:
 					if (helper.level == "info")
 					{
-						ImGui::Text(helper.str.c_str());
+						ImGui::Selectable(helper.str.c_str(), false);
 					}
 					break;
 				case 2:
 					if (helper.level == "warn")
 					{
-						ImGui::Text(helper.str.c_str());
+						ImGui::Selectable(helper.str.c_str(), false);
 					}
 					break;
 				case 3:
 					if (helper.level == "error")
 					{
-						ImGui::Text(helper.str.c_str());
+						ImGui::Selectable(helper.str.c_str(), false);
 					}
 					break;
 				}
@@ -101,7 +108,7 @@ namespace Spiecs {
 
 			ImGui::PopStyleVar();
 		}
-		ImGui::PopStyleColor();
+		ImGui::PopStyleColor(2);
 		ImGui::EndChild();
 		ImGui::Separator();
 
@@ -120,13 +127,4 @@ namespace Spiecs {
 	{
 		return 0;
 	}
-
-	void ImguiConsole::LoadConsoleIcon(ImTextureID& id, const std::string& iconFile)
-	{
-		auto rowPtr = ResourcePool<Texture>::Load<Texture2D>(iconFile);
-		auto info = rowPtr->GetResource<VulkanImage>()->GetImageInfo();
-
-		id = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
-	}
-
 }

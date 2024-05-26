@@ -20,6 +20,7 @@ namespace Spiecs {
 	public:
 		bool IsResizedThisFrame() { return isResized; };
 		std::pair<uint32_t, uint32_t> GetMousePosInViewport();
+		std::shared_ptr<ImguiGizmos> GetGizmo() { return m_Gizmos; };
 
 	private:
 		bool OnSlateResize(SlateResizeEvent& event);

@@ -98,12 +98,14 @@ namespace Spiecs{
 		*/
 		void End() { ImGui::End(); ImGui::PopStyleVar(3); };
 
+		void LoadConsoleIcon(ImTextureID& id, const std::string& iconFile);
+
 	public:
 		void SetWindowState(bool isSlateOn) { m_IsSlateOn = isSlateOn; };
 
 	public:
-		ImVec2 GetPanelSize() { return m_PanelSize; };
-		ImVec2 GetPanelPos() { return m_PanelPos; };
+		ImVec2& GetPanelSize() { return m_PanelSize; };
+		ImVec2& GetPanelPos() { return m_PanelPos; };
 		bool IsFocused() { return m_IsFocused; };
 		bool IsHovered() { return m_IsHovered; };
 

@@ -59,6 +59,8 @@ namespace Spiecs {
 
 	bool CameraController::OnMouseScroll(MouseScrolledEvent& e)
 	{
+		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return false;
+
 		float delta = e.GetYOffest() * 0.1f;
 		MouseZoom(delta);
 		UpdateView();

@@ -15,7 +15,7 @@ namespace Spiecs {
         m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
 
         m_FloattingInfo = SlateSystem::GetRegister()->Register<ImguiFloattingInfo>(false, "FloattingInfo", this);
-        m_Gizmos        = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, "Gizmos");
+        m_Gizmos        = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, "Gizmos", this);
     }
 
     void ImguiViewport::OnRender()
