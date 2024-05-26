@@ -112,7 +112,9 @@ namespace Spiecs {
 		* @param[in] e Event Warpper.
 		* @return true if we need block the event
 		*/
-		bool OnWindowResized(WindowResizeEvent& e);
+		bool OnWindowResizeOver(WindowResizeOverEvent& e);
+
+		bool OnSlateResized(SlateResizeEvent& e);
 
 		/**
 		* @brief Calculate Camera Drag.

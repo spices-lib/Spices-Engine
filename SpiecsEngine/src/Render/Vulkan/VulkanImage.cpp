@@ -399,7 +399,6 @@ namespace Spiecs {
 		imageInfo.flags = 0;
 
 		VK_CHECK(vkCreateImage(vulkanState.m_Device, &imageInfo, nullptr, &m_Image));
-		SPIECS_CORE_INFO("VkImage created succeed!!!");
 
 		// memory
 		VkMemoryRequirements memRequirements;
@@ -426,22 +425,6 @@ namespace Spiecs {
 
 	void VulkanImage::CreateDescriptorSet(uint32_t binding)
 	{
-		/*std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder{}
-			.AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-			.Build(m_VulkanState);
-
-		VulkanRenderBackend::GetDescriptorPool()->allocateDescriptor(setLayout->GetDescriptorSetLayout(), m_DescriptorSet);
-
-		VkWriteDescriptorSet write{};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		write.dstBinding = 0;
-		write.dstSet = m_DescriptorSet;
-		write.pImageInfo = GetImageInfo();
-		write.descriptorCount = 1;
-
-		vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);*/
-
 		DestroyDescriptorSetLayout();
 
 		m_IsCreateSet = true;
@@ -458,10 +441,7 @@ namespace Spiecs {
 		layoutInfo.bindingCount = 1;
 		layoutInfo.pBindings = &samplerLayoutBinding;
 
-		if (vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create texture descriptor set layout!");
-		}
-
+		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout));
 
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -469,9 +449,7 @@ namespace Spiecs {
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &m_DescriptorSetLayout;
 
-		if (vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate descriptor sets!");
-		}
+		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet));
 
 		VkDescriptorImageInfo imageInfo{};
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

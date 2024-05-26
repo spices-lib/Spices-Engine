@@ -53,11 +53,6 @@ namespace Spiecs {
 	{
 		m_NativeScriptRegister->OnEvent(event);
 
-		/**
-		* @breif Only active world's NativeScriptComponent event while viewport is hovered.
-		*/
-		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return;
-
 		auto& view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
 		for (auto& e : view)
 		{

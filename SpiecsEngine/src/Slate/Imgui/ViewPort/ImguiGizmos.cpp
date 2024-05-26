@@ -5,6 +5,7 @@
 #include "Core/Input/KeyCodes.h"
 #include "World/World/World.h"
 #include "World/Entity.h"
+#include "Systems/SlateSystem.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -17,9 +18,11 @@ namespace Spiecs {
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
 
+            auto& size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+
             float windowWidth = (float)ImGui::GetWindowWidth();
             float windowHeight = (float)ImGui::GetWindowHeight();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, size.x, size.y);
 
             //// Camera
             glm::mat4 viewMat = glm::mat4(1.0f);
@@ -42,12 +45,12 @@ namespace Spiecs {
                 }
             }
 
-            //// Entity transform
+            // Entity transform
             Entity entity((entt::entity)m_FrameInfo.m_PickEntityID.endk(), m_FrameInfo.m_World.get());
             auto& tc = entity.GetComponent<TransformComponent>();
             glm::mat4 model = tc.GetModelMatrix();
 
-            //// Snapping
+            // Snapping
             bool snap = Input::IsKeyPressed(Key::LeftControl);
             float snapValue = 0.5f; // Snap to 0.5m for translation/scale
             // Snap to 45 degrees for rotation
@@ -58,6 +61,7 @@ namespace Spiecs {
 
             float snapValues[3] = { snapValue, snapValue ,snapValue };
 
+            ImGuizmo::DrawGrid(glm::value_ptr(viewMat), glm::value_ptr(projectionMat), glm::value_ptr(glm::mat4(1.0f)), 100.f);
             ImGuizmo::Manipulate(glm::value_ptr(viewMat), glm::value_ptr(projectionMat),
                 (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(model),
                 nullptr, snap ? snapValues : nullptr);
@@ -72,6 +76,25 @@ namespace Spiecs {
                 tc.SetRotation(tc.GetRotation() + deltaRotation);
                 tc.SetScale(scale);
             }
+
+
+            /*ImGuiIO& io = ImGui::GetIO();
+            float viewManipulateRight = io.DisplaySize.x;
+            float viewManipulateTop = 0;
+
+            ImGuizmo::SetDrawlist();
+            float windowWidth = (float)ImGui::GetWindowWidth();
+            float windowHeight = (float)ImGui::GetWindowHeight();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+            viewManipulateRight = ImGui::GetWindowPos().x + windowWidth;
+            viewManipulateTop = ImGui::GetWindowPos().y;*/
+
+            //ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
+            //ImGuizmo::DrawCubes(cameraView, cameraProjection, &objectMatrix[0][0], gizmoCount);
+            //ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
+
+            //ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
+
         }
     }
 }

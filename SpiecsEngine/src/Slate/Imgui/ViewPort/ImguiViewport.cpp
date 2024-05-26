@@ -3,6 +3,7 @@
 #include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Systems/SlateSystem.h"
 #include "ImguiFloattingInfo.h"
+#include "ImGuizmo.h"
 
 namespace Spiecs {
 
@@ -14,6 +15,7 @@ namespace Spiecs {
         m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
 
         m_FloattingInfo = SlateSystem::GetRegister()->Register<ImguiFloattingInfo>(false, "FloattingInfo", this);
+        m_Gizmos        = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, "Gizmos");
     }
 
     void ImguiViewport::OnRender()
@@ -26,9 +28,11 @@ namespace Spiecs {
         m_IsFocused = ImGui::IsWindowFocused();
         m_IsHovered = ImGui::IsWindowHovered();
 
-        m_FloattingInfo->OnRender();
-
         ImGui::Image((void*)m_ViewportID, m_PanelSize);
+
+        m_FloattingInfo->OnRender();
+        m_Gizmos->OnRender();
+
         End();
     }
 

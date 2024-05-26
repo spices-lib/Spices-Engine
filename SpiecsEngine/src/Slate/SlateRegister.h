@@ -15,7 +15,7 @@
 #include "Slate/Imgui/ViewPort/ImguiViewport.h"
 #include "Slate/Imgui/MainMenu/ImguiMainMenu.h"
 #include "Slate/Imgui/ViewPort/ImguiFloattingInfo.h"
-#include "Slate/Imgui/ImguiGizmos.h"
+#include "Slate/Imgui/ViewPort/ImguiGizmos.h"
 
 // STL Header
 #include <memory>

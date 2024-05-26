@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Core.h"
-#include "ImguiUtils.h"
+#include "Slate/Imgui/ImguiUtils.h"
 
 namespace Spiecs {
 

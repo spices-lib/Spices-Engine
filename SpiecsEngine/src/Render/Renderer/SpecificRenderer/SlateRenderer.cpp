@@ -103,6 +103,7 @@ namespace Spiecs {
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)

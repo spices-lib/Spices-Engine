@@ -5,6 +5,7 @@
 namespace Spiecs {
 
 	class ImguiFloattingInfo;
+	class ImguiGizmos;
 
 	class ImguiViewport : public ImguiSlate
 	{
@@ -27,6 +28,7 @@ namespace Spiecs {
 	private:
 		ImTextureID m_ViewportID;
 		std::shared_ptr<ImguiFloattingInfo> m_FloattingInfo;
+		std::shared_ptr<ImguiGizmos> m_Gizmos;
 		bool isResized = false;
 	};
 }

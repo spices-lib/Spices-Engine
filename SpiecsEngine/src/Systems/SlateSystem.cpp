@@ -28,7 +28,6 @@ namespace Spiecs {
 		m_SlateRegister->Register<ImguiContentBrowser>(true, "Content");
 		m_SlateRegister->Register<ImguiProperty>(true, "Property");
 		m_SlateRegister->Register<ImguiStage>(true, "Stage");
-		m_SlateRegister->Register<ImguiGizmos>(true, "Gizmos");
 	}
 
 	void SlateSystem::OnSystemShutDown()

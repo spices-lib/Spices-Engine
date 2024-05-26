@@ -11,6 +11,7 @@
 #include "Core/Input/Input.h"
 #include "Core/Input/MouseButtonCodes.h"
 #include "Systems/SlateSystem.h"
+#include "Core/Input/KeyCodes.h"
 
 namespace Spiecs {
 
@@ -28,7 +29,7 @@ namespace Spiecs {
 		*/
 		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return;
 
-		//if (Input::IsKeyPressed(Key::LeftAlt))
+		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
@@ -48,7 +49,8 @@ namespace Spiecs {
 
 		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(CameraController::OnKeyPressed));
 		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(CameraController::OnMouseScroll));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(CameraController::OnWindowResized));
+		dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(CameraController::OnWindowResizeOver));
+		//dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(CameraController::OnSlateResized));
 	}
 
 	bool CameraController::OnKeyPressed(KeyPressedEvent& e)
@@ -64,11 +66,18 @@ namespace Spiecs {
 		return false;
 	}
 
-	bool CameraController::OnWindowResized(WindowResizeEvent& e)
+	bool CameraController::OnWindowResizeOver(WindowResizeOverEvent& e)
 	{
 		float ratio = e.GetWidth() / float(e.GetHeight());
 		std::any_cast<std::shared_ptr<Camera>>(m_Camera)->SetPerspective(ratio);
 
+		return false;
+	}
+	
+	bool CameraController::OnSlateResized(SlateResizeEvent& e)
+	{
+		float ratio = e.GetWidth() / float(e.GetHeight());
+		std::any_cast<std::shared_ptr<Camera>>(m_Camera)->SetPerspective(ratio);
 		return false;
 	}
 
