@@ -18,5 +18,8 @@ namespace Spiecs {
 		virtual void OnUpdate(TimeStep& ts) override {};
 		virtual void OnRender() override;
 		virtual void OnEvent(Event& event) override {};
+
+	private:
+		std::string m_ProfileProcessName = SPIECS_EXTENT_PROCESS_PATH +  "tracy/tracy-profiler.exe";
 	};
 }

@@ -6,6 +6,8 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
+#include <time.h>
+
 namespace Spiecs {
 
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
@@ -22,7 +24,24 @@ namespace Spiecs {
 		/**
 		* @brief Log/Log.log file.
 		*/
-		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(SPIECS_lOG_PATH, max_size, max_files);
+		time_t timep;
+		struct tm* p;
+
+		time(&timep);
+		p = localtime(&timep);
+
+		std::stringstream ss;
+		ss << 
+		SPIECS_lOGFILE_PATH << 
+		p->tm_year + 1900 <<  
+		p->tm_mon  << 
+		p->tm_mday << 
+		p->tm_hour << 
+		p->tm_min  << 
+		p->tm_sec  << 
+		"_Log.log";
+
+		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(ss.str(), max_size, max_files);
 		file_sink->set_level(spdlog::level::trace);
 
 		/**

@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "ImguiUtilities.h"
 #include "Systems/SlateSystem.h"
+#include "Core/Library/ProcessLibrary.h"
 
 namespace Spiecs {
     ImguiUtilities::ImguiUtilities(const std::string& panelName, FrameInfo& frameInfo)
@@ -13,7 +14,7 @@ namespace Spiecs {
     {
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
-            if (ImGui::MenuItem("Profiler")) {}
+            if (ImGui::MenuItem("Profiler")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }
 
             ImGui::EndMenu();
         }
