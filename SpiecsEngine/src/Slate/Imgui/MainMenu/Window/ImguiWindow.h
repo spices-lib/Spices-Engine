@@ -5,6 +5,7 @@
 namespace Spiecs {
 
 	class ImguiVisualizer;
+	class ImguiUtilities;
 
 	class ImguiWindow : public ImguiSlate
 	{
@@ -18,5 +19,6 @@ namespace Spiecs {
 
 	private:
 		std::shared_ptr<ImguiVisualizer> m_Visualizer;
+		std::shared_ptr<ImguiUtilities> m_Utilities;
 	};
 }

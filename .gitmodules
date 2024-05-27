@@ -22,3 +22,6 @@
 [submodule "SpiecsEngine/vendor/ImGuizmo"]
 	path = SpiecsEngine/vendor/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo
+[submodule "SpiecsEngine/vendor/tracy"]
+	path = SpiecsEngine/vendor/tracy
+	url = https://github.com/wolfpld/tracy

@@ -2,6 +2,7 @@
 #include "Systems/SlateSystem.h"
 #include "ImguiWindow.h"
 #include "Visualizer/ImguiVisualizer.h"
+#include "Utilities/ImguiUtilities.h"
 
 namespace Spiecs {
 
@@ -9,6 +10,7 @@ namespace Spiecs {
         : ImguiSlate(panelName, frameInfo)
     {
         m_Visualizer = SlateSystem::GetRegister()->Register<ImguiVisualizer>(false, "Visualizer");
+        m_Utilities  = SlateSystem::GetRegister()->Register<ImguiUtilities>(false, "Utilities");
     }
 
     void ImguiWindow::OnRender()
@@ -16,6 +18,7 @@ namespace Spiecs {
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
             m_Visualizer->OnRender();
+            m_Utilities->OnRender();
 
             ImGui::EndMenu();
         }
