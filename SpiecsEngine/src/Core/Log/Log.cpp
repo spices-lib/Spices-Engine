@@ -50,7 +50,7 @@ namespace Spiecs {
 		auto ide_console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 		ide_console_sink->set_level(spdlog::level::trace);
 
-		auto console_sink = Console::Register("Console");
+		auto console_sink = Console::Register("Console", ss.str());
 
 		/**
 		* @brief console slate log.

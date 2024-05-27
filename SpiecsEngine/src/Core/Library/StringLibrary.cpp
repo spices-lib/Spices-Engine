@@ -7,6 +7,10 @@
 #include "Pchheader.h"
 #include "StringLibrary.h"
 
+#include <string>
+#include <locale>
+#include <codecvt>
+
 namespace Spiecs {
 
 	std::vector<std::string> StringLibrary::SplitString(const std::string& input, char delimiter)
@@ -28,5 +32,19 @@ namespace Spiecs {
     bool StringLibrary::StringsEqual(const char* str0, const char* str1)
     {
         return strcmp(str0, str1) == 0;
+    }
+
+    std::wstring StringLibrary::CharToWChar(const char* c)
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+
+        return converter.from_bytes(c);
+    }
+
+    std::string StringLibrary::WCharToChar(const wchar_t* wc)
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+
+        return converter.to_bytes(wc);
     }
 }

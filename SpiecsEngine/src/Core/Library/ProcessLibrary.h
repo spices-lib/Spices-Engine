@@ -9,7 +9,7 @@ namespace Spiecs {
 	{
 	public:
 		
-		static bool OpenProcess(const char* processName);
+		static bool OpenProcess(const char* processPath, const char* commandLine = "");
 
 		static bool CloseProcess(const char* processName);
 	};

@@ -35,5 +35,8 @@ namespace Spiecs {
 		* @todo Platform Implementation.
 		*/
 		static bool StringsEqual(const char* str0, const char* str1);
+
+		static std::wstring CharToWChar(const char* c);
+		static std::string WCharToChar(const wchar_t* wc);
 	};
 }

@@ -5,6 +5,7 @@
 #include "Resources/Texture/Texture2D.h"
 #include "Core/Library/FileLibrary.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Core/Library/ProcessLibrary.h"
 
 namespace Spiecs {
 
@@ -30,13 +31,26 @@ namespace Spiecs {
 
 		if (ImGui::ImageButton(m_ConsoleIconID.clearConsoleIcon, ImVec2(18, 18))) { m_Console->Clear(); }
 		ImGui::SameLine();
-		if (ImGui::ImageButton(m_ConsoleIconID.openLogFileIcon, ImVec2(18, 18))) { m_Console->Clear(); }
+		if (ImGui::ImageButton(m_ConsoleIconID.openLogFileIcon, ImVec2(18, 18))) 
+		{ 
+			std::stringstream ss;
+			ss << "C:/Windows/System32/notepad.exe " << m_Console->GetFilePath();
+			ProcessLibrary::OpenProcess("C:/Windows/System32/notepad.exe ", ss.str().c_str());
+		}
 		ImGui::SameLine();
-		if (ImGui::ImageButton(m_ConsoleIconID.openLogFolderIcon, ImVec2(18, 18))) { 
+		if (ImGui::ImageButton(m_ConsoleIconID.openLogFolderIcon, ImVec2(18, 18))) 
+		{ 
 			std::string filepath = FileLibrary::FileLibrary_OpenInExplore(
 				"Spiecs Log (*.log)\0*.log\0",
 				glfwGetWin32Window((GLFWwindow*)VulkanRenderBackend::GetState().m_Windows)
 			);
+
+			if (filepath != "")
+			{
+				std::stringstream ss;
+				ss << "C:/Windows/System32/notepad.exe " << filepath;
+				ProcessLibrary::OpenProcess("C:/Windows/System32/notepad.exe ", ss.str().c_str());
+			}
 		}
 		ImGui::SameLine();
 		if (ImGui::ImageButton(m_ConsoleIconID.enableCommandFieldIcon, ImVec2(18, 18))) { m_Console->Clear(); }

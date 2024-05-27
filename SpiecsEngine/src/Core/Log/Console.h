@@ -15,14 +15,18 @@ namespace Spiecs {
 	class Console : public spdlog::sinks::base_sink<std::mutex>
 	{
 	public:
-		Console();
+		Console(const std::string& filePath);
 		virtual ~Console();
 
-		static std::shared_ptr<Console> Register(const std::string& name);
+		static std::shared_ptr<Console> Register(
+			const std::string& name, 
+			const std::string& filePath = ""
+		);
 
 		const std::vector<InfoLevelHelper>& GetInfos() { return m_LogInfos; };
 		void Clear();
 		void Push(const std::string& cmd);
+		inline const std::string& GetFilePath() { return m_FilePath; };
 
 	protected:
 		void sink_it_(const spdlog::details::log_msg& msg) override;
@@ -30,5 +34,6 @@ namespace Spiecs {
 
 	protected:
 		std::vector<InfoLevelHelper> m_LogInfos;
+		std::string m_FilePath;
 	};
 }

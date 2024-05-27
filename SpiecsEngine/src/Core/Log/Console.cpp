@@ -5,7 +5,8 @@ namespace Spiecs {
 
 	static std::unordered_map<std::string, std::shared_ptr<Console>> m_GlobalConsolePool;
 
-	Console::Console()
+	Console::Console(const std::string& filePath)
+		: m_FilePath(filePath)
 	{
 		m_LogInfos.clear();
 	}
@@ -15,11 +16,11 @@ namespace Spiecs {
 
 	}
 
-	std::shared_ptr<Console> Console::Register(const std::string& name)
+	std::shared_ptr<Console> Console::Register(const std::string& name, const std::string& filePath)
 	{
 		if (m_GlobalConsolePool.find(name) == m_GlobalConsolePool.end())
 		{
-			m_GlobalConsolePool[name] = std::make_shared<Console>();
+			m_GlobalConsolePool[name] = std::make_shared<Console>(filePath);
 		}
 
 		return m_GlobalConsolePool[name];
