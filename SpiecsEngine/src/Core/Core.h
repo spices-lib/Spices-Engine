@@ -18,6 +18,8 @@
 #include <GLFW/glfw3.h>
 #include <glfw/glfw3native.h>
 
+#include "tracy/Tracy.hpp"
+
 namespace Spiecs {
 
 /**

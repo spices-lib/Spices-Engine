@@ -31,6 +31,7 @@ project "SpiecsTest"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.googletest}",
 		"%{IncludeDir.googlemock}",
+		"%{IncludeDir.tracy}",
 	}
 
 	links

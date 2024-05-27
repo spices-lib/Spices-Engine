@@ -25,7 +25,10 @@ project "SpiecsEngine"
 		"vendor/tinyobjloader/**.h",
 
 		"vendor/ImGuizmo/ImGuizmo.cpp",
-		"vendor/ImGuizmo/ImGuizmo.h"
+		"vendor/ImGuizmo/ImGuizmo.h",
+
+		"vendor/tracy/public/TracyClient.cpp",
+		"vendor/tracy/public/tracy/Tracy.hpp",
 	}
 
 	defines
@@ -52,6 +55,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.NvPerfUtility}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.tracy}",
 	}
 
 	links
@@ -73,6 +77,9 @@ project "SpiecsEngine"
 	filter "files:vendor/ImGuizmo/**.cpp"
 	flags { "NoPCH" }
 
+	filter "files:vendor/tracy/public/**.cpp"
+	flags { "NoPCH" }
+
 	filter "system:windows"
 		systemversion "latest"
 
@@ -85,11 +92,18 @@ project "SpiecsEngine"
 		}
 
 	filter "configurations:Debug"
-		defines "SPIECS_DEBUG"
+		defines 
+		{
+			"SPIECS_DEBUG",
+			"TRACY_ENABLE"
+		}
 		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "SPIECS_RELEASE"
+		defines 
+		{
+			"SPIECS_RELEASE",
+		}
 		runtime "Release"
 		optimize "On"

@@ -99,6 +99,8 @@ namespace Spiecs {
 			* @brief Activete Our Specific World.
 			*/
 			FrameInfo::Get().m_World->OnActivate(ts);
+
+			FrameMark;
 		}
 
 		/**

@@ -32,6 +32,7 @@ project "SpiecsGame"
 		"%{IncludeDir.tinyobjloader}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.tracy}",
 	}
 
 	links
@@ -43,11 +44,18 @@ project "SpiecsGame"
 		systemversion "latest"
 
 	filter "configurations:Debug"
-		defines "SPIECS_DEBUG"
+		defines
+		{
+			"SPIECS_DEBUG",
+			"TRACY_ENABLE"
+		}
 		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "SPIECS_RELEASE"
+		defines
+		{
+			"SPIECS_DEBUG",
+		}
 		runtime "Release"
 		optimize "On"

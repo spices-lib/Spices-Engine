@@ -13,6 +13,7 @@ IncludeDir["NvPerf"]         = "%{wks.location}/SpiecsEngine/vendor/NvPerf/inclu
 IncludeDir["NvPerfUtility"]  = "%{wks.location}/SpiecsEngine/vendor/NvPerfUtility/include"
 IncludeDir["spdlog"]         = "%{wks.location}/SpiecsEngine/vendor/spdlog/include"
 IncludeDir["ImGuizmo"]       = "%{wks.location}/SpiecsEngine/vendor/ImGuizmo"
+IncludeDir["tracy"]          = "%{wks.location}/SpiecsEngine/vendor/tracy/public"
 IncludeDir["googletest"]     = "%{wks.location}/SpiecsTest/vendor/googletest/googletest/include"
 IncludeDir["googlemock"]     = "%{wks.location}/SpiecsTest/vendor/googletest/googlemock/include"
 
