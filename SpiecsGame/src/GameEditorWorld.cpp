@@ -65,7 +65,6 @@ namespace Spiecs {
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)
 	{
-		FrameMark;
 		EditorWorld::OnActivate(ts);
 	}
 

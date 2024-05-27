@@ -206,4 +206,58 @@ namespace SpiecsTest {
 		EXPECT_EQ(c1.has_equalsize(), true);
 		EXPECT_EQ(c2.has_equalsize(), true);
 	}
+
+	/**
+	* @brief Testing if No Linear Finding is successfully.
+	*/
+	TEST_F(linked_unordered_map_test, NoLinearFind) {
+
+		/**
+		* @brief Testing prev_value is getted successfully.
+		*/
+		EXPECT_EQ(c0.prev_value("aaa"), "");
+		EXPECT_EQ(c0.prev_value("bbb"), "aaa");
+		EXPECT_EQ(c0.prev_value("ccc"), "bbb");
+
+		/**
+		* @brief Testing next_value is getted successfully.
+		*/
+		EXPECT_EQ(c0.next_value("aaa"), "bbb");
+		EXPECT_EQ(c0.next_value("bbb"), "ccc");
+		EXPECT_EQ(c0.next_value("ccc"),  "");
+
+		/**
+		* @breif Testing first value is getted successfully.
+		*/
+		scl::linked_unordered_map<std::string, std::string> c3;
+
+		EXPECT_EQ(c0.first(), "aaa");
+		EXPECT_EQ(c1.first(), "1");
+		EXPECT_EQ(c2.first(), "1.0");
+		EXPECT_EQ(c3.first(), "");
+
+		/**
+		* @breif Testing end value is getted successfully.
+		*/
+		EXPECT_EQ(c0.end(), "ccc");
+		EXPECT_EQ(c1.end(), "3");
+		EXPECT_EQ(c2.end(), "3.0");
+		EXPECT_EQ(c3.end(), "");
+
+		/**
+		* @breif Testing end key is getted successfully.
+		*/
+		EXPECT_EQ(c0.endk(), "ccc");
+		EXPECT_EQ(c1.endk(), 3);
+		EXPECT_EQ(c2.endk(), 3.0);
+		EXPECT_EQ(c3.endk(), "");
+
+		/**
+		* @brief Testing container's euqlity after NoLinearFind.
+		*/
+		EXPECT_EQ(c0.has_equalsize(), true);
+		EXPECT_EQ(c1.has_equalsize(), true);
+		EXPECT_EQ(c2.has_equalsize(), true);
+		EXPECT_EQ(c3.has_equalsize(), true);
+	}
 }

@@ -98,28 +98,34 @@ namespace scl {
 		* @brief Get the previous element by the key.
 		* @param[in] key the key.
 		* @return Returns the previous element.
+		* @note It's slow, so do not use it unnecessary. 
 		*/
-		V* prev_value(const K& key);
+		V& prev_value(const K& key);
 
 		/**
 		* @brief Get the next element by the key.
 		* @param[in] key the key.
 		* @return Returns the next element.
+		* @note It's slow, so do not use it unnecessary. 
 		*/
-		V* next_value(const K& key);
+		V& next_value(const K& key);
 
 		/**
-		* @brief Get the first element this container.
+		* @brief Get the first element of this container.
 		* @return Returns the first element finded.
 		*/
 		V& first();
 
 		/**
-		* @brief Get the end element this container.
+		* @brief Get the end element of this container.
 		* @return Returns the end element finded.
 		*/
 		V& end();
 
+		/**
+		* @breif Get the end key of this container.
+		* @return Returns the end key finded.
+		*/
 		K& endk();
 	};
 
@@ -129,7 +135,7 @@ namespace scl {
 		/**
 		* @brief Clear list.
 		*/
-		keys_.clear();
+		keys_.clear(); // Clear list.
 
 		/**
 		* @brief Clear hashmap.
@@ -219,71 +225,93 @@ namespace scl {
 			*/
 			bool isbreak = fn(key, map_[key]);
 			
-			if(isbreak) break;
+			if(isbreak) break;   //Break If want.
 		}
 	}
 
 	template<typename K, typename V>
-	inline V* linked_unordered_map<K, V>::prev_value(const K& key)
+	inline V& linked_unordered_map<K, V>::prev_value(const K& key)
 	{
+		/**
+		* @breif Returns V() if not find key.
+		*/
 		if (!has_key(key))
 		{
-			return nullptr;
+			return V();
 		}
 
-		for (it = keys_.begin(); it != keys_.end(); it++)
+		/**
+		* @brief Iter the list.
+		*/
+		for (auto it = keys_.begin(); it != keys_.end(); it++)
 		{
 			if (*it == key)
 			{
 				if (it == keys_.begin())
 				{
-					return nullptr;
+					/**
+					* @brief Returns V() if not a prev value.
+					*/
+					return V();
 				}
 				else
 				{
-					return it--;
+					return *it--;
 				}
 			}
 		}
 
-		return nullptr;
+		return V();
 	}
 
 	template<typename K, typename V>
-	inline V* linked_unordered_map<K, V>::next_value(const K& key)
+	inline V& linked_unordered_map<K, V>::next_value(const K& key)
 	{
+		/**
+		* @breif Returns V() if not find key.
+		*/
 		if (!has_key(key))
 		{
-			return nullptr;
+			return V();
 		}
 
-		for (it = keys_.begin(); it != keys_.end(); it++)
+		/**
+		* @brief Iter the list.
+		*/
+		for (auto it = keys_.begin(); it != keys_.end(); it++)
 		{
 			if (*it == key)
 			{
+				/**
+				* @brief Returns V() if not a next value.
+				*/
 				if (it == keys_.end())
 				{
-					return nullptr;
+					return V();
 				}
 				else
 				{
-					return it++;
+					return *it++;
 				}
 			}
 		}
 
-		return nullptr;
+		return V();
 	}
 
 	template<typename K, typename V>
 	V& linked_unordered_map<K, V>::first()
 	{
+		if (size() == 0) return V();
+
 		return map_[keys_.front()];
 	}
 
 	template<typename K, typename V>
 	V& linked_unordered_map<K, V>::end()
 	{
+		if (size() == 0) return V();
+
 		return map_[keys_.back()];
 	}
 
