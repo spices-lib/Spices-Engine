@@ -328,7 +328,7 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BeginRenderPass()
 	{
-		m_HandledSubPass = m_Renderer->m_Pass->GetSubPasses().first();
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

@@ -215,42 +215,42 @@ namespace SpiecsTest {
 		/**
 		* @brief Testing prev_value is getted successfully.
 		*/
-		EXPECT_EQ(c0.prev_value("aaa"), "");
-		EXPECT_EQ(c0.prev_value("bbb"), "aaa");
-		EXPECT_EQ(c0.prev_value("ccc"), "bbb");
+		EXPECT_EQ(c0.prev_value("aaa"), nullptr);
+		EXPECT_EQ(*c0.prev_value("bbb"), "aaa");
+		EXPECT_EQ(*c0.prev_value("ccc"), "bbb");
 
 		/**
 		* @brief Testing next_value is getted successfully.
 		*/
-		EXPECT_EQ(c0.next_value("aaa"), "bbb");
-		EXPECT_EQ(c0.next_value("bbb"), "ccc");
-		EXPECT_EQ(c0.next_value("ccc"),  "");
+		EXPECT_EQ(*c0.next_value("aaa"), "bbb");
+		EXPECT_EQ(*c0.next_value("bbb"), "ccc");
+		EXPECT_EQ(c0.next_value("ccc"),  nullptr);
 
 		/**
 		* @breif Testing first value is getted successfully.
 		*/
 		scl::linked_unordered_map<std::string, std::string> c3;
 
-		EXPECT_EQ(c0.first(), "aaa");
-		EXPECT_EQ(c1.first(), "1");
-		EXPECT_EQ(c2.first(), "1.0");
-		EXPECT_EQ(c3.first(), "");
+		EXPECT_EQ(*c0.first(), "aaa");
+		EXPECT_EQ(*c1.first(), "1");
+		EXPECT_EQ(*c2.first(), "1.0");
+		EXPECT_EQ(c3.first(), nullptr);
 
 		/**
 		* @breif Testing end value is getted successfully.
 		*/
-		EXPECT_EQ(c0.end(), "ccc");
-		EXPECT_EQ(c1.end(), "3");
-		EXPECT_EQ(c2.end(), "3.0");
-		EXPECT_EQ(c3.end(), "");
+		EXPECT_EQ(*c0.end(), "ccc");
+		EXPECT_EQ(*c1.end(), "3");
+		EXPECT_EQ(*c2.end(), "3.0");
+		EXPECT_EQ(c3.end(), nullptr);
 
 		/**
 		* @breif Testing end key is getted successfully.
 		*/
-		EXPECT_EQ(c0.endk(), "ccc");
-		EXPECT_EQ(c1.endk(), 3);
-		EXPECT_EQ(c2.endk(), 3.0);
-		EXPECT_EQ(c3.endk(), "");
+		EXPECT_EQ(*c0.endk(), "ccc");
+		EXPECT_EQ(*c1.endk(), 3);
+		EXPECT_EQ(*c2.endk(), 3.0);
+		EXPECT_EQ(c3.endk(), nullptr);
 
 		/**
 		* @brief Testing container's euqlity after NoLinearFind.

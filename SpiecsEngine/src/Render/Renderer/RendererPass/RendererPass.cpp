@@ -115,7 +115,7 @@ namespace Spiecs {
 		});
 
 		std::vector<VkSubpassDependency> subPassDepecdency;
-		m_SubPasses.first()->BuildFirstSubPassDependency();
+		(*m_SubPasses.first())->BuildFirstSubPassDependency();
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			subPassDepecdency.push_back(subpass->GetDependency());
 			return false;
