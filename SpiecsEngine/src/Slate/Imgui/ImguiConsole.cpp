@@ -13,6 +13,8 @@ namespace Spiecs {
 		: ImguiSlate(panelName, frameInfo)
 		, m_Console(console)
 	{
+		ZoneScoped;
+
 		LoadConsoleIcon(m_ConsoleIconID.clearConsoleIcon,       "slate/Console.ClearConsole.png"       );
 		LoadConsoleIcon(m_ConsoleIconID.openLogFileIcon,        "slate/Console.OpenLogFile.png"        );
 		LoadConsoleIcon(m_ConsoleIconID.openLogFolderIcon,      "slate/Console.OpenLogFolder.png"      );
@@ -27,6 +29,8 @@ namespace Spiecs {
 
 	void ImguiConsole::OnRender()
 	{
+		ZoneScoped;
+
 		Begin();
 
 		if (ImGui::ImageButton(m_ConsoleIconID.clearConsoleIcon, ImVec2(18, 18))) { m_Console->Clear(); }

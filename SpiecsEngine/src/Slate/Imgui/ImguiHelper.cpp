@@ -6,6 +6,8 @@ namespace Spiecs {
 
     void ImGuiH::SetStyle()
     {
+        ZoneScoped;
+
         ImGui::StyleColorsDark();
 
         ImGuiStyle& style                   = ImGui::GetStyle();
@@ -81,6 +83,8 @@ namespace Spiecs {
 
     void ImGuiH::SetFonts(FontMode fontmode)
     {
+        ZoneScoped;
+
         ImGuiIO& io = ImGui::GetIO();
         const float high_dpi_scale = GetDPIScale();
 
@@ -124,6 +128,8 @@ namespace Spiecs {
 
     float ImGuiH::GetDPIScale()
     {
+        ZoneScoped;
+
         // Cached DPI scale, so that this doesn't change after the first time code calls getDPIScale.
         // A negative value indicates that the value hasn't been computed yet.
         static float cached_dpi_scale = -1.0f;

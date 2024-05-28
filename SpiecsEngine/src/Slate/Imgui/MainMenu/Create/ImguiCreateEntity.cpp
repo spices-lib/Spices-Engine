@@ -11,6 +11,8 @@ namespace Spiecs {
 
     void ImguiCreateEntity::OnRender()
     {
+        ZoneScoped;
+
         if (ImGui::BeginMenu("Create"))
         {
             // Mesh

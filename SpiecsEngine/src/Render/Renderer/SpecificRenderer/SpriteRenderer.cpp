@@ -12,6 +12,8 @@ namespace Spiecs {
 
 	void SpriteRenderer::CreateRendererPass()
 	{
+		ZoneScoped;
+
 		RendererPassBuilder{ "Sprite", this }
 		.AddSubPass("Sprite")
 		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
@@ -27,6 +29,8 @@ namespace Spiecs {
 
 	void SpriteRenderer::CreateDescriptorSet()
 	{
+		ZoneScoped;
+
 		DescriptorSetBuilder{ "Sprite", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
@@ -34,6 +38,8 @@ namespace Spiecs {
 
 	void SpriteRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();

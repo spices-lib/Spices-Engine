@@ -20,12 +20,16 @@ namespace Spiecs {
 	)
 		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
 	{
+		ZoneScoped;
+
 		m_Square = std::make_unique<SquarePack>();
 		m_Square->OnCreatePack();
 	}
 
 	void WorldPickStage2Renderer::CreateRendererPass()
 	{
+		ZoneScoped;
+
 		RendererPassBuilder{ "WorldPickStage2", this }
 		.AddSubPass("WorldPickStage2")
 		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
@@ -42,6 +46,8 @@ namespace Spiecs {
 
 	void WorldPickStage2Renderer::CreateDescriptorSet()
 	{
+		ZoneScoped;
+
 		DescriptorSetBuilder{ "WorldPickStage2", this }
 		.AddAttachmentTexture(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"SelectBuffer"})
 		.Build();
@@ -49,6 +55,8 @@ namespace Spiecs {
 
 	void WorldPickStage2Renderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();

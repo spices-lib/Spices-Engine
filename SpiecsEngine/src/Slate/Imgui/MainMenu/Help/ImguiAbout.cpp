@@ -11,6 +11,8 @@ namespace Spiecs {
 
     void ImguiAbout::OnRender()
     {
+        ZoneScoped;
+
         if (!m_IsSlateOn) return;
 
         Begin();

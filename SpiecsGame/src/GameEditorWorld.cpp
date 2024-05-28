@@ -65,6 +65,7 @@ namespace Spiecs {
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)
 	{
+		ZoneScoped;
 		EditorWorld::OnActivate(ts);
 	}
 

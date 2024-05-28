@@ -38,6 +38,8 @@ namespace Spiecs {
 
 	void SystemManager::Run(TimeStep& ts)
 	{
+		ZoneScoped;
+
 		m_Identities.for_each([&](auto& k, auto& v) {
 			v->OnSystemUpdate(ts);
 			return false;

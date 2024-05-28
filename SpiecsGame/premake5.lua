@@ -42,6 +42,7 @@ project "SpiecsGame"
 
 	filter "system:windows"
 		systemversion "latest"
+		editAndContinue "Off"
 
 	filter "configurations:Debug"
 		defines

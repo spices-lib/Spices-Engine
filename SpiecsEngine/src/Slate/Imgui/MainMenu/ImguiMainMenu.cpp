@@ -11,6 +11,8 @@ namespace Spiecs {
     ImguiMainMenu::ImguiMainMenu(const std::string& panelName, FrameInfo& frameInfo)
         : ImguiSlate(panelName, frameInfo)
     {
+        ZoneScoped;
+
         m_Create = SlateSystem::GetRegister()->Register<ImguiCreateEntity>(false, "Create");
         m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>(false, "Window");
         m_Help = SlateSystem::GetRegister()->Register<ImguiHelp>(false, "Help");
@@ -18,6 +20,8 @@ namespace Spiecs {
 
     void ImguiMainMenu::OnRender()
 	{
+        ZoneScoped;
+
         /**
         * @brief MainMenu do not need call Begin(), End().
         * ImGui::BeginMainMenuBar() does it automatically.

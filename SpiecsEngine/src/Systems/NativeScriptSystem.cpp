@@ -32,6 +32,8 @@ namespace Spiecs {
 
 	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{
+		ZoneScoped;
+
 		/**
 		* @brief Update NativeScript( C++ );
 		*/
@@ -51,6 +53,8 @@ namespace Spiecs {
 
 	void NativeScriptSystem::OnEvent(Event& event)
 	{
+		ZoneScoped;
+
 		m_NativeScriptRegister->OnEvent(event);
 
 		auto& view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();

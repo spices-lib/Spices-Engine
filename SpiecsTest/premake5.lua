@@ -42,6 +42,7 @@ project "SpiecsTest"
 
 	filter "system:windows"
 		systemversion "latest"
+		editAndContinue "Off"
 
 	filter "configurations:Debug"
 		runtime "Debug"

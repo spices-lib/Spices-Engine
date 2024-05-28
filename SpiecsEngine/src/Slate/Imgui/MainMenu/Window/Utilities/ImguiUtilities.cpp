@@ -12,6 +12,8 @@ namespace Spiecs {
 
     void ImguiUtilities::OnRender()
     {
+        ZoneScoped;
+
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
             if (ImGui::MenuItem("Profiler")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }

@@ -12,6 +12,8 @@ namespace Spiecs {
 
 	void WorldPickRenderer::CreateRendererPass()
 	{
+		ZoneScoped;
+
 		RendererPassBuilder{ "WorldPick", this }
 		.AddSubPass("WorldPick")
 		.AddColorAttachment("SelectBuffer", [](bool& isEnableBlend, VkAttachmentDescription& description) {
@@ -26,6 +28,8 @@ namespace Spiecs {
 
 	void WorldPickRenderer::CreateDescriptorSet()
 	{
+		ZoneScoped;
+
 		DescriptorSetBuilder{ "WorldPick", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
@@ -33,6 +37,8 @@ namespace Spiecs {
 
 	void WorldPickRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();

@@ -25,6 +25,8 @@ namespace Spiecs {
 
 	void RenderSystem::OnSystemUpdate(TimeStep& ts)
 	{
+		ZoneScoped;
+
 		/**
 		* @brief Begin Render this frame.
 		*/
@@ -48,6 +50,8 @@ namespace Spiecs {
 
 	void RenderSystem::OnEvent(Event& event)
 	{
+		ZoneScoped;
+
 		m_RenderFrontend->OnEvent(event);
 	}
 }

@@ -7,11 +7,15 @@ namespace Spiecs {
     ImguiVisualizer::ImguiVisualizer(const std::string& panelName, FrameInfo& frameInfo)
         : ImguiSlate(panelName, frameInfo)
     {
+        ZoneScoped;
+
         m_GBufferVisualizer = SlateSystem::GetRegister()->Register<ImguiGBufferVisualizer>(true, "GBuffer");
     }
 
     void ImguiVisualizer::OnRender()
     {
+        ZoneScoped;
+
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
             if (ImGui::MenuItem("GBuffer")) m_GBufferVisualizer->SetWindowState(true);

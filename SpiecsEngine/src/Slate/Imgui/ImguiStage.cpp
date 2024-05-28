@@ -10,11 +10,15 @@ namespace Spiecs {
     )
         : ImguiSlate(panelName, frameInfo)
     {
+        ZoneScoped;
+
         LoadConsoleIcon(m_StageIconID.visibleIcon, "slate/Console.ClearConsole.png");
     }
 
     void ImguiStage::OnRender()
     {
+        ZoneScoped;
+
         Begin();
 
         char search[128] = "";

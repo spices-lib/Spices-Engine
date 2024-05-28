@@ -25,6 +25,8 @@ namespace Spiecs {
 	
 	void RendererManager::Run(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		m_Identities.for_each([&](auto& k, auto& v) {
 			v->Render(ts, frameInfo);
 			return false;
@@ -33,6 +35,8 @@ namespace Spiecs {
 
 	void RendererManager::OnWindowResizeOver()
 	{
+		ZoneScoped;
+
 		m_Identities.for_each([](auto& k, auto& v) {
 			v->OnWindowResizeOver();
 			return false;
@@ -41,6 +45,8 @@ namespace Spiecs {
 
 	void RendererManager::OnSlateResize()
 	{
+		ZoneScoped;
+
 		m_Identities.for_each([](auto& k, auto& v) {
 			v->OnSlateResize();
 			return false;
@@ -49,6 +55,8 @@ namespace Spiecs {
 
 	std::shared_ptr<Renderer> RendererManager::GetRenderer(const std::string name)
 	{
+		ZoneScoped;
+
 		if (m_Identities.has_key(name))
 		{
 			return m_Identities.find_value(name);

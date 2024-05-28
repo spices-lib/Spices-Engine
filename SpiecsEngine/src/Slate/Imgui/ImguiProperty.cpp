@@ -5,6 +5,8 @@ namespace Spiecs {
 
 	void ImguiProperty::OnRender()
 	{
+		ZoneScoped;
+
 		Begin();
 		End();
 	}

@@ -17,6 +17,8 @@ namespace Spiecs {
 
 	void SlateSystem::OnSystemInitialize()
 	{
+		ZoneScoped;
+
 		m_SlateRegister = std::make_shared<SlateRegister>();
 
 		/**
@@ -41,6 +43,8 @@ namespace Spiecs {
 
 	void SlateSystem::OnEvent(Event& event)
 	{
+		ZoneScoped;
+
 		m_SlateRegister->OnEvent(event);
 	}
 }

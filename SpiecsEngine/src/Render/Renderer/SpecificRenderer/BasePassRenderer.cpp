@@ -12,6 +12,8 @@ namespace Spiecs {
 
 	void BasePassRenderer::CreateRendererPass()
 	{
+		ZoneScoped;
+
 		RendererPassBuilder{ "BassPass", this }
 		.AddSubPass("SkyBox")
 		.AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {
@@ -56,6 +58,8 @@ namespace Spiecs {
 
 	void BasePassRenderer::CreateDescriptorSet()
 	{
+		ZoneScoped;
+
 		DescriptorSetBuilder{ "SkyBox", this }
 		.AddPushConstant<PreR::PushConstant>()
 		.Build();
@@ -71,6 +75,8 @@ namespace Spiecs {
 		std::shared_ptr<RendererSubPass> subPass
 	)
 	{
+		ZoneScoped;
+
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = m_Pass->Get();
@@ -89,6 +95,8 @@ namespace Spiecs {
 
 	void BasePassRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();

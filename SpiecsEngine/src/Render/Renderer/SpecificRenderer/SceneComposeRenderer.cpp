@@ -28,12 +28,16 @@ namespace Spiecs {
 	)
 		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
 	{
+		ZoneScoped;
+
 		m_Square = std::make_unique<SquarePack>();
 		m_Square->OnCreatePack();
 	}
 
 	void SceneComposeRenderer::CreateRendererPass()
 	{
+		ZoneScoped;
+
 		RendererPassBuilder{ "SceneCompose", this }
 		.AddSubPass("SceneCompose")
 		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
@@ -64,6 +68,8 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
+		ZoneScoped;
+
 		DescriptorSetBuilder{ "SceneCompose", this }
 		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Position", "Depth" })
 		.AddStorageBuffer<SceneCR::LightsBuffer>(1, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
@@ -72,6 +78,8 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();

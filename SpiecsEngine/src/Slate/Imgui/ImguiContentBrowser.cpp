@@ -5,6 +5,8 @@ namespace Spiecs {
 
     void ImguiContentBrowser::OnRender()
     {
+        ZoneScoped;
+
         Begin();
 
         ImGui::ShowDemoWindow();

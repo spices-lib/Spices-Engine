@@ -9,12 +9,16 @@ namespace Spiecs {
     ImguiWindow::ImguiWindow(const std::string& panelName, FrameInfo& frameInfo)
         : ImguiSlate(panelName, frameInfo)
     {
+        ZoneScoped;
+
         m_Visualizer = SlateSystem::GetRegister()->Register<ImguiVisualizer>(false, "Visualizer");
         m_Utilities  = SlateSystem::GetRegister()->Register<ImguiUtilities>(false, "Utilities");
     }
 
     void ImguiWindow::OnRender()
     {
+        ZoneScoped;
+
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
             m_Visualizer->OnRender();

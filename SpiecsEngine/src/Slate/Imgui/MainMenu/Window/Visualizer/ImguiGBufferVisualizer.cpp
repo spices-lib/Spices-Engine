@@ -7,11 +7,15 @@ namespace Spiecs {
     ImguiGBufferVisualizer::ImguiGBufferVisualizer(const std::string& panelName, FrameInfo& frameInfo)
         : ImguiSlate(panelName, frameInfo)
     {
+        ZoneScoped;
+
         QueryGBufferID();
     }
 
     void ImguiGBufferVisualizer::OnRender()
     {
+        ZoneScoped;
+
         if (!m_IsSlateOn) return;
 
         Begin("GBuffer");
@@ -40,12 +44,16 @@ namespace Spiecs {
 
     void ImguiGBufferVisualizer::OnEvent(Event& event)
     {
+        ZoneScoped;
+
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(ImguiGBufferVisualizer::OnSlateResized));
     }
 
     bool ImguiGBufferVisualizer::OnSlateResized(SlateResizeEvent& event)
     {
+        ZoneScoped;
+
         m_GBufferID.Free();
 
         m_Width = 500;
@@ -57,6 +65,8 @@ namespace Spiecs {
 
     void ImguiGBufferVisualizer::QueryGBufferID()
     {
+        ZoneScoped;
+
         VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
         VkDescriptorImageInfo* diffuseInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Diffuse" );
         VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Normal"    );

@@ -10,6 +10,8 @@ namespace Spiecs {
     ImguiViewport::ImguiViewport(const std::string& panelName, FrameInfo& frameInfo)
         : ImguiSlate(panelName, frameInfo)
     {
+        ZoneScoped;
+
         VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
 
         m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
@@ -20,6 +22,8 @@ namespace Spiecs {
 
     void ImguiViewport::OnRender()
     {
+        ZoneScoped;
+
         BeginMainDock();
 
         QueryIsResizedThisFrame(ImGui::GetContentRegionAvail());
@@ -38,6 +42,8 @@ namespace Spiecs {
 
     void ImguiViewport::OnEvent(Event& event)
     {
+        ZoneScoped;
+
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(ImguiViewport::OnSlateResize));
@@ -45,6 +51,8 @@ namespace Spiecs {
 
     std::pair<uint32_t, uint32_t> ImguiViewport::GetMousePosInViewport()
     {
+        ZoneScoped;
+
         ImGuiIO& io = ImGui::GetIO();
         ImVec2 viewportPos = io.MousePos - m_PanelPos;
 
@@ -55,6 +63,8 @@ namespace Spiecs {
 
     bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
     {
+        ZoneScoped;
+
         ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(m_ViewportID));
 
         VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
@@ -66,6 +76,8 @@ namespace Spiecs {
 
     void ImguiViewport::QueryIsResizedThisFrame(ImVec2 thisFrameSize)
     {
+        ZoneScoped;
+
         if (m_PanelSize.x != thisFrameSize.x || m_PanelSize.y != thisFrameSize.y)
         {
             isResized = true;

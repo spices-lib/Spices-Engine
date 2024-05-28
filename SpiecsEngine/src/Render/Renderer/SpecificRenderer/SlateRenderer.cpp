@@ -12,6 +12,8 @@ namespace Spiecs {
 
 	void SlateRenderer::CreateRendererPass()
 	{
+		ZoneScoped;
+
 		RendererPassBuilder{ "Slate", this }
 		.AddSubPass("Slate")
 		.AddSwapChainAttachment([](VkAttachmentDescription& description) {
@@ -27,13 +29,15 @@ namespace Spiecs {
 
 	void SlateRenderer::OnSystemInitialize()
 	{
+		ZoneScoped;
+
 		Renderer::OnSystemInitialize();
 		InitImgui();
 	}
 
 	void SlateRenderer::InitImgui()
 	{
-		// UI
+		ZoneScoped;
 
 		/**
 		* @brief Context, a concept of OpenGL, means OpenGL objects in used during a render stage.
@@ -92,6 +96,8 @@ namespace Spiecs {
 
 	void SlateRenderer::ShutdownImgui()
 	{
+		ZoneScoped;
+
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImPlot::DestroyContext();
@@ -100,6 +106,8 @@ namespace Spiecs {
 
 	void SlateRenderer::BeginImguiFrame()
 	{
+		ZoneScoped;
+
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -108,6 +116,8 @@ namespace Spiecs {
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)
 	{
+		ZoneScoped;
+
 		ImGuiIO& io = ImGui::GetIO();
 
 		ImGui::Render();
@@ -124,6 +134,8 @@ namespace Spiecs {
 
 	void SlateRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();

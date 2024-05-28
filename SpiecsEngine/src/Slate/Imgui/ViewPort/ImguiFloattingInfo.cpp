@@ -8,6 +8,8 @@ namespace Spiecs {
 
     void ImguiFloattingInfo::OnRender()
     {
+        ZoneScoped;
+
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
 
         ImVec2 work_pos = m_Owner->GetPanelPos(); // Use work area to avoid menu-bar/task-bar, if any!

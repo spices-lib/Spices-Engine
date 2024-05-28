@@ -19,6 +19,8 @@ namespace Spiecs {
 
 	void SlateRegister::OnRender()
 	{
+		ZoneScoped;
+
 		for (auto& pair : m_SlatesRenderContainer)
 		{
 			pair.second->OnRender();

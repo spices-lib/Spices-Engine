@@ -11,6 +11,8 @@ namespace Spiecs {
 
 	TimeStep::TimeStep()
 	{
+		ZoneScoped;
+
 		/**
 		* @brief Init GameTime and FrameTime.
 		*/
@@ -20,6 +22,8 @@ namespace Spiecs {
 
 	void TimeStep::Flush()
 	{
+		ZoneScoped;
+
 		/**
 		* @brief Recording the current time.
 		*/

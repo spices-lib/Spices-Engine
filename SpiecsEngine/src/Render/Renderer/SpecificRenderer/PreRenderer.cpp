@@ -5,6 +5,8 @@ namespace Spiecs {
 
 	void PreRenderer::CreateRendererPass()
 	{
+		ZoneScoped;
+
 		RendererPassBuilder{ "PreRenderer", this }
 		.AddSubPass("PreRenderer")
 		.EndSubPass()	
@@ -13,6 +15,8 @@ namespace Spiecs {
 
 	void PreRenderer::CreateDescriptorSet()
 	{
+		ZoneScoped;
+
  		DescriptorSetBuilder{ "PreRenderer", this }
 		.AddUniformBuffer<PreR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
 		.AddUniformBuffer<PreR::SpiecsInput>(0, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
@@ -21,6 +25,8 @@ namespace Spiecs {
 
 	void PreRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
+		ZoneScoped;
+
 		/**
 		* @breif Instance a RenderBehaverBuilder.
 		*/

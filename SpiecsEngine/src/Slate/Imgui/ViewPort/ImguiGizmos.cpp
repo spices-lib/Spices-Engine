@@ -13,6 +13,8 @@ namespace Spiecs {
 
     void ImguiGizmos::OnRender()
     {
+        ZoneScoped;
+
         /**
         * @brief Set Gizmo Projection type.
         */
@@ -142,6 +144,8 @@ namespace Spiecs {
 
     void ImguiGizmos::OnEvent(Event& event)
     {
+        ZoneScoped;
+
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(ImguiGizmos::OnKeyPressed));
@@ -149,6 +153,8 @@ namespace Spiecs {
 
     bool ImguiGizmos::OnKeyPressed(KeyPressedEvent& e)
     {
+        ZoneScoped;
+
         switch (e.GetKeyCode())
         {
         case Key::W:
