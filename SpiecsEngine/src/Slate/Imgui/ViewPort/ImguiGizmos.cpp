@@ -1,5 +1,12 @@
+/**
+* @file ImguiGizmos.cpp.
+* @brief The ImguiGizmos Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "ImguiGizmos.h"
+
 #include "Core/Math/Math.h"
 #include "Core/Input/Input.h"
 #include "Core/Input/KeyCodes.h"
@@ -28,6 +35,9 @@ namespace Spiecs {
             */
             ImGuizmo::SetDrawlist();
 
+            /**
+            * @brief Locating Gizmo.
+            */
             ImGuizmo::SetRect(
                 m_Owner->GetPanelPos().x,
                 m_Owner->GetPanelPos().y,
@@ -36,14 +46,22 @@ namespace Spiecs {
             );
         }
 
+        /**
+        * @brief Instnce empty camera.
+        */
         Entity CameraEntity;
         glm::mat4 viewMat = glm::mat4(1.0f);
         glm::mat4 projectionMat = glm::mat4(1.0f);
 
-        // Camera' Matrix.
+        /**
+        * @brief Fill in camera.
+        */
         {
             ZoneScopedN("Get Camera Matrix");
 
+            /**
+            * @brief Iter by view.
+            */
             auto& view = m_FrameInfo.m_World->GetRegistry().view<CameraComponent>();
             for (auto& e : view)
             {
@@ -66,6 +84,9 @@ namespace Spiecs {
         {
             ZoneScopedN("ImGuizmo::DrawGrid");
 
+            /**
+            * @todo Remove it and implementate it by renderer.
+            */
             ImGuizmo::DrawGrid(
                 glm::value_ptr(viewMat),
                 glm::value_ptr(projectionMat),
@@ -80,6 +101,9 @@ namespace Spiecs {
         {
             ZoneScopedN("ImGuizmo::ViewManipulate");
 
+            /**
+            * @todo fix uncorrect manipulate.
+            */
             ImGuizmo::ViewManipulate(
                 glm::value_ptr(viewMat),
                 8.0f,
@@ -95,6 +119,9 @@ namespace Spiecs {
         {
             ZoneScopedN("DecomposeTransform");
 
+            /**
+            * @brief Split Channels from Matrix.
+            */
             glm::vec3 translation, rotation, scale;
             DecomposeTransform(glm::inverse(viewMat), translation, rotation, scale);
 
@@ -167,6 +194,9 @@ namespace Spiecs {
 
                     if (ImGuizmo::IsUsing())
                     {
+                        /**
+                        * @brief Split Channels from Matrix.
+                        */
                         glm::vec3 translation, rotation, scale;
                         DecomposeTransform(model, translation, rotation, scale);
 
@@ -184,8 +214,14 @@ namespace Spiecs {
     {
         ZoneScoped;
 
+        /**
+        * @brief Instance a EventDispatcher.
+        */
         EventDispatcher dispatcher(event);
 
+        /**
+        * @brief Dispatch KeyPressedEvent to ImguiGizmos::OnKeyPressed.
+        */
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(ImguiGizmos::OnKeyPressed));
     }
 
