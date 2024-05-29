@@ -11,6 +11,11 @@ namespace Spiecs {
 
 	void SlateRegister::OnUpdate(TimeStep& ts)
 	{
+		ZoneScoped;
+
+		/**
+		* @brief Iter hash map.
+		*/
 		for (auto& pair : m_SlatesRenderContainer)
 		{
 			pair.second->OnUpdate(ts);
@@ -21,6 +26,9 @@ namespace Spiecs {
 	{
 		ZoneScoped;
 
+		/**
+		* @brief Iter hash map.
+		*/
 		for (auto& pair : m_SlatesRenderContainer)
 		{
 			pair.second->OnRender();
@@ -29,6 +37,11 @@ namespace Spiecs {
 
 	void SlateRegister::OnEvent(Event& event)
 	{
+		ZoneScoped;
+
+		/**
+		* @brief Iter hash map.
+		*/
 		for (auto& pair : m_SlatesEventContainer)
 		{
 			pair.second->OnEvent(event);
@@ -37,6 +50,8 @@ namespace Spiecs {
 
 	std::shared_ptr<ImguiViewport> SlateRegister::GetViewPort()
 	{
+		ZoneScoped;
+
 		return std::static_pointer_cast<ImguiViewport>(m_SlatesRenderContainer["ViewPort"]);
 	}
 }

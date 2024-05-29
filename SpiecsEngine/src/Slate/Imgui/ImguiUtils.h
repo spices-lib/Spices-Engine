@@ -108,20 +108,41 @@ namespace Spiecs{
 		* @param[out] id The ImTextureID Created with inconFilePath.
 		* @param[in] iconFile The file path of icon.
 		*/
-		void LoadConsoleIcon(ImTextureID& id, const std::string& iconFile);
+		void LoadSlateIcon(ImTextureID& id, const std::string& iconFile);
 
 	public:
 
 		/**
-		* @brief 
+		* @brief Set Slate is rendererable or not.
+		* @param[in] isSlateOn The boolean of renderable.
 		*/
 		void SetWindowState(bool isSlateOn) { m_IsSlateOn = isSlateOn; };
 
 	public:
-		ImVec2& GetPanelSize() { return m_PanelSize; };
-		ImVec2& GetPanelPos() { return m_PanelPos; };
-		bool IsFocused() { return m_IsFocused; };
-		bool IsHovered() { return m_IsHovered; };
+
+		/**
+		* @brief Get Panel Size.
+		* @return Returns the Panel Size.
+		*/
+		inline ImVec2& GetPanelSize() { return m_PanelSize; };
+
+		/**
+		* @brief Get Panel Pos.
+		* @return Returns the Panel Pos.
+		*/
+		inline ImVec2& GetPanelPos() { return m_PanelPos; };
+
+		/**
+		* @brief Get is IsFocused.
+		* @return Returns true if focused.
+		*/
+		inline bool IsFocused() { return m_IsFocused; };
+
+		/**
+		* @brief Get is IsHovered.
+		* @return  Returns true if hovered.
+		*/
+		inline bool IsHovered() { return m_IsHovered; };
 
 	protected:
 
@@ -135,6 +156,9 @@ namespace Spiecs{
 		*/
 		ImVec2 m_PanelSize = { 1920, 1058 };
 
+		/**
+		* @brief This slate's position in desktop.
+		*/
 		ImVec2 m_PanelPos;
 
 		/**
@@ -147,6 +171,9 @@ namespace Spiecs{
 		*/
 		FrameInfo& m_FrameInfo;
 
+		/**
+		* @brief turn false if click quit botton. 
+		*/
 		bool m_IsOpen = true;
 
 		/**
@@ -159,7 +186,9 @@ namespace Spiecs{
 		*/
 		bool m_IsHovered = false;
 
-
+		/**
+		* @breif The boolean of rendererable.
+		*/
 		bool m_IsSlateOn = false;
 	};
 }

@@ -1,3 +1,9 @@
+/**
+* @file ImguiGizmos.cpp.
+* @brief The ImguiGizmos Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "ImguiHelper.h"
 #include "Core/Library/FileLibrary.h"
@@ -8,8 +14,14 @@ namespace Spiecs {
     {
         ZoneScoped;
 
+        /**
+        * @brief Set Dark Style.
+        */
         ImGui::StyleColorsDark();
 
+        /**
+        * @brief Set Style.
+        */
         ImGuiStyle& style                   = ImGui::GetStyle();
         style.WindowRounding                = 0.0f;
         style.WindowBorderSize              = 0.0f;
@@ -25,12 +37,16 @@ namespace Spiecs {
         style.Colors[ImGuiCol_Border]       = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
         style.Colors[ImGuiCol_FrameBg]      = ImVec4(0.05f, 0.05f, 0.05f, 0.5f);
 
-        // Botton
+        /**
+        * @brief Set Botton Style.
+        */
         style.Colors[ImGuiCol_Button]       = style.Colors[ImGuiCol_WindowBg];
         style.Colors[ImGuiCol_ButtonActive] = style.Colors[ImGuiCol_FrameBg];
         style.Colors[ImGuiCol_ButtonHovered]= ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
 
-        // Normal
+        /**
+        * @brief Set Normal Style.
+        */
         ImVec4                normal_color(0.465f, 0.465f, 0.525f, 1.0f);
         std::vector<ImGuiCol> to_change_nrm;
         to_change_nrm.push_back(ImGuiCol_Header);
@@ -45,7 +61,9 @@ namespace Spiecs {
             style.Colors[c] = normal_color;
         }
 
-        // Active
+        /**
+        * @brief Set Active Style.
+        */
         ImVec4                active_color(0.365f, 0.365f, 0.425f, 1.0f);
         std::vector<ImGuiCol> to_change_act;
         to_change_act.push_back(ImGuiCol_HeaderActive);
@@ -57,7 +75,9 @@ namespace Spiecs {
             style.Colors[c] = active_color;
         }
 
-        // Hovered
+        /**
+        * @brief Set Hovered Style.
+        */
         ImVec4                hovered_color(0.565f, 0.565f, 0.625f, 1.0f);
         std::vector<ImGuiCol> to_change_hover;
         to_change_hover.push_back(ImGuiCol_HeaderHovered);
@@ -88,7 +108,9 @@ namespace Spiecs {
         ImGuiIO& io = ImGui::GetIO();
         const float high_dpi_scale = GetDPIScale();
 
-        // Nicer fonts
+        /**
+        * @brief Set Nicer fonts.
+        */
         ImFont* font = nullptr;
         if (fontmode == FONT_MONOSPACED_SCALED)
         {

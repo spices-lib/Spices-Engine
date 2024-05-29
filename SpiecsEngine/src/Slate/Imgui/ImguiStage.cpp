@@ -1,5 +1,12 @@
+/**
+* @file ImguiGizmos.cpp.
+* @brief The ImguiGizmos Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "ImguiStage.h"
+
 #include "World/World/World.h"
 
 namespace Spiecs {
@@ -12,18 +19,23 @@ namespace Spiecs {
     {
         ZoneScoped;
 
-        LoadConsoleIcon(m_StageIconID.visibleIcon, "slate/Console.ClearConsole.png");
+        /**
+        * @brief Load used icon from file.
+        */
+        LoadSlateIcon(m_StageIconID.visibleIcon, "slate/Console.ClearConsole.png");
     }
 
     void ImguiStage::OnRender()
     {
         ZoneScoped;
 
+        /**
+        * @brief Begin render Stage.
+        */
         Begin();
 
         char search[128] = "";
         if (ImGui::InputText("Search", search, 128)) {}
-
 
         static ImGuiTableFlags flags =
             ImGuiTableFlags_Resizable  | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable
@@ -31,9 +43,11 @@ namespace Spiecs {
             | ImGuiTableFlags_RowBg    | ImGuiTableFlags_Borders     | ImGuiTableFlags_NoBordersInBody
             | ImGuiTableFlags_ScrollX  | ImGuiTableFlags_ScrollY
             | ImGuiTableFlags_SizingFixedFit;
+
         static ImGuiTableColumnFlags columns_base_flags = ImGuiTableColumnFlags_None;
         static int freeze_cols = 1;
         static int freeze_rows = 1;
+
         if (ImGui::BeginTable("Entity Stage", 3, flags, ImVec2(0, 0), 0.0))
         {
             ImGui::TableSetupColumn("Name", columns_base_flags | ImGuiTableColumnFlags_PreferSortDescending, 0.0f);
@@ -69,6 +83,9 @@ namespace Spiecs {
             ImGui::EndPopup();
         }
 
+        /**
+        * @brief End render Visualizer.
+        */
         End();
     }
 }

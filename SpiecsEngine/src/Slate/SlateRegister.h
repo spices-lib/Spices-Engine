@@ -57,6 +57,9 @@ namespace Spiecs {
 		/**
 		* @brief This function regist slate instance.
 		* @param[in] T Slate specific type.
+		* @param[in] isPrimary Is this slate's render function is called by register or owner.
+		* @param[in] panelName The slate name.
+		* @return Returns the shared pointer of T.
 		*/
 		template<typename T, typename ... Args>
 		std::shared_ptr<T> Register(bool isPrimary, const std::string& panelName, Args&& ... args);
@@ -74,9 +77,14 @@ namespace Spiecs {
 
 		/**
 		* @brief This function will be called on global Event function pointer is called.
+		* @param[in] event The Specific Event Type.
 		*/
 		void OnEvent(Event& event);
 
+		/**
+		* @breif Get Viewport Slate.
+		* @return Returns the shared pointer of ImguiViewport.
+		*/
 		std::shared_ptr<ImguiViewport> GetViewPort();
 
 	private:
@@ -95,13 +103,22 @@ namespace Spiecs {
 	template<typename T, typename ...Args>
 	inline std::shared_ptr<T> SlateRegister::Register(bool isPrimary, const std::string& panelName, Args && ...args)
 	{
+		ZoneScoped;
+
+		/**
+		* @brief Not allow registy repeat.
+		*/
 		if (m_SlatesEventContainer.find(panelName) != m_SlatesEventContainer.end())
 		{
 			std::stringstream ss;
 			ss << panelName << " Slate already registed, please check your code again.";
+
 			SPIECS_CORE_ERROR(ss.str());
 		}
 
+		/**
+		* @breif Instance T and store it.
+		*/
 		std::shared_ptr<T> _T = std::make_shared<T>(panelName, FrameInfo::Get(), std::forward<Args>(args)...);
 		m_SlatesEventContainer[panelName] = _T;
 
