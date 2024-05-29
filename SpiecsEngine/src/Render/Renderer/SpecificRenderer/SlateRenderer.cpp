@@ -108,10 +108,29 @@ namespace Spiecs {
 	{
 		ZoneScoped;
 
-		ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		ImGuizmo::BeginFrame();
+		{
+			ZoneScopedN("ImGui_ImplVulkan_NewFrame");
+
+			ImGui_ImplVulkan_NewFrame();
+		}
+
+		{
+			ZoneScopedN("ImGui_ImplGlfw_NewFrame");
+
+			ImGui_ImplGlfw_NewFrame();
+		}
+
+		{
+			ZoneScopedN("ImGui::NewFrame");
+
+			ImGui::NewFrame();
+		}
+
+		{
+			ZoneScopedN("ImGuizmo::BeginFrame");
+
+			ImGuizmo::BeginFrame();
+		}
 	}
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)

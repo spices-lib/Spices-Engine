@@ -17,6 +17,8 @@ namespace Spiecs {
 
 	void ImguiSlate::BeginMainDock(Side side, float alpha)
 	{
+        ZoneScoped;
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -114,6 +116,13 @@ namespace Spiecs {
                 m_IsOpen = false;
             ImGui::EndPopup();
         }
+    }
+
+    void ImguiSlate::End()
+    {
+        ZoneScoped; 
+        ImGui::End(); 
+        ImGui::PopStyleVar(3);
     }
 
     void ImguiSlate::LoadConsoleIcon(ImTextureID& id, const std::string& iconFile)

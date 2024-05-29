@@ -15,129 +15,167 @@ namespace Spiecs {
     {
         ZoneScoped;
 
-        /**
-        * @brief Set Gizmo Projection type.
-        */
-        ImGuizmo::SetOrthographic(false);
+        {
+            ZoneScopedN("Set ImGuizmo Draw Info");
 
-        /**
-        * @brief Use Window Draw List.
-        */
-        ImGuizmo::SetDrawlist();
+            /**
+            * @brief Set Gizmo Projection type.
+            */
+            ImGuizmo::SetOrthographic(false);
 
-        ImGuizmo::SetRect(
-            m_Owner->GetPanelPos().x  ,
-            m_Owner->GetPanelPos().y  ,
-            m_Owner->GetPanelSize().x ,
-            m_Owner->GetPanelSize().y
-        );
+            /**
+            * @brief Use Window Draw List.
+            */
+            ImGuizmo::SetDrawlist();
 
-        // Camera' Matrix.
+            ImGuizmo::SetRect(
+                m_Owner->GetPanelPos().x,
+                m_Owner->GetPanelPos().y,
+                m_Owner->GetPanelSize().x,
+                m_Owner->GetPanelSize().y
+            );
+        }
+
         Entity CameraEntity;
-        glm::mat4 viewMat       = glm::mat4(1.0f);
+        glm::mat4 viewMat = glm::mat4(1.0f);
         glm::mat4 projectionMat = glm::mat4(1.0f);
 
-        auto& view = m_FrameInfo.m_World->GetRegistry().view<CameraComponent>();
-        for (auto& e : view)
+        // Camera' Matrix.
         {
-            auto& [tComp, transComp] = m_FrameInfo.m_World->GetRegistry().get<CameraComponent, TransformComponent>(e);
+            ZoneScopedN("Get Camera Matrix");
 
-            if (tComp.IsActived())
+            auto& view = m_FrameInfo.m_World->GetRegistry().view<CameraComponent>();
+            for (auto& e : view)
             {
-                viewMat = glm::inverse(transComp.GetModelMatrix());
-                projectionMat = tComp.GetCamera()->GetPMatrix();
+                auto& [tComp, transComp] = m_FrameInfo.m_World->GetRegistry().get<CameraComponent, TransformComponent>(e);
 
-                CameraEntity = Entity(e, m_FrameInfo.m_World.get());
-                break;
+                if (tComp.IsActived())
+                {
+                    viewMat = glm::inverse(transComp.GetModelMatrix());
+                    projectionMat = tComp.GetCamera()->GetPMatrix();
+
+                    CameraEntity = Entity(e, m_FrameInfo.m_World.get());
+                    break;
+                }
             }
         }
 
         /**
         * @brief Draw Editor Grid.
         */
-        ImGuizmo::DrawGrid(
-            glm::value_ptr(viewMat)         , 
-            glm::value_ptr(projectionMat)   , 
-            glm::value_ptr(glm::mat4(1.0f)) , 
-            100.f
-        );
+        {
+            ZoneScopedN("ImGuizmo::DrawGrid");
 
-        ImGuizmo::ViewManipulate(
-            glm::value_ptr(viewMat), 
-            8.0f, 
-            ImVec2(m_Owner->GetPanelPos().x, m_Owner->GetPanelPos().y + m_Owner->GetPanelSize().y - 96),
-            ImVec2(96, 96),
-            0x10101010
-        );
+            ImGuizmo::DrawGrid(
+                glm::value_ptr(viewMat),
+                glm::value_ptr(projectionMat),
+                glm::value_ptr(glm::mat4(1.0f)),
+                100.f
+            );
+        }
 
-        glm::vec3 translation, rotation, scale;
-        DecomposeTransform(glm::inverse(viewMat), translation, rotation, scale);
+        /**
+        * @brief Draw Editor ViewManipulate.
+        */
+        {
+            ZoneScopedN("ImGuizmo::ViewManipulate");
 
-        auto& tc = CameraEntity.GetComponent<TransformComponent>();
-        tc.SetPostion(translation);
-        tc.SetRotation(rotation);
-        tc.SetScale(scale);
+            ImGuizmo::ViewManipulate(
+                glm::value_ptr(viewMat),
+                8.0f,
+                ImVec2(m_Owner->GetPanelPos().x, m_Owner->GetPanelPos().y + m_Owner->GetPanelSize().y - 96),
+                ImVec2(96, 96),
+                0x10101010
+            );
+        }
+
+        /**
+        * @brief Set New Camera transform.
+        */
+        {
+            ZoneScopedN("DecomposeTransform");
+
+            glm::vec3 translation, rotation, scale;
+            DecomposeTransform(glm::inverse(viewMat), translation, rotation, scale);
+
+            auto& tc = CameraEntity.GetComponent<TransformComponent>();
+            tc.SetPostion(translation);
+            tc.SetRotation(rotation);
+            tc.SetScale(scale);
+        }
 
         /**
         * @brief Draw Editor Gizmo.
         */
-        if (m_FrameInfo.m_PickEntityID.size() > 0 && bEnableGizmo)
         {
-            /**
-            * @brief Get Selected Entity.
-            */
-            Entity entity(
-                static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.endk()), 
-                m_FrameInfo.m_World.get()
-            );
+            ZoneScopedN("Draw Editor Gizmo");
 
-            /**
-            * @brief Get Transform Component.
-            */
-            auto& tc = entity.GetComponent<TransformComponent>();
-
-            /**
-            * @brief Get Entity Model Matrix.
-            */
-            glm::mat4 model = tc.GetModelMatrix();
-
-            /**
-            * @brief Snapping.
-            */ 
-            bool snap = Input::IsKeyPressed(Key::LeftControl);
-            float snapValue = 0.5f; // Snap to 0.5m for translation/scale
-            // Snap to 45 degrees for rotation
-            if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+            if (m_FrameInfo.m_PickEntityID.size() > 0 && bEnableGizmo)
             {
-                snapValue = 45.0F;
-            }
+                /**
+                * @brief Get Selected Entity.
+                */
+                Entity entity(
+                    static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.endk()),
+                    m_FrameInfo.m_World.get()
+                );
 
-            float snapValues[3] = { snapValue, snapValue ,snapValue };
+                /**
+                * @brief Get Transform Component.
+                */
+                auto& tc = entity.GetComponent<TransformComponent>();
 
-            /**
-            * @brief Gozmo Manipulater.
-            */
-            ImGuizmo::Manipulate(
-                glm::value_ptr(viewMat)               , 
-                glm::value_ptr(projectionMat)         ,
-                (ImGuizmo::OPERATION)m_GizmoType      , 
-                ImGuizmo::LOCAL                       , 
-                glm::value_ptr(model)                 ,
-                nullptr, snap ? snapValues : nullptr
-            );
+                /**
+                * @brief Get Entity Model Matrix.
+                */
+                glm::mat4 model = tc.GetModelMatrix();
 
-            /**
-            * @brief Add to Entity Transform.
-            */
-            if (ImGuizmo::IsUsing())
-            {
-                glm::vec3 translation, rotation, scale;
-                DecomposeTransform(model, translation, rotation, scale);
+                /**
+                * @brief Snapping.
+                */
+                bool snap = Input::IsKeyPressed(Key::LeftControl);
+                float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+                // Snap to 45 degrees for rotation
+                if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+                {
+                    snapValue = 45.0F;
+                }
 
-                glm::vec3 deltaRotation = rotation - tc.GetRotation();
-                tc.SetPostion(translation);
-                tc.SetRotation(tc.GetRotation() + deltaRotation);
-                tc.SetScale(scale);
+                float snapValues[3] = { snapValue, snapValue ,snapValue };
+
+                /**
+                * @brief Gozmo Manipulater.
+                */
+                {
+                    ZoneScopedN("ImGuizmo::Manipulate");
+
+                    ImGuizmo::Manipulate(
+                        glm::value_ptr(viewMat),
+                        glm::value_ptr(projectionMat),
+                        (ImGuizmo::OPERATION)m_GizmoType,
+                        ImGuizmo::LOCAL,
+                        glm::value_ptr(model),
+                        nullptr, snap ? snapValues : nullptr
+                    );
+                }
+
+                /**
+                * @brief Add to Entity Transform.
+                */
+                {
+                    ZoneScopedN("Add Transform to Manipulatd Entity");
+
+                    if (ImGuizmo::IsUsing())
+                    {
+                        glm::vec3 translation, rotation, scale;
+                        DecomposeTransform(model, translation, rotation, scale);
+
+                        glm::vec3 deltaRotation = rotation - tc.GetRotation();
+                        tc.SetPostion(translation);
+                        tc.SetRotation(tc.GetRotation() + deltaRotation);
+                        tc.SetScale(scale);
+                    }
+                }
             }
         }
     }

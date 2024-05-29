@@ -96,7 +96,7 @@ namespace Spiecs{
 		/**
 		* @brief End a slate.
 		*/
-		void End() { ImGui::End(); ImGui::PopStyleVar(3); };
+		void End() { ZoneScoped; ImGui::End(); ImGui::PopStyleVar(3); };
 
 		void LoadConsoleIcon(ImTextureID& id, const std::string& iconFile);
 
