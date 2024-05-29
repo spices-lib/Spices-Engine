@@ -27,4 +27,8 @@ namespace Spiecs {
 	{
 	}
 
+	const std::string& SkyBoxComponent::DefineStageIcon()
+	{
+		return "slate/stage/Stage.Light.png";
+	}
 }

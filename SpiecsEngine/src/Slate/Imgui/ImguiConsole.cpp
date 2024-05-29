@@ -29,16 +29,16 @@ namespace Spiecs {
 		/**
 		* @breif Load Icons that need.
 		*/
-		LoadSlateIcon(m_ConsoleIconID.clearConsoleIcon,       "slate/Console.ClearConsole.png"       );
-		LoadSlateIcon(m_ConsoleIconID.openLogFileIcon,        "slate/Console.OpenLogFile.png"        );
-		LoadSlateIcon(m_ConsoleIconID.openLogFolderIcon,      "slate/Console.OpenLogFolder.png"      );
-		LoadSlateIcon(m_ConsoleIconID.enableCommandFieldIcon, "slate/Console.EnableCommandField.png" );
+		LoadSlateIcon(m_ConsoleIconID.clearConsoleIcon,       "slate/console/Console.ClearConsole.png"       );
+		LoadSlateIcon(m_ConsoleIconID.openLogFileIcon,        "slate/console/Console.OpenLogFile.png"        );
+		LoadSlateIcon(m_ConsoleIconID.openLogFolderIcon,      "slate/console/Console.OpenLogFolder.png"      );
+		LoadSlateIcon(m_ConsoleIconID.enableCommandFieldIcon, "slate/console/Console.EnableCommandField.png" );
 
-		LoadSlateIcon(m_ConsoleIconID.select,                 "slate/Console.Select.png"             );
-		LoadSlateIcon(m_ConsoleIconID.verbose,                "slate/Console.Verbose.png"            );
-		LoadSlateIcon(m_ConsoleIconID.info,                   "slate/Console.Info.png"               );
-		LoadSlateIcon(m_ConsoleIconID.warning,                "slate/Console.Warning.png"            );
-		LoadSlateIcon(m_ConsoleIconID.error,                  "slate/Console.Error.png"              );
+		LoadSlateIcon(m_ConsoleIconID.select,                 "slate/console/Console.Select.png"             );
+		LoadSlateIcon(m_ConsoleIconID.verbose,                "slate/console/Console.Verbose.png"            );
+		LoadSlateIcon(m_ConsoleIconID.info,                   "slate/console/Console.Info.png"               );
+		LoadSlateIcon(m_ConsoleIconID.warning,                "slate/console/Console.Warning.png"            );
+		LoadSlateIcon(m_ConsoleIconID.error,                  "slate/console/Console.Error.png"              );
 	}
 
 	void ImguiConsole::OnRender()

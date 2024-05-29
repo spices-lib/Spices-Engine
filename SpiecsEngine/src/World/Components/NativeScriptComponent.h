@@ -55,6 +55,13 @@ namespace Spiecs {
 		virtual void OnDeSerialize() override {};
 
 		/**
+		* @brief Defines Component icon on stage.
+		* Set m_SlateStageIconPath here.
+		* @return Returns Specific m_SlateStageIconPath.
+		*/
+		virtual const std::string& DefineStageIcon() override;
+
+		/**
 		* @brief This interface defines the behaver on specific component added.
 		* Init with variable.
 		* @param[in] entity this component's Owner entity.

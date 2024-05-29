@@ -22,7 +22,13 @@ namespace Spiecs {
         /**
         * @brief Load used icon from file.
         */
-        LoadSlateIcon(m_StageIconID.visibleIcon, "slate/Console.ClearConsole.png");
+        LoadSlateIcon(m_StageIconID.filterIcon,    "slate/stage/Stage.Filter.png"   );
+        LoadSlateIcon(m_StageIconID.optionsIcon,   "slate/stage/Stage.Options.png"  );
+
+        LoadSlateIcon(m_StageIconID.visibleIcon,   "slate/stage/Stage.Visible.png"  );
+        LoadSlateIcon(m_StageIconID.invisibleIcon, "slate/stage/Stage.Invisible.png");
+
+        LoadSlateIcon(m_StageIconID.entityIcon,    "slate/stage/Stage.Entity.png"   );
     }
 
     void ImguiStage::OnRender()
@@ -36,6 +42,10 @@ namespace Spiecs {
 
         char search[128] = "";
         if (ImGui::InputText("Search", search, 128)) {}
+        ImGui::SameLine();
+        ImGui::ImageButton(m_StageIconID.filterIcon, ImVec2(12, 12));
+        ImGui::SameLine();
+        ImGui::ImageButton(m_StageIconID.optionsIcon, ImVec2(12, 12));
 
         static ImGuiTableFlags flags =
             ImGuiTableFlags_Resizable  | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable
@@ -61,10 +71,12 @@ namespace Spiecs {
                 ImGui::TableNextRow();
 
                 ImGui::TableSetColumnIndex(0);
+                ImGui::ImageButton(m_StageIconID.entityIcon, ImVec2(12, 12));
+                ImGui::SameLine();
                 ImGui::Text((*tComp.GetTag().begin()).c_str());
 
                 ImGui::TableSetColumnIndex(1);
-                ImGui::ImageButton(m_StageIconID.visibleIcon, ImVec2(18, 18));
+                if (ImGui::ImageButton(m_StageIconID.visibleIcon, ImVec2(18, 9)));
 
                 ImGui::TableSetColumnIndex(2);
                 ImGui::Text("Entity");

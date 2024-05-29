@@ -25,7 +25,7 @@ namespace Spiecs {
 		* Usually call it.
 		* @param[in] isActived Whether this cameracomponent's camera is a primary camera.
 		*/
-		CameraComponent(bool isActived = false) : m_IsActived(isActived) {};
+		CameraComponent(bool isActived = false);
 
 		/**
 		* @brief Destructor Function.
@@ -43,6 +43,13 @@ namespace Spiecs {
 		* @todo Finsih it.
 		*/
 		virtual void OnDeSerialize() override;
+
+		/**
+		* @brief Defines Component icon on stage.
+		* Set m_SlateStageIconPath here.
+		* @return Returns Specific m_SlateStageIconPath.
+		*/
+		virtual const std::string& DefineStageIcon() override;
 
 		/**
 		* @brief Set the camera this component handled.

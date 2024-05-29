@@ -8,6 +8,7 @@
 #include "DirectionalLightComponent.h"
 
 namespace Spiecs {
+
 	void DirectionalLightComponent::OnSerialize()
 	{
 	}
@@ -15,4 +16,8 @@ namespace Spiecs {
 	{
 	}
 
+	const std::string& DirectionalLightComponent::DefineStageIcon()
+	{
+		return "slate/stage/Stage.Light.png";
+	}
 }

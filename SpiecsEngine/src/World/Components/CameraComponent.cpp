@@ -9,6 +9,10 @@
 
 namespace Spiecs {
 
+	CameraComponent::CameraComponent(bool isActived)
+		: m_IsActived(isActived)
+	{}
+
 	void CameraComponent::OnSerialize()
 	{
 
@@ -19,4 +23,8 @@ namespace Spiecs {
 
 	}
 
+	const std::string& CameraComponent::DefineStageIcon()
+	{
+		return "slate/stage/Stage.Light.png";
+	}
 }

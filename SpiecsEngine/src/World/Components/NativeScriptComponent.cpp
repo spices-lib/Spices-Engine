@@ -14,6 +14,11 @@ namespace Spiecs {
 		m_RealNScriptComp = realComp;
 	}
 
+	const std::string& NativeScriptComponent::DefineStageIcon()
+	{
+		return "slate/stage/Stage.Light.png";
+	}
+
 	void NativeScriptComponent::OnComponentAdded(const entt::entity& entity)
 	{
 		Component::OnComponentAdded(entity);

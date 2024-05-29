@@ -19,4 +19,8 @@ namespace Spiecs {
 
 	}
 
+	const std::string& UUIDComponent::DefineStageIcon()
+	{
+		return "slate/stage/Stage.Light.png";
+	}
 }

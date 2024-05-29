@@ -14,4 +14,9 @@ namespace Spiecs {
 	void PointLightComponent::OnDeSerialize()
 	{
 	}
+
+	const std::string& PointLightComponent::DefineStageIcon()
+	{
+		return "slate/stage/Stage.Light.png";
+	}
 }

@@ -19,6 +19,9 @@ namespace Spiecs {
 		ImTextureID optionsIcon;    // ImTextureID of Options.
 
 		ImTextureID visibleIcon;    // ImTextureID of Visible.
+		ImTextureID invisibleIcon;  // ImTextureID of Visible.
+
+		ImTextureID entityIcon;     // ImTextureID of Entity.
 	};
 
 	/**
