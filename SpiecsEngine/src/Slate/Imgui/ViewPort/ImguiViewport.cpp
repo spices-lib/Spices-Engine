@@ -23,7 +23,7 @@ namespace Spiecs {
         ZoneScoped;
 
         {
-            ZoneScopedN("Create SceneColor ImTextureID.");
+            ZoneScopedN("Create SceneColor ImTextureID");
 
             /**
             * @brief Get SceneColor Info.
@@ -36,23 +36,17 @@ namespace Spiecs {
             m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
         }
 
-        {
-            ZoneScopedN("Create FloattingInfo.");
+        /**
+        * @brief Instance a FloattingInfo.
+        */
+        m_FloattingInfo = SlateSystem::GetRegister()->Register<ImguiFloattingInfo>(false, "FloattingInfo", this);
 
-            /**
-            * @brief Instance a FloattingInfo.
-            */
-            m_FloattingInfo = SlateSystem::GetRegister()->Register<ImguiFloattingInfo>(false, "FloattingInfo", this);
-        }
 
-        {
-            ZoneScopedN("Create Gizmos.");
+        /**
+        * @brief Instance a Gizmos.
+        */
+        m_Gizmos = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, "Gizmos", this);
 
-            /**
-            * @brief Instance a Gizmos.
-            */
-            m_Gizmos = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, "Gizmos", this);
-        }
     }
 
     void ImguiViewport::OnRender()
@@ -91,21 +85,14 @@ namespace Spiecs {
         }
 
         /**
-        * @brief Render Elements on Viewport.
+        * @brief Render FloatingInfo.
         */
-        {
-            ZoneScopedN("Render Elements");
+        m_FloattingInfo->OnRender();
 
-            /**
-            * @brief Render FloatingInfo.
-            */
-            m_FloattingInfo->OnRender();
-
-            /**
-            * @brief Render Gizmos.
-            */
-            m_Gizmos->OnRender();
-        }
+        /**
+        * @brief Render Gizmos.
+        */
+        m_Gizmos->OnRender();
 
         /**
         * @brief End Viewport Slate.

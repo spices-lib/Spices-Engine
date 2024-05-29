@@ -1,21 +1,42 @@
+/**
+* @file ImguiGizmos.cpp.
+* @brief The ImguiGizmos Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "ImguiMainMenu.h"
-#include "Systems/SlateSystem.h"
 
+#include "Systems/SlateSystem.h"
 #include "Window/ImguiWindow.h"
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
 
 namespace Spiecs {
 
-    ImguiMainMenu::ImguiMainMenu(const std::string& panelName, FrameInfo& frameInfo)
+    ImguiMainMenu::ImguiMainMenu(
+        const std::string& panelName , 
+        FrameInfo&         frameInfo
+    )
         : ImguiSlate(panelName, frameInfo)
     {
         ZoneScoped;
 
+        /**
+        * @brief Instance a ImguiCreateEntity.
+        */
         m_Create = SlateSystem::GetRegister()->Register<ImguiCreateEntity>(false, "Create");
+
+        /**
+        * @brief Instance a ImguiWindow.
+        */
         m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>(false, "Window");
+
+        /**
+        * @brief Instance a ImguiHelp.
+        */
         m_Help = SlateSystem::GetRegister()->Register<ImguiHelp>(false, "Help");
+
     }
 
     void ImguiMainMenu::OnRender()
@@ -28,31 +49,84 @@ namespace Spiecs {
         */
         if (ImGui::BeginMainMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
+            /**
+            * @brief Render Menu File.
+            */
             {
-                ImGui::EndMenu();
+                ZoneScopedN("Render Menu File");
+
+                if (ImGui::BeginMenu("File"))
+                {
+                    ImGui::EndMenu();
+                }
             }
-            if (ImGui::BeginMenu("Edit"))
+
+            /**
+            * @brief Render Menu Edit.
+            */
             {
-                if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-                if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-                ImGui::Separator();
-                if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-                if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-                if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-                ImGui::EndMenu();
+                ZoneScopedN("Render Menu Edit");
+
+                if (ImGui::BeginMenu("Edit"))
+                {
+                    if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+                    if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+                    ImGui::Separator();
+                    if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+                    if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+                    if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+                    ImGui::EndMenu();
+                }
             }
-            m_Create->OnRender();
-            m_Window->OnRender();
-            if (ImGui::BeginMenu("Tools"))
+
+            /**
+            * @brief Render Menu Create.
+            */
             {
-                ImGui::EndMenu();
+                ZoneScopedN("Render Menu Create");
+
+                m_Create->OnRender();
             }
+
+            /**
+            * @brief Render Menu Window.
+            */
+            {
+                ZoneScopedN("Render Menu Window");
+
+                m_Window->OnRender();
+            }
+
+            /**
+            * @brief Render Menu Tools.
+            */
+            {
+                ZoneScopedN("Render Menu Tools");
+
+                if (ImGui::BeginMenu("Tools"))
+                {
+                    ImGui::EndMenu();
+                }
+            }
+
+            /**
+            * @brief Render Menu Layout.
+            */
             if (ImGui::BeginMenu("Layout"))
             {
+                ZoneScopedN("Render Menu Layout");
+
                 ImGui::EndMenu();
             }
+
+            /**
+            * @brief Render Menu Help.
+            */
             m_Help->OnRender();
+
+            /**
+            * @brief End MainMenu;
+            */
             ImGui::EndMainMenuBar();
         }
 	}
