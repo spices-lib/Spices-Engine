@@ -24,8 +24,8 @@ namespace Spiecs {
 
 	}
 
-	const std::string& TagComponent::DefineStageIcon()
+	void TagComponent::DefineStageIcon()
 	{
-		return "slate/stage/Stage.Light.png";
+		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
 	}
 }

@@ -22,9 +22,9 @@ namespace Spiecs {
 
 	}
 
-	const std::string& TransformComponent::DefineStageIcon()
+	void TransformComponent::DefineStageIcon()
 	{
-		return "slate/stage/Stage.Light.png";
+		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
 	}
 
 	void TransformComponent::CalMatrix()

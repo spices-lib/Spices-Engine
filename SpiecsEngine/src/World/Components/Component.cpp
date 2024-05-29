@@ -14,14 +14,7 @@
 namespace Spiecs {
 
 	Component::Component()
-	{
-		ZoneScoped;
-
-		/**
-		* @brief Set m_SlateStageIconPath.
-		*/
-		m_SlateStageIconPath = DefineStageIcon();
-	}
+	{}
 
 	void Component::OnComponentAdded(const entt::entity& entity)
 	{
@@ -31,6 +24,11 @@ namespace Spiecs {
 		* @brief Set m_Owner Variable.
 		*/
 		m_Owner = entity;
+
+		/**
+		* @brief Set m_SlateStageIconPath.
+		*/
+		DefineStageIcon();
 
 		if (!m_SlateStageIconPath.empty())
 		{

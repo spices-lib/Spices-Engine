@@ -19,8 +19,8 @@ namespace Spiecs {
 
 	}
 
-	const std::string& MeshComponent::DefineStageIcon()
+	void MeshComponent::DefineStageIcon()
 	{
-		return "slate/stage/Stage.Light.png";
+		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
 	}
 }

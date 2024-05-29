@@ -61,6 +61,7 @@ namespace Spiecs {
 				m_Console->Clear();
 			}
 
+			ImGui::SetItemTooltip("Clear Console");
 			ImGui::SameLine();
 		}
 
@@ -81,6 +82,7 @@ namespace Spiecs {
 				ProcessLibrary::OpenProcess("C:/Windows/System32/notepad.exe ", ss.str().c_str());
 			}
 
+			ImGui::SetItemTooltip("Open Log File");
 			ImGui::SameLine();
 		}
 
@@ -112,6 +114,7 @@ namespace Spiecs {
 				}
 			}
 
+			ImGui::SetItemTooltip("Open Log Folder");
 			ImGui::SameLine();
 		}
 
@@ -126,6 +129,7 @@ namespace Spiecs {
 				m_Console->Clear();
 			}
 
+			ImGui::SetItemTooltip("Enable Command Field");
 			ImGui::SameLine();
 		}
 
@@ -154,6 +158,7 @@ namespace Spiecs {
 				m_Level = 0;
 			}
 
+			ImGui::SetItemTooltip("Verbose");
 			ImGui::SameLine();
 		}
 
@@ -168,6 +173,7 @@ namespace Spiecs {
 				m_Level = 1;
 			}
 
+			ImGui::SetItemTooltip("Info");
 			ImGui::SameLine();
 		}
 
@@ -182,6 +188,7 @@ namespace Spiecs {
 				m_Level = 2; 
 			}
 
+			ImGui::SetItemTooltip("Warning");
 			ImGui::SameLine();
 		}
 
@@ -196,6 +203,7 @@ namespace Spiecs {
 				m_Level = 3; 
 			}
 
+			ImGui::SetItemTooltip("Error");
 			ImGui::SameLine();
 		}
 
@@ -206,8 +214,7 @@ namespace Spiecs {
 			ZoneScopedN("Render Search Input Text");
 
 			char search[128] = "";
-			if (ImGui::InputText("Search", search, 128)) {}
-
+			if (ImGui::InputTextWithHint("Search", "Search", search, 128)) {}
 			ImGui::Separator();
 		}
 

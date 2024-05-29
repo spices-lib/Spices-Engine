@@ -9,6 +9,8 @@
 
 #include "World/World/World.h"
 
+#include <imgui_internal.h>
+
 namespace Spiecs {
 
     ImguiStage::ImguiStage(
@@ -40,12 +42,32 @@ namespace Spiecs {
         */
         Begin();
 
+        /**
+        * @brief Query Slate State.
+        */
+        float lineHeight;
+        {
+            ZoneScopedN("Query Slate State");
+
+            /**
+            * @brief Get Panel Size.
+            */
+            m_PanelSize = ImGui::GetContentRegionAvail();
+
+            lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+            std::cout << lineHeight << std::endl;
+        }
+
         char search[128] = "";
-        if (ImGui::InputText("Search", search, 128)) {}
-        ImGui::SameLine();
-        ImGui::ImageButton(m_StageIconID.filterIcon, ImVec2(12, 12));
-        ImGui::SameLine();
-        ImGui::ImageButton(m_StageIconID.optionsIcon, ImVec2(12, 12));
+        if (ImGui::InputTextWithHint("Search", "Search", search, 128)) {}
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+        ImGui::SameLine(m_PanelSize.x - lineHeight * 1.5f);
+        ImGui::ImageButton(m_StageIconID.filterIcon, ImVec2(lineHeight, lineHeight));
+        ImGui::SameLine(m_PanelSize.x - lineHeight * 0.5f);
+        ImGui::ImageButton(m_StageIconID.optionsIcon, ImVec2(lineHeight, lineHeight));
+        ImGui::PopStyleVar();
+        ImGui::Separator();
 
         static ImGuiTableFlags flags =
             ImGuiTableFlags_Resizable  | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable

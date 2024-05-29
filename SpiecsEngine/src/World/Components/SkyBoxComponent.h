@@ -54,9 +54,8 @@ namespace Spiecs {
 		/**
 		* @brief Defines Component icon on stage.
 		* Set m_SlateStageIconPath here.
-		* @return Returns Specific m_SlateStageIconPath.
 		*/
-		virtual const std::string& DefineStageIcon() override;
+		virtual void DefineStageIcon() override;
 
 		/**
 		* @brief Get the Mesh variable.

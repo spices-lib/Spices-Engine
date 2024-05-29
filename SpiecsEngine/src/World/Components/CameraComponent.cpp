@@ -23,8 +23,8 @@ namespace Spiecs {
 
 	}
 
-	const std::string& CameraComponent::DefineStageIcon()
+	void CameraComponent::DefineStageIcon()
 	{
-		return "slate/stage/Stage.Light.png";
+		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
 	}
 }

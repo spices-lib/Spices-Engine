@@ -16,8 +16,8 @@ namespace Spiecs {
 	{
 	}
 
-	const std::string& DirectionalLightComponent::DefineStageIcon()
+	void DirectionalLightComponent::DefineStageIcon()
 	{
-		return "slate/stage/Stage.Light.png";
+		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
 	}
 }

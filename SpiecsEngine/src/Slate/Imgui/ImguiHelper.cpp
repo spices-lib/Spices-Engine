@@ -28,15 +28,17 @@ namespace Spiecs {
         style.ColorButtonPosition           = ImGuiDir_Left;
         style.FrameRounding                 = 2.0f;
         style.FrameBorderSize               = 1.0f;
+        style.FramePadding                  = ImVec2(2.0f, 2.0f);
         style.GrabRounding                  = 4.0f;
         style.IndentSpacing                 = 12.0f;
+        style.ItemSpacing                   = ImVec2(2.0f, 2.0f);
         style.Colors[ImGuiCol_WindowBg]     = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_MenuBarBg]    = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_ScrollbarBg]  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_PopupBg]      = ImVec4(0.135f, 0.135f, 0.135f, 1.0f);
         style.Colors[ImGuiCol_Border]       = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
         style.Colors[ImGuiCol_FrameBg]      = ImVec4(0.05f, 0.05f, 0.05f, 0.5f);
-
+        
         /**
         * @brief Set Botton Style.
         */

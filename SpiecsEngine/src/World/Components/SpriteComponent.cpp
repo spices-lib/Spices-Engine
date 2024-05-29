@@ -18,8 +18,8 @@ namespace Spiecs {
 		m_Mesh = Mesh::Builder().AddPack(pack).Build();
 	}
 
-	const std::string& SpriteComponent::DefineStageIcon()
+	void SpriteComponent::DefineStageIcon()
 	{
-		return "slate/stage/Stage.Light.png";
+		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
 	}
 }
