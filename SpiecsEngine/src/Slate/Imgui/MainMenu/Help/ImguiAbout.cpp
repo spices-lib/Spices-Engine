@@ -1,13 +1,22 @@
+/**
+* @file ImguiGizmos.cpp.
+* @brief The ImguiGizmos Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
-#include "Systems/SlateSystem.h"
 #include "ImguiAbout.h"
+
+#include "Systems/SlateSystem.h"
 
 namespace Spiecs {
 
-    ImguiAbout::ImguiAbout(const std::string& panelName, FrameInfo& frameInfo)
+    ImguiAbout::ImguiAbout(
+        const std::string& panelName , 
+        FrameInfo&         frameInfo
+    )
         : ImguiSlate(panelName, frameInfo)
-    {
-    }
+    {}
 
     void ImguiAbout::OnRender()
     {
@@ -15,6 +24,9 @@ namespace Spiecs {
 
         if (!m_IsSlateOn) return;
 
+        /**
+        * @brief Begin render About.
+        */
         Begin();
 
         ImGui::Text("Spiecs Engine Version 0.0.1");
@@ -33,7 +45,9 @@ namespace Spiecs {
 		ImGui::PopStyleColor();
 		ImGui::EndChild();
 
-
+        /**
+        * @brief End render About.
+        */
         End();
     }
 }

@@ -91,6 +91,11 @@ namespace Spiecs{
 		*/
 		void Begin(float alpha = 0.5f);
 
+		/**
+		* @brief Begin a common slate with name.
+		* @param[in] panelName The name of Slate.
+		* @param[in] alpha Opacity.
+		*/
 		void Begin(const std::string& panelName, float alpha = 0.5f);
 
 		/**
@@ -98,9 +103,18 @@ namespace Spiecs{
 		*/
 		void End();
 
+		/**
+		* @brief Load a Texture from ResourcePool.
+		* @param[out] id The ImTextureID Created with inconFilePath.
+		* @param[in] iconFile The file path of icon.
+		*/
 		void LoadConsoleIcon(ImTextureID& id, const std::string& iconFile);
 
 	public:
+
+		/**
+		* @brief 
+		*/
 		void SetWindowState(bool isSlateOn) { m_IsSlateOn = isSlateOn; };
 
 	public:
