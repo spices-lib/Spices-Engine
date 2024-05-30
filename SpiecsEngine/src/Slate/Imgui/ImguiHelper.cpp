@@ -26,8 +26,8 @@ namespace Spiecs {
         style.WindowRounding                = 0.0f;
         style.WindowBorderSize              = 0.0f;
         style.ColorButtonPosition           = ImGuiDir_Left;
-        style.FrameRounding                 = 2.0f;
-        style.FrameBorderSize               = 1.0f;
+        style.FrameRounding                 = 4.0f;
+        style.FrameBorderSize               = 0.0f;
         style.FramePadding                  = ImVec2(2.0f, 2.0f);
         style.GrabRounding                  = 4.0f;
         style.IndentSpacing                 = 12.0f;

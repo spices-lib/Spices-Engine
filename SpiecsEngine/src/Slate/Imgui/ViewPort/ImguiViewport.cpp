@@ -60,22 +60,6 @@ namespace Spiecs {
         BeginMainDock();
 
         /**
-        * @brief Query Resize Event Condition.
-        */
-        QueryIsResizedThisFrame(ImGui::GetContentRegionAvail());
-
-        /**
-        * @brief Query Slate State, maybe implementate in parent.
-        */
-        {
-            ZoneScopedN("Query Slate State");
-
-            m_PanelPos = ImGui::GetWindowPos();
-            m_IsFocused = ImGui::IsWindowFocused();
-            m_IsHovered = ImGui::IsWindowHovered();
-        }
-
-        /**
         * @brief Render Viewport image.
         */
         {
@@ -153,21 +137,5 @@ namespace Spiecs {
         * @brief Do not block the event.
         */
         return false;
-    }
-
-    void ImguiViewport::QueryIsResizedThisFrame(ImVec2 thisFrameSize)
-    {
-        ZoneScoped;
-
-        if (m_PanelSize.x != thisFrameSize.x || m_PanelSize.y != thisFrameSize.y)
-        {
-            isResized = true;
-        }
-        else
-        {
-            isResized = false;
-        }
-
-        m_PanelSize = thisFrameSize;
     }
 }

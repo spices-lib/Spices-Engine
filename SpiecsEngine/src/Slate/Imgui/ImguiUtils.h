@@ -110,6 +110,12 @@ namespace Spiecs{
 		*/
 		void LoadSlateIcon(ImTextureID& id, const std::string& iconFile);
 
+		/**
+		* @brief Query whether viewport is resized this frame.
+		* @param[in] thisFrameSize The size of Viewport this Frame.
+		*/
+		void QueryIsResizedThisFrame(ImVec2 thisFrameSize);
+
 	public:
 
 		/**
@@ -143,6 +149,12 @@ namespace Spiecs{
 		* @return  Returns true if hovered.
 		*/
 		inline bool IsHovered() { return m_IsHovered; };
+
+		/**
+		* @brief Get boolean of whether resized this frame.
+		* @return Returns true if resized.
+		*/
+		inline bool IsResizedThisFrame() { return m_IsResized; };
 
 	protected:
 
@@ -190,5 +202,15 @@ namespace Spiecs{
 		* @breif The boolean of rendererable.
 		*/
 		bool m_IsSlateOn = false;
+
+		/**
+		* @brief Boolean of whether resized this frame.
+		*/
+		bool m_IsResized = false;
+
+		/**
+		* @brief One line height.
+		*/
+		float m_LineHeight;
 	};
 }

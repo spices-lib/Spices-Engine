@@ -62,12 +62,6 @@ namespace Spiecs {
 	public:
 
 		/**
-		* @brief Get boolean of whether resized this frame.
-		* @return Returns true if resized.
-		*/
-		inline bool IsResizedThisFrame() { return isResized; };
-
-		/**
 		* @brief Get Mouse Position Relative Viewport(Might be negative value).
 		* @return Returns the pair of PostionX, PostionY.
 		*/
@@ -88,11 +82,7 @@ namespace Spiecs {
 		*/
 		bool OnSlateResize(SlateResizeEvent& event);
 
-		/**
-		* @brief Query whether viewport is resized this frame.
-		* @param[in] thisFrameSize The size of Viewport this Frame.
-		*/
-		void QueryIsResizedThisFrame(ImVec2 thisFrameSize);
+		
 
 	private:
 
@@ -110,10 +100,5 @@ namespace Spiecs {
 		* @brief The shared pointer of ImguiGizmos.
 		*/
 		std::shared_ptr<ImguiGizmos> m_Gizmos;
-
-		/**
-		* @brief Boolean of whether resized this frame.
-		*/
-		bool isResized = false;
 	};
 }

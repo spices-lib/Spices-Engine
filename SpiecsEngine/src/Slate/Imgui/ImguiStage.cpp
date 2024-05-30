@@ -30,7 +30,7 @@ namespace Spiecs {
         LoadSlateIcon(m_StageIconID.visibleIcon,   "slate/stage/Stage.Visible.png"  );
         LoadSlateIcon(m_StageIconID.invisibleIcon, "slate/stage/Stage.Invisible.png");
 
-        LoadSlateIcon(m_StageIconID.entityIcon,    "slate/stage/Stage.Entity.png"   );
+        LoadSlateIcon(m_StageIconID.entityIcon,    "slate/stage/Stage.MeshComponent.png"   );
     }
 
     void ImguiStage::OnRender()
@@ -41,31 +41,15 @@ namespace Spiecs {
         * @brief Begin render Stage.
         */
         Begin();
-
-        /**
-        * @brief Query Slate State.
-        */
-        float lineHeight;
-        {
-            ZoneScopedN("Query Slate State");
-
-            /**
-            * @brief Get Panel Size.
-            */
-            m_PanelSize = ImGui::GetContentRegionAvail();
-
-            lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-            std::cout << lineHeight << std::endl;
-        }
-
+        ImGui::Separator();
         char search[128] = "";
         if (ImGui::InputTextWithHint("Search", "Search", search, 128)) {}
         
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-        ImGui::SameLine(m_PanelSize.x - lineHeight * 1.5f);
-        ImGui::ImageButton(m_StageIconID.filterIcon, ImVec2(lineHeight, lineHeight));
-        ImGui::SameLine(m_PanelSize.x - lineHeight * 0.5f);
-        ImGui::ImageButton(m_StageIconID.optionsIcon, ImVec2(lineHeight, lineHeight));
+        ImGui::SameLine(m_PanelSize.x - m_LineHeight * 2.4f);
+        ImGui::ImageButton(m_StageIconID.filterIcon, ImVec2(m_LineHeight, m_LineHeight));
+        ImGui::SameLine(m_PanelSize.x - m_LineHeight * 1.2f);
+        ImGui::ImageButton(m_StageIconID.optionsIcon, ImVec2(m_LineHeight, m_LineHeight));
         ImGui::PopStyleVar();
         ImGui::Separator();
 
@@ -93,12 +77,17 @@ namespace Spiecs {
                 ImGui::TableNextRow();
 
                 ImGui::TableSetColumnIndex(0);
-                ImGui::ImageButton(m_StageIconID.entityIcon, ImVec2(12, 12));
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+                ImGui::Image(m_StageIconID.entityIcon, ImVec2(m_LineHeight, m_LineHeight));
+                ImGui::PopStyleVar();
                 ImGui::SameLine();
                 ImGui::Text((*tComp.GetTag().begin()).c_str());
 
                 ImGui::TableSetColumnIndex(1);
-                if (ImGui::ImageButton(m_StageIconID.visibleIcon, ImVec2(18, 9)));
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+                ImTextureID icon = m_StageIconID.visibleIcon;
+                if (ImGui::ImageButton(icon, ImVec2(m_LineHeight, m_LineHeight)));
+                ImGui::PopStyleVar();
 
                 ImGui::TableSetColumnIndex(2);
                 ImGui::Text("Entity");

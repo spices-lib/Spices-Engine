@@ -50,19 +50,21 @@ namespace Spiecs {
 		*/
 		Begin();
 
+		ImGui::Separator();
+
 		/**
 		* @brief Render ClearConsoleIcon.
 		*/
 		{
 			ZoneScopedN("Render ClearConsoleIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.clearConsoleIcon, ImVec2(18, 18)))
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.clearConsoleIcon, ImVec2(m_LineHeight, m_LineHeight)))
 			{
 				m_Console->Clear();
 			}
-
+			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Clear Console");
-			ImGui::SameLine();
 		}
 
 		/**
@@ -71,7 +73,9 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render OpenLogFileIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.openLogFileIcon, ImVec2(18, 18)))
+			ImGui::SameLine();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.openLogFileIcon, ImVec2(m_LineHeight, m_LineHeight)))
 			{
 				std::stringstream ss;
 				ss << "C:/Windows/System32/notepad.exe " << m_Console->GetFilePath();
@@ -81,9 +85,8 @@ namespace Spiecs {
 				*/
 				ProcessLibrary::OpenProcess("C:/Windows/System32/notepad.exe ", ss.str().c_str());
 			}
-
+			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Open Log File");
-			ImGui::SameLine();
 		}
 
 		/**
@@ -92,7 +95,9 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render OpenLogFolderIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.openLogFolderIcon, ImVec2(18, 18)))
+			ImGui::SameLine();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.openLogFolderIcon, ImVec2(m_LineHeight, m_LineHeight)))
 			{
 				/**
 				* @brief Get Selected file in Explore.
@@ -113,9 +118,8 @@ namespace Spiecs {
 					ProcessLibrary::OpenProcess("C:/Windows/System32/notepad.exe ", ss.str().c_str());
 				}
 			}
-
+			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Open Log Folder");
-			ImGui::SameLine();
 		}
 
 		/**
@@ -124,13 +128,14 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render EnableCommandFieldIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.enableCommandFieldIcon, ImVec2(18, 18)))
-			{
-				m_Console->Clear();
-			}
-
-			ImGui::SetItemTooltip("Enable Command Field");
 			ImGui::SameLine();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.enableCommandFieldIcon, ImVec2(m_LineHeight, m_LineHeight)))
+			{
+				m_EnableCmdInput = !m_EnableCmdInput;
+			}
+			ImGui::PopStyleVar();
+			ImGui::SetItemTooltip("Enable Command Field");
 		}
 
 		/**
@@ -139,12 +144,13 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render SelectIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.select, ImVec2(18, 18)))
+			ImGui::SameLine(m_PanelSize.x - m_LineHeight - 350.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.select, ImVec2(m_LineHeight, m_LineHeight)))
 			{
 				m_Console->Clear();
 			}
-
-			ImGui::SameLine();
+			ImGui::PopStyleVar();
 		}
 
 		/**
@@ -153,13 +159,14 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render VerboseIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.verbose, ImVec2(18, 18)))
+			ImGui::SameLine();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.verbose, ImVec2(m_LineHeight, m_LineHeight)))
 			{
 				m_Level = 0;
 			}
-
+			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Verbose");
-			ImGui::SameLine();
 		}
 
 		/**
@@ -168,13 +175,14 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render InfoIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.info, ImVec2(18, 18)))
+			ImGui::SameLine();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.info, ImVec2(m_LineHeight, m_LineHeight)))
 			{
 				m_Level = 1;
 			}
-
+			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Info");
-			ImGui::SameLine();
 		}
 
 		/**
@@ -183,13 +191,14 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render WarningIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.warning, ImVec2(18, 18))) 
+			ImGui::SameLine();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.warning, ImVec2(m_LineHeight, m_LineHeight)))
 			{ 
 				m_Level = 2; 
 			}
-
+			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Warning");
-			ImGui::SameLine();
 		}
 
 		/**
@@ -198,13 +207,14 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render ErrorIcon");
 
-			if (ImGui::ImageButton(m_ConsoleIconID.error, ImVec2(18, 18))) 
+			ImGui::SameLine();
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			if (ImGui::ImageButton(m_ConsoleIconID.error, ImVec2(m_LineHeight, m_LineHeight)))
 			{
 				m_Level = 3; 
 			}
-
+			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Error");
-			ImGui::SameLine();
 		}
 
 		/**
@@ -213,8 +223,11 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render Search Input Text");
 
+			ImGui::SameLine();
+			ImGui::PushItemWidth(200);
 			char search[128] = "";
 			if (ImGui::InputTextWithHint("Search", "Search", search, 128)) {}
+			ImGui::PopItemWidth();
 			ImGui::Separator();
 		}
 
@@ -224,11 +237,11 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render Console ScrollingRegion");
 
-			const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetStyleColorVec4(ImGuiCol_Border));
 
-			if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
+			float itemHeight = m_EnableCmdInput ? ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing() : ImGui::GetStyle().ItemSpacing.y;
+			if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -itemHeight), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
 
@@ -280,20 +293,36 @@ namespace Spiecs {
 
 			ImGui::PopStyleColor(2);
 			ImGui::EndChild();
-			ImGui::Separator();
 		}
 
 		/**
 		* @brief Render Console Command-line.
 		*/
 		{
-			ZoneScopedN("Render Console Command-line");
-
-			bool reclaim_focus = false;
-			char InputBuf[512] = "";
-			ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-			if (ImGui::InputText("cmd", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &ImguiConsole::TextEditCallbackStub, (void*)this))
+			if (m_EnableCmdInput)
 			{
+				ZoneScopedN("Render Console Command-line");
+
+				ImGui::Separator();
+				ImGui::PushItemWidth(-1);
+				bool reclaim_focus = false;
+				char InputBuf[512] = "";
+				ImGuiInputTextFlags input_text_flags = 
+					ImGuiInputTextFlags_EnterReturnsTrue   | 
+					ImGuiInputTextFlags_EscapeClearsAll    | 
+					ImGuiInputTextFlags_CallbackCompletion | 
+					ImGuiInputTextFlags_CallbackHistory    |
+					ImGuiInputTextFlags_CallbackCharFilter ;
+				ImGui::InputTextWithHint(
+					"Cmd", 
+					"Cmd", 
+					InputBuf, 
+					IM_ARRAYSIZE(InputBuf), 
+					input_text_flags, 
+					&ImguiConsole::TextEditCallbackStub, 
+					(void*)this
+				);
+				ImGui::PopItemWidth();
 			}
 		}
 
@@ -305,6 +334,8 @@ namespace Spiecs {
 
 	int ImguiConsole::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 	{
+		SPIECS_CORE_INFO(data->Buf);
+
 		return 0;
 	}
 }

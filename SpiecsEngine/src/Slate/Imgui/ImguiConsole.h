@@ -108,5 +108,10 @@ namespace Spiecs {
 		* @brief The information level that console show.
 		*/
 		int m_Level = 0;
+
+		/**
+		* @brief The boolean of enable Cmd Input.
+		*/
+		bool m_EnableCmdInput = false;
 	};
 }

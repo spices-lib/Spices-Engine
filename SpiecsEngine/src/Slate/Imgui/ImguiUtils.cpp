@@ -93,6 +93,23 @@ namespace Spiecs {
             ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
         }
         ImGui::Begin(m_PanelName.c_str());
+
+        /**
+        * @brief Query Resize Event Condition.
+        */
+        QueryIsResizedThisFrame(ImGui::GetContentRegionAvail());
+
+        /**
+        * @brief Query Slate State, maybe implementate in parent.
+        */
+        {
+            ZoneScopedN("Query Slate State");
+
+            m_PanelPos = ImGui::GetWindowPos();
+            m_IsFocused = ImGui::IsWindowFocused();
+            m_IsHovered = ImGui::IsWindowHovered();
+            m_LineHeight = GImGui->Font->FontSize * GImGui->IO.FontGlobalScale + GImGui->Style.FramePadding.y * 2.0f;
+        }
 	}
 
     void ImguiSlate::Begin(float alpha)
@@ -122,6 +139,23 @@ namespace Spiecs {
                 m_IsOpen = false;
             ImGui::EndPopup();
         }
+
+        /**
+        * @brief Query Resize Event Condition.
+        */
+        QueryIsResizedThisFrame(ImGui::GetContentRegionAvail());
+
+        /**
+        * @brief Query Slate State, maybe implementate in parent.
+        */
+        {
+            ZoneScopedN("Query Slate State");
+
+            m_PanelPos   = ImGui::GetWindowPos();
+            m_IsFocused  = ImGui::IsWindowFocused();
+            m_IsHovered  = ImGui::IsWindowHovered();
+            m_LineHeight = GImGui->Font->FontSize * GImGui->IO.FontGlobalScale + GImGui->Style.FramePadding.y * 2.0f;
+        }
     }
 
     void ImguiSlate::End()
@@ -140,5 +174,21 @@ namespace Spiecs {
         auto info = rowPtr->GetResource<VulkanImage>()->GetImageInfo();
 
         id = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
+    }
+
+    void ImguiSlate::QueryIsResizedThisFrame(ImVec2 thisFrameSize)
+    {
+        ZoneScoped;
+
+        if (m_PanelSize.x != thisFrameSize.x || m_PanelSize.y != thisFrameSize.y)
+        {
+            m_IsResized = true;
+        }
+        else
+        {
+            m_IsResized = false;
+        }
+
+        m_PanelSize = thisFrameSize;
     }
 }
