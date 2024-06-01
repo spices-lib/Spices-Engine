@@ -40,8 +40,10 @@ namespace Spiecs {
         */
         Begin();
         ImGui::Separator();
+        ImGui::PushItemWidth(m_PanelSize.x - m_LineHeight * 2.4f);
         char search[128] = "";
         if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
+        ImGui::PopItemWidth();
         
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
         ImGui::SameLine(m_PanelSize.x - m_LineHeight * 2.4f);

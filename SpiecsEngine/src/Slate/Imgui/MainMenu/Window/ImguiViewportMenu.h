@@ -8,7 +8,7 @@
 #include "Core/Core.h"
 #include "Slate/Imgui/ImguiUtils.h"
 
-#define MaxViewportNum 4
+#define MaxViewportNum 2
 
 namespace Spiecs {
 

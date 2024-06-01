@@ -17,14 +17,12 @@ namespace Spiecs {
     {
         ZoneScoped;
 
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-
         ImVec2 work_pos  = m_Owner->GetPanelPos();
         ImVec2 work_size = m_Owner->GetPanelSize();
 
         static int location = 1;
         ImGuiIO& io = ImGui::GetIO();
-        ImGuiWindowFlags window_flags = 
+        ImGuiWindowFlags window_flags =
             ImGuiWindowFlags_NoDecoration        | 
             ImGuiWindowFlags_NoDocking           | 
             ImGuiWindowFlags_AlwaysAutoResize    | 
@@ -43,7 +41,6 @@ namespace Spiecs {
             window_pos_pivot.y = (location & 2) ? 1.0f : 0.0f;
 
             ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
-            ImGui::SetNextWindowViewport(viewport->ID);
 
             window_flags |= ImGuiWindowFlags_NoMove;
         }

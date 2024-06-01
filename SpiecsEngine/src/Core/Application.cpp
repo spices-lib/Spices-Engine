@@ -21,7 +21,7 @@ namespace Spiecs {
 	Application::Application()
 	{
 		ZoneScoped;
-
+		
 		/**
 		* @brief Init Log Class.
 		*/

@@ -144,7 +144,7 @@ namespace Spiecs {
 		{
 			ZoneScopedN("Render SelectIcon");
 
-			ImGui::SameLine(m_PanelSize.x - m_LineHeight - 350.0f);
+			ImGui::SameLine(m_PanelSize.x - m_LineHeight * 5.7 - 200.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			if (ImGui::ImageButton(m_ConsoleIconID.select, ImVec2(m_LineHeight, m_LineHeight)))
 			{

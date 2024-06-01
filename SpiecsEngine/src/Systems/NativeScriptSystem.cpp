@@ -24,7 +24,7 @@ namespace Spiecs {
 		m_NativeScriptRegister = std::make_unique<NativeScriptRegister>();
 
 		m_NativeScriptRegister->Register<ViewPortResizeQueryer>();
-		//m_NativeScriptRegister->Register<WorldPickIDQueryer>();
+		m_NativeScriptRegister->Register<WorldPickIDQueryer>();
 	}
 
 	void NativeScriptSystem::OnSystemShutDown()

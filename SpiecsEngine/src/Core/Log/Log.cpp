@@ -33,13 +33,13 @@ namespace Spiecs {
 		std::stringstream ss;
 		ss << 
 		SPIECS_lOGFILE_PATH << 
-		p->tm_year + 1900 <<  
-		p->tm_mon  << 
-		p->tm_mday << 
-		p->tm_hour << 
-		p->tm_min  << 
-		p->tm_sec  << 
-		"_Log.log";
+		p->tm_year + 1900 << "-" <<
+		p->tm_mon  + 1 << "-" <<
+		p->tm_mday << " " <<
+		p->tm_hour << "," << 
+		p->tm_min  << "," <<
+		p->tm_sec  <<
+		".log";
 
 		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(ss.str(), max_size, max_files);
 		file_sink->set_level(spdlog::level::trace);
