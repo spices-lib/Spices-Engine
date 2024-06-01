@@ -122,12 +122,12 @@ namespace Spiecs {
 		});
 
 		VkSubpassDependency outDependency{};
-		outDependency.srcSubpass      = m_SubPasses.size() - 1;
-		outDependency.dstSubpass      = VK_SUBPASS_EXTERNAL;
-		outDependency.srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		outDependency.dstStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		outDependency.srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		outDependency.dstAccessMask   = VK_ACCESS_MEMORY_READ_BIT;
+		outDependency.srcSubpass = m_SubPasses.size() - 1;
+		outDependency.dstSubpass = VK_SUBPASS_EXTERNAL;
+		outDependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		outDependency.dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		outDependency.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		outDependency.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 		outDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
 		subPassDepecdency.push_back(outDependency);
