@@ -21,6 +21,11 @@ namespace Spiecs {
 	class ImguiGizmos;
 
 	/**
+	* @brief Forward Declear.
+	*/
+	class ImguiViewportToolBar;
+
+	/**
 	* @brief The ImguiViewport Class.
 	* This class defines how to render a viewport.
 	*/
@@ -100,5 +105,10 @@ namespace Spiecs {
 		* @brief The shared pointer of ImguiGizmos.
 		*/
 		std::shared_ptr<ImguiGizmos> m_Gizmos;
+
+		/**
+		* @brief The shared pointer of ImguiGizmos.
+		*/
+		std::shared_ptr<ImguiViewportToolBar> m_ToolBar;
 	};
 }

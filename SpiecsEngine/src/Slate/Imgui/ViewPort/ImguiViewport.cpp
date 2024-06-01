@@ -11,6 +11,7 @@
 #include "Systems/SlateSystem.h"
 #include "ImguiFloattingInfo.h"
 #include "ImGuizmo.h"
+#include "ImguiViewportToolBar.h"
 
 namespace Spiecs {
 
@@ -47,6 +48,11 @@ namespace Spiecs {
         */
         m_Gizmos = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, "Gizmos", this);
 
+        /**
+        * @brief Instance a Gizmos.
+        */
+        m_ToolBar = SlateSystem::GetRegister()->Register<ImguiViewportToolBar>(false, "ToolBar", this);
+
     }
 
     void ImguiViewport::OnRender()
@@ -67,6 +73,11 @@ namespace Spiecs {
 
             ImGui::Image((void*)m_ViewportID, m_PanelSize);
         }
+
+        /**
+        * @brief Render ToolBar.
+        */
+        m_ToolBar->OnRender();
 
         /**
         * @brief Render FloatingInfo.
