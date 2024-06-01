@@ -28,20 +28,6 @@ namespace Spiecs{
 	public:
 
 		/**
-		* @brief Where the slate's initialized pos.
-		*/
-		enum class Side
-		{
-			Left,    // The Left          on the window.
-			Right,   // The Right         on the window.
-			Up,      // The Up            on the window.
-			Down,    // The Down          on the window.
-			Scene,   // The full screen   on the window.
-		};
-
-	public:
-
-		/**
 		* @brief Constructor Function.
 		* Init with Slate's name.
 		* @param[in] panelName The Slate's name.
@@ -79,24 +65,19 @@ namespace Spiecs{
 	protected:
 
 		/**
-		* @brief Begin a docking space, usually called by viewport.
-		* @param[in] side Usually Side::Scene.
-		* @param[in] alpha Opacity.
-		*/
-		void BeginMainDock(Side side = Side::Scene, float alpha = 1.0f);
-
-		/**
 		* @brief Begin a common slate.
 		* @param[in] alpha Opacity.
+		* @param[in] flags Slate flags.
 		*/
-		void Begin(float alpha = 0.5f);
+		void Begin(float alpha = 0.5f, ImGuiWindowFlags flags = 0);
 
 		/**
 		* @brief Begin a common slate with name.
 		* @param[in] panelName The name of Slate.
 		* @param[in] alpha Opacity.
+		* @param[in] flags Slate flags.
 		*/
-		void Begin(const std::string& panelName, float alpha = 0.5f);
+		void Begin(const std::string& panelName, float alpha = 0.5f, ImGuiWindowFlags flags = 0);
 
 		/**
 		* @brief End a slate.
@@ -157,11 +138,6 @@ namespace Spiecs{
 		inline bool IsResizedThisFrame() { return m_IsResized; };
 
 	protected:
-
-		/**
-		* @brief Main docking slate ID.
-		*/
-		static ImGuiID dockspaceID;
 
 		/**
 		* @brief This slate's size.

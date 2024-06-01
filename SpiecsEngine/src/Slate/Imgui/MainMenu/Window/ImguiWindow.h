@@ -21,6 +21,11 @@ namespace Spiecs {
 	class ImguiUtilities;
 
 	/**
+	* @brief Forward Declear.
+	*/
+	class ImguiViewportMenu;
+
+	/**
 	* @brief The ImguiWindow Class.
 	* This class defines how to render a window menu.
 	*/
@@ -70,5 +75,10 @@ namespace Spiecs {
 		* @brief The shared pointer of ImguiUtilities.
 		*/
 		std::shared_ptr<ImguiUtilities> m_Utilities;
+
+		/**
+		* @brief The shared pointer of ImguiUtilities.
+		*/
+		std::shared_ptr<ImguiViewportMenu> m_ViewportMenu;
 	};
 }

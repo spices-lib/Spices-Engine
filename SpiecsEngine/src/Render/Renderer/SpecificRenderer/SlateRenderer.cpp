@@ -124,6 +124,7 @@ namespace Spiecs {
 			ZoneScopedN("ImGui::NewFrame");
 
 			ImGui::NewFrame();
+			ImGuiH::MainDockSpace();
 		}
 
 		{
@@ -131,6 +132,8 @@ namespace Spiecs {
 
 			ImGuizmo::BeginFrame();
 		}
+
+
 	}
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)

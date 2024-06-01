@@ -226,7 +226,7 @@ namespace Spiecs {
 			ImGui::SameLine();
 			ImGui::PushItemWidth(200);
 			char search[128] = "";
-			if (ImGui::InputTextWithHint("Search", "Search", search, 128)) {}
+			if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
 			ImGui::PopItemWidth();
 			ImGui::Separator();
 		}

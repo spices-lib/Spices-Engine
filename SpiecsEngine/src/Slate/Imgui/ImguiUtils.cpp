@@ -9,121 +9,16 @@
 
 #include "Render/Vulkan/VulkanImage.h"
 
-// Only once.
-#include <imgui.cpp>
-
 namespace Spiecs {
 
-    /**
-    * @breif Single Instance Dockspace ID.
-    */
-    ImGuiID ImguiSlate::dockspaceID;
-
-	void ImguiSlate::BeginMainDock(Side side, float alpha)
-	{
-        ZoneScoped;
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-        // Keeping the unique ID of the dock space
-        dockspaceID = ImGui::GetID("DockSpace");
-
-        // The dock need a dummy window covering the entire viewport.
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-        // All flags to dummy window
-        ImGuiWindowFlags host_window_flags = 0;
-        host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
-        host_window_flags |= ImGuiWindowFlags_NoMove; //| ImGuiWindowFlags_NoDocking;
-        host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        host_window_flags |= ImGuiWindowFlags_NoBackground;
-        // Starting dummy window
-        char label[32];
-        ImFormatString(label, IM_ARRAYSIZE(label), "DockSpaceViewport_%08X", viewport->ID);
-        ImGui::Begin(label, NULL, host_window_flags);
-
-        // The central node is transparent, so that when UI is draw after, the image is visible
-        // Auto Hide Bar, no title of the panel
-        // Center is not dockable, that is for the scene
-        ImGuiDockNodeFlags dockspaceFlags = 
-            ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoDockingInCentralNode;
-
-        // Building the splitting of the dock space is done only once
-        if (!ImGui::DockBuilderGetNode(dockspaceID))
-        {
-
-            ImGui::DockBuilderRemoveNode(dockspaceID);
-            ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace);
-
-            ImGuiID dock_main_id = dockspaceID;
-
-            // Slitting all 4 directions
-            ImGuiID id_left = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.2f, nullptr, &dock_main_id);
-            ImGui::DockBuilderDockWindow(side == Side::Left ? m_PanelName.c_str() : "Dock_left", id_left);
-
-            ImGuiID id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, nullptr, &dock_main_id);
-            ImGui::DockBuilderDockWindow(side == Side::Right ? m_PanelName.c_str() : "Dock_right", id_right);
-
-            ImGuiID id_up = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.2f, nullptr, &dock_main_id);
-            ImGui::DockBuilderDockWindow(side == Side::Up ? m_PanelName.c_str() : "Dock_up", id_up);
-
-            ImGuiID id_down = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.2f, nullptr, &dock_main_id);
-            ImGui::DockBuilderDockWindow(side == Side::Down ? m_PanelName.c_str() : "Dock_down", id_down);
-
-            ImGui::DockBuilderDockWindow(side == Side::Scene ? m_PanelName.c_str() : "Scene", dock_main_id);  // Center
-
-            ImGui::DockBuilderFinish(dock_main_id);
-        }
-
-        // Setting the panel to blend with alpha
-        ImVec4 col = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg);
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(col.x, col.y, col.z, alpha));
-
-        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
-        ImGui::PopStyleColor();
-        ImGui::End();
-
-        // The panel
-        if (alpha < 1)
-        {
-            ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
-        }
-        ImGui::Begin(m_PanelName.c_str());
-
-        /**
-        * @brief Query Resize Event Condition.
-        */
-        QueryIsResizedThisFrame(ImGui::GetContentRegionAvail());
-
-        /**
-        * @brief Query Slate State, maybe implementate in parent.
-        */
-        {
-            ZoneScopedN("Query Slate State");
-
-            m_PanelPos = ImGui::GetWindowPos();
-            m_IsFocused = ImGui::IsWindowFocused();
-            m_IsHovered = ImGui::IsWindowHovered();
-            m_LineHeight = GImGui->Font->FontSize * GImGui->IO.FontGlobalScale + GImGui->Style.FramePadding.y * 2.0f;
-        }
-	}
-
-    void ImguiSlate::Begin(float alpha)
+    void ImguiSlate::Begin(float alpha, ImGuiWindowFlags flags)
     {
         Begin(m_PanelName, alpha);
     }
 
-    void ImguiSlate::Begin(const std::string& panelName, float alpha)
+    void ImguiSlate::Begin(const std::string& panelName, float alpha, ImGuiWindowFlags flags)
     {
         ZoneScoped;;
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
         // The panel
         if (alpha < 1)
@@ -131,7 +26,7 @@ namespace Spiecs {
             ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
         }
 
-        ImGui::Begin(panelName.c_str(), &m_IsOpen);
+        ImGui::Begin(panelName.c_str(), &m_IsOpen, flags);
 
         if (ImGui::BeginPopupContextItem())
         {
@@ -154,7 +49,7 @@ namespace Spiecs {
             m_PanelPos   = ImGui::GetWindowPos();
             m_IsFocused  = ImGui::IsWindowFocused();
             m_IsHovered  = ImGui::IsWindowHovered();
-            m_LineHeight = GImGui->Font->FontSize * GImGui->IO.FontGlobalScale + GImGui->Style.FramePadding.y * 2.0f;
+            m_LineHeight = ImGui::GetFont()->FontSize * ImGui::GetIO().FontGlobalScale + ImGui::GetStyle().FramePadding.y * 2.0f;
         }
     }
 
@@ -163,7 +58,6 @@ namespace Spiecs {
         ZoneScoped;
 
         ImGui::End(); 
-        ImGui::PopStyleVar(3);
     }
 
     void ImguiSlate::LoadSlateIcon(ImTextureID& id, const std::string& iconFile)

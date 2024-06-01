@@ -10,6 +10,7 @@
 #include "ImguiWindow.h"
 #include "Visualizer/ImguiVisualizer.h"
 #include "Utilities/ImguiUtilities.h"
+#include "ImguiViewportMenu.h"
 
 namespace Spiecs {
 
@@ -31,6 +32,10 @@ namespace Spiecs {
         */
         m_Utilities = SlateSystem::GetRegister()->Register<ImguiUtilities>(false, "Utilities");
 
+        /**
+        * @brief Instance a ViewportMenu.
+        */
+        m_ViewportMenu = SlateSystem::GetRegister()->Register<ImguiViewportMenu>(false, "ViewportMenu");
     }
 
     void ImguiWindow::OnRender()
@@ -51,6 +56,11 @@ namespace Spiecs {
             * @brief Render Utilities.
             */
             m_Utilities->OnRender();
+
+            /**
+            * @brief Render Utilities.
+            */
+            m_ViewportMenu->OnRender();
 
             /**
             * @brief End Windows.

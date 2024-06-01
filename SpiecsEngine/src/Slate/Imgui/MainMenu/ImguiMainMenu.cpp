@@ -12,6 +12,8 @@
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
 
+#include <imgui_internal.h>
+
 namespace Spiecs {
 
     ImguiMainMenu::ImguiMainMenu(
@@ -42,6 +44,10 @@ namespace Spiecs {
     void ImguiMainMenu::OnRender()
 	{
         ZoneScoped;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
+        ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
 
         /**
         * @brief MainMenu do not need call Begin(), End().
@@ -129,5 +135,8 @@ namespace Spiecs {
             */
             ImGui::EndMainMenuBar();
         }
+
+        ImGui::PopItemFlag();
+        ImGui::PopStyleVar(2);
 	}
 }

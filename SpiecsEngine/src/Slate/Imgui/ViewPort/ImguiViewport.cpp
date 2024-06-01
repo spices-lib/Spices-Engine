@@ -60,10 +60,9 @@ namespace Spiecs {
         ZoneScoped;
 
         /**
-        * @brief Begin the viewport as a Main Docking Space.
-        * @todo Multiple Viewport Support.
+        * @brief Begin render Console.
         */
-        BeginMainDock();
+        Begin(0.5, ImGuiWindowFlags_NoTitleBar);
 
         /**
         * @brief Render Viewport image.

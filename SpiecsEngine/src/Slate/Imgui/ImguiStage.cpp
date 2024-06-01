@@ -9,8 +9,6 @@
 
 #include "World/World/World.h"
 
-#include <imgui_internal.h>
-
 namespace Spiecs {
 
     ImguiStage::ImguiStage(
@@ -43,7 +41,7 @@ namespace Spiecs {
         Begin();
         ImGui::Separator();
         char search[128] = "";
-        if (ImGui::InputTextWithHint("Search", "Search", search, 128)) {}
+        if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
         
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
         ImGui::SameLine(m_PanelSize.x - m_LineHeight * 2.4f);

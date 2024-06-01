@@ -8,6 +8,9 @@
 #include "ImguiHelper.h"
 #include "Core/Library/FileLibrary.h"
 
+// This file Only Can include once.
+#include <imgui.cpp>
+
 namespace Spiecs {
 
     void ImGuiH::SetStyle()
@@ -25,6 +28,7 @@ namespace Spiecs {
         ImGuiStyle& style                   = ImGui::GetStyle();
         style.WindowRounding                = 0.0f;
         style.WindowBorderSize              = 0.0f;
+        style.WindowPadding                 = ImVec2(0.0f, 0.0f);
         style.ColorButtonPosition           = ImGuiDir_Left;
         style.FrameRounding                 = 4.0f;
         style.FrameBorderSize               = 0.0f;
@@ -38,7 +42,7 @@ namespace Spiecs {
         style.Colors[ImGuiCol_PopupBg]      = ImVec4(0.135f, 0.135f, 0.135f, 1.0f);
         style.Colors[ImGuiCol_Border]       = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
         style.Colors[ImGuiCol_FrameBg]      = ImVec4(0.05f, 0.05f, 0.05f, 0.5f);
-        
+
         /**
         * @brief Set Botton Style.
         */
@@ -148,6 +152,73 @@ namespace Spiecs {
             font_config.SizePixels = 13.0f * ((fontmode == FONT_FIXED) ? 1 : high_dpi_scale);  // 13 is the default font size
             io.Fonts->AddFontDefault(&font_config);
         }
+    }
+
+    void ImGuiH::MainDockSpace(Side side, float alpha)
+    {
+        ZoneScoped;
+
+        // Keeping the unique ID of the dock space
+        ImGuiID dockspaceID = ImGui::GetID("DockSpace");
+
+        // The dock need a dummy window covering the entire viewport.
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        // All flags to dummy window
+        ImGuiWindowFlags host_window_flags = 0;
+        host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+        host_window_flags |= ImGuiWindowFlags_NoMove; //| ImGuiWindowFlags_NoDocking;
+        host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        host_window_flags |= ImGuiWindowFlags_NoBackground;
+        // Starting dummy window
+        char label[32];
+        ImFormatString(label, IM_ARRAYSIZE(label), "DockSpaceViewport_%08X", viewport->ID);
+        ImGui::Begin(label, NULL, host_window_flags);
+
+        // The central node is transparent, so that when UI is draw after, the image is visible
+        // Auto Hide Bar, no title of the panel
+        // Center is not dockable, that is for the scene
+        ImGuiDockNodeFlags dockspaceFlags =
+            ImGuiDockNodeFlags_PassthruCentralNode;
+            //ImGuiDockNodeFlags_AutoHideTabBar;
+            //ImGuiDockNodeFlags_NoDockingInCentralNode;
+
+        // Building the splitting of the dock space is done only once
+        if (!ImGui::DockBuilderGetNode(dockspaceID))
+        {
+
+            ImGui::DockBuilderRemoveNode(dockspaceID);
+            ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace);
+
+            ImGuiID dock_main_id = dockspaceID;
+
+            // Slitting all 4 directions
+            ImGuiID id_left = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.2f, nullptr, &dock_main_id);
+            ImGui::DockBuilderDockWindow(side == Side::Left ? "Docking Space" : "Dock_left", id_left);
+
+            ImGuiID id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, nullptr, &dock_main_id);
+            ImGui::DockBuilderDockWindow(side == Side::Right ? "Docking Space" : "Dock_right", id_right);
+
+            ImGuiID id_up = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.2f, nullptr, &dock_main_id);
+            ImGui::DockBuilderDockWindow(side == Side::Up ? "Docking Space" : "Dock_up", id_up);
+
+            ImGuiID id_down = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.2f, nullptr, &dock_main_id);
+            ImGui::DockBuilderDockWindow(side == Side::Down ? "Docking Space" : "Dock_down", id_down);
+
+            ImGui::DockBuilderDockWindow(side == Side::Scene ? "Docking Space" : "Scene", dock_main_id);  // Center
+
+            ImGui::DockBuilderFinish(dock_main_id);
+        }
+
+        // Setting the panel to blend with alpha
+        ImVec4 col = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg);
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(col.x, col.y, col.z, alpha));
+
+        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
+        ImGui::PopStyleColor();
+        ImGui::End();
     }
 
     float ImGuiH::GetDPIScale()

@@ -10,6 +10,7 @@
 // imgui header.
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
+//#include <imgui_internal.h>
 #include <backends/imgui_impl_vulkan.h>
 #include <backends/imgui_impl_glfw.h>
 #include <implot.h>
@@ -26,6 +27,18 @@ namespace Spiecs {
 		FONT_PROPORTIONAL_SCALED,      // proportional_scale.
 		FONT_MONOSPACED_SCALED,        // monospaced_scale.
 		FONT_MAX,                      // max.
+	};
+
+	/**
+	* @brief Where the slate's initialized pos.
+	*/
+	enum class Side
+	{
+		Left,    // The Left          on the window.
+		Right,   // The Right         on the window.
+		Up,      // The Up            on the window.
+		Down,    // The Down          on the window.
+		Scene,   // The full screen   on the window.
 	};
 
 	/**
@@ -46,6 +59,13 @@ namespace Spiecs {
 		* @param[in] fontmode FontMode.
 		*/
 		static void SetFonts(FontMode fontmode = FontMode::FONT_PROPORTIONAL_SCALED);
+
+		/**
+		* @brief Begin a docking space.
+		* @param[in] side Usually Side::Scene.
+		* @param[in] alpha Opacity.
+		*/
+		static void MainDockSpace(Side side = Side::Scene, float alpha = 1.0f);
 
 	private:
 
