@@ -5,6 +5,7 @@
 */
 
 #pragma once
+#include "Core/Core.h"
 #include "Core/Library/ClassLibrary.h"
 
 namespace scl {

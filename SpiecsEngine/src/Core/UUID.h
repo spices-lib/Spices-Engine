@@ -17,7 +17,6 @@ namespace Spiecs {
 
 }
 
-
 namespace std {
 
 	template<>

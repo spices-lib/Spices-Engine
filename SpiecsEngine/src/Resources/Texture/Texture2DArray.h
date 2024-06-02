@@ -5,6 +5,7 @@
 */
 
 #pragma once
+#include "Core/Core.h"
 #include "Texture2D.h"
 
 namespace Spiecs {

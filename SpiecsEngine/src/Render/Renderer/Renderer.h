@@ -476,7 +476,7 @@ namespace Spiecs {
 	template<typename T, typename F>
 	inline void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
 	{
-		ZoneScoped;;
+		SPIECS_PROFILE_ZONE;;
 
 		/**
 		* @brief Iter use view, not group.

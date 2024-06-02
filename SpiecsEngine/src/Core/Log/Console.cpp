@@ -8,13 +8,11 @@ namespace Spiecs {
 	Console::Console(const std::string& filePath)
 		: m_FilePath(filePath)
 	{
-		m_LogInfos.clear();
+		m_InfoData.Clear();
 	}
 
 	Console::~Console()
-	{
-
-	}
+	{}
 
 	std::shared_ptr<Console> Console::Register(const std::string& name, const std::string& filePath)
 	{
@@ -28,12 +26,13 @@ namespace Spiecs {
 
 	void Console::Clear()
 	{
-		m_LogInfos.clear();
+		m_InfoData.Clear();
 	}
 
 	void Console::Push(const std::string& cmd)
 	{
-		m_LogInfos.push_back({ cmd , "info", glm::vec4(1.0f)});
+		// todo: To be completed.
+		//m_LogInfos.push_back({ cmd , "info", glm::vec4(1.0f)});
 	}
 
 	void Console::sink_it_(const spdlog::details::log_msg& msg)
@@ -59,34 +58,58 @@ namespace Spiecs {
 		case spdlog::level::level_enum::trace: 
 			helper.level = "trace";
 			helper.color = glm::vec4(1.0f);
+			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
+			helper.str = ss.str();
+			if (m_InfoData.m_TraceLogInfos.size() == 50)
+			{
+				m_InfoData.m_TraceLogInfos.pop_front();
+			}
+			m_InfoData.m_TraceLogInfos.push_back(helper);
 			break;
 		case spdlog::level::level_enum::info:
 			helper.level = "info";
 			helper.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
+			helper.str = ss.str();
+			if (m_InfoData.m_InfoLogInfos.size() == 50)
+			{
+				m_InfoData.m_InfoLogInfos.pop_front();
+			}
+			m_InfoData.m_InfoLogInfos.push_back(helper);
 			break;
 		case spdlog::level::level_enum::warn:
 			helper.level = "warn";
 			helper.color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
+			helper.str = ss.str();
+			if (m_InfoData.m_WarnLogInfos.size() == 50)
+			{
+				m_InfoData.m_WarnLogInfos.pop_front();
+			}
+			m_InfoData.m_WarnLogInfos.push_back(helper);
 			break;
 		case spdlog::level::level_enum::err:
 			helper.level = "error";
 			helper.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
+			helper.str = ss.str();
+			if (m_InfoData.m_ErrorLogInfos.size() == 50)
+			{
+				m_InfoData.m_ErrorLogInfos.pop_front();
+			}
+			m_InfoData.m_ErrorLogInfos.push_back(helper);
 			break;
 		case spdlog::level::level_enum::critical:
 			helper.level = "critical";
 			helper.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
+			helper.str = ss.str();
+			if (m_InfoData.m_CriticalLogInfos.size() == 50)
+			{
+				m_InfoData.m_CriticalLogInfos.pop_front();
+			}
+			m_InfoData.m_CriticalLogInfos.push_back(helper);
 			break;
 		}
-
-		/**
-		* @brief Build Log string.
-		*/
-		ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
-		helper.str = ss.str();
-
-		/**
-		* @brief Keep it.
-		*/
-		m_LogInfos.push_back(helper);
 	}
 }

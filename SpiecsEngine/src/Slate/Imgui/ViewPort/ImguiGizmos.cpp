@@ -20,10 +20,10 @@ namespace Spiecs {
 
     void ImguiGizmos::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         {
-            ZoneScopedN("Set ImGuizmo Draw Info");
+            SPIECS_PROFILE_ZONEN("Set ImGuizmo Draw Info");
 
             /**
             * @brief Set Gizmo Projection type.
@@ -57,7 +57,7 @@ namespace Spiecs {
         * @brief Fill in camera.
         */
         {
-            ZoneScopedN("Get Camera Matrix");
+            SPIECS_PROFILE_ZONEN("Get Camera Matrix");
 
             /**
             * @brief Iter by view.
@@ -82,7 +82,7 @@ namespace Spiecs {
         * @brief Draw Editor Grid.
         */
         {
-            ZoneScopedN("ImGuizmo::DrawGrid");
+            SPIECS_PROFILE_ZONEN("ImGuizmo::DrawGrid");
 
             /**
             * @todo Remove it and implementate it by renderer.
@@ -99,7 +99,7 @@ namespace Spiecs {
         * @brief Draw Editor ViewManipulate.
         */
         {
-            ZoneScopedN("ImGuizmo::ViewManipulate");
+            SPIECS_PROFILE_ZONEN("ImGuizmo::ViewManipulate");
 
             /**
             * @todo fix uncorrect manipulate.
@@ -117,7 +117,7 @@ namespace Spiecs {
         * @brief Set New Camera transform.
         */
         {
-            ZoneScopedN("DecomposeTransform");
+            SPIECS_PROFILE_ZONEN("DecomposeTransform");
 
             /**
             * @brief Split Channels from Matrix.
@@ -135,7 +135,7 @@ namespace Spiecs {
         * @brief Draw Editor Gizmo.
         */
         {
-            ZoneScopedN("Draw Editor Gizmo");
+            SPIECS_PROFILE_ZONEN("Draw Editor Gizmo");
 
             if (m_FrameInfo.m_PickEntityID.size() > 0 && bEnableGizmo)
             {
@@ -174,7 +174,7 @@ namespace Spiecs {
                 * @brief Gozmo Manipulater.
                 */
                 {
-                    ZoneScopedN("ImGuizmo::Manipulate");
+                    SPIECS_PROFILE_ZONEN("ImGuizmo::Manipulate");
 
                     ImGuizmo::Manipulate(
                         glm::value_ptr(viewMat),
@@ -190,7 +190,7 @@ namespace Spiecs {
                 * @brief Add to Entity Transform.
                 */
                 {
-                    ZoneScopedN("Add Transform to Manipulatd Entity");
+                    SPIECS_PROFILE_ZONEN("Add Transform to Manipulatd Entity");
 
                     if (ImGuizmo::IsUsing())
                     {
@@ -212,7 +212,7 @@ namespace Spiecs {
 
     void ImguiGizmos::OnEvent(Event& event)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Instance a EventDispatcher.
@@ -227,7 +227,7 @@ namespace Spiecs {
 
     bool ImguiGizmos::OnKeyPressed(KeyPressedEvent& e)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         switch (e.GetKeyCode())
         {

@@ -20,7 +20,7 @@ namespace Spiecs {
     )
         : ImguiSlate(panelName, frameInfo)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Instance a Visualizer.
@@ -40,7 +40,7 @@ namespace Spiecs {
 
     void ImguiWindow::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Begin render Window.

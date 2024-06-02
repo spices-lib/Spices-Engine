@@ -24,7 +24,7 @@ namespace Spiecs {
 		: ImguiSlate(panelName, frameInfo)
 		, m_Console(console)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @breif Load Icons that need.
@@ -34,7 +34,7 @@ namespace Spiecs {
 		LoadSlateIcon(m_ConsoleIconID.openLogFolderIcon,      "slate/console/Console.OpenLogFolder.png"      );
 		LoadSlateIcon(m_ConsoleIconID.enableCommandFieldIcon, "slate/console/Console.EnableCommandField.png" );
 
-		LoadSlateIcon(m_ConsoleIconID.select,                 "slate/console/Console.Select.png"             );
+		LoadSlateIcon(m_ConsoleIconID.filter,                 "slate/console/Console.Filter.png"             );
 		LoadSlateIcon(m_ConsoleIconID.verbose,                "slate/console/Console.Verbose.png"            );
 		LoadSlateIcon(m_ConsoleIconID.info,                   "slate/console/Console.Info.png"               );
 		LoadSlateIcon(m_ConsoleIconID.warning,                "slate/console/Console.Warning.png"            );
@@ -43,7 +43,7 @@ namespace Spiecs {
 
 	void ImguiConsole::OnRender()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Begin render Console.
@@ -56,7 +56,7 @@ namespace Spiecs {
 		* @brief Render ClearConsoleIcon.
 		*/
 		{
-			ZoneScopedN("Render ClearConsoleIcon");
+			SPIECS_PROFILE_ZONEN("Render ClearConsoleIcon");
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			if (ImGui::ImageButton(m_ConsoleIconID.clearConsoleIcon, ImVec2(m_LineHeight, m_LineHeight)))
@@ -71,7 +71,7 @@ namespace Spiecs {
 		* @brief Render OpenLogFileIcon.
 		*/
 		{
-			ZoneScopedN("Render OpenLogFileIcon");
+			SPIECS_PROFILE_ZONEN("Render OpenLogFileIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
@@ -93,7 +93,7 @@ namespace Spiecs {
 		* @brief Render OpenLogFolderIcon.
 		*/
 		{
-			ZoneScopedN("Render OpenLogFolderIcon");
+			SPIECS_PROFILE_ZONEN("Render OpenLogFolderIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
@@ -126,45 +126,37 @@ namespace Spiecs {
 		* @brief Render EnableCommandFieldIcon.
 		*/
 		{
-			ZoneScopedN("Render EnableCommandFieldIcon");
+			SPIECS_PROFILE_ZONEN("Render EnableCommandFieldIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			if (ImGui::ImageButton(m_ConsoleIconID.enableCommandFieldIcon, ImVec2(m_LineHeight, m_LineHeight)))
-			{
-				m_EnableCmdInput = !m_EnableCmdInput;
-			}
+			if (ImGui::ImageButton(m_ConsoleIconID.enableCommandFieldIcon, ImVec2(m_LineHeight, m_LineHeight))) m_EnableCmdInput = !m_EnableCmdInput;
 			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Enable Command Field");
 		}
 
 		/**
-		* @brief Render SelectIcon.
+		* @brief Render FilterIcon.
 		*/
 		{
-			ZoneScopedN("Render SelectIcon");
+			SPIECS_PROFILE_ZONEN("Render FilterIcon");
 
-			ImGui::SameLine(m_PanelSize.x - m_LineHeight * 5.7 - 200.0f);
+			ImGui::SameLine(m_PanelSize.x - m_LineHeight * 5.7 - 220.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			if (ImGui::ImageButton(m_ConsoleIconID.select, ImVec2(m_LineHeight, m_LineHeight)))
-			{
-				m_Console->Clear();
-			}
+			if (ImGui::ImageButton(m_ConsoleIconID.filter, ImVec2(m_LineHeight, m_LineHeight))) {}
 			ImGui::PopStyleVar();
+			ImGui::SetItemTooltip("Filter");
 		}
 
 		/**
 		* @brief Render VerboseIcon.
 		*/
 		{
-			ZoneScopedN("Render VerboseIcon");
+			SPIECS_PROFILE_ZONEN("Render VerboseIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			if (ImGui::ImageButton(m_ConsoleIconID.verbose, ImVec2(m_LineHeight, m_LineHeight)))
-			{
-				m_Level = 0;
-			}
+			if (ImGui::ImageButton(m_ConsoleIconID.verbose, ImVec2(m_LineHeight, m_LineHeight))) m_Level = 0;
 			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Verbose");
 		}
@@ -173,14 +165,11 @@ namespace Spiecs {
 		* @brief Render InfoIcon.
 		*/
 		{
-			ZoneScopedN("Render InfoIcon");
+			SPIECS_PROFILE_ZONEN("Render InfoIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			if (ImGui::ImageButton(m_ConsoleIconID.info, ImVec2(m_LineHeight, m_LineHeight)))
-			{
-				m_Level = 1;
-			}
+			if (ImGui::ImageButton(m_ConsoleIconID.info, ImVec2(m_LineHeight, m_LineHeight))) m_Level = 1;
 			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Info");
 		}
@@ -189,14 +178,14 @@ namespace Spiecs {
 		* @brief Render WarningIcon.
 		*/
 		{
-			ZoneScopedN("Render WarningIcon");
+			SPIECS_PROFILE_ZONEN("Render WarningIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			if (ImGui::ImageButton(m_ConsoleIconID.warning, ImVec2(m_LineHeight, m_LineHeight)))
-			{ 
-				m_Level = 2; 
-			}
+			if (ImGui::ImageButton(m_ConsoleIconID.warning, ImVec2(m_LineHeight, m_LineHeight))) m_Level = 2; 
+			ImGui::SameLine();
+			std::string num = std::to_string(m_Console->GetInfos().m_WarnLogInfos.size());
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), num.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Warning");
 		}
@@ -205,14 +194,14 @@ namespace Spiecs {
 		* @brief Render ErrorIcon.
 		*/
 		{
-			ZoneScopedN("Render ErrorIcon");
+			SPIECS_PROFILE_ZONEN("Render ErrorIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-			if (ImGui::ImageButton(m_ConsoleIconID.error, ImVec2(m_LineHeight, m_LineHeight)))
-			{
-				m_Level = 3; 
-			}
+			if (ImGui::ImageButton(m_ConsoleIconID.error, ImVec2(m_LineHeight, m_LineHeight))) m_Level = 3; 
+			ImGui::SameLine();
+			std::string num = std::to_string(m_Console->GetInfos().m_ErrorLogInfos.size());
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), num.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SetItemTooltip("Error");
 		}
@@ -221,7 +210,7 @@ namespace Spiecs {
 		* @brief Render Search Input Text.
 		*/
 		{
-			ZoneScopedN("Render Search Input Text");
+			SPIECS_PROFILE_ZONEN("Render Search Input Text");
 
 			ImGui::SameLine();
 			ImGui::PushItemWidth(200);
@@ -235,7 +224,7 @@ namespace Spiecs {
 		* @brief Render Console ScrollingRegion.
 		*/
 		{
-			ZoneScopedN("Render Console ScrollingRegion");
+			SPIECS_PROFILE_ZONEN("Render Console ScrollingRegion");
 
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetStyleColorVec4(ImGuiCol_Border));
@@ -247,45 +236,64 @@ namespace Spiecs {
 
 				bool isFiltered = m_Filter.IsActive();
 
-				int i = 0;
-				for (auto iter = m_Console->GetInfos().rbegin(); iter != m_Console->GetInfos().rend(); iter++)
+				switch (m_Level)
 				{
-					if (i == 50) break;
-
-					const InfoLevelHelper& helper = *iter;
-					ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
-
-					switch (m_Level)
+				case 0:
+					for (auto it = m_Console->GetInfos().m_TraceLogInfos.rbegin(); it != m_Console->GetInfos().m_TraceLogInfos.rend(); it++)
 					{
-					case 0:
+						const InfoLevelHelper& helper = *it;
+						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "trace")
 						{
+							ImGui::Image(m_ConsoleIconID.verbose, ImVec2(m_LineHeight, m_LineHeight));
+							ImGui::SameLine();
 							ImGui::Selectable(helper.str.c_str(), false);
 						}
-						break;
-					case 1:
+						ImGui::PopStyleColor();
+					}
+					break;
+				case 1:
+					for (auto it = m_Console->GetInfos().m_InfoLogInfos.rbegin(); it != m_Console->GetInfos().m_InfoLogInfos.rend(); it++)
+					{
+						const InfoLevelHelper& helper = *it;
+						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "info")
 						{
+							ImGui::Image(m_ConsoleIconID.info, ImVec2(m_LineHeight, m_LineHeight));
+							ImGui::SameLine();
 							ImGui::Selectable(helper.str.c_str(), false);
 						}
-						break;
-					case 2:
+						ImGui::PopStyleColor();
+					}
+					break;
+				case 2:
+					for (auto it = m_Console->GetInfos().m_WarnLogInfos.rbegin(); it != m_Console->GetInfos().m_WarnLogInfos.rend(); it++)
+					{
+						const InfoLevelHelper& helper = *it;
+						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "warn")
 						{
+							ImGui::Image(m_ConsoleIconID.warning, ImVec2(m_LineHeight, m_LineHeight));
+							ImGui::SameLine();
 							ImGui::Selectable(helper.str.c_str(), false);
 						}
-						break;
-					case 3:
+						ImGui::PopStyleColor();
+					}
+					break;
+				case 3:
+					for (auto it = m_Console->GetInfos().m_ErrorLogInfos.rbegin(); it != m_Console->GetInfos().m_ErrorLogInfos.rend(); it++)
+					{
+						const InfoLevelHelper& helper = *it;
+						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "error")
 						{
+							ImGui::Image(m_ConsoleIconID.error, ImVec2(m_LineHeight, m_LineHeight));
+							ImGui::SameLine();
 							ImGui::Selectable(helper.str.c_str(), false);
 						}
-						break;
+						ImGui::PopStyleColor();
 					}
-
-					ImGui::PopStyleColor();
-
-					i++;
+					break;
 				}
 
 				ImGui::PopStyleVar();
@@ -301,7 +309,7 @@ namespace Spiecs {
 		{
 			if (m_EnableCmdInput)
 			{
-				ZoneScopedN("Render Console Command-line");
+				SPIECS_PROFILE_ZONEN("Render Console Command-line");
 
 				ImGui::Separator();
 				ImGui::PushItemWidth(-1);

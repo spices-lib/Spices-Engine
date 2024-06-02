@@ -18,7 +18,7 @@ namespace Spiecs {
 
     void ImguiSlate::Begin(const std::string& panelName, float alpha, ImGuiWindowFlags flags)
     {
-        ZoneScoped;;
+        SPIECS_PROFILE_ZONE;
 
         // The panel
         if (alpha < 1)
@@ -44,7 +44,7 @@ namespace Spiecs {
         * @brief Query Slate State, maybe implementate in parent.
         */
         {
-            ZoneScopedN("Query Slate State");
+            SPIECS_PROFILE_ZONEN("Query Slate State");
 
             m_PanelPos   = ImGui::GetWindowPos();
             m_IsFocused  = ImGui::IsWindowFocused();
@@ -55,14 +55,14 @@ namespace Spiecs {
 
     void ImguiSlate::End()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         ImGui::End(); 
     }
 
     void ImguiSlate::LoadSlateIcon(ImTextureID& id, const std::string& iconFile)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         auto rowPtr = ResourcePool<Texture>::Load<Texture2D>(iconFile);
         auto info = rowPtr->GetResource<VulkanImage>()->GetImageInfo();
@@ -72,7 +72,7 @@ namespace Spiecs {
 
     void ImguiSlate::QueryIsResizedThisFrame(ImVec2 thisFrameSize)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         if (m_PanelSize.x != thisFrameSize.x || m_PanelSize.y != thisFrameSize.y)
         {

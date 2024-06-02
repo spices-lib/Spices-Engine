@@ -17,14 +17,14 @@ namespace Spiecs {
     )
         : ImguiSlate(panelName, frameInfo)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         QueryGBufferID();
     }
 
     void ImguiGBufferVisualizer::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         if (!m_IsSlateOn) return;
 
@@ -39,7 +39,7 @@ namespace Spiecs {
         * @brief Render SceneColor.
         */
         {
-            ZoneScopedN("Render SceneColor");
+            SPIECS_PROFILE_ZONEN("Render SceneColor");
 
             ImGui::Text("SceneColor");
             ImGui::Image(m_GBufferID.SceneColorID, size);
@@ -50,7 +50,7 @@ namespace Spiecs {
         * @brief Render Diffuse.
         */
         {
-            ZoneScopedN("Render Diffuse");
+            SPIECS_PROFILE_ZONEN("Render Diffuse");
 
             ImGui::Text("Diffuse");
             ImGui::Image(m_GBufferID.DiffuseID, size);
@@ -61,7 +61,7 @@ namespace Spiecs {
         * @brief Render Normal.
         */
         {
-            ZoneScopedN("Render Normal");
+            SPIECS_PROFILE_ZONEN("Render Normal");
 
             ImGui::Text("Normal");
             ImGui::Image(m_GBufferID.NormalID, size);
@@ -72,7 +72,7 @@ namespace Spiecs {
         * @brief Render Specular.
         */
         {
-            ZoneScopedN("Render Specular");
+            SPIECS_PROFILE_ZONEN("Render Specular");
 
             ImGui::Text("Specular");
             ImGui::Image(m_GBufferID.SpecularID, size);
@@ -88,7 +88,7 @@ namespace Spiecs {
 
     void ImguiGBufferVisualizer::OnEvent(Event& event)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Instance a EventDispatcher.
@@ -103,7 +103,7 @@ namespace Spiecs {
 
     bool ImguiGBufferVisualizer::OnSlateResized(SlateResizeEvent& event)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Free old DescriptorSet.
@@ -126,7 +126,7 @@ namespace Spiecs {
 
     void ImguiGBufferVisualizer::QueryGBufferID()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
         VkDescriptorImageInfo* diffuseInfo    = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Diffuse"   );

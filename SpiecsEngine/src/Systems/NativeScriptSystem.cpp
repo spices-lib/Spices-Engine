@@ -32,7 +32,7 @@ namespace Spiecs {
 
 	void NativeScriptSystem::OnSystemUpdate(TimeStep& ts)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Update NativeScript( C++ );
@@ -53,7 +53,7 @@ namespace Spiecs {
 
 	void NativeScriptSystem::OnEvent(Event& event)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_NativeScriptRegister->OnEvent(event);
 

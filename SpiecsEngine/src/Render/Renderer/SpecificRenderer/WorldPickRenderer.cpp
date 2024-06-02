@@ -12,7 +12,7 @@ namespace Spiecs {
 
 	void WorldPickRenderer::CreateRendererPass()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RendererPassBuilder{ "WorldPick", this }
 		.AddSubPass("WorldPick")
@@ -28,7 +28,7 @@ namespace Spiecs {
 
 	void WorldPickRenderer::CreateDescriptorSet()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "WorldPick", this }
 		.AddPushConstant<PreR::PushConstant>()
@@ -37,7 +37,7 @@ namespace Spiecs {
 
 	void WorldPickRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

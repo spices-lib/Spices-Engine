@@ -11,7 +11,7 @@ namespace Spiecs {
 
     void ImguiContentBrowser::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Begin render ContentBrowser.

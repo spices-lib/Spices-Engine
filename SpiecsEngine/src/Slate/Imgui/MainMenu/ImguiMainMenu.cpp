@@ -22,7 +22,7 @@ namespace Spiecs {
     )
         : ImguiSlate(panelName, frameInfo)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Instance a ImguiCreateEntity.
@@ -43,7 +43,7 @@ namespace Spiecs {
 
     void ImguiMainMenu::OnRender()
 	{
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
@@ -59,7 +59,7 @@ namespace Spiecs {
             * @brief Render Menu File.
             */
             {
-                ZoneScopedN("Render Menu File");
+                SPIECS_PROFILE_ZONEN("Render Menu File");
 
                 if (ImGui::BeginMenu("File"))
                 {
@@ -71,7 +71,7 @@ namespace Spiecs {
             * @brief Render Menu Edit.
             */
             {
-                ZoneScopedN("Render Menu Edit");
+                SPIECS_PROFILE_ZONEN("Render Menu Edit");
 
                 if (ImGui::BeginMenu("Edit"))
                 {
@@ -89,7 +89,7 @@ namespace Spiecs {
             * @brief Render Menu Create.
             */
             {
-                ZoneScopedN("Render Menu Create");
+                SPIECS_PROFILE_ZONEN("Render Menu Create");
 
                 m_Create->OnRender();
             }
@@ -98,7 +98,7 @@ namespace Spiecs {
             * @brief Render Menu Window.
             */
             {
-                ZoneScopedN("Render Menu Window");
+                SPIECS_PROFILE_ZONEN("Render Menu Window");
 
                 m_Window->OnRender();
             }
@@ -107,7 +107,7 @@ namespace Spiecs {
             * @brief Render Menu Tools.
             */
             {
-                ZoneScopedN("Render Menu Tools");
+                SPIECS_PROFILE_ZONEN("Render Menu Tools");
 
                 if (ImGui::BeginMenu("Tools"))
                 {
@@ -120,7 +120,7 @@ namespace Spiecs {
             */
             if (ImGui::BeginMenu("Layout"))
             {
-                ZoneScopedN("Render Menu Layout");
+                SPIECS_PROFILE_ZONEN("Render Menu Layout");
 
                 ImGui::EndMenu();
             }

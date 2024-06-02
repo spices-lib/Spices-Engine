@@ -2,6 +2,7 @@
 #include "Core/Core.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
+#include <deque>
 
 namespace Spiecs {
 
@@ -10,6 +11,43 @@ namespace Spiecs {
 		std::string str;
 		std::string level;
 		glm::vec4 color;
+	};
+
+	struct InfoData
+	{
+		/**
+		* @brief trace deque.
+		*/
+		std::deque<InfoLevelHelper> m_TraceLogInfos;
+
+		/**
+		* @brief info deque.
+		*/
+		std::deque<InfoLevelHelper> m_InfoLogInfos;
+
+		/**
+		* @brief warn deque.
+		*/
+		std::deque<InfoLevelHelper> m_WarnLogInfos;
+
+		/**
+		* @brief error deque.
+		*/
+		std::deque<InfoLevelHelper> m_ErrorLogInfos;
+
+		/**
+		* @brief critical deque.
+		*/
+		std::deque<InfoLevelHelper> m_CriticalLogInfos;
+
+		void Clear() 
+		{
+			m_TraceLogInfos.clear();
+			m_InfoLogInfos.clear();
+			m_WarnLogInfos.clear();
+			m_ErrorLogInfos.clear();
+			m_CriticalLogInfos.clear();
+		}
 	};
 
 	class Console : public spdlog::sinks::base_sink<std::mutex>
@@ -23,7 +61,7 @@ namespace Spiecs {
 			const std::string& filePath = ""
 		);
 
-		const std::vector<InfoLevelHelper>& GetInfos() { return m_LogInfos; };
+		const InfoData& GetInfos() { return m_InfoData; };
 		void Clear();
 		void Push(const std::string& cmd);
 		inline const std::string& GetFilePath() { return m_FilePath; };
@@ -33,7 +71,8 @@ namespace Spiecs {
 		virtual void flush_() { Clear(); };
 
 	protected:
-		std::vector<InfoLevelHelper> m_LogInfos;
 		std::string m_FilePath;
+
+		InfoData m_InfoData;
 	};
 }

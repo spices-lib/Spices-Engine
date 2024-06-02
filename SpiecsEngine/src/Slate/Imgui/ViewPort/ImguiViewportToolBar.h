@@ -4,6 +4,14 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief The  StageIcon Texture's ImTextureID.
+	*/
+	struct ViewportToolBarIconID
+	{
+		ImTextureID optionIcon;     // ImTextureID of Option.
+	};
+
 	class ImguiViewportToolBar : public ImguiSlate
 	{
 	public:
@@ -18,10 +26,7 @@ namespace Spiecs {
 			const std::string& panelName,
 			FrameInfo& frameInfo,
 			ImguiSlate* owner
-		)
-			: ImguiSlate(panelName, frameInfo)
-			, m_Owner(owner)
-		{};
+		);
 
 		/**
 		* @brief Destructor Function.
@@ -50,5 +55,10 @@ namespace Spiecs {
 		* @brief The owner, usually is a ImguiViewport class.
 		*/
 		ImguiSlate* m_Owner;
+
+		/**
+		* @brief The instance of ViewportToolBarIconID.
+		*/
+		ViewportToolBarIconID m_IconID;
 	};
 }

@@ -21,7 +21,7 @@ namespace Spiecs {
 
     void ImguiUtilities::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Begin render Utilities.

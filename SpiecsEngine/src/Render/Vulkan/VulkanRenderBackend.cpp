@@ -68,7 +68,7 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::RecreateSwapChain() 
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		int width = 0, height = 0;
 		glfwGetFramebufferSize(m_VulkanState.m_Windows, &width, &height);
@@ -92,7 +92,7 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		vkWaitForFences(
 			m_VulkanState.m_Device, 
@@ -164,7 +164,7 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::EndFrame(FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]));
 
@@ -216,14 +216,14 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RendererManager::Run(ts, frameInfo);
 	}
 
 	void VulkanRenderBackend::OnEvent(Event& event)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		EventDispatcher dispatcher(event);
 
@@ -233,7 +233,7 @@ namespace Spiecs {
 
 	bool VulkanRenderBackend::OnWindowResizeOver(WindowResizeOverEvent& event)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_VulkanDevice->RequerySwapChainSupport();
 
@@ -248,7 +248,7 @@ namespace Spiecs {
 
 	bool VulkanRenderBackend::OnSlateResize(SlateResizeEvent& event)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_RendererResourcePool->OnSlateResize(event.GetWidth(), event.GetHeight());
 		RendererManager::Get().OnSlateResize();

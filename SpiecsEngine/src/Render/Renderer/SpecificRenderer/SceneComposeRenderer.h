@@ -5,8 +5,8 @@
 */
 
 #pragma once
+#include "Core/Core.h"
 #include "Render/Renderer/Renderer.h"
-
 
 namespace Spiecs {
 

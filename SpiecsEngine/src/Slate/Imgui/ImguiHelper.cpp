@@ -15,7 +15,7 @@ namespace Spiecs {
 
     void ImGuiH::SetStyle()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Set Dark Style.
@@ -36,6 +36,7 @@ namespace Spiecs {
         style.GrabRounding                  = 4.0f;
         style.IndentSpacing                 = 12.0f;
         style.ItemSpacing                   = ImVec2(2.0f, 2.0f);
+        style.ScrollbarSize                 = 4.0f;
         style.Colors[ImGuiCol_WindowBg]     = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_MenuBarBg]    = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_ScrollbarBg]  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -109,7 +110,7 @@ namespace Spiecs {
 
     void ImGuiH::SetFonts(FontMode fontmode)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         ImGuiIO& io = ImGui::GetIO();
         const float high_dpi_scale = GetDPIScale();
@@ -156,7 +157,7 @@ namespace Spiecs {
 
     void ImGuiH::MainDockSpace(Side side, float alpha)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         // Keeping the unique ID of the dock space
         ImGuiID dockspaceID = ImGui::GetID("DockSpace");
@@ -223,7 +224,7 @@ namespace Spiecs {
 
     float ImGuiH::GetDPIScale()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         // Cached DPI scale, so that this doesn't change after the first time code calls getDPIScale.
         // A negative value indicates that the value hasn't been computed yet.

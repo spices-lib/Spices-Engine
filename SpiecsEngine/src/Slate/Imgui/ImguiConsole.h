@@ -31,7 +31,7 @@ namespace Spiecs {
 		/**
 		* @brief Right Icon.
 		*/
-		ImTextureID select;                     // ImTextureID of Select.
+		ImTextureID filter;                     // ImTextureID of Filter.
 		ImTextureID verbose;				    // ImTextureID of Verbose.
 		ImTextureID info;					    // ImTextureID of Info.
 		ImTextureID warning;				    // ImTextureID of Warning.

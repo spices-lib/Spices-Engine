@@ -1,4 +1,6 @@
 #pragma once
+#include "Core/Core.h"
+
 #include <yaml-cpp/yaml.h>
 #include "Resources/Material/Material.h"
 #include <glm/glm.hpp>

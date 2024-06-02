@@ -20,7 +20,7 @@ namespace Spiecs {
 
 	Application::Application()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 		
 		/**
 		* @brief Init Log Class.
@@ -41,7 +41,7 @@ namespace Spiecs {
 
 	Application::~Application()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Destroy our Specific World.
@@ -66,7 +66,7 @@ namespace Spiecs {
 
 	void Application::Run()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Specify the current World, which created from Game.
@@ -91,7 +91,7 @@ namespace Spiecs {
 		*/
 		while (!glfwWindowShouldClose(VulkanRenderBackend::GetState().m_Windows))
 		{
-			ZoneScoped;
+			SPIECS_PROFILE_ZONE;
 
 			/**
 			* @brief Wait for glfw events.
@@ -108,7 +108,7 @@ namespace Spiecs {
 			*/
 			FrameInfo::Get().m_World->OnActivate(ts);
 
-			FrameMark;
+			SPIECS_PROFILE_FRAME;
 		}
 
 		/**

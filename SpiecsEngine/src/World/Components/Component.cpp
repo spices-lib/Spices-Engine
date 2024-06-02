@@ -18,7 +18,7 @@ namespace Spiecs {
 
 	void Component::OnComponentAdded(const entt::entity& entity)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Set m_Owner Variable.
@@ -48,7 +48,7 @@ namespace Spiecs {
 
 	void Component::LoadSlateIcon(ImTextureID& id, const std::string& iconFile)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Get info from ResourcePool.

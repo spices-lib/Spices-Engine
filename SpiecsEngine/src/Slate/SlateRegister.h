@@ -103,7 +103,7 @@ namespace Spiecs {
 	template<typename T, typename ...Args>
 	inline std::shared_ptr<T> SlateRegister::Register(bool isPrimary, const std::string& panelName, Args && ...args)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Not allow registy repeat.

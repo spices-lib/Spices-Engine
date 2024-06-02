@@ -5,6 +5,7 @@
 */
 
 #pragma once
+#include "Core/Performance/Profiler.h"
 #include "TimeStep.h"
 #include "Log/Log.h"
 
@@ -17,8 +18,6 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
 #include <glfw/glfw3native.h>
-
-#include "tracy/Tracy.hpp"
 
 namespace Spiecs {
 

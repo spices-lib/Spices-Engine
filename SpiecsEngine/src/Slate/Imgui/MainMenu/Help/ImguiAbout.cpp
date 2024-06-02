@@ -20,7 +20,7 @@ namespace Spiecs {
 
     void ImguiAbout::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         if (!m_IsSlateOn) return;
 

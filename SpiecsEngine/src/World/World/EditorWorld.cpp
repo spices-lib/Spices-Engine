@@ -44,7 +44,7 @@ namespace Spiecs {
 
 	void EditorWorld::OnActivate(TimeStep& ts)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		SystemManager::Run(ts);
 	}

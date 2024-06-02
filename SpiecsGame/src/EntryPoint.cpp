@@ -1,6 +1,21 @@
 #include <EntryPoint.h>
 #include "GameEditorWorld.h"
 
+#include <new>
+
+void* operator new(size_t size)
+{
+    void* ptr = malloc(size);
+	SPIECS_PROFILE_ALLOC(ptr, size);
+    return ptr;
+}
+
+void operator delete(void* ptr) noexcept
+{
+	SPIECS_PROFILE_FREE(ptr);
+	free(ptr);
+}
+
 namespace Spiecs {
 
 	std::shared_ptr<World> CreateWorld()

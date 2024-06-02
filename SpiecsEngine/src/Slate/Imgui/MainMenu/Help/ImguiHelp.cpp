@@ -18,7 +18,7 @@ namespace Spiecs {
     )
         : ImguiSlate(panelName, frameInfo)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
        * @brief Instance a ImguiAbout.
@@ -28,7 +28,7 @@ namespace Spiecs {
 
     void ImguiHelp::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Begin render About.

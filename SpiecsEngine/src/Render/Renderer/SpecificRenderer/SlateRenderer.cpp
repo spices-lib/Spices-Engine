@@ -12,7 +12,7 @@ namespace Spiecs {
 
 	void SlateRenderer::CreateRendererPass()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RendererPassBuilder{ "Slate", this }
 		.AddSubPass("Slate")
@@ -29,7 +29,7 @@ namespace Spiecs {
 
 	void SlateRenderer::OnSystemInitialize()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		Renderer::OnSystemInitialize();
 		InitImgui();
@@ -37,7 +37,7 @@ namespace Spiecs {
 
 	void SlateRenderer::InitImgui()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Context, a concept of OpenGL, means OpenGL objects in used during a render stage.
@@ -96,7 +96,7 @@ namespace Spiecs {
 
 	void SlateRenderer::ShutdownImgui()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -106,29 +106,29 @@ namespace Spiecs {
 
 	void SlateRenderer::BeginImguiFrame()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		{
-			ZoneScopedN("ImGui_ImplVulkan_NewFrame");
+			SPIECS_PROFILE_ZONEN("ImGui_ImplVulkan_NewFrame");
 
 			ImGui_ImplVulkan_NewFrame();
 		}
 
 		{
-			ZoneScopedN("ImGui_ImplGlfw_NewFrame");
+			SPIECS_PROFILE_ZONEN("ImGui_ImplGlfw_NewFrame");
 
 			ImGui_ImplGlfw_NewFrame();
 		}
 
 		{
-			ZoneScopedN("ImGui::NewFrame");
+			SPIECS_PROFILE_ZONEN("ImGui::NewFrame");
 
 			ImGui::NewFrame();
 			ImGuiH::MainDockSpace();
 		}
 
 		{
-			ZoneScopedN("ImGuizmo::BeginFrame");
+			SPIECS_PROFILE_ZONEN("ImGuizmo::BeginFrame");
 
 			ImGuizmo::BeginFrame();
 		}
@@ -138,7 +138,7 @@ namespace Spiecs {
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -154,7 +154,7 @@ namespace Spiecs {
 
 	void SlateRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

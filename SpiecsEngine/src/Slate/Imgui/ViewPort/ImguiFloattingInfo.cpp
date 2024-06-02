@@ -15,10 +15,13 @@ namespace Spiecs {
 
     void ImguiFloattingInfo::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         ImVec2 work_pos  = m_Owner->GetPanelPos();
         ImVec2 work_size = m_Owner->GetPanelSize();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
         static int location = 1;
         ImGuiIO& io = ImGui::GetIO();
@@ -28,11 +31,12 @@ namespace Spiecs {
             ImGuiWindowFlags_AlwaysAutoResize    | 
             ImGuiWindowFlags_NoSavedSettings     | 
             ImGuiWindowFlags_NoFocusOnAppearing  | 
-            ImGuiWindowFlags_NoNav;
+            ImGuiWindowFlags_NoNav               |
+            ImGuiWindowFlags_NoTitleBar;
 
         if (location >= 0)
         {
-            const float PAD = 10.0f;
+            const float PAD = 5.0f;
             
             ImVec2 window_pos, window_pos_pivot;
             window_pos.x = (location & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
@@ -80,6 +84,8 @@ namespace Spiecs {
             }
         }
 
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
         ImGui::End();
     }
 }

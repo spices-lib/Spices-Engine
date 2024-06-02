@@ -92,5 +92,3 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 #define SPIECS_CRITICAL(...)      
 
 #endif // SPIECS_RELEASE
-
-

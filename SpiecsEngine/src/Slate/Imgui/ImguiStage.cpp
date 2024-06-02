@@ -17,7 +17,7 @@ namespace Spiecs {
     )
         : ImguiSlate(panelName, frameInfo)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Load used icon from file.
@@ -33,7 +33,7 @@ namespace Spiecs {
 
     void ImguiStage::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Begin render Stage.

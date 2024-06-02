@@ -316,14 +316,14 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame);
 	}
 
 	void Renderer::RenderBehaverBuilder::BeginNextSubPass(const std::string& subpassName)
 	{
-		ZoneScoped;;
+		SPIECS_PROFILE_ZONE;
 
 		m_HandledSubPass = m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
 
@@ -332,7 +332,7 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BeginRenderPass()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 
@@ -361,14 +361,14 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::EndRenderPass()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		vkCmdEndRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
 	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos)
 	{
-		ZoneScoped;;
+		SPIECS_PROFILE_ZONE;
 
 		std::stringstream ss;
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
@@ -378,7 +378,7 @@ namespace Spiecs {
 
 	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name)
 	{
-		ZoneScoped;;
+		SPIECS_PROFILE_ZONE;
 
 		for (auto pair : infos)
 		{

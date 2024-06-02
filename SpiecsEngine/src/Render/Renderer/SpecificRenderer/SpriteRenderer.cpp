@@ -12,7 +12,7 @@ namespace Spiecs {
 
 	void SpriteRenderer::CreateRendererPass()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RendererPassBuilder{ "Sprite", this }
 		.AddSubPass("Sprite")
@@ -29,7 +29,7 @@ namespace Spiecs {
 
 	void SpriteRenderer::CreateDescriptorSet()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Sprite", this }
 		.AddPushConstant<PreR::PushConstant>()
@@ -38,7 +38,7 @@ namespace Spiecs {
 
 	void SpriteRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

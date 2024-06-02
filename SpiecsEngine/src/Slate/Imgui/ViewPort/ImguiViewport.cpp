@@ -21,10 +21,10 @@ namespace Spiecs {
     )
         : ImguiSlate(panelName, frameInfo)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         {
-            ZoneScopedN("Create SceneColor ImTextureID");
+            SPIECS_PROFILE_ZONEN("Create SceneColor ImTextureID");
 
             /**
             * @brief Get SceneColor Info.
@@ -57,7 +57,7 @@ namespace Spiecs {
 
     void ImguiViewport::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Begin render Console.
@@ -68,7 +68,7 @@ namespace Spiecs {
         * @brief Render Viewport image.
         */
         {
-            ZoneScopedN("Render Viewport Image");
+            SPIECS_PROFILE_ZONEN("Render Viewport Image");
 
             ImGui::Image((void*)m_ViewportID, m_PanelSize);
         }
@@ -96,7 +96,7 @@ namespace Spiecs {
 
     void ImguiViewport::OnEvent(Event& event)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Instance a EventDispatcher.
@@ -111,7 +111,7 @@ namespace Spiecs {
 
     std::pair<uint32_t, uint32_t> ImguiViewport::GetMousePosInViewport()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         ImGuiIO& io = ImGui::GetIO();
         ImVec2 viewportPos = io.MousePos - m_PanelPos;
@@ -126,7 +126,7 @@ namespace Spiecs {
 
     bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Free old Viewport image DescriptorSet.

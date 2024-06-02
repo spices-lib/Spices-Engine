@@ -28,7 +28,7 @@ namespace Spiecs {
 	)
 		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_Square = std::make_unique<SquarePack>();
 		m_Square->OnCreatePack();
@@ -36,7 +36,7 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::CreateRendererPass()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RendererPassBuilder{ "SceneCompose", this }
 		.AddSubPass("SceneCompose")
@@ -68,7 +68,7 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::CreateDescriptorSet()
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "SceneCompose", this }
 		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Position", "Depth" })
@@ -78,7 +78,7 @@ namespace Spiecs {
 
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		RenderBehaverBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

@@ -5,7 +5,7 @@
 */
 
 #pragma once
-#include "Core/core.h"
+#include "Core/Core.h"
 #include "Component.h"
 #include "Core/Event/Event.h"
 #include "Core/Event/KeyEvent.h"

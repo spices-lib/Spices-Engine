@@ -20,7 +20,7 @@ namespace Spiecs {
 
     void ImguiCreateEntity::OnRender()
     {
-        ZoneScoped;
+        SPIECS_PROFILE_ZONE;
 
         /**
         * @brief Begin render Create.
@@ -31,7 +31,7 @@ namespace Spiecs {
             * @brief Begin render Mesh.
             */
             {
-                ZoneScopedN("Render Mesh");
+                SPIECS_PROFILE_ZONEN("Render Mesh");
 
                 if (ImGui::BeginMenu("Mesh"))
                 {
@@ -53,7 +53,7 @@ namespace Spiecs {
             * @brief Begin render Shape.
             */
             {
-                ZoneScopedN("Render Shape");
+                SPIECS_PROFILE_ZONEN("Render Shape");
 
                 if (ImGui::BeginMenu("Shape"))
                 {
@@ -74,7 +74,7 @@ namespace Spiecs {
             * @brief Begin render Light.
             */
             {
-                ZoneScopedN("Render Light");
+                SPIECS_PROFILE_ZONEN("Render Light");
 
                 if (ImGui::BeginMenu("Light"))
                 {
@@ -93,7 +93,7 @@ namespace Spiecs {
             * @brief Begin render Audio.
             */
             {
-                ZoneScopedN("Render Audio");
+                SPIECS_PROFILE_ZONEN("Render Audio");
 
                 if (ImGui::BeginMenu("Audio"))
                 {
@@ -109,7 +109,7 @@ namespace Spiecs {
             * @brief Begin render Camera.
             */
             {
-                ZoneScopedN("Render Camera");
+                SPIECS_PROFILE_ZONEN("Render Camera");
 
                 if (ImGui::MenuItem("Camera")) {};
             }
@@ -117,7 +117,7 @@ namespace Spiecs {
             * @brief Begin render Scope.
             */
             {
-                ZoneScopedN("Render Scope");
+                SPIECS_PROFILE_ZONEN("Render Scope");
 
                 if (ImGui::MenuItem("Scope")) {};
             }
@@ -125,7 +125,7 @@ namespace Spiecs {
             * @brief Begin render Xform.
             */
             {
-                ZoneScopedN("Render Xform");
+                SPIECS_PROFILE_ZONEN("Render Xform");
 
                 if (ImGui::MenuItem("Xform")) {};
             }

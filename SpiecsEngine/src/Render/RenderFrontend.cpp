@@ -10,28 +10,28 @@ namespace Spiecs {
 
 	void RenderFrontend::BeginFrame(FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_RenderBackend->BeginFrame(frameInfo);
 	}
 
 	void RenderFrontend::EndFrame(FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_RenderBackend->EndFrame(frameInfo);
 	}
 
 	void RenderFrontend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_RenderBackend->DrawTest(ts, frameInfo);
 	}
 
 	void RenderFrontend::OnEvent(Event& event)
 	{
-		ZoneScoped;
+		SPIECS_PROFILE_ZONE;
 
 		m_RenderBackend->OnEvent(event);
 	}
