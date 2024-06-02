@@ -23,26 +23,17 @@ namespace Spiecs {
         SPIECS_PROFILE_ZONE;
 
         /**
-        * @brief Begin render ImguiViewportMenu.
+        * @brief Begin render Utilities.
         */
-        if (ImGui::BeginMenu("Viewport"))
+        if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
-            for (int i = 0; i < MaxViewportNum; i++)
-            {
-                ImGui::Checkbox("##", &m_ViewportVisible[i]);
-                ImGui::SameLine();
-
-                std::stringstream ss;
-                ss << "Viewport" << i;
-
-                if (ImGui::MenuItem(ss.str().c_str()))
-                {
-                    m_ViewportVisible[i] = !m_ViewportVisible[i];
-                }
-            }
+            /**
+            * @brief Render Profiler.
+            */
+            if (ImGui::MenuItem("Profiler")) {  }
 
             /**
-            * @brief End Windows.
+            * @brief End render Utilities.
             */
             ImGui::EndMenu();
         }

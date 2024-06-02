@@ -10,6 +10,9 @@ namespace Spiecs {
 	struct ViewportToolBarIconID
 	{
 		ImTextureID optionIcon;     // ImTextureID of Option.
+		ImTextureID renderingIcon;  // ImTextureID of Rendering.
+		ImTextureID viewerIcon;     // ImTextureID of Viewer.
+		ImTextureID cameraIcon;     // ImTextureID of Camera.
 	};
 
 	class ImguiViewportToolBar : public ImguiSlate

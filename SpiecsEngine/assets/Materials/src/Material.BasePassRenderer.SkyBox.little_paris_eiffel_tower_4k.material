@@ -6,4 +6,4 @@ Shaders:
     Path: BasePassRenderer.SkyBox.Default
 Textures:
   - Name: diffuse
-    Value: [1, 0, 0, Texture2D, skybox/little_paris_eiffel_tower_4k.hdr]
+    Value: [1, 0, 0, Texture2D, skybox/meadow_4k.hdr]

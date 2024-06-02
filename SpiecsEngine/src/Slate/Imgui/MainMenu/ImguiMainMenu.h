@@ -13,6 +13,11 @@ namespace Spiecs {
 	/**
 	* @brief Forward Declear.
 	*/
+	class ImguiFile;
+
+	/**
+	* @brief Forward Declear.
+	*/
 	class ImguiWindow;
 
 	/**
@@ -65,6 +70,11 @@ namespace Spiecs {
 		virtual void OnEvent(Event& event) override {};
 
 	private:
+
+		/**
+		* @brief The shared pointer of ImguiVisualizer.
+		*/
+		std::shared_ptr<ImguiFile> m_File;
 
 		/**
 		* @breaf The shared pointer of ImguiCreateEntity.

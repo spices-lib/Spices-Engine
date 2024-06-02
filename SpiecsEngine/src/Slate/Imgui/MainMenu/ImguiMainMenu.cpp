@@ -8,6 +8,7 @@
 #include "ImguiMainMenu.h"
 
 #include "Systems/SlateSystem.h"
+#include "ImguiFile.h"
 #include "Window/ImguiWindow.h"
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
@@ -23,6 +24,11 @@ namespace Spiecs {
         : ImguiSlate(panelName, frameInfo)
     {
         SPIECS_PROFILE_ZONE;
+
+        /**
+        * @brief Instance a ImguiFile.
+        */
+        m_File = SlateSystem::GetRegister()->Register<ImguiFile>(false, "File");
 
         /**
         * @brief Instance a ImguiCreateEntity.
@@ -73,16 +79,7 @@ namespace Spiecs {
             {
                 SPIECS_PROFILE_ZONEN("Render Menu Edit");
 
-                if (ImGui::BeginMenu("Edit"))
-                {
-                    if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-                    if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-                    ImGui::Separator();
-                    if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-                    if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-                    if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-                    ImGui::EndMenu();
-                }
+                m_File->OnRender();
             }
 
             /**
