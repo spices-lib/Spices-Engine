@@ -30,9 +30,21 @@ namespace Spiecs {
 		*/
 		if (!SlateSystem::GetRegister()) return false;
 
+		/**
+		* @brief Get viewport.
+		*/
 		if (!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
 
 		if (!m_ViewPort->IsHovered() || m_ViewPort->GetGizmo()->IsOver()) return false;
+
+		if (m_ViewPort->GetMousePosInViewport().first < 0                              ||
+			m_ViewPort->GetMousePosInViewport().first > m_ViewPort->GetPanelSize().x   ||
+			m_ViewPort->GetMousePosInViewport().second < 0                             ||
+			m_ViewPort->GetMousePosInViewport().second > m_ViewPort->GetPanelSize().y
+			)
+		{
+			return false;
+		}
 
 		if (e.GetMouseButton() == Mouse::ButtonLeft)
 		{
