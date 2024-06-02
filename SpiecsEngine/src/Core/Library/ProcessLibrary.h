@@ -12,5 +12,7 @@ namespace Spiecs {
 		static bool OpenProcess(const char* processPath, const char* commandLine = "");
 
 		static bool CloseProcess(const char* processName);
+
+		static float ProcessMemoryInUsed();
 	};
 }

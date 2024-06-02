@@ -3,6 +3,8 @@
 
 #include <new>
 
+#if 0
+
 void* operator new(size_t size)
 {
     void* ptr = malloc(size);
@@ -15,6 +17,8 @@ void operator delete(void* ptr) noexcept
 	SPIECS_PROFILE_FREE(ptr);
 	free(ptr);
 }
+
+#endif
 
 namespace Spiecs {
 

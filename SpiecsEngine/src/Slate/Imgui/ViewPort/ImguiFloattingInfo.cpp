@@ -10,6 +10,7 @@
 #include "Systems/SlateSystem.h"
 #include "World/World/World.h"
 #include "World/Entity.h"
+#include "Core/Library/ProcessLibrary.h"
 
 namespace Spiecs {
 
@@ -70,6 +71,9 @@ namespace Spiecs {
             {
                 ImGui::Text("Mouse Position: <invalid>");
             }
+
+            float size = ProcessLibrary::ProcessMemoryInUsed();
+            ImGui::Text("Memory in Used: %.2f GB", size);
 
             if (ImGui::BeginPopupContextWindow())
             {

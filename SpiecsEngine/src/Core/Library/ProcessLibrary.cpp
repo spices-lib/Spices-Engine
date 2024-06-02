@@ -2,6 +2,9 @@
 #include "ProcessLibrary.h"
 #include "StringLibrary.h"
 
+#include <psapi.h>
+#include <stdio.h>
+
 namespace Spiecs {
 
 	bool ProcessLibrary::OpenProcess(const char* processPath, const char* commandLine)
@@ -45,5 +48,16 @@ namespace Spiecs {
 		system(temp.c_str());
 
 		return true;
+	}
+
+	float ProcessLibrary::ProcessMemoryInUsed()
+	{
+		PROCESS_MEMORY_COUNTERS pmc;
+		if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc)))
+		{
+			return pmc.WorkingSetSize / 1024.0f / 1024.0f / 1024.0f; // GB.
+		}
+
+		return 0;
 	}
 }
