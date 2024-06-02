@@ -18,6 +18,11 @@ namespace Spiecs {
 	/**
 	* @brief Forward Declear.
 	*/
+	class ImguiEdit;
+
+	/**
+	* @brief Forward Declear.
+	*/
 	class ImguiWindow;
 
 	/**
@@ -72,9 +77,14 @@ namespace Spiecs {
 	private:
 
 		/**
-		* @brief The shared pointer of ImguiVisualizer.
+		* @brief The shared pointer of ImguiFile.
 		*/
 		std::shared_ptr<ImguiFile> m_File;
+
+		/**
+		* @brief The shared pointer of ImguiEdit.
+		*/
+		std::shared_ptr<ImguiEdit> m_Edit;
 
 		/**
 		* @breaf The shared pointer of ImguiCreateEntity.

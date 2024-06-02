@@ -9,6 +9,7 @@
 
 #include "Systems/SlateSystem.h"
 #include "ImguiFile.h"
+#include "ImguiEdit.h"
 #include "Window/ImguiWindow.h"
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
@@ -26,25 +27,15 @@ namespace Spiecs {
         SPIECS_PROFILE_ZONE;
 
         /**
-        * @brief Instance a ImguiFile.
+        * @brief Instance Child Item.
         */
-        m_File = SlateSystem::GetRegister()->Register<ImguiFile>(false, "File");
-
-        /**
-        * @brief Instance a ImguiCreateEntity.
-        */
-        m_Create = SlateSystem::GetRegister()->Register<ImguiCreateEntity>(false, "Create");
-
-        /**
-        * @brief Instance a ImguiWindow.
-        */
-        m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>(false, "Window");
-
-        /**
-        * @brief Instance a ImguiHelp.
-        */
-        m_Help = SlateSystem::GetRegister()->Register<ImguiHelp>(false, "Help");
-
+        {
+            m_File   = SlateSystem::GetRegister()->Register<ImguiFile>        (false, "File");
+            m_Edit   = SlateSystem::GetRegister()->Register<ImguiEdit>        (false, "Edit");
+            m_Create = SlateSystem::GetRegister()->Register<ImguiCreateEntity>(false, "Create");
+            m_Window = SlateSystem::GetRegister()->Register<ImguiWindow>      (false, "Window");
+            m_Help   = SlateSystem::GetRegister()->Register<ImguiHelp>        (false, "Help");
+        }
     }
 
     void ImguiMainMenu::OnRender()
@@ -64,32 +55,20 @@ namespace Spiecs {
             /**
             * @brief Render Menu File.
             */
-            {
-                SPIECS_PROFILE_ZONEN("Render Menu File");
-
-                if (ImGui::BeginMenu("File"))
-                {
-                    ImGui::EndMenu();
-                }
-            }
+            m_File->OnRender();
+  
 
             /**
             * @brief Render Menu Edit.
             */
-            {
-                SPIECS_PROFILE_ZONEN("Render Menu Edit");
+            m_Edit->OnRender();
 
-                m_File->OnRender();
-            }
 
             /**
             * @brief Render Menu Create.
             */
-            {
-                SPIECS_PROFILE_ZONEN("Render Menu Create");
+            m_Create->OnRender();
 
-                m_Create->OnRender();
-            }
 
             /**
             * @brief Render Menu Window.
