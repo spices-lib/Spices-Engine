@@ -153,6 +153,22 @@ namespace Spiecs {
             font_config.SizePixels = 13.0f * ((fontmode == FONT_FIXED) ? 1 : high_dpi_scale);  // 13 is the default font size
             io.Fonts->AddFontDefault(&font_config);
         }
+        
+        float iconFontSize = 16.0f * high_dpi_scale * 2.0f / 3.0f;
+
+        // merge in icons from Font Awesome
+        static const ImWchar icons_ranges[] = { ICON_MIN_LC, ICON_MAX_16_LC, 0 };
+        ImFontConfig icons_config;
+        icons_config.MergeMode = true;
+        icons_config.PixelSnapH = true;
+        icons_config.GlyphMinAdvanceX = iconFontSize;
+
+        std::stringstream ss;
+        ss << SPIECS_ENGINE_ASSETS_PATH << "Fonts/" << FONT_ICON_FILE_NAME_LC;
+        if (FileLibrary::FileLibrary_Exists(ss.str().c_str()))
+        {
+            io.Fonts->AddFontFromFileTTF(ss.str().c_str(), iconFontSize, &icons_config, icons_ranges);
+        }
     }
 
     void ImGuiH::MainDockSpace(Side side, float alpha)
@@ -222,6 +238,12 @@ namespace Spiecs {
         ImGui::End();
     }
 
+    ImVec2 ImGuiH::GetLineItemSize()
+    {
+        float x = ImGui::GetFont()->FontSize * ImGui::GetIO().FontGlobalScale + ImGui::GetStyle().FramePadding.y * 2.0f;
+        return ImVec2(x, x);
+    }
+
     float ImGuiH::GetDPIScale()
     {
         SPIECS_PROFILE_ZONE;
@@ -260,5 +282,31 @@ namespace Spiecs {
         }
 
         return cached_dpi_scale;
+    }
+}
+
+namespace ImGui {
+
+    void CenteredText(const char* label, const ImVec2& size_arg)
+    {
+        ImGuiWindow* window = GetCurrentWindow();
+
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiID id = window->GetID(label);
+        const ImVec2 label_size = CalcTextSize(label, NULL, true);
+
+        ImVec2 pos = window->DC.CursorPos;
+        ImVec2 size = CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
+
+        const ImVec2 pos2 = ImVec2((pos.x + size.x), (pos.y + size.y));
+        const ImRect bb(pos, pos2);
+
+        ItemSize(size, style.FramePadding.y);
+
+        const ImVec2 pos_min = ImVec2((bb.Min.x + style.FramePadding.x), (bb.Min.y + style.FramePadding.y));
+        const ImVec2 pos_max = ImVec2((bb.Max.x - style.FramePadding.x), (bb.Max.y - style.FramePadding.y));
+
+        RenderTextClipped(pos_min, pos_max, label, NULL, &label_size, style.ButtonTextAlign, &bb);
     }
 }

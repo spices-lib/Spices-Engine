@@ -40,16 +40,16 @@ namespace Spiecs {
         */
         Begin();
         ImGui::Separator();
-        ImGui::PushItemWidth(m_PanelSize.x - m_LineHeight * 2.4f);
+        ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.4f);
         char search[128] = "";
         if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
         ImGui::PopItemWidth();
         
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-        ImGui::SameLine(m_PanelSize.x - m_LineHeight * 2.4f);
-        ImGui::ImageButton(m_StageIconID.filterIcon, ImVec2(m_LineHeight, m_LineHeight));
-        ImGui::SameLine(m_PanelSize.x - m_LineHeight * 1.2f);
-        ImGui::ImageButton(m_StageIconID.optionsIcon, ImVec2(m_LineHeight, m_LineHeight));
+        ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.4f);
+        ImGui::ImageButton(m_StageIconID.filterIcon, ImGuiH::GetLineItemSize());
+        ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 1.2f);
+        ImGui::ImageButton(m_StageIconID.optionsIcon, ImGuiH::GetLineItemSize());
         ImGui::PopStyleVar();
         ImGui::Separator();
 
@@ -78,7 +78,7 @@ namespace Spiecs {
 
                 ImGui::TableSetColumnIndex(0);
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-                ImGui::Image(m_StageIconID.entityIcon, ImVec2(m_LineHeight, m_LineHeight));
+                ImGui::Image(m_StageIconID.entityIcon, ImGuiH::GetLineItemSize());
                 ImGui::PopStyleVar();
                 ImGui::SameLine();
                 ImGui::Text((*tComp.GetTag().begin()).c_str());
@@ -86,7 +86,7 @@ namespace Spiecs {
                 ImGui::TableSetColumnIndex(1);
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
                 ImTextureID icon = m_StageIconID.visibleIcon;
-                if (ImGui::ImageButton(icon, ImVec2(m_LineHeight, m_LineHeight)));
+                if (ImGui::ImageButton(icon, ImGuiH::GetLineItemSize()));
                 ImGui::PopStyleVar();
 
                 ImGui::TableSetColumnIndex(2);

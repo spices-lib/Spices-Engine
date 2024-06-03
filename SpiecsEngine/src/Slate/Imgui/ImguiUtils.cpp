@@ -49,7 +49,6 @@ namespace Spiecs {
             m_PanelPos   = ImGui::GetWindowPos();
             m_IsFocused  = ImGui::IsWindowFocused();
             m_IsHovered  = ImGui::IsWindowHovered();
-            m_LineHeight = ImGui::GetFont()->FontSize * ImGui::GetIO().FontGlobalScale + ImGui::GetStyle().FramePadding.y * 2.0f;
         }
     }
 

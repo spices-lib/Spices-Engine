@@ -33,7 +33,9 @@ namespace Spiecs {
             {
                 ImGui::EndMenu();
             }
-            if (ImGui::MenuItem("Import")) {}
+            if (ImGui::MenuItem("Import", ICON_LC_SAVE)) {}
+
+            ImGui::MenuItem(ICON_TEXT(ICON_LC_SAVE, Save));
             if (ImGui::BeginMenu("New From Stage Template"))
             {
                 ImGui::EndMenu();

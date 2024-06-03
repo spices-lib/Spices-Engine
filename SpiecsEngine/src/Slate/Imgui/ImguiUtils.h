@@ -183,10 +183,5 @@ namespace Spiecs{
 		* @brief Boolean of whether resized this frame.
 		*/
 		bool m_IsResized = false;
-
-		/**
-		* @brief One line height.
-		*/
-		float m_LineHeight;
 	};
 }

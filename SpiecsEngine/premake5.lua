@@ -43,6 +43,9 @@ project "SpiecsEngine"
 		-- Library: tracy Files.
 		"vendor/tracy/public/TracyClient.cpp",
 		"vendor/tracy/public/tracy/Tracy.hpp",
+
+		-- Library: IconFontCppHeaders Files.
+		"vendor/IconFontCppHeaders/**.h",
 	}
 
 	-- Macros Definitions
@@ -80,6 +83,7 @@ project "SpiecsEngine"
 		"%{IncludeDir.spdlog}",                -- Library: spdlog Source Folder.
 		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
 		"%{IncludeDir.tracy}",                 -- Library: tracy Source Folder.
+		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 	}
 
 	-- The Solution Dependency

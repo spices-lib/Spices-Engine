@@ -33,13 +33,13 @@ namespace Spiecs {
 		bool open = true;
 		Begin(m_PanelName.c_str(), 0.35f, window_flags);
 
-		ImGui::ImageButton(m_IconID.optionIcon, ImVec2(m_LineHeight, m_LineHeight));
-		ImGui::SameLine(m_LineHeight * 1.5);
-		ImGui::ImageButton(m_IconID.renderingIcon, ImVec2(m_LineHeight, m_LineHeight));
-		ImGui::SameLine(m_LineHeight * 3.0);
-		ImGui::ImageButton(m_IconID.viewerIcon, ImVec2(m_LineHeight, m_LineHeight));
-		ImGui::SameLine(m_LineHeight * 4.5);
-		ImGui::ImageButton(m_IconID.cameraIcon, ImVec2(m_LineHeight, m_LineHeight));
+		ImGui::ImageButton(m_IconID.optionIcon, ImGuiH::GetLineItemSize());
+		ImGui::SameLine(ImGuiH::GetLineItemSize().x * 1.5);
+		ImGui::ImageButton(m_IconID.renderingIcon, ImGuiH::GetLineItemSize());
+		ImGui::SameLine(ImGuiH::GetLineItemSize().x * 3.0);
+		ImGui::ImageButton(m_IconID.viewerIcon, ImGuiH::GetLineItemSize());
+		ImGui::SameLine(ImGuiH::GetLineItemSize().x * 4.5);
+		ImGui::ImageButton(m_IconID.cameraIcon, ImGuiH::GetLineItemSize());
 
 		End();
 	}

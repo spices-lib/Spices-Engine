@@ -13,10 +13,14 @@
 //#include <imgui_internal.h>
 #include <backends/imgui_impl_vulkan.h>
 #include <backends/imgui_impl_glfw.h>
+
 #include <implot.h>
 #include <ImGuizmo.h>
+#include <IconsLucide.h>
 
 namespace Spiecs {
+
+#define ICON_TEXT(icon, text) std::string(icon).append(" ").append(#text).c_str()
 
 	/**
 	* @brief Slate Font Mode.
@@ -67,6 +71,12 @@ namespace Spiecs {
 		*/
 		static void MainDockSpace(Side side = Side::Scene, float alpha = 1.0f);
 
+		/**
+		* @brief Get Line Width's Square Size.
+		* @return Returns the square size of Line width.
+		*/
+		static ImVec2 GetLineItemSize();
+
 	private:
 
 		/**
@@ -74,4 +84,9 @@ namespace Spiecs {
 		*/
 		static float GetDPIScale();
 	};
+}
+
+namespace ImGui {
+
+	void CenteredText(const char* label, const ImVec2& size_arg);
 }

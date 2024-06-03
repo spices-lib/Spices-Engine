@@ -33,6 +33,7 @@ project "SpiecsGame"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.tracy}",
+		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 	}
 
 	links

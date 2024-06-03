@@ -25,3 +25,6 @@
 [submodule "SpiecsEngine/vendor/tracy"]
 	path = SpiecsEngine/vendor/tracy
 	url = https://github.com/wolfpld/tracy
+[submodule "SpiecsEngine/vendor/IconFontCppHeaders"]
+	path = SpiecsEngine/vendor/IconFontCppHeaders
+	url = https://github.com/juliettef/IconFontCppHeaders

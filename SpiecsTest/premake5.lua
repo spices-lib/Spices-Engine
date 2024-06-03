@@ -32,6 +32,7 @@ project "SpiecsTest"
 		"%{IncludeDir.googletest}",
 		"%{IncludeDir.googlemock}",
 		"%{IncludeDir.tracy}",
+		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 	}
 
 	links
