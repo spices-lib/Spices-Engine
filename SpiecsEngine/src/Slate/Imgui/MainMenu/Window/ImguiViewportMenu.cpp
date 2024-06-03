@@ -25,12 +25,15 @@ namespace Spiecs {
         /**
         * @brief Begin render Utilities.
         */
-        if (ImGui::BeginMenu(m_PanelName.c_str()))
+        std::stringstream ss;
+        ss << ICON_EMPTY << " " << m_PanelName.c_str();
+        if (ImGui::BeginMenu(ss.str().c_str()))
         {
             /**
             * @brief Render Profiler.
             */
-            if (ImGui::MenuItem("Profiler")) {  }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Viewport0))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Viewport1))) {}
 
             /**
             * @brief End render Utilities.

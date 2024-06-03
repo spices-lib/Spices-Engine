@@ -47,6 +47,10 @@ namespace Spiecs {
         */
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
+
+
+
+
             /**
             * @brief Render Visualizer.
             */

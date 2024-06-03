@@ -16,11 +16,12 @@
 
 #include <implot.h>
 #include <ImGuizmo.h>
-#include <IconsLucide.h>
+#include <IconsMaterialDesign.h>
 
 namespace Spiecs {
 
 #define ICON_TEXT(icon, text) std::string(icon).append(" ").append(#text).c_str()
+#define ICON_EMPTY "     "
 
 	/**
 	* @brief Slate Font Mode.

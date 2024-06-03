@@ -27,35 +27,33 @@ namespace Spiecs {
         */
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
-            if (ImGui::MenuItem("New", "Ctrl+N")) {}
-            if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-            if (ImGui::BeginMenu("Open Rencent")) 
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_NEW_LABEL, New), "Ctrl+N")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_FOLDER_OPEN, Open), "Ctrl+O")) {}
+            if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Open Rencent)))
             {
                 ImGui::EndMenu();
             }
-            if (ImGui::MenuItem("Import", ICON_LC_SAVE)) {}
-
-            ImGui::MenuItem(ICON_TEXT(ICON_LC_SAVE, Save));
-            if (ImGui::BeginMenu("New From Stage Template"))
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Import))) {}
+            if (ImGui::BeginMenu(ICON_TEXT(ICON_MD_NEW_LABEL, New From Stage Template)))
             {
                 ImGui::EndMenu();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem("Re-open with New Edit Layer")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_OPEN_IN_NEW, Re-open with New Edit Layer))) {}
             ImGui::Separator();
-            if (ImGui::MenuItem("Share", false, false)) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_SHARE, Share), false, false)) {}
             ImGui::Separator();
-            if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-            if (ImGui::MenuItem("Save With Options", "Ctrl+Alt+S")) {}
-            if (ImGui::MenuItem("Save As...", "Shift+Ctrl+S")) {}
-            if (ImGui::MenuItem("Save Flattened As...")) {}
-            if (ImGui::MenuItem("Export", false, false)) {}
-            if (ImGui::MenuItem("Collect As...", false, false)) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_SAVE, Save), "Ctrl+S")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_SAVE, Save With Options), "Ctrl+Alt+S")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Save As...), "Shift+Ctrl+S")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Save Flattened As...))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Export), false, false)) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Collect As...), false, false)) {}
             ImGui::Separator();
-            if (ImGui::MenuItem("Add Reference")) {}
-            if (ImGui::MenuItem("Add Payload")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Add Reference))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Add Payload))) {}
             ImGui::Separator();
-            if (ImGui::MenuItem("Exit")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Exit))) {}
 
             /**
             * @brief End ImguiFileMenu.

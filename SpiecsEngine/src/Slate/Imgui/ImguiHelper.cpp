@@ -154,17 +154,18 @@ namespace Spiecs {
             io.Fonts->AddFontDefault(&font_config);
         }
         
-        float iconFontSize = 16.0f * high_dpi_scale * 2.0f / 3.0f;
+        float iconFontSize = 18.0f * high_dpi_scale;
 
         // merge in icons from Font Awesome
-        static const ImWchar icons_ranges[] = { ICON_MIN_LC, ICON_MAX_16_LC, 0 };
+        static const ImWchar icons_ranges[] = { ICON_MIN_MD, ICON_MAX_16_MD, 0 };
         ImFontConfig icons_config;
         icons_config.MergeMode = true;
         icons_config.PixelSnapH = true;
         icons_config.GlyphMinAdvanceX = iconFontSize;
+        icons_config.GlyphOffset.y = 4.0f;
 
         std::stringstream ss;
-        ss << SPIECS_ENGINE_ASSETS_PATH << "Fonts/" << FONT_ICON_FILE_NAME_LC;
+        ss << SPIECS_ENGINE_ASSETS_PATH << "Fonts/" << FONT_ICON_FILE_NAME_MD;
         if (FileLibrary::FileLibrary_Exists(ss.str().c_str()))
         {
             io.Fonts->AddFontFromFileTTF(ss.str().c_str(), iconFontSize, &icons_config, icons_ranges);
