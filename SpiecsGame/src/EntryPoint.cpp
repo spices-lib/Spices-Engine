@@ -3,7 +3,7 @@
 
 #include <new>
 
-#if 0
+#if TRACY_ENABLE && 1
 
 void* operator new(size_t size)
 {
