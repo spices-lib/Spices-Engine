@@ -116,20 +116,15 @@ namespace Spiecs {
         /**
         * @brief Set New Camera transform.
         */
-        {
-            SPIECS_PROFILE_ZONEN("DecomposeTransform");
+        //{
+        //    SPIECS_PROFILE_ZONEN("DecomposeTransform");
 
-            /**
-            * @brief Split Channels from Matrix.
-            */
-            glm::vec3 translation, rotation, scale;
-            DecomposeTransform(glm::inverse(viewMat), translation, rotation, scale);
-
-            auto& tc = CameraEntity.GetComponent<TransformComponent>();
-            tc.SetPostion(translation);
-            tc.SetRotation(rotation);
-            tc.SetScale(scale);
-        }
+        //    /**
+        //    * @brief Split Channels from Matrix.
+        //    */
+        //    glm::vec3 translation, rotation, scale;
+        //    DecomposeTransform(glm::inverse(viewMat), translation, rotation, scale);
+        //}
 
         /**
         * @brief Draw Editor Gizmo.
