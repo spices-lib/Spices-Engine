@@ -18,9 +18,4 @@ namespace Spiecs {
 	{
 
 	}
-
-	void UUIDComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

@@ -14,9 +14,4 @@ namespace Spiecs {
 	void PointLightComponent::OnDeSerialize()
 	{
 	}
-
-	void PointLightComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

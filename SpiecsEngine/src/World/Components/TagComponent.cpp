@@ -23,9 +23,4 @@ namespace Spiecs {
 	{
 
 	}
-
-	void TagComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

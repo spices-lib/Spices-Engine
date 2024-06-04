@@ -17,9 +17,4 @@ namespace Spiecs {
 		// spritecomponent only take one meshpack
 		m_Mesh = Mesh::Builder().AddPack(pack).Build();
 	}
-
-	void SpriteComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

@@ -16,29 +16,6 @@ namespace Spiecs {
 	class Console;
 
 	/**
-	* @brief The  ConsoleIcon Texture's ImTextureID.
-	*/
-	struct ConsoleIconID
-	{
-		/**
-		* @brief Left Icon.
-		*/
-		ImTextureID clearConsoleIcon;           // ImTextureID of ClearConsole.
-		ImTextureID openLogFileIcon;            // ImTextureID of OpenLogFile.
-		ImTextureID openLogFolderIcon;          // ImTextureID of OpenLogFolder.
-		ImTextureID enableCommandFieldIcon;     // ImTextureID of EnableCommandField.
-
-		/**
-		* @brief Right Icon.
-		*/
-		ImTextureID filter;                     // ImTextureID of Filter.
-		ImTextureID verbose;				    // ImTextureID of Verbose.
-		ImTextureID info;					    // ImTextureID of Info.
-		ImTextureID warning;				    // ImTextureID of Warning.
-		ImTextureID error;                      // ImTextureID of Error.
-	};
-
-	/**
 	* @brief The ImguiConsole Class.
 	* This class defines how to render a Console.
 	*/
@@ -98,11 +75,6 @@ namespace Spiecs {
 		* @brief The Filter of console.
 		*/
 		ImGuiTextFilter m_Filter;
-
-		/**
-		* @brief The instance of ConsoleIconID.
-		*/
-		ConsoleIconID m_ConsoleIconID;
 
 		/**
 		* @brief The information level that console show.

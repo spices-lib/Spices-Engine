@@ -11,20 +11,6 @@
 namespace Spiecs {
 
 	/**
-	* @brief The  StageIcon Texture's ImTextureID.
-	*/
-	struct StageIconID
-	{
-		ImTextureID filterIcon;     // ImTextureID of Filter.
-		ImTextureID optionsIcon;    // ImTextureID of Options.
-
-		ImTextureID visibleIcon;    // ImTextureID of Visible.
-		ImTextureID invisibleIcon;  // ImTextureID of Visible.
-
-		ImTextureID entityIcon;     // ImTextureID of Entity.
-	};
-
-	/**
 	* @brief The ImguiStage Class.
 	* This class defines how to render a Stage.
 	*/
@@ -62,12 +48,5 @@ namespace Spiecs {
 		* @brief This interface is called On Global Event Function Pointer is called.
 		*/
 		virtual void OnEvent(Event& event) override {};
-
-	private:
-
-		/**
-		* @brief The instance of StageIconID.
-		*/
-		StageIconID m_StageIconID;
 	};
 }

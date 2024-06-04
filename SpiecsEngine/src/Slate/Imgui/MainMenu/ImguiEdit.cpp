@@ -60,8 +60,8 @@ namespace Spiecs {
                 ImGui::EndMenu();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Instance)), "Shift+Ctrl+i") {}
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CONTROL_POINT_DUPLICATE, Duplicate)), "Ctrl+D") {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Instance), "Shift+Ctrl+I")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CONTROL_POINT_DUPLICATE, Duplicate), "Ctrl+D")) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CONTROL_POINT_DUPLICATE, Duplicate-All Layers))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CONTROL_POINT_DUPLICATE, Duplicate-Collapsed))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CONTROL_POINT_DUPLICATE, Parent), "P")) {}
@@ -92,7 +92,7 @@ namespace Spiecs {
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Toggle Visualization Mode))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Capture Screenshot), "F10")) {}
             ImGui::Separator();
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_ROOM_PREFERENCES, Preferences))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_FILTER_VINTAGE, Preferences))) {}
 
             /**
             * @brief End ImguiFileMenu.

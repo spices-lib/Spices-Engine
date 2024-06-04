@@ -18,9 +18,4 @@ namespace Spiecs {
 	{
 
 	}
-
-	void MeshComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

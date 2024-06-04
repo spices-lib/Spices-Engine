@@ -4,17 +4,6 @@
 
 namespace Spiecs {
 
-	/**
-	* @brief The  StageIcon Texture's ImTextureID.
-	*/
-	struct ViewportToolBarIconID
-	{
-		ImTextureID optionIcon;     // ImTextureID of Option.
-		ImTextureID renderingIcon;  // ImTextureID of Rendering.
-		ImTextureID viewerIcon;     // ImTextureID of Viewer.
-		ImTextureID cameraIcon;     // ImTextureID of Camera.
-	};
-
 	class ImguiViewportToolBar : public ImguiSlate
 	{
 	public:
@@ -58,10 +47,5 @@ namespace Spiecs {
 		* @brief The owner, usually is a ImguiViewport class.
 		*/
 		ImguiSlate* m_Owner;
-
-		/**
-		* @brief The instance of ViewportToolBarIconID.
-		*/
-		ViewportToolBarIconID m_IconID;
 	};
 }

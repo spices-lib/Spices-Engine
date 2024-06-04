@@ -22,9 +22,4 @@ namespace Spiecs {
 	{
 
 	}
-
-	void CameraComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

@@ -22,11 +22,6 @@ namespace Spiecs {
 
 	}
 
-	void TransformComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
-
 	void TransformComponent::CalMatrix()
 	{
 		/**

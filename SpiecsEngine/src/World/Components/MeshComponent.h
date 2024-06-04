@@ -44,12 +44,6 @@ namespace Spiecs {
 		virtual void OnDeSerialize() override;
 
 		/**
-		* @brief Defines Component icon on stage.
-		* Set m_SlateStageIconPath here.
-		*/
-		virtual void DefineStageIcon() override;
-
-		/**
 		* @brief Set the Mesh this component handled.
 		* @param[in] mesh The Mesh shared pointer.
 		*/

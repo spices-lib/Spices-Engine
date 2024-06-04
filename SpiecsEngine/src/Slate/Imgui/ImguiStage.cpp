@@ -16,20 +16,7 @@ namespace Spiecs {
         FrameInfo&         frameInfo
     )
         : ImguiSlate(panelName, frameInfo)
-    {
-        SPIECS_PROFILE_ZONE;
-
-        /**
-        * @brief Load used icon from file.
-        */
-        LoadSlateIcon(m_StageIconID.filterIcon,    "slate/stage/Stage.Filter.png"   );
-        LoadSlateIcon(m_StageIconID.optionsIcon,   "slate/stage/Stage.Options.png"  );
-
-        LoadSlateIcon(m_StageIconID.visibleIcon,   "slate/stage/Stage.Visible.png"  );
-        LoadSlateIcon(m_StageIconID.invisibleIcon, "slate/stage/Stage.Invisible.png");
-
-        LoadSlateIcon(m_StageIconID.entityIcon,    "slate/stage/Stage.MeshComponent.png"   );
-    }
+    {}
 
     void ImguiStage::OnRender()
     {
@@ -40,17 +27,15 @@ namespace Spiecs {
         */
         Begin();
         ImGui::Separator();
-        ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.4f);
+        ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
         char search[128] = "";
         if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
         ImGui::PopItemWidth();
         
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-        ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.4f);
-        ImGui::ImageButton(m_StageIconID.filterIcon, ImGuiH::GetLineItemSize());
-        ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 1.2f);
-        ImGui::ImageButton(m_StageIconID.optionsIcon, ImGuiH::GetLineItemSize());
-        ImGui::PopStyleVar();
+        ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
+        ImGui::Button(ICON_MD_FILTER_LIST, ImGuiH::GetLineItemSize());
+        ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 1.0f);
+        ImGui::Button(ICON_MD_LINE_WEIGHT, ImGuiH::GetLineItemSize());
         ImGui::Separator();
 
         static ImGuiTableFlags flags =
@@ -67,7 +52,7 @@ namespace Spiecs {
         if (ImGui::BeginTable("Entity Stage", 3, flags, ImVec2(0, 0), 0.0))
         {
             ImGui::TableSetupColumn("Name", columns_base_flags | ImGuiTableColumnFlags_PreferSortDescending, 0.0f);
-            ImGui::TableSetupColumn("Visable", columns_base_flags | ((flags & ImGuiTableFlags_NoHostExtendX) ? 0 : ImGuiTableColumnFlags_WidthStretch), 0.0f);
+            ImGui::TableSetupColumn(ICON_MD_REMOVE_RED_EYE, columns_base_flags | ((flags & ImGuiTableFlags_NoHostExtendX) ? 0 : ImGuiTableColumnFlags_WidthStretch), 0.0f);
             ImGui::TableSetupColumn("Type", columns_base_flags | ImGuiTableColumnFlags_NoSort, 0.0f);
             ImGui::TableSetupScrollFreeze(freeze_cols, freeze_rows);
             ImGui::TableHeadersRow();
@@ -77,17 +62,12 @@ namespace Spiecs {
                 ImGui::TableNextRow();
 
                 ImGui::TableSetColumnIndex(0);
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-                ImGui::Image(m_StageIconID.entityIcon, ImGuiH::GetLineItemSize());
-                ImGui::PopStyleVar();
+                ImGui::Text("\xee\xa2\xab ", ImGuiH::GetLineItemSize());
                 ImGui::SameLine();
                 ImGui::Text((*tComp.GetTag().begin()).c_str());
 
                 ImGui::TableSetColumnIndex(1);
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-                ImTextureID icon = m_StageIconID.visibleIcon;
-                if (ImGui::ImageButton(icon, ImGuiH::GetLineItemSize()));
-                ImGui::PopStyleVar();
+                if (ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize()));
 
                 ImGui::TableSetColumnIndex(2);
                 ImGui::Text("Entity");

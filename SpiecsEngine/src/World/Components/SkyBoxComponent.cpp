@@ -26,9 +26,4 @@ namespace Spiecs {
 	void SkyBoxComponent::OnDeSerialize()
 	{
 	}
-
-	void SkyBoxComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

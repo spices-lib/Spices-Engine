@@ -94,12 +94,6 @@ namespace Spiecs {
 		virtual void OnDeSerialize() override;
 
 		/**
-		* @brief Defines Component icon on stage.
-		* Set m_SlateStageIconPath here.
-		*/
-		virtual void DefineStageIcon() override;
-
-		/**
 		* @brief Get the PointLight variable.
 		* @return Returns the PointLight variable.
 		*/

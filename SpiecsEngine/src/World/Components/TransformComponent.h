@@ -45,12 +45,6 @@ namespace Spiecs {
 		virtual void OnDeSerialize();
 
 		/**
-		* @brief Defines Component icon on stage.
-		* Set m_SlateStageIconPath here.
-		*/
-		virtual void DefineStageIcon() override;
-
-		/**
 		* @brief Set the position this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] position The entity's world position.

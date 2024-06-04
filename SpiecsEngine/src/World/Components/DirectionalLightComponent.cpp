@@ -15,9 +15,4 @@ namespace Spiecs {
 	void DirectionalLightComponent::OnDeSerialize()
 	{
 	}
-
-	void DirectionalLightComponent::DefineStageIcon()
-	{
-		m_SlateStageIconPath = "slate/stage/Stage.Light.png";
-	}
 }

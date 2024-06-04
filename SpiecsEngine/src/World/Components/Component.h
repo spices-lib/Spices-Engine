@@ -54,25 +54,10 @@ namespace Spiecs
 		virtual void OnComponentAdded(const entt::entity& entity);
 
 		/**
-		* @brief Defines Component icon on stage.
-		* Set m_SlateStageIconPath here.
-		*/
-		virtual void DefineStageIcon() = 0;
-
-		/**
 		* @brief Get Component's icon in Stage.
 		* @return Returns the icon ImTextureID.
 		*/
 		inline ImTextureID& GetStageIcon() { return m_SlateStageIcon; };
-		
-	protected:
-
-		/**
-		* @brief Load a Texture from ResourcePool.
-		* @param[out] id The ImTextureID Created with inconFilePath.
-		* @param[in] iconFile The file path of icon.
-		*/
-		void LoadSlateIcon(ImTextureID& id, const std::string& iconFile);
 
 	protected:
 

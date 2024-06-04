@@ -12,8 +12,8 @@
 namespace Spiecs {
 
     ImguiViewportMenu::ImguiViewportMenu(
-        const std::string& panelName,
-        FrameInfo& frameInfo
+        const std::string& panelName ,
+        FrameInfo&         frameInfo
     )
         : ImguiSlate(panelName, frameInfo)
     {}
