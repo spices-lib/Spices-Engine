@@ -47,5 +47,12 @@ namespace Spiecs {
 		* @brief The owner, usually is a ImguiViewport class.
 		*/
 		ImguiSlate* m_Owner;
+
+		bool m_OptionMenuOn = false;
+		bool m_RenderMenuOn = false;
+		bool m_ViewMenuOn = false;
+		bool m_CameraMenuOn = false;
+		bool m_LightMenuOn = false;
+		bool m_WayPointOn = false;
 	};
 }

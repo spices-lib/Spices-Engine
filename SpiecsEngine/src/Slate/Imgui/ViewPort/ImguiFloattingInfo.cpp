@@ -41,7 +41,7 @@ namespace Spiecs {
             
             ImVec2 window_pos, window_pos_pivot;
             window_pos.x = (location & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
-            window_pos.y = (location & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD);
+            window_pos.y = (location & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD + ImGuiH::GetLineItemSize().x * 1.5f + 2.0f);
             window_pos_pivot.x = (location & 1) ? 1.0f : 0.0f;
             window_pos_pivot.y = (location & 2) ? 1.0f : 0.0f;
 
