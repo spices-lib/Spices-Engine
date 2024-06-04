@@ -35,10 +35,16 @@ namespace Spiecs {
         */
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Provide Feedback))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Omni UI Docs))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, User Manual), "F1")) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Discover Kit SDK))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Developers Manual))) {}
+
             /**
             * @brief Render About.
             */
-            if (ImGui::MenuItem("About")) m_About->SetWindowState(true);
+            if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, About))) m_About->SetWindowState(true);
 
             /**
             * @brief End render Visualizer.
