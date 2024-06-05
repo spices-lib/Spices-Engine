@@ -34,7 +34,7 @@ namespace Spiecs {
 		ImVec2 ItemSize = ImGuiH::GetLineItemSize() * 1.5f;
 		ItemSize.x *= 3.5f;
 
-		if (ImGui::Button(ICON_MD_SETTINGS_DISPLAY, ImGuiH::GetLineItemSize() * 1.5f))
+		if (ImGui::Button(ICON_MD_LINE_WEIGHT, ImGuiH::GetLineItemSize() * 1.5f))
 		{
 			m_OptionMenuOn = !m_OptionMenuOn;
 			m_RenderMenuOn = false;
@@ -74,6 +74,12 @@ namespace Spiecs {
 			m_LightMenuOn = false;
 			m_WayPointOn = false;
 		}
+		ImGui::SameLine();
+		ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.5f));
+		if (ImGui::Button(ICON_MD_ARROW_RIGHT, ImVec2(ItemSize.y * 0.5f, ItemSize.y)))
+		{
+		}
+		ImGui::PopStyleVar();
 		End();
 
 		ImVec2 NextPos = StartPos;
@@ -217,7 +223,9 @@ namespace Spiecs {
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Interactive(Path Tracing)))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Accurate(lray)))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Pixar-Storm))) {}
-			ImGui::Separator();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+			ImGui::SeparatorText("Rendering Settings");
+			ImGui::PopStyleColor();
 			if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Load from Preset))) 
 			{
 				if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Draft))) {}
@@ -230,7 +238,9 @@ namespace Spiecs {
 			}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Save Current as Preset))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Reset to Defaults))) {}
-			ImGui::Separator();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+			ImGui::SeparatorText("Rendering Mode");
+			ImGui::PopStyleColor();
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Default))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Wireframe))) {}
 			if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Debug View))) 
@@ -448,7 +458,9 @@ namespace Spiecs {
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Lights Off))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Camera Light))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Stage Lights))) {}
-			ImGui::Separator();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+			ImGui::SeparatorText("Light Rigs");
+			ImGui::PopStyleColor();
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Colored Lights))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Dafault))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Grey Studio))) {}

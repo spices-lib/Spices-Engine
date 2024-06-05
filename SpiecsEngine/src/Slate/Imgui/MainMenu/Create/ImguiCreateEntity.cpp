@@ -128,7 +128,9 @@ namespace Spiecs {
 
                 if (ImGui::BeginMenu(ICON_TEXT(ICON_MD_PANORAMA_PHOTOSPHERE_SELECT, Material)))
                 {
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Advanced");
+                    ImGui::PopStyleColor();
                     if (ImGui::MenuItem("Surface")) {};
                     if (ImGui::MenuItem("SurfaceBlend")) {};
                     if (ImGui::MenuItem("SurfaceLite")) {};
@@ -174,12 +176,16 @@ namespace Spiecs {
 
                         ImGui::EndMenu();
                     } 
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Base");
+                    ImGui::PopStyleColor();
                     if (ImGui::MenuItem("Glass")) {};
                     if (ImGui::MenuItem("PBR")) {};
                     if (ImGui::MenuItem("PBRBase")) {};
                     if (ImGui::MenuItem("PBR ClearCoat")) {};
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Hair");
+                    ImGui::PopStyleColor();
                     if (ImGui::MenuItem("Hair")) {};
                     if (ImGui::BeginMenu("HairPresets")) 
                     {
@@ -191,10 +197,14 @@ namespace Spiecs {
 
                         ImGui::EndMenu();
                     };
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("SimReady");
+                    ImGui::PopStyleColor();
                     if (ImGui::MenuItem("SimPBR")) {};
                     if (ImGui::MenuItem("SimPBR Translucent")) {};
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Volumes");
+                    ImGui::PopStyleColor();
                     if (ImGui::MenuItem("VolumeDensity")) {};
                     if (ImGui::BeginMenu("VolumeNoise"))
                     {
@@ -203,7 +213,9 @@ namespace Spiecs {
 
                         ImGui::EndMenu();
                     };
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Usd Materials");
+                    ImGui::PopStyleColor();
                     if (ImGui::MenuItem("USD Preview Surface")) {};
                     if (ImGui::MenuItem("USD Preview Surface Texture")) {};
                     if (ImGui::MenuItem("Add MDL File")) {};
@@ -377,6 +389,9 @@ namespace Spiecs {
 
                 if (ImGui::BeginMenu(ICON_TEXT(ICON_MD_SQUARE, UI)))
                 {
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Containers");
+                    ImGui::PopStyleColor();
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Frame))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, ScrollingFrame))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, CollapsableFrame))) {};
@@ -384,7 +399,9 @@ namespace Spiecs {
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, VStack))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, ZStack))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Placer))) {};
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Widgets");
+                    ImGui::PopStyleColor();
 
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Button))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Image))) {};
@@ -394,14 +411,18 @@ namespace Spiecs {
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Line))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Circle))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Triangle))) {};
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Style");
+                    ImGui::PopStyleColor();
 
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, StyleContainer))) {};
                     if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Style))) {};
-                    ImGui::Separator();
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                    ImGui::SeparatorText("Window");
+                    ImGui::PopStyleColor();
 
-                    if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Viewport Frame))) {};
-                    if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Window Frame))) {};
+                    if (ImGui::MenuItem("Viewport Fram")) {};
+                    if (ImGui::MenuItem("Window Frame")) {};
 
                     ImGui::EndMenu();
                 }

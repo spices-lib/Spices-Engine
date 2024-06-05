@@ -37,6 +37,9 @@ namespace Spiecs {
         style.IndentSpacing                 = 12.0f;
         style.ItemSpacing                   = ImVec2(2.0f, 2.0f);
         style.ScrollbarSize                 = 4.0f;
+        style.SeparatorTextAlign            = ImVec2(0.0f, 0.5f);
+        style.SeparatorTextPadding          = ImVec2(0.0f, 3.0f);
+        style.SeparatorTextBorderSize       = 1.0f;
         style.Colors[ImGuiCol_WindowBg]     = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_MenuBarBg]    = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_ScrollbarBg]  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
