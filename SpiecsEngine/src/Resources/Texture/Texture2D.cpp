@@ -20,6 +20,7 @@ namespace Spiecs {
 		{
 			m_Resource = std::make_shared<VulkanImage>(
 				VulkanRenderBackend::GetState(),
+				info.name,
 				info.width,
 				info.height,
 				info.description.samples,
@@ -42,6 +43,7 @@ namespace Spiecs {
 		{
 			m_Resource = std::make_shared<VulkanImage>(
 				VulkanRenderBackend::GetState(),
+				info.name,
 				info.width,
 				info.height,
 				info.description.samples,

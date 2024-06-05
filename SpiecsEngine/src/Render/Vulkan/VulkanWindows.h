@@ -45,7 +45,10 @@ namespace Spiecs {
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] initInfo WindowInfo.
 		*/
-		VulkanWindows(VulkanState& vulkanState, const WindowInfo& initInfo);
+		VulkanWindows(
+			VulkanState&      vulkanState , 
+			const WindowInfo& initInfo
+		);
 
 		/**
 		* @brief Destructor Function.

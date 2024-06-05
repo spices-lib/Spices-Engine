@@ -11,6 +11,7 @@
 #include "VulkanRenderPass.h"
 #include "VulkanSwapChain.h"
 #include "VulkanDescriptor.h"
+#include "VulkanDebugUtils.h"
 
 namespace Spiecs {
 

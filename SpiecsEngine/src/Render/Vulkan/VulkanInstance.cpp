@@ -10,7 +10,11 @@
 
 namespace Spiecs {
 
-	VulkanInstance::VulkanInstance(VulkanState& vulkanState, const std::string& name, const std::string& enginename)
+	VulkanInstance::VulkanInstance(
+		VulkanState&       vulkanState , 
+		const std::string& name        , 
+		const std::string& enginename
+	)
 		: VulkanObject(vulkanState)
 	{
 		/**
@@ -316,7 +320,23 @@ namespace Spiecs {
 		* @brief Format string.
 		*/
 		std::stringstream ss;
-		ss << "validation layer: " << pCallbackData->pMessage;
+
+		ss <<
+		"validation layer:\n			" <<
+		"MessageIdNumber: " <<
+		pCallbackData->messageIdNumber <<
+		"\n			MessageIdName: " <<
+		pCallbackData->pMessageIdName;
+
+		if (pCallbackData->cmdBufLabelCount != 0)
+		{
+			ss << "\n		CmdLabelName: " <<
+			pCallbackData->pCmdBufLabels->pLabelName;
+		}
+
+		ss <<
+		"\n			Message: " <<
+		pCallbackData->pMessage;
 
 		switch (messageSeverity)
 		{

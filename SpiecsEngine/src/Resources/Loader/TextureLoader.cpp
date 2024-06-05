@@ -49,6 +49,7 @@ namespace Spiecs {
 
 		resourceptr->CreateImage(
 			resourceptr->m_VulkanState,
+			filePath,
 			resourceptr->m_Width,
 			resourceptr->m_Height,
 			VK_SAMPLE_COUNT_1_BIT,
@@ -97,6 +98,7 @@ namespace Spiecs {
 
 		resourceptr->CreateImage(
 			resourceptr->m_VulkanState,
+			filePath,
 			resourceptr->m_Width,
 			resourceptr->m_Height,
 			VK_SAMPLE_COUNT_1_BIT,

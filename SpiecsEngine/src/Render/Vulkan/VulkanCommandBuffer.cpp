@@ -1,6 +1,6 @@
 /**
 * @file VulkanCommandBuffer.cpp.
-* @brief The VulkanCommandPool Class and VulkanCommandBuffer Class Definitions.
+* @brief The VulkanCommandPool Class and VulkanCommandBuffer Class Implementation.
 * @author Spiecs.
 */
 

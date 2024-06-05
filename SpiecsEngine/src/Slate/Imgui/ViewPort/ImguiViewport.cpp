@@ -29,7 +29,7 @@ namespace Spiecs {
             /**
             * @brief Get SceneColor Info.
             */
-            VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
+            VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
 
             /**
             * @brief Create SceneColor DescriptorSet.
@@ -136,7 +136,7 @@ namespace Spiecs {
         /**
         * @brief Get SceneColor Info again.
         */
-        VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
+        VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
 
         /**
         * @brief Create SceneColor DescriptorSet.

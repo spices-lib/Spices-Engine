@@ -25,7 +25,9 @@ namespace Spiecs {
 		* Init a empty VulkanImage, used in TextureLoad.
 		* @param[in] vulkanState, The VulkanObject in used this frame.
 		*/
-		VulkanImage(VulkanState& vulkanState) : VulkanObject(vulkanState) {};
+		VulkanImage(VulkanState& vulkanState) 
+			: VulkanObject(vulkanState) 
+		{};
 
 		/**
 		* @breif Constructor Function.
@@ -42,6 +44,7 @@ namespace Spiecs {
 		* Init class variable.
 		* Create the vkImage by specific parameters.
 		* @param[in] vulkanState, The VulkanObject in used this frame.
+		* @param[in] name, Image's name.
 		* @param[in] width, Image's width.
 		* @param[in] height, Image's height.
 		* @param[in] numSamples, Image's MSAA sample num.(8 if enable MSAA).
@@ -53,6 +56,7 @@ namespace Spiecs {
 		*/
 		VulkanImage(
 			VulkanState&          vulkanState  ,
+			const std::string&    name         ,
 			uint32_t              width        ,
 			uint32_t              height       ,
 			VkSampleCountFlagBits numSamples   ,
@@ -126,7 +130,18 @@ namespace Spiecs {
 		void GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight);
 		void CreateImageView(VkFormat format, VkImageAspectFlags aspectFlags);
 		void CreateSampler();
-		void CreateImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels);
+		void CreateImage(
+			VulkanState& vulkanState, 
+			const std::string& name,
+			uint32_t width, 
+			uint32_t height, 
+			VkSampleCountFlagBits numSamples, 
+			VkFormat format, 
+			VkImageTiling tiling, 
+			VkImageUsageFlags usage, 
+			VkMemoryPropertyFlags properties, 
+			uint32_t mipLevels
+		);
 		void CreateDescriptorSet(uint32_t binding);
 		VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; };
 		void DestroyDescriptorSetLayout();

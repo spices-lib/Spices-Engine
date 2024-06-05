@@ -26,7 +26,11 @@ namespace Spiecs {
 		* @param[in] name Application name.
 		* @param[in] enginename Engine name.
 		*/
-		VulkanInstance(VulkanState& vulkanState, const std::string& name, const std::string& enginename);
+		VulkanInstance(
+			VulkanState&       vulkanState , 
+			const std::string& name        , 
+			const std::string& enginename
+		);
 
 		/**
 		* @brief Destructor Function.
@@ -41,14 +45,19 @@ namespace Spiecs {
 		* @param[in] enginename pEngineName.
 		* @return Returns a filled VkApplicationInfo struct.
 		*/
-		VkApplicationInfo CreateApplicationInfo(const std::string& name, const std::string& enginename);
+		VkApplicationInfo CreateApplicationInfo(
+			const std::string& name       , 
+			const std::string& enginename
+		);
 
 		/**
 		* @brief Create VkInstanceCreateInfo struct.
 		* @param[in] appInfo pApplicationInfo.
 		* @return Returns a filled VkInstanceCreateInfo.
 		*/
-		VkInstanceCreateInfo CreateInstanceCreateInfo(const VkApplicationInfo& appInfo);
+		VkInstanceCreateInfo CreateInstanceCreateInfo(
+			const VkApplicationInfo& appInfo
+		);
 
 		/**
 		* @brief Get all instance extension requirements our engine needede.

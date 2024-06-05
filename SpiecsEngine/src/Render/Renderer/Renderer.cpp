@@ -325,7 +325,12 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		
+
 		m_HandledSubPass = m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
+
+		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_HandledSubPass->GetName());
 
 		vkCmdNextSubpass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -356,12 +361,18 @@ namespace Spiecs {
 		renderPassInfo.clearValueCount = (uint32_t)m_Renderer->m_Pass->GetClearValues().size();
 		renderPassInfo.pClearValues = m_Renderer->m_Pass->GetClearValues().data();
 
+		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_Renderer->m_Pass->GetName());
+		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_HandledSubPass->GetName());
+
 		vkCmdBeginRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void Renderer::RenderBehaverBuilder::EndRenderPass()
 	{
 		SPIECS_PROFILE_ZONE;
+
+		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 
 		vkCmdEndRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
@@ -417,7 +428,9 @@ namespace Spiecs {
 		*/
 		for (int i = 0; i < textureNames.size(); i++)
 		{
-			auto info = m_Renderer->m_RendererResourcePool->AccessResource(textureNames[i]);
+			RendererResourceCreateInfo Resinfo;
+			Resinfo.name = textureNames[i];
+			auto info = m_Renderer->m_RendererResourcePool->AccessResource(Resinfo);
 
 			m_ImageInfos[set][binding].push_back(*info);
 		}
@@ -440,7 +453,9 @@ namespace Spiecs {
 		*/
 		for (int i = 0; i < inputAttachmentNames.size(); i++)
 		{
-			auto info = m_Renderer->m_RendererResourcePool->AccessResource(inputAttachmentNames[i]);
+			RendererResourceCreateInfo Resinfo;
+			Resinfo.name = inputAttachmentNames[i];
+			auto info = m_Renderer->m_RendererResourcePool->AccessResource(Resinfo);
 
 			m_ImageInfos[set][binding].push_back(*info);
 		}

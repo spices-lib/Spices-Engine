@@ -769,11 +769,12 @@ namespace Spiecs {
 		}
 
 		RendererResourceCreateInfo Info;
+		Info.name = attachmentName;
 		Info.description = attachmentDescription;
 		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 
-		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView;
+		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
 
@@ -805,6 +806,7 @@ namespace Spiecs {
 		clearValue.depthStencil = { 1.0f, 0 };
 
 		RendererResourceCreateInfo Info;
+		Info.name = "Depth";
 		Info.description = depthAttachment;
 		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
@@ -845,11 +847,12 @@ namespace Spiecs {
 		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		RendererResourceCreateInfo Info;
+		Info.name = attachmentName;
 		Info.description = attachmentDescription;
 		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 
-		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(attachmentName, Info)->imageView;
+		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
 

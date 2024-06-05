@@ -128,10 +128,10 @@ namespace Spiecs {
     {
         SPIECS_PROFILE_ZONE;
 
-        VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("SceneColor");
-        VkDescriptorImageInfo* diffuseInfo    = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Diffuse"   );
-        VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Normal"    );
-        VkDescriptorImageInfo* specularInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource("Specular"  );
+        VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
+        VkDescriptorImageInfo* diffuseInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Diffuse" });
+        VkDescriptorImageInfo* normalInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal" });
+        VkDescriptorImageInfo* specularInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Specular" });
 
         m_GBufferID.SceneColorID  = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
         m_GBufferID.DiffuseID     = ImGui_ImplVulkan_AddTexture(diffuseInfo->sampler    , diffuseInfo->imageView   ,  diffuseInfo->imageLayout     );

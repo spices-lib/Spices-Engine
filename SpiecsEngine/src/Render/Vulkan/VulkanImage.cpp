@@ -7,13 +7,24 @@
 
 namespace Spiecs {
 
-	VulkanImage::VulkanImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels)
+	VulkanImage::VulkanImage(
+		VulkanState&          vulkanState , 
+		const std::string&    name        ,
+		uint32_t              width       , 
+		uint32_t              height      , 
+		VkSampleCountFlagBits numSamples  , 
+		VkFormat              format      ,   
+		VkImageTiling         tiling      , 
+		VkImageUsageFlags     usage       , 
+		VkMemoryPropertyFlags properties  , 
+		uint32_t              mipLevels
+	)
 		: VulkanObject(vulkanState)
 		, m_Width(width)
 		, m_Height(height)
 		, m_Format(format)
 	{
-		CreateImage(vulkanState, width, height, numSamples, format, tiling, usage, properties, mipLevels);
+		CreateImage(vulkanState, name, width, height, numSamples, format, tiling, usage, properties, mipLevels);
 	}
 
 	VulkanImage::~VulkanImage()
@@ -377,28 +388,40 @@ namespace Spiecs {
 		VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_TextureSampler));
 	}
 
-	void VulkanImage::CreateImage(VulkanState& vulkanState, uint32_t width, uint32_t height, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, uint32_t mipLevels)
+	void VulkanImage::CreateImage(
+		VulkanState&          vulkanState ,
+		const std::string&    name        ,
+		uint32_t              width       , 
+		uint32_t              height      , 
+		VkSampleCountFlagBits numSamples  , 
+		VkFormat              format      , 
+		VkImageTiling         tiling      , 
+		VkImageUsageFlags     usage       , 
+		VkMemoryPropertyFlags properties  , 
+		uint32_t              mipLevels
+	)
 	{
 		m_MipLevels = mipLevels;
 		m_Format = format;
 
 		VkImageCreateInfo imageInfo{};
-		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageInfo.extent.width = width;
-		imageInfo.extent.height = height;
-		imageInfo.extent.depth = 1;
-		imageInfo.mipLevels = mipLevels;
-		imageInfo.arrayLayers = 1;
-		imageInfo.format = format;
-		imageInfo.tiling = tiling;
-		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		imageInfo.usage = usage;
-		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		imageInfo.samples = numSamples;
-		imageInfo.flags = 0;
+		imageInfo.sType          = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		imageInfo.imageType      = VK_IMAGE_TYPE_2D;
+		imageInfo.extent.width   = width;
+		imageInfo.extent.height  = height;
+		imageInfo.extent.depth   = 1;
+		imageInfo.mipLevels      = mipLevels;
+		imageInfo.arrayLayers    = 1;
+		imageInfo.format         = format;
+		imageInfo.tiling         = tiling;
+		imageInfo.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageInfo.usage          = usage;
+		imageInfo.sharingMode    = VK_SHARING_MODE_EXCLUSIVE;
+		imageInfo.samples        = numSamples;
+		imageInfo.flags          = 0;
 
 		VK_CHECK(vkCreateImage(vulkanState.m_Device, &imageInfo, nullptr, &m_Image));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, m_Image, m_VulkanState.m_Device, name);
 
 		// memory
 		VkMemoryRequirements memRequirements;

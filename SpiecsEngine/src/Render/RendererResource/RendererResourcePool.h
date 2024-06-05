@@ -50,11 +50,10 @@ namespace Spiecs {
 
 		/**
 		* @brief Get Resource with specific name, create it if it have not been created.
-		* @param[in] name The name of the resource.
 		* @param[in] info The info used for create resource.
 		* @return Returns the view of the resource.
 		*/
-		VkDescriptorImageInfo* AccessResource(const std::string& name, const RendererResourceCreateInfo& info = RendererResourceCreateInfo{});
+		VkDescriptorImageInfo* AccessResource(const RendererResourceCreateInfo& info = RendererResourceCreateInfo{});
 		std::shared_ptr<VulkanImage> AccessRowResource(const std::string& name);
 
 		/**

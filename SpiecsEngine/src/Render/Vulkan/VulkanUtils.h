@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "VulkanDebugUtils.h"
 
 #include <vector>
 

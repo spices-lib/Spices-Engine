@@ -28,6 +28,11 @@ namespace Spiecs{
 		RendererResourceCreateInfo() {};
 
 		/**
+		* @brief Constructor Function.
+		*/
+		RendererResourceCreateInfo(const std::string name) : name(name) {};
+
+		/**
 		* @brief Destructor Function.
 		*/
 		virtual ~RendererResourceCreateInfo() {};
@@ -36,6 +41,11 @@ namespace Spiecs{
 		* @brief Texture's description info.
 		*/
 		VkAttachmentDescription description{};
+		
+		/**
+		* @brief Texture's name.
+		*/
+		std::string name;
 
 		/**
 		* @brief Texture'width.

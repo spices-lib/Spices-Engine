@@ -29,6 +29,8 @@ namespace Spiecs {
 		m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
 		m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>(m_VulkanState, m_VulkanDevice);
 
+		VulkanDebugUtils::Init(m_VulkanState.m_Instance);
+
 		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
 		.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
 		.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
