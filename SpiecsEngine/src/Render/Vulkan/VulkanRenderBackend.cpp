@@ -1,5 +1,12 @@
+/**
+* @file VulkanRenderBackend.cpp.
+* @brief The VulkanRenderBackend Class Implementation.
+* @author Spiecs.
+*/
+
 #include "Pchheader.h"
 #include "VulkanRenderBackend.h"
+
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Core/Event/WindowEvent.h"
 #include "Systems/SlateSystem.h"
@@ -14,51 +21,94 @@
 
 namespace Spiecs {
 
+	/**
+	* @brief Window create parameter.
+	*/
 	const WindowInfo initInfo{ 1920, 1080, "Spiecs Engine"};
 
-	VulkanState VulkanRenderBackend::m_VulkanState;
+	VulkanState                           VulkanRenderBackend::m_VulkanState;
 	std::shared_ptr<VulkanDescriptorPool> VulkanRenderBackend::m_VulkanDescriptorPool;
 	std::shared_ptr<RendererResourcePool> VulkanRenderBackend::m_RendererResourcePool;
 
 	VulkanRenderBackend::VulkanRenderBackend()
 	{
-		m_VulkanWindows       = std::make_unique<VulkanWindows>(m_VulkanState, initInfo);
-		m_VulkanInstance      = std::make_unique<VulkanInstance>(m_VulkanState, "app", "engine");
-		m_VulkanDevice        = std::make_shared<VulkanDevice>(m_VulkanState);
-		m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>(m_VulkanState);
-		m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
-		m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>(m_VulkanState, m_VulkanDevice);
+		SPIECS_PROFILE_ZONE;
 
-		VulkanDebugUtils::Init(m_VulkanState.m_Instance);
+		/**
+		* @brief Create basic Vulkan Objects.
+		*/
+		{
+			m_VulkanWindows       = std::make_unique<VulkanWindows>      (m_VulkanState, initInfo);
+			m_VulkanInstance      = std::make_unique<VulkanInstance>     (m_VulkanState, "app", "engine");
 
-		m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
-		.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
-		.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
-		.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
-		.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000)
-		.AddPoolSize(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000)
-		.Build(m_VulkanState);
+			/**
+			* @brief Init Vulkan Debug Functions.
+			*/
+			{
+				VulkanDebugUtils::Init(m_VulkanState.m_Instance);
+			}
 
-		// TODO: Move to  
-		m_RendererResourcePool = std::make_shared<RendererResourcePool>();
+			m_VulkanDevice        = std::make_shared<VulkanDevice>       (m_VulkanState);
+			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>  (m_VulkanState);
+			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
+			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>    (m_VulkanState, m_VulkanDevice);
+		}
 
-		RendererManager::Get()
-			.Push<PreRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<BasePassRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SceneComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SpriteRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<WorldPickRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+		/**
+		* @brief Create VulkanDescriptorPool.
+		*/
+		{
+			m_VulkanDescriptorPool = VulkanDescriptorPool::Builder()
+			.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000)
+			.Build(m_VulkanState);
+		}
+
+		/**
+		* @brief Create RendererResourcePool.
+		* @todo Move to  
+		*/
+		{
+			m_RendererResourcePool = std::make_shared<RendererResourcePool>();
+		}
+
+		/**
+		* @brief Create all Specific Renderer.
+		*/
+		{
+			RendererManager::Get()
+			.Push<PreRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<BasePassRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SlateRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
+			.Push<SlateRenderer>          (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
+		}
 	}
 
 	VulkanRenderBackend::~VulkanRenderBackend()
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Release RendererResourcePool.
+		*/
 		m_RendererResourcePool = nullptr;
 
+		/**
+		* @brief Release VulkanDescriptorPool.
+		*/
 		m_VulkanDescriptorPool = nullptr;
 
-		RendererManager::Get()
+		/**
+		* @brief Release all Specific Renderer.
+		*/
+		{
+			RendererManager::Get()
 			.Pop("SlateRenderer")
 			.Pop("WorldPickStage2Renderer")
 			.Pop("WorldPickRenderer")
@@ -66,12 +116,16 @@ namespace Spiecs {
 			.Pop("SceneComposeRenderer")
 			.Pop("BasePassRenderer")
 			.Pop("PreRenderer");
+		}
 	}
 
 	void VulkanRenderBackend::RecreateSwapChain() 
 	{
 		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Get new size of Windows.
+		*/
 		int width = 0, height = 0;
 		glfwGetFramebufferSize(m_VulkanState.m_Windows, &width, &height);
 		while (width == 0 || height == 0) 
@@ -96,18 +150,28 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Wait for last frame done.
+		*/
 		vkWaitForFences(
 			m_VulkanState.m_Device, 
 			1, 
 			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex], 
 			VK_TRUE, UINT64_MAX
 		);
+
+		/**
+		* @brief Reset Fences.
+		*/
 		vkResetFences(
 			m_VulkanState.m_Device, 
 			1, 
 			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
 		);
 
+		/**
+		* @brief Prepare Writing another SwapchainImage.
+		*/
 		VkResult result = vkAcquireNextImageKHR(
 			m_VulkanState.m_Device, 
 			m_VulkanState.m_SwapChain, 
@@ -117,18 +181,29 @@ namespace Spiecs {
 			&frameInfo.m_Imageindex
 		);
 
-		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+		/**
+		* @brief Confine whether swapchain need recreated.
+		*/
+		if (result == VK_ERROR_OUT_OF_DATE_KHR) 
+		{
 			RecreateSwapChain();
 		}
-		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-			throw std::runtime_error("failed to acquire swap chain image!");
+		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
+		{
+			SPIECS_CORE_ERROR("Failed to acquire swap chain image!");
 		}
 
+		/**
+		* @brief Instance a VkCommandBufferBeginInfo.
+		*/
 		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags            = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		beginInfo.pInheritanceInfo = nullptr;
 
+		/**
+		* @brief Start recording a CommandBuffer.
+		*/
 		VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo));
 
 		/**
@@ -156,11 +231,21 @@ namespace Spiecs {
 			viewport.height = -viewPortSize.y;
 		}
 
+		/**
+		* @brief Set VkViewport with viewport slate.
+		*/
 		vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);
 
+		/**
+		* @brief Instance a VkRect2D
+		*/
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
 		scissor.extent = m_VulkanDevice->GetSwapChainSupport().surfaceSize;
+
+		/**
+		* @brief Set VkRect2D.
+		*/
 		vkCmdSetScissor(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &scissor);
 	}
 
@@ -168,14 +253,23 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief End recording the CommandBuffer.
+		*/
 		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]));
 
+		/**
+		* @brief Reset Fences.
+		*/
 		vkResetFences(
 			m_VulkanState.m_Device, 
 			1, 
 			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
 		);
 
+		/**
+		* @brief Instance a VkSubmitInfo.
+		*/
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -192,8 +286,14 @@ namespace Spiecs {
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores    = signalSemaphores;
 
+		/**
+		* @brief Submit all commands recorded to graphic queue.
+		*/
 		VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]));
 
+		/**
+		* @brief Instance a VkPresentInfoKHR.
+		*/
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType               = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.waitSemaphoreCount  = 1;
@@ -206,13 +306,17 @@ namespace Spiecs {
 
 		presentInfo.pResults = nullptr;
 
+		/**
+		* @brief Present the swapchain image to windows.
+		*/
 		VkResult result = vkQueuePresentKHR(m_VulkanState.m_PresentQueue, &presentInfo);
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_VulkanWindows->IsResized()) {
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_VulkanWindows->IsResized()) 
+		{
 			m_VulkanWindows->SetResized(false);
 			RecreateSwapChain();
 		}
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-			throw std::runtime_error::runtime_error("failed to present swap chain image!");
+			SPIECS_CORE_ERROR("Failed to present swap chain image!");
 		}
 	}
 
@@ -220,6 +324,9 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Run all specific renderer.
+		*/
 		RendererManager::Run(ts, frameInfo);
 	}
 
@@ -230,7 +337,7 @@ namespace Spiecs {
 		EventDispatcher dispatcher(event);
 
 		dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(VulkanRenderBackend::OnWindowResizeOver));
-		dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(VulkanRenderBackend::OnSlateResize));
+		dispatcher.Dispatch<SlateResizeEvent>     (BIND_EVENT_FN(VulkanRenderBackend::OnSlateResize));
 	}
 
 	bool VulkanRenderBackend::OnWindowResizeOver(WindowResizeOverEvent& event)
@@ -239,12 +346,25 @@ namespace Spiecs {
 
 		m_VulkanDevice->RequerySwapChainSupport();
 
+		/**
+		* @brief Recreate Swapchain here.
+		*/
 		m_VulkanSwapChain->Destroy();
 		m_VulkanSwapChain->Create();
 
+		/**
+		* @brief Recreate all resources which size is determained by viewportsize.
+		*/
 		m_RendererResourcePool->OnSlateResize(event.GetWidth(), event.GetHeight());
+
+		/**
+		* @brief Recreate all rendererpass which size is determained by viewportsize.
+		*/
 		RendererManager::Get().OnWindowResizeOver();
 
+		/**
+		* @brief Do not block the event.
+		*/
 		return false;
 	}
 
@@ -252,9 +372,19 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Recreate all resources which size is determained by viewportsize.
+		*/
 		m_RendererResourcePool->OnSlateResize(event.GetWidth(), event.GetHeight());
+
+		/**
+		* @brief Recreate all rendererpass which size is determained by viewportsize.
+		*/
 		RendererManager::Get().OnSlateResize();
 
+		/**
+		* @brief Do not block the event.
+		*/
 		return false;
 	}
 }

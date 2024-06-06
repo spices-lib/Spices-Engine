@@ -23,14 +23,23 @@ namespace Spiecs {
 	{
 	public:
 
-
+		/**
+		* @brief Constructor Function.
+		* Create VkRenderPass and VkFramebuffer.
+		* @param[in] vulkanState The global VulkanState.
+		* @param[in] passName The RenderPass's name.
+		* @param[in] vulkanDevice The shared pointer of VulkanDevice.
+		* @param[in] createInfo The information helps to create a VkRenderPass.
+		* @param[in] imageViews All attachments except swapchain image view that in used.
+		* @param[in] isUseSwapChianImage True if need apped a swpachain image view.
+		*/
 		VulkanRenderPass(
-			VulkanState& vulkanState,
-			const std::string& passName,
-			std::shared_ptr<VulkanDevice> vulkanDevice,
-			VkRenderPassCreateInfo& createInfo,
-			std::vector<VkImageView>& imageViews,
-			bool isUseSwapChianImage
+			VulkanState&                  vulkanState           ,
+			const std::string&            passName              ,
+			std::shared_ptr<VulkanDevice> vulkanDevice          ,
+			VkRenderPassCreateInfo&       createInfo            ,
+			std::vector<VkImageView>&     imageViews            ,
+			bool                          isUseSwapChianImage
 		);
 
 		/**
@@ -51,7 +60,6 @@ namespace Spiecs {
 		*/
 		inline VkFramebuffer& GetFramebuffer(uint32_t index) { return m_SwapChainFramebuffers[index]; };
 
-
 	private:
 
 		/**
@@ -59,12 +67,10 @@ namespace Spiecs {
 		*/
 		std::shared_ptr<VulkanDevice> m_VulkanDevice;
 
-
 		/**
 		* @brief The RenderPass this class mainly manage.
 		*/
 		VkRenderPass m_RenderPass{};
-
 
 		/**
 		* @brief The FrameBuffers.

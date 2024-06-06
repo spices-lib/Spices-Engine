@@ -18,6 +18,8 @@ namespace Spiecs {
 	)
 		: VulkanObject(vulkanState)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get Shader File Path.
 		*/
@@ -66,6 +68,8 @@ namespace Spiecs {
 
 	VulkanShaderModule::~VulkanShaderModule()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Destroy Shader Module.
 		*/
@@ -74,6 +78,8 @@ namespace Spiecs {
 
 	std::string VulkanShaderModule::GetSahderPath(const std::string& name, const std::string& shaderType)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get full path of shader file.
 		*/

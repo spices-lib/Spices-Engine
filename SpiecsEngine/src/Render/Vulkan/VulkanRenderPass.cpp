@@ -11,16 +11,18 @@
 namespace Spiecs {
 
 	VulkanRenderPass::VulkanRenderPass(
-		VulkanState & vulkanState, 
-		const std::string& passName,
-		std::shared_ptr<VulkanDevice> vulkanDevice,  
-		VkRenderPassCreateInfo & createInfo, 
-		std::vector<VkImageView>& imageViews,
-		bool isUseSwapChianImage
+		VulkanState&                   vulkanState         , 
+		const std::string&             passName            ,
+		std::shared_ptr<VulkanDevice>  vulkanDevice        ,  
+		VkRenderPassCreateInfo&        createInfo          , 
+		std::vector<VkImageView>&      imageViews          ,
+		bool                           isUseSwapChianImage
 	)
 		: VulkanObject(vulkanState)
 		, m_VulkanDevice(vulkanDevice)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief CreateRenderPass.
 		*/
@@ -32,7 +34,6 @@ namespace Spiecs {
 			/**
 			* @brief Add SwapChian's image to local variable.
 			*/
-
 			std::vector<VkImageView> views = imageViews;
 
 			if (isUseSwapChianImage)
@@ -44,19 +45,22 @@ namespace Spiecs {
 			* @brief Instanced a VkFramebufferCreateInfo with default value.
 			*/
 			VkFramebufferCreateInfo framebufferInfo{};
-			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = m_RenderPass;
+			framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			framebufferInfo.renderPass      = m_RenderPass;
 			framebufferInfo.attachmentCount = static_cast<uint32_t>(views.size());
-			framebufferInfo.pAttachments = views.data();
+			framebufferInfo.pAttachments    = views.data();
 
+			/**
+			* @brief In the first frame we use surface size instend viewport size.
+			*/
 			if (isUseSwapChianImage || !SlateSystem::GetRegister())
 			{
-				framebufferInfo.width = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
+				framebufferInfo.width  = m_VulkanDevice->GetSwapChainSupport().surfaceSize.width;
 				framebufferInfo.height = m_VulkanDevice->GetSwapChainSupport().surfaceSize.height;
 			}
 			else
 			{
-				framebufferInfo.width = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
+				framebufferInfo.width  = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
 				framebufferInfo.height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
 			}
 
@@ -72,6 +76,8 @@ namespace Spiecs {
 
 	VulkanRenderPass::~VulkanRenderPass()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Destroy FrameBuffer.
 		*/
