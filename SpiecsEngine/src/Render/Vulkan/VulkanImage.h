@@ -25,19 +25,11 @@ namespace Spiecs {
 		* Init a empty VulkanImage, used in TextureLoad.
 		* @param[in] vulkanState, The VulkanObject in used this frame.
 		*/
-		VulkanImage(VulkanState& vulkanState) 
+		VulkanImage(
+			VulkanState& vulkanState
+		)
 			: VulkanObject(vulkanState) 
 		{};
-
-		/**
-		* @breif Constructor Function.
-		* Init class variable.
-		* Init a empty VulkanImage, used in TextureLoad.
-		* @param[in] vulkanState, The VulkanObject in used this frame.
-		* @param[in] filePath, The filepath of local texture.
-		* @attention Not in use.
-		*/
-		//VulkanImage(VulkanState& vulkanState, const std::string& filePath) : VulkanObject(vulkanState) {};
 
 		/**
 		* @breif Constructor Function.
@@ -124,11 +116,40 @@ namespace Spiecs {
 		);
 
 		/**
-		* @breif 
+		* @breif Copy one texel data from a VkImage.
+		* @param[in] x The sampled position x.
+		* @param[in] y The sampled position y.
+		* @param[in] out_rgba The sampled data.
 		*/
-		void CopyImageTexelToBuffer(uint32_t x, uint32_t y, void* out_rgba);
-		void GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight);
-		void CreateImageView(VkFormat format, VkImageAspectFlags aspectFlags);
+		void CopyImageTexelToBuffer(
+			uint32_t x        , 
+			uint32_t y        , 
+			void*    out_rgba
+		);
+
+		/**
+		* @brief Generate mipmaps with the VkImage.
+		* @param[in] imageFormat VkFormat.
+		* @param[in] texWidth The Image Width.
+		* @param[in] texHeight The Image Height.
+		*/
+		void GenerateMipmaps(
+			VkFormat imageFormat , 
+			int32_t  texWidth    , 
+			int32_t  texHeight
+		);
+
+		/**
+		* @brief Generate mipmaps with the VkImage.
+		* @param[in] imageFormat VkFormat.
+		* @param[in] texWidth The Image Width.
+		* @param[in] texHeight The Image Height.
+		*/
+		void CreateImageView(
+			VkFormat           format      , 
+			VkImageAspectFlags aspectFlags
+		);
+
 		void CreateSampler();
 		void CreateImage(
 			VulkanState& vulkanState, 

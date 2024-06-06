@@ -113,36 +113,12 @@ namespace Spiecs {
 		* @brief Instanced a VkApplicationInfo with default value.
 		*/
 		VkApplicationInfo appInfo = {};
-
-		/**
-		* @brief Fill in sType.
-		*/
-		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-
-		/**
-		* @brief Fill in pApplicationName.
-		*/
-		appInfo.pApplicationName = name.c_str();
-
-		/**
-		* @brief Fill in applicationVersion.
-		*/
-		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-
-		/**
-		* @brief Fill in pEngineName.
-		*/
-		appInfo.pEngineName = enginename.c_str();
-
-		/**
-		* @brief Fill in engineVersion.
-		*/
-		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-
-		/**
-		* @brief Fill in apiVersion.
-		*/
-		appInfo.apiVersion = VK_API_VERSION_1_0;
+		appInfo.sType                 = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName      = name.c_str();
+		appInfo.applicationVersion    = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.pEngineName           = enginename.c_str();
+		appInfo.engineVersion         = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.apiVersion            = VK_API_VERSION_1_0;
 
 		return appInfo;
 	}
@@ -153,15 +129,7 @@ namespace Spiecs {
 		* @brief Instanced a VkInstanceCreateInfo with default value.
 		*/
 		VkInstanceCreateInfo createInfo = {};
-
-		/**
-		* @brief Fill in sType.
-		*/
-		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-
-		/**
-		* @brief Fill in pApplicationInfo.
-		*/
+		createInfo.sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &appInfo;
 
 		return createInfo;
