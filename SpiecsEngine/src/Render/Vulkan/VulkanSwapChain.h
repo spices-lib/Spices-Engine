@@ -27,7 +27,10 @@ namespace Spiecs {
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] vulkanDevice The shared pointer of VulkanDevice.
 		*/
-		VulkanSwapChain(VulkanState& vulkanState, std::shared_ptr<VulkanDevice> vulkanDevice);
+		VulkanSwapChain(
+			VulkanState&                  vulkanState  , 
+			std::shared_ptr<VulkanDevice> vulkanDevice
+		);
 
 		/**
 		* @brief Destructor Function.
@@ -49,7 +52,12 @@ namespace Spiecs {
 		* @param[in] features VkFormatFeatureFlags.
 		* @return Returns a Format supported.
 		*/
-		static VkFormat findSupportedFormat(const VkPhysicalDevice& physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+		static VkFormat findSupportedFormat(
+			const VkPhysicalDevice&      physicalDevice , 
+			const std::vector<VkFormat>& candidates     , 
+			VkImageTiling                tiling         , 
+			VkFormatFeatureFlags         features
+		);
 
 		/**
 		* @brief Create this.

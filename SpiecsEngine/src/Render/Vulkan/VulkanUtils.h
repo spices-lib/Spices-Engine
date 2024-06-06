@@ -158,7 +158,9 @@ namespace Spiecs {
 		* Init member veriables.
 		* @param[in] vulkanState The global VulkanState.
 		*/
-		VulkanObject(VulkanState& vulkanState) : m_VulkanState(vulkanState){};
+		VulkanObject(VulkanState& vulkanState) 
+			: m_VulkanState(vulkanState)
+		{};
 
 		/**
 		* @brief Destructor Function.
