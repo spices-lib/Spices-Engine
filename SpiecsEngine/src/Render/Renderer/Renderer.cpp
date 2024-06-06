@@ -157,7 +157,7 @@ namespace Spiecs {
 
 		VkPipelineLayout pipelineLayout;
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout));
-	
+
 		return pipelineLayout;
 	}
 	
@@ -176,21 +176,11 @@ namespace Spiecs {
 		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
-			GetSahderPath(material->GetShaderPath("vertShader"), "vert"),
-			GetSahderPath(material->GetShaderPath("fragShader"), "frag"),
+			material->GetName(),
+			material->GetShaderPath("vertShader"),
+			material->GetShaderPath("fragShader"),
 			pipelineConfig
 		);
-	}
-
-	std::string Renderer::GetSahderPath(const std::string& name, const std::string& shaderType)
-	{
-		/**
-		* @brief Get full path of shader file.
-		*/
-		std::stringstream ss;
-		ss << SPIECS_ENGINE_ASSETS_PATH << "Shaders/spv/Shader." << name << "." << shaderType << ".spv";
-
-		return ss.str();
 	}
 
 	std::pair<glm::mat4, glm::mat4> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
@@ -371,10 +361,10 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
-		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
-
 		vkCmdEndRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+
+		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
 	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos)
@@ -475,8 +465,8 @@ namespace Spiecs {
 			/**
 			* @brief AllocateDescriptorSet for Pool.
 			*/
-			pair.second->BuildDescriptorSet();
-
+			pair.second->BuildDescriptorSet(m_HandledSubPass->GetName());
+			
 			/**
 			* @brief UpdateDescriptorSet.
 			*/

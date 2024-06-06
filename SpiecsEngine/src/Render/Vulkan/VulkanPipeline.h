@@ -30,6 +30,7 @@ namespace Spiecs {
 	public:
 		VulkanPipeline(
 			VulkanState&               vulkanState  ,
+			const std::string&         pipelineName ,
 			const std::string&         vertFilepath , 
 			const std::string&         fragFilepath , 
 			const PipelineConfigInfo&  config
@@ -43,7 +44,7 @@ namespace Spiecs {
 		VkPipelineLayout& GetPipelineLayout() { return m_PipelineLayout; };
 
 	private:
-		void CreateGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config);
+		void CreateGraphicsPipeline(const std::string& pipelineName, const std::string& vertShaderName, const std::string& fragShaderName, const PipelineConfigInfo& config);
 
 	private:
 

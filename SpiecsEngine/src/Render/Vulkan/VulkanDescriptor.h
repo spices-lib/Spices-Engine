@@ -155,7 +155,7 @@ namespace Spiecs {
             uint32_t            count = 1
         );
 
-        void BuildDescriptorSet();
+        void BuildDescriptorSet(const std::string& createrName);
         
         void UpdateDescriptorSet(ImageInfo&  imageInfo, BufferInfo& bufferInfo);
 

@@ -26,6 +26,7 @@ namespace Spiecs {
 
 		VulkanRenderPass(
 			VulkanState& vulkanState,
+			const std::string& passName,
 			std::shared_ptr<VulkanDevice> vulkanDevice,
 			VkRenderPassCreateInfo& createInfo,
 			std::vector<VkImageView>& imageViews,

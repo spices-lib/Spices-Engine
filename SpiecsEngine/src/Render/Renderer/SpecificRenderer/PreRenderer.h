@@ -1,4 +1,10 @@
-﻿#pragma once
+﻿/**
+* @file PreRenderer.h.
+* @brief The PreRenderer Class Definitions.
+* @author Spiecs.
+*/
+
+#pragma once
 
 #include "Core/Core.h"
 #include "Core/Math/Math.h"

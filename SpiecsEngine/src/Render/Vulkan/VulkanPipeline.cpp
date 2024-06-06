@@ -4,10 +4,16 @@
 
 namespace Spiecs {
 
-	VulkanPipeline::VulkanPipeline(VulkanState& vulkanState, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config)
+	VulkanPipeline::VulkanPipeline(
+		VulkanState& vulkanState, 
+		const std::string& pipelineName,
+		const std::string& vertFilepath, 
+		const std::string& fragFilepath, 
+		const PipelineConfigInfo& config
+	)
 		: VulkanObject(vulkanState)
 	{
-		CreateGraphicsPipeline(vertFilepath, fragFilepath, config);
+		CreateGraphicsPipeline(pipelineName, vertFilepath, fragFilepath, config);
 	}
 
 	VulkanPipeline::~VulkanPipeline()
@@ -93,12 +99,17 @@ namespace Spiecs {
 		vkCmdBindPipeline(m_VulkanState.m_CommandBuffer[frameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 	}
 
-	void VulkanPipeline::CreateGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& config)
+	void VulkanPipeline::CreateGraphicsPipeline(
+		const std::string& pipelineName,
+		const std::string& vertShaderName,
+		const std::string& fragShaderName,
+		const PipelineConfigInfo& config
+	)
 	{
 		m_PipelineLayout = config.pipelineLayout;
 
-		m_VertShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, vertFilepath);
-		m_FragShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, fragFilepath);
+		m_VertShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, vertShaderName, "vert");
+		m_FragShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, fragShaderName, "frag");
 
 		VkPipelineShaderStageCreateInfo shaderStages[2];
 		shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -147,5 +158,6 @@ namespace Spiecs {
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
 		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 }

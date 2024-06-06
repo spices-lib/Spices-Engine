@@ -278,7 +278,7 @@ namespace Spiecs {
 			/**
 			* @brief AllocateDescriptorSet for Pool.
 			*/
-			descriptorSet->BuildDescriptorSet();
+			descriptorSet->BuildDescriptorSet(m_MaterialPath);
 
 			/**
 			* @brief UpdateDescriptorSet.

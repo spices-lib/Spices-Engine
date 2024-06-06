@@ -151,6 +151,7 @@ namespace Spiecs {
 
 		m_RenderPass = std::make_unique<VulkanRenderPass>(
 			VulkanRenderBackend::GetState(),
+			m_PassName,
 			m_Device, 
 			renderPassInfo, 
 			m_ImageViews,

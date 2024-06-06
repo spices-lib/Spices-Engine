@@ -89,7 +89,7 @@ namespace Spiecs {
 		m_Bindings[binding]            = layoutBinding;
 	}
 
-	void VulkanDescriptorSet::BuildDescriptorSet()
+	void VulkanDescriptorSet::BuildDescriptorSet(const std::string& createrName)
 	{
 		m_Layout.BuildDescriptorSetLayout(m_Bindings);
 
@@ -100,6 +100,7 @@ namespace Spiecs {
 		allocInfo.descriptorSetCount = 1;
 			
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, createrName);
 	}
 
 	void VulkanDescriptorSet::UpdateDescriptorSet(

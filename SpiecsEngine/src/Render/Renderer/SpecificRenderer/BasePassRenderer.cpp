@@ -87,8 +87,9 @@ namespace Spiecs {
 		pipelineConfig.colorBlendInfo.pAttachments = subPass->GetColorBlend().data();
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
-			GetSahderPath(material->GetShaderPath("vertShader"), "vert"),
-			GetSahderPath(material->GetShaderPath("fragShader"), "frag"),
+			material->GetName(),
+			material->GetShaderPath("vertShader"),
+			material->GetShaderPath("fragShader"),
 			pipelineConfig
 		);
 	}

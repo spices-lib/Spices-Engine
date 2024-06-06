@@ -160,13 +160,6 @@ namespace Spiecs {
 		/******************************Renderer Help Function**********************************************/
 
 		/**
-		* @brief Get sahder path string.
-		* @param[in] shaderType What shader type is.
-		* @return Returns the sahder path string.
-		*/
-		std::string GetSahderPath(const std::string& name, const std::string& shaderType);
-
-		/**
 		* @brief Iterater the specific Component in World.
 		* @param[in] T The specific Component class.
 		* @param[in] frameInfo The current frame data.

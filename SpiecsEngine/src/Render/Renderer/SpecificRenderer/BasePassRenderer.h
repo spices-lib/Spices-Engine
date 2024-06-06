@@ -26,10 +26,10 @@ namespace Spiecs {
 		* @param[in] desctiptorPool The DesctiptorPool.
 		*/
 		BasePassRenderer(
-			const std::string& rendererName,
-			VulkanState& vulkanState,
-			std::shared_ptr<VulkanDescriptorPool> desctiptorPool,
-			std::shared_ptr<VulkanDevice>         device,
+			const std::string&                    rendererName        ,
+			VulkanState&                          vulkanState         ,
+			std::shared_ptr<VulkanDescriptorPool> desctiptorPool      ,
+			std::shared_ptr<VulkanDevice>         device              ,
 			std::shared_ptr<RendererResourcePool> rendererResourcePool
 		)
 			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
@@ -50,15 +50,24 @@ namespace Spiecs {
 		 
 		/**
 		* @brief The interface is inherited from Renderer.
-		* Create specific renderpass.
+		* Create Specific Rendererpass.
 		*/
 		virtual void CreateRendererPass() override;
 
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create Renderer Specific DescriptorSet.
+		*/
 		virtual void CreateDescriptorSet() override;
 
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create Material Specific Pipeline.
+		* @todo Complete it by renderer.
+		*/
 		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
-			std::shared_ptr<Material>  material,
-			VkPipelineLayout& layout,
+			std::shared_ptr<Material>        material  ,
+			VkPipelineLayout&                layout    ,
 			std::shared_ptr<RendererSubPass> subPass
 		) override;
 	};
