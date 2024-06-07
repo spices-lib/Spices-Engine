@@ -163,6 +163,8 @@ namespace Spiecs {
 		const std::string& caption
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
@@ -201,6 +203,8 @@ namespace Spiecs {
 	template<typename T>
 	inline void VulkanDebugUtils::SetObjectTag(VkObjectType type, T& handle, VkDevice& device, std::vector<char*> captions)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
