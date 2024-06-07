@@ -84,6 +84,10 @@ namespace Spiecs {
 
 	}
 
+	/**
+	* @brief PreRenderer Class.
+	* This class defines the global descriptorset.
+	*/
     class PreRenderer : public Renderer
     {
     public:
@@ -124,6 +128,10 @@ namespace Spiecs {
         */
         virtual void CreateRendererPass() override;
 
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create specific descriptorset for subpass.
+		*/
         virtual void CreateDescriptorSet() override;
         
     };

@@ -31,7 +31,14 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Call Parent Function.
+		*/
 		Renderer::OnSystemInitialize();
+
+		/**
+		* @breif Init ImGui.
+		*/
 		InitImgui();
 	}
 
@@ -70,9 +77,11 @@ namespace Spiecs {
 		ImGuiH::SetFonts();
 
 		// Setup Platform/Renderer backends
-
 		ImGui_ImplGlfw_InitForVulkan(m_VulkanState.m_Windows, true);
 
+		/**
+		* @brief Instance a ImGui_ImplVulkan_InitInfo.
+		*/
 		ImGui_ImplVulkan_InitInfo init_info = {};
 		init_info.Instance                  = m_VulkanState.m_Instance;
 		init_info.PhysicalDevice            = m_VulkanState.m_PhysicalDevice;
@@ -88,6 +97,10 @@ namespace Spiecs {
 		init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Allocator                 = VK_NULL_HANDLE;
 		init_info.CheckVkResultFn           = VK_NULL_HANDLE;
+
+		/**
+		* @brief ImGui Init for Vulkan.
+		*/
 		ImGui_ImplVulkan_Init(&init_info);
 
 		ImGui_ImplVulkan_CreateFontsTexture();
@@ -132,8 +145,6 @@ namespace Spiecs {
 
 			ImGuizmo::BeginFrame();
 		}
-
-
 	}
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)
@@ -167,5 +178,4 @@ namespace Spiecs {
 		EndImguiFrame(frameInfo.m_FrameIndex);
 		builder.EndRenderPass();
 	}
-
 }

@@ -27,16 +27,10 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		/**
-		* @breif Instance a RenderBehaverBuilder.
-		*/
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();
 
-		/**
-		* @brief Update View.
-		*/
 		builder.UpdateUniformBuffer<PreR::View>(0, 0, [&](auto& ubo) {
 			auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 			ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
@@ -49,9 +43,6 @@ namespace Spiecs {
 			ubo.windowSize = { windowSize.width, windowSize.height, 1.0f / windowSize.width, 1.0 / windowSize.height };
 		});
 
-		/**
-		* @brief Update Input.
-		*/
 		builder.UpdateUniformBuffer<PreR::SpiecsInput>(0, 1, [&](auto& ubo) {
 			auto& [x, y] = SlateSystem::GetRegister()->GetViewPort()->GetMousePosInViewport();
 

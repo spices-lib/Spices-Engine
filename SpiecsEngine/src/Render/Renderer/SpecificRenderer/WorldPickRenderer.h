@@ -54,6 +54,10 @@ namespace Spiecs {
 		*/
 		virtual void CreateRendererPass() override;
 
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create specific descriptorset for subpass.
+		*/
 		virtual void CreateDescriptorSet() override;
 	};
 

@@ -54,16 +54,38 @@ namespace Spiecs {
 		*/
 		virtual void CreateRendererPass() override;
 
+		/**
+		* @brief The interface is inherited from Renderer.
+		* Create specific descriptorset for subpass.
+		*/
 		virtual void CreateDescriptorSet() override;
 
+		/**
+		* @brief Rewrite Renderer OnSystemInitialize to add other code.
+		*/
 		virtual void OnSystemInitialize() override;
 
-		void InitImgui();
-		void ShutdownImgui();
-		void BeginImguiFrame();
-		void EndImguiFrame(uint32_t index);
-
 	private:
-	};
 
+		/**
+		* @brief Init Imgui.
+		*/
+		void InitImgui();
+
+		/**
+		* @brief Shutdown Imgui.
+		*/
+		void ShutdownImgui();
+
+		/**
+		* @brief Begin Imgui frame.
+		*/
+		void BeginImguiFrame();
+
+		/**
+		* @brief End Imgui frame.
+		* @param[in] index CommandBuffer index.
+		*/
+		void EndImguiFrame(uint32_t index);
+	};
 }

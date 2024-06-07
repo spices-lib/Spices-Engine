@@ -79,12 +79,14 @@ namespace Spiecs {
 
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		pipelineConfig.renderPass = m_Pass->Get();
-		pipelineConfig.subpass = subPass->GetIndex();
-		pipelineConfig.pipelineLayout = layout;
-		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)subPass->GetColorBlend().size();
-		pipelineConfig.colorBlendInfo.pAttachments = subPass->GetColorBlend().data();
+
+		pipelineConfig.renderPass                      = m_Pass->Get();
+		pipelineConfig.subpass                         = subPass->GetIndex();
+		pipelineConfig.pipelineLayout                  = layout;
+		pipelineConfig.rasterizationInfo.cullMode      = VK_CULL_MODE_NONE;
+		pipelineConfig.colorBlendInfo.attachmentCount  = (uint32_t)subPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.pAttachments     = subPass->GetColorBlend().data();
+
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
 			material->GetName(),
