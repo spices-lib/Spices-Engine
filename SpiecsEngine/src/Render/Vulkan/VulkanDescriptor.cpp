@@ -131,7 +131,7 @@ namespace Spiecs {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_POOL, m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout");
 	}
 
 	VulkanDescriptorSet::~VulkanDescriptorSet()

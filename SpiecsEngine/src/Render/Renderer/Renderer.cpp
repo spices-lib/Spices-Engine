@@ -33,26 +33,39 @@ namespace Spiecs {
 
 	void Renderer::OnSystemInitialize()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
-		* @brief create renderpass.
+		* @brief Create renderpass.
 		*/
 		CreateRendererPass();
 
 		/**
-		* @brief create specific renderer descriptorset.
+		* @brief Create specific renderer descriptorset.
 		*/
 		CreateDescriptorSet();
 
+		/**
+		* @brief Create specific renderer default material.
+		*/
 		CreateDefaultMaterial();
 	}
 
 	void Renderer::OnWindowResizeOver()
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Just call OnSlateResize.
+		* @todo Remove it.
+		*/
 		OnSlateResize();
 	}
 
 	void Renderer::OnSlateResize()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Recreate RenderPass.
 		*/
@@ -66,6 +79,8 @@ namespace Spiecs {
 
 	void Renderer::RegistyMaterial(const std::string& materialName, const std::string& subpassName)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Instance a temp empty map for VkDescriptorSetLayout.
 		* Before turn it to a continus container, sorted is required.
@@ -125,6 +140,11 @@ namespace Spiecs {
 
 	void Renderer::CreateDefaultMaterial()
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Iter all subpass.
+		*/
 		if (m_IsLoadDefaultMaterial)
 		{
 			m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
@@ -135,45 +155,73 @@ namespace Spiecs {
 				auto material = ResourcePool<Material>::Load<Material>(ss.str());
 				material->BuildMaterial();
 
+				/**
+				* @brief Not break loop.
+				*/
 				return false;
 			});
 		}
 	}
 
-	VkPipelineLayout Renderer::CreatePipelineLayout(std::vector<VkDescriptorSetLayout>& rowSetLayouts, std::shared_ptr<RendererSubPass> subPass)
+	VkPipelineLayout Renderer::CreatePipelineLayout(
+		std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
+		std::shared_ptr<RendererSubPass>    subPass
+	)
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkPipelineLayoutCreateInfo.
+		*/
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(rowSetLayouts.size());
-		pipelineLayoutInfo.pSetLayouts = rowSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.sType                         = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount                = static_cast<uint32_t>(rowSetLayouts.size());
+		pipelineLayoutInfo.pSetLayouts                   = rowSetLayouts.data();
+		pipelineLayoutInfo.pushConstantRangeCount        = 0;
+		pipelineLayoutInfo.pPushConstantRanges           = nullptr;
 
 		if (subPass->IsUsePushConstant())
 		{
-			pipelineLayoutInfo.pushConstantRangeCount = 1;
-			pipelineLayoutInfo.pPushConstantRanges = &subPass->GetPushConstant();
+			pipelineLayoutInfo.pushConstantRangeCount    = 1;
+			pipelineLayoutInfo.pPushConstantRanges       = &subPass->GetPushConstant();
 		}
 
+		/**
+		* @brief Create a VkPipelineLayout.
+		*/
 		VkPipelineLayout pipelineLayout;
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE_LAYOUT, pipelineLayout, m_VulkanState.m_Device, "PipelineLayout");
 
 		return pipelineLayout;
 	}
 	
 	std::shared_ptr<VulkanPipeline> Renderer::CreatePipeline(
-		std::shared_ptr<Material> material, 
-		VkPipelineLayout&         layout,
+		std::shared_ptr<Material>        material , 
+		VkPipelineLayout&                layout   ,
 		std::shared_ptr<RendererSubPass> subPass
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Get Dafault PipelineConfigInfo.
+		*/
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
+
+		/**
+		* @brief Fill in with configurable data.
+		*/
 		pipelineConfig.renderPass                     = m_Pass->Get();
 		pipelineConfig.subpass                        = subPass->GetIndex();
 		pipelineConfig.pipelineLayout                 = layout;
 		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)subPass->GetColorBlend().size();
 		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
+
+		/**
+		* @brief Create VulkanPipeline.
+		*/
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
 			material->GetName(),
@@ -185,6 +233,8 @@ namespace Spiecs {
 
 	std::pair<glm::mat4, glm::mat4> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Init viewmatrix and projectionmatrix.
 		*/
@@ -199,8 +249,8 @@ namespace Spiecs {
 		IterWorldComp<CameraComponent>(
 			frameInfo, 
 			[&](
-			int                   entityId, 
-			TransformComponent&   transComp, 
+			int                   entityId  , 
+			TransformComponent&   transComp , 
 			CameraComponent&      camComp
 			){
 
@@ -246,6 +296,8 @@ namespace Spiecs {
 
 	DirectionalLightComponent::DirectionalLight Renderer::GetDirectionalLight(FrameInfo& frameInfo)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @breif Init a DirectionalLight.
 		*/
@@ -275,6 +327,8 @@ namespace Spiecs {
 
 	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Iter PointLightComponent.
 		*/
@@ -329,25 +383,31 @@ namespace Spiecs {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 
+		/**
+		* @brief Instance a VkRenderPassBeginInfo.
+		*/
 		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass        = m_Renderer->m_Pass->Get();
-		renderPassInfo.framebuffer       = m_Renderer->m_Pass->GetFramebuffer(m_CurrentImage);
-		renderPassInfo.renderArea.offset = { 0, 0 };
+		renderPassInfo.sType                    = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass               = m_Renderer->m_Pass->Get();
+		renderPassInfo.framebuffer              = m_Renderer->m_Pass->GetFramebuffer(m_CurrentImage);
+		renderPassInfo.renderArea.offset        = { 0, 0 };
 
+		/**
+		* @brief In the first frame, we use window size rather than viewport size.
+		*/
 		if (m_Renderer->m_Pass->IsUseSwapChain() || !SlateSystem::GetRegister())
 		{
-			renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+			renderPassInfo.renderArea.extent    = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 		}
 		else
 		{
 			ImVec2 size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 			VkExtent2D extent = { static_cast<uint32_t>(size.x) , static_cast<uint32_t>(size.y) };
-			renderPassInfo.renderArea.extent = extent;
+			renderPassInfo.renderArea.extent    = extent;
 		}
 
-		renderPassInfo.clearValueCount = (uint32_t)m_Renderer->m_Pass->GetClearValues().size();
-		renderPassInfo.pClearValues = m_Renderer->m_Pass->GetClearValues().data();
+		renderPassInfo.clearValueCount          = (uint32_t)m_Renderer->m_Pass->GetClearValues().size();
+		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
 		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_Renderer->m_Pass->GetName());
 		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_HandledSubPass->GetName());
@@ -379,6 +439,9 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Iter all desctiptorsets.
+		*/
 		for (auto pair : infos)
 		{
 			vkCmdBindDescriptorSets(
@@ -400,7 +463,9 @@ namespace Spiecs {
 	)
 		: m_Renderer(renderer)
 	{
-		m_HandledSubPass = *renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		SPIECS_PROFILE_ZONE;
+
+		m_HandledSubPass  = *renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 
@@ -411,6 +476,8 @@ namespace Spiecs {
 		const std::vector<std::string>& textureNames
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief fill in imageInfos.
 		*/
@@ -436,6 +503,8 @@ namespace Spiecs {
 		const std::vector<std::string>&  inputAttachmentNames  
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief fill in imageInfos.
 		*/
@@ -456,6 +525,8 @@ namespace Spiecs {
 
 	void Renderer::DescriptorSetBuilder::Build()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		auto descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
 
 		for (auto& pair : descriptorSets)
@@ -476,11 +547,15 @@ namespace Spiecs {
 		: m_RendererPassName(rendererPassName)
 		, m_Renderer(renderer)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		m_Renderer->m_Pass = std::make_shared<RendererPass>(rendererPassName, m_Renderer->m_Device);
 	}
 
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(const std::string& subPassName)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		uint32_t size = m_Renderer->m_Pass->GetSubPasses().size();
 		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, size);
 		return *this;
@@ -488,6 +563,8 @@ namespace Spiecs {
 
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::EndSubPass()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		m_HandledRendererSubPass->BuildSubPassDescription();
 		m_HandledRendererSubPass->BuildSubPassDependency(m_Renderer->m_Pass->GetSubPasses().size() - 1);
 		return *this;
@@ -495,6 +572,8 @@ namespace Spiecs {
 
 	void Renderer::RendererPassBuilder::Build()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		m_Renderer->m_Pass->BuildRendererPass();
 	}
 }

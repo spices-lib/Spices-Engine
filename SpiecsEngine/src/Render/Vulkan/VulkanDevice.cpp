@@ -77,27 +77,21 @@ namespace Spiecs {
 		* @brief Get graphic queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.graphicqueuefamily.value(), 0, &vulkanState.m_GraphicQueue);
-		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_GraphicQueue, vulkanState.m_Device, "Graphic Queue");
 
 		/**
 		* @brief Get present queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.presentqueuefamily.value(), 0, &vulkanState.m_PresentQueue);
-		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_PresentQueue, vulkanState.m_Device, "Present Queue");
 
 		/**
 		* @brief Get compute queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.computequeuefamily.value(), 0, &vulkanState.m_ComputeQueue);
-		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_ComputeQueue, vulkanState.m_Device, "Compute Queue");
 
 		/**
 		* @brief Get transfer queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.transferqueuefamily.value(), 0, &vulkanState.m_TransformQueue);
-		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_TransformQueue, vulkanState.m_Device, "Transform Queue");
-
-
 	}
 
 	VulkanDevice::~VulkanDevice()

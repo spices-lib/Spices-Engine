@@ -506,7 +506,7 @@ namespace Spiecs {
 		* @brief Create Sampler.
 		*/
 		VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_TextureSampler));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SAMPLER, m_ImageView, m_VulkanState.m_Device, "ImageSampler");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SAMPLER, m_TextureSampler, m_VulkanState.m_Device, "ImageSampler");
 	}
 
 	void VulkanImage::CreateImage(
@@ -642,7 +642,7 @@ namespace Spiecs {
 		* @brief Allocate DescriptorSets.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSetLayout, m_VulkanState.m_Device, "ImageDescriptorSet");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "ImageDescriptorSet");
 		
 		/**
 		* @brief Instance a VkDescriptorImageInfo.

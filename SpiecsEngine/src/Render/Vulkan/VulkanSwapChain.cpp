@@ -268,8 +268,13 @@ namespace Spiecs {
 		for (size_t i = 0; i < MaxFrameInFlight; i++) 
 		{
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ImageSemaphore[i]));
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_ImageSemaphore[i], m_VulkanState.m_Device, "ImageSemaphore");
+
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_QueueSemaphore[i]));
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_QueueSemaphore[i], m_VulkanState.m_Device, "QueueSemaphore");
+
 			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_Fence[i]));
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FENCE, m_VulkanState.m_Fence[i], m_VulkanState.m_Device, "Fence");
 		}
 	}
 

@@ -126,8 +126,20 @@ namespace Spiecs {
 		*/
 		void OnSlateResize();
 
-		void RegistyMaterial(const std::string& materialName, const std::string& subpassName);
+		/**
+		* @brief Register material to Specific Renderer.
+		* @param[in] materialName Material Name.
+		* @param[in] subpassName SubPass Name.
+		*/
+		void RegistyMaterial(
+			const std::string& materialName , 
+			const std::string& subpassName
+		);
 
+		/**
+		* @brief Get RendererPass.
+		* @return Returns the RendererPass.
+		*/
 		inline std::shared_ptr<RendererPass>& GetPasses() { return m_Pass; };
 
 	private:
@@ -139,19 +151,39 @@ namespace Spiecs {
 		*/
 		virtual void CreateRendererPass() = 0;
 
+		/**
+		* @brief This interface is called buring OnSystemInitialize().
+		* Create all subpass descriptorSet.
+		*/
 		virtual void CreateDescriptorSet() = 0;
 
+		/**
+		* @brief Create Specific Renderer Default Material. 
+		*/
 		void CreateDefaultMaterial();
 
-		VkPipelineLayout CreatePipelineLayout(std::vector<VkDescriptorSetLayout>& rowSetLayouts, std::shared_ptr<RendererSubPass> subPass);
-
-		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
-			std::shared_ptr<Material> material, 
-			VkPipelineLayout&         layout,
-			std::shared_ptr<RendererSubPass> subPass
+		/**
+		* @brief Create Pipeline Layout with material's descriptorset and renderer's descriptorset.
+		* @param[in] rowSetLayouts All descriptorset collected.
+		* @param[in] subPass material used subpass.
+		*/
+		VkPipelineLayout CreatePipelineLayout(
+			std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
+			std::shared_ptr<RendererSubPass>    subPass
 		);
 
-		
+		/**
+		* @brief Create Specific Material Pipeline.
+		* @param[in] material Specific Material.
+		* @param[in] layout VkPipelineLayout.
+		* @param[in] subPass RendererSubPass.
+		* @todo Not be virtual and configurable with material.
+		*/
+		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
+			std::shared_ptr<Material>        material  , 
+			VkPipelineLayout&                layout    ,
+			std::shared_ptr<RendererSubPass> subPass
+		);
 
 		/***************************************************************************************************/
 
@@ -197,43 +229,111 @@ namespace Spiecs {
 
 		/******************************Help Calss for quick build*******************************************/
 
+		/**
+		* @brief This Class is a helpper for Buinding RendererPass.
+		* Only instanced during CreateRendererPass().
+		*/
 		class RendererPassBuilder
 		{
 		public:
 
-			RendererPassBuilder(const std::string& rendererPassName, Renderer*renderer);
+			/**
+			* @brief Constructor Function.
+			* @param[in] rendererPassName The RendererPass Name.
+			* @param[in] renderer The Owner, pass this pointer.
+			*/
+			RendererPassBuilder(
+				const std::string& rendererPassName , 
+				Renderer*          renderer
+			);
 
+			/**
+			* @brief Destructor Function.
+			*/
 			virtual ~RendererPassBuilder() {};
 
+			/**
+			* @brief Add a new SubPass to RedererPass.
+			* @param[in] subPassName SunPass Name.
+			* @return Returns the RendererPassBuilder.
+			*/
 			RendererPassBuilder& AddSubPass(const std::string& subPassName);
 
+			/**
+			* @brief Add a swpachianimage attachment.
+			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @return Returns the RendererPassBuilder.
+			*/
 			template<typename T>
 			RendererPassBuilder& AddSwapChainAttachment(T func);
 
+			/**
+			* @brief Add a color attachment.
+			* @param[in] attachmentName Attachment Name.
+			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @return Returns the RendererPassBuilder.
+			*/
 			template<typename T>
 			RendererPassBuilder& AddColorAttachment(const std::string& attachmentName, T func);
 
+			/**
+			* @brief Add a depth attachment.
+			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @return Returns the RendererPassBuilder.
+			*/
 			template<typename T>
 			RendererPassBuilder& AddDepthAttachment(T func);
 
+			/**
+			* @brief Add a input attachment.
+			* * @param[in] attachmentName Attachment Name.
+			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @return Returns the RendererPassBuilder.
+			*/
 			template<typename T>
 			RendererPassBuilder& AddInputAttachment(const std::string& attachmentName, T func);
 
+			/**
+			* @brief End recording a subpass.
+			* @return Returns the RendererPassBuilder.
+			*/
 			RendererPassBuilder& EndSubPass();
 
+			/**
+			* @brief Build the RendererPass.
+			*/
 			void Build();
 
 		private:
+
+			/**
+			* @brief RendererPass Name.
+			*/
 			std::string m_RendererPassName;
+
+			/**
+			* @brief Specific Renderer pointer.
+			* Passed while this class instanecd.
+			*/
 			Renderer* m_Renderer;
+
+			/**
+			* @brief Handled Subpass.
+			*/
 			std::shared_ptr<RendererSubPass> m_HandledRendererSubPass;
 		};
 
+		/**
+		* @brief This Class is a helpper for Building Specific Renderer DescriptorSet.
+		* Only instanced during CreateDescriptorSets().
+		*/
 		class DescriptorSetBuilder
 		{
 		public:
+
 			/**
 			* @brief Constructor Function.
+			* @param[in] subPassName Subpass name.
 			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			*/
 			DescriptorSetBuilder(
@@ -245,7 +345,6 @@ namespace Spiecs {
 			* @brief Destructor Function.
 			*/
 			virtual ~DescriptorSetBuilder() {};
-
 
 			/**
 			* @brief Set VkPushConstantRange by a specific pushconstant struct.
@@ -265,16 +364,24 @@ namespace Spiecs {
 			*/
 			template<typename T>
 			inline DescriptorSetBuilder& AddUniformBuffer(
-				uint32_t set,
-				uint32_t binding,
-				VkShaderStageFlags stageFlags
+				uint32_t            set      ,
+				uint32_t            binding  ,
+				VkShaderStageFlags  stageFlags
 			);
 
+			/**
+			* @brief Create local buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
+			* @param[in] T Buffer struct.
+			* @param[in] set Which set this buffer wil use.
+			* @param[in] binding Which binding this buffer will use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @return Returns this reference.
+			*/
 			template<typename T>
 			inline DescriptorSetBuilder& AddStorageBuffer(
-				uint32_t set,
-				uint32_t binding,
-				VkShaderStageFlags stageFlags
+				uint32_t            set      ,
+				uint32_t            binding  ,
+				VkShaderStageFlags  stageFlags
 			);
 
 			/**
@@ -282,23 +389,31 @@ namespace Spiecs {
 			* @param[in] T Texture Type.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
-			* @param[in] arrayNum Which arrayNum this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @param[in] textureNames All Texture's Name.
 			* @return Returns this reference.
 			*/
 			template<typename T>
 			inline DescriptorSetBuilder& AddTexture(
-				uint32_t set,
-				uint32_t binding,
-				VkShaderStageFlags stageFlags,
-				const std::vector<std::string>& textureNames
+				uint32_t                         set        ,
+				uint32_t                         binding    ,
+				VkShaderStageFlags               stageFlags ,
+				const std::vector<std::string>&  textureNames
 			);
 
+			/**
+			* @brief Add the attachment as texture to descriptorsetlayout.
+			* @param[in] set Which set this texture wil use.
+			* @param[in] binding Which binding this texture wil use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @param[in] textureNames All Texture's Name.
+			* @return Returns this reference.
+			*/
 			DescriptorSetBuilder& AddAttachmentTexture(
-				uint32_t set,
-				uint32_t binding,
-				VkShaderStageFlags stageFlags,
-				const std::vector<std::string>& textureNames
+				uint32_t                         set        ,
+				uint32_t                         binding    ,
+				VkShaderStageFlags               stageFlags ,
+				const std::vector<std::string>&  textureNames
 			);
 
 			/**
@@ -306,13 +421,14 @@ namespace Spiecs {
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @param[in] inputAttachmentNames All Input Texture's Name..
 			* @return Returns this reference.
 			*/
 			DescriptorSetBuilder& AddInput(
-				uint32_t set,
-				uint32_t binding,
-				VkShaderStageFlags stageFlags,
-				const std::vector<std::string>& inputAttachmentNames
+				uint32_t                         set                 ,
+				uint32_t                         binding             ,
+				VkShaderStageFlags               stageFlags          ,
+				const std::vector<std::string>&  inputAttachmentNames
 			);
 
 			/**
@@ -329,10 +445,27 @@ namespace Spiecs {
 			* Passed while this class instanecd.
 			*/
 			Renderer* m_Renderer;
+
+			/**
+			* @brief Handled Subpass.
+			*/
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
+
+			/**
+			* @brief The DesctiptorSetManager ID descriptorSet belongs to.
+			*/
 			String2 m_DescriptorSetId;
 
+			/**
+			* @brief DescriptorSet Buffer type binginginfo.
+			* [set] - [binding] - [info]
+			*/
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> m_BufferInfos;
+
+			/**
+			* @brief DescriptorSet Image type binginginfo.
+			* [set] - [binding] - [info]
+			*/
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> m_ImageInfos;
 		};
 
@@ -350,7 +483,11 @@ namespace Spiecs {
 			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			* @param[in] currentFrame Passed from FrameInfo.
 			*/
-			RenderBehaverBuilder(Renderer* renderer, uint32_t currentFrame, uint32_t currentImage);
+			RenderBehaverBuilder(
+				Renderer* renderer     , 
+				uint32_t  currentFrame , 
+				uint32_t  currentImage
+			);
 
 			/**
 			* @brief Destructor Function.
@@ -365,8 +502,19 @@ namespace Spiecs {
 
 		public:
 
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo.
+			* For Binding a Renderer DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			*/
 			void BindDescriptorSet(DescriptorSetInfo& infos);
 
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo and name.
+			* For Binding a Material DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] name The material name.
+			*/
 			void BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name);
 
 			/**
@@ -387,20 +535,29 @@ namespace Spiecs {
 			template<typename T, typename F>
 			void UpdateUniformBuffer(uint32_t set, uint32_t binding, F func);
 
+			/**
+			* @brief Update a local buffer.
+			* @param[in] T Specific buffer struct Type.
+			* @param[in] F A function pointer, which defines what data inside the buffer.
+			* @param[in] set Which set the descriptor will use.
+			* @param[in] binding Which binding the descriptor will use.
+			*/
 			template<typename T, typename F>
 			void UpdateStorageBuffer(uint32_t set, uint32_t binding, F func);
 
+			/**
+			* @brief End a preview subpass and stat next subpass.
+			* @param[in] subpassName The name of next subpass.
+			*/
 			void BeginNextSubPass(const std::string& subpassName);
 
 			/**
 			* @brief Begin this Renderer's RenderPass.
-			* Call it auto.
 			*/
 			void BeginRenderPass();
 
 			/**
 			* @brief End this Renderer's RenderPass.
-			* Call it manually.
 			*/
 			void EndRenderPass();
 
@@ -426,6 +583,9 @@ namespace Spiecs {
 			*/
 			uint32_t m_CurrentImage;
 
+			/**
+			* @brief Handled Subpass.
+			*/
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 		};
 
@@ -441,10 +601,19 @@ namespace Spiecs {
 		*/
 		std::shared_ptr<VulkanDescriptorPool> m_DesctiptorPool;
 
+		/**
+		* @brief VulkanDevice , Passed by instanced.
+		*/
 		std::shared_ptr<VulkanDevice> m_Device;
 
+		/**
+		* @brief RendererResourcePool, Passed by instanced.
+		*/
 		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 
+		/**
+		* @brief RendererPass.
+		*/
 		std::shared_ptr<RendererPass> m_Pass;
 		
 		/**
@@ -453,23 +622,26 @@ namespace Spiecs {
 		std::string m_RendererName;
 
 		/**
+		* @brief Renderer stored material pipelines.
+		*/
+		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
+		
+		/**
+		* @brief Whether should load a default renderer material.
+		*/
+		bool m_IsLoadDefaultMaterial;
+
+		/**
 		* @brief Allow this class access all data.
-		* Maybe remove.
 		*/
 		friend class DescriptorSetBuilder;
 		friend class RendererPassBuilder;
-
-		
-		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
-		
-
-		bool m_IsLoadDefaultMaterial;
 	};
 
 	template<typename T, typename F>
 	inline void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
 	{
-		SPIECS_PROFILE_ZONE;;
+		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Iter use view, not group.
@@ -499,6 +671,8 @@ namespace Spiecs {
 	template<typename T, typename F>
 	inline void Renderer::RenderBehaverBuilder::UpdatePushConstant(F func)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @breif Create pushconstant object.
 		*/
@@ -510,13 +684,12 @@ namespace Spiecs {
 		*/
 		func(push);
 
-		/**
-		* @breif Update PushConstants
-		*/
-
 		std::stringstream ss;
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
 
+		/**
+		* @breif Update PushConstants
+		*/
 		vkCmdPushConstants(
 			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
@@ -530,6 +703,8 @@ namespace Spiecs {
 	template<typename T, typename F>
 	inline void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, F func)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @breif Create uniform buffer object
 		*/
@@ -550,6 +725,8 @@ namespace Spiecs {
 	template<typename T, typename F>
 	inline void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, F func)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @breif Create uniform buffer object
 		*/
@@ -570,10 +747,15 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Call RendererSubPass::SetPushConstant().
+		*/
 		m_HandledSubPass->SetPushConstant([&](auto& range) {
-			range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-			range.offset = 0;
-			range.size = sizeof(T);
+			range.stageFlags   = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+			range.offset       = 0;
+			range.size         = sizeof(T);
 		});
 
 		return *this;
@@ -586,6 +768,8 @@ namespace Spiecs {
 		VkShaderStageFlags stageFlags
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		Int2 id(set, binding);
 
 		/**
@@ -608,6 +792,9 @@ namespace Spiecs {
 		*/
 		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
 
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
 
@@ -621,6 +808,8 @@ namespace Spiecs {
 		VkShaderStageFlags stageFlags
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		Int2 id(set, binding);
 
 		/**
@@ -643,6 +832,9 @@ namespace Spiecs {
 		*/
 		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
 
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
 
@@ -657,6 +849,8 @@ namespace Spiecs {
 		const std::vector<std::string>& textureNames
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief fill in imageInfos.
 		*/
@@ -666,6 +860,9 @@ namespace Spiecs {
 			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
 		}
 
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
 
@@ -675,6 +872,11 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSwapChainAttachment(T func)
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkAttachmentDescription.
+		*/
 		VkAttachmentDescription attachmentDescription{};
 		attachmentDescription.format         = m_Renderer->m_Device->GetSwapChainSupport().format.format;
 		attachmentDescription.samples        = VK_SAMPLE_COUNT_1_BIT;
@@ -685,28 +887,40 @@ namespace Spiecs {
 		attachmentDescription.initialLayout  = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 		attachmentDescription.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+		/**
+		* @breif Write in data
+		* @param[in] attachmentDescription VkAttachmentDescription.
+		*/
 		func(attachmentDescription);
 
+		/**
+		* @brief Instance a VkClearValue.
+		*/
 		VkClearValue clearValue{};
-		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+		clearValue.color                     = { 0.0f, 0.0f, 0.0f, 1.0f };
 
+		/**
+		* @brief Instance a VkPipelineColorBlendAttachmentState.
+		*/
 		VkPipelineColorBlendAttachmentState colorBlend{};
-		colorBlend.colorWriteMask =
-			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		colorBlend.blendEnable = VK_FALSE;
-		colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.colorBlendOp        = VK_BLEND_OP_ADD;
-		colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlend.alphaBlendOp        = VK_BLEND_OP_ADD;
+		colorBlend.colorWriteMask            = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+			                                   VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		colorBlend.blendEnable               = VK_FALSE;
+		colorBlend.srcColorBlendFactor       = VK_BLEND_FACTOR_ONE;
+		colorBlend.dstColorBlendFactor       = VK_BLEND_FACTOR_ZERO;
+		colorBlend.colorBlendOp              = VK_BLEND_OP_ADD;
+		colorBlend.srcAlphaBlendFactor       = VK_BLEND_FACTOR_ONE;
+		colorBlend.dstAlphaBlendFactor       = VK_BLEND_FACTOR_ZERO;
+		colorBlend.alphaBlendOp              = VK_BLEND_OP_ADD;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment("SwapChainImage", attachmentDescription, clearValue);
 
+		/**
+		* @brief Instance a VkAttachmentReference.
+		*/
 		VkAttachmentReference attachmentRef{};
-		attachmentRef.attachment = index;
-		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachmentRef.attachment             = index;
+		attachmentRef.layout                 = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		m_HandledRendererSubPass->AddColorAttachmentReference(attachmentRef, colorBlend);
 
@@ -719,6 +933,11 @@ namespace Spiecs {
 		T                  func
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkAttachmentDescription.
+		*/
 		VkAttachmentDescription attachmentDescription{};
 		attachmentDescription.format            = m_Renderer->m_Device->GetSwapChainSupport().format.format;
 		attachmentDescription.samples           = VK_SAMPLE_COUNT_1_BIT;
@@ -729,51 +948,66 @@ namespace Spiecs {
 		attachmentDescription.initialLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		attachmentDescription.finalLayout       = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+		/**
+		* @brief Write in data.
+		* @param[in] isEnableBlend True if This Attachment can be blend.
+		* @param[in attachmentDescription VkAttachmentDescription.
+		*/
 		bool isEnableBlend = false;
 		func(isEnableBlend, attachmentDescription);
 
+		/**
+		* @brief Instance a VkClearValue.
+		*/
 		VkClearValue clearValue{};
-		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+		clearValue.color                        = { 0.0f, 0.0f, 0.0f, 1.0f };
 
+		/**
+		* @brief Instance a VkPipelineColorBlendAttachmentState.
+		*/
 		VkPipelineColorBlendAttachmentState colorBlend{};
-		colorBlend.colorWriteMask =
-			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-			VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-
+		colorBlend.colorWriteMask               = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+			                                      VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 		if (!isEnableBlend)
 		{
-			colorBlend.blendEnable         = VK_FALSE;
-			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-			colorBlend.colorBlendOp        = VK_BLEND_OP_ADD;
-			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-			colorBlend.alphaBlendOp        = VK_BLEND_OP_ADD;
+			colorBlend.blendEnable              = VK_FALSE;
+			colorBlend.srcColorBlendFactor      = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstColorBlendFactor      = VK_BLEND_FACTOR_ZERO;
+			colorBlend.colorBlendOp             = VK_BLEND_OP_ADD;
+			colorBlend.srcAlphaBlendFactor      = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstAlphaBlendFactor      = VK_BLEND_FACTOR_ZERO;
+			colorBlend.alphaBlendOp             = VK_BLEND_OP_ADD;
 		}
 		else
 		{
-			colorBlend.blendEnable         = VK_TRUE;
-			colorBlend.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-			colorBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-			colorBlend.colorBlendOp        = VK_BLEND_OP_ADD;
-			colorBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-			colorBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-			colorBlend.alphaBlendOp        = VK_BLEND_OP_ADD;
+			colorBlend.blendEnable              = VK_TRUE;
+			colorBlend.srcColorBlendFactor      = VK_BLEND_FACTOR_SRC_ALPHA;
+			colorBlend.dstColorBlendFactor      = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+			colorBlend.colorBlendOp             = VK_BLEND_OP_ADD;
+			colorBlend.srcAlphaBlendFactor      = VK_BLEND_FACTOR_ONE;
+			colorBlend.dstAlphaBlendFactor      = VK_BLEND_FACTOR_ZERO;
+			colorBlend.alphaBlendOp             = VK_BLEND_OP_ADD;
 		}
 
+		/**
+		* @brief Instance a RendererResourceCreateInfo.
+		*/
 		RendererResourceCreateInfo Info;
-		Info.name = attachmentName;
-		Info.description = attachmentDescription;
-		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
-		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
+		Info.name                               = attachmentName;
+		Info.description                        = attachmentDescription;
+		Info.width                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
+		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 
 		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
 
+		/**
+		* @brief Instance a VkAttachmentReference.
+		*/
 		VkAttachmentReference attachmentRef{};
-		attachmentRef.attachment = index;
-		attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachmentRef.attachment                = index;
+		attachmentRef.layout                    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		m_HandledRendererSubPass->AddColorAttachmentReference(attachmentRef, colorBlend);
 		
@@ -783,35 +1017,53 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddDepthAttachment(T func)
 	{
-		VkAttachmentDescription depthAttachment{};
-		depthAttachment.format            = VulkanSwapChain::FindDepthFormat(m_Renderer->m_VulkanState.m_PhysicalDevice);
-		depthAttachment.samples           = VK_SAMPLE_COUNT_1_BIT;
-		depthAttachment.loadOp            = VK_ATTACHMENT_LOAD_OP_LOAD;
-		depthAttachment.storeOp           = VK_ATTACHMENT_STORE_OP_STORE;
-		depthAttachment.stencilLoadOp     = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		depthAttachment.stencilStoreOp    = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachment.initialLayout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		depthAttachment.finalLayout       = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Instance a VkAttachmentDescription.
+		*/
+		VkAttachmentDescription depthAttachment{};
+		depthAttachment.format                  = VulkanSwapChain::FindDepthFormat(m_Renderer->m_VulkanState.m_PhysicalDevice);
+		depthAttachment.samples                 = VK_SAMPLE_COUNT_1_BIT;
+		depthAttachment.loadOp                  = VK_ATTACHMENT_LOAD_OP_LOAD;
+		depthAttachment.storeOp                 = VK_ATTACHMENT_STORE_OP_STORE;
+		depthAttachment.stencilLoadOp           = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		depthAttachment.stencilStoreOp          = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.initialLayout           = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		depthAttachment.finalLayout             = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		/**
+		* @brief Write in data.
+		* @param[in attachmentDescription VkAttachmentDescription.
+		*/
 		func(depthAttachment);
 
+		/**
+		* @brief Instance a VkClearValue.
+		*/
 		VkClearValue clearValue{};
-		clearValue.depthStencil = { 1.0f, 0 };
+		clearValue.depthStencil                 = { 1.0f, 0 };
 
+		/**
+		* @brief Instance a RendererResourceCreateInfo.
+		*/
 		RendererResourceCreateInfo Info;
-		Info.name = "Depth";
-		Info.description = depthAttachment;
-		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
-		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
-		Info.isDepthResource = true;
+		Info.name                               = "Depth";
+		Info.description                        = depthAttachment;
+		Info.width                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
+		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
+		Info.isDepthResource                    = true;
 
 		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessDepthResource(Info)->imageView;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment("Depth", depthAttachment, clearValue, view);
 
+		/**
+		* @brief Instance a VkAttachmentReference.
+		*/
 		VkAttachmentReference depthAttachmentRef{};
-		depthAttachmentRef.attachment = index;
-		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		depthAttachmentRef.attachment           = index;
+		depthAttachmentRef.layout               = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		m_HandledRendererSubPass->AdDepthAttachmentReference(depthAttachmentRef);
 
@@ -824,34 +1076,53 @@ namespace Spiecs {
 		T                  func
 	)
 	{
-		VkAttachmentDescription attachmentDescription{};
-		attachmentDescription.format           = m_Renderer->m_Device->GetSwapChainSupport().format.format;
-		attachmentDescription.samples          = VK_SAMPLE_COUNT_1_BIT;
-		attachmentDescription.loadOp           = VK_ATTACHMENT_LOAD_OP_LOAD;
-		attachmentDescription.storeOp          = VK_ATTACHMENT_STORE_OP_STORE;
-		attachmentDescription.stencilLoadOp    = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachmentDescription.stencilStoreOp   = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachmentDescription.initialLayout    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		attachmentDescription.finalLayout      = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		SPIECS_PROFILE_ZONE;
 
+		/**
+		* @brief Instance a VkAttachmentDescription.
+		*/
+		VkAttachmentDescription attachmentDescription{};
+		attachmentDescription.format            = m_Renderer->m_Device->GetSwapChainSupport().format.format;
+		attachmentDescription.samples           = VK_SAMPLE_COUNT_1_BIT;
+		attachmentDescription.loadOp            = VK_ATTACHMENT_LOAD_OP_LOAD;
+		attachmentDescription.storeOp           = VK_ATTACHMENT_STORE_OP_STORE;
+		attachmentDescription.stencilLoadOp     = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachmentDescription.stencilStoreOp    = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachmentDescription.initialLayout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachmentDescription.finalLayout       = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		/**
+		* @brief Write in data.
+		* @param[in attachmentDescription VkAttachmentDescription.
+		*/
 		func(attachmentDescription);
 
+		/**
+		* @brief Instance a VkClearValue.
+		*/
 		VkClearValue clearValue{};
-		clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+		clearValue.color                        = { 0.0f, 0.0f, 0.0f, 1.0f };
 
+		/**
+		* @brief Instance a RendererResourceCreateInfo.
+		*/
 		RendererResourceCreateInfo Info;
-		Info.name = attachmentName;
-		Info.description = attachmentDescription;
-		Info.width = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
-		Info.height = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
+		Info.name                               = attachmentName;
+		Info.description                        = attachmentDescription;
+		Info.width                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
+		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 
 		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
 		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
 
+		/**
+		* @brief Instance a VkAttachmentReference.
+		*/
 		VkAttachmentReference attachmentRef{};
-		attachmentRef.attachment = index;
-		attachmentRef.layout = attachmentDescription.finalLayout;
+		attachmentRef.attachment                = index;
+		attachmentRef.layout                    = attachmentDescription.finalLayout;
+
 		m_HandledRendererSubPass->AddInputAttachmentReference(attachmentRef);
 
 		return *this;

@@ -12,6 +12,8 @@ namespace Spiecs {
 	RendererResource::RendererResource(const RendererResourceCreateInfo& info)
 		: m_Info(info)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Set local variable.
 		*/
@@ -25,6 +27,8 @@ namespace Spiecs {
 
 	void RendererResource::OnResized(uint32_t width, uint32_t height)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Go on if can resize,
 		*/

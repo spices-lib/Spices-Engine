@@ -147,6 +147,7 @@ namespace Spiecs {
 		* @brief Create a Buffer.
 		*/
 		VK_CHECK(vkCreateBuffer(vulkanState.m_Device, &bufferInfo, nullptr, &m_Buffer));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, m_Buffer, vulkanState.m_Device, "Buffer");
 
 		/**
 		* @brief Get Buffer Memory Requirements.

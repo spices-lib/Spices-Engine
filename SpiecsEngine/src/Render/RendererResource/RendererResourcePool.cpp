@@ -12,6 +12,8 @@ namespace Spiecs {
 
 	void RendererResourcePool::OnSlateResize(uint32_t width, uint32_t height)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Call all Resource's OnResized().
 		*/
@@ -23,6 +25,8 @@ namespace Spiecs {
 
 	VkDescriptorImageInfo* RendererResourcePool::AccessResource(const RendererResourceCreateInfo& info)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Create one if isn't exist.
 		*/
@@ -36,11 +40,15 @@ namespace Spiecs {
 
 	std::shared_ptr<VulkanImage> RendererResourcePool::AccessRowResource(const std::string& name)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		return m_RendererResource[name]->GetTexture()->GetResource<VulkanImage>();
 	}
 
 	VkDescriptorImageInfo* RendererResourcePool::AccessDepthResource(const RendererResourceCreateInfo& info)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Create one if isn't exist.
 		*/

@@ -54,6 +54,11 @@ namespace Spiecs {
 		*/
 		static void OnWindowResizeOver();
 
+		/**
+		* @brief Event Called on Slate resize.
+		* @param[in] width Slate new width.
+		* @param[in] height Slate new height.
+		*/
 		static void OnSlateResize();
 
 		/**
@@ -64,6 +69,8 @@ namespace Spiecs {
 		template<typename T, typename ... Args>
 		RendererManager& Push(Args&& ... args)
 		{
+			SPIECS_PROFILE_ZONE;
+
 			std::string rendererName = ClassLibrary::GetClassString(typeid(T));
 
 			/**
@@ -97,6 +104,8 @@ namespace Spiecs {
 		*/
 		RendererManager& Pop(const std::string& rendererName)
 		{
+			SPIECS_PROFILE_ZONE;
+
 			/**
 			* @brief Pop system to map
 			*/
