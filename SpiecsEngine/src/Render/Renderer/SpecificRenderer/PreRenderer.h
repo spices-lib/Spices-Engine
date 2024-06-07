@@ -133,6 +133,5 @@ namespace Spiecs {
 		* Create specific descriptorset for subpass.
 		*/
         virtual void CreateDescriptorSet() override;
-        
     };
 }
