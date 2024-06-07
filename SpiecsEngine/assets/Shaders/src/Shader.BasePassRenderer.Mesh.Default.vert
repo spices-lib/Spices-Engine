@@ -41,7 +41,8 @@ layout(set = 0, binding = 1) uniform SpiecsInput {
 // main
 void main()
 {
-    vec3 normal = normalize((push.model * vec4(normal, 1.0f)).xyz);
+    mat3 m3model = mat3(push.model);
+    vec3 normal = normalize(m3model * normal);
 
     vec4 pos = push.model * vec4(position, 1.0f);
 

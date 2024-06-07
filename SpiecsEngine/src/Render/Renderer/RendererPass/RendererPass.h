@@ -1,13 +1,25 @@
+/**
+* @file RendererPass.h
+* @brief The RendererPass Class Definitions.
+* @author Spiecs.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "RendererSubPass.h"
 #include "Core/Container/linked_unordered_map.h"
 
-namespace Spiecs
-{
+namespace Spiecs {
+
+	/**
+	* @brief This class is a wapper of VulkanRenderPass.
+	* Used during Renderer.
+	*/
 	class RendererPass
 	{
 	public:
+
+
 		RendererPass(
 			const std::string& passName, 
 			std::shared_ptr<VulkanDevice> vulkanDevice

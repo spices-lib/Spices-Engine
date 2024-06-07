@@ -14,17 +14,16 @@ namespace Spiecs {
 
 		// mesh1
 		{
-			Entity& meshentity = CreateEntity("DefaultMesh");
+			/*Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 			transformComp1.SetScale({ 25.0f, 25.0f, 25.0f });
 			transformComp1.SetPostion({ 0.0f, -5.0f, 0.0f });
 
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("112");
-			//std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(20, 20);
 			pack1->SetMaterial("BasePassRenderer.Mesh.0");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-			meshComp.SetMesh(mesh);
+			meshComp.SetMesh(mesh);*/
 		}
 
 		// mesh2

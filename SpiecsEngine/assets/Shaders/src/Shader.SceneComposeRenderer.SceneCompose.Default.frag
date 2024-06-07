@@ -156,19 +156,18 @@ vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 position, vec3 came
 	float distance = length(light.position - position);
 	float attenuation = 1.0f / (light.constantf + light.linear * distance + light.quadratic * (distance * distance));
 
-	vec4 ambient = vec4(1.0f);
+	vec4 ambient = vec4(0.3f);
 	vec4 diffuse = vec4(light.color, 1.0f) * diff * light.intensity;
 	vec4 specular = vec4(light.color, 1.0f) * spec;
 
-	//vec4 diffSamp = subpassLoad(GBuffer[DIFFUSE]);
-	//diffuse  *= diffSamp;
-	//ambient  *= diffSamp;
-	//specular *= vec4(subpassLoad(GBuffer[SPECULAR]).rgb, diffuse.a);
+	vec4 diffSamp = subpassLoad(GBuffer[DIFFUSE]);
+	diffuse  *= diffSamp;
+	ambient  *= diffSamp;
+	specular *= vec4(subpassLoad(GBuffer[SPECULAR]).rgb, diffuse.a);
 
 	ambient  *= attenuation;
 	diffuse  *= attenuation;
 	specular *= attenuation;
 
-	//return (ambient + diffuse + specular);
-	return diffuse;
+	return (ambient + diffuse + specular);
 }
