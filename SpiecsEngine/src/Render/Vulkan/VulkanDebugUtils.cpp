@@ -22,6 +22,8 @@ namespace Spiecs {
 
 	void VulkanDebugUtils::Init(VkInstance instance)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
@@ -57,8 +59,14 @@ namespace Spiecs {
 
 	}
 
-	void VulkanDebugUtils::BeginLabel(VkCommandBuffer cmdbuffer, const std::string& caption, glm::vec4 color)
+	void VulkanDebugUtils::BeginLabel(
+		VkCommandBuffer    cmdbuffer , 
+		const std::string& caption   , 
+		glm::vec4          color
+	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
@@ -93,8 +101,14 @@ namespace Spiecs {
 		vkCmdBeginDebugUtilsLabelEXT(cmdbuffer, &labelInfo);
 	}
 
-	void VulkanDebugUtils::InsertLabel(VkCommandBuffer cmdbuffer, const std::string& caption, glm::vec4 color)
+	void VulkanDebugUtils::InsertLabel(
+		VkCommandBuffer    cmdbuffer , 
+		const std::string& caption   , 
+		glm::vec4          color
+	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
@@ -131,6 +145,8 @@ namespace Spiecs {
 
 	void VulkanDebugUtils::EndLabel(VkCommandBuffer cmdbuffer)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
@@ -157,8 +173,14 @@ namespace Spiecs {
 		vkCmdEndDebugUtilsLabelEXT(cmdbuffer);
 	}
 
-	void VulkanDebugUtils::BeginQueueLable(VkQueue queue, const std::string& caption, glm::vec4 color)
+	void VulkanDebugUtils::BeginQueueLable(
+		VkQueue            queue   , 
+		const std::string& caption , 
+		glm::vec4          color
+	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
@@ -195,6 +217,8 @@ namespace Spiecs {
 
 	void VulkanDebugUtils::EndQueueLabel(VkQueue queue)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/
@@ -223,6 +247,8 @@ namespace Spiecs {
 
 	void VulkanDebugUtils::InsertQueueLabel(VkQueue queue, const std::string& caption, glm::vec4 color)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Only Show Debug info with Debug Mode.
 		*/

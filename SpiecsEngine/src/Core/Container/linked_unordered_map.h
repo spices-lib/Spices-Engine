@@ -75,7 +75,7 @@ namespace scl {
 		* @param[in] key K the key.
 		* @return Returns the value that founded.
 		*/
-		V& find_value(const K& key);
+		V* find_value(const K& key);
 
 		/**
 		* @brief Determine whether the key is in the container.
@@ -179,14 +179,14 @@ namespace scl {
 	}
 
 	template<typename K, typename V>
-	inline V& linked_unordered_map<K, V>::find_value(const K& key)
+	inline V* linked_unordered_map<K, V>::find_value(const K& key)
 	{
 		/**
 		* @brief Get V from map_ only while it does has the key.
 		* Otherwise return a new V.
 		*/
-		if(has_key(key)) return map_[key];
-		return V();
+		if(has_key(key)) return &map_[key];
+		return nullptr;
 	}
 
 	template<typename K, typename V>

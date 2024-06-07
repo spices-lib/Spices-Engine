@@ -66,51 +66,29 @@ namespace Spiecs {
 	template<typename T>
 	inline void VulkanCommandBuffer::CustomCmd(VulkanState& vulkanState, T func)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Instanced a VkCommandBufferAllocateInfo with default value.
 		*/
 		VkCommandBufferAllocateInfo allocInfo{};
-
-		/**
-		* @brief Fill in sType.
-		*/
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-
-		/**
-		* @brief Fill in levels.
-		*/
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-
-		/**
-		* @brief Fill in commandPool.
-		*/
-		allocInfo.commandPool = vulkanState.m_CommandPool;
-
-		/**
-		* @brief Fill in commandBufferCount.
-		*/
-		allocInfo.commandBufferCount = 1;
+		allocInfo.sType               = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level               = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool         = vulkanState.m_CommandPool;
+		allocInfo.commandBufferCount  = 1;
 
 		/**
 		* @brief Allocate s new CommandBuffer from CommandPool.
 		*/
 		VkCommandBuffer commandBuffer;
 		vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &commandBuffer);
-
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, commandBuffer, vulkanState.m_Device, "CustomCmd Command Buffer");
 
 		/**
 		* @brief Instanced a VkCommandBufferBeginInfo with default value.
 		*/
 		VkCommandBufferBeginInfo beginInfo{};
-
-		/**
-		* @brief Fill in sType.
-		*/
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-		/**
-		* @brief Fill in flags.
-		*/
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
 		/**
@@ -128,26 +106,13 @@ namespace Spiecs {
 		*/
 		vkEndCommandBuffer(commandBuffer);
 
-
 		/**
 		* @brief Instanced a VkSubmitInfo with default value.
 		*/
 		VkSubmitInfo submitInfo{};
-
-		/**
-		* @brief Fill in sType.
-		*/
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-		/**
-		* @brief Fill in commandBufferCount.
-		*/
-		submitInfo.commandBufferCount = 1;
-
-		/**
-		* @brief Fill in pCommandBuffers.
-		*/
-		submitInfo.pCommandBuffers = &commandBuffer;
+		submitInfo.sType               = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount  = 1;
+		submitInfo.pCommandBuffers     = &commandBuffer;
 
 		/**
 		* @brief Submit the CommandBuffer in graphic Queue.

@@ -214,7 +214,7 @@ namespace Spiecs {
 				/**
 				* @brief Get constantParam by param's name.
 				*/
-				ConstantParam& ref = m_ConstantParams.find_value(name);
+				ConstantParam& ref = *m_ConstantParams.find_value(name);
 
 				/**
 				* @brief Fill in data to memory block.

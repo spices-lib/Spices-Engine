@@ -100,7 +100,7 @@ namespace SpiecsTest {
 		* @brief Testing if find a exist element successfully.
 		*/
 		auto v = c0.find_value("aaa");
-		EXPECT_EQ(v, "aaa");
+		EXPECT_EQ(*v, "aaa");
 
 		/**
 		* @brief Testing if find a not exist element successfully.
@@ -112,7 +112,7 @@ namespace SpiecsTest {
 		* @brief Testing if find a not exist element successfully.
 		*/
 		v = c2.find_value(10.0);
-		EXPECT_EQ(v, "");
+		EXPECT_EQ(v, nullptr);
 
 		/**
 		* @brief Testing container's euqlity after find element.
@@ -143,10 +143,10 @@ namespace SpiecsTest {
 		* @brief Testing if the insert element written successfully.
 		*/
 		auto v = c2.find_value(1.0f);
-		EXPECT_EQ(v, "1.0");
+		EXPECT_EQ(*v, "1.0");
 		c2.push_back(1.0f, "10.0");
 		v = c2.find_value(1.0f);
-		EXPECT_EQ(v, "10.0");
+		EXPECT_EQ(*v, "10.0");
 
 		/**
 		* @brief Testing container's euqlity after add element.

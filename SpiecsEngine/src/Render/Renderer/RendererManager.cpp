@@ -59,7 +59,7 @@ namespace Spiecs {
 
 		if (m_Identities.has_key(name))
 		{
-			return m_Identities.find_value(name);
+			return *m_Identities.find_value(name);
 		}
 
 		std::stringstream ss;

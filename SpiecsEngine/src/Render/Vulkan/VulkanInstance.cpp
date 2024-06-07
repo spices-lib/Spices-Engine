@@ -17,6 +17,8 @@ namespace Spiecs {
 	)
 		: VulkanObject(vulkanState)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Create VkApplicationInfo struct.
 		*/
@@ -83,6 +85,8 @@ namespace Spiecs {
 
 	VulkanInstance::~VulkanInstance()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Destroy the Vulkan Surface Object.
 		*/
@@ -109,6 +113,8 @@ namespace Spiecs {
 
 	VkApplicationInfo VulkanInstance::CreateApplicationInfo(const std::string& name, const std::string& enginename)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Instanced a VkApplicationInfo with default value.
 		*/
@@ -125,6 +131,8 @@ namespace Spiecs {
 
 	VkInstanceCreateInfo VulkanInstance::CreateInstanceCreateInfo(const VkApplicationInfo& appInfo)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Instanced a VkInstanceCreateInfo with default value.
 		*/
@@ -137,6 +145,8 @@ namespace Spiecs {
 
 	void VulkanInstance::GetExtensionRequirements()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get glfw extensions requirements.
 		*/
@@ -169,6 +179,8 @@ namespace Spiecs {
 
 	bool VulkanInstance::CheckExtensionRequirementsSatisfied()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get all instance extensions nums.
 		*/
@@ -204,6 +216,7 @@ namespace Spiecs {
 
 	void VulkanInstance::GetLayerRequirements()
 	{
+		SPIECS_PROFILE_ZONE;
 
 #ifdef SPIECS_DEBUG
 
@@ -218,6 +231,8 @@ namespace Spiecs {
 
 	bool VulkanInstance::ChecklayerRequirementsSatisfied()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get all layer extensions nums.
 		*/
@@ -253,6 +268,7 @@ namespace Spiecs {
 
 	void VulkanInstance::SetVulkanDebugCallbackFuncPointer()
 	{
+		SPIECS_PROFILE_ZONE;
 
 #ifdef SPIECS_DEBUG
 
@@ -270,6 +286,8 @@ namespace Spiecs {
 
 	void VulkanInstance::CreateVulkanSurface()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Create surface and set it global.
 		* @note Init with Window's size, but we need resize it to viewport's size after.
@@ -284,6 +302,8 @@ namespace Spiecs {
 		void*                                          pUserData
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Format string.
 		*/
@@ -342,6 +362,8 @@ namespace Spiecs {
 
 	void VulkanInstance::FillDebugMessengerCreateInfo()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Instanced a VkDebugUtilsMessengerCreateInfoEXT with default value.
 		*/
@@ -357,7 +379,7 @@ namespace Spiecs {
 		*/
 		m_DebugMessengerCreateInfo.messageSeverity = 
 			VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | 
+			VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
 			VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   ;
 
 		/**

@@ -113,7 +113,7 @@ namespace Spiecs {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		auto& subPass = m_Pass->GetSubPasses().find_value(subpassName);
+		auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
 		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
@@ -315,9 +315,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		
-
-		m_HandledSubPass = m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
 
 		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_HandledSubPass->GetName());
@@ -402,7 +400,7 @@ namespace Spiecs {
 	)
 		: m_Renderer(renderer)
 	{
-		m_HandledSubPass = renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		m_HandledSubPass = *renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 

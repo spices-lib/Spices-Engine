@@ -120,34 +120,93 @@ namespace Spiecs {
         VkDescriptorPool m_DescriptorPool;
     };
 
+    /**
+    * @brief This Class is a Wapper of VkDescriptorSetLayout.
+    * Usually used as a member variable in VulkanDescriptorSet.
+    * Single use is also allowed.
+    */
     class VulkanDescriptorSetLayout : public VulkanObject
     {
     public:
-        VulkanDescriptorSetLayout(VulkanState& vulkanState) : VulkanObject(vulkanState) {};
+
+        /**
+        * @brief Constructor Function.
+        * @param[in] vulkanState The core vulkan objects that in use.
+        */
+        VulkanDescriptorSetLayout(
+            VulkanState& vulkanState
+        ) 
+            : VulkanObject(vulkanState) 
+        {};
+
+        /**
+        * @brief Destructor Function.
+        */
         virtual ~VulkanDescriptorSetLayout();
 
-        void BuildDescriptorSetLayout(const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings);
-        VkDescriptorSetLayout& Get() { return m_Layout; };
+        /**
+        * @brief Build a VkDescriptorSetLayout with bindings.
+        * @param[in] bindings all the bingings used in a VkDescriptorSetLayout.
+        */
+        void BuildDescriptorSetLayout(
+            const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings
+        );
+
+        /**
+        * @brief Get a VkDescriptorSetLayout.
+        * @return Returns the VkDescriptorSetLayout.
+        */
+        inline VkDescriptorSetLayout& Get() { return m_Layout; };
         
     private:
+
+        /**
+        * @brief The VkDescriptorSetLayout this class handled.
+        */
         VkDescriptorSetLayout m_Layout;
     };
     
+    /**
+    * @brief This Class is a wapper of VkDescriptorSet.
+    */
     class VulkanDescriptorSet : public VulkanObject
     {
     public:
+
+        /**
+        * @brief Simply definiations.
+        */
         using ImageInfo  = std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>;
         using BufferInfo = std::unordered_map<uint32_t, VkDescriptorBufferInfo>;
         
     public:
-        VulkanDescriptorSet(VulkanState& vulkanState, std::shared_ptr<VulkanDescriptorPool> pool)
+
+        /**
+        * @brief Constructor Function.
+        * @param[in] vulkanState The core vulkan objects that in use.
+        * @param[in] pool VulkanDescriptorPool.
+        */
+        VulkanDescriptorSet(
+            VulkanState&                          vulkanState , 
+            std::shared_ptr<VulkanDescriptorPool> pool
+        )
             : VulkanObject(vulkanState)
             , m_Layout(vulkanState)
             , m_Pool(pool)
         {};
         
+        /**
+        * @brief Destructor Function.
+        */
         virtual ~VulkanDescriptorSet();
 
+        /**
+        * @brief Add a binding to this descriptorset.
+        * @param[in] binding Which binging location is.
+        * @param[in] descriptorType What type it is.
+        * @param[in] stageFlags Shader access flags.
+        * @param[in] count Array num.
+        */
         void AddBinding(
             uint32_t            binding,
             VkDescriptorType    descriptorType,
@@ -155,22 +214,70 @@ namespace Spiecs {
             uint32_t            count = 1
         );
 
+        /**
+        * @brief Bind this to Pipeline.
+        * @param[in] createrName The object this descriptorset belongs to.
+        */
         void BuildDescriptorSet(const std::string& createrName);
         
-        void UpdateDescriptorSet(ImageInfo&  imageInfo, BufferInfo& bufferInfo);
+        /**
+        * @brief Update this descriptorset.
+        * @param[in] imageInfo ImageInfo.
+        * @param[in] bufferInfo BufferInfo.
+        */
+        void UpdateDescriptorSet(
+            ImageInfo&  imageInfo  , 
+            BufferInfo& bufferInfo
+        );
 
-        void UpdateDescriptorSet(BufferInfo& bufferInfo);
+        /**
+        * @brief Update this descriptorset.
+        * @param[in] bufferInfo BufferInfo.
+        */
+        void UpdateDescriptorSet(
+            BufferInfo& bufferInfo
+        );
 
-        void UpdateDescriptorSet(ImageInfo& imageInfo);
+        /**
+        * @brief Update this descriptorset.
+        * @param[in] imageInfo ImageInfo.
+        */
+        void UpdateDescriptorSet(
+            ImageInfo&  imageInfo
+        );
         
-        VkDescriptorSet& Get() { return m_DescriptorSet; };
+        /**
+        * @brief Get a VkDescriptorSet.
+        * @return Returns the VkDescriptorSet.
+        */
+        inline VkDescriptorSet& Get() { return m_DescriptorSet; };
+
+        /**
+        * @brief Get a VkDescriptorSetLayout.
+        * @return Returns the VkDescriptorSetLayout.
+        */
         VkDescriptorSetLayout& GetRowSetLayout() { return m_Layout.Get(); };
         
     private:
+
+        /**
+        * @brief The bindings this descriptorset in use.
+        */
         std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> m_Bindings;
+
+        /**
+        * @brief The VkDescriptorSet this class handled.
+        */
         VkDescriptorSet m_DescriptorSet;
 
+        /**
+        * @brief The VulkanDescriptorSetLayout this descriptorset in use.
+        */
         VulkanDescriptorSetLayout m_Layout;
+
+        /**
+        * @brief The VulkanDescriptorPool this descriptorset in use.
+        */
         std::shared_ptr<VulkanDescriptorPool> m_Pool;
     };
 }

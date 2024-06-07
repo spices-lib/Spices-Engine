@@ -78,7 +78,8 @@ namespace Spiecs {
 			}
 
 			m_Identities.push_back(rendererName, std::shared_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...)));
-			m_Identities.find_value(rendererName)->OnSystemInitialize();
+			auto ptr = *m_Identities.find_value(rendererName);
+			ptr->OnSystemInitialize();
 
 			/**
 			* @brief System init

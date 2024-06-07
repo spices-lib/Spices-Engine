@@ -16,6 +16,8 @@ namespace Spiecs {
 	VulkanWindows::VulkanWindows(VulkanState& vulkanState, const WindowInfo& initInfo)
 		: VulkanObject(vulkanState), m_WindowInfo(initInfo)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief glfw initialize.
 		*/
@@ -49,6 +51,8 @@ namespace Spiecs {
 
 	VulkanWindows::~VulkanWindows()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Destroy glfw window.
 		*/
@@ -62,6 +66,8 @@ namespace Spiecs {
 
 	void VulkanWindows::SetInternalCallBack()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Error event Callback.
 		* @todo Butter Log.

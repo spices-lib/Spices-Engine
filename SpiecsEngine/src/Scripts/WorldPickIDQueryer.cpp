@@ -89,7 +89,7 @@ namespace Spiecs {
 					reinterpret_cast<void*>(&m_WorldPickID[0])
 				);
 
-				std::string entityName = FrameInfo::Get().m_PickEntityID.find_value(static_cast<int>(m_WorldPickID[0]));
+				std::string entityName = *FrameInfo::Get().m_PickEntityID.find_value(static_cast<int>(m_WorldPickID[0]));
 
 				FrameInfo::Get().m_PickEntityID.erase(static_cast<int>(m_WorldPickID[0]));
 

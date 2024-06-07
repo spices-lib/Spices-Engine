@@ -161,7 +161,11 @@ namespace Spiecs {
 		* @return Returns true if select one successfully.
 		* @todo multiple physical device support.
 		*/
-		bool SelectPhysicalDevice(const VkInstance& instance, const VkSurfaceKHR& surface, GLFWwindow* window);
+		bool SelectPhysicalDevice(
+			const VkInstance&   instance , 
+			const VkSurfaceKHR& surface  , 
+			GLFWwindow*         window
+		);
 
 		/**
 		* @brief Check all Property we need meet.
@@ -213,7 +217,11 @@ namespace Spiecs {
 		* @param[in] window The row pointer of GLFWwindow.
 		* @return Returns SwapChainSupportDetails.
 		*/
-		static SwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface, GLFWwindow* window);
+		static SwapChainSupportDetails QuerySwapChainSupport(
+			const VkPhysicalDevice& device  , 
+			const VkSurfaceKHR&     surface , 
+			GLFWwindow*             window
+		);
 
 	private:
 
@@ -226,6 +234,11 @@ namespace Spiecs {
 		* @brief Device Features we need.
 		*/
 		VkPhysicalDeviceFeatures m_DeviceFeatures{};
+
+		/**
+		* @brief Selected Physical Device Properties.
+		*/
+		VkPhysicalDeviceProperties m_DeviceProperties{};
 
 		/**
 		* @brief QueueHelper.

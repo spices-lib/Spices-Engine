@@ -153,7 +153,8 @@ namespace Spiecs {
 			m_Identities.push_back(systemName, std::shared_ptr<System>(new T(systemName, std::forward<Args>(args)...)));
 
 			// system init
-			m_Identities.find_value(systemName)->OnSystemInitialize();
+			auto ptr = *m_Identities.find_value(systemName);
+			ptr->OnSystemInitialize();
 
 			std::stringstream ss;
 			ss << systemName << " pushed ";
@@ -180,7 +181,8 @@ namespace Spiecs {
 			}
 
 			// system shutdown
-			m_Identities.find_value(systemName)->OnSystemShutDown();
+			auto ptr = *m_Identities.find_value(systemName);
+			ptr->OnSystemShutDown();
 
 			std::stringstream ss;
 			ss << systemName << " poped ";

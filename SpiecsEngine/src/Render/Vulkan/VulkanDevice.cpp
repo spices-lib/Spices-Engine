@@ -9,20 +9,31 @@
 
 namespace Spiecs {
 
-	VulkanDevice::VulkanDevice(VulkanState& vulkanState)
+	VulkanDevice::VulkanDevice(
+		VulkanState&  vulkanState
+	)
 		: VulkanObject(vulkanState)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Select one suitable physical device.
 		*/
-		if (!SelectPhysicalDevice(vulkanState.m_Instance, vulkanState.m_Surface, vulkanState.m_Windows)) {
+		if (!SelectPhysicalDevice(vulkanState.m_Instance, vulkanState.m_Surface, vulkanState.m_Windows)) 
+		{
 			SPIECS_CORE_INFO("failed select physical device!");
 		}
 
 		/**
 		* @brief Create a queue identifies container.
 		*/
-		std::set<uint32_t> uniqueQueueFamilies = { m_QueueHelper.graphicqueuefamily.value(), m_QueueHelper.presentqueuefamily.value(), m_QueueHelper.computequeuefamily.value(), m_QueueHelper.transferqueuefamily.value() };
+		std::set<uint32_t> uniqueQueueFamilies = 
+		{   
+			m_QueueHelper.graphicqueuefamily.value(), 
+			m_QueueHelper.presentqueuefamily.value(), 
+			m_QueueHelper.computequeuefamily.value(),
+			m_QueueHelper.transferqueuefamily.value() 
+		};
 
 		/**
 		* @brief Fill in VkDeviceQueueCreateInfo.
@@ -34,25 +45,10 @@ namespace Spiecs {
 			* @brief Instanced a VkDeviceQueueCreateInfo with default value.
 			*/
 			VkDeviceQueueCreateInfo queueCreateInfo{};
-
-			/**
-			* @brief Fill in sType.
-			*/
-			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-
-			/**
-			* @brief Fill in sType.
-			*/
+			queueCreateInfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			queueCreateInfo.queueFamilyIndex = queueFamily;
+			queueCreateInfo.queueCount       = 1;
 
-			/**
-			* @brief Fill in sType.
-			*/
-			queueCreateInfo.queueCount = 1;
-
-			/**
-			* @brief Fill in sType.
-			*/
 			float queuePriority = 1.0f;
 			queueCreateInfo.pQueuePriorities = &queuePriority;
 
@@ -63,70 +59,51 @@ namespace Spiecs {
 		* @brief Instanced a VkDeviceCreateInfo with default value.
 		*/
 		VkDeviceCreateInfo createInfo{};
-
-		/**
-		* @brief Fill in sType.
-		*/
-		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-
-		/**
-		* @brief Fill in pQueueCreateInfos.
-		*/
-		createInfo.pQueueCreateInfos = queueCreateInfos.data();
-
-		/**
-		* @brief Fill in queueCreateInfoCount.
-		*/
-		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-
-		/**
-		* @brief Fill in pEnabledFeatures.
-		*/
-		createInfo.pEnabledFeatures = &m_DeviceFeatures;
-
-		/**
-		* @brief Fill in enabledExtensionCount.
-		*/
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(m_ExtensionProperties.size());
-
-		/**
-		* @brief Fill in ppEnabledExtensionNames.
-		*/
-		createInfo.ppEnabledExtensionNames = m_ExtensionProperties.data();
-
-		/**
-		* @brief Fill in enabledLayerCount.
-		*/
-		createInfo.enabledLayerCount = 0;
+		createInfo.sType                    = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.pQueueCreateInfos        = queueCreateInfos.data();
+		createInfo.queueCreateInfoCount     = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pEnabledFeatures         = &m_DeviceFeatures;
+		createInfo.enabledExtensionCount    = static_cast<uint32_t>(m_ExtensionProperties.size());
+		createInfo.ppEnabledExtensionNames  = m_ExtensionProperties.data();
+		createInfo.enabledLayerCount        = 0;
 
 		/**
 		* @brief Create device and set it global.
 		*/
 		VK_CHECK(vkCreateDevice(vulkanState.m_PhysicalDevice, &createInfo, nullptr, &vulkanState.m_Device));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DEVICE, vulkanState.m_Device, vulkanState.m_Device, m_DeviceProperties.deviceName);
 
 		/**
 		* @brief Get graphic queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.graphicqueuefamily.value(), 0, &vulkanState.m_GraphicQueue);
+		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_GraphicQueue, vulkanState.m_Device, "Graphic Queue");
 
 		/**
 		* @brief Get present queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.presentqueuefamily.value(), 0, &vulkanState.m_PresentQueue);
+		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_PresentQueue, vulkanState.m_Device, "Present Queue");
 
 		/**
 		* @brief Get compute queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.computequeuefamily.value(), 0, &vulkanState.m_ComputeQueue);
+		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_ComputeQueue, vulkanState.m_Device, "Compute Queue");
 
 		/**
 		* @brief Get transfer queue and set it global.
 		*/
 		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.transferqueuefamily.value(), 0, &vulkanState.m_TransformQueue);
+		//VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_QUEUE, vulkanState.m_TransformQueue, vulkanState.m_Device, "Transform Queue");
+
+
 	}
 
 	VulkanDevice::~VulkanDevice()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Destroy the Vulkan Device Object.
 		* Queue is created by device, we do not need destroy queue here manually.
@@ -136,18 +113,28 @@ namespace Spiecs {
 
 	void VulkanDevice::RequerySwapChainSupport()
 	{
-		m_SwapChainSupportDetails = QuerySwapChainSupport(m_VulkanState.m_PhysicalDevice, m_VulkanState.m_Surface, m_VulkanState.m_Windows);
+		SPIECS_PROFILE_ZONE;
+
+		m_SwapChainSupportDetails = 
+			QuerySwapChainSupport(
+			m_VulkanState.m_PhysicalDevice, 
+			m_VulkanState.m_Surface, m_VulkanState.m_Windows
+		);
 	}
 
 	VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get VkPhysicalDeviceProperties.
 		*/
 		VkPhysicalDeviceProperties physicalDeviceProperties;
 		vkGetPhysicalDeviceProperties(m_VulkanState.m_PhysicalDevice, &physicalDeviceProperties);
 
-		VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+		VkSampleCountFlags counts = 
+			physicalDeviceProperties.limits.framebufferColorSampleCounts & 
+			physicalDeviceProperties.limits.framebufferDepthSampleCounts;
 
 		/**
 		* @breif select one.
@@ -164,6 +151,8 @@ namespace Spiecs {
 
 	bool VulkanDevice::SelectPhysicalDevice(const VkInstance& instance, const VkSurfaceKHR& surface, GLFWwindow* window)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get all physical device num this computer.
 		*/
@@ -173,8 +162,9 @@ namespace Spiecs {
 		/**
 		* @brief This software requires there must be at least one physical device.
 		*/
-		if (deviceCount == 0) {
-			throw std::runtime_error("failed to find GPUs with Vulkan support!");
+		if (deviceCount == 0) 
+		{
+			SPIECS_CORE_WARN("Failed to find GPUs with Vulkan support!");
 			return false;
 		}
 
@@ -192,7 +182,11 @@ namespace Spiecs {
 			/**
 			* @brief All this condition need satisfied.
 			*/
-			if (IsPropertyMeetDemand(physicalDevice) && IsFeatureMeetDemand(physicalDevice) && IsExtensionMeetDemand(physicalDevice) && IsQueueMeetDemand(physicalDevice, surface))
+			if (IsPropertyMeetDemand(physicalDevice) && 
+				IsFeatureMeetDemand(physicalDevice) && 
+				IsExtensionMeetDemand(physicalDevice) && 
+				IsQueueMeetDemand(physicalDevice, surface)
+				)
 			{
 				/**
 				* @brief Set Selected physical device.
@@ -214,6 +208,8 @@ namespace Spiecs {
 
 	bool VulkanDevice::IsPropertyMeetDemand(const VkPhysicalDevice& device)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get all Properties that supported.
 		*/
@@ -224,11 +220,15 @@ namespace Spiecs {
 		* @brief Just return true for we do not need a specific property supported now.
 		* @todo Configurable.
 		*/
+		m_DeviceProperties = deviceProperties;
+
 		return true;
 	}
 
 	bool VulkanDevice::GetFeatureRequirements(VkPhysicalDeviceFeatures& physicalDeviceFeature)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief 启用纹理采样的各项异性
 		*/
@@ -251,6 +251,8 @@ namespace Spiecs {
 
 	bool VulkanDevice::IsFeatureMeetDemand(const VkPhysicalDevice& device)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get all Features that supported.
 		*/
@@ -266,6 +268,8 @@ namespace Spiecs {
 
 	void VulkanDevice::GetExtensionRequirements()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Swapchain Extension.
 		*/
@@ -279,6 +283,8 @@ namespace Spiecs {
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get all physicaldevice extensions nums.
 		*/
@@ -301,7 +307,8 @@ namespace Spiecs {
 		*/
 		std::set<std::string> requiredExtensions(m_ExtensionProperties.begin(), m_ExtensionProperties.end());
 
-		for (const auto& extension : availableExtensions) {
+		for (const auto& extension : availableExtensions) 
+		{
 			requiredExtensions.erase(extension.extensionName);
 		}
 
@@ -310,6 +317,8 @@ namespace Spiecs {
 
 	bool VulkanDevice::IsQueueMeetDemand(const VkPhysicalDevice& device, const VkSurfaceKHR& surface)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get all physicaldevice queue nums.
 		*/
@@ -331,7 +340,8 @@ namespace Spiecs {
 			/**
 			* @brief Get graphic queue identify.
 			*/
-			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+			{
 				m_QueueHelper.graphicqueuefamily = i;
 				m_VulkanState.m_GraphicQueueFamily = i;
 
@@ -341,21 +351,24 @@ namespace Spiecs {
 				/**
 				* @brief Get present queue identify.
 				*/
-				if (presentSupport) {
+				if (presentSupport) 
+				{
 					m_QueueHelper.presentqueuefamily = i;
 				}
 
 				/**
 				* @brief Get compute queue identify.
 				*/
-				if (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) {
+				if (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) 
+				{
 					m_QueueHelper.computequeuefamily = i;
 				}
 
 				/**
 				* @brief Get transfer queue identify.
 				*/
-				if (queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) {
+				if (queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) 
+				{
 					m_QueueHelper.transferqueuefamily = i;
 				}
 			}
@@ -366,8 +379,14 @@ namespace Spiecs {
 		return false;
 	}
 
-	SwapChainSupportDetails VulkanDevice::QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface, GLFWwindow* window)
+	SwapChainSupportDetails VulkanDevice::QuerySwapChainSupport(
+		const VkPhysicalDevice& device  , 
+		const VkSurfaceKHR&     surface , 
+		GLFWwindow*             window
+	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Get VkSurfaceCapabilitiesKHR.
 		*/
@@ -468,5 +487,4 @@ namespace Spiecs {
 
 		return swapChainSupportDetails;
 	}
-
 }
