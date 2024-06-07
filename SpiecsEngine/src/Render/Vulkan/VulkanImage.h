@@ -140,52 +140,135 @@ namespace Spiecs {
 		);
 
 		/**
-		* @brief Generate mipmaps with the VkImage.
-		* @param[in] imageFormat VkFormat.
-		* @param[in] texWidth The Image Width.
-		* @param[in] texHeight The Image Height.
+		* @brief Create Image View.
+		* @param[in] format VkFormat.
+		* @param[in] aspectFlags VkImageAspectFlags.
 		*/
 		void CreateImageView(
 			VkFormat           format      , 
 			VkImageAspectFlags aspectFlags
 		);
 
+		/**
+		* @brief Create a Sampler.
+		*/
 		void CreateSampler();
+
+		/**
+		* @breif Create a VkImage.
+		* @param[in] vulkanState, The VulkanObject in used this frame.
+		* @param[in] name, Image's name.
+		* @param[in] width, Image's width.
+		* @param[in] height, Image's height.
+		* @param[in] numSamples, Image's MSAA sample num.(8 if enable MSAA).
+		* @param[in] format, Image's format.
+		* @param[in] tiling, Image's tilling.
+		* @param[in] usage, Image's used stage.
+		* @param[in] properties, Image's data memory requirement.
+		* @param[in] mipLevels, Image's mipnum, if need.
+		*/
 		void CreateImage(
-			VulkanState& vulkanState, 
-			const std::string& name,
-			uint32_t width, 
-			uint32_t height, 
-			VkSampleCountFlagBits numSamples, 
-			VkFormat format, 
-			VkImageTiling tiling, 
-			VkImageUsageFlags usage, 
-			VkMemoryPropertyFlags properties, 
-			uint32_t mipLevels
+			VulkanState&           vulkanState   , 
+			const std::string&     name          ,
+			uint32_t               width         , 
+			uint32_t               height        , 
+			VkSampleCountFlagBits  numSamples    , 
+			VkFormat               format        , 
+			VkImageTiling          tiling        , 
+			VkImageUsageFlags      usage         , 
+			VkMemoryPropertyFlags  properties    , 
+			uint32_t               mipLevels
 		);
+
+		/**
+		* @brief Create DescriptorSet with single image.
+		* @param[in] binding Which binding will be use.
+		*/
 		void CreateDescriptorSet(uint32_t binding);
-		VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; };
+
+		/**
+		* @brief Get VkDescriptorSet.
+		* @return Returns the VkDescriptorSet.
+		*/
+		inline VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; };
+
+	private:
+
+		/**
+		* @brief Destroy the DescriptorSetLayout if Created a DescriptorSet.
+		*/
 		void DestroyDescriptorSetLayout();
 
 	private:
+
+		/**
+		* @brief Image width.
+		*/
 		int m_Width = 0;
+
+		/**
+		* @brief Image height.
+		*/
 		int m_Height = 0;
+
+		/**
+		* @brief Image layer.
+		*/
 		int m_Layers = 1;
 
+		/**
+		* @brief Image mipmaps num.
+		*/
 		uint32_t m_MipLevels = 1;
-		VkImage m_Image{};
-		VkDeviceMemory m_ImageMemory{};
-		VkImageView m_ImageView{};
-		VkSampler m_TextureSampler{};
 
-		VkDescriptorImageInfo m_ImageInfo{};
-
-		bool m_IsCreateSet = false;
-		VkDescriptorSetLayout m_DescriptorSetLayout;
-		VkDescriptorSet m_DescriptorSet{};
-
+		/**
+		* @brief The image format.
+		*/
 		VkFormat m_Format;
 
+		/**
+		* @brief The Vkimage this Class Wappered.
+		*/
+		VkImage m_Image{};
+
+		/**
+		* @brief The image video memory.
+		*/
+		VkDeviceMemory m_ImageMemory{};
+
+		/**
+		* @brief The image view.
+		*/
+		VkImageView m_ImageView{};
+
+		/**
+		* @brief The image sampler.
+		*/
+		VkSampler m_TextureSampler{};
+
+		/**
+		* @brief VkDescriptorImageInfo.
+		*/
+		VkDescriptorImageInfo m_ImageInfo{};
+
+		/**
+		* @brief True if Called Create DescriptorSet.
+		*/
+		bool m_IsCreateSet = false;
+
+		/**
+		* @brief VkDescriptorSetLayout.
+		*/
+		VkDescriptorSetLayout m_DescriptorSetLayout;
+
+		/**
+		* @brief VkDescriptorSet.
+		*/
+		VkDescriptorSet m_DescriptorSet{};
+
+		/**
+		* @brief Allow TextureLoader access all data.
+		*/
 		friend class TextureLoader;
 	};
 }
