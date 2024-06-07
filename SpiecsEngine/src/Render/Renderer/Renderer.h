@@ -210,15 +210,15 @@ namespace Spiecs {
 		/**
 		* @brief Get DirectionalLightComponent's render data in World.
 		* @param[in] frameInfo The current frame data.
-		* @return Returns the only one DirectionalLight render data.
+		* @param[out] directionalLight DirectionalLight.
 		* @todo Mutiple directional light.
 		*/
-		DirectionalLightComponent::DirectionalLight GetDirectionalLight(FrameInfo& frameInfo);
+		void GetDirectionalLight(FrameInfo& frameInfo, DirectionalLightComponent::DirectionalLight& directionalLight);
 
 		/**
 		* @brief Get PointLightComponent's render data in World.
 		* @param[in] frameInfo The current frame data.
-		* @return Returns the 10 PointLight render data.
+		* @param[out] pLightArrat PointLight.
 		* @todo infinity pointlight.
 		*/
 		void GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat);

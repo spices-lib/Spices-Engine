@@ -294,14 +294,9 @@ namespace Spiecs {
 		return std::make_pair(invViewMat, projectionMat);
 	}
 
-	DirectionalLightComponent::DirectionalLight Renderer::GetDirectionalLight(FrameInfo& frameInfo)
+	void Renderer::GetDirectionalLight(FrameInfo& frameInfo, DirectionalLightComponent::DirectionalLight& directionalLight)
 	{
 		SPIECS_PROFILE_ZONE;
-
-		/**
-		* @breif Init a DirectionalLight.
-		*/
-		DirectionalLightComponent::DirectionalLight directionalLight;
 
 		/**
 		* @breif Iter DirectionalLightComponent, and just use the first one.
@@ -321,8 +316,6 @@ namespace Spiecs {
 			*/
 			return true;
 		});
-
-		return directionalLight;
 	}
 
 	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat)

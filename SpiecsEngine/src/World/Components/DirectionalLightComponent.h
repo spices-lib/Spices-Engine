@@ -28,7 +28,7 @@ namespace Spiecs {
 			/**
 			* @brief Direction of SunLight.
 			*/
-			alignas(16) glm::vec3 direction{ 1.0f };
+			alignas(16) glm::vec3 direction{ 1.0f, 1.0f, -1.0f };
 
 			/**
 			* @brief Color of SunLight.
@@ -78,6 +78,10 @@ namespace Spiecs {
 		* @return Returns the DirectionalLight variable.
 		*/
 		inline const DirectionalLight& GetLight() { return m_DirectionalLight; };
+
+		void SetDirection(const glm::vec3& direction) { m_DirectionalLight.direction = direction; };
+		void SetColor(const glm::vec3& color) { m_DirectionalLight.color = color; };
+		void SetIntensity(float intensity) { m_DirectionalLight.intensity = intensity; };
 
 	private:
 

@@ -39,6 +39,9 @@ namespace Spiecs {
 		{
 			Entity& dirlightentity = CreateEntity("DirectionalLight");
 			DirectionalLightComponent& dirlightComp = dirlightentity.AddComponent<DirectionalLightComponent>();
+			dirlightComp.SetDirection({1.0f, 1.0f, -1.0f});
+			dirlightComp.SetColor({ 1.0f, 0.0f, 0.0f });
+			dirlightComp.SetIntensity(1.0f);
 		}
 	}
 

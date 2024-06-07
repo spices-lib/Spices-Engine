@@ -53,23 +53,12 @@ namespace Spiecs
 		*/
 		virtual void OnComponentAdded(const entt::entity& entity);
 
-		/**
-		* @brief Get Component's icon in Stage.
-		* @return Returns the icon ImTextureID.
-		*/
-		inline ImTextureID& GetStageIcon() { return m_SlateStageIcon; };
-
 	protected:
 
 		/**
 		* @brief This component's Owner entity.
 		*/
 		entt::entity m_Owner{ entt::null };
-
-		/**
-		* @brief This component's icon on stage slate.
-		*/
-		ImTextureID m_SlateStageIcon;
 
 		/**
 		* @brief This component's icon file path.

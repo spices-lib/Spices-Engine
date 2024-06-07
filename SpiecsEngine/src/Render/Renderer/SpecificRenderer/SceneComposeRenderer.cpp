@@ -15,6 +15,7 @@ namespace Spiecs {
 	{
 		struct LightsBuffer
 		{
+			DirectionalLightComponent::DirectionalLight directionalLight;
 			std::array<Spiecs::PointLightComponent::PointLight, 1000> pointLights;
 		};
 	}
@@ -89,6 +90,7 @@ namespace Spiecs {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SceneCompose" }));
 
 		builder.UpdateStorageBuffer<SceneCR::LightsBuffer>(1, 1, [&](auto& ubo) {
+			GetDirectionalLight(frameInfo, ubo.directionalLight);
 			GetPointLight(frameInfo, ubo.pointLights);
 		});
 

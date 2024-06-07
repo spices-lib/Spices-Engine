@@ -41,7 +41,7 @@ layout(set = 0, binding = 1) uniform SpiecsInput {
 // main
 void main()
 {
-    mat3 m3model = mat3(push.model);
+    mat3 m3model = mat3(transpose(inverse(push.model)));
     vec3 normal = normalize(m3model * normal);
 
     vec4 pos = push.model * vec4(position, 1.0f);
