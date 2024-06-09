@@ -25,15 +25,15 @@ namespace Spiecs {
 * @brief Assert macro.
 * @todo better Assert System.
 */
-#define ASSERT(expr)                                                                        \
-    {                                                                                       \
-        if (expr) {                                                                         \
-        } else {                                                                            \
-            std::stringstream ss;                                                           \
-            ss << "Assert Failed \n At File: " << __FILE__ << " \n At Line: " << __LINE__;  \
-            SPIECS_CORE_ERROR(ss.str());                                                    \
-        }                                                                                   \
-    }                                                                                       \
+#define ASSERT(expr)                                                                                          \
+    {                                                                                                         \
+        if (expr) {                                                                                           \
+        } else {                                                                                              \
+            std::stringstream ss;                                                                             \
+            ss << "Assert Failed \n    At File: " << __FILE__ << " \n   At Line: " << __LINE__ << "\n   ";    \
+            SPIECS_CORE_ERROR(ss.str());                                                                      \
+        }                                                                                                     \
+    }                                                                                                         \
 
 /**
 * @brief Vulkan Check macro.

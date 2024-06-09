@@ -1,8 +1,8 @@
 ﻿Material: BasePassRenderer.SkyBox.Default
 Shaders:
-  - Stage: vertShader
+  - Stage: vert
     Path: BasePassRenderer.SkyBox.Default
-  - Stage: fragShader
+  - Stage: frag
     Path: BasePassRenderer.SkyBox.Default
 Textures:
   - Name: diffuse

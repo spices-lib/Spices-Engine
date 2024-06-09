@@ -1,8 +1,8 @@
 Material: BasePassRenderer.Mesh.interior_stair_wl3ieamdw
 Shaders:
-  - Stage: vertShader
+  - Stage: vert
     Path: BasePassRenderer.Mesh.Default
-  - Stage: fragShader
+  - Stage: frag
     Path: BasePassRenderer.Mesh.Default
 Textures:
   - Name: diffuse

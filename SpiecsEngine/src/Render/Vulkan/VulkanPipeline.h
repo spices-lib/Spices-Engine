@@ -112,16 +112,14 @@ namespace Spiecs {
 		* Create VkPipeline.
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] pipelineName The Pipeline name.
-		* @param[in] vertShaderName The vert Shader name.
-		* @param[in] fragShaderName The frag Shader name.
+		* @param[in] shaders The Shader stage name and path.
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanPipeline(
-			VulkanState&               vulkanState   ,
-			const std::string&         pipelineName  ,
-			const std::string&         vertShaderName,
-			const std::string&         fragShaderName,
-			const PipelineConfigInfo&  config
+			VulkanState&                                        vulkanState   ,
+			const std::string&                                  pipelineName  ,
+			const std::unordered_map<std::string, std::string>& shaders       ,
+			const PipelineConfigInfo&                           config
 		);
 
 		/**
@@ -152,15 +150,13 @@ namespace Spiecs {
 		/**
 		* @brief Create the VkPipeline.
 		* @param[in] pipelineName The Pipeline name.
-		* @param[in] vertShaderName The vert Shader name.
-		* @param[in] fragShaderName The frag Shader name.
+		* @param[in] shaders The Shader stage name and path.
 		* @param[in] config PipelineConfigInfo.
 		*/
 		void CreateGraphicsPipeline(
-			const std::string&        pipelineName   ,
-			const std::string&        vertShaderName , 
-			const std::string&        fragShaderName , 
-			const PipelineConfigInfo& config
+			const std::string&                                  pipelineName   ,
+			const std::unordered_map<std::string, std::string>& shaders        ,
+			const PipelineConfigInfo&                           config
 		);
 
 	private:
@@ -175,15 +171,5 @@ namespace Spiecs {
 		* @brief The VkPipeline.
 		*/
 		VkPipeline m_Pipeline;
-
-		/**
-		* @brief The uniqie pointer of vert VulkanShaderModule.
-		*/
-		std::unique_ptr<VulkanShaderModule> m_VertShaderModule;
-
-		/**
-		* @brief The uniqie pointer of frag VulkanShaderModule.
-		*/
-		std::unique_ptr<VulkanShaderModule> m_FragShaderModule;
 	};
 }

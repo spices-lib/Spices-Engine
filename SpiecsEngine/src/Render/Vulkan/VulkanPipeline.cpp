@@ -11,11 +11,10 @@
 namespace Spiecs {
 
 	VulkanPipeline::VulkanPipeline(
-		VulkanState&              vulkanState    , 
-		const std::string&        pipelineName   ,
-		const std::string&        vertShaderName ,
-		const std::string&        fragShaderName ,
-		const PipelineConfigInfo& config
+		VulkanState&                                        vulkanState    , 
+		const std::string&                                  pipelineName   ,
+		const std::unordered_map<std::string, std::string>& shaders        ,
+		const PipelineConfigInfo&                           config
 	)
 		: VulkanObject(vulkanState)
 	{
@@ -24,7 +23,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Pipeline.
 		*/
-		CreateGraphicsPipeline(pipelineName, vertShaderName, fragShaderName, config);
+		CreateGraphicsPipeline(pipelineName, shaders, config);
 	}
 
 	VulkanPipeline::~VulkanPipeline()
@@ -152,9 +151,8 @@ namespace Spiecs {
 	}
 
 	void VulkanPipeline::CreateGraphicsPipeline(
-		const std::string&        pipelineName    ,
-		const std::string&        vertShaderName  ,
-		const std::string&        fragShaderName  ,
+		const std::string&                                  pipelineName    ,
+		const std::unordered_map<std::string, std::string>& shaders         ,
 		const PipelineConfigInfo& config
 	)
 	{
@@ -168,28 +166,20 @@ namespace Spiecs {
 		/**
 		* @brief Create the VulkanShaderModule.
 		*/
-		m_VertShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, vertShaderName, "vert");
-		m_FragShaderModule = std::make_unique<VulkanShaderModule>(m_VulkanState, fragShaderName, "frag");
+		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		for (auto& pair : shaders)
+		{
+			shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second, pair.first));
+		}
 
 		/**
 		* @brief Instance VkPipelineShaderStageCreateInfo.
 		*/
-		VkPipelineShaderStageCreateInfo shaderStages[2];
-		shaderStages[0].sType                = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		shaderStages[0].stage                = VK_SHADER_STAGE_VERTEX_BIT;
-		shaderStages[0].module               = m_VertShaderModule->Get();
-		shaderStages[0].pName                = "main";
-		shaderStages[0].flags                = 0;
-		shaderStages[0].pNext                = nullptr;
-		shaderStages[0].pSpecializationInfo  = nullptr;
-
-		shaderStages[1].sType                = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		shaderStages[1].stage                = VK_SHADER_STAGE_FRAGMENT_BIT;
-		shaderStages[1].module               = m_FragShaderModule->Get();
-		shaderStages[1].pName                = "main";
-		shaderStages[1].flags                = 0;
-		shaderStages[1].pNext                = nullptr;
-		shaderStages[1].pSpecializationInfo  = nullptr;
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (int i = 0; i < shaderModules.size(); i++)
+		{
+			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
+		}
 		
 		auto& bindingDescriptions = config.bindingDescriptions;
 		auto& attributeDescriptions = config.attributeDescriptions;
@@ -209,8 +199,8 @@ namespace Spiecs {
 		*/
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineInfo.stageCount                         = 2;
-		pipelineInfo.pStages                            = shaderStages;
+		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
+		pipelineInfo.pStages                            = shaderStages.data();
 		pipelineInfo.pVertexInputState                  = &vertexInputInfo;
 		pipelineInfo.pInputAssemblyState                = &config.inputAssemblyInfo;
 		pipelineInfo.pViewportState                     = &config.viewportInfo;

@@ -17,6 +17,7 @@ namespace Spiecs {
 		const std::string& shaderStage
 	)
 		: VulkanObject(vulkanState)
+		, m_ShaderStage(shaderStage)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -74,6 +75,23 @@ namespace Spiecs {
 		* @brief Destroy Shader Module.
 		*/
 		vkDestroyShaderModule(m_VulkanState.m_Device, m_ShaderModule, nullptr);
+	}
+
+	VkPipelineShaderStageCreateInfo VulkanShaderModule::GetShaderStageCreateInfo()
+	{
+		VkPipelineShaderStageCreateInfo shaderStages{};
+
+		shaderStages.sType                         = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		shaderStages.stage                         = VK_SHADER_STAGE_VERTEX_BIT;
+		shaderStages.module                        = m_ShaderModule;
+		shaderStages.pName                         = "main";
+		shaderStages.flags                         = 0;
+		shaderStages.pNext                         = nullptr;
+		shaderStages.pSpecializationInfo           = nullptr;
+
+		if(shaderStageshaderStage)
+
+		return shaderStages;
 	}
 
 	std::string VulkanShaderModule::GetSahderPath(const std::string& name, const std::string& shaderType)

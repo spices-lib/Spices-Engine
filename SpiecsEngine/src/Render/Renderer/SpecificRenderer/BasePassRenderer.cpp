@@ -90,8 +90,7 @@ namespace Spiecs {
 		return std::make_shared<VulkanPipeline>(
 			m_VulkanState,
 			material->GetName(),
-			material->GetShaderPath("vertShader"),
-			material->GetShaderPath("fragShader"),
+			material->GetShaderPath(),
 			pipelineConfig
 		);
 	}

@@ -1,6 +1,6 @@
 Material: WorldPickRenderer.WorldPick.Default
 Shaders:
-  - Stage: vertShader
+  - Stage: vert
     Path: WorldPickRenderer.WorldPick.Default
-  - Stage: fragShader
+  - Stage: frag
     Path: WorldPickRenderer.WorldPick.Default

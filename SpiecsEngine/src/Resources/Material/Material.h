@@ -144,9 +144,16 @@ namespace Spiecs {
 
 		/**
 		* @brief Get material shader path.
-		* @return Returns all stage shader path that needed.
+		* @param[in] stage Shader stage name.
+		* @return Returns the stage shader path that needed.
 		*/
-		std::string& GetShaderPath(const std::string& stage);
+		const std::string& GetShaderPath(const std::string& stage);
+
+		/**
+		* @brief Get material shader path.
+		* @return Returns all the stage shader path that needed.
+		*/
+		inline const std::unordered_map<std::string, std::string>& GetShaderPath() { return m_Shaders; };
 
 		/**
 		* @brief Get material texture parameters.

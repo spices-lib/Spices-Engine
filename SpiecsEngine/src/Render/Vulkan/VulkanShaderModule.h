@@ -41,6 +41,9 @@ namespace Spiecs {
 		*/
 		VkShaderModule& Get() { return m_ShaderModule; };
 
+
+		VkPipelineShaderStageCreateInfo GetShaderStageCreateInfo();
+
 	private:
 
 		/**
@@ -60,5 +63,10 @@ namespace Spiecs {
 		* @brief The VkShaderModule this class handled.
 		*/
 		VkShaderModule m_ShaderModule;
+
+		/**
+		*brief Shader Stage.
+		*/
+		std::string m_ShaderStage;
 	};
 }

@@ -1,8 +1,8 @@
 ﻿Material: SpriteRenderer.Sprite.S_LightPoint
 Shaders:
-  - Stage: vertShader
+  - Stage: vert
     Path: SpriteRenderer.Sprite.Default
-  - Stage: fragShader
+  - Stage: frag
     Path: SpriteRenderer.Sprite.Default
 Textures:
   - Name: diffuse
