@@ -4,23 +4,23 @@
 
 /*****************************************************************************************/
 
-/************************************FragMent Input***************************************/
+/************************************Fragment Input***************************************/
 
 /**
 * @brief Fragment Shader Input From Vertex Shader.
 */
 layout(location = 0) in struct FragInput {
-	vec2 texCoord;         /*Frag UV*/
+	vec2 texCoord;                         /*Fragmet UV*/
 } fragInput;
 
 /*****************************************************************************************/
 
-/************************************FragMent Output**************************************/
+/************************************Fragment Output**************************************/
 
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4 outColor;  /*SceneColor Attachment*/
+layout(location = 0) out vec4 outColor;    /*SceneColor Attachment*/
 
 /*****************************************************************************************/
 
@@ -148,8 +148,9 @@ void main()
 	vec3 diffuse = diff * directionalLight.color * directionalLight.intensity;
 
 
-	vec3 result = (0.5f + diffuse) * subpassLoad(GBuffer[DIFFUSE]).xyz;
-	outColor = vec4(result, 1.0f);
+	//vec3 result = (0.5f + diffuse) * subpassLoad(GBuffer[DIFFUSE]).xyz;
+	//outColor = vec4(result, 1.0f);
+	outColor = subpassLoad(GBuffer[DIFFUSE]);
 }
 
 /*****************************************************************************************/

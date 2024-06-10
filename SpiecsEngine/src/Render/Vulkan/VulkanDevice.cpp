@@ -240,6 +240,13 @@ namespace Spiecs {
 		if (physicalDeviceFeature.independentBlend) m_DeviceFeatures.independentBlend = VK_TRUE;
 		else return false;
 
+		/**
+		* @breif Enable Geometry Shader Feature.
+		*/
+		if (physicalDeviceFeature.geometryShader) m_DeviceFeatures.geometryShader = VK_TRUE;
+		else return false;
+
+
 		return true;
 	}
 

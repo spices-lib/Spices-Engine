@@ -81,15 +81,20 @@ namespace Spiecs {
 	{
 		VkPipelineShaderStageCreateInfo shaderStages{};
 
-		shaderStages.sType                         = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		shaderStages.stage                         = VK_SHADER_STAGE_VERTEX_BIT;
-		shaderStages.module                        = m_ShaderModule;
-		shaderStages.pName                         = "main";
-		shaderStages.flags                         = 0;
-		shaderStages.pNext                         = nullptr;
-		shaderStages.pSpecializationInfo           = nullptr;
-
-		if(shaderStageshaderStage)
+		shaderStages.sType                                     = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		shaderStages.module                                    = m_ShaderModule;
+		shaderStages.pName                                     = "main";
+		shaderStages.flags                                     = 0;
+		shaderStages.pNext                                     = nullptr;
+		shaderStages.pSpecializationInfo                       = nullptr;
+						   
+		if     (m_ShaderStage == "vert") shaderStages.stage    = VK_SHADER_STAGE_VERTEX_BIT;
+		else if(m_ShaderStage == "frag") shaderStages.stage    = VK_SHADER_STAGE_FRAGMENT_BIT;
+		else if(m_ShaderStage == "geom") shaderStages.stage    = VK_SHADER_STAGE_GEOMETRY_BIT;
+		else
+		{
+			SPIECS_CORE_ERROR("Not Supported Sahder Stage from material.");
+		}
 
 		return shaderStages;
 	}

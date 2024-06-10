@@ -21,9 +21,9 @@ namespace Spiecs {
         /**
         * @todo Remove it.
         */
-        ImGui::ShowDemoWindow();
+        /*ImGui::ShowDemoWindow();
         ImGui::ShowDebugLogWindow();
-        ImPlot::ShowDemoWindow();
+        ImPlot::ShowDemoWindow();*/
 
         /**
         * @brief End render ContentBrowser.

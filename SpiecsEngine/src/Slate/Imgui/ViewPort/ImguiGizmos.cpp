@@ -87,12 +87,12 @@ namespace Spiecs {
             /**
             * @todo Remove it and implementate it by renderer.
             */
-            /*ImGuizmo::DrawGrid(
+            ImGuizmo::DrawGrid(
                 glm::value_ptr(viewMat),
                 glm::value_ptr(projectionMat),
                 glm::value_ptr(glm::mat4(1.0f)),
                 100.f
-            );*/
+            );
         }
 
         /**

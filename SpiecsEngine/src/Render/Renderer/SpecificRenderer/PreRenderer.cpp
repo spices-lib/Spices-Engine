@@ -18,8 +18,8 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
  		DescriptorSetBuilder{ "PreRenderer", this }
-		.AddUniformBuffer<PreR::View>(0, 0, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddUniformBuffer<PreR::SpiecsInput>(0, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddUniformBuffer<PreR::View>(0, 0, VK_SHADER_STAGE_ALL_GRAPHICS)
+		.AddUniformBuffer<PreR::SpiecsInput>(0, 1, VK_SHADER_STAGE_ALL_GRAPHICS)
 		.Build();
 	}
 

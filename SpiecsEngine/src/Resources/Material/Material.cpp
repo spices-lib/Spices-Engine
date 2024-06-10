@@ -54,7 +54,7 @@ namespace Spiecs {
 		return DescriptorSetManager::GetByName(m_MaterialPath);
 	}
 
-	std::string& Material::GetShaderPath(const std::string& stage)
+	const std::string& Material::GetShaderPath(const std::string& stage)
 	{
 		if (m_Shaders.find(stage) == m_Shaders.end())
 		{
