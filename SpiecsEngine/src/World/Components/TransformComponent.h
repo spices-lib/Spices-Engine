@@ -45,6 +45,11 @@ namespace Spiecs {
 		virtual void OnDeSerialize();
 
 		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis();
+
+		/**
 		* @brief Set the position this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] position The entity's world position.
@@ -90,7 +95,7 @@ namespace Spiecs {
 		* @brief Get the modelMatrix variable.
 		* @return Returns the modelMatrix variable.
 		*/
-		inline const glm::mat4& GetModelMatrix() { return m_ModelMatrix; };
+		inline const glm::mat4& GetModelMatrix() { CalMatrix(); return m_ModelMatrix; };
 
 		/**
 		* @brief Get the position variable.

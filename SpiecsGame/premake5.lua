@@ -32,6 +32,7 @@ project "SpiecsGame"
 		"%{IncludeDir.tinyobjloader}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
 		"%{IncludeDir.tracy}",
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 	}

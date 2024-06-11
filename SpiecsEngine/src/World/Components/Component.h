@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "Slate/Imgui/ImguiHelper.h"
 
 #include <entt.hpp>
 #include <imgui.h>
@@ -52,6 +53,11 @@ namespace Spiecs
 		* @param[in] entity this component's Owner entity.
 		*/
 		virtual void OnComponentAdded(const entt::entity& entity);
+
+		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis() {};
 
 	protected:
 

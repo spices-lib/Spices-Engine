@@ -15,6 +15,7 @@
 #include "World/Components/TagComponent.h"
 #include "World/Components/UUIDComponent.h"
 #include "World/Components/DirectionalLightComponent.h"
+#include "World/Components/NativeScriptComponent.h"
 #include "World/Components/PointLightComponent.h"
 #include "World/Components/SkyBoxComponent.h"
 #include "World/Components/SpriteComponent.h"
