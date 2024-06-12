@@ -142,7 +142,7 @@ namespace Spiecs{
 		/**
 		* @brief This slate's size.
 		*/
-		ImVec2 m_PanelSize = { 1920, 1058 };
+		ImVec2 m_PanelSize = { 1, 1 };
 
 		/**
 		* @brief This slate's position in desktop.
