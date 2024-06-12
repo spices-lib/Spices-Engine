@@ -111,7 +111,7 @@ namespace scl {
         if(object_.find(name) == object_.end())
         {
             std::stringstream ss;
-            ss << "runtime_memory_list:: explain failed: without the element: " << name;
+            ss << "runtime_memory_block:: explain failed: without the element: " << name;
             
             throw std::runtime_error(ss.str());
             return;
@@ -137,7 +137,7 @@ namespace scl {
         if(object_.find(name) == object_.end())
         {
             std::stringstream ss;
-            ss << "runtime_memory_list:: get_value failed: without the element: " << name;
+            ss << "runtime_memory_block:: get_value failed: without the element: " << name;
             
             throw std::runtime_error(ss.str());
         }

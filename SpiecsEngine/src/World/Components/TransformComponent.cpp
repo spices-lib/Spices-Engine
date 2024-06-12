@@ -31,7 +31,40 @@ namespace Spiecs {
 
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 5.0f);
-			ImGui::Button("Translate");
+			
+			static bool selected = false;
+			if (ImGui::Selectable("Translate", selected))
+				selected = !selected;
+			if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+			{
+				ImGui::MenuItem("Copy");
+				ImGui::MenuItem("Paste");
+				ImGui::MenuItem("Copy Property Path");
+				ImGui::Separator();
+				ImGui::MenuItem("Disable");
+				ImGui::MenuItem("Delete");
+				ImGui::Separator();
+				ImGui::MenuItem("Set Key");
+				ImGui::MenuItem("Remove Key");
+				ImGui::MenuItem("Copy Key");
+				ImGui::MenuItem("Paste Key");
+				ImGui::Separator();
+				ImGui::MenuItem("Copy Animation");
+				ImGui::MenuItem("Paste Animation");
+				ImGui::MenuItem("Remove Animation");
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Locks"))
+				{
+					ImGui::MenuItem("Lock");
+					ImGui::MenuItem("UnLock");
+
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndPopup();
+			}
+			ImGui::SetItemTooltip("xformOp:translate(float3)\nRight click it to disable or delete it.");
+
 			ImGui::NextColumn();
 
 			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
@@ -82,7 +115,7 @@ namespace Spiecs {
 
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 5.0f);
-			if (ImGui::BeginMenu("Rotate"))
+			/*if (ImGui::BeginMenu("Rotate"))
 			{
 				ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, XYZ));
 				ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, XZY));
@@ -92,7 +125,41 @@ namespace Spiecs {
 				ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, ZYX));
 
 				ImGui::EndMenu();
+			}*/
+			
+			static bool selected = false;
+			if (ImGui::Selectable("Rotate", selected))
+				selected = !selected;
+			if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+			{
+				ImGui::MenuItem("Copy");
+				ImGui::MenuItem("Paste");
+				ImGui::MenuItem("Copy Property Path");
+				ImGui::Separator();
+				ImGui::MenuItem("Disable");
+				ImGui::MenuItem("Delete");
+				ImGui::Separator();
+				ImGui::MenuItem("Set Key");
+				ImGui::MenuItem("Remove Key");
+				ImGui::MenuItem("Copy Key");
+				ImGui::MenuItem("Paste Key");
+				ImGui::Separator();
+				ImGui::MenuItem("Copy Animation");
+				ImGui::MenuItem("Paste Animation");
+				ImGui::MenuItem("Remove Animation");
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Locks"))
+				{
+					ImGui::MenuItem("Lock");
+					ImGui::MenuItem("UnLock");
+
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndPopup();
 			}
+			ImGui::SetItemTooltip("xformOp:rotateXYZ(float3)\nRight click it to disable or delete it.\nLeft click it to change the rotate order, default is XYZ.");
+
 			ImGui::NextColumn();
 
 			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
@@ -143,7 +210,40 @@ namespace Spiecs {
 
 			ImGui::Columns(2);
 			ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 5.0f);
-			ImGui::Button("Scale");
+			
+			static bool selected = false;
+			if (ImGui::Selectable("Scale", selected))
+				selected = !selected;
+			if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+			{
+				ImGui::MenuItem("Copy");
+				ImGui::MenuItem("Paste");
+				ImGui::MenuItem("Copy Property Path");
+				ImGui::Separator();
+				ImGui::MenuItem("Disable");
+				ImGui::MenuItem("Delete");
+				ImGui::Separator();
+				ImGui::MenuItem("Set Key");
+				ImGui::MenuItem("Remove Key");
+				ImGui::MenuItem("Copy Key");
+				ImGui::MenuItem("Paste Key");
+				ImGui::Separator();
+				ImGui::MenuItem("Copy Animation");
+				ImGui::MenuItem("Paste Animation");
+				ImGui::MenuItem("Remove Animation");
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Locks"))
+				{
+					ImGui::MenuItem("Lock");
+					ImGui::MenuItem("UnLock");
+
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndPopup();
+			}
+			ImGui::SetItemTooltip("xformOp:scale(float3)\nRight click it for more options.");
+
 			ImGui::SameLine();
 			ImGui::Button(ICON_MD_LINK);
 			ImGui::NextColumn();

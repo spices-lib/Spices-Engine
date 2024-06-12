@@ -62,7 +62,6 @@ namespace Spiecs {
             ImGuiTableColumnFlags columns_base_flags = ImGuiTableColumnFlags_None;
             int freeze_cols = 1;
             int freeze_rows = 1;
-            static ImVector<int> selection;
 
             if (ImGui::BeginTable("Entity Stage", 3, flags, ImVec2(0, 0), 0.0))
             {
@@ -77,7 +76,7 @@ namespace Spiecs {
 
                     ImGui::TableSetColumnIndex(0);
 
-                    const bool item_is_selected = selection.contains((int)entityID);
+                    const bool item_is_selected = m_FrameInfo.m_PickEntityID.has_key((int)entityID);
                     ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
                     std::stringstream ss;
@@ -93,8 +92,6 @@ namespace Spiecs {
                                 * @brief Remove select entity.
                                 */
 
-                                selection.find_erase_unsorted((int)entityID);
-
                                 m_FrameInfo.m_PickEntityID.erase((int)entityID);
                             }
                             else
@@ -102,8 +99,6 @@ namespace Spiecs {
                                 /**
                                 * @brief Add select entity.
                                 */
-
-                                selection.push_back((int)entityID);
 
                                 m_FrameInfo.m_PickEntityID.push_back((int)entityID, (*tComp.GetTag().begin()));
                             }
@@ -113,9 +108,6 @@ namespace Spiecs {
                             /**
                             * @brief Set a select entity.
                             */
-
-                            selection.clear();
-                            selection.push_back((int)entityID);
 
                             m_FrameInfo.m_PickEntityID.clear();
                             m_FrameInfo.m_PickEntityID.push_back((int)entityID, (*tComp.GetTag().begin()));

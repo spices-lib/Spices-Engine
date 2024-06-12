@@ -20,7 +20,7 @@ namespace scl {
         if(object_.find(name) != object_.end())
         {
             std::stringstream ss;
-            ss << "runtime_memory_list:: add failed: already has the element: " << name;
+            ss << "runtime_memory_block:: add failed: already has the element: " << name;
             
             SPIECS_CORE_WARN(ss.str());
             return;
