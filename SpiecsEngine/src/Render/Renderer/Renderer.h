@@ -113,18 +113,16 @@ namespace Spiecs {
 		/**
 		* @brief This interface is called on Window resized over (regist by swapchain).
 		* If the specific renderer uses swpachianimage attachment during CreateRenderPass(), 
-		* this interface needs to override, call CreateRenderPass() here just will be fine.
+		* this interface needs to override, callOnSlateResize here just will be fine.
 		*/
-		void OnWindowResizeOver();
+		virtual void OnWindowResizeOver() {};
 
 		/**
 		* @breif This interface is called on Viewport resize (regist by ImguiViewport).
 		* If the specific renderer uses the attachment that needs recreated during CreateRenderPass(), 
-		* this interface needs to override, call CreateRenderPass() here just will be fine.
-		* If the specific renderer uses the input attachment during CreateRenderPass(), 
-		* this interface needs to override, see SceneComposeRenderer::OnSlateResize() for sample.
+		* this interface needs to override, call CreateRenderPass() and CreateDescriptorSet() here just will be fine.
 		*/
-		void OnSlateResize();
+		virtual void OnSlateResize();
 
 		/**
 		* @brief Register material to Specific Renderer.

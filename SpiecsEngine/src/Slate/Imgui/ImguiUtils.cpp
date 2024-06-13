@@ -69,7 +69,7 @@ namespace Spiecs {
         id = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
     }
 
-    void ImguiSlate::QueryIsResizedThisFrame(ImVec2 thisFrameSize)
+    void ImguiSlate::QueryIsResizedThisFrame(const ImVec2& thisFrameSize)
     {
         SPIECS_PROFILE_ZONE;
 

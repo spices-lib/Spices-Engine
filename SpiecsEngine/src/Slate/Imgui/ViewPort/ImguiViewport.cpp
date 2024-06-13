@@ -104,9 +104,31 @@ namespace Spiecs {
         EventDispatcher dispatcher(event);
 
         /**
-        * @brief Dispatch SlateResizeEvent to ImguiViewport::OnSlateResize.
+        * @brief Dispatch SlateResizeEvent.
         */
         dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(ImguiViewport::OnSlateResize));
+        dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(ImguiViewport::OnWindowResizeOver));
+    }
+
+    void ImguiViewport::QueryIsResizedThisFrame(const ImVec2& thisFrameSize)
+    {
+        SPIECS_PROFILE_ZONE;
+
+        /**
+        * @brief Clamp min value to 1 for viewport.
+        */
+        ImVec2 tempSize = ImVec2(glm::max(thisFrameSize.x, 1.0f), glm::max(thisFrameSize.y, 1.0f));
+
+        if (m_PanelSize.x != tempSize.x || m_PanelSize.y != tempSize.y)
+        {
+            m_IsResized = true;
+        }
+        else
+        {
+            m_IsResized = false;
+        }
+
+        m_PanelSize = tempSize;
     }
 
     std::pair<uint32_t, uint32_t> ImguiViewport::GetMousePosInViewport()
@@ -125,6 +147,31 @@ namespace Spiecs {
     }
 
     bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
+    {
+        SPIECS_PROFILE_ZONE;
+
+        /**
+        * @brief Free old Viewport image DescriptorSet.
+        */
+        ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(m_ViewportID));
+
+        /**
+        * @brief Get SceneColor Info again.
+        */
+        VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
+
+        /**
+        * @brief Create SceneColor DescriptorSet.
+        */
+        m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
+
+        /**
+        * @brief Do not block the event.
+        */
+        return false;
+    }
+
+    bool ImguiViewport::OnWindowResizeOver(WindowResizeOverEvent& event)
     {
         SPIECS_PROFILE_ZONE;
 

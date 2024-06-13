@@ -119,6 +119,7 @@ namespace Spiecs {
 		* @brief This funtion is called on window is resized over.
 		* @param[in] event WindowResizeOverEvent.
 		* @return Returns true if need block event.
+		* @attention: Minimize Window registy OnWindowResizeOver, OnSlateResize will not be registy.
 		*/
 		bool OnWindowResizeOver(WindowResizeOverEvent& event);
 

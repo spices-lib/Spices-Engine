@@ -51,17 +51,6 @@ namespace Spiecs {
 		CreateDefaultMaterial();
 	}
 
-	void Renderer::OnWindowResizeOver()
-	{
-		SPIECS_PROFILE_ZONE;
-
-		/**
-		* @brief Just call OnSlateResize.
-		* @todo Remove it.
-		*/
-		OnSlateResize();
-	}
-
 	void Renderer::OnSlateResize()
 	{
 		SPIECS_PROFILE_ZONE;

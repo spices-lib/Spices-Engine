@@ -42,6 +42,16 @@ namespace Spiecs {
 		InitImgui();
 	}
 
+	void SlateRenderer::OnWindowResizeOver()
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Just call OnSlateResize.
+		*/
+		Renderer::OnSlateResize();
+	}
+
 	void SlateRenderer::InitImgui()
 	{
 		SPIECS_PROFILE_ZONE;

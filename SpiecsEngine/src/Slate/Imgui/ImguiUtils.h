@@ -95,7 +95,7 @@ namespace Spiecs{
 		* @brief Query whether viewport is resized this frame.
 		* @param[in] thisFrameSize The size of Viewport this Frame.
 		*/
-		void QueryIsResizedThisFrame(ImVec2 thisFrameSize);
+		virtual void QueryIsResizedThisFrame(const ImVec2& thisFrameSize);
 
 	public:
 

@@ -24,7 +24,7 @@ namespace Spiecs {
 	/**
 	* @brief Window create parameter.
 	*/
-	const WindowInfo initInfo{ 1920, 1080, "Spiecs Engine"};
+	const WindowInfo initInfo{ 1600, 900, "Spiecs Engine"};
 
 	VulkanState                           VulkanRenderBackend::m_VulkanState;
 	std::shared_ptr<VulkanDescriptorPool> VulkanRenderBackend::m_VulkanDescriptorPool;
@@ -351,11 +351,6 @@ namespace Spiecs {
 		*/
 		m_VulkanSwapChain->Destroy();
 		m_VulkanSwapChain->Create();
-
-		/**
-		* @brief Recreate all resources which size is determained by viewportsize.
-		*/
-		m_RendererResourcePool->OnSlateResize(event.GetWidth(), event.GetHeight());
 
 		/**
 		* @brief Recreate all rendererpass which size is determained by viewportsize.

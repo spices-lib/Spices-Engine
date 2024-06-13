@@ -65,6 +65,13 @@ namespace Spiecs {
 		*/
 		virtual void OnSystemInitialize() override;
 
+		/**
+		* @brief This interface is called on Window resized over (regist by swapchain).
+		* If the specific renderer uses swpachianimage attachment during CreateRenderPass(),
+		* this interface needs to override, callOnSlateResize here just will be fine.
+		*/
+		virtual void OnWindowResizeOver() override;
+
 	private:
 
 		/**

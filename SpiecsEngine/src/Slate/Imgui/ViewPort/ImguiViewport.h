@@ -64,6 +64,15 @@ namespace Spiecs {
 		*/
 		virtual void OnEvent(Event& event) override;
 
+	protected:
+
+		/**
+		* @brief Query whether viewport is resized this frame.
+		* Clamp min m_panelsize value to 1 here, for vulkan can not work with 0 extent.
+		* @param[in] thisFrameSize The size of Viewport this Frame.
+		*/
+		virtual void QueryIsResizedThisFrame(const ImVec2& thisFrameSize) override;
+
 	public:
 
 		/**
@@ -87,7 +96,12 @@ namespace Spiecs {
 		*/
 		bool OnSlateResize(SlateResizeEvent& event);
 
-		
+		/**
+		* @brief Event Dispatcher target. Registy on Windows Resized.
+		* @param[in] event WindowResizeOverEvent.
+		* @return Returns true if need block the event.
+		*/
+		bool OnWindowResizeOver(WindowResizeOverEvent& event);
 
 	private:
 
