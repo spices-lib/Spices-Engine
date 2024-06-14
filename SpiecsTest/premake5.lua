@@ -19,8 +19,8 @@ project "SpiecsTest"
 
 	includedirs
 	{
-		"%{wks.location}/SpiecsEngine/src",
 		"src",
+		"%{wks.location}/SpiecsEngine/src",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.stb_image}",
@@ -33,6 +33,12 @@ project "SpiecsTest"
 		"%{IncludeDir.googlemock}",
 		"%{IncludeDir.tracy}",
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
+		"%{IncludeDir.yaml_cpp}",              -- Library: yaml_cpp Source Folder.
+		"%{IncludeDir.rapidyaml}",             -- Library: rapidyaml Source Folder.
+		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
+		"%{IncludeDir.NvPerf}",                -- Library: NvPerf Source Folder.
+		"%{IncludeDir.NvPerfUtility}",         -- Library: NvPerfUtility Source Folder.
+		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
 	}
 
 	links
@@ -44,11 +50,23 @@ project "SpiecsTest"
 	filter "system:windows"
 		systemversion "latest"
 		editAndContinue "Off"
+		
 
 	filter "configurations:Debug"
+		defines
+		{
+			"SPIECS_DEBUG",
+			"TRACY_ENABLE"
+		}
 		runtime "Debug"
 		symbols "On"
+		
 
 	filter "configurations:Release"
+		defines
+		{
+			"SPIECS_RELEASE",
+		}
 		runtime "Release"
 		optimize "On"
+		

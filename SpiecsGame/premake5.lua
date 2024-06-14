@@ -58,7 +58,7 @@ project "SpiecsGame"
 	filter "configurations:Release"
 		defines
 		{
-			"SPIECS_DEBUG",
+			"SPIECS_RELEASE",
 		}
 		runtime "Release"
 		optimize "On"
