@@ -44,7 +44,11 @@ namespace Spiecs {
 	* @param[in] shaderStage What Stage shader use.
 	* @param[in] shaderPath Shader path(short path).
 	*/
-	static void SerializeShaderConfig(YAML::Emitter& out, const std::string& shaderStage, const std::string& shaderPath);
+	static void SerializeShaderConfig(
+		YAML::Emitter&     out         , 
+		const std::string& shaderStage , 
+		const std::string& shaderPath
+	);
 
 	/**
 	* @brief Serialze Texture Config.
@@ -52,7 +56,11 @@ namespace Spiecs {
 	* @param[in] name Texture name.
 	* @param[in] param Texture parameter.
 	*/
-	static void SerializeTextureConfig(YAML::Emitter& out, const std::string& name, const TextureParam& param);
+	static void SerializeTextureConfig(
+		YAML::Emitter&      out   , 
+		const std::string&  name  , 
+		const TextureParam& param
+	);
 
 	bool MaterialLoader::Load(const std::string& fileName, Material* outMaterial)
 	{
@@ -78,6 +86,8 @@ namespace Spiecs {
 
 	bool MaterialLoader::LoadFromMaterial(const std::string& filepath, Material* outMaterial)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Read .material file as bytes.
 		*/
@@ -153,7 +163,10 @@ namespace Spiecs {
 
 	bool MaterialLoader::LoadFromSASSET(const std::string& filepath, Material* outMaterial)
 	{
-		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) {
+		SPIECS_PROFILE_ZONE;
+
+		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) 
+		{
 			return false;
 		}
 
