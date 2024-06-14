@@ -1,3 +1,9 @@
+/**
+* @file linked_unordered_map_test.h.
+* @brief The linked_unordered_map_test Definitions.
+* @author Spiecs.
+*/
+
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Container/linked_unordered_map.h>
@@ -5,7 +11,8 @@
 namespace SpiecsTest {
 
 	/**
-	* @brief Unit Test for linked_unordered_map
+	* @brief The interface is inherited from testing::Test.
+	* Registy on Initialize.
 	*/
 	class linked_unordered_map_test : public testing::Test
 	{

@@ -1,3 +1,9 @@
+/**
+* @file runtime_memory_block_test.h.
+* @brief The runtime_memory_block_test Definitions.
+* @author Spiecs.
+*/
+
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Container/runtime_memory_block.h>
@@ -12,7 +18,8 @@ namespace SpiecsTest {
 	protected:
 
 		/**
-		* @brief Testing class initialize funtion.
+		* @brief The interface is inherited from testing::Test.
+		* Registy on Initialize.
 		*/
 		void SetUp() override {
 			m0.add_element("1", "float");

@@ -244,18 +244,21 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		uint32_t channelsize = 32;
+		uint32_t channelsize = 4;
 
 		/**
 		* @todo Support all type;
 		*/
 		switch (m_Format)
 		{
-		case VK_FORMAT_B8G8R8A8_UNORM:  // 4 bytes.
-			channelsize = 32;
+		case VK_FORMAT_B8G8R8A8_UNORM:           // 4 bytes.
+			channelsize = 4;			         
+			break;						         
+		case VK_FORMAT_R32_SFLOAT:               // 4 bytes.
+			channelsize = 4;
 			break;
-		case VK_FORMAT_R32_SFLOAT:      // 4 bytes.
-			channelsize = 32;
+		case VK_FORMAT_R32G32B32A32_SFLOAT:      // 16 bytes.
+			channelsize = 16;
 			break;
 		}
 

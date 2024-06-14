@@ -35,7 +35,7 @@ namespace Spiecs {
 		VkDeviceSize imageSize = resourceptr->m_Width * resourceptr->m_Height * 4;
 
 		if (!pixels) {
-			throw std::runtime_error("failed to load texture image!");
+			SPIECS_CORE_ERROR("Failed to load texture image!");
 		}
 
 		VulkanBuffer stagingBuffer(resourceptr->m_VulkanState, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
