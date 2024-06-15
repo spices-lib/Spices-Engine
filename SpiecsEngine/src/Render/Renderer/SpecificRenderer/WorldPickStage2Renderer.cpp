@@ -32,7 +32,12 @@ namespace Spiecs {
 
 		RendererPassBuilder{ "WorldPickStage2", this }
 		.AddSubPass("WorldPickStage2")
-		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		})
+		.AddColorAttachment("TestCube", TextureType::Texture2DCube, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
 		.EndSubPass()

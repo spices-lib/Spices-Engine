@@ -7,6 +7,8 @@
 #pragma once
 #include "Core/Core.h"
 #include "Resources/Texture/Texture2D.h"
+#include "Resources/Texture/Texture2DArray.h"
+#include "Resources/Texture/Texture2DCube.h"
 
 namespace Spiecs{
 
@@ -46,6 +48,11 @@ namespace Spiecs{
 		* @brief Texture's name.
 		*/
 		std::string name;
+
+		/**
+		* @brief Texture's Class Type.
+		*/
+		TextureType type = TextureType::Texture2D;
 
 		/**
 		* @brief Texture'width.

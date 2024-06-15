@@ -6,6 +6,7 @@ layout(location = 0) in struct FragInput {
 } fragInput;
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outTestCube;
 
 // push constant
 
@@ -54,6 +55,7 @@ void main()
 	if (outLine < 0.1f) discard;
 
 	outColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);
+	outTestCube = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }
 
 float SampleWithOffest(vec2 uv_offest)

@@ -9,6 +9,11 @@
 
 namespace Spiecs {
 
+	Texture2DArray::Texture2DArray(const RendererResourceCreateInfo& info)
+	{
+
+	}
+
 	Texture2DArray::Texture2DArray(const std::string& path)
 	{
 		m_ResourcePath = path;

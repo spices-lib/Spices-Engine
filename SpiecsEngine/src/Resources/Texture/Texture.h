@@ -14,6 +14,17 @@
 namespace Spiecs {
 
 	/**
+	* @brief The enum of all Texture Type.
+	*/
+	enum class TextureType
+	{
+		Texture2D,
+		Texture2DArray,
+		Texture2DCube,
+		MAX
+	};
+
+	/**
 	* @brief Texture Class.
 	* This class defines the basic behaver of texture.
 	* When we add an new Texture, we need inherit from this.

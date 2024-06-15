@@ -26,6 +26,13 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
+		* Used for create render resource.
+		* @param[in] info RendererResourceCreateInfo.
+		*/
+		Texture2DArray(const RendererResourceCreateInfo& info);
+
+		/**
+		* @brief Constructor Function.
 		* Init class variable, load date immediatelly.
 		* Usually call it.
 		* @param[in] path Image Path in disk.

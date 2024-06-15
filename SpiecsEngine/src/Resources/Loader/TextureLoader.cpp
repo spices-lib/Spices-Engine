@@ -100,14 +100,17 @@ namespace Spiecs {
 		resourceptr->CreateImage(
 			resourceptr->m_VulkanState,
 			filePath,
+			VK_IMAGE_TYPE_2D,
 			resourceptr->m_Width,
 			resourceptr->m_Height,
+			1,                                         // 1 layers.
 			VK_SAMPLE_COUNT_1_BIT,                     // No MASS.
 			VK_FORMAT_R8G8B8A8_UNORM,                  // RGBA8 Format.
 			VK_IMAGE_TILING_OPTIMAL,                   // Tiling Optimal.
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT |          // Can be Used for Transfer_src
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT |          // Can be Used for Transfer_dst
 			VK_IMAGE_USAGE_SAMPLED_BIT,                // Can be Used for Sample
+			0,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			resourceptr->m_MipLevels
 		);
@@ -145,6 +148,7 @@ namespace Spiecs {
 		*/
 		resourceptr->CreateImageView(
 			VK_FORMAT_R8G8B8A8_UNORM, 
+			VK_IMAGE_VIEW_TYPE_2D,
 			VK_IMAGE_ASPECT_COLOR_BIT
 		);
 

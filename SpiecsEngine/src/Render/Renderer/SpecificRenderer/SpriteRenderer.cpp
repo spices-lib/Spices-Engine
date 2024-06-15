@@ -16,10 +16,10 @@ namespace Spiecs {
 
 		RendererPassBuilder{ "Sprite", this }
 		.AddSubPass("Sprite")
-		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			isEnableBlend = true;
 		})
-		.AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})

@@ -22,7 +22,21 @@ namespace Spiecs {
 		/**
 		* @brief Create the texture with specific info.
 		*/
-		m_Texture = std::make_unique<Texture2D>(info);
+		switch (info.type)
+		{
+		case TextureType::Texture2D:
+			m_Texture = std::make_unique<Texture2D>(info);
+			break;
+		case TextureType::Texture2DArray:
+			m_Texture = std::make_unique<Texture2DArray>(info);
+			break;
+		case TextureType::Texture2DCube:
+			m_Texture = std::make_unique<Texture2DCube>(info);
+			break;
+		default:
+			SPIECS_CORE_ERROR("Not supported Texture Class Type");
+			break;
+		}
 	}
 
 	void RendererResource::OnResized(uint32_t width, uint32_t height)
@@ -47,6 +61,20 @@ namespace Spiecs {
 		/**
 		* @brief Recreate the texture with specific info.
 		*/
-		m_Texture = std::make_unique<Texture2D>(m_Info);
+		switch (m_Info.type)
+		{
+		case TextureType::Texture2D:
+			m_Texture = std::make_unique<Texture2D>(m_Info);
+			break;
+		case TextureType::Texture2DArray:
+			m_Texture = std::make_unique<Texture2DArray>(m_Info);
+			break;
+		case TextureType::Texture2DCube:
+			m_Texture = std::make_unique<Texture2DCube>(m_Info);
+			break;
+		default:
+			SPIECS_CORE_ERROR("Not supported Texture Class Type");
+			break;
+		}
 	}
 }

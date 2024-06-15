@@ -37,24 +37,30 @@ namespace Spiecs {
 		* Create the vkImage by specific parameters.
 		* @param[in] vulkanState, The VulkanObject in used this frame.
 		* @param[in] name, Image's name.
+		* @param[in] type, Image's type.
 		* @param[in] width, Image's width.
 		* @param[in] height, Image's height.
+		* @param[in] layers, Image's layers(texturecube).
 		* @param[in] numSamples, Image's MSAA sample num.(8 if enable MSAA).
 		* @param[in] format, Image's format.
 		* @param[in] tiling, Image's tilling.
 		* @param[in] usage, Image's used stage.
+		* @param[in] flages, Image's used flages.
 		* @param[in] properties, Image's data memory requirement.
 		* @param[in] mipLevels, Image's mipnum, if need.
 		*/
 		VulkanImage(
 			VulkanState&          vulkanState  ,
 			const std::string&    name         ,
+			VkImageType           type         ,
 			uint32_t              width        ,
 			uint32_t              height       ,
+			uint32_t              layers       ,
 			VkSampleCountFlagBits numSamples   ,
 			VkFormat              format       ,
 			VkImageTiling         tiling       ,
 			VkImageUsageFlags     usage        ,
+			VkImageCreateFlags    flages       ,
 			VkMemoryPropertyFlags properties   ,
 			uint32_t              mipLevels     
 		);
@@ -142,10 +148,12 @@ namespace Spiecs {
 		/**
 		* @brief Create Image View.
 		* @param[in] format VkFormat.
+		* @param[in] viewType VkImageViewType.
 		* @param[in] aspectFlags VkImageAspectFlags.
 		*/
 		void CreateImageView(
 			VkFormat           format      , 
+			VkImageViewType    viewType    ,
 			VkImageAspectFlags aspectFlags
 		);
 
@@ -158,24 +166,30 @@ namespace Spiecs {
 		* @breif Create a VkImage.
 		* @param[in] vulkanState, The VulkanObject in used this frame.
 		* @param[in] name, Image's name.
+		* @param[in] type, Image's type.
 		* @param[in] width, Image's width.
 		* @param[in] height, Image's height.
+		* @param[in] layers, Image's layers(texturecube).
 		* @param[in] numSamples, Image's MSAA sample num.(8 if enable MSAA).
 		* @param[in] format, Image's format.
 		* @param[in] tiling, Image's tilling.
 		* @param[in] usage, Image's used stage.
+		* @param[in] flages, Image's used flages.
 		* @param[in] properties, Image's data memory requirement.
 		* @param[in] mipLevels, Image's mipnum, if need.
 		*/
 		void CreateImage(
 			VulkanState&           vulkanState   , 
 			const std::string&     name          ,
+			VkImageType            type          ,
 			uint32_t               width         , 
 			uint32_t               height        , 
+			uint32_t               layers        ,
 			VkSampleCountFlagBits  numSamples    , 
 			VkFormat               format        , 
 			VkImageTiling          tiling        , 
 			VkImageUsageFlags      usage         , 
+			VkImageCreateFlags     flages        ,
 			VkMemoryPropertyFlags  properties    , 
 			uint32_t               mipLevels
 		);
@@ -212,14 +226,19 @@ namespace Spiecs {
 		int m_Height = 0;
 
 		/**
-		* @brief Image layer.
+		* @brief Image layer(texturecube: 6).
 		*/
-		int m_Layers = 1;
+		uint32_t m_Layers = 1;
 
 		/**
 		* @brief Image mipmaps num.
 		*/
 		uint32_t m_MipLevels = 1;
+
+		/**
+		* @brief Image Type.
+		*/
+		VkImageType m_ImageType;
 
 		/**
 		* @brief The image format.

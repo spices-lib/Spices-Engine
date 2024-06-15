@@ -30,8 +30,10 @@ namespace SpiecsTest {
 			m_VulkanImage = std::make_unique<Spiecs::VulkanImage>(
 				m_RenderBackend->GetState(),
 				"TestImage",
+				VK_IMAGE_TYPE_2D,
 				m_TextureSize,
 				m_TextureSize,
+				1,
 				VK_SAMPLE_COUNT_1_BIT,
 				VK_FORMAT_R32G32B32A32_SFLOAT,
 				VK_IMAGE_TILING_OPTIMAL,
@@ -40,6 +42,7 @@ namespace SpiecsTest {
 				VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT |    // Can be used for InputAttachment.
 				VK_IMAGE_USAGE_TRANSFER_SRC_BIT     |    // Can be used for TransferSrc.
 				VK_IMAGE_USAGE_TRANSFER_DST_BIT,         // Can be used for TransferDst.
+				0,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				1
 			);

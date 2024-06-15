@@ -16,16 +16,16 @@ namespace Spiecs {
 
 		RendererPassBuilder{ "BassPass", this }
 		.AddSubPass("SkyBox")
-		.AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Diffuse", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
-		.AddColorAttachment("Position", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
-		.AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			description.format = VK_FORMAT_R32_SFLOAT;
@@ -36,19 +36,19 @@ namespace Spiecs {
 		})
 		.EndSubPass()
 		.AddSubPass("Mesh")
-		.AddColorAttachment("Diffuse", [](bool& isEnableBlend, VkAttachmentDescription& description) {})
-		.AddColorAttachment("Normal", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Diffuse", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
+		.AddColorAttachment("Normal", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
-		.AddColorAttachment("Specular", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Specular", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
-		.AddColorAttachment("Position", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
-		.AddColorAttachment("ID", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format = VK_FORMAT_R32_SFLOAT;
 		})
 		.AddDepthAttachment([](VkAttachmentDescription& description) {})

@@ -268,11 +268,16 @@ namespace Spiecs {
 			/**
 			* @brief Add a color attachment.
 			* @param[in] attachmentName Attachment Name.
+			* @param[in] type Attachment TextureType.
 			* @param[in] T Defines Specific VkAttachmentDescription.
 			* @return Returns the RendererPassBuilder.
 			*/
 			template<typename T>
-			RendererPassBuilder& AddColorAttachment(const std::string& attachmentName, T func);
+			RendererPassBuilder& AddColorAttachment(
+				const std::string& attachmentName ,
+				TextureType        type           ,
+				T                  func
+			);
 
 			/**
 			* @brief Add a depth attachment.
@@ -284,12 +289,17 @@ namespace Spiecs {
 
 			/**
 			* @brief Add a input attachment.
-			* * @param[in] attachmentName Attachment Name.
+			* @param[in] attachmentName Attachment Name.
+			* @param[in] type Attachment TextureType.
 			* @param[in] T Defines Specific VkAttachmentDescription.
 			* @return Returns the RendererPassBuilder.
 			*/
 			template<typename T>
-			RendererPassBuilder& AddInputAttachment(const std::string& attachmentName, T func);
+			RendererPassBuilder& AddInputAttachment(
+				const std::string& attachmentName , 
+				TextureType        type           ,
+				T                  func
+			);
 
 			/**
 			* @brief End recording a subpass.
@@ -928,6 +938,7 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddColorAttachment(
 		const std::string& attachmentName , 
+		TextureType        type           ,
 		T                  func
 	)
 	{
@@ -992,6 +1003,7 @@ namespace Spiecs {
 		*/
 		RendererResourceCreateInfo Info;
 		Info.name                               = attachmentName;
+		Info.type                               = type;
 		Info.description                        = attachmentDescription;
 		Info.width                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
@@ -1071,6 +1083,7 @@ namespace Spiecs {
 	template<typename T>
 	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddInputAttachment(
 		const std::string& attachmentName , 
+		TextureType        type           ,
 		T                  func
 	)
 	{
@@ -1106,6 +1119,7 @@ namespace Spiecs {
 		*/
 		RendererResourceCreateInfo Info;
 		Info.name                               = attachmentName;
+		Info.type                               = type;
 		Info.description                        = attachmentDescription;
 		Info.width                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;

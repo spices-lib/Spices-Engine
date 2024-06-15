@@ -21,8 +21,10 @@ namespace Spiecs {
 			m_Resource = std::make_shared<VulkanImage>(
 				VulkanRenderBackend::GetState(),
 				info.name,
+				VK_IMAGE_TYPE_2D,
 				info.width,
 				info.height,
+				1,
 				info.description.samples,
 				info.description.format,
 				VK_IMAGE_TILING_OPTIMAL,
@@ -30,12 +32,13 @@ namespace Spiecs {
 				VK_IMAGE_USAGE_SAMPLED_BIT            |  // Can be used for ShaderRead.
 				VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT   |  // Can be used for InputAttachment.
 				VK_IMAGE_USAGE_TRANSFER_SRC_BIT,         // Can be used for TransferSrc.
+				0,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				1
 			);
 
 			auto resourceptr = GetResource<VulkanImage>();
-			resourceptr->CreateImageView(info.description.format, VK_IMAGE_ASPECT_COLOR_BIT);
+			resourceptr->CreateImageView(info.description.format, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT);
 
 			resourceptr->CreateSampler();
 		}
@@ -44,20 +47,23 @@ namespace Spiecs {
 			m_Resource = std::make_shared<VulkanImage>(
 				VulkanRenderBackend::GetState(),
 				info.name,
+				VK_IMAGE_TYPE_2D,
 				info.width,
 				info.height,
+				1,
 				info.description.samples,
 				info.description.format,
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT   | // Can be used for DepthAttachment.
 				VK_IMAGE_USAGE_SAMPLED_BIT                    | // Can be used for ShaderRead.
 				VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,            // Can be used for InputAttachment.
+				0,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				1
 			);
 
 			auto resourceptr = GetResource<VulkanImage>();
-			resourceptr->CreateImageView(info.description.format, VK_IMAGE_ASPECT_DEPTH_BIT);
+			resourceptr->CreateImageView(info.description.format, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT);
 
 			resourceptr->TransitionImageLayout(
 				info.description.format,

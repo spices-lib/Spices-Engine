@@ -41,24 +41,24 @@ namespace Spiecs {
 
 		RendererPassBuilder{ "SceneCompose", this }
 		.AddSubPass("SceneCompose")
-		.AddColorAttachment("SceneColor", [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		})
-		.AddInputAttachment("Diffuse", [](VkAttachmentDescription& description) {
+		.AddInputAttachment("Diffuse", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
-		.AddInputAttachment("Normal", [](VkAttachmentDescription& description) {
+		.AddInputAttachment("Normal", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
-		.AddInputAttachment("Specular", [](VkAttachmentDescription& description) {
+		.AddInputAttachment("Specular", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
-		.AddInputAttachment("Position", [](VkAttachmentDescription& description) {
+		.AddInputAttachment("Position", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
-		.AddInputAttachment("Depth", [&](VkAttachmentDescription& description) {
+		.AddInputAttachment("Depth", TextureType::Texture2D, [&](VkAttachmentDescription& description) {
 			description.format = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
 			description.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

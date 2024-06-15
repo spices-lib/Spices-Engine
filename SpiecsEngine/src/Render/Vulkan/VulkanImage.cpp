@@ -17,18 +17,23 @@ namespace Spiecs {
 	VulkanImage::VulkanImage(
 		VulkanState&          vulkanState , 
 		const std::string&    name        ,
+		VkImageType           type        ,
 		uint32_t              width       , 
 		uint32_t              height      , 
+		uint32_t              layers      ,
 		VkSampleCountFlagBits numSamples  , 
 		VkFormat              format      ,   
 		VkImageTiling         tiling      , 
-		VkImageUsageFlags     usage       , 
+		VkImageUsageFlags     usage       ,
+		VkImageCreateFlags    flages      ,
 		VkMemoryPropertyFlags properties  , 
 		uint32_t              mipLevels
 	)
 		: VulkanObject(vulkanState)
 		, m_Width(width)
 		, m_Height(height)
+		, m_Layers(layers)
+		, m_ImageType(type)
 		, m_Format(format)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -36,7 +41,21 @@ namespace Spiecs {
 		/**
 		* @brief Create Image.
 		*/
-		CreateImage(vulkanState, name, width, height, numSamples, format, tiling, usage, properties, mipLevels);
+		CreateImage(
+			vulkanState, 
+			name, 
+			type,
+			width, 
+			height, 
+			layers, 
+			numSamples, 
+			format, 
+			tiling, 
+			usage,
+			flages,
+			properties, 
+			mipLevels
+		);
 	}
 
 	VulkanImage::~VulkanImage()
@@ -93,7 +112,7 @@ namespace Spiecs {
 		barrier.subresourceRange.baseMipLevel     = 0;
 		barrier.subresourceRange.levelCount       = m_MipLevels;
 		barrier.subresourceRange.baseArrayLayer   = 0;
-		barrier.subresourceRange.layerCount       = 1;
+		barrier.subresourceRange.layerCount       = m_Layers;
 		barrier.srcAccessMask                     = 0;
 		barrier.dstAccessMask                     = 0;
 
@@ -227,7 +246,7 @@ namespace Spiecs {
 		region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
 		region.imageSubresource.mipLevel       = 0;
 		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount     = 1;
+		region.imageSubresource.layerCount     = m_Layers;
 
 		region.imageOffset                     = { 0, 0, 0 };
 		region.imageExtent                     = { width, height, 1 };
@@ -299,7 +318,7 @@ namespace Spiecs {
 		region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
 		region.imageSubresource.mipLevel       = 0;
 		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount     = 1;
+		region.imageSubresource.layerCount     = m_Layers;
 
 		region.imageOffset.x                   = x;
 		region.imageOffset.y                   = y;
@@ -362,7 +381,7 @@ namespace Spiecs {
 		barrier.dstQueueFamilyIndex                  = VK_QUEUE_FAMILY_IGNORED;
 		barrier.subresourceRange.aspectMask          = VK_IMAGE_ASPECT_COLOR_BIT;
 		barrier.subresourceRange.baseArrayLayer      = 0;
-		barrier.subresourceRange.layerCount          = 1;
+		barrier.subresourceRange.layerCount          = m_Layers;
 		barrier.subresourceRange.levelCount          = 1;
 
 		int32_t mipWidth = texWidth;
@@ -402,13 +421,13 @@ namespace Spiecs {
 				blit.srcSubresource.aspectMask           = VK_IMAGE_ASPECT_COLOR_BIT;
 				blit.srcSubresource.mipLevel             = i - 1;
 				blit.srcSubresource.baseArrayLayer       = 0;
-				blit.srcSubresource.layerCount           = 1;
+				blit.srcSubresource.layerCount           = m_Layers;
 				blit.dstOffsets[0]                       = { 0, 0, 0 };
 				blit.dstOffsets[1]                       = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 };
 				blit.dstSubresource.aspectMask           = VK_IMAGE_ASPECT_COLOR_BIT;
 				blit.dstSubresource.mipLevel             = i;
 				blit.dstSubresource.baseArrayLayer       = 0;
-				blit.dstSubresource.layerCount           = 1;
+				blit.dstSubresource.layerCount           = m_Layers;
 
 				/**
 				* @brief BitlImage.
@@ -454,7 +473,7 @@ namespace Spiecs {
 		});
 	}
 
-	void VulkanImage::CreateImageView(VkFormat format, VkImageAspectFlags aspectFlags)
+	void VulkanImage::CreateImageView(VkFormat format, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -464,13 +483,13 @@ namespace Spiecs {
 		VkImageViewCreateInfo viewInfo{};
 		viewInfo.sType                             = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image                             = m_Image;
-		viewInfo.viewType                          = VK_IMAGE_VIEW_TYPE_2D;
+		viewInfo.viewType                          = viewType;
 		viewInfo.format                            = format;
 		viewInfo.subresourceRange.aspectMask       = aspectFlags;
 		viewInfo.subresourceRange.baseMipLevel     = 0;
 		viewInfo.subresourceRange.levelCount       = m_MipLevels;
 		viewInfo.subresourceRange.baseArrayLayer   = 0;
-		viewInfo.subresourceRange.layerCount       = 1;
+		viewInfo.subresourceRange.layerCount       = m_Layers;
 
 		/**
 		* @brief Create ImageView. 
@@ -522,12 +541,15 @@ namespace Spiecs {
 	void VulkanImage::CreateImage(
 		VulkanState&          vulkanState ,
 		const std::string&    name        ,
+		VkImageType           type        ,
 		uint32_t              width       , 
 		uint32_t              height      , 
+		uint32_t              layers      ,
 		VkSampleCountFlagBits numSamples  , 
 		VkFormat              format      , 
 		VkImageTiling         tiling      , 
 		VkImageUsageFlags     usage       , 
+		VkImageCreateFlags    flages      ,
 		VkMemoryPropertyFlags properties  , 
 		uint32_t              mipLevels
 	)
@@ -542,19 +564,19 @@ namespace Spiecs {
 		*/
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType          = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageInfo.imageType      = VK_IMAGE_TYPE_2D;
+		imageInfo.imageType      = type;
 		imageInfo.extent.width   = width;
 		imageInfo.extent.height  = height;
 		imageInfo.extent.depth   = 1;
 		imageInfo.mipLevels      = mipLevels;
-		imageInfo.arrayLayers    = 1;
+		imageInfo.arrayLayers    = layers;
 		imageInfo.format         = format;
 		imageInfo.tiling         = tiling;
 		imageInfo.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
 		imageInfo.usage          = usage;
 		imageInfo.sharingMode    = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples        = numSamples;
-		imageInfo.flags          = 0;
+		imageInfo.flags          = flages;
 
 		/**
 		* @brief Create Image.
