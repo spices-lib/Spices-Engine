@@ -25,6 +25,11 @@ namespace Spiecs {
 		*/
 		Texture2D() {};
 
+		/**
+		* @brief Constructor Function.
+		* Used for create render resource.
+		* @param[in] info RendererResourceCreateInfo.
+		*/
 		Texture2D(const RendererResourceCreateInfo& info);
 
 		/**

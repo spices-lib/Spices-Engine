@@ -236,7 +236,14 @@ namespace Spiecs {
 		* @brief Use Custom Cmd.
 		*/
 		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
-			vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+			vkCmdCopyBufferToImage(
+				commandBuffer, 
+				buffer, 
+				image, 
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+				1, 
+				&region
+			);
 		});
 	}
 
