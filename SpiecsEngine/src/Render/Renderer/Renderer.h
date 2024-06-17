@@ -281,11 +281,17 @@ namespace Spiecs {
 
 			/**
 			* @brief Add a depth attachment.
+			* @param[in] attachmentName Attachment Name.
+			* @param[in] type Attachment TextureType.
 			* @param[in] T Defines Specific VkAttachmentDescription.
 			* @return Returns the RendererPassBuilder.
 			*/
 			template<typename T>
-			RendererPassBuilder& AddDepthAttachment(T func);
+			RendererPassBuilder& AddDepthAttachment(
+				const std::string& attachmentName ,
+				TextureType        type           ,
+				T                  func
+			);
 
 			/**
 			* @brief Add a input attachment.
@@ -1025,7 +1031,11 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddDepthAttachment(T func)
+	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddDepthAttachment(
+		const std::string& attachmentName ,
+		TextureType        type           ,
+		T func
+	)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -1058,15 +1068,16 @@ namespace Spiecs {
 		* @brief Instance a RendererResourceCreateInfo.
 		*/
 		RendererResourceCreateInfo Info;
-		Info.name                               = "Depth";
+		Info.name                               = attachmentName;
+		Info.type                               = type;
 		Info.description                        = depthAttachment;
 		Info.width                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 		Info.isDepthResource                    = true;
 
-		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessDepthResource(Info)->imageView;
+		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment("Depth", depthAttachment, clearValue, view);
+		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, depthAttachment, clearValue, view);
 
 		/**
 		* @brief Instance a VkAttachmentReference.
@@ -1075,7 +1086,7 @@ namespace Spiecs {
 		depthAttachmentRef.attachment           = index;
 		depthAttachmentRef.layout               = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-		m_HandledRendererSubPass->AdDepthAttachmentReference(depthAttachmentRef);
+		m_HandledRendererSubPass->AddDepthAttachmentReference(depthAttachmentRef);
 
 		return *this;
 	}

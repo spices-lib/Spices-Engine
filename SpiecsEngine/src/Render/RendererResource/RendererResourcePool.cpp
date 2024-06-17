@@ -44,19 +44,4 @@ namespace Spiecs {
 
 		return m_RendererResource[name]->GetTexture()->GetResource<VulkanImage>();
 	}
-
-	VkDescriptorImageInfo* RendererResourcePool::AccessDepthResource(const RendererResourceCreateInfo& info)
-	{
-		SPIECS_PROFILE_ZONE;
-
-		/**
-		* @brief Create one if isn't exist.
-		*/
-		if (m_RendererResource.find("Depth") == m_RendererResource.end())
-		{
-			m_RendererResource["Depth"] = std::make_unique<RendererResource>(info);
-		}
-
-		return m_RendererResource["Depth"]->GetTexture()->GetResource<VulkanImage>()->GetImageInfo();
-	}
 }

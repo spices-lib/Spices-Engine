@@ -66,13 +66,6 @@ namespace Spiecs {
 		*/
 		std::shared_ptr<VulkanImage> AccessRowResource(const std::string& name);
 
-		/**
-		* @brief Get Depth Resource, create it if it have not been created.
-		* @param[in] info The info used for create depth resource.
-		* @return Returns the view of the resource.
-		*/
-		VkDescriptorImageInfo* AccessDepthResource(const RendererResourceCreateInfo& info);
-
 	private:
 
 		/**

@@ -23,7 +23,7 @@ namespace Spiecs {
 		m_ColorBlends.push_back(colorBlend);
 	}
 
-	void RendererSubPass::AdDepthAttachmentReference(
+	void RendererSubPass::AddDepthAttachmentReference(
 		const VkAttachmentReference&               attachmentReference
 	)
 	{

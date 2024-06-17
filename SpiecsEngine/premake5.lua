@@ -140,7 +140,7 @@ project "SpiecsEngine"
 		defines 
 		{
 			"SPIECS_DEBUG",                  -- Debug Symbol.
-			"TRACY_ENABLE"                   -- tracy Feature Enable.
+			--"TRACY_ENABLE"                   -- tracy Feature Enable.
 		}
 
 		runtime "Debug"

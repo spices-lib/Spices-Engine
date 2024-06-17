@@ -2,7 +2,7 @@
 Shaders:
   - Stage: vert
     Path: MeshNormalVisualizer
-  - Stage: frag
-    Path: MeshNormalVisualizer
   - Stage: geom
+    Path: MeshNormalVisualizer
+  - Stage: frag
     Path: MeshNormalVisualizer

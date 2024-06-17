@@ -59,7 +59,7 @@ namespace Spiecs
 		* @brief Add a Depth Attachment to subpass.
 		* @param[in] attachmentReference VkAttachmentReference.
 		*/
-		void AdDepthAttachmentReference(
+		void AddDepthAttachmentReference(
 			const VkAttachmentReference&               attachmentReference
 		);
 

@@ -487,9 +487,9 @@ namespace Spiecs {
 		viewInfo.format                            = format;
 		viewInfo.subresourceRange.aspectMask       = aspectFlags;
 		viewInfo.subresourceRange.baseMipLevel     = 0;
-		viewInfo.subresourceRange.levelCount       = m_MipLevels;
-		viewInfo.subresourceRange.baseArrayLayer   = 0;
-		viewInfo.subresourceRange.layerCount       = m_Layers;
+		viewInfo.subresourceRange.levelCount       = m_MipLevels;                                 // mipmaps num.
+		viewInfo.subresourceRange.baseArrayLayer   = 0;                                           // layer index.(access given index layer of texturearray/texturecube)
+		viewInfo.subresourceRange.layerCount       = m_Layers;                                    // layer num.
 
 		/**
 		* @brief Create ImageView. 

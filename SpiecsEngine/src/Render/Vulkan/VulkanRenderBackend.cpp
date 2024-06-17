@@ -18,6 +18,7 @@
 #include "Render/Renderer/SpecificRenderer/WorldPickRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SpriteRenderer.h"
 #include "Render/Renderer/SpecificRenderer/WorldPickStage2Renderer.h"
+#include "Render/Renderer/SpecificRenderer/TestRenderer.h"
 
 namespace Spiecs {
 
@@ -86,6 +87,7 @@ namespace Spiecs {
 			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<TestRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>          (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 		}
 	}
@@ -110,6 +112,7 @@ namespace Spiecs {
 		{
 			RendererManager::Get()
 			.Pop("SlateRenderer")
+			.Pop("TestRenderer")
 			.Pop("WorldPickStage2Renderer")
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")

@@ -1,0 +1,8 @@
+Material: TestRenderer.Test.Default
+Shaders:
+  - Stage: vert
+    Path: TestRenderer.Test.Default
+  - Stage: geom
+    Path: TestRenderer.Test.Default
+  - Stage: frag
+    Path: TestRenderer.Test.Default

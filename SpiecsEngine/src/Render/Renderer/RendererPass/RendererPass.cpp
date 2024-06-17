@@ -122,24 +122,24 @@ namespace Spiecs {
 		});
 
 		VkSubpassDependency outDependency{};
-		outDependency.srcSubpass = m_SubPasses.size() - 1;
-		outDependency.dstSubpass = VK_SUBPASS_EXTERNAL;
-		outDependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		outDependency.dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		outDependency.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		outDependency.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		outDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+		outDependency.srcSubpass                        = m_SubPasses.size() - 1;
+		outDependency.dstSubpass                        = VK_SUBPASS_EXTERNAL;
+		outDependency.srcStageMask                      = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		outDependency.dstStageMask                      = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		outDependency.srcAccessMask                     = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		outDependency.dstAccessMask                     = VK_ACCESS_MEMORY_READ_BIT;
+		outDependency.dependencyFlags                   = VK_DEPENDENCY_BY_REGION_BIT;
 
 		subPassDepecdency.push_back(outDependency);
 
 		VkRenderPassCreateInfo renderPassInfo{};
-		renderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachmentDescription.size());
-		renderPassInfo.pAttachments    = attachmentDescription.data();
-		renderPassInfo.subpassCount    = subPassDescription.size();
-		renderPassInfo.pSubpasses      = subPassDescription.data();
-		renderPassInfo.dependencyCount = subPassDepecdency.size();
-		renderPassInfo.pDependencies   = subPassDepecdency.data();
+		renderPassInfo.sType                            = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		renderPassInfo.attachmentCount                  = static_cast<uint32_t>(attachmentDescription.size());
+		renderPassInfo.pAttachments                     = attachmentDescription.data();
+		renderPassInfo.subpassCount                     = subPassDescription.size();
+		renderPassInfo.pSubpasses                       = subPassDescription.data();
+		renderPassInfo.dependencyCount                  = subPassDepecdency.size();
+		renderPassInfo.pDependencies                    = subPassDepecdency.data();
 
 		if (m_AttachmentDescriptions.size() != m_ImageViews.size() + 1 && m_AttachmentDescriptions.size() != m_ImageViews.size())
 		{

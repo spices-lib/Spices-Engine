@@ -56,7 +56,7 @@ project "SpiecsTest"
 		defines
 		{
 			"SPIECS_DEBUG",
-			"TRACY_ENABLE"
+			--"TRACY_ENABLE"
 		}
 		runtime "Debug"
 		symbols "On"
