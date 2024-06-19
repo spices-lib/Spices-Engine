@@ -83,6 +83,12 @@ namespace Spiecs {
 		*/
 		inline VkImage& GetImage() { return m_Image; };
 
+		/**
+		* @brief Get this Layers.
+		* @return Returns the m_Layers.
+		*/
+		inline uint32_t GetLayers() { return m_Layers; };
+
 	public:
 
 		/**

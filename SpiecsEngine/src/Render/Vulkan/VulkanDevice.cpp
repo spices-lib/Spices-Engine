@@ -277,9 +277,16 @@ namespace Spiecs {
 		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
 		/**
-		* @brief Negative Viewpoet Extension
+		* @brief Negative Viewpoet Extension.
 		*/
 		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);
+
+		/**
+		* @brief MultiLayered Texture Writing Extension.
+		* shader declear that: #extension GL_ARB_shader_viewport_layer_array : enable.
+		* @note Not necessary no more in high version VulkanSDK.
+		*/
+		//m_ExtensionProperties.push_back(VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME);
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

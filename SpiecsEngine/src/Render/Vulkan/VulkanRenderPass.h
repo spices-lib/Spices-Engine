@@ -31,6 +31,7 @@ namespace Spiecs {
 		* @param[in] vulkanDevice The shared pointer of VulkanDevice.
 		* @param[in] createInfo The information helps to create a VkRenderPass.
 		* @param[in] imageViews All attachments except swapchain image view that in used.
+		* @param[in] layers The max layers of all attachments.
 		* @param[in] isUseSwapChianImage True if need apped a swpachain image view.
 		*/
 		VulkanRenderPass(
@@ -39,6 +40,7 @@ namespace Spiecs {
 			std::shared_ptr<VulkanDevice> vulkanDevice          ,
 			VkRenderPassCreateInfo&       createInfo            ,
 			std::vector<VkImageView>&     imageViews            ,
+			uint32_t                      layers                ,
 			bool                          isUseSwapChianImage
 		);
 

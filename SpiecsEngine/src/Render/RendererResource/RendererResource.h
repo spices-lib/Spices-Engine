@@ -65,6 +65,11 @@ namespace Spiecs{
 		uint32_t height = 1080;
 
 		/**
+		* @brief Texture's layer(1 for Texture2D, 6 for TextureCube, any for TextureArray).
+		*/
+		uint32_t layer = 1;
+
+		/**
 		* @brief True if this resource is a DepthResource.
 		*/
 		bool isDepthResource = false;

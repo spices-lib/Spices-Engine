@@ -293,7 +293,6 @@ namespace Spiecs {
 		* @note Init with Window's size, but we need resize it to viewport's size after.
 		*/
 		VK_CHECK(glfwCreateWindowSurface(m_VulkanState.m_Instance, m_VulkanState.m_Windows, nullptr, &m_VulkanState.m_Surface));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SURFACE_KHR, m_VulkanState.m_Surface, m_VulkanState.m_Device, "SpiecsEngineSurface");
 	}
 
 	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanInstance::InstanceDebugCallback(

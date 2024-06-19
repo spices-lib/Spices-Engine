@@ -16,6 +16,7 @@ namespace Spiecs {
 		std::shared_ptr<VulkanDevice>  vulkanDevice        ,  
 		VkRenderPassCreateInfo&        createInfo          , 
 		std::vector<VkImageView>&      imageViews          ,
+		uint32_t                       layers              ,
 		bool                           isUseSwapChianImage
 	)
 		: VulkanObject(vulkanState)
@@ -64,7 +65,7 @@ namespace Spiecs {
 				framebufferInfo.height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
 			}
 
-			framebufferInfo.layers = 1;
+			framebufferInfo.layers = layers;
 
 			/**
 			* @brief CreateFrameBuffer.

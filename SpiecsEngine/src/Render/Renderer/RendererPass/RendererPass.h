@@ -36,6 +36,7 @@ namespace Spiecs {
 		uint32_t AddAttachment(
 			const std::string&             attachmnetName ,
 			const VkAttachmentDescription& description    ,
+			uint32_t                       layers         ,
 			const VkClearValue&            clearValue
 		);
 
@@ -43,6 +44,7 @@ namespace Spiecs {
 			const std::string&             attachmnetName  , 
 			const VkAttachmentDescription& description     ,
 			const VkClearValue&            clearValue      ,
+			uint32_t                       layers          ,
 			VkImageView&                   view
 		);
 
@@ -80,6 +82,8 @@ namespace Spiecs {
 		std::vector<VkImageView> m_ImageViews;
 
 		std::shared_ptr<VulkanDevice> m_Device;
+
+		uint32_t m_MaxLayers = 1;
 
 		bool m_IsSwapChainImageInUse = false;
 	};

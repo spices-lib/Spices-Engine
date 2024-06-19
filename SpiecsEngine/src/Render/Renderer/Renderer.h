@@ -927,7 +927,7 @@ namespace Spiecs {
 		colorBlend.dstAlphaBlendFactor       = VK_BLEND_FACTOR_ZERO;
 		colorBlend.alphaBlendOp              = VK_BLEND_OP_ADD;
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment("SwapChainImage", attachmentDescription, clearValue);
+		uint32_t index = m_Renderer->m_Pass->AddAttachment("SwapChainImage", attachmentDescription, 1, clearValue);
 
 		/**
 		* @brief Instance a VkAttachmentReference.
@@ -1016,7 +1016,23 @@ namespace Spiecs {
 
 		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
+		/**
+		* @brief Get layers.
+		*/
+		uint32_t layers = 1;
+		switch (type)
+		{
+		case Spiecs::TextureType::Texture2DArray:
+			layers = m_Renderer->m_RendererResourcePool->AccessRowResource(Info.name)->GetLayers();
+			break;
+		case Spiecs::TextureType::Texture2DCube:
+			layers = 6;
+			break;
+		default:
+			break;
+		}
+
+		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, layers, view);
 
 		/**
 		* @brief Instance a VkAttachmentReference.
@@ -1077,7 +1093,23 @@ namespace Spiecs {
 
 		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, depthAttachment, clearValue, view);
+		/**
+		* @brief Get layers.
+		*/
+		uint32_t layers = 1;
+		switch (type)
+		{
+		case Spiecs::TextureType::Texture2DArray:
+			layers = m_Renderer->m_RendererResourcePool->AccessRowResource(Info.name)->GetLayers();
+			break;
+		case Spiecs::TextureType::Texture2DCube:
+			layers = 6;
+			break;
+		default:
+			break;
+		}
+
+		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, depthAttachment, clearValue, layers, view);
 
 		/**
 		* @brief Instance a VkAttachmentReference.
@@ -1137,7 +1169,7 @@ namespace Spiecs {
 
 		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, view);
+		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, 1, view); /*todo: layer config */
 
 		/**
 		* @brief Instance a VkAttachmentReference.

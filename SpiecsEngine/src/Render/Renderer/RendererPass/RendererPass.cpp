@@ -33,6 +33,7 @@ namespace Spiecs {
 	uint32_t RendererPass::AddAttachment(
 		const std::string&             attachmnetName     , 
 		const VkAttachmentDescription& description        , 
+		uint32_t                       layers             ,
 		const VkClearValue&            clearValue 
 	)
 	{
@@ -58,6 +59,7 @@ namespace Spiecs {
 			m_IsSwapChainImageInUse = true;
 		}
 
+		m_MaxLayers = glm::max(m_MaxLayers, layers);
 		m_ClearValues.push_back(clearValue);
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
 
@@ -68,6 +70,7 @@ namespace Spiecs {
 		const std::string&             attachmnetName    , 
 		const VkAttachmentDescription& description       ,
 		const VkClearValue&            clearValue        ,
+		uint32_t                       layers            ,
 		VkImageView&                   view
 	)
 	{
@@ -93,6 +96,7 @@ namespace Spiecs {
 			m_IsSwapChainImageInUse = true;
 		}
 
+		m_MaxLayers = glm::max(m_MaxLayers, layers);
 		m_ClearValues.push_back(clearValue);
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
 		m_ImageViews.push_back(view);
@@ -155,6 +159,7 @@ namespace Spiecs {
 			m_Device, 
 			renderPassInfo, 
 			m_ImageViews,
+			m_MaxLayers,
 			m_IsSwapChainImageInUse
 		);
 	}
