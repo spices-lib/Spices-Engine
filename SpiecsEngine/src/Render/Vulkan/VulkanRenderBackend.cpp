@@ -13,6 +13,7 @@
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/BasePassRenderer.h"
+#include "Render/Renderer/SpecificRenderer/ShadowRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SlateRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SceneComposeRenderer.h"
 #include "Render/Renderer/SpecificRenderer/WorldPickRenderer.h"
@@ -83,6 +84,7 @@ namespace Spiecs {
 			RendererManager::Get()
 			.Push<PreRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<BasePassRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
@@ -117,6 +119,7 @@ namespace Spiecs {
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
 			.Pop("SceneComposeRenderer")
+			.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
 			.Pop("PreRenderer");
 		}

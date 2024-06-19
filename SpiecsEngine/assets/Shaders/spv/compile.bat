@@ -4,6 +4,10 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.vert -o Shader.BasePassRenderer.SkyBox.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.frag -o Shader.BasePassRenderer.SkyBox.Default.frag.spv
 
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.ShadowRenderer.DirectionalLightShadow.Default.vert -o Shader.ShadowRenderer.DirectionalLightShadow.Default.vert.spv
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.ShadowRenderer.DirectionalLightShadow.Default.geom -o Shader.ShadowRenderer.DirectionalLightShadow.Default.geom.spv
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.ShadowRenderer.DirectionalLightShadow.Default.frag -o Shader.ShadowRenderer.DirectionalLightShadow.Default.frag.spv
+
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SceneComposeRenderer.SceneCompose.Default.vert -o Shader.SceneComposeRenderer.SceneCompose.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.SceneComposeRenderer.SceneCompose.Default.frag -o Shader.SceneComposeRenderer.SceneCompose.Default.frag.spv
 

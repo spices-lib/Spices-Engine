@@ -35,6 +35,8 @@ namespace Spiecs {
 
 	void Camera::SetOrthographic(float left, float right, float top, float bottom, float nearPlane, float farPlane)
 	{
+		m_ProjectionType = ProjectionType::Orthographic;
+
 		m_ProjectionMatrix = glm::mat4{ 1.0f };
 		m_ProjectionMatrix[0][0] = 2.0f / (right - left);
 		m_ProjectionMatrix[1][1] = 2.0f / (bottom - top);

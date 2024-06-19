@@ -78,6 +78,12 @@ namespace Spiecs {
 		*/
 		inline glm::mat4 GetPMatrix() { return m_ProjectionMatrix; };
 
+		/**
+		* @brief Get camera projection type.
+		* @return Returns the camera projection type.
+		*/
+		inline ProjectionType GetProjectionType() { return m_ProjectionType; };
+
 	private:
 
 		/**

@@ -1,0 +1,6 @@
+Material: ShadowRenderer.DirectionalLightShadow.Default
+Shaders:
+  - Stage: vert
+    Path: ShadowRenderer.DirectionalLightShadow.Default
+  - Stage: geom
+    Path: ShadowRenderer.DirectionalLightShadow.Default

@@ -65,7 +65,10 @@ namespace Spiecs {
 				framebufferInfo.height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
 			}
 
-			framebufferInfo.layers = layers;
+			/**
+			* @brief FrameBuffer Attachments layers(the max one).
+			*/
+			framebufferInfo.layers = layers;  
 
 			/**
 			* @brief CreateFrameBuffer.

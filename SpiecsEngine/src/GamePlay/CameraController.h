@@ -167,18 +167,23 @@ namespace Spiecs {
 		/**
 		* @brief The camera smart pointer get from owner's cameracomponent.
 		*/
-		std::any m_Camera;
+		std::shared_ptr<Camera> m_Camera;
 
 		/**
 		* @brief The camera transformcomponent pointer get from owner's transformcomponent.
 		*/
-		std::any m_CameraTranComp;
+		TransformComponent* m_CameraTranComp;
 
 		/**
 		* @brief The Viewport size.
 		* @todo Make it param.
 		*/
 		float m_ViewportWidth = 1920, m_ViewportHeight = 1080;
+
+		/**
+		* @brief Zoom Level, for orthographic type camera.
+		*/
+		float m_ZoomLevel = 1.0f;
 
 		/**
 		* @brief The camera spring arm.

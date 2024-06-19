@@ -1,8 +1,8 @@
 #version 460
 
-#define CUBE_FACE 6
+#define MAX_DIRECTIONALLIGHT_NUM 2
 
-layout(triangles, invocations = CUBE_FACE) in;
+layout(triangles, invocations = MAX_DIRECTIONALLIGHT_NUM) in;
 
 layout(triangle_strip, max_vertices = 3) out;
 layout(location = 0) out vec3 color;
@@ -13,8 +13,9 @@ void main()
 	{
 		gl_Layer = gl_InvocationID;
 		vec4 pos = gl_in[i].gl_Position;
+		pos.z = 1.0f;
 		gl_Position = pos;
-		color = gl_Layer < 1 ? vec3(1.0f, 0.0f, 0.0f) : vec3(0.0f, 1.0f, 0.0f);
+		color = vec3(sin(gl_InvocationID), cos(gl_InvocationID), sin(45 + gl_InvocationID));
 		EmitVertex();
 	}
 

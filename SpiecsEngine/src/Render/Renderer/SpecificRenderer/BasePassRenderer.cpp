@@ -31,7 +31,7 @@ namespace Spiecs {
 			description.format = VK_FORMAT_R32_SFLOAT;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; /*@attention It seams that layout transform is not work?*/
 			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.EndSubPass()

@@ -41,37 +41,37 @@ namespace Spiecs {
 
 			resourceptr->CreateSampler();
 		}
-		//else
-		//{
-		//	m_Resource = std::make_shared<VulkanImage>(
-		//		VulkanRenderBackend::GetState(),
-		//		info.name,
-		//		VK_IMAGE_TYPE_2D,
-		//		glm::max(info.width, info.height),
-		//		glm::max(info.width, info.height),
-		//		6,
-		//		info.description.samples,
-		//		info.description.format,
-		//		VK_IMAGE_TILING_OPTIMAL,
-		//		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT |   // Can be used for DepthAttachment.
-		//		VK_IMAGE_USAGE_SAMPLED_BIT |                    // Can be used for ShaderRead.
-		//		VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,            // Can be used for InputAttachment.
-		//		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
-		//		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		//		1
-		//	);
+		else
+		{
+			m_Resource = std::make_shared<VulkanImage>(
+				VulkanRenderBackend::GetState(),
+				info.name,
+				VK_IMAGE_TYPE_2D,
+				info.width,
+				info.height,
+				2,
+				info.description.samples,
+				info.description.format,
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT |   // Can be used for DepthAttachment.
+				VK_IMAGE_USAGE_SAMPLED_BIT |                    // Can be used for ShaderRead.
+				VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,            // Can be used for InputAttachment.
+				0,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				1
+			);
 
-		//	auto resourceptr = GetResource<VulkanImage>();
-		//	resourceptr->CreateImageView(info.description.format, VK_IMAGE_VIEW_TYPE_CUBE, VK_IMAGE_ASPECT_DEPTH_BIT);
+			auto resourceptr = GetResource<VulkanImage>();
+			resourceptr->CreateImageView(info.description.format, VK_IMAGE_VIEW_TYPE_2D_ARRAY, VK_IMAGE_ASPECT_DEPTH_BIT);
 
-		//	resourceptr->TransitionImageLayout(
-		//		info.description.format,
-		//		VK_IMAGE_LAYOUT_UNDEFINED,
-		//		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-		//	);
+			resourceptr->TransitionImageLayout(
+				info.description.format,
+				VK_IMAGE_LAYOUT_UNDEFINED,
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+			);
 
-		//	resourceptr->CreateSampler();
-		//}
+			resourceptr->CreateSampler();
+		}
 	}
 
 	Texture2DArray::Texture2DArray(const std::string& path)

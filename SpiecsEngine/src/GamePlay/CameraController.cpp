@@ -61,7 +61,13 @@ namespace Spiecs {
 	{
 		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return false;
 
+		float ratio = m_ViewportWidth / m_ViewportHeight;
+
 		float delta = e.GetYOffest() * 0.1f;
+		m_ZoomLevel -= e.GetYOffest() * 0.1;
+		m_ZoomLevel = std::max(m_ZoomLevel, 0.2f);
+		m_Camera->SetOrthographic(-ratio * m_ZoomLevel, ratio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, 0.001f, 100000.0f);
+
 		MouseZoom(delta);
 		UpdateView();
 		return false;
@@ -69,8 +75,21 @@ namespace Spiecs {
 	
 	bool CameraController::OnSlateResized(SlateResizeEvent& e)
 	{
-		float ratio = e.GetWidth() / float(e.GetHeight());
-		std::any_cast<std::shared_ptr<Camera>>(m_Camera)->SetPerspective(ratio);
+		m_ViewportWidth = e.GetWidth();
+		m_ViewportHeight = e.GetHeight();
+		float ratio = m_ViewportWidth / m_ViewportHeight;
+		ProjectionType type = m_Camera->GetProjectionType();
+
+		switch (type)
+		{
+		case ProjectionType::Perspective:
+			m_Camera->SetPerspective(ratio);
+			break;
+		case ProjectionType::Orthographic:
+			m_Camera->SetOrthographic(-ratio * m_ZoomLevel, ratio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, 0.001f, 100000.0f);
+			break;
+		}
+		
 		return false;
 	}
 
@@ -83,13 +102,13 @@ namespace Spiecs {
 
 	void CameraController::MouseRotate(const glm::vec2& delta)
 	{
-		glm::vec3 rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
+		glm::vec3 rot = m_CameraTranComp->GetRotation();
 		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 
 		rot.y -= yawSign * delta.x * RotationSpeed();
 		rot.x += delta.y * RotationSpeed();
 
-		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetRotation(rot);
+		m_CameraTranComp->SetRotation(rot);
 	}
 
 	void CameraController::MouseZoom(float delta)
@@ -130,7 +149,7 @@ namespace Spiecs {
 	void CameraController::UpdateView()
 	{
 		glm::vec3 pos = CalculatePosition();
-		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPostion(pos);
+		m_CameraTranComp->SetPostion(pos);
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 	}
 
@@ -156,7 +175,7 @@ namespace Spiecs {
 
 	glm::quat CameraController::GetOrientation() const
 	{
-		const glm::vec3& rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
+		const glm::vec3& rot = m_CameraTranComp->GetRotation();
 		return glm::quat(glm::vec3(rot.x, rot.y, rot.z));
 	}
 }
