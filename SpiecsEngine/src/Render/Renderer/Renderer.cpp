@@ -315,6 +315,19 @@ namespace Spiecs {
 			directionalLight[i] = glm::mat4(1.0f);
 		}
 
+		glm::vec3 camPos;
+
+		IterWorldComp<CameraComponent>(
+			frameInfo,
+			[&](
+			int                          entityId,
+			TransformComponent& transComp,
+			CameraComponent& camComp
+			) {
+				camPos = transComp.GetPosition();
+				return true;
+		});
+
 		int index = 0;
 		IterWorldComp<DirectionalLightComponent>(
 			frameInfo,
@@ -323,11 +336,14 @@ namespace Spiecs {
 			TransformComponent&          transComp   ,
 			DirectionalLightComponent&   dirlightComp
 			) {
-				//glm::mat4 view = glm::lookAt(dirlightComp.GetLight().direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-				//glm::mat4 projection = glm::ortho(-2.0f, 2.0f, 2.0f, -2.0f, -100000.0f, 100000.0f);
+				glm::mat4 view = glm::lookAt(dirlightComp.GetLight().direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 				auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 
-				directionalLight[index] = projectionMatrix * glm::inverse(invViewMatrix);
+				glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 0.001f, 100000.0f);
+
+
+
+				directionalLight[index] = projection * glm::inverse(invViewMatrix);
 				index++;
 				return false;
 		});
