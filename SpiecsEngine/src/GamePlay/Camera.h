@@ -84,6 +84,12 @@ namespace Spiecs {
 		*/
 		inline ProjectionType GetProjectionType() { return m_ProjectionType; };
 
+		/**
+		* @brief Get camera AspectRatio.
+		* @return Returns the camera AspectRatio.
+		*/
+		inline float GetAspectRatio() { return m_AspectRatio; };
+
 	private:
 
 		/**

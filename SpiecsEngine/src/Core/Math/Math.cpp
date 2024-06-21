@@ -90,4 +90,17 @@ namespace Spiecs {
 
 		return false;
     }
+
+	glm::mat4 Otrhographic(float left, float right, float top, float bottom, float nearPlane, float farPlane)
+	{
+		glm::mat4 mat = glm::mat4{ 1.0f };
+		mat[0][0] = 2.0f / (right - left);
+		mat[1][1] = 2.0f / (bottom - top);
+		mat[2][2] = 1.0f / (farPlane - nearPlane);
+		mat[3][0] = -(right + left) / (right - left);
+		mat[3][1] = -(bottom + top) / (bottom - top);
+		mat[3][2] = -nearPlane / (farPlane - nearPlane);
+
+		return mat;
+	}
 }

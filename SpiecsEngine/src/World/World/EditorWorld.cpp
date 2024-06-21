@@ -20,8 +20,8 @@ namespace Spiecs {
 			Entity& cameraentity = CreateEntity("EditorCamera");
 			CameraComponent& camComp = cameraentity.AddComponent<CameraComponent>(true);
 			camComp.SetCamera(std::make_shared<Camera>());
-			camComp.GetCamera()->SetPerspective(glm::radians(45.0f), 0.001f, 100000.0f, 1920.f/1080.f);
-			//camComp.GetCamera()->SetOrthographic(-100.0f, 100.0f, 100.0f, -100.0f, 0.001f, 100000.0f);
+			//camComp.GetCamera()->SetPerspective(glm::radians(45.0f), 0.001f, 100000.0f, 1920.f/1080.f);
+			camComp.GetCamera()->SetOrthographic(-100.0f, 100.0f, 100.0f, -100.0f, 0.001f, 100000.0f);
 			TransformComponent& transformComp = cameraentity.GetComponent<TransformComponent>();
 			transformComp.SetPostion({ 5.0f, 7.0f, -10.0f });
 
@@ -39,8 +39,9 @@ namespace Spiecs {
 		// directionallight
 		{
 			Entity& dirlightentity = CreateEntity("DirectionalLight");
+			TransformComponent& transformComp = dirlightentity.GetComponent<TransformComponent>();
 			DirectionalLightComponent& dirlightComp = dirlightentity.AddComponent<DirectionalLightComponent>();
-			dirlightComp.SetDirection({1.0f, 1.0f, -1.0f});
+			transformComp.SetRotation({0.0f, 0.0f, 0.0f});
 			dirlightComp.SetColor({ 1.0f, 0.0f, 0.0f });
 			dirlightComp.SetIntensity(1.0f);
 		}

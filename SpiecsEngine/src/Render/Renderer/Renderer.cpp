@@ -315,7 +315,8 @@ namespace Spiecs {
 			directionalLight[i] = glm::mat4(1.0f);
 		}
 
-		glm::vec3 camPos;
+		TransformComponent camTranComp;
+		float ratio;
 
 		IterWorldComp<CameraComponent>(
 			frameInfo,
@@ -324,7 +325,8 @@ namespace Spiecs {
 			TransformComponent& transComp,
 			CameraComponent& camComp
 			) {
-				camPos = transComp.GetPosition();
+				camTranComp = transComp;
+				ratio = camComp.GetCamera()->GetAspectRatio();
 				return true;
 		});
 
@@ -336,14 +338,16 @@ namespace Spiecs {
 			TransformComponent&          transComp   ,
 			DirectionalLightComponent&   dirlightComp
 			) {
-				glm::mat4 view = glm::lookAt(dirlightComp.GetLight().direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+				TransformComponent tempComp;
+				tempComp.SetPostion(camTranComp.GetPosition());
+				tempComp.SetRotation(camTranComp.GetRotation());
+
+				glm::mat4 view = tempComp.GetModelMatrix();
+				glm::mat4 projection = Otrhographic(-ratio * 30, ratio * 30, -1.0f * 30, 1.0f * 30, -100000.0f, 100000.0f);
+
 				auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 
-				glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 0.001f, 100000.0f);
-
-
-
-				directionalLight[index] = projection * glm::inverse(invViewMatrix);
+				directionalLight[index] = projection * glm::inverse(view);
 				index++;
 				return false;
 		});

@@ -37,6 +37,8 @@ namespace Spiecs {
         glm::vec3&       outRotation,
         glm::vec3&       outScale
     );
+
+    glm::mat4 Otrhographic(float left, float right, float top, float bottom, float nearPlane, float farPlane);
 }
 
 namespace std {
