@@ -306,6 +306,33 @@ namespace Spiecs {
 		});
 	}
 
+	void Renderer::GetDirectionalLightMatrix(FrameInfo& frameInfo, std::array<glm::mat4, MAX_DIRECTIONALLIGHT_NUM>& directionalLight)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		for (int i = 0; i < MAX_DIRECTIONALLIGHT_NUM; i++)
+		{
+			directionalLight[i] = glm::mat4(1.0f);
+		}
+
+		int index = 0;
+		IterWorldComp<DirectionalLightComponent>(
+			frameInfo,
+			[&](
+			int                          entityId    ,
+			TransformComponent&          transComp   ,
+			DirectionalLightComponent&   dirlightComp
+			) {
+				//glm::mat4 view = glm::lookAt(dirlightComp.GetLight().direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+				//glm::mat4 projection = glm::ortho(-2.0f, 2.0f, 2.0f, -2.0f, -100000.0f, 100000.0f);
+				auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+
+				directionalLight[index] = projectionMatrix * glm::inverse(invViewMatrix);
+				index++;
+				return false;
+		});
+	}
+
 	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat)
 	{
 		SPIECS_PROFILE_ZONE;

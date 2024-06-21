@@ -38,6 +38,9 @@
 #include <unordered_map>
 /***************************************************************************************************/
 
+#define MAX_DIRECTIONALLIGHT_NUM 10
+#define MAX_POINTLIGHT_MUN 100
+
 namespace Spiecs {
 
 	/**
@@ -212,6 +215,8 @@ namespace Spiecs {
 		* @todo Mutiple directional light.
 		*/
 		void GetDirectionalLight(FrameInfo& frameInfo, DirectionalLightComponent::DirectionalLight& directionalLight);
+
+		void GetDirectionalLightMatrix(FrameInfo& frameInfo, std::array<glm::mat4, MAX_DIRECTIONALLIGHT_NUM>& directionalLight);
 
 		/**
 		* @brief Get PointLightComponent's render data in World.

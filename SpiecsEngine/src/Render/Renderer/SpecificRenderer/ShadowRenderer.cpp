@@ -11,6 +11,14 @@
 
 namespace Spiecs {
 
+	namespace ShadowR
+	{
+		struct DirectionalLightMatrixs
+		{
+			std::array<glm::mat4, MAX_DIRECTIONALLIGHT_NUM> Matrixs;
+		};
+	}
+
 	ShadowRenderer::ShadowRenderer(
 		const std::string&                     rendererName         ,
 		VulkanState&                           vulkanState          ,
@@ -19,12 +27,7 @@ namespace Spiecs {
 		std::shared_ptr<RendererResourcePool>  rendererResourcePool
 	)
 		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
-	{
-		SPIECS_PROFILE_ZONE;
-
-		m_Square = std::make_unique<SquarePack>();
-		m_Square->OnCreatePack();
-	}
+	{}
 
 	void ShadowRenderer::CreateRendererPass()
 	{
@@ -45,6 +48,8 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "DirectionalLightShadow", this }
+		.AddPushConstant<PreR::PushConstant>()
+		.AddStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, VK_SHADER_STAGE_GEOMETRY_BIT)
 		.Build();
 	}
 
@@ -56,10 +61,27 @@ namespace Spiecs {
 
 		builder.BeginRenderPass();
 
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "DirectionalLightShadow" }));
+
+		builder.UpdateStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, [&](auto& ubo) {
+			GetDirectionalLightMatrix(frameInfo, ubo.Matrixs);
+		});
+
 		builder.BindPipeline("ShadowRenderer.DirectionalLightShadow.Default");
 
-		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
-		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
+
+			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+
+				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+					push.model = modelMatrix;
+					push.entityID = entityId;
+				});
+			});
+
+			return false;
+		});
 
 		builder.EndRenderPass();
 	}

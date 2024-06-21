@@ -64,9 +64,14 @@ namespace Spiecs {
 		float ratio = m_ViewportWidth / m_ViewportHeight;
 
 		float delta = e.GetYOffest() * 0.1f;
-		m_ZoomLevel -= e.GetYOffest() * 0.1;
+
+		m_ZoomLevel += delta;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.2f);
-		m_Camera->SetOrthographic(-ratio * m_ZoomLevel, ratio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, 0.001f, 100000.0f);
+
+		if (m_Camera->GetProjectionType() == ProjectionType::Orthographic)
+		{
+			m_Camera->SetOrthographic(-ratio * m_ZoomLevel, ratio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, 0.001f, 100000.0f);
+		}
 
 		MouseZoom(delta);
 		UpdateView();

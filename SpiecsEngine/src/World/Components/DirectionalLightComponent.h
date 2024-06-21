@@ -79,7 +79,7 @@ namespace Spiecs {
 		*/
 		inline const DirectionalLight& GetLight() { return m_DirectionalLight; };
 
-		void SetDirection(const glm::vec3& direction) { m_DirectionalLight.direction = direction; };
+		void SetDirection(const glm::vec3& direction) { m_DirectionalLight.direction = glm::normalize(direction); };
 		void SetColor(const glm::vec3& color) { m_DirectionalLight.color = color; };
 		void SetIntensity(float intensity) { m_DirectionalLight.intensity = intensity; };
 

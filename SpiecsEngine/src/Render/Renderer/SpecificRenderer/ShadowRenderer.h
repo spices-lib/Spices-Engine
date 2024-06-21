@@ -57,12 +57,5 @@ namespace Spiecs {
 		* Create specific descriptorset for subpass.
 		*/
 		virtual void CreateDescriptorSet() override;
-
-	private:
-
-		/**
-		* @brief Full Screen Square for rendering.
-		*/
-		std::unique_ptr<SquarePack> m_Square;
 	};
 }
