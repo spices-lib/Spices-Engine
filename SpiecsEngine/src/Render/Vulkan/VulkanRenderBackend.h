@@ -19,6 +19,7 @@
 #include "VulkanRenderPass.h"
 #include "VulkanSwapChain.h"
 #include "VulkanDescriptor.h"
+#include "VulkanRayTracing.h"
 #include "VulkanDebugUtils.h"
 
 namespace Spiecs {
@@ -135,6 +136,17 @@ namespace Spiecs {
 		*/
 		void RecreateSwapChain();
 
+		/**
+		* @brief Create BottomLevelAS with all MeshComponents.
+		* @param[in] frameInfo FrameInfo.
+		*/
+		void CreateBottomLevelAS(FrameInfo& frameInfo);
+
+		/**
+		* @brief Create TopLevelAS.
+		*/
+		void CreateTopLevelAS();
+
 	private:
 
 		/**
@@ -181,5 +193,10 @@ namespace Spiecs {
 		* @brief VulkanSwapChain.
 		*/
 		std::unique_ptr<VulkanSwapChain> m_VulkanSwapChain;
+
+		/**
+		* @brief VulkanRayTracing.
+		*/
+		std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
 	};
 }

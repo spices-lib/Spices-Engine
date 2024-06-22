@@ -241,6 +241,11 @@ namespace Spiecs {
 		VkPhysicalDeviceProperties m_DeviceProperties{};
 
 		/**
+		* @brief Device RayTracing Properties.
+		*/
+		VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_RayTracingProperties{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR };
+
+		/**
 		* @brief QueueHelper.
 		*/
 		QueueHelper m_QueueHelper;

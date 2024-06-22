@@ -67,6 +67,11 @@ namespace Spiecs {
 		inline VkDeviceMemory& GetMomory() { return m_BufferMemory; };
 
 		/**
+		* @brief Get VkBuffer Address.
+		*/
+		VkDeviceAddress GetAddress();
+
+		/**
 		* @brief Get VkBuffer.
 		* @return Returns the VkBuffer.
 		*/

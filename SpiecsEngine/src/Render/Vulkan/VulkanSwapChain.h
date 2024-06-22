@@ -17,7 +17,7 @@ namespace Spiecs {
 	* This class defines the VulkanSwapChain behaver.
 	* This class is just a wapper of VkSwapchainKHR.
 	*/
-	class VulkanSwapChain : VulkanObject
+	class VulkanSwapChain : public VulkanObject
 	{
 	public:
 

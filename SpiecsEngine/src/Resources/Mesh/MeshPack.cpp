@@ -10,6 +10,12 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "Resources/Loader/MeshLoader.h"
 
+#ifdef RENDERAPI_VULKAN
+
+#include "Render/Vulkan/VulkanRayTracing.h"
+
+#endif 
+
 namespace Spiecs {
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)
@@ -30,6 +36,62 @@ namespace Spiecs {
 		m_Material = ResourcePool<Material>::Load<Material>(materialPath);
 		m_Material->BuildMaterial();
 	}
+
+#ifdef RENDERAPI_VULKAN
+
+	auto MeshPack::MeshPackToVkGeometryKHR()
+	{
+		/**
+		* @brief BLAS builder requires raw device addresses.
+		*/
+		VkDeviceAddress vertexAddress                =  m_VertexBuffer->GetAddress();
+		VkDeviceAddress indicesAddress               =  m_IndicesBuffer->GetAddress();
+
+		uint32_t maxPrimitiveCount = m_Indices.size() / 3;
+
+		/**
+		* @brief device pointer to the buffers holding triangle vertex/index data, 
+		* along with information for interpreting it as an array (stride, data type, etc.)
+		*/
+		VkAccelerationStructureGeometryTrianglesDataKHR triangles {};
+		triangles.sType                              = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
+		triangles.vertexFormat                       = VK_FORMAT_R32G32B32_SFLOAT;  // vec3 vertex position data.
+		triangles.vertexData.deviceAddress           = vertexAddress;          /*@note position needs to be the first attribute of Vertex, otherwise correct offest is needs to be added here.*/
+		triangles.vertexStride                       = sizeof(Vertex);
+		triangles.indexType                          = VK_INDEX_TYPE_UINT32;
+		triangles.indexData.deviceAddress            = indicesAddress;
+	  //triangles.transformData = {};
+		triangles.maxVertex                          = m_Vertices.size() - 1;
+
+		/**
+		* @brief wrapper around the above with the geometry type enum (triangles in this case) plus flags for the AS builder.
+		*/
+		VkAccelerationStructureGeometryKHR asGeom {};
+		asGeom.sType                                 = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
+		asGeom.geometryType                          = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
+		asGeom.flags                                 = VK_GEOMETRY_OPAQUE_BIT_KHR;
+		asGeom.geometry.triangles                    = triangles;
+
+		/**
+		* @brief the indices within the vertex arrays to source input geometry for the BLAS.
+		*/
+		VkAccelerationStructureBuildRangeInfoKHR offset {};
+		offset.firstVertex                           = 0;
+		offset.primitiveCount                        = maxPrimitiveCount;
+		offset.primitiveOffset                       = 0;
+		offset.transformOffset                       = 0;
+
+		/**
+		* @brief Our blas is made from only one geometry, but could be made of many geometries.
+		*/
+		VulkanRayTracing::BlasInput input;
+		input.asGeometry.emplace_back(asGeom);
+		input.asBuildOffsetInfo.emplace_back(offset);
+
+		return input;
+	}
+
+#endif
 
 	void MeshPack::CreateBuffer()
 	{

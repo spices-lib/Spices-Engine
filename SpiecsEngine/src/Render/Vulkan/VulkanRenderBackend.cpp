@@ -54,6 +54,7 @@ namespace Spiecs {
 			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>  (m_VulkanState);
 			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
 			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>    (m_VulkanState, m_VulkanDevice);
+			m_VulkanRayTracing    = std::make_unique<VulkanRayTracing>   (m_VulkanState);
 		}
 
 		/**
@@ -150,6 +151,51 @@ namespace Spiecs {
 		* @brief Execute the global event function pointer by passing the specific event.
 		*/
 		Event::GetEventCallbackFn()(event);
+	}
+
+	void VulkanRenderBackend::CreateBottomLevelAS(FrameInfo& frameInfo)
+	{
+		std::vector<VulkanRayTracing::BlasInput> allBlas;
+
+		/**
+		* @brief Iter all MeshComponents.
+		*/
+		auto& view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
+		for (auto& e : view)
+		{
+			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);
+
+			auto blas = meshComp.GetMesh()->CreateMeshPackASInput();
+			ContainerLibrary::Append<VulkanRayTracing::BlasInput>(allBlas, blas);
+		}
+
+		/**
+		* @brief Build BLAS.
+		*/
+		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+	}
+
+	void VulkanRenderBackend::CreateTopLevelAS()
+	{
+		std::vector<VkAccelerationStructureInstanceKHR> tlas;
+		tlas.reserve(1);
+
+		{
+			VkAccelerationStructureInstanceKHR rayInst{};
+			//rayInst.transform                                  = nvvk::toTransformMatrixKHR(inst.transform);                 // Position of the instance
+			rayInst.instanceCustomIndex                        = 0;                                                          // gl_InstanceCustomIndexEXT
+			rayInst.accelerationStructureReference             = m_VulkanRayTracing->GetBlasDeviceAddress(0);
+			rayInst.flags                                      = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+			rayInst.mask                                       = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
+			rayInst.instanceShaderBindingTableRecordOffset     = 0;                                                          // We will use the same hit group for all objects
+
+			tlas.emplace_back(rayInst);
+		}
+
+		/**
+		* @brief Build TLAS.
+		*/
+		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 	}
 
 	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)
@@ -329,6 +375,9 @@ namespace Spiecs {
 	void VulkanRenderBackend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPIECS_PROFILE_ZONE;
+
+		CreateBottomLevelAS(frameInfo);
+		CreateTopLevelAS();
 
 		/**
 		* @brief Run all specific renderer.

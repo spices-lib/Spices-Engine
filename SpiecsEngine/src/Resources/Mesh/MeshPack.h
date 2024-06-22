@@ -86,6 +86,15 @@ namespace Spiecs {
 		*/
 		inline const std::vector<uint32_t>& GetIndices() { return m_Indices; };
 
+#ifdef RENDERAPI_VULKAN
+
+		/**
+		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS
+		*/
+		auto MeshPackToVkGeometryKHR();
+
+#endif
+
 	protected:
 
 		/**

@@ -13,6 +13,24 @@ namespace Spiecs {
 		: m_Pack(meshPack)
 	{}
 
+#ifdef RENDERAPI_VULKAN
+
+	std::vector<VulkanRayTracing::BlasInput> Mesh::CreateMeshPackASInput()
+	{
+		std::vector<VulkanRayTracing::BlasInput> allBlas;
+		allBlas.reserve(m_Pack.size());
+
+		for (auto& pair : m_Pack)
+		{
+			auto blas = pair.second->MeshPackToVkGeometryKHR();
+			allBlas.emplace_back(blas);
+		}
+
+		return allBlas;
+	}
+
+#endif
+
 	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)
 	{
 		meshPack->OnCreatePack();

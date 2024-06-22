@@ -68,6 +68,24 @@ namespace Spiecs {
 		});
 	}
 
+	VkDeviceAddress VulkanBuffer::GetAddress()
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkBufferDeviceAddressInfo.
+		*/
+		VkBufferDeviceAddressInfo info = {  };
+		info.sType                    = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+		info.pNext                    = nullptr;
+		info.buffer                   = m_Buffer;
+
+		/**
+		* @brief Get Address and return it.
+		*/
+		return vkGetBufferDeviceAddress(m_VulkanState.m_Device, &info);
+	}
+
 	void VulkanBuffer::Map(VkDeviceSize size, VkDeviceSize offset)
 	{
 		SPIECS_PROFILE_ZONE;

@@ -176,9 +176,9 @@ namespace Spiecs {
 			/**
 			* @brief All this condition need satisfied.
 			*/
-			if (IsPropertyMeetDemand(physicalDevice) && 
+			if (IsExtensionMeetDemand(physicalDevice) && 
+				IsPropertyMeetDemand(physicalDevice) &&
 				IsFeatureMeetDemand(physicalDevice) && 
-				IsExtensionMeetDemand(physicalDevice) && 
 				IsQueueMeetDemand(physicalDevice, surface)
 				)
 			{
@@ -207,14 +207,16 @@ namespace Spiecs {
 		/**
 		* @brief Get all Properties that supported.
 		*/
-		VkPhysicalDeviceProperties deviceProperties;
-		vkGetPhysicalDeviceProperties(device, &deviceProperties);
+		vkGetPhysicalDeviceProperties(device, &m_DeviceProperties);
 
 		/**
-		* @brief Just return true for we do not need a specific property supported now.
-		* @todo Configurable.
+		* @brief Get all RayTracing Properties supported.
 		*/
-		m_DeviceProperties = deviceProperties;
+		VkPhysicalDeviceProperties2 prop2{};
+		prop2.sType                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+		prop2.pNext                      = &m_RayTracingProperties;
+		prop2.properties                 = m_DeviceProperties;
+		vkGetPhysicalDeviceProperties2(device, &prop2);
 
 		return true;
 	}
@@ -271,22 +273,11 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		/**
-		* @brief Swapchain Extension.
-		*/
-		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-
-		/**
-		* @brief Negative Viewpoet Extension.
-		*/
-		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);
-
-		/**
-		* @brief MultiLayered Texture Writing Extension.
-		* shader declear that: #extension GL_ARB_shader_viewport_layer_array : enable.
-		* @note Not necessary no more in high version VulkanSDK.
-		*/
-		//m_ExtensionProperties.push_back(VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME);
+		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                  /*@brief Swapchain Extension.*/
+		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);              /*@brief Negative Viewpoet Extension.*/
+		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);     /*@brief To build acceleration structures.*/
+		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);       /*To use vkCmdTraceRaysKHR.*/
+		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);   /*@brief Required by ray tracing pipeline*/
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)
@@ -318,6 +309,19 @@ namespace Spiecs {
 		for (const auto& extension : availableExtensions) 
 		{
 			requiredExtensions.erase(extension.extensionName);
+		}
+
+		if (!requiredExtensions.empty())
+		{
+			for (auto& set : requiredExtensions)
+			{
+				VkPhysicalDeviceProperties deviceProperties;
+				vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+				std::stringstream ss;
+				ss << "Device Extension Required: " << set << ", Which is not satisfied with device: " << deviceProperties.deviceName;
+				SPIECS_CORE_WARN(ss.str());
+			}
 		}
 
 		return requiredExtensions.empty();
