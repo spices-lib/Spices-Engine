@@ -22,6 +22,11 @@ namespace Spiecs {
 		{
 			VkAccelerationStructureKHR                  accel = VK_NULL_HANDLE;
 			std::shared_ptr<VulkanBuffer>               buffer;
+
+			void FreeBuffer()
+			{
+				buffer = nullptr;
+			}
 		};
 
 		struct BuildAccelerationStructure
@@ -38,6 +43,8 @@ namespace Spiecs {
 		VulkanRayTracing(VulkanState& vulkanState);
 
 		virtual ~VulkanRayTracing();
+
+		void Destroy();
 
 		VkAccelerationStructureKHR GetAccelerationStructure() const { return m_tlas.accel; };
 		VkDeviceAddress GetBlasDeviceAddress(uint32_t blasId);
@@ -172,25 +179,42 @@ namespace Spiecs {
 		VulkanBuffer instancesBuffer(
 			m_VulkanState,
 			sizeof(T) * instances.size(),
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT |
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 
 			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 			0
 		);
 
-		VkDeviceAddress instBufferAddr = instancesBuffer.GetAddress();
+		VulkanBuffer stagingBuffer(
+			m_VulkanState,
+			sizeof(T) * instances.size(),
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
 
-		/**
-		* @brief Make sure the copy of the instance buffer are copied before triggering the acceleration structure build.
-		*/
-		VkMemoryBarrier barrier{};
-		barrier.sType                           = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-		barrier.srcAccessMask                   = VK_ACCESS_TRANSFER_WRITE_BIT;
-		barrier.dstAccessMask                   = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
+		void* data;
+		vkMapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory(), 0, sizeof(T) * instances.size(), 0, &data);
+		memcpy(data, instances.data(), sizeof(T) * instances.size());
+		vkUnmapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory());
+
+		instancesBuffer.CopyBuffer(stagingBuffer.Get(), instancesBuffer.Get(), sizeof(T) * instances.size());
+
+		VkDeviceAddress instBufferAddr = instancesBuffer.GetAddress();
 
 		/**
 		* @brief Command buffer to create the TLAS.
 		*/
 		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+
+			/**
+			* @brief Make sure the copy of the instance buffer are copied before triggering the acceleration structure build.
+			*/
+			VkMemoryBarrier barrier{};
+			barrier.sType                        = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+			barrier.srcAccessMask                = VK_ACCESS_TRANSFER_WRITE_BIT;
+			barrier.dstAccessMask                = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
+
 			vkCmdPipelineBarrier(
 				commandBuffer,
 				VK_PIPELINE_STAGE_TRANSFER_BIT,
@@ -204,7 +228,7 @@ namespace Spiecs {
 				nullptr
 			);
 
-			CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, flags, update, motion);
+			//CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, flags, update, motion);
 		});
 	}
 }

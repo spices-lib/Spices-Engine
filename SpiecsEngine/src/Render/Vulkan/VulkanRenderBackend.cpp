@@ -182,9 +182,9 @@ namespace Spiecs {
 
 		{
 			VkAccelerationStructureInstanceKHR rayInst{};
-			//rayInst.transform                                  = nvvk::toTransformMatrixKHR(inst.transform);                 // Position of the instance
+			rayInst.transform                                  = ToVkTransformMatrixKHR(glm::mat4(1.0f));                 // Position of the instance
 			rayInst.instanceCustomIndex                        = 0;                                                          // gl_InstanceCustomIndexEXT
-			//rayInst.accelerationStructureReference             = m_VulkanRayTracing->GetBlasDeviceAddress(0);
+			rayInst.accelerationStructureReference             = m_VulkanRayTracing->GetBlasDeviceAddress(0);
 			rayInst.flags                                      = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
 			rayInst.mask                                       = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
 			rayInst.instanceShaderBindingTableRecordOffset     = 0;                                                          // We will use the same hit group for all objects
@@ -376,8 +376,15 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		CreateBottomLevelAS(frameInfo);
-		CreateTopLevelAS();
+		static bool in = true;
+
+		if (in)
+		{
+			CreateBottomLevelAS(frameInfo);
+			CreateTopLevelAS();
+			m_VulkanRayTracing->Destroy();
+			in = false;
+		}
 
 		/**
 		* @brief Run all specific renderer.

@@ -25,11 +25,19 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		Destroy();
+	}
+
+	void VulkanRayTracing::Destroy()
+	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Destroy BLAS.
 		*/
 		for (auto& it : m_blas)
 		{
+			it.FreeBuffer();
 			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
 		}
 
@@ -37,6 +45,9 @@ namespace Spiecs {
 		* @brief Destroy TLAS.
 		*/
 		vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
+
+		m_blas.clear();
+		m_tlas.FreeBuffer();
 	}
 
 	VkDeviceAddress VulkanRayTracing::GetBlasDeviceAddress(uint32_t blasId)
@@ -322,8 +333,8 @@ namespace Spiecs {
 #ifdef VK_NV_ray_tracing_motion_blur
 
 		VkAccelerationStructureMotionInfoNV motionInfo{};
-		motionInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MOTION_INFO_NV;
-		motionInfo.maxInstances = countInstance;
+		motionInfo.sType                           = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MOTION_INFO_NV;
+		motionInfo.maxInstances                    = countInstance;
 
 #endif
 
