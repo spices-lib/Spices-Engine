@@ -15,6 +15,7 @@ project "SpiecsTest"
 
 	defines
 	{
+		"RENDERAPI_VULKAN"
 	}
 
 	includedirs

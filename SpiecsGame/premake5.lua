@@ -16,7 +16,7 @@ project "SpiecsGame"
 	defines
 	{
 		'SPIECS_GAME_ASSETS_PATH=std::string("%{wks.location}/SpiecsGame/assets/")',
-		"RENDERAPI_VULKAN"
+		"RENDERAPI_VULKAN",
 	}
 
 	includedirs

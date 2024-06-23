@@ -11,12 +11,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-#ifdef RENDERAPI_VULKAN
-
-#include "Render/Vulkan/VulkanRayTracing.h"
-
-#endif
-
 namespace Spiecs {
 
 	/**

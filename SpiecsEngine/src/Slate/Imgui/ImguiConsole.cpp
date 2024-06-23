@@ -117,7 +117,7 @@ namespace Spiecs {
 		{
 			SPIECS_PROFILE_ZONEN("Render FilterIcon");
 
-			ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 5.7 - 220.0f);
+			ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 5.7f - 220.0f);
 			if (ImGui::Button(ICON_MD_FILTER_LIST, ImGuiH::GetLineItemSize())) {}
 			ImGui::SetItemTooltip("Filter");
 		}

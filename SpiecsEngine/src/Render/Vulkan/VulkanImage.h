@@ -244,12 +244,12 @@ namespace Spiecs {
 		/**
 		* @brief Image Type.
 		*/
-		VkImageType m_ImageType;
+		VkImageType m_ImageType {};
 
 		/**
 		* @brief The image format.
 		*/
-		VkFormat m_Format;
+		VkFormat m_Format{};
 
 		/**
 		* @brief The Vkimage this Class Wappered.
@@ -284,7 +284,7 @@ namespace Spiecs {
 		/**
 		* @brief VkDescriptorSetLayout.
 		*/
-		VkDescriptorSetLayout m_DescriptorSetLayout;
+		VkDescriptorSetLayout m_DescriptorSetLayout{};
 
 		/**
 		* @brief VkDescriptorSet.

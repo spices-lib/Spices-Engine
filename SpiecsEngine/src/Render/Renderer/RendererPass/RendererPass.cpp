@@ -63,7 +63,7 @@ namespace Spiecs {
 		m_ClearValues.push_back(clearValue);
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
 
-		return m_AttachmentDescriptions.size() - 1;
+		return static_cast<uint32_t>(m_AttachmentDescriptions.size() - 1);
 	}
 
 	uint32_t RendererPass::AddAttachment(
@@ -101,7 +101,7 @@ namespace Spiecs {
 		m_AttachmentDescriptions.push_back(attachmnetName, description);
 		m_ImageViews.push_back(view);
 
-		return m_AttachmentDescriptions.size() - 1;
+		return static_cast<uint32_t>(m_AttachmentDescriptions.size() - 1);
 	}
 
 	void RendererPass::BuildRendererPass()
@@ -126,7 +126,7 @@ namespace Spiecs {
 		});
 
 		VkSubpassDependency outDependency{};
-		outDependency.srcSubpass                        = m_SubPasses.size() - 1;
+		outDependency.srcSubpass                        = static_cast<uint32_t>(m_SubPasses.size() - 1);
 		outDependency.dstSubpass                        = VK_SUBPASS_EXTERNAL;
 		outDependency.srcStageMask                      = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		outDependency.dstStageMask                      = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
@@ -140,9 +140,9 @@ namespace Spiecs {
 		renderPassInfo.sType                            = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		renderPassInfo.attachmentCount                  = static_cast<uint32_t>(attachmentDescription.size());
 		renderPassInfo.pAttachments                     = attachmentDescription.data();
-		renderPassInfo.subpassCount                     = subPassDescription.size();
+		renderPassInfo.subpassCount                     = static_cast<uint32_t>(subPassDescription.size());
 		renderPassInfo.pSubpasses                       = subPassDescription.data();
-		renderPassInfo.dependencyCount                  = subPassDepecdency.size();
+		renderPassInfo.dependencyCount                  = static_cast<uint32_t>(subPassDepecdency.size());
 		renderPassInfo.pDependencies                    = subPassDepecdency.data();
 
 		if (m_AttachmentDescriptions.size() != m_ImageViews.size() + 1 && m_AttachmentDescriptions.size() != m_ImageViews.size())

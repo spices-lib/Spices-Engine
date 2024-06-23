@@ -837,7 +837,8 @@ namespace Spiecs {
 		m_HandledSubPass->GetBuffers(id) = std::make_unique<VulkanBuffer>(
 			m_Renderer->m_VulkanState,
 			sizeof(T),
-			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
 		);
 

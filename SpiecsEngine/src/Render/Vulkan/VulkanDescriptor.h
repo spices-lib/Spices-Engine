@@ -163,7 +163,7 @@ namespace Spiecs {
         /**
         * @brief The VkDescriptorSetLayout this class handled.
         */
-        VkDescriptorSetLayout m_Layout;
+        VkDescriptorSetLayout m_Layout{};
     };
     
     /**
@@ -268,7 +268,7 @@ namespace Spiecs {
         /**
         * @brief The VkDescriptorSet this class handled.
         */
-        VkDescriptorSet m_DescriptorSet;
+        VkDescriptorSet m_DescriptorSet{};
 
         /**
         * @brief The VulkanDescriptorSetLayout this descriptorset in use.

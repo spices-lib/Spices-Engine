@@ -181,7 +181,8 @@ namespace Spiecs {
 			pair.second = std::make_unique<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
 				layouts[pair.first.x][pair.first.y].size,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
 			);
 

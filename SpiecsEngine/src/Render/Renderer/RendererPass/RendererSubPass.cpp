@@ -46,10 +46,10 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		m_SubPassDescriptions.pipelineBindPoint         = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		m_SubPassDescriptions.colorAttachmentCount      = m_ColorAttachmentReference.size();
+		m_SubPassDescriptions.colorAttachmentCount      = static_cast<uint32_t>(m_ColorAttachmentReference.size());
 		m_SubPassDescriptions.pColorAttachments         = m_ColorAttachmentReference.data();
 		m_SubPassDescriptions.pDepthStencilAttachment   = m_DepthAttachmentReference.size() != 0 ? m_DepthAttachmentReference.data() : nullptr;
-		m_SubPassDescriptions.inputAttachmentCount      = m_InputAttachmentReference.size();
+		m_SubPassDescriptions.inputAttachmentCount      = static_cast<uint32_t>(m_InputAttachmentReference.size());
 		m_SubPassDescriptions.pInputAttachments         = m_InputAttachmentReference.data();
 	}
 

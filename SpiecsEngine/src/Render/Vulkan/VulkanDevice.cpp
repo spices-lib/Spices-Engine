@@ -56,16 +56,38 @@ namespace Spiecs {
 		}
 
 		/**
+		* @brief Create the feature chain.
+		*/
+		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures{};
+		descriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+		descriptorIndexingFeatures.pNext = nullptr;  /*@brief Pass your other features through this chain.*/
+
+		VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures{};
+		bufferDeviceAddressFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+		bufferDeviceAddressFeatures.pNext = &descriptorIndexingFeatures;
+
+		/**
+		* @brief Get all Features that supported.
+		*/
+		VkPhysicalDeviceFeatures2 deviceFeatures{};
+		deviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		deviceFeatures.pNext = &bufferDeviceAddressFeatures;
+
+		// Fetch all features
+		vkGetPhysicalDeviceFeatures2(m_VulkanState.m_PhysicalDevice, &deviceFeatures);
+
+		/**
 		* @brief Instanced a VkDeviceCreateInfo with default value.
 		*/
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType                    = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		createInfo.pQueueCreateInfos        = queueCreateInfos.data();
 		createInfo.queueCreateInfoCount     = static_cast<uint32_t>(queueCreateInfos.size());
-		createInfo.pEnabledFeatures         = &m_DeviceFeatures;
+		createInfo.pEnabledFeatures         = VK_NULL_HANDLE;
 		createInfo.enabledExtensionCount    = static_cast<uint32_t>(m_ExtensionProperties.size());
 		createInfo.ppEnabledExtensionNames  = m_ExtensionProperties.data();
 		createInfo.enabledLayerCount        = 0;
+		createInfo.pNext                    = &deviceFeatures;
 
 		/**
 		* @brief Create device and set it global.
@@ -221,33 +243,15 @@ namespace Spiecs {
 		return true;
 	}
 
-	bool VulkanDevice::GetFeatureRequirements(VkPhysicalDeviceFeatures& physicalDeviceFeature)
+	bool VulkanDevice::GetFeatureRequirements(VkPhysicalDeviceFeatures2& physicalDeviceFeature)
 	{
 		SPIECS_PROFILE_ZONE;
 
-		/**
-		* @brief 启用纹理采样的各项异性
-		*/
-		if (physicalDeviceFeature.samplerAnisotropy) m_DeviceFeatures.samplerAnisotropy = VK_TRUE;
-		else return false;
-		/**
-		* @brief 启用实例着色（应对MSAA的缺点）
-		*/
-		if (physicalDeviceFeature.sampleRateShading) m_DeviceFeatures.sampleRateShading = VK_TRUE;
-		else return false;
-
-		/**
-		* @breif Enable Independent Attachment AlphaBlend State.
-		*/
-		if (physicalDeviceFeature.independentBlend) m_DeviceFeatures.independentBlend = VK_TRUE;
-		else return false;
-
-		/**
-		* @breif Enable Geometry Shader Feature.
-		*/
-		if (physicalDeviceFeature.geometryShader) m_DeviceFeatures.geometryShader = VK_TRUE;
-		else return false;
-
+		if (!physicalDeviceFeature.features.samplerAnisotropy) return false;  /*@brief 启用纹理采样的各项异性*/
+		if (!physicalDeviceFeature.features.sampleRateShading) return false; /*@brief 启用实例着色（应对MSAA的缺点）*/
+		if (!physicalDeviceFeature.features.independentBlend) return false; /*@breif Enable Independent Attachment AlphaBlend State.*/
+		if (!physicalDeviceFeature.features.geometryShader) return false; /*@breif Enable Geometry Shader Feature.*/
+		if (!reinterpret_cast<VkPhysicalDeviceBufferDeviceAddressFeatures*>(physicalDeviceFeature.pNext)->bufferDeviceAddress) return false; /*@breif Enable Buffer Address Feature.*/
 
 		return true;
 	}
@@ -257,10 +261,25 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		/**
+		* @brief Create the feature chain.
+		*/ 
+		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures {};
+		descriptorIndexingFeatures.sType              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+		descriptorIndexingFeatures.pNext              = nullptr;  /*@brief Pass your other features through this chain.*/
+
+		VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures {};
+		bufferDeviceAddressFeatures.sType             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+		bufferDeviceAddressFeatures.pNext             = &descriptorIndexingFeatures;
+
+		/**
 		* @brief Get all Features that supported.
 		*/
-		VkPhysicalDeviceFeatures deviceFeatures;
-		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+		VkPhysicalDeviceFeatures2 deviceFeatures {};
+		deviceFeatures.sType                          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		deviceFeatures.pNext                          = &bufferDeviceAddressFeatures;
+
+		// Fetch all features
+		vkGetPhysicalDeviceFeatures2(device, &deviceFeatures);
 
 		/**
 		* @brief Just return true for we do not need a specific feature supported now.
@@ -273,11 +292,16 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                  /*@brief Swapchain Extension.*/
-		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);              /*@brief Negative Viewpoet Extension.*/
-		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);     /*@brief To build acceleration structures.*/
-		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);       /*To use vkCmdTraceRaysKHR.*/
-		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);   /*@brief Required by ray tracing pipeline*/
+		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                        /*@brief Swapchain Extension.*/
+																						         
+		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /*@brief Negative Viewpoet Extension.*/
+																						         
+		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /*@brief To build acceleration structures.*/
+		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /*To use vkCmdTraceRaysKHR.*/
+		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /*@brief Required by ray tracing pipeline*/
+																						         
+		//m_ExtensionProperties.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);            /*@brief Enable Buffer Address*/
+		//m_ExtensionProperties.push_back(VK_KHR_DEVICE_GROUP_EXTENSION_NAME);                     /*@brief Enable Buffer Address*/
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

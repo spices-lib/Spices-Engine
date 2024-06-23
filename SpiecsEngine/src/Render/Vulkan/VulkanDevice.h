@@ -179,7 +179,7 @@ namespace Spiecs {
 		* Source 1 : user Setting.
 		* @todo Configurable
 		*/
-		bool GetFeatureRequirements(VkPhysicalDeviceFeatures& physicalDeviceFeature);
+		bool GetFeatureRequirements(VkPhysicalDeviceFeatures2& physicalDeviceFeature);
 
 		/**
 		* @brief Check all  Feature we need meet.
@@ -233,12 +233,12 @@ namespace Spiecs {
 		/**
 		* @brief Device Features we need.
 		*/
-		VkPhysicalDeviceFeatures m_DeviceFeatures{};
+		VkPhysicalDeviceFeatures2 m_DeviceFeatures {};
 
 		/**
 		* @brief Selected Physical Device Properties.
 		*/
-		VkPhysicalDeviceProperties m_DeviceProperties{};
+		VkPhysicalDeviceProperties m_DeviceProperties {};
 
 		/**
 		* @brief Device RayTracing Properties.

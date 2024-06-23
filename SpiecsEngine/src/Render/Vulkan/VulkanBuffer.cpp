@@ -68,22 +68,14 @@ namespace Spiecs {
 		});
 	}
 
-	VkDeviceAddress VulkanBuffer::GetAddress()
+	VkDeviceAddress& VulkanBuffer::GetAddress()
 	{
-		SPIECS_PROFILE_ZONE;
+		if ((m_Uasge & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) == VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		{
+			return m_BufferAddress;
+		}
 
-		/**
-		* @brief Instance a VkBufferDeviceAddressInfo.
-		*/
-		VkBufferDeviceAddressInfo info = {  };
-		info.sType                    = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
-		info.pNext                    = nullptr;
-		info.buffer                   = m_Buffer;
-
-		/**
-		* @brief Get Address and return it.
-		*/
-		return vkGetBufferDeviceAddress(m_VulkanState.m_Device, &info);
+		SPIECS_CORE_ERROR("This Buffer Cannot Get Address");
 	}
 
 	void VulkanBuffer::Map(VkDeviceSize size, VkDeviceSize offset)
@@ -170,7 +162,7 @@ namespace Spiecs {
 		/**
 		* @brief Get Buffer Memory Requirements.
 		*/
-		VkMemoryRequirements memRequirements;
+		VkMemoryRequirements memRequirements{};
 		vkGetBufferMemoryRequirements(vulkanState.m_Device, m_Buffer, &memRequirements);
 
 		/**
@@ -179,11 +171,23 @@ namespace Spiecs {
 		VkMemoryAllocateInfo allocInfo{};
 		allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
+		
+		if ((usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) == VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		{
+			/**
+			* @brief Allow Buffer Device Address
+			*/
+			VkMemoryAllocateFlagsInfoKHR flagsInfo{};
+			flagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
+			flagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR;
+
+			allocInfo.pNext = &flagsInfo;
+		}
 
 		/**
 		* @brief Get video memory Properties.
 		*/
-		VkPhysicalDeviceMemoryProperties memProperties;
+		VkPhysicalDeviceMemoryProperties memProperties{};
 		vkGetPhysicalDeviceMemoryProperties(vulkanState.m_PhysicalDevice, &memProperties);
 
 		/**
@@ -201,5 +205,20 @@ namespace Spiecs {
 		*/
 		VK_CHECK(vkAllocateMemory(vulkanState.m_Device, &allocInfo, nullptr, &m_BufferMemory));
 		VK_CHECK(vkBindBufferMemory(vulkanState.m_Device, m_Buffer, m_BufferMemory, 0));
+
+		if ((usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) == VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		{
+			/**
+			* @brief Instance a VkBufferDeviceAddressInfo.
+			*/
+			VkBufferDeviceAddressInfo info = {  };
+			info.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+			info.buffer = m_Buffer;
+
+			/**
+			* @brief Get Address and return it.
+			*/
+			m_BufferAddress = vkGetBufferDeviceAddress(m_VulkanState.m_Device, &info);
+		}
 	}
 }

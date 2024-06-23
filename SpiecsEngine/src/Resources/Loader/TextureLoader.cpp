@@ -68,7 +68,7 @@ namespace Spiecs {
 		* @brief Get Texture bytes.
 		* @note 4 means 4 channels per texel, 1 means 1 bytes per texel channel.(RGBA8 Format support only)
 		*/
-		VkDeviceSize imageSize = resourceptr->m_Width * resourceptr->m_Height * 4 * 1;
+		VkDeviceSize imageSize = static_cast<uint64_t>(resourceptr->m_Width * resourceptr->m_Height * 4 * 1);
 
 		/**
 		* @brief Instance a staginBuffer.
@@ -76,7 +76,7 @@ namespace Spiecs {
 		VulkanBuffer stagingBuffer(
 			resourceptr->m_VulkanState, 
 			imageSize, 
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);

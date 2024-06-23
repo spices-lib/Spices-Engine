@@ -68,8 +68,9 @@ namespace Spiecs {
 
 		/**
 		* @brief Get VkBuffer Address.
+		* @return Returns the VkDeviceAddress.
 		*/
-		VkDeviceAddress GetAddress();
+		VkDeviceAddress& GetAddress();
 
 		/**
 		* @brief Get VkBuffer.
@@ -162,6 +163,11 @@ namespace Spiecs {
 		* @brief The buffer video memory.
 		*/
 		VkDeviceMemory m_BufferMemory{};
+
+		/**
+		* @brief The buffer gpu address.
+		*/
+		VkDeviceAddress m_BufferAddress{};
 
 		/**
 		* @brief The mapped buffer local memory.

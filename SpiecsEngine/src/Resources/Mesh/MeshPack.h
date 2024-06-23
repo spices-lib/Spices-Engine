@@ -11,6 +11,12 @@
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Resources/ResourcePool/ResourcePool.h"
 
+#ifdef RENDERAPI_VULKAN
+
+#include "Render/Vulkan/VulkanRayTracing.h"
+
+#endif
+
 namespace Spiecs {
 
 	/**
@@ -91,7 +97,7 @@ namespace Spiecs {
 		/**
 		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS
 		*/
-		auto MeshPackToVkGeometryKHR();
+		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR();
 
 #endif
 

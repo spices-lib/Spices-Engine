@@ -2,7 +2,6 @@
 #include "Core/Core.h"
 #include "VulkanUtils.h"
 #include "VulkanCommandBuffer.h"
-#include "VulkanRenderBackend.h"
 #include "VulkanBuffer.h"
 
 namespace Spiecs {
@@ -163,7 +162,7 @@ namespace Spiecs {
 		* @brief Create a buffer holding the actual instance data (matrices++) for use by the AS builder.
 		*/
 		VulkanBuffer instancesBuffer(
-			VulkanRenderBackend::GetState(),
+			m_VulkanState,
 			sizeof(T) * instances.size(),
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 
 			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
@@ -197,7 +196,7 @@ namespace Spiecs {
 				nullptr
 			);
 
-			CmdCreateTLAS(cmdBuf, countInstance, instBufferAddr, flags, update, motion);
+			CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, flags, update, motion);
 		});
 	}
 }

@@ -10,12 +10,6 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "Resources/Loader/MeshLoader.h"
 
-#ifdef RENDERAPI_VULKAN
-
-#include "Render/Vulkan/VulkanRayTracing.h"
-
-#endif 
-
 namespace Spiecs {
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)
@@ -39,7 +33,7 @@ namespace Spiecs {
 
 #ifdef RENDERAPI_VULKAN
 
-	auto MeshPack::MeshPackToVkGeometryKHR()
+	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR()
 	{
 		/**
 		* @brief BLAS builder requires raw device addresses.
@@ -47,7 +41,7 @@ namespace Spiecs {
 		VkDeviceAddress vertexAddress                =  m_VertexBuffer->GetAddress();
 		VkDeviceAddress indicesAddress               =  m_IndicesBuffer->GetAddress();
 
-		uint32_t maxPrimitiveCount = m_Indices.size() / 3;
+		uint32_t maxPrimitiveCount = static_cast<uint32_t>(m_Indices.size() / 3);
 
 		/**
 		* @brief device pointer to the buffers holding triangle vertex/index data, 
@@ -61,7 +55,7 @@ namespace Spiecs {
 		triangles.indexType                          = VK_INDEX_TYPE_UINT32;
 		triangles.indexData.deviceAddress            = indicesAddress;
 	  //triangles.transformData = {};
-		triangles.maxVertex                          = m_Vertices.size() - 1;
+		triangles.maxVertex                          = static_cast<uint32_t>(m_Vertices.size() - 1);
 
 		/**
 		* @brief wrapper around the above with the geometry type enum (triangles in this case) plus flags for the AS builder.
@@ -99,14 +93,27 @@ namespace Spiecs {
 		{
 			VkDeviceSize bufferSize = sizeof(Vertex) * m_Vertices.size();
 
-			VulkanBuffer stagingBuffer(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VulkanBuffer stagingBuffer(
+				VulkanRenderBackend::GetState(), 
+				bufferSize, 
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
 
 			void* data;
 			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
 			memcpy(data, m_Vertices.data(), (size_t)bufferSize);
 			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory());
 
-			m_VertexBuffer = std::make_unique<VulkanBuffer>(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+			m_VertexBuffer = std::make_unique<VulkanBuffer>(
+				VulkanRenderBackend::GetState(),
+				bufferSize, 
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
+				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | 
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, 
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
 
 			m_VertexBuffer->CopyBuffer(stagingBuffer.Get(), m_VertexBuffer->Get(), bufferSize);
 		}
@@ -115,14 +122,27 @@ namespace Spiecs {
 		{
 			VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_Indices.size();
 
-			VulkanBuffer stagingBuffer(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VulkanBuffer stagingBuffer(
+				VulkanRenderBackend::GetState(), 
+				bufferSize, 
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
 
 			void* data;
 			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
 			memcpy(data, m_Indices.data(), (size_t)bufferSize);
 			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory());
 
-			m_IndicesBuffer = std::make_unique<VulkanBuffer>(VulkanRenderBackend::GetState(), bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+			m_IndicesBuffer = std::make_unique<VulkanBuffer>(
+				VulkanRenderBackend::GetState(), 
+				bufferSize, 
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
+				VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
 
 			m_IndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_IndicesBuffer->Get(), bufferSize);
 		}
