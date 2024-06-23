@@ -58,13 +58,17 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
+		accelerationStructureFeatures.sType                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+		accelerationStructureFeatures.pNext                     = nullptr; /*@brief Pass your other features through this chain.*/
+
 		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures{};
-		descriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-		descriptorIndexingFeatures.pNext = nullptr;  /*@brief Pass your other features through this chain.*/
+		descriptorIndexingFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+		descriptorIndexingFeatures.pNext                        = &accelerationStructureFeatures;  
 
 		VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures{};
-		bufferDeviceAddressFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
-		bufferDeviceAddressFeatures.pNext = &descriptorIndexingFeatures;
+		bufferDeviceAddressFeatures.sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+		bufferDeviceAddressFeatures.pNext                       = &descriptorIndexingFeatures;
 
 		/**
 		* @brief Get all Features that supported.
@@ -243,19 +247,6 @@ namespace Spiecs {
 		return true;
 	}
 
-	bool VulkanDevice::GetFeatureRequirements(VkPhysicalDeviceFeatures2& physicalDeviceFeature)
-	{
-		SPIECS_PROFILE_ZONE;
-
-		if (!physicalDeviceFeature.features.samplerAnisotropy) return false;  /*@brief 启用纹理采样的各项异性*/
-		if (!physicalDeviceFeature.features.sampleRateShading) return false; /*@brief 启用实例着色（应对MSAA的缺点）*/
-		if (!physicalDeviceFeature.features.independentBlend) return false; /*@breif Enable Independent Attachment AlphaBlend State.*/
-		if (!physicalDeviceFeature.features.geometryShader) return false; /*@breif Enable Geometry Shader Feature.*/
-		if (!reinterpret_cast<VkPhysicalDeviceBufferDeviceAddressFeatures*>(physicalDeviceFeature.pNext)->bufferDeviceAddress) return false; /*@breif Enable Buffer Address Feature.*/
-
-		return true;
-	}
-
 	bool VulkanDevice::IsFeatureMeetDemand(const VkPhysicalDevice& device)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -263,9 +254,13 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/ 
+		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
+		accelerationStructureFeatures.sType           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+		accelerationStructureFeatures.pNext           = nullptr; /*@brief Pass your other features through this chain.*/
+
 		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures {};
 		descriptorIndexingFeatures.sType              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-		descriptorIndexingFeatures.pNext              = nullptr;  /*@brief Pass your other features through this chain.*/
+		descriptorIndexingFeatures.pNext              = &accelerationStructureFeatures;  /*@brief Pass your other features through this chain.*/
 
 		VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures {};
 		bufferDeviceAddressFeatures.sType             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
@@ -285,7 +280,14 @@ namespace Spiecs {
 		* @brief Just return true for we do not need a specific feature supported now.
 		* @todo Configurable.
 		*/
-		return GetFeatureRequirements(deviceFeatures);
+		if (!deviceFeatures.features.samplerAnisotropy) return false;                  /*@brief 启用纹理采样的各项异性*/
+		if (!deviceFeatures.features.sampleRateShading) return false;                  /*@brief 启用实例着色（应对MSAA的缺点）*/
+		if (!deviceFeatures.features.independentBlend) return false;                   /*@breif Enable Independent Attachment AlphaBlend State.*/
+		if (!deviceFeatures.features.geometryShader) return false;                     /*@breif Enable Geometry Shader Feature.*/
+		if (!bufferDeviceAddressFeatures.bufferDeviceAddress) return false;            /*@breif Enable Buffer Address Feature.*/
+		if (!accelerationStructureFeatures.accelerationStructure) return false;        /*@breif Enable RayTracing AccelerationStructure.*/
+
+		return true;
 	}
 
 	void VulkanDevice::GetExtensionRequirements()

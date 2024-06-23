@@ -54,7 +54,7 @@ namespace Spiecs {
 			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>  (m_VulkanState);
 			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
 			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>    (m_VulkanState, m_VulkanDevice);
-			//m_VulkanRayTracing    = std::make_unique<VulkanRayTracing>   (m_VulkanState);
+			m_VulkanRayTracing    = std::make_unique<VulkanRayTracing>   (m_VulkanState);
 		}
 
 		/**
@@ -172,7 +172,7 @@ namespace Spiecs {
 		/**
 		* @brief Build BLAS.
 		*/
-		//m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 	}
 
 	void VulkanRenderBackend::CreateTopLevelAS()
@@ -195,7 +195,7 @@ namespace Spiecs {
 		/**
 		* @brief Build TLAS.
 		*/
-		//m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 	}
 
 	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)

@@ -3,28 +3,52 @@
 
 namespace Spiecs {
 
+	VulkanRayTracing::VulkanRayTracing(VulkanState& vulkanState)
+		: VulkanObject(vulkanState)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Get all needed KHR Functions pointer.
+		*/
+		vkCreateAccelerationStructureKHR                 = reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>                (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCreateAccelerationStructureKHR"));
+		vkDestroyAccelerationStructureKHR                = reinterpret_cast<PFN_vkDestroyAccelerationStructureKHR>               (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkDestroyAccelerationStructureKHR"));
+		vkCmdBuildAccelerationStructuresKHR              = reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresKHR>             (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCmdBuildAccelerationStructuresKHR"));
+		vkCopyAccelerationStructureKHR                   = reinterpret_cast<PFN_vkCopyAccelerationStructureKHR>                  (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCopyAccelerationStructureKHR"));
+		vkGetAccelerationStructureDeviceAddressKHR       = reinterpret_cast<PFN_vkGetAccelerationStructureDeviceAddressKHR>      (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkGetAccelerationStructureDeviceAddressKHR"));
+		vkCmdWriteAccelerationStructuresPropertiesKHR    = reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesKHR>   (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCmdWriteAccelerationStructuresPropertiesKHR"));
+		vkGetAccelerationStructureBuildSizesKHR          = reinterpret_cast<PFN_vkGetAccelerationStructureBuildSizesKHR>         (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkGetAccelerationStructureBuildSizesKHR"));
+		vkCmdCopyAccelerationStructureKHR                = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureKHR>               (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCmdCopyAccelerationStructureKHR"));
+	}
+
 	VulkanRayTracing::~VulkanRayTracing()
 	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Destroy BLAS.
+		*/
 		for (auto& it : m_blas)
 		{
 			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
 		}
 
+		/**
+		* @brief Destroy TLAS.
+		*/
 		vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
-	}
-
-	VkAccelerationStructureKHR VulkanRayTracing::GetAccelerationStructure() const
-	{
-		return m_tlas.accel;
 	}
 
 	VkDeviceAddress VulkanRayTracing::GetBlasDeviceAddress(uint32_t blasId)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		assert(size_t(blasId) < m_blas.size());
 
 		VkAccelerationStructureDeviceAddressInfoKHR addressInfo{};
-		addressInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
-		addressInfo.accelerationStructure = m_blas[blasId].accel;
+		addressInfo.sType                             = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
+		addressInfo.accelerationStructure             = m_blas[blasId].accel;
+
 		return vkGetAccelerationStructureDeviceAddressKHR(m_VulkanState.m_Device, &addressInfo);
 	}
 
@@ -33,6 +57,8 @@ namespace Spiecs {
 		VkBuildAccelerationStructureFlagsKHR flags
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		uint32_t         nbBlas = static_cast<uint32_t>(input.size());
 		VkDeviceSize     asTotalSize{ 0 };     
 		uint32_t         nbCompactions{ 0 };   
@@ -175,6 +201,8 @@ namespace Spiecs {
 
 	void VulkanRayTracing::UpdateBlas(uint32_t blasIdx, BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		assert(size_t(blasIdx) < m_blas.size());
 
 		// Preparing all build information, acceleration is filled later
@@ -251,6 +279,8 @@ namespace Spiecs {
 		bool                                  motion		  
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Wraps a device pointer to the above uploaded instances.
 		*/
@@ -365,6 +395,8 @@ namespace Spiecs {
 		VkQueryPool                                queryPool
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		/**
 		* @brief Querying the compaction size.
 		*/
@@ -455,6 +487,8 @@ namespace Spiecs {
 		VkQueryPool                              queryPool
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		uint32_t queryCtn{ 0 };
 
 		/**
@@ -504,6 +538,8 @@ namespace Spiecs {
 		std::vector<BuildAccelerationStructure>& buildAs
 	)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		for (auto& i : indices)
 		{
 			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, buildAs[i].cleanupAS.accel, nullptr);
@@ -512,6 +548,8 @@ namespace Spiecs {
 
 	VulkanRayTracing::AccelKHR VulkanRayTracing::CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel)
 	{
+		SPIECS_PROFILE_ZONE;
+
 		AccelKHR resultAccel;
 		// Allocating the buffer to hold the acceleration structure
 		resultAccel.buffer = std::make_shared<VulkanBuffer>(

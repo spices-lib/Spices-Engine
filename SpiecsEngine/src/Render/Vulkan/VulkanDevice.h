@@ -175,13 +175,6 @@ namespace Spiecs {
 		bool IsPropertyMeetDemand(const VkPhysicalDevice& device);
 
 		/**
-		* @brief Get all device feature requirements our engine needede.
-		* Source 1 : user Setting.
-		* @todo Configurable
-		*/
-		bool GetFeatureRequirements(VkPhysicalDeviceFeatures2& physicalDeviceFeature);
-
-		/**
 		* @brief Check all  Feature we need meet.
 		* @param[in] device VkPhysicalDevice.
 		* @return Returns true if all Feature we need meet.

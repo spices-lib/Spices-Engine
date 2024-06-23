@@ -23,18 +23,23 @@ namespace Spiecs {
 			VkAccelerationStructureKHR                  accel = VK_NULL_HANDLE;
 			std::shared_ptr<VulkanBuffer>               buffer;
 		};
+
+		struct BuildAccelerationStructure
+		{
+			VkAccelerationStructureBuildGeometryInfoKHR buildInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR };
+			VkAccelerationStructureBuildSizesInfoKHR sizeInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR };
+			const VkAccelerationStructureBuildRangeInfoKHR* rangeInfo;
+			AccelKHR                                  as;  // result acceleration structure
+			AccelKHR                                 cleanupAS;
+		};
 		
 	public:
 
-		VulkanRayTracing(
-			VulkanState& vulkanState
-		)
-			: VulkanObject(vulkanState)
-		{};
+		VulkanRayTracing(VulkanState& vulkanState);
 
 		virtual ~VulkanRayTracing();
 
-		VkAccelerationStructureKHR GetAccelerationStructure() const;
+		VkAccelerationStructureKHR GetAccelerationStructure() const { return m_tlas.accel; };
 		VkDeviceAddress GetBlasDeviceAddress(uint32_t blasId);
 
 		/**
@@ -100,19 +105,7 @@ namespace Spiecs {
 			bool                                 motion           // Motion Blur
 		);
 
-	protected:
-
-		std::vector<AccelKHR> m_blas;  // Bottom-level acceleration structure
-		AccelKHR              m_tlas;  // Top-level acceleration structure
-
-		struct BuildAccelerationStructure
-		{
-			VkAccelerationStructureBuildGeometryInfoKHR buildInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR };
-			VkAccelerationStructureBuildSizesInfoKHR sizeInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR };
-			const VkAccelerationStructureBuildRangeInfoKHR* rangeInfo;
-			AccelKHR                                  as;  // result acceleration structure
-			AccelKHR                                 cleanupAS;
-		};
+	private:
 
 		/**
 		* @brief Creating the bottom level acceleration structure for all indices of `buildAs` vector.
@@ -120,10 +113,10 @@ namespace Spiecs {
 		* indices limits the number of BLAS to create at once. This limits the amount of
 		* memory needed when compacting the BLAS.
 		*/
-		void CmdCreateBLAS(VkCommandBuffer           cmdBuf          ,
-			std::vector<uint32_t>                    indices         ,
-			std::vector<BuildAccelerationStructure>& buildAs         ,
-			VkDeviceAddress                          scratchAddress  ,
+		void CmdCreateBLAS(VkCommandBuffer           cmdBuf,
+			std::vector<uint32_t>                    indices,
+			std::vector<BuildAccelerationStructure>& buildAs,
+			VkDeviceAddress                          scratchAddress,
 			VkQueryPool                              queryPool
 		);
 
@@ -133,15 +126,30 @@ namespace Spiecs {
 		* This is the reason why we used m_cmdPool.submitAndWait(cmdBuf) before calling this function.
 		*/
 		void CmdCompactBLAS(
-			VkCommandBuffer                          cmdBuf          , 
-			std::vector<uint32_t>                    indices         , 
-			std::vector<BuildAccelerationStructure>& buildAs         , 
+			VkCommandBuffer                          cmdBuf,
+			std::vector<uint32_t>                    indices,
+			std::vector<BuildAccelerationStructure>& buildAs,
 			VkQueryPool                              queryPool
 		);
 
 		void destroyNonCompacted(std::vector<uint32_t> indices, std::vector<BuildAccelerationStructure>& buildAs);
 		bool hasFlag(VkFlags item, VkFlags flag) { return (item & flag) == flag; }
 		AccelKHR CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel);
+
+	private:
+
+		std::vector<AccelKHR> m_blas;  // Bottom-level acceleration structure
+		AccelKHR              m_tlas;  // Top-level acceleration structure
+
+
+		PFN_vkCreateAccelerationStructureKHR                   vkCreateAccelerationStructureKHR;
+		PFN_vkDestroyAccelerationStructureKHR                  vkDestroyAccelerationStructureKHR;
+		PFN_vkCmdBuildAccelerationStructuresKHR                vkCmdBuildAccelerationStructuresKHR;
+		PFN_vkCopyAccelerationStructureKHR                     vkCopyAccelerationStructureKHR;
+		PFN_vkGetAccelerationStructureDeviceAddressKHR         vkGetAccelerationStructureDeviceAddressKHR;
+		PFN_vkCmdWriteAccelerationStructuresPropertiesKHR      vkCmdWriteAccelerationStructuresPropertiesKHR;
+		PFN_vkGetAccelerationStructureBuildSizesKHR            vkGetAccelerationStructureBuildSizesKHR;
+		PFN_vkCmdCopyAccelerationStructureKHR                  vkCmdCopyAccelerationStructureKHR;
 	};
 
 	template<class T>
