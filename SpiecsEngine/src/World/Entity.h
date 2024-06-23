@@ -143,6 +143,6 @@ namespace Spiecs {
 		/**
 		* @brief A specific world Pointer.
 		*/
-		World* m_World;
+		World* m_World = nullptr;
 	};
 }
