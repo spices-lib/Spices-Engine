@@ -185,7 +185,7 @@ namespace Spiecs {
 					/**
 					* @brief Destroy the non - compacted version.
 					*/ 
-					destroyNonCompacted(indices, buildAs);
+					DestroyNonCompacted(indices, buildAs);
 				}
 				
 				/**
@@ -320,7 +320,7 @@ namespace Spiecs {
 		buildInfo.srcAccelerationStructure         = VK_NULL_HANDLE;
 
 		VkAccelerationStructureBuildSizesInfoKHR sizeInfo{};
-		sizeInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
+		sizeInfo.sType                             = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
 
 		vkGetAccelerationStructureBuildSizesKHR(
 			m_VulkanState.m_Device, 
@@ -394,7 +394,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Build the TLAS.
-		*/ 
+		*/
 		vkCmdBuildAccelerationStructuresKHR(cmdBuf, 1, &buildInfo, &pBuildOffsetInfo);
 	}
 
@@ -513,38 +513,39 @@ namespace Spiecs {
 			0, 
 			(uint32_t)compactSizes.size(), 
 			compactSizes.size() * sizeof(VkDeviceSize),
-			compactSizes.data(), sizeof(VkDeviceSize), 
+			compactSizes.data(), 
+			sizeof(VkDeviceSize), 
 			VK_QUERY_RESULT_WAIT_BIT
 		);
 
 		for (auto idx : indices)
 		{
-			buildAs[idx].cleanupAS = buildAs[idx].as;                                    // previous AS to destroy
-			buildAs[idx].sizeInfo.accelerationStructureSize = compactSizes[queryCtn++];  // new reduced size
+			buildAs[idx].cleanupAS                          = buildAs[idx].as;              // previous AS to destroy
+			buildAs[idx].sizeInfo.accelerationStructureSize = compactSizes[queryCtn++];     // new reduced size
 
 			/**
 			* @brief Creating a compact version of the AS.
 			*/ 
 			VkAccelerationStructureCreateInfoKHR asCreateInfo{};
-			asCreateInfo.sType                 = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
-			asCreateInfo.size                  = buildAs[idx].sizeInfo.accelerationStructureSize;
-			asCreateInfo.type                  = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
-			buildAs[idx].as = CreateAcceleration(asCreateInfo);
+			asCreateInfo.sType                              = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
+			asCreateInfo.size                               = buildAs[idx].sizeInfo.accelerationStructureSize;
+			asCreateInfo.type                               = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
+			buildAs[idx].as                                 = CreateAcceleration(asCreateInfo);
 
 			/**
 			* @brief Copy the original BLAS to a compact version.
 			*/ 
 			VkCopyAccelerationStructureInfoKHR copyInfo{};
-			copyInfo.sType                     = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
-			copyInfo.src                       = buildAs[idx].buildInfo.dstAccelerationStructure;
-			copyInfo.dst                       = buildAs[idx].as.accel;
-			copyInfo.mode                      = VK_COPY_ACCELERATION_STRUCTURE_MODE_COMPACT_KHR;
+			copyInfo.sType                                  = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
+			copyInfo.src                                    = buildAs[idx].buildInfo.dstAccelerationStructure;
+			copyInfo.dst                                    = buildAs[idx].as.accel;
+			copyInfo.mode                                   = VK_COPY_ACCELERATION_STRUCTURE_MODE_COMPACT_KHR;
 
 			vkCmdCopyAccelerationStructureKHR(cmdBuf, &copyInfo);
 		}
 	}
 
-	void VulkanRayTracing::destroyNonCompacted(
+	void VulkanRayTracing::DestroyNonCompacted(
 		std::vector<uint32_t> indices, 
 		std::vector<BuildAccelerationStructure>& buildAs
 	)
@@ -554,6 +555,7 @@ namespace Spiecs {
 		for (auto& i : indices)
 		{
 			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, buildAs[i].cleanupAS.accel, nullptr);
+			buildAs[i].cleanupAS.buffer = nullptr;
 		}
 	}
 
@@ -562,7 +564,10 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		AccelKHR resultAccel;
-		// Allocating the buffer to hold the acceleration structure
+
+		/**
+		* @brief Allocating the buffer to hold the acceleration structure.
+		*/
 		resultAccel.buffer = std::make_shared<VulkanBuffer>(
 			m_VulkanState, 
 			accel.size, 
@@ -571,10 +576,14 @@ namespace Spiecs {
 			0
 		);
 
-		// Setting the buffer
+		/**
+		* @brief Setting the buffer.
+		*/ 
 		accel.buffer = resultAccel.buffer->Get();
 
-		// Create the acceleration structure
+		/**
+		* @brief Create the acceleration structure.
+		*/ 
 		vkCreateAccelerationStructureKHR(
 			m_VulkanState.m_Device, 
 			&accel, 

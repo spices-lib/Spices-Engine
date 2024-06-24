@@ -155,6 +155,9 @@ namespace Spiecs {
 
 	void VulkanRenderBackend::CreateBottomLevelAS(FrameInfo& frameInfo)
 	{
+		/**
+		* @brief BLAS - Storing each primitive in a geometry.
+		*/
 		std::vector<VulkanRayTracing::BlasInput> allBlas;
 
 		/**

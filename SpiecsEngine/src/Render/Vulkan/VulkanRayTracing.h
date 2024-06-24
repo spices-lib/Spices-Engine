@@ -139,7 +139,7 @@ namespace Spiecs {
 			VkQueryPool                              queryPool
 		);
 
-		void destroyNonCompacted(std::vector<uint32_t> indices, std::vector<BuildAccelerationStructure>& buildAs);
+		void DestroyNonCompacted(std::vector<uint32_t> indices, std::vector<BuildAccelerationStructure>& buildAs);
 		bool hasFlag(VkFlags item, VkFlags flag) { return (item & flag) == flag; }
 		AccelKHR CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel);
 
@@ -228,7 +228,7 @@ namespace Spiecs {
 				nullptr
 			);
 
-			//CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, flags, update, motion);
+			CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, flags, update, motion);
 		});
 	}
 }
