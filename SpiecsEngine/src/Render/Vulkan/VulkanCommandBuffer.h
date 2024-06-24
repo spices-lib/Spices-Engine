@@ -81,7 +81,7 @@ namespace Spiecs {
 		* @brief Allocate s new CommandBuffer from CommandPool.
 		*/
 		VkCommandBuffer commandBuffer;
-		vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &commandBuffer);
+		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &commandBuffer));
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, commandBuffer, vulkanState.m_Device, "CustomCmd Command Buffer");
 
 		/**
@@ -94,7 +94,7 @@ namespace Spiecs {
 		/**
 		* @brief Begin a CommandBuffer
 		*/
-		vkBeginCommandBuffer(commandBuffer, &beginInfo);
+		VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
 		/**
 		* @brief Execute function pointer.
@@ -104,7 +104,7 @@ namespace Spiecs {
 		/**
 		* @brief End a CommandBuffer
 		*/
-		vkEndCommandBuffer(commandBuffer);
+		VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 		/**
 		* @brief Instanced a VkSubmitInfo with default value.
@@ -117,12 +117,17 @@ namespace Spiecs {
 		/**
 		* @brief Submit the CommandBuffer in graphic Queue.
 		*/
-		vkQueueSubmit(vulkanState.m_GraphicQueue, 1, &submitInfo, VK_NULL_HANDLE);
+		VK_CHECK(vkQueueSubmit(vulkanState.m_GraphicQueue, 1, &submitInfo, VK_NULL_HANDLE));
 
 		/**
 		* @brief Wait for queu execute.
 		*/
-		vkQueueWaitIdle(vulkanState.m_GraphicQueue);
+		VkResult result = vkQueueWaitIdle(vulkanState.m_GraphicQueue);
+		if (result != VK_SUCCESS) {
+			std::stringstream ss;
+			ss << "Assert Failed \n    At File: " << __FILE__ << " \n   At Line: " << __LINE__ << "\n   ";
+			SPIECS_CORE_ERROR(ss.str());
+		}
 
 		/**
 		* @brief Free the CommandBuffer that created.

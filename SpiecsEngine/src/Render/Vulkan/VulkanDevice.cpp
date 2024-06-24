@@ -301,9 +301,7 @@ namespace Spiecs {
 		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /*@brief To build acceleration structures.*/
 		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /*To use vkCmdTraceRaysKHR.*/
 		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /*@brief Required by ray tracing pipeline*/
-																						         
-		//m_ExtensionProperties.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);            /*@brief Enable Buffer Address*/
-		//m_ExtensionProperties.push_back(VK_KHR_DEVICE_GROUP_EXTENSION_NAME);                     /*@brief Enable Buffer Address*/
+																			         
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

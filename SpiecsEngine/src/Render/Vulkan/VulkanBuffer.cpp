@@ -70,7 +70,7 @@ namespace Spiecs {
 
 	VkDeviceAddress& VulkanBuffer::GetAddress()
 	{
-		if ((m_Uasge & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) == VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		if (m_Uasge & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
 			return m_BufferAddress;
 		}
@@ -162,17 +162,27 @@ namespace Spiecs {
 		/**
 		* @brief Get Buffer Memory Requirements.
 		*/
-		VkMemoryRequirements memRequirements{};
-		vkGetBufferMemoryRequirements(vulkanState.m_Device, m_Buffer, &memRequirements);
+		VkMemoryDedicatedRequirements dedicatedRegs{};
+		dedicatedRegs.sType                               = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+
+		VkMemoryRequirements2 memReqs{};
+		memReqs.sType                                     = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+		memReqs.pNext                                     = &dedicatedRegs;
+
+		VkBufferMemoryRequirementsInfo2 bufferReqs{};
+		bufferReqs.sType                                  = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
+		bufferReqs.buffer                                 = m_Buffer;
+
+		vkGetBufferMemoryRequirements2(m_VulkanState.m_Device, &bufferReqs, &memReqs);
 
 		/**
 		* @brief Instance a VkMemoryAllocateInfo.
 		*/
 		VkMemoryAllocateInfo allocInfo{};
 		allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memRequirements.size;
+		allocInfo.allocationSize = memReqs.memoryRequirements.size;
 		
-		if ((usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) == VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
 			/**
 			* @brief Allow Buffer Device Address
@@ -195,7 +205,8 @@ namespace Spiecs {
 		*/
 		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) 
 		{
-			if (memRequirements.memoryTypeBits & (1 << i) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+			if (memReqs.memoryRequirements.memoryTypeBits & (1 << i) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) 
+			{
 				allocInfo.memoryTypeIndex = i;
 			}
 		}
@@ -206,7 +217,7 @@ namespace Spiecs {
 		VK_CHECK(vkAllocateMemory(vulkanState.m_Device, &allocInfo, nullptr, &m_BufferMemory));
 		VK_CHECK(vkBindBufferMemory(vulkanState.m_Device, m_Buffer, m_BufferMemory, 0));
 
-		if ((usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) == VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
 			/**
 			* @brief Instance a VkBufferDeviceAddressInfo.

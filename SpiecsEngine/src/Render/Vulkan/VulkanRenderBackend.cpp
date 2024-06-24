@@ -175,7 +175,7 @@ namespace Spiecs {
 		/**
 		* @brief Build BLAS.
 		*/
-		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
 	}
 
 	void VulkanRenderBackend::CreateTopLevelAS()
@@ -198,7 +198,7 @@ namespace Spiecs {
 		/**
 		* @brief Build TLAS.
 		*/
-		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
 	}
 
 	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)
