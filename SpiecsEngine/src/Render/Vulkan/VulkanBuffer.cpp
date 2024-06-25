@@ -179,18 +179,18 @@ namespace Spiecs {
 		* @brief Instance a VkMemoryAllocateInfo.
 		*/
 		VkMemoryAllocateInfo allocInfo{};
-		allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memReqs.memoryRequirements.size;
+		allocInfo.sType                                   = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		allocInfo.allocationSize                          = memReqs.memoryRequirements.size;
 		
+		/**
+		* @brief Allow Buffer Device Address
+		*/
+		VkMemoryAllocateFlagsInfoKHR flagsInfo{};
+		flagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
+		flagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT;
+
 		if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
-			/**
-			* @brief Allow Buffer Device Address
-			*/
-			VkMemoryAllocateFlagsInfoKHR flagsInfo{};
-			flagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
-			flagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR;
-
 			allocInfo.pNext = &flagsInfo;
 		}
 
@@ -208,6 +208,7 @@ namespace Spiecs {
 			if (memReqs.memoryRequirements.memoryTypeBits & (1 << i) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) 
 			{
 				allocInfo.memoryTypeIndex = i;
+				break;
 			}
 		}
 
