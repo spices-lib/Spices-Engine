@@ -385,7 +385,6 @@ namespace Spiecs {
 		{
 			CreateBottomLevelAS(frameInfo);
 			CreateTopLevelAS();
-			m_VulkanRayTracing->Destroy();
 			in = false;
 		}
 

@@ -285,6 +285,7 @@ namespace Spiecs {
 		VkCommandBuffer                       cmdBuf           , 
 		uint32_t                              countInstance    , 
 		VkDeviceAddress                       instBufferAddr   , 
+		std::unique_ptr<VulkanBuffer>&        scratchBuffer    ,
 		VkBuildAccelerationStructureFlagsKHR  flags            , 
 		bool                                  update           , 
 		bool                                  motion		  
@@ -364,7 +365,7 @@ namespace Spiecs {
 		/**
 		* @brief Allocate the scratch memory.
 		*/ 
-		VulkanBuffer scratchBuffer(
+		scratchBuffer = std::make_unique<VulkanBuffer>(
 			m_VulkanState,
 			sizeInfo.buildScratchSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
@@ -372,7 +373,7 @@ namespace Spiecs {
 			0
 		);
 
-		VkDeviceAddress scratchAddress = scratchBuffer.GetAddress();
+		VkDeviceAddress scratchAddress = scratchBuffer->GetAddress();
 
 		/**
 		* @brief Update build information.

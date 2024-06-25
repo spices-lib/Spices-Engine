@@ -104,12 +104,13 @@ namespace Spiecs {
 		*  Creating the TLAS, called by buildTlas.
 		*/
 		void CmdCreateTLAS(
-			VkCommandBuffer                      cmdBuf,          // Command buffer
-			uint32_t                             countInstance,   // number of instances
-			VkDeviceAddress                      instBufferAddr,  // Buffer address of instances
-			VkBuildAccelerationStructureFlagsKHR flags,           // Build creation flag
-			bool                                 update,          // Update == animation
-			bool                                 motion           // Motion Blur
+			VkCommandBuffer                      cmdBuf         ,   // Command buffer.
+			uint32_t                             countInstance  ,   // number of instances.
+			VkDeviceAddress                      instBufferAddr ,   // Buffer address of instances.
+			std::unique_ptr<VulkanBuffer>&       scratchBuffer  ,   // ScratchBuffer Buffer.
+			VkBuildAccelerationStructureFlagsKHR flags          ,   // Build creation flag.
+			bool                                 update         ,   // Update == animation.
+			bool                                 motion             // Motion Blur.
 		);
 
 	private:
@@ -205,6 +206,7 @@ namespace Spiecs {
 		/**
 		* @brief Command buffer to create the TLAS.
 		*/
+		std::unique_ptr<VulkanBuffer> scratchBuffer = nullptr;
 		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
 
 			/**
@@ -228,7 +230,7 @@ namespace Spiecs {
 				nullptr
 			);
 
-			CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, flags, update, motion);
+			CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, scratchBuffer, flags, update, motion);
 		});
 	}
 }
