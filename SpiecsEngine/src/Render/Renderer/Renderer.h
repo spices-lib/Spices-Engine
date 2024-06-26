@@ -483,9 +483,10 @@ namespace Spiecs {
 			/**
 			* @brief Create all buffer type descriptor set.
 			* Create pipeline layout.
+			* @param[in] accel AccelerationStructure. Pass it if call AddAccelerationStructure before.
 			* @attention Texture type descriptor set is not created here, but in Material::BuildMaterial().
 			*/
-			void Build();
+			void Build(VkAccelerationStructureKHR accel = VK_NULL_HANDLE);
 
 		public:
 

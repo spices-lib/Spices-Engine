@@ -12,6 +12,7 @@
 #include "Systems/SlateSystem.h"
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
+#include "Render/Renderer/SpecificRenderer/RayTracingRenderer.h"
 #include "Render/Renderer/SpecificRenderer/BasePassRenderer.h"
 #include "Render/Renderer/SpecificRenderer/ShadowRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SlateRenderer.h"
@@ -54,7 +55,6 @@ namespace Spiecs {
 			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>  (m_VulkanState);
 			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
 			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>    (m_VulkanState, m_VulkanDevice);
-			m_VulkanRayTracing    = std::make_unique<VulkanRayTracing>   (m_VulkanState);
 		}
 
 		/**
@@ -84,6 +84,7 @@ namespace Spiecs {
 		{
 			RendererManager::Get()
 			.Push<PreRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<RayTracingRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<BasePassRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
@@ -122,6 +123,7 @@ namespace Spiecs {
 			.Pop("SceneComposeRenderer")
 			.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
+			.Pop("RayTracingRenderer")
 			.Pop("PreRenderer");
 		}
 	}
@@ -151,54 +153,6 @@ namespace Spiecs {
 		* @brief Execute the global event function pointer by passing the specific event.
 		*/
 		Event::GetEventCallbackFn()(event);
-	}
-
-	void VulkanRenderBackend::CreateBottomLevelAS(FrameInfo& frameInfo)
-	{
-		/**
-		* @brief BLAS - Storing each primitive in a geometry.
-		*/
-		std::vector<VulkanRayTracing::BlasInput> allBlas;
-
-		/**
-		* @brief Iter all MeshComponents.
-		*/
-		auto& view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
-		for (auto& e : view)
-		{
-			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);
-
-			auto blas = meshComp.GetMesh()->CreateMeshPackASInput();
-			ContainerLibrary::Append<VulkanRayTracing::BlasInput>(allBlas, blas);
-		}
-
-		/**
-		* @brief Build BLAS.
-		*/
-		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
-	}
-
-	void VulkanRenderBackend::CreateTopLevelAS()
-	{
-		std::vector<VkAccelerationStructureInstanceKHR> tlas;
-		tlas.reserve(1);
-
-		{
-			VkAccelerationStructureInstanceKHR rayInst{};
-			rayInst.transform                                  = ToVkTransformMatrixKHR(glm::mat4(1.0f));                 // Position of the instance
-			rayInst.instanceCustomIndex                        = 0;                                                          // gl_InstanceCustomIndexEXT
-			rayInst.accelerationStructureReference             = m_VulkanRayTracing->GetBlasDeviceAddress(0);
-			rayInst.flags                                      = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-			rayInst.mask                                       = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
-			rayInst.instanceShaderBindingTableRecordOffset     = 0;                                                          // We will use the same hit group for all objects
-
-			tlas.emplace_back(rayInst);
-		}
-
-		/**
-		* @brief Build TLAS.
-		*/
-		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
 	}
 
 	void VulkanRenderBackend::BeginFrame(FrameInfo& frameInfo)
@@ -378,15 +332,6 @@ namespace Spiecs {
 	void VulkanRenderBackend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPIECS_PROFILE_ZONE;
-
-		static bool in = true;
-
-		if (in)
-		{
-			CreateBottomLevelAS(frameInfo);
-			CreateTopLevelAS();
-			in = false;
-		}
 
 		/**
 		* @brief Run all specific renderer.

@@ -565,7 +565,7 @@ namespace Spiecs {
 		return *this;
 	}
 
-	void Renderer::DescriptorSetBuilder::Build()
+	void Renderer::DescriptorSetBuilder::Build(VkAccelerationStructureKHR accel)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -581,7 +581,7 @@ namespace Spiecs {
 			/**
 			* @brief UpdateDescriptorSet.
 			*/
-			pair.second->UpdateDescriptorSet(m_ImageInfos[pair.first], m_BufferInfos[pair.first]);
+			pair.second->UpdateDescriptorSet(m_ImageInfos[pair.first], m_BufferInfos[pair.first], accel);
 		}
 	}
 

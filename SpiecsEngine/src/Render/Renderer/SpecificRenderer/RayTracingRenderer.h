@@ -10,6 +10,8 @@
 
 namespace Spiecs {
 
+	class VulkanRayTracing;
+
 	/**
 	* @brief RayTracingRenderer Class.
 	* This class defines the ray tracing behaver.
@@ -57,5 +59,23 @@ namespace Spiecs {
 		* Create specific descriptorset for subpass.
 		*/
 		virtual void CreateDescriptorSet() override;
+
+		/**
+		* @brief VulkanRayTracing.
+		*/
+		std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
+
+	private:
+
+		/**
+		* @brief Create BottomLevelAS with all MeshComponents.
+		* @param[in] frameInfo FrameInfo.
+		*/
+		void CreateBottomLevelAS(FrameInfo& frameInfo);
+
+		/**
+		* @brief Create TopLevelAS.
+		*/
+		void CreateTopLevelAS();
 	};
 }

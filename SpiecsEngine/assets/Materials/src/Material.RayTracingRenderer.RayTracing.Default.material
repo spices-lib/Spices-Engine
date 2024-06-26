@@ -1,0 +1,8 @@
+Material: RayTracingRenderer.RayTracing.Default
+Shaders:
+  - Stage: rgen
+    Path: RayTracingRenderer.RayTracing.Default
+  - Stage: rmiss
+    Path: RayTracingRenderer.RayTracing.Default
+  - Stage: rchit
+    Path: RayTracingRenderer.RayTracing.Default

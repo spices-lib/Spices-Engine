@@ -191,8 +191,9 @@ namespace Spiecs {
 	}
 
 	void VulkanDescriptorSet::UpdateDescriptorSet(
-		ImageInfo&  imageInfo  ,
-		BufferInfo& bufferInfo
+		ImageInfo&                 imageInfo  ,
+		BufferInfo&                bufferInfo ,
+		VkAccelerationStructureKHR accel
 	)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -219,6 +220,14 @@ namespace Spiecs {
 			case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
 			case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
 				write.pBufferInfo       = &bufferInfo[pair.first];
+				write.descriptorCount   = 1;
+			case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
+				VkWriteDescriptorSetAccelerationStructureKHR descASInfo {};
+				descASInfo.sType                          = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
+				descASInfo.accelerationStructureCount     = 1;
+				descASInfo.pAccelerationStructures        = &accel;
+
+				write.pNext             = &descASInfo;
 				write.descriptorCount   = 1;
 				break;
 			}
