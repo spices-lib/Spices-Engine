@@ -91,7 +91,7 @@ struct PointLight {
 /**
 * @brief Light Buffer Struct.
 */
-layout(std140, set = 1, binding = 1) buffer LightsBuffer {
+layout(std140, set = 1, binding = 1) readonly buffer LightsBuffer {
 	DirectionalLight directionalLight;
 	PointLight pointLights[];    /*Point Light Array*/
 };

@@ -551,6 +551,20 @@ namespace Spiecs {
 		return *this;
 	}
 
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddAccelerationStructure(
+		uint32_t                         set                    , 
+		uint32_t                         binding                , 
+		VkShaderStageFlags               stageFlags
+	)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, stageFlags, 1);
+
+		return *this;
+	}
+
 	void Renderer::DescriptorSetBuilder::Build()
 	{
 		SPIECS_PROFILE_ZONE;

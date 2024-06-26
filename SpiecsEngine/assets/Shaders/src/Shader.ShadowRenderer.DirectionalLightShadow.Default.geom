@@ -4,7 +4,7 @@
 
 layout(triangles, invocations = MAX_DIRECTIONALLIGHT_NUM) in;
 
-layout(set = 1, binding = 0) buffer DirectionalLightMatrixs {
+layout(set = 1, binding = 0) readonly buffer DirectionalLightMatrixs {
 	mat4 Matrixs[];
 };
 

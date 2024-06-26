@@ -212,6 +212,7 @@ namespace Spiecs {
 			{
 			case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
 			case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+			case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
 				write.pImageInfo        = imageInfo[pair.first].data();
 				write.descriptorCount   = static_cast<uint32_t>(imageInfo[pair.first].size());
 				break;

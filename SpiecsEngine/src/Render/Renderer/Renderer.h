@@ -421,6 +421,23 @@ namespace Spiecs {
 			);
 
 			/**
+			* @brief Add the storage texture set binding to descriptorsetlayout.
+			* @param[in] T Texture Type.
+			* @param[in] set Which set this texture wil use.
+			* @param[in] binding Which binding this texture wil use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @param[in] textureNames All Texture's Name.
+			* @return Returns this reference.
+			*/
+			template<typename T>
+			inline DescriptorSetBuilder& AddStorageTexture(
+				uint32_t                         set           ,
+				uint32_t                         binding       ,
+				VkShaderStageFlags               stageFlags    ,
+				const std::vector<std::string>&  textureNames
+			);
+
+			/**
 			* @brief Add the attachment as texture to descriptorsetlayout.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
@@ -448,6 +465,19 @@ namespace Spiecs {
 				uint32_t                         binding             ,
 				VkShaderStageFlags               stageFlags          ,
 				const std::vector<std::string>&  inputAttachmentNames
+			);
+
+			/**
+			* @brief Add the Acceleration Structure set binding to descriptorsetlayout.
+			* @param[in] set Which set this Acceleration Structure wil use.
+			* @param[in] binding Which binding this Acceleration Structure wil use.
+			* @param[in] stageFlags Which buffer stage this Acceleration Structure will use.
+			* @return Returns this reference.
+			*/
+			DescriptorSetBuilder& AddAccelerationStructure(
+				uint32_t                         set         ,
+				uint32_t                         binding     ,
+				VkShaderStageFlags               stageFlags
 			);
 
 			/**
@@ -863,9 +893,9 @@ namespace Spiecs {
 
 	template<typename T>
 	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddTexture(
-		uint32_t           set        ,
-		uint32_t           binding    ,
-		VkShaderStageFlags stageFlags ,
+		uint32_t                        set        ,
+		uint32_t                        binding    ,
+		VkShaderStageFlags              stageFlags ,
 		const std::vector<std::string>& textureNames
 	)
 	{
@@ -885,6 +915,34 @@ namespace Spiecs {
 		*/
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
+
+		return *this;
+	}
+
+	template<typename T>
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageTexture(
+		uint32_t                        set        , 
+		uint32_t                        binding    , 
+		VkShaderStageFlags              stageFlags ,
+		const std::vector<std::string>& textureNames
+	)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief fill in imageInfos.
+		*/
+		for (int i = 0; i < textureNames.size(); i++)
+		{
+			std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i]);
+			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
+		}
+
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, stageFlags, textureNames.size());
 
 		return *this;
 	}
