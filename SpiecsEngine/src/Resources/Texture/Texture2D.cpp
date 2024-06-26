@@ -31,7 +31,8 @@ namespace Spiecs {
 				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT   |  // Can be used for ColorAttachment.
 				VK_IMAGE_USAGE_SAMPLED_BIT            |  // Can be used for ShaderRead.
 				VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT   |  // Can be used for InputAttachment.
-				VK_IMAGE_USAGE_TRANSFER_SRC_BIT,         // Can be used for TransferSrc.
+				VK_IMAGE_USAGE_TRANSFER_SRC_BIT       |  // Can be used for TransferSrc.        /*todo: Configurable*/
+				VK_IMAGE_USAGE_STORAGE_BIT,
 				0,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				1

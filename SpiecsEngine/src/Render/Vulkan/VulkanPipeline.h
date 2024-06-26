@@ -109,6 +109,12 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
+		* @param[in] vulkanState The global VulkanState.
+		*/
+		VulkanPipeline(VulkanState& vulkanState) : VulkanObject(vulkanState) {};
+
+		/**
+		* @brief Constructor Function.
 		* Create VkPipeline.
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] pipelineName The Pipeline name.
@@ -153,23 +159,78 @@ namespace Spiecs {
 		* @param[in] shaders The Shader stage name and path.
 		* @param[in] config PipelineConfigInfo.
 		*/
-		void CreateGraphicsPipeline(
+		virtual void CreateGraphicsPipeline(
 			const std::string&                                  pipelineName   ,
 			const std::unordered_map<std::string, std::string>& shaders        ,
 			const PipelineConfigInfo&                           config
 		);
 
-	private:
+	protected:
 
 		/**
 		* @brief The VkPipelineLayout.
 		* @attention Create by Renderer and destroy by this.
 		*/
-		VkPipelineLayout m_PipelineLayout;
+		VkPipelineLayout m_PipelineLayout{};
 
 		/**
 		* @brief The VkPipeline.
 		*/
-		VkPipeline m_Pipeline;
+		VkPipeline m_Pipeline{};
+	};
+
+	/**
+	* @brief This class is a wapper of VkPipelineLayout and VkPipeline.
+	*/
+	class VulkanRayTracingPipeline : public VulkanPipeline
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		* Create VkPipeline.
+		* @param[in] vulkanState The global VulkanState.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		VulkanRayTracingPipeline(
+			VulkanState&                                         vulkanState  ,
+			const std::string&                                   pipelineName ,
+			const std::unordered_map<std::string, std::string>&  shaders      ,
+			const PipelineConfigInfo&                            config
+		);
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~VulkanRayTracingPipeline() {};
+
+	private:
+
+		/**
+		* @brief Create the VkPipeline.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		virtual void CreateGraphicsPipeline(
+			const std::string&                                   pipelineName ,
+			const std::unordered_map<std::string, std::string>&  shaders      ,
+			const PipelineConfigInfo&                            config
+		) override;
+
+	private:
+
+		enum RTShaderStageIndices
+		{
+			RayGen                = 0,
+			Miss                  = 1,
+			ClosesHit             = 2,
+			ShaderGroupCount      = 3
+		};
+
+		std::vector<VkRayTracingShaderGroupCreateInfoKHR> m_RTShaderGroups;
+		PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR;
 	};
 }

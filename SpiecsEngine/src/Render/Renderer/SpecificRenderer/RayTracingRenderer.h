@@ -61,6 +61,19 @@ namespace Spiecs {
 		virtual void CreateDescriptorSet() override;
 
 		/**
+		* @brief The interface is inherited from Renderer.
+		* Create Material Specific Pipeline.
+		* @todo Complete it by renderer.
+		*/
+		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
+			std::shared_ptr<Material>        material ,
+			VkPipelineLayout&                layout   ,
+			std::shared_ptr<RendererSubPass> subPass
+		) override;
+
+	private:
+
+		/**
 		* @brief VulkanRayTracing.
 		*/
 		std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;

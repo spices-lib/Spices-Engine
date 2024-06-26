@@ -497,6 +497,43 @@ namespace Spiecs {
 		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageTexture(
+		uint32_t                         set           , 
+		uint32_t                         binding       , 
+		VkShaderStageFlags               stageFlags    , 
+		const std::vector<std::string>&  textureNames  , 
+		VkFormat                         format        ,
+		TextureType                      type
+	)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief fill in imageInfos.
+		*/
+		for (int i = 0; i < textureNames.size(); i++)
+		{
+			RendererResourceCreateInfo Info;
+			Info.name                                = textureNames[i];
+			Info.type                                = type;
+			Info.width                               = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
+			Info.height                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
+			Info.description.samples                 = VK_SAMPLE_COUNT_1_BIT;
+			Info.description.format                  = format;
+			VkDescriptorImageInfo* imageInfo = m_Renderer->m_RendererResourcePool->AccessResource(Info);
+
+			m_ImageInfos[set][binding].push_back(*imageInfo);
+		}
+
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
+		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, stageFlags, textureNames.size());
+
+		return *this;
+	}
+
 	Renderer:: DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddAttachmentTexture(
 		uint32_t                         set,
 		uint32_t                         binding,

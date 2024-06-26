@@ -210,7 +210,7 @@ namespace Spiecs {
 		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
 		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
 
-		pipelineInfo.layout                             = config.pipelineLayout;
+		pipelineInfo.layout                             = m_PipelineLayout;
 		pipelineInfo.renderPass                         = config.renderPass;
 		pipelineInfo.subpass                            = config.subpass;
 
@@ -223,4 +223,108 @@ namespace Spiecs {
 		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
+
+	VulkanRayTracingPipeline::VulkanRayTracingPipeline(
+		VulkanState&                                         vulkanState  ,
+		const std::string&                                   pipelineName ,
+		const std::unordered_map<std::string, std::string>&  shaders      ,
+		const PipelineConfigInfo&                            config
+	)
+		: VulkanPipeline(vulkanState)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Get needed KHR function pointer.
+		*/
+		vkCreateRayTracingPipelinesKHR = reinterpret_cast<PFN_vkCreateRayTracingPipelinesKHR>(vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCreateRayTracingPipelinesKHR"));
+
+		/**
+		* @brief Create RT Pipeline.
+		*/
+		CreateGraphicsPipeline(pipelineName, shaders, config);
+	}
+
+	void VulkanRayTracingPipeline::CreateGraphicsPipeline(
+		const std::string &                                  pipelineName , 
+		const std::unordered_map<std::string, std::string>&  shaders      , 
+		const PipelineConfigInfo &                           config
+	)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Receive PipelineLayout from parameter.
+		*/
+		m_PipelineLayout = config.pipelineLayout;
+
+		/**
+		* @brief Create the VulkanShaderModule.
+		*/
+		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		for (auto& pair : shaders)
+		{
+			shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second, pair.first));
+		}
+
+		/**
+		* @brief Instance VkPipelineShaderStageCreateInfo.
+		*/
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (int i = 0; i < shaderModules.size(); i++)
+		{
+			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
+		}
+
+		/**
+		* @brief Shader groups.
+		*/
+		VkRayTracingShaderGroupCreateInfoKHR group{};
+		group.sType                         = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
+		group.anyHitShader                  = VK_SHADER_UNUSED_KHR;
+		group.closestHitShader              = VK_SHADER_UNUSED_KHR;
+		group.generalShader                 = VK_SHADER_UNUSED_KHR;
+		group.intersectionShader            = VK_SHADER_UNUSED_KHR;
+
+		/**
+		* @brief Raygen.
+		*/
+		group.type                         = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
+		group.generalShader                = RTShaderStageIndices::RayGen;
+		m_RTShaderGroups.push_back(group);
+
+		/**
+		* @brief Miss.
+		*/
+		group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
+		group.generalShader               = RTShaderStageIndices::Miss;
+		m_RTShaderGroups.push_back(group);
+
+		/**
+		* @brief Closest hit.
+		*/
+		group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
+		group.generalShader               = VK_SHADER_UNUSED_KHR;
+		group.closestHitShader            = RTShaderStageIndices::ClosesHit;
+		m_RTShaderGroups.push_back(group);
+
+		/**
+		* @brief Instance a VkGraphicsPipelineCreateInfo.
+		*/
+		VkRayTracingPipelineCreateInfoKHR rayPipelineInfo{};
+		rayPipelineInfo.sType                                      = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR;
+		rayPipelineInfo.stageCount                                 = static_cast<uint32_t>(shaderStages.size());
+		rayPipelineInfo.pStages                                    = shaderStages.data();
+		rayPipelineInfo.groupCount                                 = static_cast<uint32_t>(m_RTShaderGroups.size());
+		rayPipelineInfo.pGroups                                    = m_RTShaderGroups.data();
+		rayPipelineInfo.maxPipelineRayRecursionDepth               = 1;  // Ray depth
+		rayPipelineInfo.layout                                     = m_PipelineLayout;
+
+		/**
+		* @brief Create Pipeline.
+		*/
+		VK_CHECK(vkCreateRayTracingPipelinesKHR(m_VulkanState.m_Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_Pipeline));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
+	}
+
 }

@@ -35,7 +35,7 @@ namespace Spiecs {
 			m_RendererResource[info.name] = std::make_unique<RendererResource>(info);
 		}
 
-		return m_RendererResource[info.name]->GetTexture()->GetResource<VulkanImage>()->GetImageInfo();
+		return m_RendererResource[info.name]->GetTexture()->GetResource<VulkanImage>()->GetImageInfo(VK_IMAGE_LAYOUT_GENERAL);
 	}
 
 	std::shared_ptr<VulkanImage> RendererResourcePool::AccessRowResource(const std::string& name)

@@ -39,8 +39,27 @@ namespace Spiecs {
 
 		DescriptorSetBuilder{ "RayTracing", this }
 		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR)
-		//.AddStorageTexture<Texture2D>(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" })
+		.AddStorageTexture(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
+	}
+
+	std::shared_ptr<VulkanPipeline> RayTracingRenderer::CreatePipeline(
+		std::shared_ptr<Material>         material ,
+		VkPipelineLayout&                 layout   ,
+		std::shared_ptr<RendererSubPass>  subPass
+	)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		PipelineConfigInfo pipelineConfig{};
+		pipelineConfig.pipelineLayout   = layout;
+
+		return std::make_shared<VulkanRayTracingPipeline>(
+			m_VulkanState,
+			material->GetName(),
+			material->GetShaderPath(),
+			pipelineConfig
+		);
 	}
 
 	void RayTracingRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
@@ -55,12 +74,6 @@ namespace Spiecs {
 			CreateTopLevelAS();
 			in = false;
 		}
-
-		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
-
-		builder.BeginRenderPass();
-
-		builder.EndRenderPass();
 	}
 
 	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo)

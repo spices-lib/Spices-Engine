@@ -91,6 +91,9 @@ namespace Spiecs {
 		if     (m_ShaderStage == "vert") shaderStages.stage    = VK_SHADER_STAGE_VERTEX_BIT;
 		else if(m_ShaderStage == "frag") shaderStages.stage    = VK_SHADER_STAGE_FRAGMENT_BIT;
 		else if(m_ShaderStage == "geom") shaderStages.stage    = VK_SHADER_STAGE_GEOMETRY_BIT;
+		else if(m_ShaderStage == "rgen") shaderStages.stage    = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
+		else if(m_ShaderStage == "rmiss") shaderStages.stage   = VK_SHADER_STAGE_MISS_BIT_KHR;
+		else if(m_ShaderStage == "rchit") shaderStages.stage   = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
 		else
 		{
 			SPIECS_CORE_ERROR("Not Supported Sahder Stage from material.");

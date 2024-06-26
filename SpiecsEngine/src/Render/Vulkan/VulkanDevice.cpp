@@ -58,9 +58,13 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures{};
+		rayTracingFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+		rayTracingFeatures.pNext                                = nullptr; /*@brief Pass your other features through this chain.*/
+
 		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
 		accelerationStructureFeatures.sType                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
-		accelerationStructureFeatures.pNext                     = nullptr; /*@brief Pass your other features through this chain.*/
+		accelerationStructureFeatures.pNext                     = &rayTracingFeatures;
 
 		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures{};
 		descriptorIndexingFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
@@ -254,9 +258,13 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/ 
+		VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures {};
+		rayTracingFeatures.sType                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+		rayTracingFeatures.pNext                      = nullptr; /*@brief Pass your other features through this chain.*/
+
 		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
 		accelerationStructureFeatures.sType           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
-		accelerationStructureFeatures.pNext           = nullptr; /*@brief Pass your other features through this chain.*/
+		accelerationStructureFeatures.pNext           = &rayTracingFeatures; 
 
 		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures {};
 		descriptorIndexingFeatures.sType              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
@@ -286,6 +294,7 @@ namespace Spiecs {
 		if (!deviceFeatures.features.geometryShader) return false;                     /*@breif Enable Geometry Shader Feature.*/
 		if (!bufferDeviceAddressFeatures.bufferDeviceAddress) return false;            /*@breif Enable Buffer Address Feature.*/
 		if (!accelerationStructureFeatures.accelerationStructure) return false;        /*@breif Enable RayTracing AccelerationStructure.*/
+		if (!rayTracingFeatures.rayTracingPipeline) return false;                      /*@breif Enable RayTracing Pipeline.*/
 
 		return true;
 	}
@@ -301,7 +310,6 @@ namespace Spiecs {
 		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /*@brief To build acceleration structures.*/
 		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /*To use vkCmdTraceRaysKHR.*/
 		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /*@brief Required by ray tracing pipeline*/
-																			         
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)
