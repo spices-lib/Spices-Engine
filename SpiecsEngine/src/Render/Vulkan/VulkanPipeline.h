@@ -45,6 +45,16 @@ namespace Spiecs {
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
 		/**
+		* @brief Viewport.
+		*/
+		VkViewport viewport;
+
+		/**
+		* @brief Scissor.
+		*/
+		VkRect2D scissor;
+
+		/**
 		* @brief VkPipelineViewportStateCreateInfo.
 		*/
 		VkPipelineViewportStateCreateInfo              viewportInfo;
@@ -142,14 +152,21 @@ namespace Spiecs {
 		/**
 		* @brief Bind Pipeline with commandbuffer index.
 		* @param[in] frameIndex The CommandBuffer Index.
+		* @param[in] bindPoint VkPipelineBindPoint.
 		*/
-		void Bind(uint32_t frameIndex);
+		void Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 		/**
 		* @brief Get VkPipelineLayout.
 		* @return Returns the VkPipelineLayout.
 		*/
 		inline VkPipelineLayout& GetPipelineLayout() { return m_PipelineLayout; };
+
+		/**
+		* @brief Get VkPipeline.
+		* @return Returns the VkPipeline.
+		*/
+		inline VkPipeline& GetPipeline() { return m_Pipeline; };
 
 	private:
 

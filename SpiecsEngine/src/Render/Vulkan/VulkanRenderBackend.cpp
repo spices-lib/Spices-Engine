@@ -243,7 +243,7 @@ namespace Spiecs {
 		/**
 		* @brief Set VkViewport with viewport slate.
 		*/
-		vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);
+		//vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);
 
 		/**
 		* @brief Instance a VkRect2D
@@ -255,7 +255,7 @@ namespace Spiecs {
 		/**
 		* @brief Set VkRect2D.
 		*/
-		vkCmdSetScissor(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &scissor);
+		//vkCmdSetScissor(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &scissor);
 	}
 
 	void VulkanRenderBackend::EndFrame(FrameInfo& frameInfo)

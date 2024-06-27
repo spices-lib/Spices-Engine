@@ -74,13 +74,6 @@ namespace Spiecs {
 	private:
 
 		/**
-		* @brief VulkanRayTracing.
-		*/
-		std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
-
-	private:
-
-		/**
 		* @brief Create BottomLevelAS with all MeshComponents.
 		* @param[in] frameInfo FrameInfo.
 		*/
@@ -90,5 +83,24 @@ namespace Spiecs {
 		* @brief Create TopLevelAS.
 		*/
 		void CreateTopLevelAS();
+
+		void CreateRTShaderBindingTable();
+
+	private:
+
+		/**
+		* @brief VulkanRayTracing.
+		*/
+		std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
+
+		std::unique_ptr<VulkanBuffer> m_RTSBTBuffer;
+
+		VkStridedDeviceAddressRegionKHR m_RgenRegion{};
+		VkStridedDeviceAddressRegionKHR m_MissRegion{};
+		VkStridedDeviceAddressRegionKHR m_HitRegion{};
+		VkStridedDeviceAddressRegionKHR m_CallRegion{};
+
+		PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
+		PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
 	};
 }

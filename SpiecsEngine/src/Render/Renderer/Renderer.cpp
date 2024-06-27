@@ -208,6 +208,28 @@ namespace Spiecs {
 		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)subPass->GetColorBlend().size();
 		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
 
+		pipelineConfig.viewport.x = 0.0f;
+		pipelineConfig.viewport.y = static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.height);
+		pipelineConfig.viewport.width = static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.width);
+		pipelineConfig.viewport.height = -static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.height);
+		pipelineConfig.viewport.minDepth = 0.0f;
+		pipelineConfig.viewport.maxDepth = 1.0f;
+
+		if (SlateSystem::GetRegister())
+		{
+			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+
+			pipelineConfig.viewport.y = viewPortSize.y;
+			pipelineConfig.viewport.width = viewPortSize.x;
+			pipelineConfig.viewport.height = -viewPortSize.y;
+		}
+		pipelineConfig.scissor.offset = { 0, 0 };
+
+		pipelineConfig.scissor.extent = m_Device->GetSwapChainSupport().surfaceSize;
+
+		pipelineConfig.viewportInfo.pViewports = &pipelineConfig.viewport;
+		pipelineConfig.viewportInfo.pScissors = &pipelineConfig.scissor;
+
 		/**
 		* @brief Create VulkanPipeline.
 		*/
@@ -386,11 +408,11 @@ namespace Spiecs {
 		, m_CurrentImage( currentImage   )
 	{}
 
-	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName)
+	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint)
 	{
 		SPIECS_PROFILE_ZONE;
 
-		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame);
+		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame, bindPoint);
 	}
 
 	void Renderer::RenderBehaverBuilder::BeginNextSubPass(const std::string& subpassName)
@@ -453,17 +475,17 @@ namespace Spiecs {
 		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos)
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
 	{
 		SPIECS_PROFILE_ZONE;
 
 		std::stringstream ss;
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
 
-		BindDescriptorSet(infos, ss.str());
+		BindDescriptorSet(infos, ss.str(), bindPoint);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name)
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -474,7 +496,7 @@ namespace Spiecs {
 		{
 			vkCmdBindDescriptorSets(
 				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
-				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				bindPoint,
 				m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
 				pair.first,
 				1,
@@ -521,6 +543,7 @@ namespace Spiecs {
 			Info.description.samples                 = VK_SAMPLE_COUNT_1_BIT;
 			Info.description.format                  = format;
 			VkDescriptorImageInfo* imageInfo = m_Renderer->m_RendererResourcePool->AccessResource(Info);
+			imageInfo->imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
 			m_ImageInfos[set][binding].push_back(*imageInfo);
 		}

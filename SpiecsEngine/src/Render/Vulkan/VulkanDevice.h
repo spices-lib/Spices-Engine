@@ -151,6 +151,11 @@ namespace Spiecs {
 		*/
 		VkSampleCountFlagBits GetMaxUsableSampleCount();
 
+		/**
+		* @brief Get RayTracingPipelineProperties.
+		*/
+		inline VkPhysicalDeviceRayTracingPipelinePropertiesKHR& GetRTPipelineProperties() { return m_RayTracingProperties; };
+
 	private:
 
 		/**

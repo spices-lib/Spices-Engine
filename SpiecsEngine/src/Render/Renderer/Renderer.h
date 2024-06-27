@@ -548,8 +548,10 @@ namespace Spiecs {
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaverBuilder instanced.
+			* @param[name] materialName, also pipelineName.
+			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void BindPipeline(const std::string& materialName);
+			void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 		public:
 
@@ -557,16 +559,25 @@ namespace Spiecs {
 			* @brief Binding DescriptorSet with DescriptorSetInfo.
 			* For Binding a Renderer DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
+			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void BindDescriptorSet(DescriptorSetInfo& infos);
+			void BindDescriptorSet(
+				DescriptorSetInfo&   infos                                       , 
+				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
 
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo and name.
 			* For Binding a Material DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
 			* @param[in] name The material name.
+			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name);
+			void BindDescriptorSet(
+				DescriptorSetInfo&   infos                                       , 
+				const std::string&   name                                        , 
+				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
 
 			/**
 			* @brief Update local pushconstant buffer.

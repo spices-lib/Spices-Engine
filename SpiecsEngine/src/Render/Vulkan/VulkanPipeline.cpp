@@ -58,9 +58,9 @@ namespace Spiecs {
 		*/
 		configInfo.viewportInfo.sType                        = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		configInfo.viewportInfo.viewportCount                = 1;
-		configInfo.viewportInfo.pViewports                   = nullptr;
+		configInfo.viewportInfo.pViewports                   = &configInfo.viewport;
 		configInfo.viewportInfo.scissorCount                 = 1;
-		configInfo.viewportInfo.pScissors                    = nullptr;
+		configInfo.viewportInfo.pScissors                    = &configInfo.scissor;
 
 		/**
 		* @brief VkPipelineRasterizationStateCreateInfo.
@@ -140,20 +140,20 @@ namespace Spiecs {
 		configInfo.attributeDescriptions                     = Vertex::GetAttributeDescriptions();
 	}
 
-	void VulkanPipeline::Bind(uint32_t frameIndex)
+	void VulkanPipeline::Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint)
 	{
 		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Bind Pipeline.
 		*/
-		vkCmdBindPipeline(m_VulkanState.m_CommandBuffer[frameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+		vkCmdBindPipeline(m_VulkanState.m_CommandBuffer[frameIndex], bindPoint, m_Pipeline);
 	}
 
 	void VulkanPipeline::CreateGraphicsPipeline(
 		const std::string&                                  pipelineName    ,
 		const std::unordered_map<std::string, std::string>& shaders         ,
-		const PipelineConfigInfo& config
+		const PipelineConfigInfo&                           config
 	)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -208,7 +208,7 @@ namespace Spiecs {
 		pipelineInfo.pMultisampleState                  = &config.multisampleInfo;
 		pipelineInfo.pColorBlendState                   = &config.colorBlendInfo;
 		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
-		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
+		//pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
 
 		pipelineInfo.layout                             = m_PipelineLayout;
 		pipelineInfo.renderPass                         = config.renderPass;
