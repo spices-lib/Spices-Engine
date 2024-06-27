@@ -553,7 +553,10 @@ namespace Spiecs {
 			*/
 			void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-		public:
+			/**
+			* @brief DynamicState Set Viewport and Scissor.
+			*/
+			void SetViewPort();
 
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo.

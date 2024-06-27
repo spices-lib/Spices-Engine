@@ -61,28 +61,6 @@ namespace Spiecs {
 
 		pipelineConfig.pipelineLayout              = layout;
 
-		pipelineConfig.viewport.x = 0.0f;
-		pipelineConfig.viewport.y = static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.height);
-		pipelineConfig.viewport.width = static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.width);
-		pipelineConfig.viewport.height = -static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.height);
-		pipelineConfig.viewport.minDepth = 0.0f;
-		pipelineConfig.viewport.maxDepth = 1.0f;
-
-		if (SlateSystem::GetRegister())
-		{
-			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-
-			pipelineConfig.viewport.y = viewPortSize.y;
-			pipelineConfig.viewport.width = viewPortSize.x;
-			pipelineConfig.viewport.height = -viewPortSize.y;
-		}
-		pipelineConfig.scissor.offset = { 0, 0 };
-
-		pipelineConfig.scissor.extent = m_Device->GetSwapChainSupport().surfaceSize;
-
-		pipelineConfig.viewportInfo.pViewports = &pipelineConfig.viewport;
-		pipelineConfig.viewportInfo.pScissors = &pipelineConfig.scissor;
-
 		return std::make_shared<VulkanRayTracingPipeline>(
 			m_VulkanState,
 			material->GetName(),
@@ -157,12 +135,12 @@ namespace Spiecs {
 
 		{
 			VkAccelerationStructureInstanceKHR rayInst{};
-			rayInst.transform = ToVkTransformMatrixKHR(glm::mat4(1.0f));                 // Position of the instance
-			rayInst.instanceCustomIndex = 0;                                                          // gl_InstanceCustomIndexEXT
-			rayInst.accelerationStructureReference = m_VulkanRayTracing->GetBlasDeviceAddress(0);
-			rayInst.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-			rayInst.mask = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
-			rayInst.instanceShaderBindingTableRecordOffset = 0;                                                          // We will use the same hit group for all objects
+			rayInst.transform                                           = ToVkTransformMatrixKHR(glm::mat4(1.0f));                    // Position of the instance
+			rayInst.instanceCustomIndex                                 = 0;                                                          // gl_InstanceCustomIndexEXT
+			rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(0);
+			rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+			rayInst.mask                                                = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
+			rayInst.instanceShaderBindingTableRecordOffset              = 0;                                                          // We will use the same hit group for all objects
 
 			tlas.emplace_back(rayInst);
 		}

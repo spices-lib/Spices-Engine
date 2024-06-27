@@ -208,28 +208,6 @@ namespace Spiecs {
 		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)subPass->GetColorBlend().size();
 		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
 
-		pipelineConfig.viewport.x = 0.0f;
-		pipelineConfig.viewport.y = static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.height);
-		pipelineConfig.viewport.width = static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.width);
-		pipelineConfig.viewport.height = -static_cast<float>(m_Device->GetSwapChainSupport().surfaceSize.height);
-		pipelineConfig.viewport.minDepth = 0.0f;
-		pipelineConfig.viewport.maxDepth = 1.0f;
-
-		if (SlateSystem::GetRegister())
-		{
-			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-
-			pipelineConfig.viewport.y = viewPortSize.y;
-			pipelineConfig.viewport.width = viewPortSize.x;
-			pipelineConfig.viewport.height = -viewPortSize.y;
-		}
-		pipelineConfig.scissor.offset = { 0, 0 };
-
-		pipelineConfig.scissor.extent = m_Device->GetSwapChainSupport().surfaceSize;
-
-		pipelineConfig.viewportInfo.pViewports = &pipelineConfig.viewport;
-		pipelineConfig.viewportInfo.pScissors = &pipelineConfig.scissor;
-
 		/**
 		* @brief Create VulkanPipeline.
 		*/
@@ -415,6 +393,51 @@ namespace Spiecs {
 		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame, bindPoint);
 	}
 
+	void Renderer::RenderBehaverBuilder::SetViewPort()
+	{
+		/**
+		* @brief Use Negative Viewport height filp here to handle axis difference.
+		* Remember enable device extension (VK_KHR_MAINTENANCE1)
+		*/
+		VkViewport viewport{};
+		viewport.x                = 0.0f;
+		viewport.y                =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height);
+		viewport.width            =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width);
+		viewport.height           = -static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height);
+		viewport.minDepth         = 0.0f;
+		viewport.maxDepth         = 1.0f;
+
+		/**
+		* @brief Though we draw world to viewport but not surface,
+		* Set Correct viewport here is necessary.
+		*/
+		if (SlateSystem::GetRegister())
+		{
+			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+
+			viewport.y            =  viewPortSize.y;
+			viewport.width        =  viewPortSize.x;
+			viewport.height       = -viewPortSize.y;
+		}
+
+		/**
+		* @brief Set VkViewport with viewport slate.
+		*/
+		vkCmdSetViewport(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], 0, 1, &viewport);
+
+		/**
+		* @brief Instance a VkRect2D
+		*/
+		VkRect2D scissor{};
+		scissor.offset            = { 0, 0 };
+		scissor.extent            = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+
+		/**
+		* @brief Set VkRect2D.
+		*/
+		vkCmdSetScissor(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], 0, 1, &scissor);
+	}
+
 	void Renderer::RenderBehaverBuilder::BeginNextSubPass(const std::string& subpassName)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -542,8 +565,10 @@ namespace Spiecs {
 			Info.height                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 			Info.description.samples                 = VK_SAMPLE_COUNT_1_BIT;
 			Info.description.format                  = format;
-			VkDescriptorImageInfo* imageInfo = m_Renderer->m_RendererResourcePool->AccessResource(Info);
-			imageInfo->imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+			Info.usage                               = VK_IMAGE_USAGE_STORAGE_BIT;
+
+			VkDescriptorImageInfo* imageInfo         = m_Renderer->m_RendererResourcePool->AccessResource(Info);
+			imageInfo->imageLayout                   = VK_IMAGE_LAYOUT_GENERAL;
 
 			m_ImageInfos[set][binding].push_back(*imageInfo);
 		}

@@ -36,8 +36,8 @@ namespace Spiecs {
 		RendererPassBuilder{ "Shadow", this }
 		.AddSubPass("DirectionalLightShadow")
 		.AddDepthAttachment("DirectionalLightShadow", TextureType::Texture2DArray, [](VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.initialLayout                           = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                                  = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.EndSubPass()
 		.Build();

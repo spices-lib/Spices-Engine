@@ -17,10 +17,10 @@ namespace Spiecs {
 		RendererPassBuilder{ "WorldPick", this }
 		.AddSubPass("WorldPick")
 		.AddColorAttachment("SelectBuffer", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.finalLayout   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.loadOp        = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format        = VK_FORMAT_R32_SFLOAT;
+			description.initialLayout                         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.finalLayout                           = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.loadOp                                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format                                = VK_FORMAT_R32_SFLOAT;
 		})
 		.EndSubPass()
 		.Build();

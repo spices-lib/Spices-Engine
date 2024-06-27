@@ -70,6 +70,11 @@ namespace Spiecs{
 		uint32_t layer = 1;
 
 		/**
+		* @brief Image Usage.
+		*/
+		VkImageUsageFlagBits usage;
+
+		/**
 		* @brief True if this resource is a DepthResource.
 		*/
 		bool isDepthResource = false;

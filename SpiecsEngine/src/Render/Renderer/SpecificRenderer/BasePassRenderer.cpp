@@ -17,39 +17,39 @@ namespace Spiecs {
 		RendererPassBuilder{ "BassPass", this }
 		.AddSubPass("SkyBox")
 		.AddColorAttachment("Diffuse", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format                = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
 		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format = VK_FORMAT_R32_SFLOAT;
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format                = VK_FORMAT_R32_SFLOAT;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; /*@attention It seams that layout transform is not work?*/
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED; /*@attention It seams that layout transform is not work?*/
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.EndSubPass()
 		.AddSubPass("Mesh")
 		.AddColorAttachment("Diffuse", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
 		.AddColorAttachment("Normal", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.AddColorAttachment("Specular", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+			description.format                = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
 		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format = VK_FORMAT_R32_SFLOAT;
+			description.format                = VK_FORMAT_R32_SFLOAT;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {})
 		.EndSubPass()
@@ -101,6 +101,8 @@ namespace Spiecs {
 
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
+		builder.SetViewPort();
+
 		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
@@ -111,6 +113,7 @@ namespace Spiecs {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			skyboxComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+
 				builder.BindPipeline(material->GetName());
 
 				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {

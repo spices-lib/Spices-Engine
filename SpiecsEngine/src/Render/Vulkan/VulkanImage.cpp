@@ -217,11 +217,15 @@ namespace Spiecs {
 		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](auto& commandBuffer) {
 			vkCmdPipelineBarrier(
 				commandBuffer,
-				sourceStage, destinationStage,
+				sourceStage, 
+				destinationStage,
 				0,
-				0, nullptr,
-				0, nullptr,
-				1, &barrier
+				0, 
+				nullptr,
+				0, 
+				nullptr,
+				1, 
+				&barrier
 			);
 		});
 	}

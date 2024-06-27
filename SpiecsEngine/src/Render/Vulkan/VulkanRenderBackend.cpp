@@ -214,48 +214,6 @@ namespace Spiecs {
 		* @brief Start recording a CommandBuffer.
 		*/
 		VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo));
-
-		/**
-		* @brief Use Negative Viewport height filp here to handle axis difference.
-		* Remember enable device extension (VK_KHR_MAINTENANCE1)
-		*/
-		VkViewport viewport{};
-		viewport.x        = 0.0f;
-		viewport.y        =  static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
-		viewport.width    =  static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.width);
-		viewport.height   = -static_cast<float>(m_VulkanDevice->GetSwapChainSupport().surfaceSize.height);
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-
-		/**
-		* @brief Though we draw world to viewport but not surface,
-		* Set Correct viewport here is necessary.
-		*/
-		if (SlateSystem::GetRegister())
-		{
-			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-
-			viewport.y      =  viewPortSize.y;
-			viewport.width  =  viewPortSize.x;
-			viewport.height = -viewPortSize.y;
-		}
-
-		/**
-		* @brief Set VkViewport with viewport slate.
-		*/
-		//vkCmdSetViewport(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &viewport);
-
-		/**
-		* @brief Instance a VkRect2D
-		*/
-		VkRect2D scissor{};
-		scissor.offset = { 0, 0 };
-		scissor.extent = m_VulkanDevice->GetSwapChainSupport().surfaceSize;
-
-		/**
-		* @brief Set VkRect2D.
-		*/
-		//vkCmdSetScissor(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], 0, 1, &scissor);
 	}
 
 	void VulkanRenderBackend::EndFrame(FrameInfo& frameInfo)

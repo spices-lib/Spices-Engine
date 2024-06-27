@@ -208,7 +208,7 @@ namespace Spiecs {
 		pipelineInfo.pMultisampleState                  = &config.multisampleInfo;
 		pipelineInfo.pColorBlendState                   = &config.colorBlendInfo;
 		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
-		//pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
+		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
 
 		pipelineInfo.layout                             = m_PipelineLayout;
 		pipelineInfo.renderPass                         = config.renderPass;
