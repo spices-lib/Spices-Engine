@@ -2,17 +2,10 @@
 
 #version 460
 
-/*****************************************************************************************/
+#extension GL_GOOGLE_include_directive : enable
 
-/************************************Vertex Input*****************************************/
-
-/**
-* @brief Vertex Shader Input from InputAssembly.
-*/
-layout(location = 0) in vec3 position;             /*Vertex Position*/
-layout(location = 1) in vec3 normal;               /*Vertex Normal*/
-layout(location = 2) in vec3 color;                /*Vertex Color*/
-layout(location = 3) in vec2 texCoord;             /*Vertex UV*/
+#include "Header/ShaderVertexInput.glsl"
+#include "Header/ShaderLayouts.glsl"
 
 /*****************************************************************************************/
 
@@ -22,8 +15,8 @@ layout(location = 3) in vec2 texCoord;             /*Vertex UV*/
 * @brief Vertex Shader Output to Geometry Shader.
 */
 layout(location = 0) out struct VertOut {
-    vec3 position;                                 /*World Position*/
-    vec3 normal;                                   /*World Normal*/
+    vec3 position;                                 /* @brief World Position */
+    vec3 normal;                                   /* @brief World Normal   */
 } vertOut;
 
 /*****************************************************************************************/
@@ -34,8 +27,8 @@ layout(location = 0) out struct VertOut {
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-    mat4 model;                                    /*Model Matrix*/
-    int entityID;                                  /*Entity ID*/
+    mat4 model;                                    /* @brief Model Matrix */
+    int entityID;                                  /* @brief Entity ID    */
 } push;
 
 /*****************************************************************************************/

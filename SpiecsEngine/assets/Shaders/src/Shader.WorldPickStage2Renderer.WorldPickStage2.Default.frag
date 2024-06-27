@@ -1,34 +1,48 @@
+/************************************Pre Compile*******************************************/
+
 #version 460
 
-// frag input
+#extension GL_GOOGLE_include_directive : enable
+
+#include "Header/ShaderLayouts.glsl"
+
+/*****************************************************************************************/
+
+/************************************Fragment Input***************************************/
+
+/**
+* @brief Fragment Shader Input From Geometry Shader.
+*/
 layout(location = 0) in struct FragInput {
 	vec2 texCoord;
 } fragInput;
 
+/*****************************************************************************************/
+
+/************************************Fragment Output**************************************/
+
+/**
+* @brief Fragment Shader Output to FrameBuffer.
+*/
 layout(location = 0) out vec4 outColor;
 
-// push constant
+/*****************************************************************************************/
 
-// uniform buffer
-layout(set = 0, binding = 0) uniform View {
-	mat4 projection;
-	mat4 view;
-	mat4 inView;
-	vec4 sceneTextureSize;
-	vec4 windowSize;
-} view;
+/********************************Specific Renderer Data***********************************/
 
-layout(set = 0, binding = 1) uniform SpiecsInput {
-	vec4 mousePos;
-	float gameTime;
-	float frameTime;
-} spiecsInput;
+layout(set = 1, binding = 0) uniform sampler2D selectBuffer;  /* @brief Select Buffer */
 
-layout(set = 1, binding = 0) uniform sampler2D selectBuffer;
+/*****************************************************************************************/
+
+/*************************************Functions*******************************************/
 
 float SampleWithOffest(vec2 uv_offest);
 float Sobel(float MatColor[3][3]);
 float EdgeClear(float mask);
+
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
 
 void main()
 {
@@ -55,6 +69,8 @@ void main()
 
 	outColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);
 }
+
+/*****************************************************************************************/
 
 float SampleWithOffest(vec2 uv_offest)
 {

@@ -10,10 +10,10 @@
 * @brief Fragment Shader Input From Vertex Shader.
 */
 layout(location = 0) in struct FragInput {
-    vec3 position;                         /*World Position*/
-    vec3 normal;                           /*World Normal*/
-    vec3 color;                            /*Fragmet Color*/
-    vec2 texCoord;                         /*Fragmet UV*/
+    vec3 position;                                     /* @brief World Position */
+    vec3 normal;                                       /* @brief World Normal   */
+    vec3 color;                                        /* @brief Fragmet Color  */
+    vec2 texCoord;                                     /* @brief Fragmet UV     */
 } fragInput;
 
 /*****************************************************************************************/
@@ -23,11 +23,11 @@ layout(location = 0) in struct FragInput {
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4 outColor;                /*diffuse Attachment*/
-layout(location = 1) out vec4 outNormal;               /*normal Attachment*/
-layout(location = 2) out vec4 outSpecular;             /*specular Attachment*/
-layout(location = 3) out vec4 outPosition;             /*position Attachment*/
-layout(location = 4) out float outID;                  /*ID Attachment*/
+layout(location = 0) out vec4 outColor;                /* @brief diffuse Attachment  */
+layout(location = 1) out vec4 outNormal;               /* @brief normal Attachment   */
+layout(location = 2) out vec4 outSpecular;             /* @brief specular Attachment */
+layout(location = 3) out vec4 outPosition;             /* @brief position Attachment */
+layout(location = 4) out float outID;                  /* @brief ID Attachment       */
 
 /*****************************************************************************************/
 
@@ -37,8 +37,8 @@ layout(location = 4) out float outID;                  /*ID Attachment*/
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	mat4 model;                                        /*Model Matrix*/
-	int entityID;                                      /*Entity ID*/
+	mat4 model;                                        /* @brief Model Matrix */
+	int entityID;                                      /* @brief Entity ID    */
 } push;
 
 /*****************************************************************************************/

@@ -72,7 +72,7 @@ namespace Spiecs{
 		/**
 		* @brief Image Usage.
 		*/
-		VkImageUsageFlagBits usage;
+		VkImageUsageFlagBits usage {};
 
 		/**
 		* @brief True if this resource is a DepthResource.

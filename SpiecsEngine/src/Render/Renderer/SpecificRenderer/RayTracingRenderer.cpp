@@ -83,7 +83,9 @@ namespace Spiecs {
 			in = false;
 		}
 
-		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+		RenderBehaverBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+
+		VulkanDebugUtils::BeginLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], "RayTracing");
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("RayTracing"), "RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
 
@@ -93,10 +95,12 @@ namespace Spiecs {
 		uint32_t height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
 
 		/*
-		* @attention VulkanSDK Version Below 1.3.283 not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
+		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
 		vkCmdTraceRaysKHR(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion, width, height, 1); 
+
+		VulkanDebugUtils::EndLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 	}
 
 	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo)

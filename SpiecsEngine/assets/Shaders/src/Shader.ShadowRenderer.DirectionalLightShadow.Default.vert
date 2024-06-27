@@ -1,17 +1,30 @@
+/************************************Pre Compile*******************************************/
+
 #version 460
 
-// vertex input
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec3 color;
-layout(location = 3) in vec2 texCoord;
+#extension GL_GOOGLE_include_directive : enable
 
+#include "Header/ShaderVertexInput.glsl"
+
+/*****************************************************************************************/
+
+/*********************************Push Constant*******************************************/
+
+/**
+* @brief push constant.
+*/
 layout(push_constant) uniform Push {
-	mat4 model;                                    /*Model Matrix*/
-	int entityID;                                  /*Entity ID*/
+	mat4 model;                                    /* @brief Model Matrix */
+	int entityID;                                  /* @brief Entity ID    */
 } push;
+
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
 
 void main() 
 {
 	gl_Position = push.model * vec4(position, 1.0f);
 }
+
+/*****************************************************************************************/

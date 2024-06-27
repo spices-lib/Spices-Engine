@@ -2,6 +2,10 @@
 
 #version 460
 
+#extension GL_GOOGLE_include_directive : enable
+
+#include "Header/ShaderLayouts.glsl"
+
 /*****************************************************************************************/
 
 /************************************Geometry Input***************************************/
@@ -15,8 +19,8 @@ layout (triangles) in;
 * @brief Geometry Shader Input From Vertex Shader.
 */
 layout(location = 0) in struct GeomInput {
-    vec3 position;                         /*World Postion*/
-    vec3 normal;                           /*World Normal*/
+    vec3 position;                         /* @brief World Postion */
+    vec3 normal;                           /* @brief World Normal  */
 } geomInput[];
 
 /*****************************************************************************************/
@@ -33,32 +37,8 @@ layout (line_strip, max_vertices = 2) out;
 * @brief Geometry Shader Output to Fragment Shader.
 */
 layout(location = 0) out struct GeomOut {
-    vec3 color;                            /*Fragment Color*/
+    vec3 color;                            /* @brief Fragment Color */
 } geomOut;
-
-/*****************************************************************************************/
-
-/*************************************Pre Renderer Data***********************************/
-
-/**
-* @brief Global View Struct.
-*/
-layout(set = 0, binding = 0) uniform View {
-    mat4 projection;          /*Projection Matrix from major Camera Entity*/
-    mat4 view;                /*View Matrix from major Camera Entity*/
-    mat4 inView;              /*Inverse View Matrix from major Camera Entity*/
-    vec4 sceneTextureSize;    /*Scene Texture Size*/
-    vec4 windowSize;          /*Application Window Size*/
-} view;
-
-/**
-* @brief Application Inout Struct.
-*/
-layout(set = 0, binding = 1) uniform SpiecsInput {
-    vec4 mousePos;            /*Mouse Postion and inverse position*/
-    float gameTime;           /*Application Run time since start*/
-    float frameTime;          /*Duration time since last frame*/
-} spiecsInput;
 
 /*****************************************************************************************/
 

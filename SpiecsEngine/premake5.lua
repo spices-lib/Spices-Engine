@@ -24,6 +24,9 @@ project "SpiecsEngine"
 		"src/**.h",
 		"src/**.cpp",
 
+		-- Engine Shader Headers.
+		"assets/Shaders/src/Header/**.h",
+
 		-- Library: std_image Files.
 		"vendor/stb_image/**.h",
 		"vendor/stb_image/**.cpp",

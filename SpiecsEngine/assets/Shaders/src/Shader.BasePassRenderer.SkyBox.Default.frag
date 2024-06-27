@@ -1,29 +1,54 @@
+/************************************Pre Compile*******************************************/
+
 #version 460
 
-// frag input
+/*****************************************************************************************/
+
+/************************************Fragment Input***************************************/
+
+/**
+* @brief Fragment Shader Input From Vertex Shader.
+*/
 layout(location = 0) in struct FragInput {
     vec3 localPosition;
     vec3 worldPosition;
 } fragInput;
 
-// frag output
-layout(location = 0) out vec4 outColor;
-layout(location = 1) out vec4 outPosition;
-layout(location = 2) out float outID;
+/*****************************************************************************************/
 
-// push constant
+/************************************Fragment Output**************************************/
+
+/**
+* @brief Fragment Shader Output to FrameBuffer.
+*/
+layout(location = 0) out vec4 outColor;                /* @brief Fragmet Color       */
+layout(location = 1) out vec4 outPosition;             /* @brief position Attachment */
+layout(location = 2) out float outID;                  /* @brief ID Attachment       */
+
+/*****************************************************************************************/
+
+/*********************************Push Constant*******************************************/
+
+/**
+* @brief push constant.
+*/
 layout(push_constant) uniform Push {
     mat4 model;
     int entityID;
 } push;
 
-// uniform buffer
-layout(set = 1, binding = 0) uniform sampler2D samplers;
+/*****************************************************************************************/
 
-// constant
+/********************************Specific Renderer Data***********************************/
+
 const vec2 invAtan = vec2(0.1591, 0.3183);
 
-// functions
+layout(set = 1, binding = 0) uniform sampler2D samplers;    /* @brief SkyBox Diffuse */
+
+/*****************************************************************************************/
+
+/***************************************Functions*****************************************/
+
 vec2 SampleSphericalMap(vec3 v)
 {
     vec2 uv = vec2(atan(-v.z, v.x), asin(-v.y));
@@ -33,7 +58,10 @@ vec2 SampleSphericalMap(vec3 v)
     return uv;
 }
 
-// main
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
+
 void main()
 {
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
@@ -41,3 +69,5 @@ void main()
     outPosition = vec4(fragInput.worldPosition, 1.0f);
     outID = push.entityID;
 }
+
+/*****************************************************************************************/

@@ -101,9 +101,9 @@ namespace Spiecs {
 
 		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.SetViewPort();
-
 		builder.BeginRenderPass();
+
+		builder.SetViewPort();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
