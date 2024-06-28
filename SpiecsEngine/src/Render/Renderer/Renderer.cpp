@@ -650,7 +650,7 @@ namespace Spiecs {
 		return *this;
 	}
 
-	void Renderer::DescriptorSetBuilder::Build(VkAccelerationStructureKHR accel)
+	void Renderer::DescriptorSetBuilder::Build(const VkAccelerationStructureKHR& accel)
 	{
 		SPIECS_PROFILE_ZONE;
 

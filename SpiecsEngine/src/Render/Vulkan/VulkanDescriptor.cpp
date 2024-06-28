@@ -191,9 +191,9 @@ namespace Spiecs {
 	}
 
 	void VulkanDescriptorSet::UpdateDescriptorSet(
-		ImageInfo&                 imageInfo  ,
-		BufferInfo&                bufferInfo ,
-		VkAccelerationStructureKHR accel
+		ImageInfo&                        imageInfo  ,
+		BufferInfo&                       bufferInfo ,
+		const VkAccelerationStructureKHR& accel
 	)
 	{
 		SPIECS_PROFILE_ZONE;

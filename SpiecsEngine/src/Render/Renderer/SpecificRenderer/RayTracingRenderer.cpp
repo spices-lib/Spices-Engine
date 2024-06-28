@@ -87,6 +87,8 @@ namespace Spiecs {
 
 		VulkanDebugUtils::BeginLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], "RayTracing");
 
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), "RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
+
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("RayTracing"), "RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
 
 		builder.BindPipeline("RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);

@@ -4,6 +4,18 @@
 
 #extension GL_EXT_ray_tracing : require
 
+#include "Header/ShaderLayouts.glsl"
+#include "Header/ShaderRayCommon.glsl"
+
+/*****************************************************************************************/
+
+/***************************************Rgen Input***************************************/
+
+/**
+* @brief Input from Hit/Miss Shader CallBack.
+*/
+layout(location = 0) rayPayloadEXT HitPayLoad prd;
+
 /*****************************************************************************************/
 
 /********************************Specific Renderer Data***********************************/
@@ -17,7 +29,33 @@ layout(set = 1, binding = 1, rgba32f) uniform image2D image;
 
 void main() 
 {
-    imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(0.5, 0.5, 0.5, 1.0));
+    const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5f);
+    const vec2 inUV = pixelCenter / vec2(gl_LaunchSizeEXT.xy);
+    vec2 d = inUV * 2.0 - 1.0;
+
+    vec4 origin    = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec4 target    = inverse(view.projection) * vec4(d.x, d.y, 1.0f, 1.0f);
+    vec4 direction = view.inView * vec4(normalize(target.xyz), 0.0f);
+
+    uint rayFlags = gl_RayFlagsOpaqueEXT;
+    float tMin = 0.001f;
+    float tMax = 1000.0f;
+
+    //traceRayEXT(topLevelAS,   // acceleration structure
+    //      rayFlags,            // rayFlags
+    //      0xFF,                // cullMask
+    //      0,                   // sbtRecordOffset
+    //      0,                   // sbtRecordStride
+    //      0,                   // missIndex
+    //      origin.xyz,          // ray origin
+     //     tMin,                // ray min range
+     //     direction.xyz,       // ray direction
+     //     tMax,                // ray max range
+    //      0                    // payload (location = 0)
+    //);
+
+    //imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(prd.hitValue, 1.0));
+    imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(0.5f, 0.5f, 0.5f, 1.0));
 }
 
 /*****************************************************************************************/

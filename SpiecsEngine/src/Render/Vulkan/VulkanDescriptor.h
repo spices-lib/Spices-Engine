@@ -227,9 +227,9 @@ namespace Spiecs {
         * @param[in] accel VkAccelerationStructureKHR.
         */
         void UpdateDescriptorSet(
-            ImageInfo&                 imageInfo  ,
-            BufferInfo&                bufferInfo ,
-            VkAccelerationStructureKHR accel = VK_NULL_HANDLE
+            ImageInfo&                        imageInfo  ,
+            BufferInfo&                       bufferInfo ,
+            const VkAccelerationStructureKHR& accel = VK_NULL_HANDLE
         );
 
         /**

@@ -487,7 +487,7 @@ namespace Spiecs {
 			* @param[in] accel AccelerationStructure. Pass it if call AddAccelerationStructure before.
 			* @attention Texture type descriptor set is not created here, but in Material::BuildMaterial().
 			*/
-			void Build(VkAccelerationStructureKHR accel = VK_NULL_HANDLE);
+			void Build(const VkAccelerationStructureKHR& accel = VK_NULL_HANDLE);
 
 		public:
 

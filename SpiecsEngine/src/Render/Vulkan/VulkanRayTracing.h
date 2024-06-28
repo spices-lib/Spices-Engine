@@ -46,7 +46,7 @@ namespace Spiecs {
 
 		void Destroy();
 
-		VkAccelerationStructureKHR GetAccelerationStructure() const { return m_tlas.accel; };
+		const VkAccelerationStructureKHR& GetAccelerationStructure() const { return m_tlas.accel; };
 		VkDeviceAddress GetBlasDeviceAddress(uint32_t blasId);
 
 		/**
