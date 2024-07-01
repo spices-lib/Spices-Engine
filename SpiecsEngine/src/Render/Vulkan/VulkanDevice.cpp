@@ -58,9 +58,13 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/
-		VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures{};
+		VkPhysicalDeviceHostQueryResetFeatures hostQueryResetFeatures {};
+		hostQueryResetFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
+		hostQueryResetFeatures.pNext                            = nullptr;  /*@brief Pass your other features through this chain.*/
+
+		VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures {};
 		rayTracingFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
-		rayTracingFeatures.pNext                                = nullptr; /*@brief Pass your other features through this chain.*/
+		rayTracingFeatures.pNext                                = &hostQueryResetFeatures; 
 
 		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
 		accelerationStructureFeatures.sType                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
@@ -258,9 +262,13 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/ 
+		VkPhysicalDeviceHostQueryResetFeatures hostQueryResetFeatures {};
+		hostQueryResetFeatures.sType                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
+		hostQueryResetFeatures.pNext                  = nullptr;/*@brief Pass your other features through this chain.*/
+
 		VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures {};
 		rayTracingFeatures.sType                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
-		rayTracingFeatures.pNext                      = nullptr; /*@brief Pass your other features through this chain.*/
+		rayTracingFeatures.pNext                      = &hostQueryResetFeatures; 
 
 		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
 		accelerationStructureFeatures.sType           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
@@ -295,6 +303,7 @@ namespace Spiecs {
 		if (!bufferDeviceAddressFeatures.bufferDeviceAddress) return false;            /*@breif Enable Buffer Address Feature.*/
 		if (!accelerationStructureFeatures.accelerationStructure) return false;        /*@breif Enable RayTracing AccelerationStructure.*/
 		if (!rayTracingFeatures.rayTracingPipeline) return false;                      /*@breif Enable RayTracing Pipeline.*/
+		if (!hostQueryResetFeatures.hostQueryReset) return false;                      /*@brief Enable HostQueryReset Feature.*/
 
 		return true;
 	}

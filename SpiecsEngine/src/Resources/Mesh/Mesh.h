@@ -87,6 +87,12 @@ namespace Spiecs {
 		template<typename F>
 		void Draw(VkCommandBuffer& commandBuffer, F func);
 
+		/**
+		* @brief Get m_Pack.
+		* @return Returns m_Pack.
+		*/
+		inline std::unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; };
+
 #ifdef RENDERAPI_VULKAN
 
 		/**

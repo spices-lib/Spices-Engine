@@ -81,8 +81,9 @@ namespace Spiecs {
 
 		/**
 		* @brief Create TopLevelAS.
+		* @param[in] frameInfo FrameInfo.
 		*/
-		void CreateTopLevelAS();
+		void CreateTopLevelAS(FrameInfo& frameInfo);
 
 		void CreateRTShaderBindingTable();
 

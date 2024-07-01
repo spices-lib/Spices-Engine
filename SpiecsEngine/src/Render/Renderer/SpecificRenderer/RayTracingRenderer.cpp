@@ -78,7 +78,7 @@ namespace Spiecs {
 		if (in)
 		{
 			CreateBottomLevelAS(frameInfo);
-			CreateTopLevelAS();
+			CreateTopLevelAS(frameInfo);
 			CreateRTShaderBindingTable();
 			in = false;
 		}
@@ -129,32 +129,40 @@ namespace Spiecs {
 		/**
 		* @brief Build BLAS.
 		*/
-		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
+		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR);
 	}
 
-	void RayTracingRenderer::CreateTopLevelAS()
+	void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo)
 	{
 		SPIECS_PROFILE_ZONE;
 
 		std::vector<VkAccelerationStructureInstanceKHR> tlas;
-		tlas.reserve(1);
 
+		int index = 0;
+		auto& view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
+		for (auto& e : view)
 		{
-			VkAccelerationStructureInstanceKHR rayInst{};
-			rayInst.transform                                           = ToVkTransformMatrixKHR(glm::mat4(1.0f));                    // Position of the instance
-			rayInst.instanceCustomIndex                                 = 0;                                                          // gl_InstanceCustomIndexEXT
-			rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(0);
-			rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-			rayInst.mask                                                = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
-			rayInst.instanceShaderBindingTableRecordOffset              = 0;                                                          // We will use the same hit group for all objects
+			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);
 
-			tlas.emplace_back(rayInst);
+			for(auto& pair : meshComp.GetMesh()->GetPacks())
+			{
+				VkAccelerationStructureInstanceKHR rayInst{};
+				rayInst.transform                                           = ToVkTransformMatrixKHR(glm::mat4(1.0f));                    // Position of the instance
+				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
+				rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(index);
+				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+				rayInst.mask                                                = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
+				rayInst.instanceShaderBindingTableRecordOffset              = 0;                                                          // We will use the same hit group for all objects
+
+				tlas.push_back(rayInst);
+				index += 1;
+			}
 		}
 
 		/**
 		* @brief Build TLAS.
 		*/
-		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
+		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR);
 	}
 
 	void RayTracingRenderer::CreateRTShaderBindingTable()
