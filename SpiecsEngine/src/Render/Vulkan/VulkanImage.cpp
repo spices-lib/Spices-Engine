@@ -676,7 +676,7 @@ namespace Spiecs {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_DescriptorSetLayout, m_VulkanState.m_Device, "DescriptorSetLayout");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_DescriptorSetLayout, m_VulkanState.m_Device, "DescriptorSetLayoutImage");
 
 		/**
 		* @brief Instance a VkDescriptorSetAllocateInfo.
@@ -691,7 +691,7 @@ namespace Spiecs {
 		* @brief Allocate DescriptorSets.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "ImageDescriptorSet");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSetImage");
 		
 		/**
 		* @brief Instance a VkDescriptorImageInfo.

@@ -66,9 +66,9 @@ namespace Spiecs {
 		CreateRTShaderBindingTable();
 
 		/**
-		* @brief Create descriptorSet again.
+		* @breif ReCreate RenderPass and DescriptorSet.
 		*/
-		CreateDescriptorSet();
+		Renderer::OnSlateResize();
 	}
 
 	std::shared_ptr<VulkanPipeline> RayTracingRenderer::CreatePipeline(
