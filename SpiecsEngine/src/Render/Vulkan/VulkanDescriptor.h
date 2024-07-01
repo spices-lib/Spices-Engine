@@ -147,9 +147,11 @@ namespace Spiecs {
         /**
         * @brief Build a VkDescriptorSetLayout with bindings.
         * @param[in] bindings all the bingings used in a VkDescriptorSetLayout.
+        * @param[in] caption DescriptorSetLayout Name.
         */
         void BuildDescriptorSetLayout(
-            const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings
+            const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings,
+            const std::string&                                                caption = ""
         );
 
         /**

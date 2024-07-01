@@ -61,6 +61,11 @@ namespace Spiecs {
 		virtual void CreateDescriptorSet() override;
 
 		/**
+		* @breif This interface is called on worldmarkqueryer tick (regist by MeshComponent).
+		*/
+		virtual void OnMeshAddedWorld() override;
+
+		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
 		* @todo Complete it by renderer.

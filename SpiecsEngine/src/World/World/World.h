@@ -27,6 +27,15 @@ namespace Spiecs {
 	*/
 	class Entity;
 
+	enum WorldMarkBits
+	{
+		Clean = 0,
+		MeshAddedToWorld = 1,
+		MAX = 0x7FFFFFFF
+	};
+
+	typedef uint32_t WorldMarkFlags;
+
 	/**
 	* @brief World Class.
 	* This class defines the basic behaver of World.
@@ -87,8 +96,29 @@ namespace Spiecs {
 		*/
 		inline entt::registry& GetRegistry() { return m_Registry; };
 
-
+		/**
+		* @brief Get World Entiry by id(entt::entity).
+		* @param[in] id Id(entt::entity)
+		* @return Returns valid Entity if fined.
+		*/
 		Entity QueryEntitybyID(uint32_t id);
+
+		/**
+		* @brief Get WorldMarkFlags this frame.
+		* @return Returns the WorldMarkFlags this frame.
+		*/
+		inline WorldMarkFlags GetMarker() { return m_Marker; };
+
+		/**
+		* @brief Mark WorldMarkFlags with flags.
+		* @param[in] flags In flags.
+		*/
+		void Mark(WorldMarkFlags flags) { m_Marker |= flags; };
+
+		/**
+		* @brief Reset WorldMarkFlags to Clean.
+		*/
+		void ReserMark() { m_Marker = WorldMarkBits::Clean; };
 		
 	private:
 
@@ -118,6 +148,11 @@ namespace Spiecs {
 		* Allow Entity access all data.
 		*/
 		friend class Entity;
+
+		/**
+		* @brief World State this frame.
+		*/
+		WorldMarkFlags m_Marker = WorldMarkBits::Clean;
 	};
 
 	template<typename T>

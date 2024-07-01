@@ -38,13 +38,19 @@ namespace Spiecs {
 		for (auto& it : m_blas)
 		{
 			it.FreeBuffer();
-			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
+			if (it.accel != VK_NULL_HANDLE)
+			{
+				vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
+			}
 		}
 
 		/**
 		* @brief Destroy TLAS.
 		*/
-		vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
+		if (m_tlas.accel != VK_NULL_HANDLE)
+		{
+			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
+		}
 
 		m_blas.clear();
 		m_tlas.FreeBuffer();

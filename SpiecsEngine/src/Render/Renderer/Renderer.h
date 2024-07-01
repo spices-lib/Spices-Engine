@@ -128,6 +128,11 @@ namespace Spiecs {
 		virtual void OnSlateResize();
 
 		/**
+		* @breif This interface is called on worldmarkqueryer tick (regist by MeshComponent).
+		*/
+		virtual void OnMeshAddedWorld() {};
+
+		/**
 		* @brief Register material to Specific Renderer.
 		* @param[in] materialName Material Name.
 		* @param[in] subpassName SubPass Name.

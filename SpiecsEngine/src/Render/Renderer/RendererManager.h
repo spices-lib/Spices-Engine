@@ -56,10 +56,13 @@ namespace Spiecs {
 
 		/**
 		* @brief Event Called on Slate resize.
-		* @param[in] width Slate new width.
-		* @param[in] height Slate new height.
 		*/
 		static void OnSlateResize();
+
+		/**
+		* @brief Event Called on workdmarkqueryer.
+		*/
+		static void OnMeshAddedWorld();
 
 		/**
 		* @brief Push a renderer to this manager, and initialize it.

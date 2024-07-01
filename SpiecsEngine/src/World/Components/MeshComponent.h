@@ -47,7 +47,7 @@ namespace Spiecs {
 		* @brief Set the Mesh this component handled.
 		* @param[in] mesh The Mesh shared pointer.
 		*/
-		void SetMesh(std::shared_ptr<Mesh> mesh) { m_Mesh = mesh; };
+		void SetMesh(std::shared_ptr<Mesh> mesh);
 
 		/**
 		* @brief Get the Mesh variable.

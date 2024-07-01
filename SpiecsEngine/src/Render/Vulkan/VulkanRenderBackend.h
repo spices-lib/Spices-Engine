@@ -11,6 +11,7 @@
 #include "Render/FrameInfo.h"
 #include "Core/Event/WindowEvent.h"
 #include "Core/Event/SlateEvent.h"
+#include "Core/Event/WorldEvent.h"
 
 #include "VulkanWindows.h"
 #include "VulkanInstance.h"
@@ -129,6 +130,13 @@ namespace Spiecs {
 		* @return Returns true if need block event.
 		*/
 		bool OnSlateResize(SlateResizeEvent& event);
+
+		/**
+		* @brief This funtion is called on worldmarkqueryer tick.
+		* @param[in] event WorldEvent.
+		* @return Returns true if need block event.
+		*/
+		bool OnMeshAddedWorldEvent(WorldEvent& event);
 
 		/**
 		* @brief Called OnSlateResize.

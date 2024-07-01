@@ -13,9 +13,9 @@
 #include "Core/Event/Event.h"
 #include "SlateSystem.h"
 
-
 #include "Scripts/ViewPortResizeQueryer.h"
 #include "Scripts/WorldPickIDQueryer.h"
+#include "Scripts/WorldMarkQueryer.h"
 
 namespace Spiecs {
 
@@ -25,6 +25,7 @@ namespace Spiecs {
 
 		m_NativeScriptRegister->Register<ViewPortResizeQueryer>();
 		m_NativeScriptRegister->Register<WorldPickIDQueryer>();
+		m_NativeScriptRegister->Register<WorldMarkQueryer>();
 	}
 
 	void NativeScriptSystem::OnSystemShutDown()

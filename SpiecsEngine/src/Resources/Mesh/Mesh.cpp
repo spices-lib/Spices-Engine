@@ -42,7 +42,7 @@ namespace Spiecs {
 
 	std::shared_ptr<Mesh> Mesh::Builder::Build() const
 	{
-		return  std::make_shared<Mesh>(m_Pack);
+		return std::make_shared<Mesh>(m_Pack);
 	}
 
 }

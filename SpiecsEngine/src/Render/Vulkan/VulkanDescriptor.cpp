@@ -105,7 +105,8 @@ namespace Spiecs {
 	}
 
 	void VulkanDescriptorSetLayout::BuildDescriptorSetLayout(
-		const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings
+		const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings,
+		const std::string&                                                caption
 	)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -131,7 +132,7 @@ namespace Spiecs {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption);
 	}
 
 	VulkanDescriptorSet::~VulkanDescriptorSet()
@@ -172,7 +173,7 @@ namespace Spiecs {
 		/**
 		* @brief Build DescriptorSetLayout.
 		*/
-		m_Layout.BuildDescriptorSetLayout(m_Bindings);
+		m_Layout.BuildDescriptorSetLayout(m_Bindings, createrName);
 
 		/**
 		* @brief Instance a VkDescriptorSetAllocateInfo.
@@ -187,7 +188,7 @@ namespace Spiecs {
 		* @brief Allocate DescriptorSet.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, createrName);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName);
 	}
 
 	void VulkanDescriptorSet::UpdateDescriptorSet(

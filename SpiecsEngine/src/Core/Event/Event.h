@@ -13,7 +13,8 @@ namespace Spiecs {
 		AppTick, AppUpdate, AppRender,
 		SlateResize,
 		KeyPressed, KeyReleased, KeyTyped,
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
+		MeshAdded,
 	};
 
 	enum EventCategory
@@ -24,7 +25,8 @@ namespace Spiecs {
 		EventCategoryInput        =  (1 << 2),
 		EventCategoryKeyboard     =  (1 << 3),
 		EventCategoryMouse        =  (1 << 4),
-		EventCategoryMouseButton  =  (1 << 5)
+		EventCategoryMouseButton  =  (1 << 5),
+		EventCategoryWorld         = (1 << 6),
 	};
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\

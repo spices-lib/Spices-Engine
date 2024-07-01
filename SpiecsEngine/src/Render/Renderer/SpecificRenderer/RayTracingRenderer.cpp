@@ -49,6 +49,28 @@ namespace Spiecs {
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
 
+	void RayTracingRenderer::OnMeshAddedWorld()
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Destroy old AS if created before.
+		*/
+		m_VulkanRayTracing->Destroy();
+
+		/**
+		* @brief Prepare RayTracing AC Structure ans SBT.
+		*/
+		CreateBottomLevelAS(FrameInfo::Get());
+		CreateTopLevelAS(FrameInfo::Get());
+		CreateRTShaderBindingTable();
+
+		/**
+		* @brief Create descriptorSet again.
+		*/
+		CreateDescriptorSet();
+	}
+
 	std::shared_ptr<VulkanPipeline> RayTracingRenderer::CreatePipeline(
 		std::shared_ptr<Material>         material ,
 		VkPipelineLayout&                 layout   ,
@@ -73,15 +95,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		static bool in = true;
-
-		if (in)
-		{
-			CreateBottomLevelAS(frameInfo);
-			CreateTopLevelAS(frameInfo);
-			CreateRTShaderBindingTable();
-			in = false;
-		}
+		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
 		RenderBehaverBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
@@ -100,7 +114,7 @@ namespace Spiecs {
 		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
-		vkCmdTraceRaysKHR(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion, width, height, 1); 
+		vkCmdTraceRaysKHR(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion, width, height, 1);
 
 		VulkanDebugUtils::EndLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 	}

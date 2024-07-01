@@ -64,6 +64,19 @@ namespace Spiecs {
 		});
 	}
 
+	void RendererManager::OnMeshAddedWorld()
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Iter all renderer in order.
+		*/
+		m_Identities.for_each([](auto& k, auto& v) {
+			v->OnMeshAddedWorld();
+			return false;
+		});
+	}
+
 	std::shared_ptr<Renderer> RendererManager::GetRenderer(const std::string name)
 	{
 		SPIECS_PROFILE_ZONE;

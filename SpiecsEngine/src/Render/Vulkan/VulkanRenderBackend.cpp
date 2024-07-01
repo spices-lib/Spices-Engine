@@ -8,7 +8,6 @@
 #include "VulkanRenderBackend.h"
 
 #include "Render/RendererResource/RendererResourcePool.h"
-#include "Core/Event/WindowEvent.h"
 #include "Systems/SlateSystem.h"
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
@@ -128,7 +127,7 @@ namespace Spiecs {
 		}
 	}
 
-	void VulkanRenderBackend::RecreateSwapChain() 
+	void VulkanRenderBackend::RecreateSwapChain()
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -305,6 +304,7 @@ namespace Spiecs {
 
 		dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(VulkanRenderBackend::OnWindowResizeOver));
 		dispatcher.Dispatch<SlateResizeEvent>     (BIND_EVENT_FN(VulkanRenderBackend::OnSlateResize));
+		dispatcher.Dispatch<MeshAddedWorldEvent>  (BIND_EVENT_FN(VulkanRenderBackend::OnMeshAddedWorldEvent));
 	}
 
 	bool VulkanRenderBackend::OnWindowResizeOver(WindowResizeOverEvent& event)
@@ -347,6 +347,18 @@ namespace Spiecs {
 		/**
 		* @brief Do not block the event.
 		*/
+		return false;
+	}
+
+	bool VulkanRenderBackend::OnMeshAddedWorldEvent(WorldEvent& event)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @brief Recreate descriptorset or other.
+		*/
+		RendererManager::Get().OnMeshAddedWorld();
+
 		return false;
 	}
 }
