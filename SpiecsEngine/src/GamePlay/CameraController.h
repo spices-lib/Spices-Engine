@@ -178,7 +178,7 @@ namespace Spiecs {
 		* @brief The Viewport size.
 		* @todo Make it param.
 		*/
-		float m_ViewportWidth = 1920, m_ViewportHeight = 1080;
+		uint32_t m_ViewportWidth = 1920, m_ViewportHeight = 1080;
 
 		/**
 		* @brief Zoom Level, for orthographic type camera.

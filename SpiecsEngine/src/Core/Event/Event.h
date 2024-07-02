@@ -114,10 +114,10 @@ namespace Spiecs {
 		/**
 		* @brief Event Information Function, must be implemented by EVENT_CLASS_TYPE and EVENT_CLASS_CATEGORY.
 		*/
-		virtual EventType GetEventType()    const = 0;
-		virtual const char* GetName()       const = 0;
-		virtual int GetCategoryFlags()      const = 0;
-		virtual std::string ToString()      const { return GetName(); }
+		virtual EventType      GetEventType()           const = 0;
+		virtual const char*    GetName()                const = 0;
+		virtual int            GetCategoryFlags()       const = 0;
+		virtual std::string    ToString()               const { return GetName(); }
 
 		/**
 		* @brief Judgement if a given category is contained by this event class.

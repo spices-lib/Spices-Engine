@@ -604,7 +604,7 @@ namespace Spiecs {
 		}
 
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags,  static_cast<uint32_t>(textureNames.size()));
 
 		return *this;
 	}
@@ -631,7 +631,7 @@ namespace Spiecs {
 		}
 
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, stageFlags, inputAttachmentNames.size());
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, stageFlags, static_cast<uint32_t>(inputAttachmentNames.size()));
 
 		return *this;
 	}
@@ -683,8 +683,8 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		uint32_t size = m_Renderer->m_Pass->GetSubPasses().size();
-		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, size);
+		size_t size = m_Renderer->m_Pass->GetSubPasses().size();
+		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, static_cast<uint32_t>(size));
 		return *this;
 	}
 
@@ -693,7 +693,9 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		m_HandledRendererSubPass->BuildSubPassDescription();
-		m_HandledRendererSubPass->BuildSubPassDependency(m_Renderer->m_Pass->GetSubPasses().size() - 1);
+
+		size_t index = m_Renderer->m_Pass->GetSubPasses().size() - 1;
+		m_HandledRendererSubPass->BuildSubPassDependency(static_cast<uint32_t>(index));
 		return *this;
 	}
 

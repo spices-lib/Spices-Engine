@@ -82,7 +82,7 @@ namespace Spiecs {
 	{
 		m_ViewportWidth = e.GetWidth();
 		m_ViewportHeight = e.GetHeight();
-		float ratio = m_ViewportWidth / m_ViewportHeight;
+		float ratio = m_ViewportWidth / static_cast<float>(m_ViewportHeight);
 		ProjectionType type = m_Camera->GetProjectionType();
 
 		switch (type)
