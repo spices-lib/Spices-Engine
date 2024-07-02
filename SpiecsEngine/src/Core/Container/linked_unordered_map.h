@@ -57,7 +57,7 @@ namespace scl {
 		size_t size();
 
 		/**
-		* @brief Determain whether the container's element size is same.
+		* @brief Determine whether the container's element size is same.
 		* @return Returns true if the size of the keys_ and map_.
 		* @note Used for unit test, shou not be called during game.
 		*/

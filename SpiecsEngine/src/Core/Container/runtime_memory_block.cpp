@@ -1,4 +1,10 @@
-﻿#include "Pchheader.h"
+﻿/**
+* @file runtime_memory_block.cpp.
+* @brief The runtime_memory_block Class Implementation.
+* @author Spiecs.
+*/
+
+#include "Pchheader.h"
 #include "runtime_memory_block.h"
 #include "Core/Reflect/TypeReflect.h"
 
