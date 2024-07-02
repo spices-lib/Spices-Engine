@@ -127,7 +127,12 @@ namespace Spiecs {
         */
         static bool FileLibrary_Write_Line(FileHandle* handle, const char* text);
 
-
+        /**
+        * @brief Select a file to open in explore.
+        * @param[in] filter The file extension filter.
+        * @param[in] hwnd The Windows Needs.
+        * @return Returns the file path of selected file.
+        */
         static std::string FileLibrary_OpenInExplore(const char* filter, HWND hwnd);
     };
 }
