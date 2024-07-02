@@ -1,9 +1,28 @@
-﻿Material: SpriteRenderer.Sprite.Default
+﻿# @file Material.SpriteRenderer.Sprite.Default.material.
+# @brief This File is the sample of Defining a Sprite Renderer Sprite SubPass Default Material.
+# @author Spiecs.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
+Material: SpriteRenderer.Sprite.Default
+
+# @brief Material Shaders usages.
 Shaders:
+  
+  # @brief Vertex Shader Stage Shader File Path.
   - Stage: vert
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: SpriteRenderer.Sprite.Default
+    
+  # @brief Vertex Shader Stage Shader File Path.
   - Stage: frag
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: SpriteRenderer.Sprite.Default
+    
+# @brief Material Textures usages.
 Textures:
+  
+  # @brief Usage: diffuse.
   - Name: diffuse
+    # @brief [set, binding, index, Texture Type, Texture Path]
     Value: [1, 0, 0, Texture2D, default.jpg]

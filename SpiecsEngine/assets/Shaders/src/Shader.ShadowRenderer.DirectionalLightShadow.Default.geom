@@ -1,3 +1,9 @@
+/**
+* @file Shader.ShadowRenderer.DirectionalLightShadow.Default.geom.
+* @brief This Shader Defines Shadow Renderer DirectionalLightShadow SubPass Default Geometry Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

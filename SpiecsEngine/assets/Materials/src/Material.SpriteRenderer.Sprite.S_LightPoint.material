@@ -1,4 +1,8 @@
-﻿Material: SpriteRenderer.Sprite.S_LightPoint
+﻿# @file Material.SpriteRenderer.Sprite.S_LightPoint.material.
+# @brief This File is the sample of Defining a Sprite Renderer Sprite SubPass S_LightPoint Material.
+# @author Spiecs.
+
+Material: SpriteRenderer.Sprite.S_LightPoint
 Shaders:
   - Stage: vert
     Path: SpriteRenderer.Sprite.Default

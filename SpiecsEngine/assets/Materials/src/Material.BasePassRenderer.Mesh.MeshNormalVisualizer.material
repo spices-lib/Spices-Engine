@@ -1,8 +1,25 @@
-﻿Material: BasePassRenderer.Mesh.MeshNormalVisualizer
+﻿# @file Material.BasePassRenderer.Mesh.MeshNormalVisualizer.material.
+# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass MeshNormalVisualizer Material.
+# @author Spiecs.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
+Material: BasePassRenderer.Mesh.MeshNormalVisualizer
+
+# @brief Material Shaders usages.
 Shaders:
+  
+  # @brief Vertex Shader Stage Shader File Path.
   - Stage: vert
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: MeshNormalVisualizer
+    
+  # @brief Geometry Shader Stage Shader File Path.
   - Stage: geom
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: MeshNormalVisualizer
+    
+  # @brief Fragment Shader Stage Shader File Path.
   - Stage: frag
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: MeshNormalVisualizer

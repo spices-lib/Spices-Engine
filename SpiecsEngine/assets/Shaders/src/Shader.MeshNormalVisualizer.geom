@@ -1,3 +1,9 @@
+/**
+* @file Shader.MeshNormalVisualizer.geom.
+* @brief This Shader Defines MeshNormalVisualizer SubPass Default Geometry Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

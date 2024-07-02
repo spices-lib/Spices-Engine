@@ -1,3 +1,9 @@
+/**
+* @file Shader.SceneComposeRenderer.SceneCompose.Default.vert.
+* @brief This Shader Defines SceneCompose Renderer SceneCompose SubPass Default Vertex Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

@@ -1,3 +1,9 @@
+/**
+* @file Shader.WorldPickRenderer.WorldPick.Default.vert.
+* @brief This Shader Defines WorldPick Renderer WorldPick SubPass Default Vertex Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

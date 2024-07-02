@@ -1,3 +1,9 @@
+/**
+* @file Shader.ShadowRenderer.DirectionalLightShadow.Default.vert.
+* @brief This Shader Defines Shadow Renderer DirectionalLightShadow SubPass Default Vertex Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

@@ -1,3 +1,9 @@
+/**
+* @file Shader.ShadowRenderer.DirectionalLightShadow.Default.frag.
+* @brief This Shader Defines Shadow Renderer DirectionalLightShadow SubPass Default Fragment Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

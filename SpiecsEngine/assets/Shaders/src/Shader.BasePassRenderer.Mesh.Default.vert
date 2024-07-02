@@ -1,3 +1,9 @@
+/**
+* @file Shader.BasePassRenderer.Mesh.Default.vert.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass Default Vertex Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

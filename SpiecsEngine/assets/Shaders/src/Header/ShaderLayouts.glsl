@@ -1,6 +1,12 @@
+/**
+* @file ShaderLayouts.glsl.
+* @brief This Shader Header File Defines Pre Shader DescriptorSets.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
-//#include "ShaderStructures.h"
+#include "ShaderStructures.h"
 
 /*************************************Pre Renderer Data***********************************/
 

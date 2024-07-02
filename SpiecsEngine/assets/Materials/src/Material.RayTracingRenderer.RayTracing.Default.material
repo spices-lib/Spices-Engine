@@ -1,8 +1,25 @@
+# @file Material.RayTracingRenderer.RayTracing.Default.material.
+# @brief This File is the sample of Defining a RayTracing Renderer RayTracing SubPass Default Material.
+# @author Spiecs.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
 Material: RayTracingRenderer.RayTracing.Default
+
+# @brief Material Shaders usages.
 Shaders:
+  
+  # @brief Ray Generation Shader Stage Shader File Path.
   - Stage: rgen
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: RayTracingRenderer.RayTracing.Default
+    
+  # @brief Ray Missing Shader Stage Shader File Path.
   - Stage: rmiss
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: RayTracingRenderer.RayTracing.Default
+    
+  # @brief Ray Closest Hit Shader Stage Shader File Path.
   - Stage: rchit
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: RayTracingRenderer.RayTracing.Default

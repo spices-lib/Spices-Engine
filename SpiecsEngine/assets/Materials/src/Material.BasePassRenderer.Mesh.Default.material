@@ -1,22 +1,61 @@
+# @file Material.BasePassRenderer.Mesh.Default.material.
+# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass Default Material.
+# @author Spiecs.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
 Material: BasePassRenderer.Mesh.Default
+
+# @brief Material Shaders usages.
 Shaders:
+  
+  # @brief Vertex Shader Stage Shader File Path.
   - Stage: vert
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: BasePassRenderer.Mesh.Default
+    
+  # @brief Fragment Shader Stage Shader File Path.
   - Stage: frag
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: BasePassRenderer.Mesh.Default
+
+# @brief Material Textures usages.
 Textures:
+
+  # @brief Usage: diffuse.
   - Name: diffuse
+    # @brief [set, binding, index, Texture Type, Texture Path]
     Value: [1, 0, 0, Texture2D, default.jpg]
+    
+  # @brief Usage: normal.
   - Name: normal
+    # @brief [set, binding, index, Texture Type, Texture Path]
     Value: [1, 0, 1, Texture2D, default.jpg]
+    
+  # @brief Usage: specular.
   - Name: specular
+    # @brief [set, binding, index, Texture Type, Texture Path]
     Value: [1, 0, 2, Texture2D, default.jpg]
+    
+# @brief Material Parameters usages. 
 Parameters:
+  
+  # @brief Usage: diffuseIntensity.
   - Name: diffuseIntensity
+    # @brief [set, binding, Parameter Type, Parameter Value]
     Value: [1, 1, float4, [1.0, 1.0, 1.0, 1.0]]
+    
+  # @brief Usage: diffuseIntensity.
   - Name: normalIntensity
+    # @brief [set, binding, Parameter Type, Parameter Value]
     Value: [1, 1, float3, [1.0, 1.0, 1.0]]
+    
+  # @brief Usage: diffuseIntensity.
   - Name: specularIntensity
+    # @brief [set, binding, Parameter Type, Parameter Value]
     Value: [1, 1, float2, [1.0, 1.0]]
+    
+  # @brief Usage: diffuseIntensity.
   - Name: otherIntensity
+    # @brief [set, binding, Parameter Type, Parameter Value]
     Value: [1, 1, float, 1.0]

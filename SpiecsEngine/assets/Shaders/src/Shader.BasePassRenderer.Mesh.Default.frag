@@ -1,3 +1,9 @@
+/**
+* @file Shader.BasePassRenderer.Mesh.Default.frag.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass Default Fragment Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460

@@ -1,3 +1,9 @@
+/**
+* @file Shader.SpriteRenderer.Sprite.Default.frag.
+* @brief This Shader Defines Sprite Renderer Sprite SubPass Default Fragment Shader Behaver.
+* @author Spiecs.
+*/
+
 /************************************Pre Compile*******************************************/
 
 #version 460
