@@ -12,6 +12,15 @@ namespace Spiecs {
 
 	class VulkanRayTracing;
 
+	namespace RayTracingR {
+		
+		struct MeshDescriptions
+		{
+			std::array<SpiecsShader::MeshDesc, 100000> descs;
+		};
+		
+	}
+
 	/**
 	* @brief RayTracingRenderer Class.
 	* This class defines the ray tracing behaver.
@@ -108,5 +117,7 @@ namespace Spiecs {
 
 		PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
 		PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
+
+		std::unique_ptr<RayTracingR::MeshDescriptions> m_DescArray;
 	};
 }

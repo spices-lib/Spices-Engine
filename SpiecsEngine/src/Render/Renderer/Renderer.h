@@ -590,6 +590,8 @@ namespace Spiecs {
 				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
 			);
 
+			/******************************Update By Value**********************************************************/
+
 			/**
 			* @brief Update local pushconstant buffer.
 			* @param[in] T Specific push constant struct Type.
@@ -617,6 +619,32 @@ namespace Spiecs {
 			*/
 			template<typename T, typename F>
 			void UpdateStorageBuffer(uint32_t set, uint32_t binding, F func);
+
+			/*******************************************************************************************************/
+
+			/**
+			* @brief Update local pushconstant buffer.
+			* @param[in] T Specific push constant struct Type.
+			* @param[in] data push constant data pointer.
+			*/
+			template<typename T>
+			void UpdatePushConstant(void* data);
+
+			/**
+			* @brief Update a local buffer.
+			* @param[in] set Which set the descriptor will use.
+			* @param[in] binding Which binding the descriptor will use.
+			* @param[in] data ubo data pointer.
+			*/
+			void UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data);
+
+			/**
+			* @brief Update a local buffer.
+			* @param[in] set Which set the descriptor will use.
+			* @param[in] binding Which binding the descriptor will use.
+			* @param[in] data uubo data pointer.
+			*/
+			void UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data);
 
 			/**
 			* @brief End a preview subpass and stat next subpass.
@@ -815,6 +843,47 @@ namespace Spiecs {
 		* @breif Update uniform buffer.
 		*/
 		m_HandledSubPass->SetBuffer({ set, binding }, &ssbo);
+	}
+
+	template<typename T>
+	inline void Renderer::RenderBehaverBuilder::UpdatePushConstant(void* data)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		std::stringstream ss;
+		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
+
+		/**
+		* @breif Update PushConstants
+		*/
+		vkCmdPushConstants(
+			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
+			VK_SHADER_STAGE_ALL,
+			0,
+			sizeof(T),
+			data
+		);
+	}
+
+	inline void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @breif Update uniform buffer.
+		*/
+		m_HandledSubPass->SetBuffer({ set, binding }, data);
+	}
+
+	inline void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data)
+	{
+		SPIECS_PROFILE_ZONE;
+
+		/**
+		* @breif Update uniform buffer.
+		*/
+		m_HandledSubPass->SetBuffer({ set, binding }, data);
 	}
 
 	template<typename T>

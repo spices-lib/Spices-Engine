@@ -30,7 +30,7 @@ namespace Spiecs {
 		m_Material = ResourcePool<Material>::Load<Material>(materialPath);
 		m_Material->BuildMaterial();
 	}
-
+	
 #ifdef RENDERAPI_VULKAN
 
 	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR()

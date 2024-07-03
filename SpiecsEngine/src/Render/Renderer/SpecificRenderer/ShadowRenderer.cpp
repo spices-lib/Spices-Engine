@@ -62,8 +62,8 @@ namespace Spiecs {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "DirectionalLightShadow" }));
 
-		builder.UpdateStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, [&](auto& ubo) {
-			GetDirectionalLightMatrix(frameInfo, ubo.Matrixs);
+		builder.UpdateStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, [&](auto& ssbo) {
+			GetDirectionalLightMatrix(frameInfo, ssbo.Matrixs);
 		});
 
 		builder.BindPipeline("ShadowRenderer.DirectionalLightShadow.Default");

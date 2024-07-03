@@ -26,9 +26,8 @@ hitAttributeEXT vec3 attribs;
 
 layout(buffer_reference, scalar) buffer Vertices { Vertex v[]; }; 
 layout(buffer_reference, scalar) buffer Indices { ivec3 i[]; };
-layout(buffer_reference, scalar) buffer Materials { WaveFrontMaterial m[]; };
-layout(buffer_reference, scalar) buffer MatIndices { int i[]; };
-layout(set = 1, binding = 0, scalar) buffer MeshDescs { MeshDesc i[]; } meshDesc;
+
+layout(set = 1, binding = 2, scalar) readonly buffer MeshDescs { MeshDesc i[]; } meshDesc;
 
 layout(push_constant) uniform PushConstant { PushConstantRay push; };
 
@@ -38,6 +37,10 @@ layout(push_constant) uniform PushConstant { PushConstantRay push; };
 
 void main()
 {
+    MeshDesc desc       = meshDesc.i[gl_InstanceCustomIndexEXT];
+    Vertices vertices   = Vertices(desc.vertexAddress);
+    Indices  vertices   = Indices(desc.indexAddress);
+    
     prd.hitValue = vec3(1.0f, 1.0f, 0.0f);
 }
 

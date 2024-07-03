@@ -11,7 +11,7 @@
 #include "Core/Library/MemoryLibrary.h"
 
 namespace Spiecs {
-
+	
 	RayTracingRenderer::RayTracingRenderer(
 		const std::string&                     rendererName          ,
 		VulkanState&                           vulkanState           ,
@@ -47,6 +47,7 @@ namespace Spiecs {
 		.AddPushConstant<SpiecsShader::PushConstantRay>()
 		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR)
 		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)
+		.AddStorageBuffer<RayTracingR::MeshDescriptions>(1, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR)
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
 
@@ -108,6 +109,8 @@ namespace Spiecs {
 		
 		builder.BindPipeline("RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
 
+		builder.UpdateStorageBuffer(1, 2, m_DescArray.get());
+		
 		builder.UpdatePushConstant<SpiecsShader::PushConstantRay>([&](auto& push) {
 			push.clearColor     = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			push.lightPosition  = glm::vec3(0.0f, 5.0f, 0.0f);
@@ -170,6 +173,7 @@ namespace Spiecs {
 		std::vector<VkAccelerationStructureInstanceKHR> tlas;
 
 		int index = 0;
+		m_DescArray = std::make_unique<RayTracingR::MeshDescriptions>();
 		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
@@ -186,10 +190,14 @@ namespace Spiecs {
 				rayInst.instanceShaderBindingTableRecordOffset              = 0;                                                          // We will use the same hit group for all objects
 
 				tlas.push_back(rayInst);
+
+				m_DescArray->descs[index].vertexAddress = pair.second->GetVerticesBufferAddress();
+				m_DescArray->descs[index].indexAddress  = pair.second->GetIndicesBufferAddress();
+				
 				index += 1;
 			}
 		}
-
+		
 		/**
 		* @brief Build TLAS.
 		*/

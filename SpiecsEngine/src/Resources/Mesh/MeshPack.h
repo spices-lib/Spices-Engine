@@ -84,20 +84,33 @@ namespace Spiecs {
 		* @brief Get Vertices array.
 		* @return Returns the Vertices array.
 		*/
-		inline const std::vector<Vertex>& GetVertices() { return m_Vertices; };
+		inline const std::vector<Vertex>& GetVertices() const { return m_Vertices; };
 
 		/**
 		* @brief Get Indices array.
 		* @return Returns the Indices array.
 		*/
-		inline const std::vector<uint32_t>& GetIndices() { return m_Indices; };
+		inline const std::vector<uint32_t>& GetIndices() const { return m_Indices; };
 
 #ifdef RENDERAPI_VULKAN
 
 		/**
-		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS
+		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS.
+		* @return Returns VulkanRayTracing::BlasInput.
 		*/
 		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR();
+
+		/**
+		* @brief Get VerticesBuffer Video memory address.
+		* @return Returns the VerticesBuffer Video memory address.
+		*/
+		VkDeviceAddress GetVerticesBufferAddress() const { return m_VertexBuffer->GetAddress(); };
+
+		/**
+		* @brief Get IndicesBuffer Video memory address.
+		* @return Returns the IndicesBuffer Video memory address.
+		*/
+		VkDeviceAddress GetIndicesBufferAddress() const { return m_IndicesBuffer->GetAddress(); };
 
 #endif
 
