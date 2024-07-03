@@ -6,7 +6,6 @@
 
 #include "Pchheader.h"
 #include "SpriteRenderer.h"
-#include "PreRenderer.h"
 
 namespace Spiecs {
 
@@ -32,7 +31,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Sprite", this }
-		.AddPushConstant<PreR::PushConstant>()
+		.AddPushConstant<PushConstantMesh>()
 		.Build();
 	}
 
@@ -69,7 +68,7 @@ namespace Spiecs {
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = it->second;
 				});

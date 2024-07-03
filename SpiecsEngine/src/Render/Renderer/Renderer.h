@@ -11,6 +11,7 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
+#include "../assets/Shaders/src/Header/ShaderStructures.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -538,11 +539,13 @@ namespace Spiecs {
 			* Bind pipleine and all buffer type descriptorset.
 			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			* @param[in] currentFrame Passed from FrameInfo.
+			* @param[in] isNonGraphicRender set to true if cmd is not use with a graphic pipeline.
 			*/
 			RenderBehaverBuilder(
 				Renderer* renderer     , 
 				uint32_t  currentFrame , 
-				uint32_t  currentImage
+				uint32_t  currentImage ,
+				bool      isNonGraphicRender = false
 			);
 
 			/**
@@ -763,7 +766,7 @@ namespace Spiecs {
 		vkCmdPushConstants(
 			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
 			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
-			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			VK_SHADER_STAGE_ALL,
 			0,
 			sizeof(T),
 			&push
@@ -823,7 +826,7 @@ namespace Spiecs {
 		* @brief Call RendererSubPass::SetPushConstant().
 		*/
 		m_HandledSubPass->SetPushConstant([&](auto& range) {
-			range.stageFlags   = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+			range.stageFlags   = VK_SHADER_STAGE_ALL;
 			range.offset       = 0;
 			range.size         = sizeof(T);
 		});

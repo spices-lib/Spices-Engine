@@ -20,12 +20,12 @@ namespace Spiecs {
 		std::shared_ptr<RendererResourcePool>  rendererResourcePool  ,
 		bool isLoadDefaultMaterial
 	)
-		: m_RendererName            (rendererName          )
-		, m_VulkanState             (vulkanState           ) 
+		: m_VulkanState             (vulkanState           )
 		, m_DesctiptorPool          (desctiptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
 		, m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
+	    , m_RendererName            (rendererName          )
 	{}
 
 	Renderer::~Renderer()
@@ -123,7 +123,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Pipeline.
 		*/
-		auto& pipeline = CreatePipeline(material, pipelinelayout, subPass);
+		auto pipeline = CreatePipeline(material, pipelinelayout, subPass);
 		m_Pipelines[materialName] = pipeline;
 	}
 
@@ -345,7 +345,7 @@ namespace Spiecs {
 				glm::mat4 view = tempComp.GetModelMatrix();
 				glm::mat4 projection = Otrhographic(-ratio * 30, ratio * 30, -1.0f * 30, 1.0f * 30, -100000.0f, 100000.0f);
 
-				auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+				auto [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 
 				directionalLight[index] = projection * glm::inverse(view);
 				index++;
@@ -380,11 +380,18 @@ namespace Spiecs {
 	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(
 		Renderer*         renderer       , 
 		uint32_t          currentFrame   , 
-		uint32_t          currentImage   )
+		uint32_t          currentImage   ,
+		bool              isNonGraphicRender 
+	)
 		: m_Renderer    ( renderer       )
 		, m_CurrentFrame( currentFrame   )
 		, m_CurrentImage( currentImage   )
-	{}
+	{
+		if (isNonGraphicRender)
+		{
+			m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		}
+	}
 
 	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint)
 	{
@@ -399,13 +406,13 @@ namespace Spiecs {
 		* @brief Use Negative Viewport height filp here to handle axis difference.
 		* Remember enable device extension (VK_KHR_MAINTENANCE1)
 		*/
-		VkViewport viewport{};
-		viewport.x                = 0.0f;
+		VkViewport viewport {};
+		viewport.x                =  0.0f;
 		viewport.y                =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height);
 		viewport.width            =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width);
 		viewport.height           = -static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height);
-		viewport.minDepth         = 0.0f;
-		viewport.maxDepth         = 1.0f;
+		viewport.minDepth         =  0.0f;
+		viewport.maxDepth         =  1.0f;
 
 		/**
 		* @brief Though we draw world to viewport but not surface,
@@ -428,7 +435,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkRect2D
 		*/
-		VkRect2D scissor{};
+		VkRect2D scissor {};
 		scissor.offset            = { 0, 0 };
 		scissor.extent            = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 
@@ -577,7 +584,7 @@ namespace Spiecs {
 		* @brief Registy descriptor and add binging to it.
 		*/
 		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, stageFlags, textureNames.size());
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, stageFlags, static_cast<uint32_t>(textureNames.size()));
 
 		return *this;
 	}
@@ -586,7 +593,7 @@ namespace Spiecs {
 		uint32_t                         set,
 		uint32_t                         binding,
 		VkShaderStageFlags               stageFlags,
-		const std::vector<std::string>& textureNames
+		const std::vector<std::string>&  textureNames
 	)
 	{
 		SPIECS_PROFILE_ZONE;

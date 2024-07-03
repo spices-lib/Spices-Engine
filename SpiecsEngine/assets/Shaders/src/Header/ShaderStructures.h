@@ -17,6 +17,53 @@ using uint = unsigned int;
 
 #endif
 
+/*************************************Pre Renderer Data***********************************/
+
+/**
+* @brief Global View Struct.
+*/
+struct View {
+	mat4 projection;          /* @brief Projection Matrix from major Camera Entity                   */
+	mat4 nprojection;         /* @brief Negative y axis Projection Matrix from major Camera Entity   */
+	mat4 view;                /* @brief View Matrix from major Camera Entity                         */
+	mat4 inView;              /* @brief Inverse View Matrix from major Camera Entity                 */
+	vec4 sceneTextureSize;    /* @brief Scene Texture Size                                           */
+	vec4 windowSize;          /* @brief Application Window Size                                      */
+};
+
+/**
+* @brief Application Inout Struct.
+*/
+struct SpiecsInput {
+	vec4  mousePos;            /* @brief Mouse Postion and inverse position */
+	float gameTime;            /* @brief Application Run time since start   */
+	float frameTime;           /* @brief Duration time since last frame     */
+};
+
+/**
+* @brief Push constant structure for the mesh basic
+*/
+struct PushConstantMesh {
+	mat4 model;               /* @brief MeshPack ModelMatrix      */
+	int entityID;             /* EntityId, cast from entt::entity */
+};
+
+/*****************************************************************************************/
+
+
+/*********************************RayTracing Renderer Data********************************/
+
+/**
+* @brief Push constant structure for the ray tracer
+*/ 
+struct PushConstantRay
+{
+	vec4  clearColor;
+	vec3  lightPosition;
+	float lightIntensity;
+	int   lightType;
+};
+
 /*****************************************************************************************/
 
 // Information of a obj model when referenced in a shader
@@ -31,6 +78,8 @@ using uint = unsigned int;
 
 
 
+
+
 // Push constant structure for the raster
 struct PushConstantRaster
 {
@@ -40,18 +89,6 @@ struct PushConstantRaster
 	float lightIntensity;
 	int   lightType;
 };
-
-
-// Push constant structure for the ray tracer
-struct PushConstantRay
-{
-	vec4  clearColor;
-	vec3  lightPosition;
-	float lightIntensity;
-	int   lightType;
-};
-
-
 
 struct WaveFrontMaterial  // See ObjLoader, copy of MaterialObj, could be compressed for device
 {

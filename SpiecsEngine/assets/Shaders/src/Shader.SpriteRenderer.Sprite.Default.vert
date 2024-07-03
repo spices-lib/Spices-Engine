@@ -32,9 +32,8 @@ layout(location = 0) out struct FragInput {
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-    mat4 model;
-    int entityID;
-} push;
+	PushConstantMesh push;
+};
 
 /*****************************************************************************************/
 
@@ -42,11 +41,7 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    vec3 cameraR = vec3(view.view[0][0], view.view[1][0], view.view[2][0]);
-    vec3 cameraU = vec3(view.view[0][1], view.view[1][1], view.view[2][1]);
-    vec3 cameraF = vec3(view.view[0][2], view.view[1][2], view.view[2][2]);
-
-    vec3 pos = position.x * cameraR + position.y * cameraU + position.z * cameraF;
+    vec3 pos = mat3(view.inView) * position;
 
     vertOut.texCoord = texCoord;
     gl_Position = view.projection * view.view  * push.model * vec4(pos, 1.0);

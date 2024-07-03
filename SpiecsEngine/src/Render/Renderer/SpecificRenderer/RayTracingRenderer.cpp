@@ -44,6 +44,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "RayTracing", this }
+		.AddPushConstant<PushConstantRay>()
 		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR)
 		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
@@ -97,15 +98,31 @@ namespace Spiecs {
 
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
-		RenderBehaverBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+		RenderBehaverBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex, true };
 
 		VulkanDebugUtils::BeginLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], "RayTracing");
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), "RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
+		builder.BindDescriptorSet(
+			DescriptorSetManager::GetByName("PreRenderer"),
+			VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+		);
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName("RayTracing"), "RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
+		builder.BindDescriptorSet(
+			DescriptorSetManager::GetByName("RayTracing"),
+			VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+		);
 
-		builder.BindPipeline("RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
+		builder.BindPipeline(
+			"RayTracingRenderer.RayTracing.Default",
+			VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+		);
+
+		builder.UpdatePushConstant<PushConstantRay>([&](auto& push) {
+			push.clearColor     = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			push.lightPosition  = glm::vec3(0.0f, 5.0f, 0.0f);
+			push.lightIntensity = 10.0f;
+			push.lightType      = 0;
+		});
 		
 		uint32_t width = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
 		uint32_t height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
@@ -114,7 +131,16 @@ namespace Spiecs {
 		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
-		vkCmdTraceRaysKHR(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion, width, height, 1);
+		vkCmdTraceRaysKHR(
+			m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
+			&m_RgenRegion,
+			&m_MissRegion,
+			&m_HitRegion,
+			&m_CallRegion,
+			width,
+			height,
+			1
+		);
 
 		VulkanDebugUtils::EndLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
 	}
@@ -131,7 +157,7 @@ namespace Spiecs {
 		/**
 		* @brief Iter all MeshComponents.
 		*/
-		auto& view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
+		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
 			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);
@@ -153,7 +179,7 @@ namespace Spiecs {
 		std::vector<VkAccelerationStructureInstanceKHR> tlas;
 
 		int index = 0;
-		auto& view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
+		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
 			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);

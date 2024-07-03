@@ -6,7 +6,6 @@
 
 #include "Pchheader.h"
 #include "SceneComposeRenderer.h"
-#include "PreRenderer.h"
 #include "Systems/SlateSystem.h"
 
 namespace Spiecs {

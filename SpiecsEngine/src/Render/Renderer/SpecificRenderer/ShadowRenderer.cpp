@@ -6,7 +6,6 @@
 
 #include "Pchheader.h"
 #include "ShadowRenderer.h"
-#include "PreRenderer.h"
 #include "Systems/SlateSystem.h"
 
 namespace Spiecs {
@@ -48,7 +47,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "DirectionalLightShadow", this }
-		.AddPushConstant<PreR::PushConstant>()
+		.AddPushConstant<PushConstantMesh>()
 		.AddStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, VK_SHADER_STAGE_GEOMETRY_BIT)
 		.Build();
 	}
@@ -74,7 +73,7 @@ namespace Spiecs {
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 
-				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

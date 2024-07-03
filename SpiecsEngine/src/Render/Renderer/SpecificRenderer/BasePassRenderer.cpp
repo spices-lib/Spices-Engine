@@ -6,7 +6,6 @@
 
 #include "Pchheader.h"
 #include "BasePassRenderer.h"
-#include "PreRenderer.h"
 
 namespace Spiecs {
 
@@ -61,11 +60,11 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "SkyBox", this }
-		.AddPushConstant<PreR::PushConstant>()
+		.AddPushConstant<PushConstantMesh>()
 		.Build();
 
 		DescriptorSetBuilder{ "Mesh", this }
-		.AddPushConstant<PreR::PushConstant>()
+		.AddPushConstant<PushConstantMesh>()
 		.Build();
 	}
 
@@ -116,7 +115,7 @@ namespace Spiecs {
 
 				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
@@ -138,7 +137,7 @@ namespace Spiecs {
 
 				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

@@ -8,6 +8,10 @@
 
 #version 460
 
+#extension GL_GOOGLE_include_directive : enable
+
+#include "Header/ShaderStructures.h"
+
 /*****************************************************************************************/
 
 /************************************Fragment Input***************************************/
@@ -39,9 +43,8 @@ layout(location = 2) out float outID;                  /* @brief ID Attachment  
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-    mat4 model;
-    int entityID;
-} push;
+	PushConstantMesh push;
+};
 
 /*****************************************************************************************/
 

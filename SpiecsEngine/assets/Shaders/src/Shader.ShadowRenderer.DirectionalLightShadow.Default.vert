@@ -10,7 +10,9 @@
 
 #extension GL_GOOGLE_include_directive : enable
 
+#include "Header/ShaderStructures.h"
 #include "Header/ShaderVertexInput.glsl"
+
 
 /*****************************************************************************************/
 
@@ -20,9 +22,8 @@
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	mat4 model;                                    /* @brief Model Matrix */
-	int entityID;                                  /* @brief Entity ID    */
-} push;
+	PushConstantMesh push;
+};
 
 /*****************************************************************************************/
 

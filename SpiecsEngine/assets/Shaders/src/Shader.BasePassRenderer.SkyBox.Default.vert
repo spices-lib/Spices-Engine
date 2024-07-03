@@ -33,9 +33,8 @@ layout(location = 0) out struct FragInput {
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-    mat4 model;
-    int entityID;
-} push;
+	PushConstantMesh push;
+};
 
 /*****************************************************************************************/
 

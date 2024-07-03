@@ -6,7 +6,6 @@
 
 #include "Pchheader.h"
 #include "WorldPickRenderer.h"
-#include "PreRenderer.h"
 
 namespace Spiecs {
 
@@ -31,7 +30,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "WorldPick", this }
-		.AddPushConstant<PreR::PushConstant>()
+		.AddPushConstant<PushConstantMesh>()
 		.Build();
 	}
 
@@ -55,7 +54,7 @@ namespace Spiecs {
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
@@ -72,7 +71,7 @@ namespace Spiecs {
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<PreR::PushConstant>([&](auto& push) {
+				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

@@ -35,9 +35,8 @@ layout(location = 0) out struct VertOut {
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	mat4 model;                                    /* @brief Model Matrix */
-    int entityID;                                  /* @brief Entity ID    */
-} push;
+	PushConstantMesh push;
+};
 
 /*****************************************************************************************/
 
