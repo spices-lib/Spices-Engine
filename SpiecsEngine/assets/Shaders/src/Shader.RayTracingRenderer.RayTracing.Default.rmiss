@@ -10,8 +10,8 @@
 
 #extension GL_GOOGLE_include_directive : enable
 #extension GL_EXT_ray_tracing : require
-#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
 
+#include "Header/ShaderStructures.h"
 #include "Header/ShaderRayCommon.glsl"
 
 /*****************************************************************************************/
@@ -20,9 +20,9 @@
 
 layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
-//layout(push_constant) uniform _PushConstantRay {
-//    PushConstantRay pcRay;
-//}
+layout(push_constant) uniform PushConstant {
+    PushConstantRay push;
+};
 
 /*****************************************************************************************/
 
@@ -30,7 +30,7 @@ layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 void main()
 {
-    prd.hitValue = vec3(1.0f) * 0.8f;
+    prd.hitValue = push.clearColor.xyz;
 }
 
 /*****************************************************************************************/

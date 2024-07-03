@@ -30,7 +30,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "WorldPick", this }
-		.AddPushConstant<PushConstantMesh>()
+		.AddPushConstant<SpiecsShader::PushConstantMesh>()
 		.Build();
 	}
 
@@ -54,7 +54,7 @@ namespace Spiecs {
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
+				builder.UpdatePushConstant<SpiecsShader::PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
@@ -71,7 +71,7 @@ namespace Spiecs {
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
+				builder.UpdatePushConstant<SpiecsShader::PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

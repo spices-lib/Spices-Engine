@@ -44,7 +44,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "RayTracing", this }
-		.AddPushConstant<PushConstantRay>()
+		.AddPushConstant<SpiecsShader::PushConstantRay>()
 		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR)
 		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
@@ -102,23 +102,14 @@ namespace Spiecs {
 
 		VulkanDebugUtils::BeginLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], "RayTracing");
 
-		builder.BindDescriptorSet(
-			DescriptorSetManager::GetByName("PreRenderer"),
-			VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
-		);
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
 
-		builder.BindDescriptorSet(
-			DescriptorSetManager::GetByName("RayTracing"),
-			VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
-		);
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("RayTracing"), VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
+		
+		builder.BindPipeline("RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
 
-		builder.BindPipeline(
-			"RayTracingRenderer.RayTracing.Default",
-			VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
-		);
-
-		builder.UpdatePushConstant<PushConstantRay>([&](auto& push) {
-			push.clearColor     = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		builder.UpdatePushConstant<SpiecsShader::PushConstantRay>([&](auto& push) {
+			push.clearColor     = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			push.lightPosition  = glm::vec3(0.0f, 5.0f, 0.0f);
 			push.lightIntensity = 10.0f;
 			push.lightType      = 0;
@@ -249,11 +240,6 @@ namespace Spiecs {
 		);
 
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, m_RTSBTBuffer->Get(), m_VulkanState.m_Device, "SBT Buffer");
-
-		// Find the SBT addresses of each group
-		VkBufferDeviceAddressInfo info {};
-		info.sType                              = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
-		info.buffer                             = m_RTSBTBuffer->Get();
 
 		m_RgenRegion.deviceAddress              = m_RTSBTBuffer->GetAddress();
 		m_MissRegion.deviceAddress              = m_RTSBTBuffer->GetAddress() + m_RgenRegion.size;

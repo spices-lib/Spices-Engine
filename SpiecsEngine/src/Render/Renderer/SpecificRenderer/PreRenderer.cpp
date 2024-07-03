@@ -18,8 +18,8 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
  		DescriptorSetBuilder{ "PreRenderer", this }
-		.AddUniformBuffer<View>(0, 0, VK_SHADER_STAGE_ALL)
-		.AddUniformBuffer<SpiecsInput>(0, 1, VK_SHADER_STAGE_ALL)
+		.AddUniformBuffer<SpiecsShader::View>(0, 0, VK_SHADER_STAGE_ALL)
+		.AddUniformBuffer<SpiecsShader::Input>(0, 1, VK_SHADER_STAGE_ALL)
 		.Build();
 	}
 
@@ -31,7 +31,7 @@ namespace Spiecs {
 
 		builder.BeginRenderPass();
 
-		builder.UpdateUniformBuffer<View>(0, 0, [&](auto& ubo) {
+		builder.UpdateUniformBuffer<SpiecsShader::View>(0, 0, [&](auto& ubo) {
 			auto [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
 			ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 			VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
@@ -60,12 +60,12 @@ namespace Spiecs {
 			};
 		});
 
-		builder.UpdateUniformBuffer<SpiecsInput>(0, 1, [&](auto& ubo) {
+		builder.UpdateUniformBuffer<SpiecsShader::Input>(0, 1, [&](auto& ubo) {
 			auto [x, y] = SlateSystem::GetRegister()->GetViewPort()->GetMousePosInViewport();
 
-			ubo.gameTime = ts.gt();
+			ubo.gameTime  = ts.gt();
 			ubo.frameTime = ts.ft();
-			ubo.mousePos = glm::vec4(
+			ubo.mousePos  = glm::vec4(
 				static_cast<float>(x),
 				static_cast<float>(y),
 				1.0f / static_cast<float>(x),

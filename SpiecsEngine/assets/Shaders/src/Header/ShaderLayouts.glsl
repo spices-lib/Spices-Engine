@@ -20,8 +20,8 @@ layout(set = 0, binding = 0) uniform ShaderView {
 /**
 * @brief Application Inout Struct.
 */
-layout(set = 0, binding = 1) uniform ShaderSpiecsInput {
-    SpiecsInput spiecsInput;          /* @see SpiecsInput */
+layout(set = 0, binding = 1) uniform ShaderInput {
+    Input spiecsInput;          /* @see SpiecsInput */
 };
 
 /*****************************************************************************************/

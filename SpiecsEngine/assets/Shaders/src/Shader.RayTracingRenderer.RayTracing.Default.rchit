@@ -8,28 +8,29 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable
-#extension GL_EXT_ray_tracing : require
-#extension GL_EXT_nonuniform_qualifier : enable
-#extension GL_EXT_scalar_block_layout : enable
-#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
-#extension GL_EXT_buffer_reference2 : require
+#extension GL_GOOGLE_include_directive                               : enable
+#extension GL_EXT_ray_tracing                                        : require
+#extension GL_EXT_nonuniform_qualifier                               : enable
+#extension GL_EXT_scalar_block_layout                                : enable
+#extension GL_EXT_buffer_reference2                                  : require
 
 #include "Header/ShaderRayCommon.glsl"
+#include "Header/ShaderStructures.h"
 
 /*****************************************************************************************/
 
 /********************************Specific Renderer Data***********************************/
 
 layout(location = 0) rayPayloadInEXT HitPayLoad prd;
-
-//layout(buffer_reference, scalar) buffer Vertices {Vertex v[]; }; // Positions of an object
-//layout(buffer_reference, scalar) buffer Indices {ivec3 i[]; }; // Triangle indices
-//layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
-//layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
-//layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { ObjDesc i[]; } objDesc;
-
 hitAttributeEXT vec3 attribs;
+
+layout(buffer_reference, scalar) buffer Vertices { Vertex v[]; }; 
+layout(buffer_reference, scalar) buffer Indices { ivec3 i[]; };
+layout(buffer_reference, scalar) buffer Materials { WaveFrontMaterial m[]; };
+layout(buffer_reference, scalar) buffer MatIndices { int i[]; };
+layout(set = 1, binding = 0, scalar) buffer MeshDescs { MeshDesc i[]; } meshDesc;
+
+layout(push_constant) uniform PushConstant { PushConstantRay push; };
 
 /*****************************************************************************************/
 
@@ -37,7 +38,7 @@ hitAttributeEXT vec3 attribs;
 
 void main()
 {
-  prd.hitValue = vec3(0.2, 0.5, 0.5);
+    prd.hitValue = vec3(1.0f, 1.0f, 0.0f);
 }
 
 /*****************************************************************************************/

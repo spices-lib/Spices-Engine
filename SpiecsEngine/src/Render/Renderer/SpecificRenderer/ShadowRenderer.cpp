@@ -47,7 +47,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "DirectionalLightShadow", this }
-		.AddPushConstant<PushConstantMesh>()
+		.AddPushConstant<SpiecsShader::PushConstantMesh>()
 		.AddStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, VK_SHADER_STAGE_GEOMETRY_BIT)
 		.Build();
 	}
@@ -73,7 +73,7 @@ namespace Spiecs {
 
 			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 
-				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
+				builder.UpdatePushConstant<SpiecsShader::PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

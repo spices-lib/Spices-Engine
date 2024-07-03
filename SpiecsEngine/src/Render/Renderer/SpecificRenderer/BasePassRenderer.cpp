@@ -60,11 +60,11 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "SkyBox", this }
-		.AddPushConstant<PushConstantMesh>()
+		.AddPushConstant<SpiecsShader::PushConstantMesh>()
 		.Build();
 
 		DescriptorSetBuilder{ "Mesh", this }
-		.AddPushConstant<PushConstantMesh>()
+		.AddPushConstant<SpiecsShader::PushConstantMesh>()
 		.Build();
 	}
 
@@ -115,7 +115,7 @@ namespace Spiecs {
 
 				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
+				builder.UpdatePushConstant<SpiecsShader::PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});
@@ -137,7 +137,7 @@ namespace Spiecs {
 
 				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
+				builder.UpdatePushConstant<SpiecsShader::PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = entityId;
 				});

@@ -31,7 +31,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Sprite", this }
-		.AddPushConstant<PushConstantMesh>()
+		.AddPushConstant<SpiecsShader::PushConstantMesh>()
 		.Build();
 	}
 
@@ -61,14 +61,14 @@ namespace Spiecs {
 
 		for (auto it = sortedEntity.rbegin(); it != sortedEntity.rend(); ++it)
 		{
-			auto& [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>((entt::entity)it->second);
+			auto [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>((entt::entity)it->second);
 
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<PushConstantMesh>([&](auto& push) {
+				builder.UpdatePushConstant<SpiecsShader::PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
 					push.entityID = it->second;
 				});
