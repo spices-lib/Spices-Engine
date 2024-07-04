@@ -21,7 +21,7 @@ namespace Spiecs {
 		*/
 		if (!SelectPhysicalDevice(vulkanState.m_Instance, vulkanState.m_Surface, vulkanState.m_Windows)) 
 		{
-			SPIECS_CORE_INFO("failed select physical device!");
+			SPIECS_CORE_ERROR("failed select physical device!");
 		}
 
 		/**
@@ -58,23 +58,27 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/
-		VkPhysicalDeviceHostQueryResetFeatures hostQueryResetFeatures {};
+		VkPhysicalDeviceScalarBlockLayoutFeatures                 layoutfeatures {};
+		layoutfeatures.sType                                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
+		layoutfeatures.pNext                                    = nullptr;/*@brief Pass your other features through this chain.*/
+													            
+		VkPhysicalDeviceHostQueryResetFeatures                    hostQueryResetFeatures {};
 		hostQueryResetFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
-		hostQueryResetFeatures.pNext                            = nullptr;  /*@brief Pass your other features through this chain.*/
+		hostQueryResetFeatures.pNext                            = &layoutfeatures;
 
-		VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures {};
+		VkPhysicalDeviceRayTracingPipelineFeaturesKHR             rayTracingFeatures {};
 		rayTracingFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
 		rayTracingFeatures.pNext                                = &hostQueryResetFeatures; 
 
-		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
+		VkPhysicalDeviceAccelerationStructureFeaturesKHR          accelerationStructureFeatures {};
 		accelerationStructureFeatures.sType                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
 		accelerationStructureFeatures.pNext                     = &rayTracingFeatures;
 
-		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures{};
+		VkPhysicalDeviceDescriptorIndexingFeatures                descriptorIndexingFeatures {};
 		descriptorIndexingFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
 		descriptorIndexingFeatures.pNext                        = &accelerationStructureFeatures;  
 
-		VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures{};
+		VkPhysicalDeviceBufferDeviceAddressFeatures               bufferDeviceAddressFeatures {};
 		bufferDeviceAddressFeatures.sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
 		bufferDeviceAddressFeatures.pNext                       = &descriptorIndexingFeatures;
 
@@ -262,25 +266,29 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/ 
-		VkPhysicalDeviceHostQueryResetFeatures hostQueryResetFeatures {};
-		hostQueryResetFeatures.sType                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
-		hostQueryResetFeatures.pNext                  = nullptr;/*@brief Pass your other features through this chain.*/
+		VkPhysicalDeviceScalarBlockLayoutFeatures             layoutfeatures {};
+		layoutfeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
+		layoutfeatures.pNext                                = nullptr;/*@brief Pass your other features through this chain.*/
+													        
+		VkPhysicalDeviceHostQueryResetFeatures                hostQueryResetFeatures {};
+		hostQueryResetFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
+		hostQueryResetFeatures.pNext                        = &layoutfeatures;
+													        
+		VkPhysicalDeviceRayTracingPipelineFeaturesKHR         rayTracingFeatures {};
+		rayTracingFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+		rayTracingFeatures.pNext                            = &hostQueryResetFeatures; 
 
-		VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures {};
-		rayTracingFeatures.sType                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
-		rayTracingFeatures.pNext                      = &hostQueryResetFeatures; 
-
-		VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
-		accelerationStructureFeatures.sType           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
-		accelerationStructureFeatures.pNext           = &rayTracingFeatures; 
-
-		VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures {};
-		descriptorIndexingFeatures.sType              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-		descriptorIndexingFeatures.pNext              = &accelerationStructureFeatures;  /*@brief Pass your other features through this chain.*/
-
-		VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures {};
-		bufferDeviceAddressFeatures.sType             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
-		bufferDeviceAddressFeatures.pNext             = &descriptorIndexingFeatures;
+		VkPhysicalDeviceAccelerationStructureFeaturesKHR      accelerationStructureFeatures {};
+		accelerationStructureFeatures.sType                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+		accelerationStructureFeatures.pNext                 = &rayTracingFeatures; 
+													       
+		VkPhysicalDeviceDescriptorIndexingFeatures            descriptorIndexingFeatures {};
+		descriptorIndexingFeatures.sType                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+		descriptorIndexingFeatures.pNext                    = &accelerationStructureFeatures;  /*@brief Pass your other features through this chain.*/
+													       
+		VkPhysicalDeviceBufferDeviceAddressFeatures           bufferDeviceAddressFeatures {};
+		bufferDeviceAddressFeatures.sType                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+		bufferDeviceAddressFeatures.pNext                   = &descriptorIndexingFeatures;
 
 		/**
 		* @brief Get all Features that supported.
@@ -304,6 +312,7 @@ namespace Spiecs {
 		if (!accelerationStructureFeatures.accelerationStructure) return false;        /*@breif Enable RayTracing AccelerationStructure.*/
 		if (!rayTracingFeatures.rayTracingPipeline) return false;                      /*@breif Enable RayTracing Pipeline.*/
 		if (!hostQueryResetFeatures.hostQueryReset) return false;                      /*@brief Enable HostQueryReset Feature.*/
+		if (!layoutfeatures.scalarBlockLayout) return false;                           /*@brief Enable Shader ScalarBlockLayout Feature.*/
 
 		return true;
 	}

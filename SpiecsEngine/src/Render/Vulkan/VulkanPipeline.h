@@ -132,10 +132,10 @@ namespace Spiecs {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanPipeline(
-			VulkanState&                                        vulkanState   ,
-			const std::string&                                  pipelineName  ,
-			const std::unordered_map<std::string, std::string>& shaders       ,
-			const PipelineConfigInfo&                           config
+			VulkanState&                                                      vulkanState   ,
+			const std::string&                                                pipelineName  ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+			const PipelineConfigInfo&                                         config
 		);
 
 		/**
@@ -177,9 +177,9 @@ namespace Spiecs {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		virtual void CreateGraphicsPipeline(
-			const std::string&                                  pipelineName   ,
-			const std::unordered_map<std::string, std::string>& shaders        ,
-			const PipelineConfigInfo&                           config
+			const std::string&                                                pipelineName   ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+			const PipelineConfigInfo&                                         config
 		);
 
 	protected:
@@ -212,10 +212,10 @@ namespace Spiecs {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanRayTracingPipeline(
-			VulkanState&                                         vulkanState  ,
-			const std::string&                                   pipelineName ,
-			const std::unordered_map<std::string, std::string>&  shaders      ,
-			const PipelineConfigInfo&                            config
+			VulkanState&                                                      vulkanState  ,
+			const std::string&                                                pipelineName ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       , 
+			const PipelineConfigInfo&                                         config
 		);
 
 		/**
@@ -232,20 +232,12 @@ namespace Spiecs {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		virtual void CreateGraphicsPipeline(
-			const std::string&                                   pipelineName ,
-			const std::unordered_map<std::string, std::string>&  shaders      ,
-			const PipelineConfigInfo&                            config
+			const std::string&                                                pipelineName ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+			const PipelineConfigInfo&                                         config
 		) override;
 
 	private:
-
-		enum RTShaderStageIndices
-		{
-			RayGen                = 0,
-			Miss                  = 1,
-			ClosesHit             = 2,
-			ShaderGroupCount      = 3
-		};
 
 		std::vector<VkRayTracingShaderGroupCreateInfoKHR> m_RTShaderGroups;
 		PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR;

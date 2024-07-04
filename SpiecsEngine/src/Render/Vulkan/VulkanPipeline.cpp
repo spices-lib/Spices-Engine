@@ -11,10 +11,10 @@
 namespace Spiecs {
 
 	VulkanPipeline::VulkanPipeline(
-		VulkanState&                                        vulkanState    , 
-		const std::string&                                  pipelineName   ,
-		const std::unordered_map<std::string, std::string>& shaders        ,
-		const PipelineConfigInfo&                           config
+		VulkanState&                                                      vulkanState    , 
+		const std::string&                                                pipelineName   ,
+		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+		const PipelineConfigInfo&                                         config
 	)
 		: VulkanObject(vulkanState)
 	{
@@ -151,9 +151,9 @@ namespace Spiecs {
 	}
 
 	void VulkanPipeline::CreateGraphicsPipeline(
-		const std::string&                                  pipelineName    ,
-		const std::unordered_map<std::string, std::string>& shaders         ,
-		const PipelineConfigInfo&                           config
+		const std::string&                                                pipelineName    ,
+		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+		const PipelineConfigInfo&                                         config
 	)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -169,7 +169,10 @@ namespace Spiecs {
 		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
-			shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second, pair.first));
+			for(int i = 0; i < pair.second.size(); i++)
+			{
+				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+			}
 		}
 
 		/**
@@ -181,7 +184,7 @@ namespace Spiecs {
 			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
 		}
 		
-		auto& bindingDescriptions = config.bindingDescriptions;
+		auto& bindingDescriptions    = config.bindingDescriptions;
 		auto& attributeDescriptions = config.attributeDescriptions;
 
 		/**
@@ -225,10 +228,10 @@ namespace Spiecs {
 	}
 
 	VulkanRayTracingPipeline::VulkanRayTracingPipeline(
-		VulkanState&                                         vulkanState  ,
-		const std::string&                                   pipelineName ,
-		const std::unordered_map<std::string, std::string>&  shaders      ,
-		const PipelineConfigInfo&                            config
+		VulkanState&                                                      vulkanState  ,
+		const std::string&                                                pipelineName ,
+		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+		const PipelineConfigInfo&                                         config
 	)
 		: VulkanPipeline(vulkanState)
 	{
@@ -246,9 +249,9 @@ namespace Spiecs {
 	}
 
 	void VulkanRayTracingPipeline::CreateGraphicsPipeline(
-		const std::string &                                  pipelineName , 
-		const std::unordered_map<std::string, std::string>&  shaders      , 
-		const PipelineConfigInfo &                           config
+		const std::string &                                               pipelineName , 
+		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+		const PipelineConfigInfo &                                        config
 	)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -264,7 +267,10 @@ namespace Spiecs {
 		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
-			shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second, pair.first));
+			for(int i = 0; i < pair.second.size(); i++)
+			{
+				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+			}
 		}
 
 		/**
@@ -285,29 +291,57 @@ namespace Spiecs {
 		group.closestHitShader              = VK_SHADER_UNUSED_KHR;
 		group.generalShader                 = VK_SHADER_UNUSED_KHR;
 		group.intersectionShader            = VK_SHADER_UNUSED_KHR;
+		
+		for (auto& pair : shaders)
+		{
+			/**
+			* @brief Raygen.
+			*/
+			if(pair.first == "rgen")
+			{
+				for(int i = 0; i < pair.second.size(); i++)
+		     	{
+		     		group.type                         = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
+		     		group.generalShader                = static_cast<uint32_t>(m_RTShaderGroups.size());
+		     	
+		     		m_RTShaderGroups.push_back(group);
+		     	}
+		    }
+			
+			/**
+			* @brief Miss.
+			*/
+			else if(pair.first == "rmiss")
+			{
+				for(int i = 0; i < pair.second.size(); i++)
+				{
+					group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
+					group.generalShader               = static_cast<uint32_t>(m_RTShaderGroups.size());
+				
+					m_RTShaderGroups.push_back(group);
+				}
+			}
 
-		/**
-		* @brief Raygen.
-		*/
-		group.type                         = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
-		group.generalShader                = RTShaderStageIndices::RayGen;
-		m_RTShaderGroups.push_back(group);
-
-		/**
-		* @brief Miss.
-		*/
-		group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
-		group.generalShader               = RTShaderStageIndices::Miss;
-		m_RTShaderGroups.push_back(group);
-
-		/**
-		* @brief Closest hit.
-		*/
-		group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
-		group.generalShader               = VK_SHADER_UNUSED_KHR;
-		group.closestHitShader            = RTShaderStageIndices::ClosesHit;
-		m_RTShaderGroups.push_back(group);
-
+			/**
+			* @brief Closest hit.
+			*/
+			else if(pair.first == "rchit")
+			{
+				for(int i = 0; i < pair.second.size(); i++)
+				{
+					group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
+					group.generalShader               = VK_SHADER_UNUSED_KHR;
+					group.closestHitShader            = static_cast<uint32_t>(m_RTShaderGroups.size());
+				
+					m_RTShaderGroups.push_back(group);
+				}
+			}
+			else
+			{
+				SPIECS_CORE_ERROR("RayTracing Pipeline: Not Supported Sahder Stage from material.");
+			}
+		}
+		
 		/**
 		* @brief Instance a VkGraphicsPipelineCreateInfo.
 		*/
@@ -317,7 +351,7 @@ namespace Spiecs {
 		rayPipelineInfo.pStages                                    = shaderStages.data();
 		rayPipelineInfo.groupCount                                 = static_cast<uint32_t>(m_RTShaderGroups.size());
 		rayPipelineInfo.pGroups                                    = m_RTShaderGroups.data();
-		rayPipelineInfo.maxPipelineRayRecursionDepth               = 1;  // Ray depth
+		rayPipelineInfo.maxPipelineRayRecursionDepth               = 2;  /* @brief Ray depth */
 		rayPipelineInfo.layout                                     = m_PipelineLayout;
 
 		/**

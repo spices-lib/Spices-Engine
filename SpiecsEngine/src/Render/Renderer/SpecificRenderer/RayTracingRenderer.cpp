@@ -45,9 +45,9 @@ namespace Spiecs {
 
 		DescriptorSetBuilder{ "RayTracing", this }
 		.AddPushConstant<SpiecsShader::PushConstantRay>()
-		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR)
+		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)
 		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-		.AddStorageBuffer<RayTracingR::MeshDescriptions>(1, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR)
+		.AddStorageBuffer<RayTracingR::MeshDescriptions>(1, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
 
@@ -112,8 +112,8 @@ namespace Spiecs {
 		builder.UpdateStorageBuffer(1, 2, m_DescArray.get());
 		
 		builder.UpdatePushConstant<SpiecsShader::PushConstantRay>([&](auto& push) {
-			push.clearColor     = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-			push.lightPosition  = glm::vec3(0.0f, 5.0f, 0.0f);
+			push.clearColor     = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			push.lightPosition  = glm::vec3(1.0f, 3.0f, -4.0f);
 			push.lightIntensity = 10.0f;
 			push.lightType      = 0;
 		});
@@ -208,7 +208,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		uint32_t missCount { 1 };
+		uint32_t missCount { 2 };
 		uint32_t hitCount  { 1 };
 		auto     handleCount                    = 1 + missCount + hitCount;
 		uint32_t handleSize                     = m_Device->GetRTPipelineProperties().shaderGroupHandleSize;

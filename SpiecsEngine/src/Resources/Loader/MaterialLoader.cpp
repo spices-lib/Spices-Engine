@@ -122,7 +122,7 @@ namespace Spiecs {
 		{
 			for (auto& shader : shaders)
 			{
-				outMaterial->m_Shaders[shader["Stage"].as<std::string>()] = shader["Path"].as<std::string>();
+				outMaterial->m_Shaders[shader["Stage"].as<std::string>()].push_back(shader["Path"].as<std::string>());
 			}
 		}
 		else
