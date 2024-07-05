@@ -56,10 +56,10 @@ namespace Spiecs {
 			/**
 			* @brief Instance a VkBufferCopy.
 			*/
-			VkBufferCopy copyRegion{};
-			copyRegion.srcOffset = 0;
-			copyRegion.dstOffset = 0;
-			copyRegion.size = size;
+			VkBufferCopy                                copyRegion{};
+			copyRegion.srcOffset                      = 0;
+			copyRegion.dstOffset                      = 0;
+			copyRegion.size                           = size;
 
 			/**
 			* @brief Copy Cmd.
@@ -124,11 +124,11 @@ namespace Spiecs {
 		/**
 		* @brief VkMappedMemoryRange.
 		*/
-		VkMappedMemoryRange mappedRange = {};
-		mappedRange.sType          = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-		mappedRange.memory         = m_BufferMemory;
-		mappedRange.offset         = offset;
-		mappedRange.size           = size;
+		VkMappedMemoryRange                                 mappedRange {};
+		mappedRange.sType                                 = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		mappedRange.memory                                = m_BufferMemory;
+		mappedRange.offset                                = offset;
+		mappedRange.size                                  = size;
 
 		/**
 		* @brief Flush memory to update buffer's data.
@@ -147,11 +147,11 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkBufferCreateInfo.
 		*/
-		VkBufferCreateInfo bufferInfo{};
-		bufferInfo.sType          = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bufferInfo.size           = size;
-		bufferInfo.usage          = usage;
-		bufferInfo.sharingMode    = VK_SHARING_MODE_EXCLUSIVE;
+		VkBufferCreateInfo                                  bufferInfo{};
+		bufferInfo.sType                                  = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		bufferInfo.size                                   = size;
+		bufferInfo.usage                                  = usage;
+		bufferInfo.sharingMode                            = VK_SHARING_MODE_EXCLUSIVE;
 
 		/**
 		* @brief Create a Buffer.
@@ -162,14 +162,14 @@ namespace Spiecs {
 		/**
 		* @brief Get Buffer Memory Requirements.
 		*/
-		VkMemoryDedicatedRequirements dedicatedRegs{};
+		VkMemoryDedicatedRequirements                       dedicatedRegs{};
 		dedicatedRegs.sType                               = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
 
-		VkMemoryRequirements2 memReqs{};
+		VkMemoryRequirements2                               memReqs{};
 		memReqs.sType                                     = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
 		memReqs.pNext                                     = &dedicatedRegs;
 
-		VkBufferMemoryRequirementsInfo2 bufferReqs{};
+		VkBufferMemoryRequirementsInfo2                     bufferReqs{};
 		bufferReqs.sType                                  = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
 		bufferReqs.buffer                                 = m_Buffer;
 
@@ -178,16 +178,16 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkMemoryAllocateInfo.
 		*/
-		VkMemoryAllocateInfo allocInfo{};
+		VkMemoryAllocateInfo                                allocInfo{};
 		allocInfo.sType                                   = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize                          = memReqs.memoryRequirements.size;
 		
 		/**
 		* @brief Allow Buffer Device Address
 		*/
-		VkMemoryAllocateFlagsInfoKHR flagsInfo{};
-		flagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
-		flagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT;
+		VkMemoryAllocateFlagsInfoKHR                        flagsInfo{};
+		flagsInfo.sType                                   = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
+		flagsInfo.flags                                   = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT;
 
 		if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
@@ -223,9 +223,9 @@ namespace Spiecs {
 			/**
 			* @brief Instance a VkBufferDeviceAddressInfo.
 			*/
-			VkBufferDeviceAddressInfo info = {  };
-			info.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
-			info.buffer = m_Buffer;
+			VkBufferDeviceAddressInfo           info {};
+			info.sType                        = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+			info.buffer                       = m_Buffer;
 
 			/**
 			* @brief Get Address and return it.

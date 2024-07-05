@@ -297,22 +297,31 @@ namespace Spiecs {
 		deviceFeatures.sType                          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
 		deviceFeatures.pNext                          = &bufferDeviceAddressFeatures;
 
-		// Fetch all features
+		/**
+		* @Fetch all features.
+		*/ 
 		vkGetPhysicalDeviceFeatures2(device, &deviceFeatures);
 
 		/**
 		* @brief Just return true for we do not need a specific feature supported now.
 		* @todo Configurable.
 		*/
-		if (!deviceFeatures.features.samplerAnisotropy) return false;                  /*@brief 启用纹理采样的各项异性*/
-		if (!deviceFeatures.features.sampleRateShading) return false;                  /*@brief 启用实例着色（应对MSAA的缺点）*/
-		if (!deviceFeatures.features.independentBlend) return false;                   /*@breif Enable Independent Attachment AlphaBlend State.*/
-		if (!deviceFeatures.features.geometryShader) return false;                     /*@breif Enable Geometry Shader Feature.*/
-		if (!bufferDeviceAddressFeatures.bufferDeviceAddress) return false;            /*@breif Enable Buffer Address Feature.*/
-		if (!accelerationStructureFeatures.accelerationStructure) return false;        /*@breif Enable RayTracing AccelerationStructure.*/
-		if (!rayTracingFeatures.rayTracingPipeline) return false;                      /*@breif Enable RayTracing Pipeline.*/
-		if (!hostQueryResetFeatures.hostQueryReset) return false;                      /*@brief Enable HostQueryReset Feature.*/
-		if (!layoutfeatures.scalarBlockLayout) return false;                           /*@brief Enable Shader ScalarBlockLayout Feature.*/
+		ASSERT(deviceFeatures.features.samplerAnisotropy);                                     /* @brief 启用纹理采样的各项异性                          */
+		ASSERT(deviceFeatures.features.sampleRateShading);                                     /* @brief 启用实例着色（应对MSAA的缺点）                  */
+		ASSERT(deviceFeatures.features.independentBlend);                                      /* @breif Enable Independent Attachment AlphaBlend State. */
+		ASSERT(deviceFeatures.features.geometryShader);                                        /* @breif Enable Geometry Shader Feature.                 */
+		ASSERT(bufferDeviceAddressFeatures.bufferDeviceAddress);                               /* @breif Enable Buffer Address Feature.                  */
+		ASSERT(accelerationStructureFeatures.accelerationStructure);                           /* @breif Enable RayTracing AccelerationStructure.        */
+		ASSERT(rayTracingFeatures.rayTracingPipeline);                                         /* @breif Enable RayTracing Pipeline.                     */
+		ASSERT(hostQueryResetFeatures.hostQueryReset);                                         /* @brief Enable HostQueryReset Feature.                  */
+		ASSERT(layoutfeatures.scalarBlockLayout);                                              /* @brief Enable Shader ScalarBlockLayout Feature.        */
+
+		ASSERT(descriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing);          /* @brief Enable Shader shaderSampledImageArrayNonUniformIndexing Feature.        */
+		ASSERT(descriptorIndexingFeatures.descriptorBindingSampledImageUpdateAfterBind);       /* @brief Enable Shader descriptorBindingSampledImageUpdateAfterBind Feature.     */
+		ASSERT(descriptorIndexingFeatures.shaderUniformBufferArrayNonUniformIndexing);         /* @brief Enable Shader shaderUniformBufferArrayNonUniformIndexing Feature.       */
+		ASSERT(descriptorIndexingFeatures.descriptorBindingUniformBufferUpdateAfterBind);      /* @brief Enable Shader descriptorBindingUniformBufferUpdateAfterBind Feature.    */
+		ASSERT(descriptorIndexingFeatures.shaderStorageBufferArrayNonUniformIndexing);         /* @brief Enable Shader shaderStorageBufferArrayNonUniformIndexing Feature.       */
+		ASSERT(descriptorIndexingFeatures.descriptorBindingStorageBufferUpdateAfterBind);      /* @brief Enable Shader descriptorBindingStorageBufferUpdateAfterBind Feature.    */
 
 		return true;
 	}
@@ -321,13 +330,13 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                        /*@brief Swapchain Extension.*/
-																						         
-		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /*@brief Negative Viewpoet Extension.*/
-																						         
-		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /*@brief To build acceleration structures.*/
-		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /*To use vkCmdTraceRaysKHR.*/
-		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /*@brief Required by ray tracing pipeline*/
+		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                        /* @brief Swapchain Extension.               */
+																						            								          
+		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /* @brief Negative Viewpoet Extension.       */
+																						            										  
+		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /* @brief To build acceleration structures.  */
+		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /* @brief To use vkCmdTraceRaysKHR.          */
+		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.  */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

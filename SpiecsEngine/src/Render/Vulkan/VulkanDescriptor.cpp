@@ -112,21 +112,44 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		/**
-		* @brief Get linear binding data.
+		* @brief Get linear binding data and flags.
 		*/
 		std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};
+		std::vector<VkDescriptorBindingFlags>     setBindingFlags{};
+
 		for (auto& kv : bindings) 
 		{
 			setLayoutBindings.push_back(kv.second);
+
+			switch (kv.second.descriptorType)
+			{
+			case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
+				setBindingFlags.push_back(VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT); /* @brief VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT not support VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT. */
+				break;
+			default:
+				setBindingFlags.push_back(VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT);
+				break;
+			}
 		}
-		
+
+		/**
+		* @breif Instance a VkDescriptorSetLayoutBindingFlagsCreateInfo.
+		*/
+		VkDescriptorSetLayoutBindingFlagsCreateInfo       bindingFlags{};
+		bindingFlags.sType                              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+		bindingFlags.pNext                              = nullptr;
+		bindingFlags.pBindingFlags                      = setBindingFlags.data();
+		bindingFlags.bindingCount                       = static_cast<uint32_t>(setBindingFlags.size());
+
 		/**
 		* @breif Instance a VkDescriptorSetLayoutCreateInfo.
 		*/
-		VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo{};
+		VkDescriptorSetLayoutCreateInfo                   descriptorSetLayoutCreateInfo{};
 		descriptorSetLayoutCreateInfo.sType             = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		descriptorSetLayoutCreateInfo.bindingCount      = static_cast<uint32_t>(setLayoutBindings.size());
 		descriptorSetLayoutCreateInfo.pBindings         = setLayoutBindings.data();
+		descriptorSetLayoutCreateInfo.flags             = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;  /* @brief Create if from a descriptor pool that has update after bind. */
+		descriptorSetLayoutCreateInfo.pNext             = &bindingFlags;
 
 		/**
 		* @brief Create DescriptorSetLayout.
