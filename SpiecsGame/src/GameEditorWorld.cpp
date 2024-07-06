@@ -46,18 +46,32 @@ namespace Spiecs {
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
 			meshComp.SetMesh(mesh);
 		}
+
+		// mesh2
+		{
+			Entity& meshentity = CreateEntity("Sphere");
+			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+			transformComp1.SetPostion({1.0f, 3.0f, -4.0f});
+
+			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
+
+			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
+			meshComp.SetMesh(mesh);
+		}
 		
 		// pointlight
 		{
 			Entity& plightentity = CreateEntity("PointLight");
-			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>(glm::vec3(1.0f, 0.0f, 0.0f), 2.0f, 1.0f, 0.35f, 0.44f);
+			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPostion({ 1.0f, 3.0f, -4.0f });
 		}
 		{
 			Entity& plightentity = CreateEntity("PointLight");
-			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>(glm::vec3(0.0f, 1.0f, 0.0f), 2.0f, 1.0f, 0.35f, 0.44f);
+			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPostion({ -1.0f, 3.0f, 4.0f });

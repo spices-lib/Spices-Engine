@@ -11,7 +11,7 @@
 #extension GL_GOOGLE_include_directive : enable
 #extension GL_EXT_ray_tracing : require
 
-#include "Header/ShaderStructures.h"
+#include "Header/ShaderCommon.h"
 #include "Header/ShaderRayCommon.glsl"
 
 /*****************************************************************************************/
@@ -20,17 +20,13 @@
 
 layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
-layout(push_constant) uniform PushConstant {
-    PushConstantRay push;
-};
-
 /*****************************************************************************************/
 
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
-    prd.hitValue = push.clearColor.xyz;
+    prd.hitValue = vec3(0.5f);
 }
 
 /*****************************************************************************************/

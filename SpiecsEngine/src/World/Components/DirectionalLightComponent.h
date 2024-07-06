@@ -7,6 +7,8 @@
 #pragma once
 #include "Core/Core.h"
 #include "Component.h"
+#include "../../../assets/Shaders/src/Header/ShaderCommon.h"
+
 #include "glm/glm.hpp"
 
 namespace Spiecs {
@@ -20,33 +22,15 @@ namespace Spiecs {
 	public:
 
 		/**
-		* @brief This struct defines DirectionalLight data.
-		* This struct's data needed to be transfered to shader.
-		*/
-		struct DirectionalLight
-		{
-			/**
-			* @brief Rotation of SunLight.
-			*/
-			alignas(16) glm::vec3 rotation{ 0.0f };
-
-			/**
-			* @brief Color of SunLight.
-			*/
-			alignas(16) glm::vec3 color{ 1.0f };
-
-			/**
-			* @brief Intensity of SunLight.
-			*/
-			float intensity = 1.0f;
-		};
-
-	public:
-
-		/**
 		* @brief Constructor Function.
 		*/
-		DirectionalLightComponent() {};
+		DirectionalLightComponent(
+			const glm::vec3& rotation = glm::vec3(0.0f),
+			const glm::vec3& color = glm::vec3(1.0f),
+			float intensity = 1.0f
+		)
+			: m_DirectionalLight{ rotation, color, intensity }
+		{};
 
 		/**
 		* @brief Constructor Function.
@@ -54,7 +38,9 @@ namespace Spiecs {
 		* Usually call it.
 		* @param[in] directionalLight Use a DirectionalLight struct Init this component.
 		*/
-		DirectionalLightComponent(const DirectionalLight& directionalLight) : m_DirectionalLight(directionalLight) {};
+		DirectionalLightComponent(const SpiecsShader::DirectionalLight& directionalLight)
+			: m_DirectionalLight(directionalLight)
+		{};
 
 		/**
 		* @brief Destructor Function.
@@ -77,7 +63,7 @@ namespace Spiecs {
 		* @brief Get the DirectionalLight variable.
 		* @return Returns the DirectionalLight variable.
 		*/
-		inline const DirectionalLight& GetLight() { return m_DirectionalLight; };
+		inline const SpiecsShader::DirectionalLight& GetLight() { return m_DirectionalLight; };
 
 		void SetColor(const glm::vec3& color) { m_DirectionalLight.color = color; };
 		void SetIntensity(float intensity) { m_DirectionalLight.intensity = intensity; };
@@ -87,6 +73,6 @@ namespace Spiecs {
 		/**
 		* @brief This DirectionalLight data this component handled.
 		*/
-		DirectionalLight m_DirectionalLight{};
+		SpiecsShader::DirectionalLight m_DirectionalLight{};
 	};
 }

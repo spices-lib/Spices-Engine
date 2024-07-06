@@ -29,6 +29,32 @@ namespace Spiecs {
 		return allBlas;
 	}
 
+	void Mesh::AddMaterialToHitGroup(std::unordered_map<std::string, uint32_t>& hitGroup)
+	{
+		for (auto& pair : m_Pack)
+		{
+			auto& stages = pair.second->GetMaterial()->GetShaderPath("rchit");
+			if (stages.empty())
+			{
+				std::stringstream ss;
+				ss << "Material: " << pair.second->GetMaterial()->GetName() << " do not has vaild rchit shader.";
+
+				SPIECS_CORE_ERROR(ss.str());
+			}
+
+			if (hitGroup.find(stages[0]) == hitGroup.end())
+			{
+				hitGroup[stages[0]] = hitGroup.size();
+
+				pair.second->SetMaterialHandle(hitGroup[stages[0]]);
+			}
+			else
+			{
+				pair.second->SetMaterialHandle(hitGroup[stages[0]]);
+			}
+		}
+	}
+
 #endif
 
 	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)

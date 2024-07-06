@@ -12,9 +12,9 @@ namespace Spiecs {
 	std::vector<VkVertexInputBindingDescription> Vertex::GetBindingDescriptions()
 	{
 		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
-		bindingDescriptions[0].binding = 0;
-		bindingDescriptions[0].stride = sizeof(Vertex);
-		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		bindingDescriptions[0].binding    = 0;
+		bindingDescriptions[0].stride     = sizeof(Vertex);
+		bindingDescriptions[0].inputRate  = VK_VERTEX_INPUT_RATE_VERTEX;
 
 		return bindingDescriptions;
 	}

@@ -23,9 +23,3 @@ Shaders:
   - Stage: rmiss
   # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: RayTracingRenderer.RayTracing.DefaultShadow
-    
-  # @brief Ray Closest Hit Shader Stage Shader File Path.
-  - Stage: rchit
-    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
-    Path: RayTracingRenderer.RayTracing.Default
-    

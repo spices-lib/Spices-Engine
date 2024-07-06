@@ -10,7 +10,7 @@
 
 #extension GL_GOOGLE_include_directive : enable
 
-#include "Header/ShaderStructures.h"
+#include "Header/ShaderCommon.h"
 #include "Header/ShaderVertexInput.glsl"
 
 

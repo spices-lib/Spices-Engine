@@ -14,8 +14,8 @@ namespace Spiecs {
 	{
 		struct LightsBuffer
 		{
-			DirectionalLightComponent::DirectionalLight directionalLight;
-			std::array<Spiecs::PointLightComponent::PointLight, 1000> pointLights;
+			SpiecsShader::DirectionalLight directionalLight;
+			std::array<SpiecsShader::PointLight, 1000> pointLights;
 		};
 	}
 
@@ -72,7 +72,6 @@ namespace Spiecs {
 
 		DescriptorSetBuilder{ "SceneCompose", this }
 		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Diffuse", "Normal", "Specular", "Position", "Depth" })
-		.AddStorageBuffer<SceneCR::LightsBuffer>(1, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 	}
 
@@ -88,10 +87,10 @@ namespace Spiecs {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SceneCompose" }));
 
-		builder.UpdateStorageBuffer<SceneCR::LightsBuffer>(1, 1, [&](auto& ubo) {
+		/*builder.UpdateStorageBuffer<SceneCR::LightsBuffer>(1, 1, [&](auto& ubo) {
 			GetDirectionalLight(frameInfo, ubo.directionalLight);
 			GetPointLight(frameInfo, ubo.pointLights);
-		});
+		});*/
 
 		builder.BindPipeline("SceneComposeRenderer.SceneCompose.Default");
 		

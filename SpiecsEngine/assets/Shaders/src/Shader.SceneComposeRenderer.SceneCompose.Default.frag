@@ -53,35 +53,6 @@ const int DEPTH    = 4;
 
 layout(input_attachment_index = 0, set = 1, binding = 0) uniform subpassInput GBuffer[5];
 
-/**
-* @brief PointLight Struct
-*/
-struct DirectionalLight {
-	vec3  direction;          /* @brief Directional Light Direction */
-	vec3  color;              /* @brief Directional Light Color     */
-	float intensity;          /* @brief Directional Light Intensity */
-};
-
-/**
-* @brief PointLight Struct
-*/
-struct PointLight {
-	vec3  position;           /* @brief Point Light Position  */
-	vec3  color;              /* @brief Point Light Color     */
-	float intensity;          /* @brief Point Light Intensity */
-	float constantf;          /* @brief                       */
-	float linear;             /* @brief                       */
-	float quadratic;          /* @brief                       */
-};
-
-/**
-* @brief Light Buffer Struct.
-*/
-layout(std140, set = 1, binding = 1) readonly buffer LightsBuffer {
-	DirectionalLight directionalLight;
-	PointLight pointLights[];     /*Point Light Array*/
-};
-
 /*****************************************************************************************/
 
 /*************************************Functions*******************************************/
@@ -89,7 +60,7 @@ layout(std140, set = 1, binding = 1) readonly buffer LightsBuffer {
 /**
 * @brief Calculate Point Light Lighting.
 */
-vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 position, vec3 cameraDirection);
+//vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 position, vec3 cameraDirection);
 
 /*****************************************************************************************/
 
@@ -130,8 +101,8 @@ void main()
 
 	//outColor = color;
 
-	float diff = max(dot(normal, normalize(directionalLight.direction)), 0.0f);
-	vec3 diffuse = diff * directionalLight.color * directionalLight.intensity;
+	//float diff = max(dot(normal, normalize(directionalLight.direction)), 0.0f);
+	//vec3 diffuse = diff * directionalLight.color * directionalLight.intensity;
 
 
 	//vec3 result = (0.5f + diffuse) * subpassLoad(GBuffer[DIFFUSE]).xyz;
@@ -141,37 +112,37 @@ void main()
 
 /*****************************************************************************************/
 
-vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 position, vec3 cameraDirection) {
-
-	/**
-	* @brief Fragment Postion Direction to Light.
-	*/
-	vec3 lightDirection = normalize(light.position - position);
-
-	/**
-	* @brief Cosine theta between world normal and light direction.
-	*/
-	float diff = max(dot(normal, lightDirection), 0.0f);
-
-	/***/
-	vec3 reflectDirection = reflect(-lightDirection, normal);
-	float spec = pow(max(dot(cameraDirection, reflectDirection), 0.0f), 1.0f);
-
-	float distance = length(light.position - position);
-	float attenuation = 1.0f / (light.constantf + light.linear * distance + light.quadratic * (distance * distance));
-
-	vec4 ambient = vec4(0.3f);
-	vec4 diffuse = vec4(light.color, 1.0f) * diff * light.intensity;
-	vec4 specular = vec4(light.color, 1.0f) * spec;
-
-	vec4 diffSamp = subpassLoad(GBuffer[DIFFUSE]);
-	diffuse  *= diffSamp;
-	ambient  *= diffSamp;
-	specular *= vec4(subpassLoad(GBuffer[SPECULAR]).rgb, diffuse.a);
-
-	ambient  *= attenuation;
-	diffuse  *= attenuation;
-	specular *= attenuation;
-
-	return (ambient + diffuse + specular);
-}
+//vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 position, vec3 cameraDirection) {
+//
+//	/**
+//	* @brief Fragment Postion Direction to Light.
+//	*/
+//	vec3 lightDirection = normalize(light.position - position);
+//
+//	/**
+//	* @brief Cosine theta between world normal and light direction.
+//	*/
+//	float diff = max(dot(normal, lightDirection), 0.0f);
+//
+//	/***/
+//	vec3 reflectDirection = reflect(-lightDirection, normal);
+//	float spec = pow(max(dot(cameraDirection, reflectDirection), 0.0f), 1.0f);
+//
+//	float distance = length(light.position - position);
+//	float attenuation = 1.0f / (light.constantf + light.linear * distance + light.quadratic * (distance * distance));
+//
+//	vec4 ambient = vec4(0.3f);
+//	vec4 diffuse = vec4(light.color, 1.0f) * diff * light.intensity;
+//	vec4 specular = vec4(light.color, 1.0f) * spec;
+//
+//	vec4 diffSamp = subpassLoad(GBuffer[DIFFUSE]);
+//	diffuse  *= diffSamp;
+//	ambient  *= diffSamp;
+//	specular *= vec4(subpassLoad(GBuffer[SPECULAR]).rgb, diffuse.a);
+//
+//	ambient  *= attenuation;
+//	diffuse  *= attenuation;
+//	specular *= attenuation;
+//
+//	return (ambient + diffuse + specular);
+//}

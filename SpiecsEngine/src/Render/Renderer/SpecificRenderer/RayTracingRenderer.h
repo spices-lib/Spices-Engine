@@ -14,11 +14,20 @@ namespace Spiecs {
 
 	namespace RayTracingR {
 		
-		struct MeshDescriptions
+		struct MeshDescBuffer
 		{
-			std::array<SpiecsShader::MeshDesc, 100000> descs;
+			std::array<SpiecsShader::MeshDesc, MESHBUFFERMAXNUM> descs;
 		};
-		
+
+		struct DirectionalLightBuffer
+		{
+			std::array<SpiecsShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM> lights;
+		};
+
+		struct PointLightBuffer
+		{
+			std::array<SpiecsShader::PointLight, POINTLIGHTBUFFERMAXNUM> lights;
+		};
 	}
 
 	/**
@@ -99,7 +108,11 @@ namespace Spiecs {
 		*/
 		void CreateTopLevelAS(FrameInfo& frameInfo);
 
-		void CreateRTShaderBindingTable();
+		/**
+		* @brief Create Shader Binding Table.
+		* @param[in] frameInfo FrameInfo.
+		*/
+		void CreateRTShaderBindingTable(FrameInfo& frameInfo);
 
 	private:
 
@@ -109,6 +122,7 @@ namespace Spiecs {
 		std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
 
 		std::unique_ptr<VulkanBuffer> m_RTSBTBuffer;
+		std::unordered_map<std::string, uint32_t> m_HitGroups;
 
 		VkStridedDeviceAddressRegionKHR m_RgenRegion{};
 		VkStridedDeviceAddressRegionKHR m_MissRegion{};
@@ -118,6 +132,6 @@ namespace Spiecs {
 		PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
 		PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
 
-		std::unique_ptr<RayTracingR::MeshDescriptions> m_DescArray;
+		std::unique_ptr<RayTracingR::MeshDescBuffer> m_DescArray;
 	};
 }

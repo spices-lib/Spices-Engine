@@ -8,6 +8,8 @@ Shaders:
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag
     Path: BasePassRenderer.Mesh.Default
+  - Stage: rchit
+    Path: BasePassRenderer.Mesh.Default
 Textures:
   - Name: diffuse
     Value: [1, 0, 0, Texture2D, default.jpg]

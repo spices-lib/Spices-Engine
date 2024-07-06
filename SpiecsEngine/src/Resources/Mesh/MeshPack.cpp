@@ -11,7 +11,7 @@
 #include "Resources/Loader/MeshLoader.h"
 
 namespace Spiecs {
-
+	
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)
 	{
 		VkBuffer buffers[] = { m_VertexBuffer->Get() };
@@ -29,6 +29,19 @@ namespace Spiecs {
 	{
 		m_Material = ResourcePool<Material>::Load<Material>(materialPath);
 		m_Material->BuildMaterial();
+	}
+
+	uint32_t MeshPack::GetMaterialHandle()
+	{
+		if(!m_MaterialHandle.has_value())
+		{
+			std::stringstream ss;
+			ss << "MeshPack do not has a vaild material handle.";
+			
+			SPIECS_CORE_ERROR(ss.str());
+		}
+		
+		return m_MaterialHandle.value();
 	}
 	
 #ifdef RENDERAPI_VULKAN

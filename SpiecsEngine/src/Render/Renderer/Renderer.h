@@ -11,7 +11,7 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
-#include "../assets/Shaders/src/Header/ShaderStructures.h"
+#include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -220,17 +220,17 @@ namespace Spiecs {
 		* @param[out] directionalLight DirectionalLight.
 		* @todo Mutiple directional light.
 		*/
-		void GetDirectionalLight(FrameInfo& frameInfo, DirectionalLightComponent::DirectionalLight& directionalLight);
+		void GetDirectionalLight(FrameInfo& frameInfo, std::array<SpiecsShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM>& dLightBuffer);
 
 		void GetDirectionalLightMatrix(FrameInfo& frameInfo, std::array<glm::mat4, MAX_DIRECTIONALLIGHT_NUM>& directionalLight);
 
 		/**
 		* @brief Get PointLightComponent's render data in World.
 		* @param[in] frameInfo The current frame data.
-		* @param[out] pLightArrat PointLight.
+		* @param[out] pLightBuffer PointLight Buffer.
 		* @todo infinity pointlight.
 		*/
-		void GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat);
+		void GetPointLight(FrameInfo& frameInfo, std::array<SpiecsShader::PointLight, POINTLIGHTBUFFERMAXNUM>& pLightBuffer);
 
 		/***************************************************************************************************/
 

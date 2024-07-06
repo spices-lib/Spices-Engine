@@ -282,13 +282,14 @@ namespace Spiecs {
 		return std::make_pair(invViewMat, projectionMat);
 	}
 
-	void Renderer::GetDirectionalLight(FrameInfo& frameInfo, DirectionalLightComponent::DirectionalLight& directionalLight)
+	void Renderer::GetDirectionalLight(FrameInfo& frameInfo, std::array<SpiecsShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM>& dLightBuffer)
 	{
 		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @breif Iter DirectionalLightComponent, and just use the first one.
 		*/
+		int index = 0;
 		IterWorldComp<DirectionalLightComponent>(
 			frameInfo, 
 			[&](
@@ -297,11 +298,9 @@ namespace Spiecs {
 			DirectionalLightComponent&   dirlightComp
 			) {
 
-			directionalLight = dirlightComp.GetLight();
-
-			/**
-			* @breif Break.
-			*/
+			SpiecsShader::DirectionalLight directionalLight = dirlightComp.GetLight();
+			dLightBuffer[index] = std::move(directionalLight);
+			index++;
 			return true;
 		});
 	}
@@ -353,7 +352,7 @@ namespace Spiecs {
 		});
 	}
 
-	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<PointLightComponent::PointLight, 1000>& pLightArrat)
+	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<SpiecsShader::PointLight, POINTLIGHTBUFFERMAXNUM>& pLightBuffer)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -369,9 +368,9 @@ namespace Spiecs {
 			PointLightComponent&  plightComp
 			) {
 
-			PointLightComponent::PointLight pointLight = plightComp.GetLight();
+			SpiecsShader::PointLight pointLight = plightComp.GetLight();
 			pointLight.position = transComp.GetPosition();
-			pLightArrat[index] = std::move(pointLight);
+			pLightBuffer[index] = std::move(pointLight);
 			index++;
 			return false;
 		});

@@ -11,6 +11,8 @@
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Resources/ResourcePool/ResourcePool.h"
 
+#include <optional>
+
 #ifdef RENDERAPI_VULKAN
 
 #include "Render/Vulkan/VulkanRayTracing.h"
@@ -68,6 +70,18 @@ namespace Spiecs {
 		*/
 		inline std::shared_ptr<Material> GetMaterial() { return m_Material; };
 
+		/**
+		* @brief Set Material Handle.
+		* @param[in] handle the material handle.
+		*/
+		void SetMaterialHandle(uint32_t handle) { m_MaterialHandle = handle; };
+
+		/**
+		* @brief Get Material Handle, which accessed by ray gen shader.
+		* @return Returns the material handle.
+		*/
+		uint32_t GetMaterialHandle();
+		
 		/**
 		* @brief Bind VBO and EBO.
 		* @param[in] commandBuffer Which commandbufer we will submit commmand.
@@ -168,6 +182,11 @@ namespace Spiecs {
 		*/
 		std::shared_ptr<Material> m_Material;
 
+		/**
+		* @brief specific material handle.
+		*/
+		std::optional<uint32_t> m_MaterialHandle;
+		
 		/**
 		* @brief Allow MeshLoader access all data.
 		*/

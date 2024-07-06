@@ -101,6 +101,12 @@ namespace Spiecs {
 		*/
 		std::vector<VulkanRayTracing::BlasInput> CreateMeshPackASInput();
 
+		/**
+		* @brief Add Mesh's material to hit group.
+		* @param[in out] hitGroup RayTracingRenderer HitGroup.
+		*/
+		void AddMaterialToHitGroup(std::unordered_map<std::string, uint32_t>& hitGroup);
+
 #endif
 
 	private:

@@ -169,7 +169,9 @@ namespace Spiecs {
 		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
-			for(int i = 0; i < pair.second.size(); i++)
+			if (pair.first == "rchit") continue;
+
+			for (int i = 0; i < pair.second.size(); i++)
 			{
 				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
 			}

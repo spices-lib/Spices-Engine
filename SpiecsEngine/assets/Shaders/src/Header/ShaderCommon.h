@@ -21,9 +21,14 @@ using uint = unsigned int;
 
 #else
 
-#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader. */
+#extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align. */
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.       */
 
 #endif
+
+#define MESHBUFFERMAXNUM 100000
+#define DIRECTIONALLIGHTBUFFERMAXNUM 100
+#define POINTLIGHTBUFFERMAXNUM 10000
 
 /*****************************************************************************************/
 
@@ -49,7 +54,8 @@ struct Vertex
 /**
 * @brief Global View Struct.
 */
-struct View {
+struct View 
+{
 	mat4 projection;          /* @brief Projection Matrix from major Camera Entity.                   */
 	mat4 nprojection;         /* @brief Negative y axis Projection Matrix from major Camera Entity.   */
 	mat4 view;                /* @brief View Matrix from major Camera Entity.                         */
@@ -61,7 +67,8 @@ struct View {
 /**
 * @brief Application Inout Struct.
 */
-struct Input {
+struct Input 
+{
 	vec4  mousePos;            /* @brief Mouse Postion and inverse position. */
 	float gameTime;            /* @brief Application Run time since start.   */
 	float frameTime;           /* @brief Duration time since last frame.     */
@@ -70,7 +77,8 @@ struct Input {
 /**
 * @brief Push constant structure for the mesh basic
 */
-struct PushConstantMesh {
+struct PushConstantMesh 
+{
 	mat4 model;                /* @brief MeshPack ModelMatrix.             */
 	int  entityID;             /* @brief EntityId, cast from entt::entity. */
 };
@@ -78,20 +86,35 @@ struct PushConstantMesh {
 /*****************************************************************************************/
 
 
-/*********************************RayTracing Renderer Data********************************/
+/******************************************Light Data*************************************/
 
 /**
-* @brief Push constant structure for the ray tracer
-*/ 
-struct PushConstantRay
+* @brief This struct defines DirectionalLight data.
+*/
+struct DirectionalLight
 {
-	vec4  clearColor;
-	vec3  lightPosition;
-	float lightIntensity;
-	int   lightType;
+	vec3  rotation;            /* @brief Rotation of SunLight.   */
+	vec3  color;               /* @brief Color of SunLight.      */
+	float intensity;           /* @brief Intensity of SunLight.  */
+};
+
+/**
+* @brief This struct defines PointLight data.
+*/
+struct PointLight
+{
+	vec3  position;            /* @brief World Position of PointLight. */
+	vec3  color;               /* @brief Color of PointLight.          */
+	float intensity;           /* @brief Intensity of PointLight.      */
+	float constantf;           /* @brief Constantf of PointLight.      */
+	float linear;              /* @brief Linear of PointLight.         */
+	float quadratic;           /* @brief Quadratic of PointLight.      */
 };
 
 /*****************************************************************************************/
+
+
+/*********************************RayTracing Renderer Data********************************/
 
 struct MeshDesc
 {
@@ -122,6 +145,13 @@ struct WaveFrontMaterial  // See ObjLoader, copy of MaterialObj, could be compre
 	int   illum;     // illumination model (see http://www.fileformat.info/format/material/)
 	int   textureId;
 };
+
+
+/******************************************Functions**************************************/
+
+
+
+/*****************************************************************************************/
 
 #ifdef __cplusplus
 }

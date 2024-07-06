@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "../assets/Shaders/src/Header/ShaderStructures.h"
+#include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 #include <vector>
 #include <iostream>
 
