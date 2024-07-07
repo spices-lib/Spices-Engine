@@ -49,6 +49,20 @@ namespace Spiecs {
 
 		// mesh2
 		{
+			Entity& meshentity = CreateEntity("DefaultMesh");
+			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+			transformComp1.SetPostion({0.0f, 10.0f, 0.0f});
+
+			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("Test_room");
+
+			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
+			meshComp.SetMesh(mesh);
+		}
+
+		// mesh2
+		{
 			Entity& meshentity = CreateEntity("Sphere");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -87,11 +101,13 @@ namespace Spiecs {
 		{
 			Entity& plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
-			plightComp.SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
+			plightComp.SetColor(glm::vec3(1.0f));
 			//plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ -1.0f, 3.0f, 4.0f });
+			//transformComp.SetPostion({ -1.0f, 3.0f, 4.0f });
+			transformComp.SetPostion({ 0.0f, 10.0f, 0.0f });
 		}
+		
 	}
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)
