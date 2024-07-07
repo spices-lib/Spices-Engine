@@ -13,7 +13,6 @@
 #extension GL_EXT_nonuniform_qualifier                               : enable
 #extension GL_EXT_buffer_reference2                                  : require
 
-#include "Header/ShaderRayCommon.glsl"
 #include "Header/ShaderCommon.h"
 
 /*****************************************************************************************/
@@ -71,25 +70,18 @@ void main()
     const vec3 nrm      = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
     const vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));  // Transforming the normal to world space
     
-    // Vector toward the light
-    vec3  L;
-    float lightIntensity = pLightBuffer.i[0].intensity;
-    float lightDistance  = 100000.0;
+    // light position
+    vec3 lpos = pLightBuffer.i[0].position;
+    vec3 dir = normalize(lpos - worldPos);
     
-    // Point light
-    vec3 lDir      = pLightBuffer.i[0].position - worldPos;
-    lightDistance  = length(lDir);
-    lightIntensity = lightIntensity / (lightDistance * lightDistance);
-    L              = normalize(lDir);
+    vec3 col = dot(worldNrm, dir) * pLightBuffer.i[0].color;
 
-    
-    vec3 col = dot(vec3(1.0f), worldNrm).xxx;
-    if(dot(worldNrm, L) > 0)
+    if(dot(worldNrm, dir) > 0)
     {
-        float tMin = 0.001;
-        float tMax = lightDistance;
-        vec3 origin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-        vec3 rayDir = L;
+        float tMin = 0.001f;
+        float tMax = length(lpos - worldPos);
+        vec3 origin = worldPos;
+        vec3 rayDir = dir;
         uint flags = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
         isShadowed = true;
         traceRayEXT(topLevelAS,  // acceleration structure

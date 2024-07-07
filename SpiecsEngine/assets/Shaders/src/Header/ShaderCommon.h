@@ -122,6 +122,16 @@ struct MeshDesc
 	uint64_t indexAddress;          /* Address of the index buffer.                   */
 };
 
+struct HitPayLoad
+{
+	vec3  hitValue;
+	float seed;
+	int   depth;
+	vec3  rayOrigin;
+	vec3  rayDirection;
+	vec3  weight;
+};
+
 // Push constant structure for the raster
 struct PushConstantRaster
 {

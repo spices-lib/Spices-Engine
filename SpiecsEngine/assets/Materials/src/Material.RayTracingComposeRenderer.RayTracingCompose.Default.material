@@ -1,0 +1,20 @@
+# @file Material.SceneComposeRenderer.SceneCompose.Default.material.
+# @brief This File is the sample of Defining a SceneCompose Renderer SceneCompose SubPass Default Material.
+# @author Spiecs.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
+Material: RayTracingComposeRenderer.RayTracingCompose.Default
+
+# @brief Material Shaders usages.
+Shaders:
+  
+  # @brief Vertex Shader Stage Shader File Path.
+  - Stage: vert
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: RayTracingComposeRenderer.RayTracingCompose.Default
+    
+  # @brief Fragment Shader Stage Shader File Path.
+  - Stage: frag
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: RayTracingComposeRenderer.RayTracingCompose.Default

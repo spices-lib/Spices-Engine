@@ -29,9 +29,9 @@ namespace Spiecs {
 		void Free() 
 		{
 			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SceneColorID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(DiffuseID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SpecularID));
+			//ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(DiffuseID));
+			//ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
+			//ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SpecularID));
 		};
 	};
 

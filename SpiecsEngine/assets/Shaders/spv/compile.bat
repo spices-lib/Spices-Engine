@@ -34,4 +34,7 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Default.rmiss        -o Shader.RayTracingRenderer.RayTracing.Default.rmiss.spv        --target-env=vulkan1.3
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.DefaultShadow.rmiss  -o Shader.RayTracingRenderer.RayTracing.DefaultShadow.rmiss.spv  --target-env=vulkan1.3
 
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingComposeRenderer.RayTracingCompose.Default.vert -o Shader.RayTracingComposeRenderer.RayTracingCompose.Default.vert.spv
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingComposeRenderer.RayTracingCompose.Default.frag -o Shader.RayTracingComposeRenderer.RayTracingCompose.Default.frag.spv
+
 pause

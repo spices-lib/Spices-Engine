@@ -12,7 +12,6 @@
 #extension GL_EXT_ray_tracing : require
 
 #include "Header/ShaderLayouts.glsl"
-#include "Header/ShaderRayCommon.glsl"
 
 /****************************************************************************************/
 
@@ -47,22 +46,40 @@ void main()
     uint rayFlags = gl_RayFlagsOpaqueEXT;
     uint cullMask = 0xff;
     float tMin = 0.001f;
-    float tMax = 1000.0f;
+    float tMax = 10000.0f;
 
-    traceRayEXT(topLevelAS,    // acceleration structure
-          rayFlags,            // rayFlags
-          cullMask,            // cullMask
-          0,                   // sbtRecordOffset
-          0,                   // sbtRecordStride
-          0,                   // missIndex
-          origin.xyz,          // ray origin
-          tMin,                // ray min range
-          direction.xyz,       // ray direction
-          tMax,                // ray max range
-          0                    // payload (location = 0)
-    );
+    prd.hitValue      = vec3(0.0f);
+    prd.seed          = 0.0f;
+    prd.depth         = 0;
+    prd.rayOrigin     = origin.xyz;
+    prd.rayDirection  = direction.xyz;
+    prd.weight        = vec3(0.0f);
+    
+    vec3 curWeight = vec3(1.0f);
+    vec3 hitValue = vec3(0.0f);
+    
+    //for(; prd.depth < 10; prd.depth++)
+    {
+        traceRayEXT(topLevelAS,        // acceleration structure
+                    rayFlags,          // rayFlags
+                    cullMask,          // cullMask
+                    0,                 // sbtRecordOffset
+                    0,                 // sbtRecordStride
+                    0,                 // missIndex
+                    prd.rayOrigin,     // ray origin
+                    tMin,              // ray min range
+                    prd.rayDirection,  // ray direction
+                    tMax,              // ray max range
+                    0                  // payload (location = 0)
+        );
 
-    imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(prd.hitValue, 1.0));
+        hitValue += prd.hitValue * curWeight;
+        curWeight *= prd.weight;
+    }
+
+    // Do accumulation over time
+    vec3 old_color = imageLoad(image, ivec2(gl_LaunchIDEXT.xy)).xyz;
+    imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(mix(old_color, hitValue, 0.5f), 1.0f));
 }
 
 /*****************************************************************************************/

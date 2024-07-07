@@ -20,6 +20,7 @@
 #include "Render/Renderer/SpecificRenderer/SpriteRenderer.h"
 #include "Render/Renderer/SpecificRenderer/WorldPickStage2Renderer.h"
 #include "Render/Renderer/SpecificRenderer/TestRenderer.h"
+#include "Render/Renderer/SpecificRenderer/RayTracingComposeRenderer.h"
 
 namespace Spiecs {
 
@@ -84,13 +85,14 @@ namespace Spiecs {
 			RendererManager::Get()
 			.Push<PreRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<RayTracingRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<BasePassRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<TestRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<TestRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>          (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 		}
 	}
@@ -115,13 +117,14 @@ namespace Spiecs {
 		{
 			RendererManager::Get()
 			.Pop("SlateRenderer")
-			.Pop("TestRenderer")
-			.Pop("WorldPickStage2Renderer")
-			.Pop("WorldPickRenderer")
-			.Pop("SpriteRenderer")
-			.Pop("SceneComposeRenderer")
-			.Pop("ShadowRenderer")
+			//.Pop("TestRenderer")
+			//.Pop("WorldPickStage2Renderer")
+			//.Pop("WorldPickRenderer")
+			//.Pop("SpriteRenderer")
+			//.Pop("SceneComposeRenderer")
+			//.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
+			.Pop("RayTracingComposeRenderer")
 			.Pop("RayTracingRenderer")
 			.Pop("PreRenderer");
 		}

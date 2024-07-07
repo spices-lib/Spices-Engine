@@ -12,7 +12,6 @@
 #extension GL_EXT_ray_tracing : require
 
 #include "Header/ShaderCommon.h"
-#include "Header/ShaderRayCommon.glsl"
 
 /*****************************************************************************************/
 
@@ -26,7 +25,15 @@ layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 void main()
 {
-    prd.hitValue = vec3(0.5f);
+    if(prd.depth == 0)
+    {
+        prd.hitValue = vec3(0.3f);
+    }
+    else
+    {
+        prd.hitValue = vec3(0.01f);    // No contribution from environment
+    }
+    prd.depth = 100;                  // Ending trace
 }
 
 /*****************************************************************************************/

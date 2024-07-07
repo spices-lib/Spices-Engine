@@ -29,14 +29,8 @@ namespace Spiecs {
 		*/
 		PointLightComponent(const SpiecsShader::PointLight& pointLight) : m_PointLight(pointLight) {};
 
-		PointLightComponent(
-			const glm::vec3& color = glm::vec3(1.0f),
-			float intensity = 1.0f,
-			float constantf = 1.0f,
-			float linear = 0.35f,
-			float quadratic = 0.44f
-		)
-			: m_PointLight{ glm::vec3(0.0f), color, intensity, constantf, linear, quadratic }
+		PointLightComponent()
+			: m_PointLight{ glm::vec3(0.0f), glm::vec3(1.0f), 1.0f, 1.0f, 0.35f, 0.44f }
 		{};
 
 		/**
@@ -55,6 +49,12 @@ namespace Spiecs {
 		* @todo Finsih it.
 		*/
 		virtual void OnDeSerialize() override;
+
+		/**
+		* @brief Set PointLight Color.
+		* @param[in] color PointLight Color.
+		*/
+		void SetColor(glm::vec3 color) { m_PointLight.color = color; };
 
 		/**
 		* @brief Get the PointLight variable.
