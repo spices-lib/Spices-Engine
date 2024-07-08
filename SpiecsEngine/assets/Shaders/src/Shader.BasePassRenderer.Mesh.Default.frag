@@ -8,7 +8,7 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable
+#extension GL_GOOGLE_include_directive : enable    /* @brief Enable include Macro. */
 
 #include "Header/ShaderCommon.h"
 
@@ -20,10 +20,10 @@
 * @brief Fragment Shader Input From Vertex Shader.
 */
 layout(location = 0) in struct FragInput {
-    vec3 position;                                     /* @brief World Position */
-    vec3 normal;                                       /* @brief World Normal   */
-    vec3 color;                                        /* @brief Fragmet Color  */
-    vec2 texCoord;                                     /* @brief Fragmet UV     */
+    vec3 position;                                     /* @brief World Position. */
+    vec3 normal;                                       /* @brief World Normal.   */
+    vec3 color;                                        /* @brief Fragmet Color.  */
+    vec2 texCoord;                                     /* @brief Fragmet UV.     */
 } fragInput;
 
 /*****************************************************************************************/
@@ -33,11 +33,11 @@ layout(location = 0) in struct FragInput {
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4  outColor;                /* @brief diffuse Attachment  */
-layout(location = 1) out vec4  outNormal;               /* @brief normal Attachment   */
-layout(location = 2) out vec4  outSpecular;             /* @brief specular Attachment */
-layout(location = 3) out vec4  outPosition;             /* @brief position Attachment */
-layout(location = 4) out float outID;                   /* @brief ID Attachment       */
+layout(location = 0) out vec4  outColor;                /* @brief diffuse Attachment.  */
+layout(location = 1) out vec4  outNormal;               /* @brief normal Attachment.   */
+layout(location = 2) out vec4  outSpecular;             /* @brief specular Attachment. */
+layout(location = 3) out vec4  outPosition;             /* @brief position Attachment. */
+layout(location = 4) out float outID;                   /* @brief ID Attachment.       */
 
 /*****************************************************************************************/
 
@@ -47,7 +47,7 @@ layout(location = 4) out float outID;                   /* @brief ID Attachment 
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	PushConstantMesh push;
+	PushConstantMesh push;                              /* @see PushConstantMesh. */
 };
 
 /*****************************************************************************************/
@@ -74,9 +74,9 @@ layout(set = 1, binding = 0) uniform sampler2D samplers[3];
 * @brief Material Parameters.
 */
 layout(set = 1, binding = 1) uniform Parameter {
-    vec4 diffuseIntensity;
-    vec3 normalIntensity;
-    vec2 specularIntensity;
+    vec4  diffuseIntensity;
+    vec3  normalIntensity;
+    vec2  specularIntensity;
     float otherIntensity;
 };
 

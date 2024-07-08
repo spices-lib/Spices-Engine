@@ -73,6 +73,16 @@ namespace Spiecs {
 		void SetOrthographic(float left, float right, float top, float bottom, float nearPlane, float farPlane);
 
 		/**
+		* @brief Reset m_StableFrames to 0.
+		*/
+		void ResetStableFrames() { m_StableFrames = 0; };
+
+		/**
+		* @brief InCreate 1 to m_StableFrames per frame.
+		*/
+		void IncreaseStableFrames() { m_StableFrames++; };
+
+		/**
 		* @brief Get camera projection matrix.
 		* @return Returns the camera projection matrix.
 		*/
@@ -89,6 +99,12 @@ namespace Spiecs {
 		* @return Returns the camera AspectRatio.
 		*/
 		inline float GetAspectRatio() { return m_AspectRatio; };
+
+		/**
+		* @brief Get camera StableFrames.
+		* @return Return the camera StableFrames.
+		*/
+		inline unsigned int GetStableFrames() { return m_StableFrames; };
 
 	private:
 
@@ -127,5 +143,10 @@ namespace Spiecs {
 		* Init with 1.777.
 		*/
 		float m_AspectRatio = 1.777f;
+
+		/**
+		* @brief Camera Stable Frames Number.
+		*/
+		unsigned int m_StableFrames = 0;
 	};
 }

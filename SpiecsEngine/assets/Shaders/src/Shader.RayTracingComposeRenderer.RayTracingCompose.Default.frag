@@ -10,7 +10,7 @@
 
 #extension GL_GOOGLE_include_directive : enable
 
-#include "Header/ShaderLayouts.glsl"
+#include "Header/ShaderPreRendererLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -37,15 +37,6 @@ layout(location = 0) out vec4 outColor;    /*SceneColor Attachment*/
 /********************************Specific Renderer Data***********************************/
 
 layout(set = 1, binding = 0, rgba32f) uniform image2D image;
-
-/*****************************************************************************************/
-
-/*************************************Functions*******************************************/
-
-/**
-* @brief Calculate Point Light Lighting.
-*/
-//vec4 CalculatePointLight(PointLight light, vec3 normal, vec3 position, vec3 cameraDirection);
 
 /*****************************************************************************************/
 

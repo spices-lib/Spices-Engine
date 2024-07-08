@@ -10,7 +10,7 @@
 
 #extension GL_GOOGLE_include_directive : enable
 
-#include "Header/ShaderLayouts.glsl"
+#include "Header/ShaderPreRendererLayout.glsl"
 
 /*****************************************************************************************/
 

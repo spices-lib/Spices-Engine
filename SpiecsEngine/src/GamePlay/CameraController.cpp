@@ -29,15 +29,29 @@ namespace Spiecs {
 		*/
 		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return;
 
+		m_Camera->IncreaseStableFrames();
+
 		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 			
-			if      (Input::IsMouseButtonPressed(Mouse::ButtonMiddle)) MousePan(delta);
-			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))   MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))  MouseZoom(delta.y);
+			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
+			{
+				MousePan(delta);    
+				m_Camera->ResetStableFrames();
+			}
+			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
+			{
+				MouseRotate(delta); 
+				m_Camera->ResetStableFrames();
+			}
+			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
+			{
+				MouseZoom(delta.y); 
+				m_Camera->ResetStableFrames();
+			}
 
 			UpdateView();
 		}
@@ -75,6 +89,7 @@ namespace Spiecs {
 
 		MouseZoom(delta);
 		UpdateView();
+		m_Camera->ResetStableFrames();
 		return false;
 	}
 	
@@ -95,6 +110,7 @@ namespace Spiecs {
 			break;
 		}
 		
+		m_Camera->ResetStableFrames();
 		return false;
 	}
 

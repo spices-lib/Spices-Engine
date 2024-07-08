@@ -48,7 +48,7 @@ namespace Spiecs {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Sprite" }));
 
 		glm::vec3 camPos;
-		auto& [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+		auto& [ invViewMatrix, projectionMatrix, stableFrames ] = GetActiveCameraMatrix(frameInfo);
 		camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
 
 		std::map<float, int> sortedEntity;

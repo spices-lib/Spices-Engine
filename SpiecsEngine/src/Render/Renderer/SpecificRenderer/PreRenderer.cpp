@@ -32,7 +32,7 @@ namespace Spiecs {
 		builder.BeginRenderPass();
 
 		builder.UpdateUniformBuffer<SpiecsShader::View>(0, 0, [&](auto& ubo) {
-			auto [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+			auto [ invViewMatrix, projectionMatrix, stableFrames ] = GetActiveCameraMatrix(frameInfo);
 			ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 			VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
 
@@ -58,6 +58,8 @@ namespace Spiecs {
 				1.0f / static_cast<float>(windowSize.width),
 				1.0f / static_cast<float>(windowSize.height)
 			};
+
+			ubo.stableFrames = stableFrames;
 		});
 
 		builder.UpdateUniformBuffer<SpiecsShader::Input>(0, 1, [&](auto& ubo) {

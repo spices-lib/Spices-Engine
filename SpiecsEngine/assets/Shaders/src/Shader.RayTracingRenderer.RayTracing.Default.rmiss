@@ -8,15 +8,18 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable
-#extension GL_EXT_ray_tracing : require
+#extension GL_GOOGLE_include_directive : enable    /* @brief Enable include Macro.       */
+#extension GL_EXT_ray_tracing          : require   /* @brief Enable Ray Tracing Shader.  */
 
 #include "Header/ShaderCommon.h"
 
 /*****************************************************************************************/
 
-/********************************Specific Renderer Data***********************************/
+/*********************************Missing Input Output************************************/
 
+/**
+* @brief Ray trace payloads.
+*/
 layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 /*****************************************************************************************/
@@ -28,6 +31,14 @@ void main()
     if(prd.depth == 0)
     {
         prd.hitValue = vec3(0.3f);
+        if(prd.rayDirection.y > 0.0f)
+        {
+            prd.hitValue = mix(vec3(1.0f), vec3(0.25f, 0.5f, 1.0f), prd.rayDirection.y);
+        }
+        else
+        {
+            prd.hitValue = vec3(0.03f);
+        }
     }
     else
     {

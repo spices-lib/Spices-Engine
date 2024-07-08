@@ -11,7 +11,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "Header/ShaderVertexInput.glsl"
-#include "Header/ShaderLayouts.glsl"
+#include "Header/ShaderPreRendererLayout.glsl"
 
 /*****************************************************************************************/
 

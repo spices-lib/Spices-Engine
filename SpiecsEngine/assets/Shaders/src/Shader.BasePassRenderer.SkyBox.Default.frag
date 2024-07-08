@@ -8,7 +8,7 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable
+#extension GL_GOOGLE_include_directive : enable        /* @brief Enable include Macro. */
 
 #include "Header/ShaderCommon.h"
 
@@ -43,7 +43,7 @@ layout(location = 2) out float outID;                  /* @brief ID Attachment  
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	PushConstantMesh push;
+	PushConstantMesh push;                             /* @see PushConstantMesh. */
 };
 
 /*****************************************************************************************/

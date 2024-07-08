@@ -219,7 +219,7 @@ namespace Spiecs {
 		);
 	}
 
-	std::pair<glm::mat4, glm::mat4> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
+	std::tuple<glm::mat4, glm::mat4, unsigned int> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -227,7 +227,8 @@ namespace Spiecs {
 		* @brief Init viewmatrix and projectionmatrix.
 		*/
 		glm::mat4 invViewMat       = glm::mat4(1.0f);
-		glm::mat4 projectionMat = glm::mat4(1.0f);
+		glm::mat4 projectionMat    = glm::mat4(1.0f);
+		unsigned int stableFrames  = 0;
 
 		bool find = false;
 
@@ -247,8 +248,9 @@ namespace Spiecs {
 				/**
 				* @brief Viewmaterix is the inverse of camera's modelmatrix. 
 				*/
-				invViewMat = transComp.GetModelMatrix();
+				invViewMat    = transComp.GetModelMatrix();
 				projectionMat = camComp.GetCamera()->GetPMatrix();
+				stableFrames  = camComp.GetCamera()->GetStableFrames();
 
 				/**
 				* @brief Since we enable Negative viewport, we do not need reverse y axis here.
@@ -279,7 +281,7 @@ namespace Spiecs {
 			SPIECS_CORE_WARN(ss.str());
 		}
 
-		return std::make_pair(invViewMat, projectionMat);
+		return std::make_tuple(invViewMat, projectionMat, stableFrames);
 	}
 
 	void Renderer::GetDirectionalLight(FrameInfo& frameInfo, std::array<SpiecsShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM>& dLightBuffer)
@@ -344,7 +346,7 @@ namespace Spiecs {
 				glm::mat4 view = tempComp.GetModelMatrix();
 				glm::mat4 projection = Otrhographic(-ratio * 30, ratio * 30, -1.0f * 30, 1.0f * 30, -100000.0f, 100000.0f);
 
-				auto [invViewMatrix, projectionMatrix] = GetActiveCameraMatrix(frameInfo);
+				auto [invViewMatrix, projectionMatrix, stableFrames] = GetActiveCameraMatrix(frameInfo);
 
 				directionalLight[index] = projection * glm::inverse(view);
 				index++;

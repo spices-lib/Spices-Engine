@@ -1,6 +1,6 @@
 /**
 * @file ShaderStructures.h.
-* @brief This Shader Header File Defines Shader Structure.
+* @brief This Shader Header File Defines Shader Structure both Shader side and C++ side.
 * @author Spiecs.
 */
 
@@ -17,7 +17,7 @@ using vec2 = glm::vec2;
 using vec3 = glm::vec3;     
 using vec4 = glm::vec4;     
 using mat4 = glm::mat4;     
-using uint = unsigned int;  
+using uint = unsigned int; 
 
 #else
 
@@ -26,9 +26,9 @@ using uint = unsigned int;
 
 #endif
 
-#define MESHBUFFERMAXNUM 100000
+#define MESHBUFFERMAXNUM             100000
 #define DIRECTIONALLIGHTBUFFERMAXNUM 100
-#define POINTLIGHTBUFFERMAXNUM 10000
+#define POINTLIGHTBUFFERMAXNUM       10000
 
 /*****************************************************************************************/
 
@@ -62,6 +62,7 @@ struct View
 	mat4 inView;              /* @brief Inverse View Matrix from major Camera Entity.                 */
 	vec4 sceneTextureSize;    /* @brief Scene Texture Size.                                           */
 	vec4 windowSize;          /* @brief Application Window Size.                                      */
+	uint stableFrames;        /* @brief Camera Stable Frames Number.                                  */
 };
 
 /**
@@ -122,14 +123,17 @@ struct MeshDesc
 	uint64_t indexAddress;          /* Address of the index buffer.                   */
 };
 
+/**
+* @brief Ray Tracing Shader Data Location 0. 
+*/
 struct HitPayLoad
 {
-	vec3  hitValue;
-	float seed;
-	int   depth;
-	vec3  rayOrigin;
-	vec3  rayDirection;
-	vec3  weight;
+	vec3 hitValue;                  /* @brief Current Hit Fragment Color. */
+	uint seed;                      /* @brief Random Seed for BRDF Lambertian Light Reflection Direction Select. */
+	int  depth;                     /* @brief Ray Tracing Depth for diffuse. */
+	vec3 rayOrigin;                 /* @brief Next Ray Original World Position. */
+	vec3 rayDirection;              /* @brief Next Ray Direction in World Space. */
+	vec3 weight;                    /* @brief Current Fragment Color Weight. */
 };
 
 // Push constant structure for the raster
@@ -155,11 +159,6 @@ struct WaveFrontMaterial  // See ObjLoader, copy of MaterialObj, could be compre
 	int   illum;     // illumination model (see http://www.fileformat.info/format/material/)
 	int   textureId;
 };
-
-
-/******************************************Functions**************************************/
-
-
 
 /*****************************************************************************************/
 

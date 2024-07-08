@@ -58,13 +58,17 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/
-		VkPhysicalDeviceScalarBlockLayoutFeatures                 layoutfeatures {};
-		layoutfeatures.sType                                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
-		layoutfeatures.pNext                                    = nullptr;/*@brief Pass your other features through this chain.*/
+		VkPhysicalDeviceShaderClockFeaturesKHR                    shaderClockFeatures{};
+		shaderClockFeatures.sType                               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
+		shaderClockFeatures.pNext                               = nullptr;/*@brief Pass your other features through this chain.*/
+															    
+		VkPhysicalDeviceScalarBlockLayoutFeatures                 layoutFeatures {};
+		layoutFeatures.sType                                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
+		layoutFeatures.pNext                                    = &shaderClockFeatures;
 													            
 		VkPhysicalDeviceHostQueryResetFeatures                    hostQueryResetFeatures {};
 		hostQueryResetFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
-		hostQueryResetFeatures.pNext                            = &layoutfeatures;
+		hostQueryResetFeatures.pNext                            = &layoutFeatures;
 
 		VkPhysicalDeviceRayTracingPipelineFeaturesKHR             rayTracingFeatures {};
 		rayTracingFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
@@ -266,13 +270,17 @@ namespace Spiecs {
 		/**
 		* @brief Create the feature chain.
 		*/ 
-		VkPhysicalDeviceScalarBlockLayoutFeatures             layoutfeatures {};
-		layoutfeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
-		layoutfeatures.pNext                                = nullptr;/*@brief Pass your other features through this chain.*/
+		VkPhysicalDeviceShaderClockFeaturesKHR                shaderClockFeatures{};
+		shaderClockFeatures.sType                           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
+		shaderClockFeatures.pNext                           = nullptr;/*@brief Pass your other features through this chain.*/
+
+		VkPhysicalDeviceScalarBlockLayoutFeatures             layoutFeatures {};
+		layoutFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
+		layoutFeatures.pNext                                = &shaderClockFeatures;
 													        
 		VkPhysicalDeviceHostQueryResetFeatures                hostQueryResetFeatures {};
 		hostQueryResetFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
-		hostQueryResetFeatures.pNext                        = &layoutfeatures;
+		hostQueryResetFeatures.pNext                        = &layoutFeatures;
 													        
 		VkPhysicalDeviceRayTracingPipelineFeaturesKHR         rayTracingFeatures {};
 		rayTracingFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
@@ -314,7 +322,7 @@ namespace Spiecs {
 		ASSERT(accelerationStructureFeatures.accelerationStructure);                           /* @breif Enable RayTracing AccelerationStructure.        */
 		ASSERT(rayTracingFeatures.rayTracingPipeline);                                         /* @breif Enable RayTracing Pipeline.                     */
 		ASSERT(hostQueryResetFeatures.hostQueryReset);                                         /* @brief Enable HostQueryReset Feature.                  */
-		ASSERT(layoutfeatures.scalarBlockLayout);                                              /* @brief Enable Shader ScalarBlockLayout Feature.        */
+		ASSERT(layoutFeatures.scalarBlockLayout);                                              /* @brief Enable Shader ScalarBlockLayout Feature.        */
 
 		ASSERT(descriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing);          /* @brief Enable Shader shaderSampledImageArrayNonUniformIndexing Feature.        */
 		ASSERT(descriptorIndexingFeatures.descriptorBindingSampledImageUpdateAfterBind);       /* @brief Enable Shader descriptorBindingSampledImageUpdateAfterBind Feature.     */
@@ -322,6 +330,8 @@ namespace Spiecs {
 		ASSERT(descriptorIndexingFeatures.descriptorBindingUniformBufferUpdateAfterBind);      /* @brief Enable Shader descriptorBindingUniformBufferUpdateAfterBind Feature.    */
 		ASSERT(descriptorIndexingFeatures.shaderStorageBufferArrayNonUniformIndexing);         /* @brief Enable Shader shaderStorageBufferArrayNonUniformIndexing Feature.       */
 		ASSERT(descriptorIndexingFeatures.descriptorBindingStorageBufferUpdateAfterBind);      /* @brief Enable Shader descriptorBindingStorageBufferUpdateAfterBind Feature.    */
+
+		ASSERT(shaderClockFeatures.shaderSubgroupClock);                                       /* @brief Enable Shader clock time Feature.               */
 
 		return true;
 	}
@@ -337,6 +347,8 @@ namespace Spiecs {
 		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /* @brief To build acceleration structures.  */
 		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /* @brief To use vkCmdTraceRaysKHR.          */
 		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.  */
+
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_CLOCK_EXTENSION_NAME);                     /* @brief Enable Shader Clock Extension.     */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)
