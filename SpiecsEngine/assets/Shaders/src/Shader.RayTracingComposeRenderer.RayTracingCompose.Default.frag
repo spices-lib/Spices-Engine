@@ -45,7 +45,9 @@ layout(set = 1, binding = 0, rgba32f) uniform image2D image;
 void main()
 {
 	ivec2 uv = ivec2(view.sceneTextureSize.xy * fragInput.texCoord.xy);
-	outColor = imageLoad(image, uv);
+	vec4 col = imageLoad(image, uv);
+	col = pow(col, vec4(1.0f / 2.2f));
+	outColor = col;
 }
 
 /*****************************************************************************************/

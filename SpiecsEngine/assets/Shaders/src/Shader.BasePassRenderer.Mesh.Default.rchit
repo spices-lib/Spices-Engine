@@ -140,13 +140,15 @@ void main()
     vec3 tangent, bitangent;
     CreateCoordinateSystem(vt.normal, tangent, bitangent);
     vec3 rayOrigin = vt.position + vt.normal * BIAS;
-    //vec3 rayDirection = SamplingHemisphere(prd.seed, tangent, bitangent, vt.normal);
-    vec3 rayDirection = reflect(prd.rayDirection, vt.normal);
+    vec3 rayDirection = SamplingHemisphere(prd.seed, tangent, bitangent, vt.normal);
+    //vec3 rayDirection = reflect(prd.rayDirection, vt.normal);
 
     const float cos_theta = dot(rayDirection, vt.normal);
     const float p = cos_theta / PI;
 
+    //vec3 albedo = vec3(vt.normal * 0.5f + vec3(0.5f));
     vec3 albedo = vec3(0.5f);
+    
     vec3 BRDF = albedo / PI;
 
     prd.rayOrigin    = rayOrigin;

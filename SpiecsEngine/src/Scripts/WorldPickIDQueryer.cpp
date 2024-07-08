@@ -89,14 +89,16 @@ namespace Spiecs {
 					reinterpret_cast<void*>(&m_WorldPickID[0])
 				);
 
-				std::string entityName = *FrameInfo::Get().m_PickEntityID.find_value(static_cast<int>(m_WorldPickID[0]));
+				std::string* ptr = FrameInfo::Get().m_PickEntityID.find_value(static_cast<int>(m_WorldPickID[0]));
+				if (ptr)
+				{
+					std::stringstream ss;
+					ss << "Deselect entity: " << *ptr;
 
-				FrameInfo::Get().m_PickEntityID.erase(static_cast<int>(m_WorldPickID[0]));
+					SPIECS_CORE_TRACE(ss.str());
 
-				std::stringstream ss;
-				ss << "Deselect entity: " << entityName;
-
-				SPIECS_CORE_TRACE(ss.str());
+					FrameInfo::Get().m_PickEntityID.erase(static_cast<int>(m_WorldPickID[0]));
+				}
 			}
 
 			/**
