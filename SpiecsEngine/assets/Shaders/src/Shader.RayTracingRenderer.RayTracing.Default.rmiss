@@ -28,21 +28,15 @@ layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 void main()
 {
-    if(prd.depth == 0)
+    if(prd.rayDirection.y > 0.0f)
     {
-        prd.hitValue = vec3(0.3f);
-        if(prd.rayDirection.y > 0.0f)
-        {
-            prd.hitValue = mix(vec3(1.0f), vec3(0.25f, 0.5f, 1.0f), prd.rayDirection.y);
-        }
-        else
-        {
-            prd.hitValue = vec3(0.03f);
-        }
+        prd.hitValue = mix(vec3(1.0f), vec3(0.25f, 0.5f, 1.0f), prd.rayDirection.y);
+        prd.weight       = vec3(1.0f);
     }
     else
     {
-        prd.hitValue = vec3(0.01f);    // No contribution from environment
+        prd.hitValue   = vec3(1.0f);
+        prd.weight     = vec3(1.0f);
     }
     prd.depth = 100;                  // Ending trace
 }

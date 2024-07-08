@@ -44,7 +44,7 @@ namespace Spiecs {
 
 			if (hitGroup.find(stages[0]) == hitGroup.end())
 			{
-				hitGroup[stages[0]] = hitGroup.size();
+				hitGroup[stages[0]] = static_cast<uint32_t>(hitGroup.size());
 
 				pair.second->SetMaterialHandle(hitGroup[stages[0]]);
 			}

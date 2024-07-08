@@ -85,33 +85,17 @@ layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   {
 
 /*****************************************************************************************/
 
+/******************************************Functions**************************************/
+
+Vertex UnPackVertex(vec3 weight);
+
+/*****************************************************************************************/
+
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
-    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
-    Vertices vertices   = Vertices(desc.vertexAddress);
-    Indices  indices    = Indices(desc.indexAddress);
-    
-    // Indices of the triangle
-    ivec3 index = indices.i[gl_PrimitiveID];
-    
-    // Vertex of the triangle
-    Vertex v0 = vertices.v[index.x];
-    Vertex v1 = vertices.v[index.y];
-    Vertex v2 = vertices.v[index.z];
-    
-    const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
-    
-    //vec3 worldPos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-    
-    // Computing the coordinates of the hit position
-    const vec3 pos      = v0.position * barycentrics.x + v1.position * barycentrics.y + v2.position * barycentrics.z;
-    const vec3 worldPos = vec3(gl_ObjectToWorldEXT * vec4(pos, 1.0));  // Transforming the position to world space
-    
-    // Computing the normal at hit position
-    const vec3 nrm      = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
-    const vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));  // Transforming the normal to world space
+    Vertex vt = UnPackVertex(attribs);
     
     // light position
     //vec3 lpos = pLightBuffer.i[0].position;
@@ -151,56 +135,80 @@ void main()
     
     //prd.hitValue = col;
 
-
-    
-
-
-
-
-
-
-    vec3 emittance = vec3(0.5f);
+    vec3 emittance = vec3(0.0f);
 
     vec3 tangent, bitangent;
-    CreateCoordinateSystem(worldNrm, tangent, bitangent);
-    vec3 rayOrigin = worldPos;
-    vec3 rayDirection = SamplingHemisphere(prd.seed, tangent, bitangent, worldNrm);
+    CreateCoordinateSystem(vt.normal, tangent, bitangent);
+    vec3 rayOrigin = vt.position + vt.normal * BIAS;
+    //vec3 rayDirection = SamplingHemisphere(prd.seed, tangent, bitangent, vt.normal);
+    vec3 rayDirection = reflect(prd.rayDirection, vt.normal);
 
-    const float cos_theta = dot(rayDirection, worldNrm);
-    const float p = cos_theta / M_PI;
+    const float cos_theta = dot(rayDirection, vt.normal);
+    const float p = cos_theta / PI;
 
     vec3 albedo = vec3(0.5f);
-    vec3 BRDF = albedo / M_PI;
+    vec3 BRDF = albedo / PI;
 
-     prd.rayOrigin    = rayOrigin;
-     prd.rayDirection = rayDirection;
-     prd.hitValue     = emittance;
-     prd.weight       = BRDF * cos_theta / p;
-     return;
-
-     if(prd.depth < 10)
-     {
-        prd.depth++;
-        float tMin  = 0.001;
-        float tMax  = 100000000.0;
-        uint  flags = gl_RayFlagsOpaqueEXT;
-        traceRayEXT(topLevelAS,    // acceleration structure
-                    flags,         // rayFlags
-                    0xFF,          // cullMask
-                    0,             // sbtRecordOffset
-                    0,             // sbtRecordStride
-                    0,             // missIndex
-                    rayOrigin,     // ray origin
-                    tMin,          // ray min range
-                    rayDirection,  // ray direction
-                    tMax,          // ray max range
-                    0              // payload (location = 0)
-        );
-     }
-     vec3 incoming = prd.hitValue;
-
-     // Apply the Rendering Equation here.
-     prd.hitValue = emittance + (BRDF * incoming * cos_theta / p);
+    prd.rayOrigin    = rayOrigin;
+    prd.rayDirection = rayDirection;
+    prd.hitValue     = emittance;
+    prd.weight       = BRDF * cos_theta / p;
 }
 
 /*****************************************************************************************/
+
+Vertex UnPackVertex(vec3 weight)
+{
+    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
+    Vertices vertices   = Vertices(desc.vertexAddress);
+    Indices  indices    = Indices(desc.indexAddress);
+    
+    /**
+    * @brief Get Indices of the triangle.
+    */ 
+    ivec3 index = indices.i[gl_PrimitiveID];
+    
+    /**
+    * @brief Get Vertex of the triangle.
+    */ 
+    Vertex v0 = vertices.v[index.x];
+    Vertex v1 = vertices.v[index.y];
+    Vertex v2 = vertices.v[index.z];
+    
+    const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
+    
+    //vec3 worldPos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+    
+    /**
+    * @brief Computing the coordinates of the hit position.
+    */ 
+    const vec3 localpos = v0.position * barycentrics.x + v1.position * barycentrics.y + v2.position * barycentrics.z;
+    const vec3 worldPos = vec3(gl_ObjectToWorldEXT * vec4(localpos, 1.0));
+    
+    /**
+    * @brief Computing the normal at hit position.
+    */ 
+    const vec3 localnrm = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
+    const vec3 worldNrm = normalize(vec3(localnrm * gl_WorldToObjectEXT));
+    
+    /**
+    * @brief Computing the color at hit position.
+    */
+    const vec3 color = v0.color * barycentrics.x + v1.color * barycentrics.y + v2.color * barycentrics.z;
+    
+    /**
+    * @brief Computing the uv at hit position.
+    */ 
+    const vec2 uv = v0.texCoord * barycentrics.x + v1.texCoord * barycentrics.y + v2.texCoord * barycentrics.z;
+    
+    /**
+    * @brief Make Vertex.
+    */
+    Vertex vt;
+    vt.position   = worldPos;
+    vt.normal     = worldNrm;
+    vt.color      = color;
+    vt.texCoord   = uv;
+    
+    return vt;
+}

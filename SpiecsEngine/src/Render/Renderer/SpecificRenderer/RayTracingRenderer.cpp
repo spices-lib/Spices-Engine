@@ -224,7 +224,7 @@ namespace Spiecs {
 				 				               
 		uint32_t rayGenCount                    = rayTracingMaterial->GetShaderPath("rgen").size();
 		uint32_t missCount                      = rayTracingMaterial->GetShaderPath("rmiss").size();
-		uint32_t hitCount                       = m_HitGroups.size();
+		uint32_t hitCount                       = static_cast<uint32_t>(m_HitGroups.size());
 
 		auto     handleCount                    = rayGenCount + missCount + hitCount;
 		uint32_t handleSize                     = m_Device->GetRTPipelineProperties().shaderGroupHandleSize;

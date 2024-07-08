@@ -22,12 +22,20 @@ namespace Spiecs {
 		/**
 		* @brief Create VkApplicationInfo struct.
 		*/
-		VkApplicationInfo appInfo = CreateApplicationInfo(name, enginename);
+		VkApplicationInfo               appInfo {};
+		appInfo.sType                 = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName      = name.c_str();
+		appInfo.applicationVersion    = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.pEngineName           = enginename.c_str();
+		appInfo.engineVersion         = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.apiVersion            = VK_API_VERSION_1_3;
 
 		/**
 		* @brief Create VkInstanceCreateInfo struct.
 		*/
-		VkInstanceCreateInfo createInfo = CreateInstanceCreateInfo(appInfo);
+		VkInstanceCreateInfo            createInfo {};
+		createInfo.sType              = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.pApplicationInfo   = &appInfo;
 
 		/**
 		* @brief Get all instance extension requirements our engine needede.
@@ -37,13 +45,19 @@ namespace Spiecs {
 		/**
 		* @brief Iter all our extensions, check whether all satisfied or not.
 		*/
-		if (!CheckExtensionRequirementsSatisfied()) return;
+		if (!CheckExtensionRequirementsSatisfied())
+		{
+			std::stringstream ss;
+			ss << "Instance Extension not Satisfied";
+
+			SPIECS_CORE_ERROR(ss.str());
+		}
 
 		/**
 		* @brief Set instance extension.
 		*/
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(m_ExtensionProperties.size());
-		createInfo.ppEnabledExtensionNames = m_ExtensionProperties.data();
+		createInfo.enabledExtensionCount         = static_cast<uint32_t>(m_ExtensionProperties.size());
+		createInfo.ppEnabledExtensionNames       = m_ExtensionProperties.data();
 
 		/**
 		* @brief Get all instance layer requirements our engine needede.
@@ -58,13 +72,27 @@ namespace Spiecs {
 		/**
 		* @brief Set instance layer.
 		*/
-		createInfo.enabledLayerCount = static_cast<uint32_t>(m_LayerProperties.size());
-		createInfo.ppEnabledLayerNames = m_LayerProperties.data();
+		createInfo.enabledLayerCount             = static_cast<uint32_t>(m_LayerProperties.size());
+		createInfo.ppEnabledLayerNames           = m_LayerProperties.data();
 
 		/**
 		* @brief Set VkDebugUtilsMessengerCreateInfoEXT.
 		*/
 		FillDebugMessengerCreateInfo();
+
+		/**
+		* @brief Enable Shader Debug Feature.
+		*/
+		std::vector<VkValidationFeatureEnableEXT> validationFeatureEnable;
+		validationFeatureEnable.push_back(VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT);
+		
+		VkValidationFeaturesEXT                               validationFeatures{};
+		validationFeatures.sType                            = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+		validationFeatures.enabledValidationFeatureCount    = static_cast<uint32_t>(validationFeatureEnable.size());
+		validationFeatures.pEnabledValidationFeatures       = validationFeatureEnable.data();
+
+		m_DebugMessengerCreateInfo.pNext                    = &validationFeatures;
+
 		createInfo.pNext = &m_DebugMessengerCreateInfo;
 
 		/**
@@ -109,38 +137,6 @@ namespace Spiecs {
 		* @brief Destroy the Vulkan Instance Object.
 		*/
 		vkDestroyInstance(m_VulkanState.m_Instance, nullptr);
-	}
-
-	VkApplicationInfo VulkanInstance::CreateApplicationInfo(const std::string& name, const std::string& enginename)
-	{
-		SPIECS_PROFILE_ZONE;
-
-		/**
-		* @brief Instanced a VkApplicationInfo with default value.
-		*/
-		VkApplicationInfo appInfo = {};
-		appInfo.sType                 = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName      = name.c_str();
-		appInfo.applicationVersion    = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName           = enginename.c_str();
-		appInfo.engineVersion         = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.apiVersion            = VK_API_VERSION_1_3;
-
-		return appInfo;
-	}
-
-	VkInstanceCreateInfo VulkanInstance::CreateInstanceCreateInfo(const VkApplicationInfo& appInfo)
-	{
-		SPIECS_PROFILE_ZONE;
-
-		/**
-		* @brief Instanced a VkInstanceCreateInfo with default value.
-		*/
-		VkInstanceCreateInfo createInfo = {};
-		createInfo.sType            = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		createInfo.pApplicationInfo = &appInfo;
-
-		return createInfo;
 	}
 
 	void VulkanInstance::GetExtensionRequirements()
@@ -190,28 +186,31 @@ namespace Spiecs {
 		/**
 		* @brief Get all instance extensions that supported.
 		*/
-		std::vector<VkExtensionProperties> extensions(extensionCount);
-		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
-
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableExtensions.data());
+		
 		/**
-		* @brief Iter all our extensions, check whether all satisfied or not.
+		* @brief Check whether all extensions satisfied.
 		*/
-		for (const char* requiredextension : m_ExtensionProperties)
-		{
-			bool find = false;
-			for (auto& target : extensions)
-			{
-				if (StringLibrary::StringsEqual(requiredextension, target.extensionName))
-				{
-					find = true;
-					break;
-				}
-			}
+		std::set<std::string> requiredExtensions(m_ExtensionProperties.begin(), m_ExtensionProperties.end());
 
-			if (!find) return false;
+		for (const auto& extension : availableExtensions) 
+		{
+			requiredExtensions.erase(extension.extensionName);
 		}
 
-		return true;
+		if (!requiredExtensions.empty())
+		{
+			for (auto& set : requiredExtensions)
+			{
+				std::stringstream ss;
+				ss << "Instance Extension Required: " << set << ", Which is not satisfied";
+				
+				SPIECS_CORE_WARN(ss.str());
+			}
+		}
+
+		return requiredExtensions.empty();
 	}
 
 	void VulkanInstance::GetLayerRequirements()
@@ -246,24 +245,27 @@ namespace Spiecs {
 		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
 		/**
-		* @brief Iter all our layers, check whether all satisfied or not.
+		* @brief Check whether all layer satisfied.
 		*/
-		for (const char* layerName : m_LayerProperties) 
-		{
-			bool find = false;
-			for (const auto& layerProperties : availableLayers) 
-			{
-				if (StringLibrary::StringsEqual(layerName, layerProperties.layerName))
-				{
-					find = true;
-					break;
-				}
-			}
+		std::set<std::string> requiredLayera(m_LayerProperties.begin(), m_LayerProperties.end());
 
-			if (!find) return false;
+		for (const auto& layer : availableLayers) 
+		{
+			requiredLayera.erase(layer.layerName);
 		}
 
-		return true;
+		if (!requiredLayera.empty())
+		{
+			for (auto& set : requiredLayera)
+			{
+				std::stringstream ss;
+				ss << "Instance Layer Required: " << set << ", Which is not satisfied";
+				
+				SPIECS_CORE_WARN(ss.str());
+			}
+		}
+
+		return requiredLayera.empty();
 	}
 
 	void VulkanInstance::SetVulkanDebugCallbackFuncPointer()
@@ -355,6 +357,12 @@ namespace Spiecs {
 			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
 				SPIECS_CORE_ERROR(ss.str());
 				break;
+			
+			case VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT:
+				break;
+			
+			default:
+				break;
 		}
 	
 		return VK_FALSE;
@@ -367,37 +375,21 @@ namespace Spiecs {
 		/**
 		* @brief Instanced a VkDebugUtilsMessengerCreateInfoEXT with default value.
 		*/
-		m_DebugMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT{};
-
-		/**
-		* @brief Fill in sType.
-		*/
-		m_DebugMessengerCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-
-		/**
-		* @brief Fill in messageSeverity.
-		*/
-		m_DebugMessengerCreateInfo.messageSeverity = 
+		m_DebugMessengerCreateInfo                     = VkDebugUtilsMessengerCreateInfoEXT {};
+		m_DebugMessengerCreateInfo.sType               = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		
+		m_DebugMessengerCreateInfo.messageSeverity     = 
 			VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
 			VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-			VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   ;
-
-		/**
-		* @brief Fill in messageType.
-		*/
-		m_DebugMessengerCreateInfo.messageType = 
+			VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   |
+			VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT    ;
+		
+		m_DebugMessengerCreateInfo.messageType         = 
 			VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT      |
 			VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT   | 
 			VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT  ;
-
-		/**
-		* @brief Fill in pfnUserCallback.
-		*/
-		m_DebugMessengerCreateInfo.pfnUserCallback = InstanceDebugCallback;
-
-		/**
-		* @brief Fill in pUserData.
-		*/
-		m_DebugMessengerCreateInfo.pUserData = nullptr; // Optional
+		
+		m_DebugMessengerCreateInfo.pfnUserCallback     = InstanceDebugCallback;
+		m_DebugMessengerCreateInfo.pUserData           = nullptr; // Optional
 	}
 }

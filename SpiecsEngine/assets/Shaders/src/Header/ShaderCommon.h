@@ -6,9 +6,10 @@
 
 /************************************Pre Compile*******************************************/
 
-#ifdef __cplusplus
-#pragma once
+#ifndef SHADER_COMMON
+#define SHADER_COMMON
 
+#ifdef __cplusplus
 #include <glm/glm.hpp>
 
 namespace SpiecsShader
@@ -21,14 +22,17 @@ using uint = unsigned int;
 
 #else
 
-#extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align. */
-#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.       */
+#extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align.                       */
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.                             */
+#extension GL_EXT_debug_printf                           : require  /* @brief Enable shader debug info. (debugPrintfEXT("Hello Shader");) */
 
 #endif
 
 #define MESHBUFFERMAXNUM             100000
 #define DIRECTIONALLIGHTBUFFERMAXNUM 100
 #define POINTLIGHTBUFFERMAXNUM       10000
+#define PI                           3.14159265f
+#define BIAS                         0.01f
 
 /*****************************************************************************************/
 
@@ -164,4 +168,6 @@ struct WaveFrontMaterial  // See ObjLoader, copy of MaterialObj, could be compre
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

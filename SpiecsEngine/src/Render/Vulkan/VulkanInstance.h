@@ -35,29 +35,9 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanInstance();
+		virtual ~VulkanInstance() override;
 
 	private:
-
-		/**
-		* @brief Create VkApplicationInfo struct.
-		* @param[in] name pApplicationName.
-		* @param[in] enginename pEngineName.
-		* @return Returns a filled VkApplicationInfo struct.
-		*/
-		VkApplicationInfo CreateApplicationInfo(
-			const std::string& name       , 
-			const std::string& enginename
-		);
-
-		/**
-		* @brief Create VkInstanceCreateInfo struct.
-		* @param[in] appInfo pApplicationInfo.
-		* @return Returns a filled VkInstanceCreateInfo.
-		*/
-		VkInstanceCreateInfo CreateInstanceCreateInfo(
-			const VkApplicationInfo& appInfo
-		);
 
 		/**
 		* @brief Get all instance extension requirements our engine needede.
@@ -103,8 +83,7 @@ namespace Spiecs {
 		* @param[in] messageSeverity VkDebugUtilsMessageSeverityFlagBitsEXT.
 		* @param[in] messageType VkDebugUtilsMessageTypeFlagsEXT.
 		* @param[in] pCallbackData VkDebugUtilsMessengerCallbackDataEXT.
-		* @param[in] pUserData.
-		* @todo Butter Log.
+		* @param[in] pUserData .
 		*/
 		static VKAPI_ATTR VkBool32 VKAPI_CALL InstanceDebugCallback(
 			VkDebugUtilsMessageSeverityFlagBitsEXT          messageSeverity,
