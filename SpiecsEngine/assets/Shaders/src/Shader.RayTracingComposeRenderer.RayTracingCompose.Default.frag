@@ -46,7 +46,6 @@ void main()
 {
 	ivec2 uv = ivec2(view.sceneTextureSize.xy * fragInput.texCoord.xy);
 	vec4 col = imageLoad(image, uv);
-	col = pow(col, vec4(1.0f / 2.2f));
 	outColor = col;
 }
 

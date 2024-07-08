@@ -44,11 +44,13 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "RayTracing", this }
-		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)
-		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(1, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)
-		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)
-		.AddStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)
+		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)   /* @brief Acceleration Structure.         */
+		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)      /* @brief Ray Tracing Output Image.       */
+		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(1, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)               /* @brief World Mesh Buffer.              */
+		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)       /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)             /* @brief World PointLight Buffer.        */
+		.AddTexture<Texture2D>(2, 0, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR, {"interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg"})  /* @brief temp */
+		.AddTexture<Texture2D>(2, 1, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/meadow_4k.hdr "})                                    /* @brief temp */
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
 

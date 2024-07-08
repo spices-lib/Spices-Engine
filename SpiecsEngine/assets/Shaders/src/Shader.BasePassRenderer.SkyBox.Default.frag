@@ -50,8 +50,6 @@ layout(push_constant) uniform Push {
 
 /********************************Specific Renderer Data***********************************/
 
-const vec2 invAtan = vec2(0.1591, 0.3183);
-
 layout(set = 1, binding = 0) uniform sampler2D samplers;    /* @brief SkyBox Diffuse */
 
 /*****************************************************************************************/

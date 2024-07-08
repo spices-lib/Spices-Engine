@@ -96,4 +96,13 @@ void CreateCoordinateSystem(in vec3 N, out vec3 Nt, out vec3 Nb)
 	Nb = cross(N, Nt);
 }
 
+vec2 SampleSphericalMap(vec3 v)
+{
+    vec2 uv = vec2(atan(-v.z, v.x), asin(-v.y));
+    uv *= invAtan;
+    uv += 0.5;
+
+    return uv;
+}
+
 /*****************************************************************************************/

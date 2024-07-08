@@ -83,6 +83,8 @@ layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   {
     PointLight i[];         /* @see PointLight. */
 } pLightBuffer;
 
+layout(set = 2, binding = 0) uniform sampler2D samplers;
+
 /*****************************************************************************************/
 
 /******************************************Functions**************************************/
@@ -147,7 +149,7 @@ void main()
     const float p = cos_theta / PI;
 
     //vec3 albedo = vec3(vt.normal * 0.5f + vec3(0.5f));
-    vec3 albedo = vec3(0.5f);
+    vec3 albedo = texture(samplers, vt.texCoord).xyz;
     
     vec3 BRDF = albedo / PI;
 
