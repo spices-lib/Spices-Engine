@@ -58,7 +58,7 @@ namespace Spiecs {
 		* @param[in] caption The label be captured.
 		* @param[in] color The label color.
 		*/
-		static void BeginQueueLable(
+		static void BeginQueueLabel(
 			VkQueue            queue                  , 
 			const std::string& caption                , 
 			glm::vec4          color = glm::vec4(1.0f)
@@ -231,14 +231,14 @@ namespace Spiecs {
 		VkDebugUtilsObjectTagInfoEXT tag_info{};
 		tag_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
 		tag_info.objectType   = type;
-		tag_info.objectHandle = (uint64_t)handle;
+		tag_info.objectHandle = static_cast<uint64_t>(handle);
 		tag_info.tagName      = 0;
-		tag_info.tagSize      = scaptions.size();
+		tag_info.tagSize      = captions.size();
 		tag_info.pTag         = captions.data();
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		vkSetDebugUtilsObjectTagEXT(device, &info);
+		vkSetDebugUtilsObjectTagEXT(device, &tag_info);
 	}
 }

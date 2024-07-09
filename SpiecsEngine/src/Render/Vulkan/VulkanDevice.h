@@ -40,7 +40,7 @@ namespace Spiecs {
 		/**
 		* @brief Whether all queues that we need is valid.
 		*/
-		bool isComplete() 
+		bool isComplete() const
 		{
 			return 
 
@@ -68,7 +68,7 @@ namespace Spiecs {
 
 	/**
 	* @brief SwapChain Utils.
-	* Queryed from device.
+	* Queried from device.
 	*/
 	struct SwapChainSupportDetails 
 	{
@@ -111,8 +111,8 @@ namespace Spiecs {
 
 	/**
 	* @brief VulkanInstance Class.
-	* This class defines the VulkanDevice behaver.
-	* This class is just a wapper of vkdevice.
+	* This class defines the VulkanDevice behave.
+	* This class is just a wrapper of vkdevice.
 	*/
 	class VulkanDevice : public VulkanObject
 	{
@@ -128,12 +128,12 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanDevice();
+		virtual ~VulkanDevice() override;
 
 		/**
 		* @brief Get SwapChain Utils.
 		*/
-		inline const SwapChainSupportDetails& GetSwapChainSupport() { return m_SwapChainSupportDetails; };
+		inline const SwapChainSupportDetails& GetSwapChainSupport() { return m_SwapChainSupportDetails; }
 
 		/**
 		* @brief Requery device's SwapChainSupportDetails.
@@ -144,25 +144,25 @@ namespace Spiecs {
 		/**
 		* @brief Get QueueHelper variable.
 		*/
-		inline const QueueHelper& GetQueueHelper() { return m_QueueHelper; };
+		inline const QueueHelper& GetQueueHelper() const { return m_QueueHelper; }
 
 		/**
 		* @brief Get device's maxusablesamplecount.
 		*/
-		VkSampleCountFlagBits GetMaxUsableSampleCount();
+		VkSampleCountFlagBits GetMaxUsableSampleCount() const;
 
 		/**
 		* @brief Get RayTracingPipelineProperties.
 		*/
-		inline VkPhysicalDeviceRayTracingPipelinePropertiesKHR& GetRTPipelineProperties() { return m_RayTracingProperties; };
+		inline VkPhysicalDeviceRayTracingPipelinePropertiesKHR& GetRTPipelineProperties() { return m_RayTracingProperties; }
 
 	private:
 
 		/**
-		* @brief select a suitable physical device equirment.
+		* @brief select a suitable physical device.
 		* @param[in] instance VkInstance.
 		* @param[in] surface VkSurfaceKHR.
-		* @param[in] window The row pointer of GLFWwindow.
+		* @param[in] window The row pointer of GLFW window.
 		* @return Returns true if select one successfully.
 		* @todo multiple physical device support.
 		*/
@@ -184,10 +184,10 @@ namespace Spiecs {
 		* @param[in] device VkPhysicalDevice.
 		* @return Returns true if all Feature we need meet.
 		*/
-		bool IsFeatureMeetDemand(const VkPhysicalDevice& device);
+		static bool IsFeatureMeetDemand(const VkPhysicalDevice& device);
 
 		/**
-		* @brief Get all physicaldevice extension requirements our engine needed.
+		* @brief Get all physical device extension requirements our engine needed.
 		* Source 1 : user Setting.
 		* @todo Configurable
 		*/
@@ -227,11 +227,6 @@ namespace Spiecs {
 		* @brief Device Extension Properties.
 		*/
 		std::vector<const char*> m_ExtensionProperties;
-
-		/**
-		* @brief Device Features we need.
-		*/
-		VkPhysicalDeviceFeatures2 m_DeviceFeatures {};
 
 		/**
 		* @brief Selected Physical Device Properties.

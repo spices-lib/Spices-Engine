@@ -173,7 +173,7 @@ namespace Spiecs {
 		vkCmdEndDebugUtilsLabelEXT(cmdbuffer);
 	}
 
-	void VulkanDebugUtils::BeginQueueLable(
+	void VulkanDebugUtils::BeginQueueLabel(
 		VkQueue            queue   , 
 		const std::string& caption , 
 		glm::vec4          color

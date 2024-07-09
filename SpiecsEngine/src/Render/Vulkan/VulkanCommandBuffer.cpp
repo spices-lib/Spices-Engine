@@ -17,7 +17,7 @@ namespace Spiecs {
 		/**
 		* @brief Instanced a VkCommandPoolCreateInfo with default value.
 		*/
-		VkCommandPoolCreateInfo poolInfo{};
+		VkCommandPoolCreateInfo     poolInfo{};
 		poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.flags            = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		poolInfo.queueFamilyIndex = vulkanState.m_GraphicQueueFamily;
@@ -52,7 +52,7 @@ namespace Spiecs {
 		/**
 		* @brief Create VkCommandBufferAllocateInfo struct.
 		*/
-		VkCommandBufferAllocateInfo allocInfo{};
+		VkCommandBufferAllocateInfo       allocInfo{};
 		allocInfo.sType                 = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.commandPool           = vulkanState.m_CommandPool;
 		allocInfo.level                 = VK_COMMAND_BUFFER_LEVEL_PRIMARY;

@@ -11,7 +11,7 @@
 namespace Spiecs {
 
 	/**
-	* @brief This Class is a Wapper of VulkanBuffer.
+	* @brief This Class is a Wrapper of VulkanBuffer.
 	*/
 	class VulkanBuffer : public VulkanObject
 	{
@@ -26,7 +26,7 @@ namespace Spiecs {
 			VulkanState& vulkanState
 		) 
 			: VulkanObject(vulkanState)
-		{};
+		{}
 
 		/**
 		* @brief Constructor Function.
@@ -46,7 +46,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanBuffer();
+		virtual ~VulkanBuffer() override;
 
 		/**
 		* @brief Copy data from a buffer to another.
@@ -64,7 +64,7 @@ namespace Spiecs {
 		* @brief Get VkDeviceMemory.
 		* @return Returns the VkDeviceMemory.
 		*/
-		inline VkDeviceMemory& GetMomory() { return m_BufferMemory; };
+		inline VkDeviceMemory& GetMemory() { return m_BufferMemory; }
 
 		/**
 		* @brief Get VkBuffer Address.
@@ -76,12 +76,12 @@ namespace Spiecs {
 		* @brief Get VkBuffer.
 		* @return Returns the VkBuffer.
 		*/
-		inline VkBuffer& Get() { return m_Buffer; };
+		inline VkBuffer& Get() { return m_Buffer; }
 
 		/**
 		* @brief Map buffer video memory to a local memory.
 		* @param[in] size The buffer size.
-		* @param[in] offset The buffer video memory offest.
+		* @param[in] offset The buffer video memory offset.
 		*/
 		void Map(
 			VkDeviceSize size   = VK_WHOLE_SIZE , 
@@ -91,7 +91,7 @@ namespace Spiecs {
 		/**
 		* @brief Get VkDescriptorBufferInfo.
 		* @param[in] size The buffer size.
-		* @param[in] offset The buffer video memory offest.
+		* @param[in] offset The buffer video memory offset.
 		* @return Returns the VkDescriptorBufferInfo.
 		*/
 		VkDescriptorBufferInfo* GetBufferInfo(
@@ -103,23 +103,23 @@ namespace Spiecs {
 		* @brief Write data to buffer.
 		* @param[in] data The data copy from.
 		* @param[in] size The buffer size.
-		* @param[in] offset The buffer video memory offest.
+		* @param[in] offset The buffer video memory offset.
 		*/
 		void WriteToBuffer(
-			void*        data, 
+			const void*        data, 
 			VkDeviceSize size   = VK_WHOLE_SIZE , 
 			VkDeviceSize offset = 0
-		);
+		) const;
 
 		/**
-		* @brief Flush the buffer's viedo memory data.
+		* @brief Flush the buffer's video memory data.
 		* @param[in] size The buffer size.
-		* @param[in] offset The buffer video memory offest.
+		* @param[in] offset The buffer video memory offset.
 		*/
 		void Flush(
 			VkDeviceSize size   = VK_WHOLE_SIZE, 
 			VkDeviceSize offset = 0
-		);
+		) const;
 
 	private:
 
@@ -147,7 +147,7 @@ namespace Spiecs {
 		/**
 		* @brief The buffer usage.
 		*/
-		VkBufferUsageFlags m_Uasge{};
+		VkBufferUsageFlags m_Usage {};
 
 		/**
 		* @brief The buffer memory requirement flags.
@@ -157,7 +157,7 @@ namespace Spiecs {
 		/**
 		* @brief The buffer this class handled.
 		*/
-		VkBuffer m_Buffer{};
+		VkBuffer m_Buffer {};
 
 		/**
 		* @brief The buffer video memory.

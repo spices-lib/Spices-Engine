@@ -11,9 +11,9 @@
 namespace Spiecs {
 
 	/**
-	* @breif VulkanImage is a wapper of VkImage.
+	* @breif VulkanImage is a wrapper of VkImage.
 	* It's a basic object of Vulkan.
-	* @todo Wapper by Texture.
+	* @todo Wrapper by Texture.
 	*/
 	class VulkanImage : public VulkanObject
 	{
@@ -23,31 +23,31 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		* Init class variable.
 		* Init a empty VulkanImage, used in TextureLoad.
-		* @param[in] vulkanState, The VulkanObject in used this frame.
+		* @param[in] vulkanState The VulkanObject in used this frame.
 		*/
 		VulkanImage(
 			VulkanState& vulkanState
 		)
 			: VulkanObject(vulkanState) 
-		{};
+		{}
 
 		/**
 		* @breif Constructor Function.
 		* Init class variable.
 		* Create the vkImage by specific parameters.
-		* @param[in] vulkanState, The VulkanObject in used this frame.
-		* @param[in] name, Image's name.
-		* @param[in] type, Image's type.
-		* @param[in] width, Image's width.
-		* @param[in] height, Image's height.
-		* @param[in] layers, Image's layers(texturecube).
-		* @param[in] numSamples, Image's MSAA sample num.(8 if enable MSAA).
-		* @param[in] format, Image's format.
-		* @param[in] tiling, Image's tilling.
-		* @param[in] usage, Image's used stage.
-		* @param[in] flages, Image's used flages.
-		* @param[in] properties, Image's data memory requirement.
-		* @param[in] mipLevels, Image's mipnum, if need.
+		* @param[in] vulkanState The VulkanObject in used this frame.
+		* @param[in] name Image's name.
+		* @param[in] type Image's type.
+		* @param[in] width Image's width.
+		* @param[in] height Image's height.
+		* @param[in] layers Image's layers(texture cube).
+		* @param[in] numSamples Image's MSAA sample num.(8 if enable MSAA).
+		* @param[in] format Image's format.
+		* @param[in] tiling Image's tilling.
+		* @param[in] usage Image's used stage.
+		* @param[in] flags Image's used flags.
+		* @param[in] properties Image's data memory requirement.
+		* @param[in] mipLevels Image's mip num, if need.
 		*/
 		VulkanImage(
 			VulkanState&          vulkanState  ,
@@ -60,7 +60,7 @@ namespace Spiecs {
 			VkFormat              format       ,
 			VkImageTiling         tiling       ,
 			VkImageUsageFlags     usage        ,
-			VkImageCreateFlags    flages       ,
+			VkImageCreateFlags    flags       ,
 			VkMemoryPropertyFlags properties   ,
 			uint32_t              mipLevels     
 		);
@@ -68,34 +68,34 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanImage();
+		virtual ~VulkanImage() override;
 
 		/**
 		* @breif Get VkImageView of this VkImage.
 		* Need Create before call this API.
 		* @return Returns VkImageView reference.
 		*/
-		inline VkImageView& GetView() { return m_ImageView; };
+		VkImageView& GetView() { return m_ImageView; }
 
 		/**
 		* @breif Get this VkImage.
 		* @return Returns VkImage reference.
 		*/
-		inline VkImage& GetImage() { return m_Image; };
+		VkImage& GetImage() { return m_Image; }
 
 		/**
 		* @brief Get this Layers.
 		* @return Returns the m_Layers.
 		*/
-		inline uint32_t GetLayers() { return m_Layers; };
+		uint32_t GetLayers() const { return m_Layers; }
 
 	public:
 
 		/**
 		* @breif Get VkDescriptorImageInfo.
-		* @param[in] imageLayout, Usually is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, also support custom layout.
+		* @param[in] imageLayout Usually is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, also support custom layout.
 		* @return Returns VkDescriptorImageInfo row pointer, avoiding copy, use pointer here.
-		* fell free to useing row pointer here.
+		* fell free to using row pointer here.
 		*/
 		VkDescriptorImageInfo* GetImageInfo(
 			VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
@@ -103,9 +103,9 @@ namespace Spiecs {
 
 		/**
 		* @breif Transform this VkImage's layout.
-		* @param[in] format, This VkImage's format, see m_Format.
-		* @param[in] oldLayout, The original layout, pass VK_IMAGE_LAYOUT_UNDEFINED if don't known the actural layout.
-		* @param[in] newLayout, The new layout.
+		* @param[in] format This VkImage's format, see m_Format.
+		* @param[in] oldLayout The original layout, pass VK_IMAGE_LAYOUT_UNDEFINED if don't known the actual layout.
+		* @param[in] newLayout The new layout.
 		*/
 		void TransitionImageLayout(
 			VkFormat        format     , 
@@ -115,17 +115,17 @@ namespace Spiecs {
 
 		/**
 		* @brief Copy the Buffer's data to this VkImage.
-		* @param[in] buffer, The buffer we want copy from.
-		* @param[in] image, The image we want copy to, usually this VkImage Object.
-		* @param[in] width, The image's width.
-		* @param[in] height, The image's height.
+		* @param[in] buffer The buffer we want copy from.
+		* @param[in] image The image we want copy to, usually this VkImage Object.
+		* @param[in] width The image's width.
+		* @param[in] height The image's height.
 		*/
 		void CopyBufferToImage(
 			VkBuffer   buffer   , 
 			VkImage    image    , 
 			uint32_t   width    , 
 			uint32_t   height
-		);
+		) const;
 
 		/**
 		* @breif Copy one texel data from a VkImage.
@@ -149,7 +149,7 @@ namespace Spiecs {
 			VkFormat imageFormat , 
 			int32_t  texWidth    , 
 			int32_t  texHeight
-		);
+		) const;
 
 		/**
 		* @brief Create Image View.
@@ -170,19 +170,19 @@ namespace Spiecs {
 
 		/**
 		* @breif Create a VkImage.
-		* @param[in] vulkanState, The VulkanObject in used this frame.
-		* @param[in] name, Image's name.
-		* @param[in] type, Image's type.
-		* @param[in] width, Image's width.
-		* @param[in] height, Image's height.
-		* @param[in] layers, Image's layers(texturecube).
-		* @param[in] numSamples, Image's MSAA sample num.(8 if enable MSAA).
-		* @param[in] format, Image's format.
-		* @param[in] tiling, Image's tilling.
-		* @param[in] usage, Image's used stage.
-		* @param[in] flages, Image's used flages.
-		* @param[in] properties, Image's data memory requirement.
-		* @param[in] mipLevels, Image's mipnum, if need.
+		* @param[in] vulkanState The VulkanObject in used this frame.
+		* @param[in] name Image's name.
+		* @param[in] type Image's type.
+		* @param[in] width Image's width.
+		* @param[in] height Image's height.
+		* @param[in] layers Image's layers(texture cube).
+		* @param[in] numSamples Image's MSAA sample num.(8 if enable MSAA).
+		* @param[in] format Image's format.
+		* @param[in] tiling Image's tilling.
+		* @param[in] usage Image's used stage.
+		* @param[in] flags Image's used flags.
+		* @param[in] properties Image's data memory requirement.
+		* @param[in] mipLevels Image's mip num, if need.
 		*/
 		void CreateImage(
 			VulkanState&           vulkanState   , 
@@ -195,7 +195,7 @@ namespace Spiecs {
 			VkFormat               format        , 
 			VkImageTiling          tiling        , 
 			VkImageUsageFlags      usage         , 
-			VkImageCreateFlags     flages        ,
+			VkImageCreateFlags     flags        ,
 			VkMemoryPropertyFlags  properties    , 
 			uint32_t               mipLevels
 		);
@@ -210,14 +210,14 @@ namespace Spiecs {
 		* @brief Get VkDescriptorSet.
 		* @return Returns the VkDescriptorSet.
 		*/
-		inline VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; };
+		inline VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; }
 
 	private:
 
 		/**
 		* @brief Destroy the DescriptorSetLayout if Created a DescriptorSet.
 		*/
-		void DestroyDescriptorSetLayout();
+		void DestroyDescriptorSetLayout() const;
 
 	private:
 
@@ -232,7 +232,7 @@ namespace Spiecs {
 		int m_Height = 0;
 
 		/**
-		* @brief Image layer(texturecube: 6).
+		* @brief Image layer(texture cube: 6).
 		*/
 		uint32_t m_Layers = 1;
 
@@ -252,7 +252,7 @@ namespace Spiecs {
 		VkFormat m_Format{};
 
 		/**
-		* @brief The Vkimage this Class Wappered.
+		* @brief The Vkimage this Class Wrapped.
 		*/
 		VkImage m_Image{};
 

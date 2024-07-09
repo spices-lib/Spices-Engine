@@ -76,7 +76,7 @@ namespace Spiecs {
 		/**
 		* @brief Create a Surface Object.
 		*/
-		void CreateVulkanSurface();
+		void CreateVulkanSurface() const;
 
 		/**
 		* @brief Static function Called on a vulkan debug message transfered.

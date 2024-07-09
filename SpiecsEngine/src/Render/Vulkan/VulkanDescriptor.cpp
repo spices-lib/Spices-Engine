@@ -154,7 +154,7 @@ namespace Spiecs {
 		/**
 		* @brief Create DescriptorSetLayout.
 		*/
-		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout));
+		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption);
 	}
 
@@ -210,7 +210,7 @@ namespace Spiecs {
 		/**
 		* @brief Allocate DescriptorSet.
 		*/
-		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet));
+		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName);
 	}
 
@@ -218,7 +218,7 @@ namespace Spiecs {
 		ImageInfo&                        imageInfo  ,
 		BufferInfo&                       bufferInfo ,
 		const VkAccelerationStructureKHR& accel
-	)
+	) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -263,7 +263,7 @@ namespace Spiecs {
 		}
 	}
 
-	void VulkanDescriptorSet::UpdateDescriptorSet(BufferInfo& bufferInfo)
+	void VulkanDescriptorSet::UpdateDescriptorSet(BufferInfo& bufferInfo) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -287,7 +287,7 @@ namespace Spiecs {
 		}
 	}
 
-	void VulkanDescriptorSet::UpdateDescriptorSet(ImageInfo& imageInfo)
+	void VulkanDescriptorSet::UpdateDescriptorSet(ImageInfo& imageInfo) const
 	{
 		SPIECS_PROFILE_ZONE;
 

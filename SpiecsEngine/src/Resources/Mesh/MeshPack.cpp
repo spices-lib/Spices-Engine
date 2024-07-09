@@ -115,9 +115,9 @@ namespace Spiecs {
 			);
 
 			void* data;
-			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
+			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory(), 0, bufferSize, 0, &data);
 			memcpy(data, m_Vertices.data(), (size_t)bufferSize);
-			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory());
+			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
 
 			m_VertexBuffer = std::make_unique<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
@@ -145,9 +145,9 @@ namespace Spiecs {
 			);
 
 			void* data;
-			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory(), 0, bufferSize, 0, &data);
+			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory(), 0, bufferSize, 0, &data);
 			memcpy(data, m_Indices.data(), (size_t)bufferSize);
-			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMomory());
+			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
 
 			m_IndicesBuffer = std::make_unique<VulkanBuffer>(
 				VulkanRenderBackend::GetState(), 

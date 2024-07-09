@@ -108,14 +108,14 @@ namespace SpiecsTest {
 		void* data;
 		vkMapMemory(
 			m_RenderBackend->GetState().m_Device, 
-			stagingBuffer.GetMomory(), 
+			stagingBuffer.GetMemory(), 
 			0, 
 			m_TextureSize * m_TextureSize * 4 * 4, 
 			0, 
 			&data
 		);
 		memcpy(data, dataArray.data(), static_cast<size_t>(m_TextureSize * m_TextureSize * 4 * 4));
-		vkUnmapMemory(m_RenderBackend->GetState().m_Device, stagingBuffer.GetMomory());
+		vkUnmapMemory(m_RenderBackend->GetState().m_Device, stagingBuffer.GetMemory());
 	
 		/**
 		* @brief Transform Image Layout from origin to Transfer_dst.

@@ -12,8 +12,8 @@ namespace Spiecs {
 	
 	/**
 	* @brief VulkanCommandPool Class.
-	* This class defines the VulkanCommandPool behaver.
-	* This class is just a wapper of VkCommandPool.
+	* This class defines the VulkanCommandPool behaves.
+	* This class is just a wrapper of VkCommandPool.
 	*/
 	class VulkanCommandPool : public VulkanObject
 	{
@@ -29,13 +29,13 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanCommandPool();
+		virtual ~VulkanCommandPool() override;
 	};
 
 	/**
 	* @brief VulkanCommandBuffer Class.
-	* This class defines the VulkanCommandBuffer behaver.
-	* This class is just a wapper of VkCommandBuffer.
+	* This class defines the VulkanCommandBuffer behaves.
+	* This class is just a wrapper of VkCommandBuffer.
 	*/
 	class VulkanCommandBuffer : public VulkanObject
 	{
@@ -50,13 +50,13 @@ namespace Spiecs {
 
 		/**
 		* @brief Destructor Function.
-		* VkCommanBuffer is created by VkCommandPool, we do not need destroy it here manually.
+		* VkCommandBuffer is created by VkCommandPool, we do not need destroy it here manually.
 		*/
-		virtual ~VulkanCommandBuffer() {};
+		virtual ~VulkanCommandBuffer() override = default;
 
 		/**
-		* @brief Create a new commandbuffer and record custom cmd, submit to graphic queue, execute it immediatelly.
-		* @param[in] T The function pointer of what cmd need to execute.
+		* @brief Create a new command buffer and record custom cmd, submit to graphic queue, execute it immediately.
+		* @param[in] func The function pointer of what cmd need to execute.
 		* @param[in] vulkanState The global VulkanState.
 		*/
 		template<typename T>
@@ -71,7 +71,7 @@ namespace Spiecs {
 		/**
 		* @brief Instanced a VkCommandBufferAllocateInfo with default value.
 		*/
-		VkCommandBufferAllocateInfo allocInfo{};
+		VkCommandBufferAllocateInfo     allocInfo{};
 		allocInfo.sType               = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level               = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandPool         = vulkanState.m_CommandPool;

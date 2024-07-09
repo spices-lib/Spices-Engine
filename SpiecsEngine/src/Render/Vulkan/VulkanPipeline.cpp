@@ -140,7 +140,7 @@ namespace Spiecs {
 		configInfo.attributeDescriptions                     = Vertex::GetAttributeDescriptions();
 	}
 
-	void VulkanPipeline::Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint)
+	void VulkanPipeline::Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint) const
 	{
 		SPIECS_PROFILE_ZONE;
 

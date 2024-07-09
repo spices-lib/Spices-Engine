@@ -126,7 +126,9 @@ namespace Spiecs {
 		*/
 #ifdef SPIECS_DEBUG
 
-		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(m_VulkanState.m_Instance, "vkDestroyDebugUtilsMessengerEXT");
+		const auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(
+			m_VulkanState.m_Instance, "vkDestroyDebugUtilsMessengerEXT"));
+		
 		if (func != nullptr) {
 			func(m_VulkanState.m_Instance, m_DebugMessenger, nullptr);
 		}
@@ -147,8 +149,7 @@ namespace Spiecs {
 		* @brief Get glfw extensions requirements.
 		*/
 		uint32_t glfwExtensionCount = 0;
-		const char** glfwExtensions;
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+		const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
 		/**
 		* @brief Combine glfw extensions requirements.
@@ -247,16 +248,16 @@ namespace Spiecs {
 		/**
 		* @brief Check whether all layer satisfied.
 		*/
-		std::set<std::string> requiredLayera(m_LayerProperties.begin(), m_LayerProperties.end());
+		std::set<std::string> requiredLayers(m_LayerProperties.begin(), m_LayerProperties.end());
 
 		for (const auto& layer : availableLayers) 
 		{
-			requiredLayera.erase(layer.layerName);
+			requiredLayers.erase(layer.layerName);
 		}
 
-		if (!requiredLayera.empty())
+		if (!requiredLayers.empty())
 		{
-			for (auto& set : requiredLayera)
+			for (auto& set : requiredLayers)
 			{
 				std::stringstream ss;
 				ss << "Instance Layer Required: " << set << ", Which is not satisfied";
@@ -265,7 +266,7 @@ namespace Spiecs {
 			}
 		}
 
-		return requiredLayera.empty();
+		return requiredLayers.empty();
 	}
 
 	void VulkanInstance::SetVulkanDebugCallbackFuncPointer()
@@ -274,7 +275,9 @@ namespace Spiecs {
 
 #ifdef SPIECS_DEBUG
 
-		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(m_VulkanState.m_Instance, "vkCreateDebugUtilsMessengerEXT");
+		const auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(
+			m_VulkanState.m_Instance, "vkCreateDebugUtilsMessengerEXT"));
+		
 		if (func != nullptr) 
 		{
 			func(m_VulkanState.m_Instance, &m_DebugMessengerCreateInfo, nullptr, &m_DebugMessenger);
@@ -286,7 +289,7 @@ namespace Spiecs {
 #endif
 	}
 
-	void VulkanInstance::CreateVulkanSurface()
+	void VulkanInstance::CreateVulkanSurface() const
 	{
 		SPIECS_PROFILE_ZONE;
 

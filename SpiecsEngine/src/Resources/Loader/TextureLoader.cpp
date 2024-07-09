@@ -85,9 +85,9 @@ namespace Spiecs {
 		* @brief Copy the data from texture bytes to staginBuffer.
 		*/
 		void* data;
-		vkMapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMomory(), 0, imageSize, 0, &data);
+		vkMapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMemory(), 0, imageSize, 0, &data);
 		memcpy(data, pixels, static_cast<size_t>(imageSize));
-		vkUnmapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMomory());
+		vkUnmapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMemory());
 
 		/**
 		* @brief Release texture bytes.

@@ -279,7 +279,7 @@ namespace Spiecs {
 		auto getHandle = [&](int i) { return handles.data() + i * handleSize; };
 
 		void* data;
-		vkMapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMomory(), 0, sbtSize, 0, &data);
+		vkMapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMemory(), 0, sbtSize, 0, &data);
 
 		/**
 		* @brief Map the SBT buffer and write in the handles.
@@ -318,6 +318,6 @@ namespace Spiecs {
 			pData += m_HitRegion.stride;
 		}
 
-		vkUnmapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMomory());
+		vkUnmapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMemory());
 	}
 }

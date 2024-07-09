@@ -18,7 +18,7 @@ namespace Spiecs {
 	)
 		: VulkanObject(vulkanState)
 		, m_DeviceSize(size       )
-		, m_Uasge     (usage      )
+		, m_Usage     (usage      )
 		, m_Flags     (properties )
 	{
 		SPIECS_PROFILE_ZONE;
@@ -70,7 +70,7 @@ namespace Spiecs {
 
 	VkDeviceAddress& VulkanBuffer::GetAddress()
 	{
-		if (m_Uasge & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		if (m_Usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
 			return m_BufferAddress;
 		}
@@ -99,7 +99,7 @@ namespace Spiecs {
 		return &m_BufferInfo;
 	}
 
-	void VulkanBuffer::WriteToBuffer(void* data, VkDeviceSize size, VkDeviceSize offset)
+	void VulkanBuffer::WriteToBuffer(const void* data, VkDeviceSize size, VkDeviceSize offset) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -111,13 +111,13 @@ namespace Spiecs {
 			memcpy(m_LocalMemory, data, m_DeviceSize);
 		}
 		else {
-			char* memOffset = (char*)m_LocalMemory;
+			char* memOffset = static_cast<char*>(m_LocalMemory);
 			memOffset += offset;
 			memcpy(memOffset, data, size);
 		}
 	}
 
-	void VulkanBuffer::Flush(VkDeviceSize size, VkDeviceSize offset)
+	void VulkanBuffer::Flush(VkDeviceSize size, VkDeviceSize offset) const
 	{
 		SPIECS_PROFILE_ZONE;
 		
@@ -141,7 +141,7 @@ namespace Spiecs {
 		SPIECS_PROFILE_ZONE;
 
 		m_DeviceSize = size;
-		m_Uasge = usage;
+		m_Usage = usage;
 		m_Flags = properties;
 
 		/**

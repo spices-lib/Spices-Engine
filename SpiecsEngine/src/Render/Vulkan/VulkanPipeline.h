@@ -18,19 +18,19 @@ namespace Spiecs {
 	{
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		PipelineConfigInfo() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
 
@@ -111,7 +111,7 @@ namespace Spiecs {
 	};
 
 	/**
-	* @brief This class is a wapper of VkPipelineLayout and VkPipeline.
+	* @brief This class is a wrapper of VkPipelineLayout and VkPipeline.
 	*/
 	class VulkanPipeline : public VulkanObject
 	{
@@ -141,7 +141,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanPipeline();
+		virtual ~VulkanPipeline() override;
 
 		/**
 		* @brief Create a PipelineConfigInfo with default parameter.
@@ -154,7 +154,7 @@ namespace Spiecs {
 		* @param[in] frameIndex The CommandBuffer Index.
 		* @param[in] bindPoint VkPipelineBindPoint.
 		*/
-		void Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
+		void Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS) const;
 
 		/**
 		* @brief Get VkPipelineLayout.
@@ -197,7 +197,7 @@ namespace Spiecs {
 	};
 
 	/**
-	* @brief This class is a wapper of VkPipelineLayout and VkPipeline.
+	* @brief This class is a wrapper of VkPipelineLayout and VkPipeline.
 	*/
 	class VulkanRayTracingPipeline : public VulkanPipeline
 	{
@@ -221,7 +221,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanRayTracingPipeline() {};
+		virtual ~VulkanRayTracingPipeline() override = default;
 
 	private:
 

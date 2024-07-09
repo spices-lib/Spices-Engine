@@ -25,7 +25,7 @@ namespace Spiecs {
 		VkFormat              format      ,   
 		VkImageTiling         tiling      , 
 		VkImageUsageFlags     usage       ,
-		VkImageCreateFlags    flages      ,
+		VkImageCreateFlags    flags      ,
 		VkMemoryPropertyFlags properties  , 
 		uint32_t              mipLevels
 	)
@@ -52,7 +52,7 @@ namespace Spiecs {
 			format, 
 			tiling, 
 			usage,
-			flages,
+			flags,
 			properties, 
 			mipLevels
 		);
@@ -248,7 +248,7 @@ namespace Spiecs {
 		VkImage  image   , 
 		uint32_t width   , 
 		uint32_t height
-	)
+	) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -287,7 +287,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		uint32_t channelsize = 4;
+		uint32_t channelize = 4;
 
 		/**
 		* @todo Support all type;
@@ -295,13 +295,13 @@ namespace Spiecs {
 		switch (m_Format)
 		{
 		case VK_FORMAT_B8G8R8A8_UNORM:           // 4 bytes.
-			channelsize = 4;			         
+			channelize = 4;			         
 			break;						         
 		case VK_FORMAT_R32_SFLOAT:               // 4 bytes.
-			channelsize = 4;
+			channelize = 4;
 			break;
 		case VK_FORMAT_R32G32B32A32_SFLOAT:      // 16 bytes.
-			channelsize = 16;
+			channelize = 16;
 			break;
 		}
 
@@ -310,13 +310,13 @@ namespace Spiecs {
 		*/
 		VulkanBuffer stagingbuffer(
 			m_VulkanState, 
-			channelsize,
+			channelize,
 			VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
 		/*
-		* @brief Transfer image layout from whatever to trasfersrc.
+		* @brief Transfer image layout from whatever to trasfer src.
 		*/
 		TransitionImageLayout(
 			m_Format,
@@ -337,8 +337,8 @@ namespace Spiecs {
 		region.imageSubresource.baseArrayLayer = 0;
 		region.imageSubresource.layerCount     = m_Layers;
 
-		region.imageOffset.x                   = x;
-		region.imageOffset.y                   = y;
+		region.imageOffset.x                   = static_cast<int32_t>(x);
+		region.imageOffset.y                   = static_cast<int32_t>(y);
 		region.imageExtent                     = { 1, 1, 1 };
 
 		/**
@@ -349,9 +349,9 @@ namespace Spiecs {
 		});
 
 		/*
-		* @brief Transfer image layout from trasfersrc to shaderread.
-		* means only can get data from a shaderread layout image.
-		* @note In SpiecsEngine, we need transform layout to shaderread in scenecomposerenderer first,
+		* @brief Transfer image layout from transfer src to shader read.
+		* means only can get data from a shader read layout image.
+		* @note In SpiecsEngine, we need transform layout to shader read in scenecomposerenderer first,
 		* and after that, you can do this here.
 		*/
 		TransitionImageLayout(
@@ -365,12 +365,12 @@ namespace Spiecs {
 		/**
 		* @brief Use memcpy get date from buffer.
 		*/
-		vkMapMemory(m_VulkanState.m_Device, stagingbuffer.GetMomory(), 0, channelsize, 0, &data);
-		memcpy(out_rgba, data, static_cast<size_t>(channelsize));
-		vkUnmapMemory(m_VulkanState.m_Device, stagingbuffer.GetMomory());
+		vkMapMemory(m_VulkanState.m_Device, stagingbuffer.GetMemory(), 0, channelize, 0, &data);
+		memcpy(out_rgba, data, static_cast<size_t>(channelize));
+		vkUnmapMemory(m_VulkanState.m_Device, stagingbuffer.GetMemory());
 	}
 
-	void VulkanImage::GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight)
+	void VulkanImage::GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -505,7 +505,7 @@ namespace Spiecs {
 		viewInfo.subresourceRange.aspectMask       = aspectFlags;
 		viewInfo.subresourceRange.baseMipLevel     = 0;
 		viewInfo.subresourceRange.levelCount       = m_MipLevels;                                 // mipmaps num.
-		viewInfo.subresourceRange.baseArrayLayer   = 0;                                           // layer index.(access given index layer of texturearray/texturecube)
+		viewInfo.subresourceRange.baseArrayLayer   = 0;                                           // layer index.(access given index layer of texture array/texture cube)
 		viewInfo.subresourceRange.layerCount       = m_Layers;                                    // layer num.
 
 		/**
@@ -566,7 +566,7 @@ namespace Spiecs {
 		VkFormat              format      , 
 		VkImageTiling         tiling      , 
 		VkImageUsageFlags     usage       , 
-		VkImageCreateFlags    flages      ,
+		VkImageCreateFlags    flags      ,
 		VkMemoryPropertyFlags properties  , 
 		uint32_t              mipLevels
 	)
@@ -593,7 +593,7 @@ namespace Spiecs {
 		imageInfo.usage          = usage;
 		imageInfo.sharingMode    = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples        = numSamples;
-		imageInfo.flags          = flages;
+		imageInfo.flags          = flags;
 
 		/**
 		* @brief Create Image.
@@ -635,7 +635,7 @@ namespace Spiecs {
 		/**
 		* @brief Allocate video memory.
 		*/
-		VK_CHECK(vkAllocateMemory(vulkanState.m_Device, &allocInfo, nullptr, &m_ImageMemory));
+		VK_CHECK(vkAllocateMemory(vulkanState.m_Device, &allocInfo, nullptr, &m_ImageMemory))
 
 		/**
 		* @brief Bind video memory.
@@ -675,7 +675,7 @@ namespace Spiecs {
 		/**
 		* @brief Create DescriptorSetLayout.
 		*/
-		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout));
+		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_DescriptorSetLayout, m_VulkanState.m_Device, "DescriptorSetLayoutImage");
 
 		/**
@@ -690,7 +690,7 @@ namespace Spiecs {
 		/**
 		* @brief Allocate DescriptorSets.
 		*/
-		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet));
+		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSetImage");
 		
 		/**
@@ -719,7 +719,7 @@ namespace Spiecs {
 		vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &descriptorWrite, 0, nullptr);
 	}
 
-	void VulkanImage::DestroyDescriptorSetLayout()
+	void VulkanImage::DestroyDescriptorSetLayout() const
 	{
 		SPIECS_PROFILE_ZONE;
 

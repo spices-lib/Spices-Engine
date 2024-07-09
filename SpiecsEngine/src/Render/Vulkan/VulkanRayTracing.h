@@ -195,9 +195,9 @@ namespace Spiecs {
 		);
 
 		void* data;
-		vkMapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory(), 0, sizeof(T) * instances.size(), 0, &data);
+		vkMapMemory(m_VulkanState.m_Device, stagingBuffer.GetMemory(), 0, sizeof(T) * instances.size(), 0, &data);
 		memcpy(data, instances.data(), sizeof(T) * instances.size());
-		vkUnmapMemory(m_VulkanState.m_Device, stagingBuffer.GetMomory());
+		vkUnmapMemory(m_VulkanState.m_Device, stagingBuffer.GetMemory());
 
 		instancesBuffer.CopyBuffer(stagingBuffer.Get(), instancesBuffer.Get(), sizeof(T) * instances.size());
 
