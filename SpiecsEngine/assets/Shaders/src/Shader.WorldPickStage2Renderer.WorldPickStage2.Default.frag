@@ -8,7 +8,7 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable
+#extension GL_GOOGLE_include_directive : enable       /* @brief Enable include Macro. */
 
 #include "Header/ShaderPreRendererLayout.glsl"
 
@@ -42,9 +42,26 @@ layout(set = 1, binding = 0) uniform sampler2D selectBuffer;  /* @brief Select B
 
 /*************************************Functions*******************************************/
 
-float SampleWithOffest(vec2 uv_offest);
-float Sobel(float MatColor[3][3]);
-float EdgeClear(float mask);
+/**
+* @brief Sample a texture with uv offest.
+* @param[in] uv_offest UV offest apply to sampler.
+* @return Returns the sampled value.
+*/
+float SampleWithOffest(in vec2 uv_offest);
+
+/**
+* @brief Sobel Edge.
+* @param[in] MatColor, Color.
+* @return Returns Sobel output.
+*/
+float Sobel(in float MatColor[3][3]);
+
+/**
+* @brief Remove edge effect.
+* @param[in] mask .
+* @return Returns 0 in edge.
+*/
+float EdgeClear(in float mask);
 
 /*****************************************************************************************/
 
@@ -78,14 +95,14 @@ void main()
 
 /*****************************************************************************************/
 
-float SampleWithOffest(vec2 uv_offest)
+float SampleWithOffest(in vec2 uv_offest)
 {
 	float outLineWidth = min(fwidth(fragInput.texCoord.x * view.sceneTextureSize.x), fwidth(fragInput.texCoord.y * view.sceneTextureSize.y));
 	vec2 uv = fragInput.texCoord + uv_offest * view.sceneTextureSize.zw * outLineWidth * 0.5f;
 	return texture(selectBuffer, uv).x;
 }
 
-float Sobel(float MatColor[3][3])
+float Sobel(in float MatColor[3][3])
 {
 	float Gridx = -1.0f * MatColor[0][0] - 2.0f * MatColor[1][0] - 1.0f * MatColor[2][0] +
 		1.0f * MatColor[0][2] + 2.0f * MatColor[1][2] + 1.0f * MatColor[2][2];
@@ -96,7 +113,7 @@ float Sobel(float MatColor[3][3])
 	return smoothstep(0.0f, 1.0f, sqrt(Gridx * Gridx + Gridy * Gridy));
 }
 
-float EdgeClear(float mask)
+float EdgeClear(in float mask)
 {
 	if (fragInput.texCoord.x < 0.001f || 
 		fragInput.texCoord.x > 0.999f || 

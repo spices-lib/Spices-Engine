@@ -264,17 +264,17 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
             uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
             isShadowArea   = true;
             
-            traceRayEXT(topLevelAS,          // acceleration structure
-                        flags,               // rayFlags
-                        0xFF,                // cullMask
-                        0,                   // sbtRecordOffset
-                        0,                   // sbtRecordStride
-                        1,                   // missIndex
-                        origin,              // ray origin
-                        tMin,                // ray min range
-                        rayDir,              // ray direction
-                        tMax,                // ray max range
-                        1                    // payload (location = 1)
+            traceRayEXT(topLevelAS,          /* @brief Acceleration structure.  */
+                        flags,               /* @brief RayFlags.                */
+                        0xFF,                /* @brief CullMask.                */
+                        0,                   /* @brief SBTRecordOffset.         */
+                        0,                   /* @brief SBTRecordStride.         */
+                        1,                   /* @brief MissIndex.               */
+                        origin,              /* @brief Ray origin.              */
+                        tMin,                /* @brief Ray min range.           */
+                        rayDir,              /* @brief Ray direction.           */
+                        tMax,                /* @brief Ray max range.           */
+                        1                    /* @brief Payload (location = 1).  */
             );
 
             if(!isShadowArea)
@@ -315,17 +315,17 @@ vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
             uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
             isShadowArea   = true;
             
-            traceRayEXT(topLevelAS,          // acceleration structure
-                        flags,               // rayFlags
-                        0xFF,                // cullMask
-                        0,                   // sbtRecordOffset
-                        0,                   // sbtRecordStride
-                        1,                   // missIndex
-                        origin,              // ray origin
-                        tMin,                // ray min range
-                        rayDir,              // ray direction
-                        tMax,                // ray max range
-                        1                    // payload (location = 1)
+            traceRayEXT(topLevelAS,          /* @brief Acceleration structure.  */
+                        flags,               /* @brief RayFlags.                */
+                        0xFF,                /* @brief CullMask.                */
+                        0,                   /* @brief SBTRecordOffset.         */
+                        0,                   /* @brief SBTRecordStride.         */
+                        1,                   /* @brief MissIndex.               */
+                        origin,              /* @brief Ray origin.              */
+                        tMin,                /* @brief Ray min range.           */
+                        rayDir,              /* @brief Ray direction.           */
+                        tMax,                /* @brief Ray max range.           */
+                        1                    /* @brief Payload (location = 1).  */
             );
 
             if(!isShadowArea)

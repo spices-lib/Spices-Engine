@@ -14,6 +14,9 @@
 
 /************************************Missing Input Output*********************************/
 
+/**
+* @brief Ray trace payloads.
+*/
 layout(location = 1) rayPayloadInEXT bool isShadowArea;
 
 /*****************************************************************************************/

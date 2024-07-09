@@ -8,7 +8,7 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable
+#extension GL_GOOGLE_include_directive : enable    /* @brief Enable include Macro. */
 
 #include "Header/ShaderCommon.h"
 
@@ -48,6 +48,9 @@ layout(push_constant) uniform Push {
 
 /********************************Specific Renderer Data***********************************/
 
+/**
+* @brief Sprite Texture.
+*/
 layout(set = 1, binding = 0) uniform sampler2D samplers;
 
 /*****************************************************************************************/

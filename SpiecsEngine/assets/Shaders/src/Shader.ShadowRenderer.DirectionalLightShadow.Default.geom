@@ -8,14 +8,20 @@
 
 #version 460
 
+#define MAX_DIRECTIONALLIGHT_NUM 2
+
 /*****************************************************************************************/
 
 /************************************Geometry Input***************************************/
 
-#define MAX_DIRECTIONALLIGHT_NUM 2
-
+/**
+* @brief From Input Assembly.
+*/
 layout(triangles, invocations = MAX_DIRECTIONALLIGHT_NUM) in;
 
+/**
+* @brief SSBO of DirectioaalLight Matrixs.
+*/
 layout(set = 1, binding = 0) readonly buffer DirectionalLightMatrixs {
 	mat4 Matrixs[];
 };
@@ -24,6 +30,9 @@ layout(set = 1, binding = 0) readonly buffer DirectionalLightMatrixs {
 
 /************************************Geometry Output**************************************/
 
+/**
+* @brief Output to different layer in Framebuffer attachment Texture2DArray. 
+*/
 layout(triangle_strip, max_vertices = 3) out;
 
 /*****************************************************************************************/
