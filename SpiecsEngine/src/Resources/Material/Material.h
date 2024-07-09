@@ -216,12 +216,12 @@ namespace Spiecs {
 		* @brief m_ConstantParams's VkBuffer.
 		* Key: set, Value: VkBuffer.
 		*/
-		std::unordered_map<Int2, std::unique_ptr<VulkanBuffer>> m_Buffers;
+		std::unordered_map<UInt2, std::unique_ptr<VulkanBuffer>> m_Buffers;
 
 		/**
 		* @brief m_Buffers's c++ data container.
 		* Key: set, Value: scl::runtime_memory_block.
 		*/
-		std::unordered_map<Int2, scl::runtime_memory_block> m_Buffermemoryblocks;
+		std::unordered_map<UInt2, scl::runtime_memory_block> m_Buffermemoryblocks;
 	};
 }

@@ -912,7 +912,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		Int2 id(set, binding);
+		UInt2 id(set, binding);
 
 		/**
 		* @brief Creating VulkanBuffer.
@@ -952,7 +952,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		Int2 id(set, binding);
+		UInt2 id(set, binding);
 
 		/**
 		* @brief Creating VulkanBuffer.

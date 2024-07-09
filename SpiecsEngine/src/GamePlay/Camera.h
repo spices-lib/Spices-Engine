@@ -30,7 +30,7 @@ namespace Spiecs {
 	/**
 	* @brief Camera Class.
 	* This class just encapsulate Projection Matrix.
-	* @todo Implementate projection type switch.
+	* @todo Implemented projection type switch.
 	*/
 	class Camera
 	{
@@ -75,36 +75,36 @@ namespace Spiecs {
 		/**
 		* @brief Reset m_StableFrames to 0.
 		*/
-		void ResetStableFrames() { m_StableFrames = 0; };
+		void ResetStableFrames() { m_StableFrames = 0; }
 
 		/**
 		* @brief InCreate 1 to m_StableFrames per frame.
 		*/
-		void IncreaseStableFrames() { m_StableFrames++; };
+		void IncreaseStableFrames() { m_StableFrames++; }
 
 		/**
 		* @brief Get camera projection matrix.
 		* @return Returns the camera projection matrix.
 		*/
-		inline glm::mat4 GetPMatrix() const { return m_ProjectionMatrix; };
+		inline glm::mat4 GetPMatrix() const { return m_ProjectionMatrix; }
 
 		/**
 		* @brief Get camera projection type.
 		* @return Returns the camera projection type.
 		*/
-		inline ProjectionType GetProjectionType() const { return m_ProjectionType; };
+		const ProjectionType& GetProjectionType() const { return m_ProjectionType; }
 
 		/**
 		* @brief Get camera AspectRatio.
 		* @return Returns the camera AspectRatio.
 		*/
-		inline float GetAspectRatio() const { return m_AspectRatio; };
+		inline float GetAspectRatio() const { return m_AspectRatio; }
 
 		/**
 		* @brief Get camera StableFrames.
 		* @return Return the camera StableFrames.
 		*/
-		inline unsigned int GetStableFrames() const { return m_StableFrames; };
+		inline unsigned int GetStableFrames() const { return m_StableFrames; }
 
 	private:
 

@@ -33,8 +33,8 @@ namespace Spiecs {
 
 		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
-			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+			const glm::vec2& mouse { Input::GetMouseX(), Input::GetMouseY() };
+			const glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 			
 			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
@@ -75,7 +75,7 @@ namespace Spiecs {
 	{
 		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return false;
 
-		const float ratio = m_ViewportWidth / static_cast<float>(m_ViewportHeight);
+		const float ratio = static_cast<float>(m_ViewportWidth) / static_cast<float>(m_ViewportHeight);
 
 		const float delta = e.GetYOffset() * 0.1f;
 
@@ -97,10 +97,9 @@ namespace Spiecs {
 	{
 		m_ViewportWidth = e.GetWidth();
 		m_ViewportHeight = e.GetHeight();
-		float ratio = m_ViewportWidth / static_cast<float>(m_ViewportHeight);
-		ProjectionType type = m_Camera->GetProjectionType();
+		const float ratio = static_cast<float>(m_ViewportWidth) / static_cast<float>(m_ViewportHeight);
 
-		switch (type)
+		switch (m_Camera->GetProjectionType())
 		{
 		case ProjectionType::Perspective:
 			m_Camera->SetPerspective(ratio);
@@ -121,10 +120,10 @@ namespace Spiecs {
 		m_FocalPoint += -GetUpDirection() * delta.y * ySpeed * m_Distance;
 	}
 
-	void CameraController::MouseRotate(const glm::vec2& delta)
+	void CameraController::MouseRotate(const glm::vec2& delta) const
 	{
 		glm::vec3 rot = m_CameraTranComp->GetRotation();
-		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
+		const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 
 		rot.y -= yawSign * delta.x * RotationSpeed();
 		rot.x += delta.y * RotationSpeed();
@@ -132,7 +131,7 @@ namespace Spiecs {
 		m_CameraTranComp->SetRotation(rot);
 	}
 
-	void CameraController::MouseZoom(float delta)
+	void CameraController::MouseZoom(const float& delta)
 	{
 		m_Distance += delta * ZoomSpeed();
 		if (m_Distance < 1.0f)
@@ -144,10 +143,10 @@ namespace Spiecs {
 
 	std::pair<float, float> CameraController::PanSpeed() const
 	{
-		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
+		const float x = std::min(static_cast<float>(m_ViewportWidth) / 1000.0f, 2.4f); // max = 2.4f
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
-		float y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
+		const float y = std::min(static_cast<float>(m_ViewportHeight) / 1000.0f, 2.4f); // max = 2.4f
 		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
 
 		return { xFactor, yFactor };
@@ -167,9 +166,9 @@ namespace Spiecs {
 		return speed;
 	}
 
-	void CameraController::UpdateView()
+	void CameraController::UpdateView() const
 	{
-		glm::vec3 pos = CalculatePosition();
+		const glm::vec3 pos = CalculatePosition();
 		m_CameraTranComp->SetPostion(pos);
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 	}

@@ -27,7 +27,7 @@ namespace Spiecs {
 	};
 
 	template<typename T>
-	inline void ContainerLibrary::Append(std::vector<T>& dst, const std::vector<T>& src)
+	void ContainerLibrary::Append(std::vector<T>& dst, const std::vector<T>& src)
 	{
 		for (int i = 0; i < src.size(); i++)
 		{

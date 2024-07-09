@@ -48,7 +48,7 @@ namespace Spiecs {
 		m_SubPassDescriptions.pipelineBindPoint         = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		m_SubPassDescriptions.colorAttachmentCount      = static_cast<uint32_t>(m_ColorAttachmentReference.size());
 		m_SubPassDescriptions.pColorAttachments         = m_ColorAttachmentReference.data();
-		m_SubPassDescriptions.pDepthStencilAttachment   = m_DepthAttachmentReference.size() != 0 ? m_DepthAttachmentReference.data() : nullptr;
+		m_SubPassDescriptions.pDepthStencilAttachment   = m_DepthAttachmentReference.empty() ? nullptr : m_DepthAttachmentReference.data();
 		m_SubPassDescriptions.inputAttachmentCount      = static_cast<uint32_t>(m_InputAttachmentReference.size());
 		m_SubPassDescriptions.pInputAttachments         = m_InputAttachmentReference.data();
 	}
@@ -62,7 +62,7 @@ namespace Spiecs {
 		m_SubPassDependency.srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 		m_SubPassDependency.dstStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 		m_SubPassDependency.srcAccessMask   = 0;
-		m_SubPassDependency.dstAccessMask   = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		m_SubPassDependency.dstAccessMask   = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 		m_SubPassDependency.dependencyFlags = 0;
 	}
 
@@ -79,11 +79,11 @@ namespace Spiecs {
 		m_SubPassDependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 	}
 
-	void RendererSubPass::SetBuffer(const Int2& i2, void* data, uint64_t size, uint64_t offest)
+	void RendererSubPass::SetBuffer(const UInt2& i2, void* data, uint64_t size, uint64_t offset)
 	{
 		SPIECS_PROFILE_ZONE;
 
-		m_Buffers[i2]->WriteToBuffer(data, size, offest);
+		m_Buffers[i2]->WriteToBuffer(data, size, offset);
 		m_Buffers[i2]->Flush();
 	}
 }

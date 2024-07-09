@@ -22,7 +22,7 @@ namespace std {
 	template<>
 	struct hash<Spiecs::UUID>
 	{
-		std::size_t operator()(const Spiecs::UUID& uuid) const
+		std::size_t operator()(const Spiecs::UUID& uuid) const noexcept
 		{
 			return hash<uint64_t>()((uint64_t)uuid);
 		}

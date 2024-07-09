@@ -18,8 +18,8 @@ namespace Spiecs {
 	{
 		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
-			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+			const glm::vec2& mouse { Input::GetMouseX(), Input::GetMouseY() };
+			const glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 
 			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle)) { MousePan(delta); UpdateView(); }
@@ -47,10 +47,10 @@ namespace Spiecs {
 		m_FocalPoint += GetUpDirection() * delta.y * ySpeed * m_Distance;
 	}
 
-	void MeshController::MouseRotate(const glm::vec2& delta)
+	void MeshController::MouseRotate(const glm::vec2& delta) const
 	{
 		glm::vec3 rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
-		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
+		const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 
 		rot.y += yawSign * delta.x * RotationSpeed();
 		rot.x += delta.y * RotationSpeed();
@@ -70,10 +70,10 @@ namespace Spiecs {
 
 	std::pair<float, float> MeshController::PanSpeed() const
 	{
-		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
+		const float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
-		float y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
+		const float y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
 		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
 
 		return { xFactor, yFactor };
@@ -93,9 +93,9 @@ namespace Spiecs {
 		return speed;
 	}
 
-	void MeshController::UpdateView()
+	void MeshController::UpdateView() const
 	{
-		glm::vec3 pos = CalculatePosition();
+		const glm::vec3 pos = CalculatePosition();
 		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPostion(pos);
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 

@@ -27,7 +27,7 @@ namespace Spiecs {
 		* @brief Get Key Input Code.
 		* @return Returns the Key Input Code.
 		*/
-		inline int GetKeyCode() const { return m_KeyCode; }
+		const int& GetKeyCode() const { return m_KeyCode; }
 
 		/**
 		* @brief Specific this Class Category with EventCategoryKeyboard and EventCategoryInput.
@@ -76,7 +76,7 @@ namespace Spiecs {
 		* @brief Get Input Key repeat count.
 		* @return Returns the Input Key repeat count.
 		*/
-		inline int GetRepeatCount() const { return m_RepeatCount; }
+		const int& GetRepeatCount() const { return m_RepeatCount; }
 
 		/**
 		* @brief Serialize this Event Class to string.
@@ -127,7 +127,7 @@ namespace Spiecs {
 		* @brief Serialize this Event Class to string.
 		* @return Returns Serialized string.
 		*/
-		std::string ToString() const override
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyReleasedEvent: " << m_KeyCode;
@@ -165,7 +165,7 @@ namespace Spiecs {
 		* @brief Serialize this Event Class to string.
 		* @return Returns Serialized string.
 		*/
-		std::string ToString() const override
+		virtual std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyTypedEvent: " << m_KeyCode;

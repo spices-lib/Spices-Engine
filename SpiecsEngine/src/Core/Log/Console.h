@@ -54,21 +54,21 @@ namespace Spiecs {
 	{
 	public:
 		Console(const std::string& filePath);
-		virtual ~Console();
+		virtual ~Console() override = default;
 
 		static std::shared_ptr<Console> Register(
 			const std::string& name, 
 			const std::string& filePath = ""
 		);
 
-		const InfoData& GetInfos() { return m_InfoData; };
+		const InfoData& GetInfos() { return m_InfoData; }
 		void Clear();
 		void Push(const std::string& cmd);
-		inline const std::string& GetFilePath() { return m_FilePath; };
+		const std::string& GetFilePath() { return m_FilePath; }
 
 	protected:
 		void sink_it_(const spdlog::details::log_msg& msg) override;
-		virtual void flush_() { Clear(); };
+		virtual void flush_() override { Clear(); }
 
 	protected:
 		std::string m_FilePath;

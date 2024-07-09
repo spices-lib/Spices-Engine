@@ -39,7 +39,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		TimeStep& operator=(const TimeStep&) = delete;
 
@@ -47,13 +47,13 @@ namespace Spiecs {
 		* @brief Get time step during frames.
 		* @return time step(s) during frames.
 		*/
-		inline float ft() const { return m_FrameTime; };
+		float ft() const { return m_FrameTime; }
 
 		/**
 		* @brief Get time step since Engine Start.
 		* @return time step(s) since Engine Start.
 		*/
-		inline float gt() const { return m_GameTime; };
+		float gt() const { return m_GameTime; }
 
 		/**
 		* @brief Refresh time in each engine loop.

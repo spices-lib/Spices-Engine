@@ -20,7 +20,7 @@
 namespace Spiecs
 {
 	/**
-	* @brief This Class Combines some data relatived to subpass.
+	* @brief This Class Combines some data relative to sub pass.
 	* Usually as a member variable of RendererPass.
 	*/
 	class RendererSubPass
@@ -29,8 +29,8 @@ namespace Spiecs
 
 		/**
 		* @brief Constructor Function.
-		* @param[in] subPassName The name of subpass.
-		* @param[in] index Subpass index of pass.
+		* @param[in] subPassName The name of sub pass.
+		* @param[in] index Sub pass index of pass.
 		*/
 		RendererSubPass(
 			const std::string& subPassName , 
@@ -38,15 +38,15 @@ namespace Spiecs
 		) 
 			: m_SubpassName(subPassName )
 			, m_Index      (index       ) 
-		{};
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~RendererSubPass() {};
+		virtual ~RendererSubPass() = default;
 
 		/**
-		* @brief Add a Color Attachment to subpass.
+		* @brief Add a Color Attachment to sub pass.
 		* @param[in] attachmentReference VkAttachmentReference.
 		* @param[in] colorBlend VkPipelineColorBlendAttachmentState.
 		*/
@@ -56,7 +56,7 @@ namespace Spiecs
 		);
 
 		/**
-		* @brief Add a Depth Attachment to subpass.
+		* @brief Add a Depth Attachment to sub pass.
 		* @param[in] attachmentReference VkAttachmentReference.
 		*/
 		void AddDepthAttachmentReference(
@@ -64,7 +64,7 @@ namespace Spiecs
 		);
 
 		/**
-		* @brief Add a Input Attachment to subpass.
+		* @brief Add a Input Attachment to sub pass.
 		* @param[in] attachmentReference VkAttachmentReference.
 		*/
 		void AddInputAttachmentReference(
@@ -83,13 +83,13 @@ namespace Spiecs
 
 		/**
 		* @brief Build VkSubpassDependency.
-		* @param[in] index The index of subpass of pass.
+		* @param[in] index The index of sub pass of pass.
 		*/
 		void BuildSubPassDependency(uint32_t index);
 
 		/**
 		* @brief Set Pipeline PushConstant.
-		* @param[in] T The function of fill in VkPushConstantRange.
+		* @param[in] fn The function of fill in VkPushConstantRange.
 		*/
 		template<typename T>
 		void SetPushConstant(T fn);
@@ -98,73 +98,73 @@ namespace Spiecs
 		* @brief Get a VkSubpassDescription.
 		* @return Returns the VkSubpassDescription.
 		*/
-		inline VkSubpassDescription& GetDescription() { return m_SubPassDescriptions; };
+		inline VkSubpassDescription& GetDescription() { return m_SubPassDescriptions; }
 
 		/**
 		* @brief Get a VkSubpassDependency.
 		* @return Returns the VkSubpassDependency.
 		*/
-		inline VkSubpassDependency& GetDependency() { return m_SubPassDependency; };
+		inline VkSubpassDependency& GetDependency() { return m_SubPassDependency; }
 
 		/**
-		* @brief Get subpass name.
-		* @return Returns the subpass name.
+		* @brief Get sub pass name.
+		* @return Returns the sub pass name.
 		*/
-		const std::string& GetName() { return m_SubpassName; };
+		const std::string& GetName() { return m_SubpassName; }
 
 		/**
 		* @brief Get isUsePushConstant.
 		* @return Returns the isUsePushConstant.
 		*/
-		inline bool IsUsePushConstant() { return isUsePushConstant; };
+		bool IsUsePushConstant() const { return isUsePushConstant; }
 
 		/**
 		* @brief Get VkPushConstantRange.
 		* @return Returns the VkPushConstantRange.
 		*/
-		inline VkPushConstantRange& GetPushConstant() { return m_PushConstantRange; };
+		VkPushConstantRange& GetPushConstant() { return m_PushConstantRange; }
 
 		/**
 		* @brief Get a buffer with index.
 		* @param[in] i2 Index of buffer.
 		* @return Returns the indexed buffer.
 		*/
-		std::shared_ptr<VulkanBuffer>& GetBuffers(const Int2& i2) { return m_Buffers[i2]; };
+		std::shared_ptr<VulkanBuffer>& GetBuffers(const UInt2& i2) { return m_Buffers[i2]; }
 
 		/**
 		* @brief Set Buffer data.
-		* @param[in] i2 The Buffer Indfex.
+		* @param[in] i2 The Buffer Index.
 		* @param[in] data The data copy from.
 		* @param[in] size The copy size.
-		* @param[in] offest The Copy offest.
+		* @param[in] offset The Copy offset.
 		*/
 		void SetBuffer(
-			const Int2& i2                   , 
-			void*       data                 , 
-			uint64_t    size = VK_WHOLE_SIZE , 
-			uint64_t    offest = 0
+			const UInt2& i2                   , 
+			void*        data                 , 
+			uint64_t     size = VK_WHOLE_SIZE , 
+			uint64_t     offset = 0
 		);
 
 		/**
-		* @brief Get subpass index of pass.
+		* @brief Get sub pass index of pass.
 		*/
-		inline uint32_t GetIndex() { return m_Index; };
+		uint32_t GetIndex() const { return m_Index; }
 
 		/**
 		* @brief Get VkPipelineColorBlendAttachmentState.
 		* @return Returns VkPipelineColorBlendAttachmentState vector.
 		*/
-		inline std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; };
+		std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; }
 
 	private:
 
 		/**
-		* @brief Subpass Name.
+		* @brief Sub pass Name.
 		*/
 		std::string m_SubpassName;
 
 		/**
-		* @brief Index of subpass in pass.
+		* @brief Index of sub pass in pass.
 		*/
 		uint32_t m_Index;
 
@@ -179,27 +179,27 @@ namespace Spiecs
 		VkSubpassDependency m_SubPassDependency{};
 
 		/**
-		* @brief Subpass used colorattachment.
+		* @brief Subpass used color attachment.
 		*/
 		std::vector<VkAttachmentReference> m_ColorAttachmentReference;
 
 		/**
-		* @brief Subpass used depthattachment.
+		* @brief Sub pass used depth attachment.
 		*/
 		std::vector<VkAttachmentReference> m_DepthAttachmentReference;
 
 		/**
-		* @brief Subpass used inputattachment.
+		* @brief Sub pass used input attachment.
 		*/
 		std::vector<VkAttachmentReference> m_InputAttachmentReference;
 
 		/**
-		* @brief Subpass used VkPipelineColorBlendAttachmentState.
+		* @brief Sub pass used VkPipelineColorBlendAttachmentState.
 		*/
 		std::vector<VkPipelineColorBlendAttachmentState> m_ColorBlends;
 
 		/**
-		* @brief True if subpass use a PushConstant.
+		* @brief True if sub pass use a PushConstant.
 		*/
 		bool isUsePushConstant = false;
 
@@ -209,9 +209,9 @@ namespace Spiecs
 		VkPushConstantRange m_PushConstantRange{};
 		
 		/**
-		* @brief All Buffers used this subpass.
+		* @brief All Buffers used this sub pass.
 		*/
-		std::unordered_map<Int2, std::shared_ptr<VulkanBuffer>> m_Buffers;
+		std::unordered_map<UInt2, std::shared_ptr<VulkanBuffer>> m_Buffers;
 	};
 
 	template<typename T>

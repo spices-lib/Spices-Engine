@@ -22,14 +22,14 @@ namespace Spiecs {
 		* @param[in] keycode In Mouse Button.
 		* @return Returns true if given Key is Pressed.
 		*/
-		virtual bool IsKeyPressedImpl(int keycode) override;
+		virtual bool IsKeyPressedImpl(const int& keycode) override;
 
 		/**
 		* @brief Query If given Mouse Button is Pressed.
 		* @param[in] button In Mouse Button.
 		* @return Returns true if given Key is Pressed.
 		*/
-		virtual bool IsMouseButtonPressedImpl(int button) override;
+		virtual bool IsMouseButtonPressedImpl(const int& button) override;
 
 		/**
 		* @brief Query Mouse Position in Windows.

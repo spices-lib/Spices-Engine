@@ -12,50 +12,49 @@
 namespace Spiecs {
 
 	/**
-	* @brief This class is a wapper of VulkanRenderPass.
+	* @brief This class is a wrapper of VulkanRenderPass.
 	* Used during Renderer.
 	*/
 	class RendererPass
 	{
 	public:
 
-
 		RendererPass(
-			const std::string& passName, 
+			const std::string&            passName     , 
 			std::shared_ptr<VulkanDevice> vulkanDevice
 		) 
 			: m_PassName(passName)
 			, m_Device(vulkanDevice)
-		{};
+		{}
 
 		virtual ~RendererPass();
 
-		inline scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; };
+		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; }
 		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName, uint32_t index);
 
 		uint32_t AddAttachment(
-			const std::string&             attachmnetName ,
+			const std::string&             attachmentName ,
 			const VkAttachmentDescription& description    ,
 			uint32_t                       layers         ,
 			const VkClearValue&            clearValue
 		);
 
 		uint32_t AddAttachment(
-			const std::string&             attachmnetName  , 
+			const std::string&             attachmentName  , 
 			const VkAttachmentDescription& description     ,
 			const VkClearValue&            clearValue      ,
 			uint32_t                       layers          ,
-			VkImageView&                   view
+			const VkImageView&             view
 		);
 
 		void BuildRendererPass();
 
-		VkRenderPass& Get() { return m_RenderPass->Get(); };
-		inline std::string& GetName() { return m_PassName; };
-		VkFramebuffer& GetFramebuffer(uint32_t index) { return m_RenderPass->GetFramebuffer(index); };
-		inline const bool IsUseSwapChain() const { return m_IsSwapChainImageInUse; };
+		VkRenderPass& Get() const { return m_RenderPass->Get(); }
+		std::string& GetName() { return m_PassName; }
+		VkFramebuffer& GetFramebuffer(uint32_t index) const { return m_RenderPass->GetFramebuffer(index); }
+		bool IsUseSwapChain() const { return m_IsSwapChainImageInUse; }
 
-		inline std::vector<VkClearValue>& GetClearValues() { return m_ClearValues; };
+		std::vector<VkClearValue>& GetClearValues() { return m_ClearValues; }
 
 	private:
 

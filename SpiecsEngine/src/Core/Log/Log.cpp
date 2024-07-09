@@ -25,9 +25,9 @@ namespace Spiecs {
 		* @brief Log/Log.log file.
 		*/
 		time_t timep;
-		struct tm* p;
+		tm* p;
 
-		time(&timep);
+		auto error = time(&timep);
 		p = localtime(&timep);
 
 		std::stringstream ss;
@@ -41,16 +41,16 @@ namespace Spiecs {
 		p->tm_sec  <<
 		".log";
 
-		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(ss.str(), max_size, max_files);
+		const auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(ss.str(), max_size, max_files);
 		file_sink->set_level(spdlog::level::trace);
 
 		/**
 		* @brief console log.
 		*/
-		auto ide_console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		const auto ide_console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 		ide_console_sink->set_level(spdlog::level::trace);
 
-		auto console_sink = Console::Register("Console", ss.str());
+		const auto console_sink = Console::Register("Console", ss.str());
 
 		/**
 		* @brief console slate log.

@@ -1,34 +1,35 @@
 #pragma once
 #include "Core/Core.h"
+#include "Core/Input/KeyCodes.h"
 
 namespace Spiecs {
 
-    struct Int2
+    struct UInt2
     {
-        Int2() {};
-        Int2(const uint32_t& x, const uint32_t& y) : x(x), y(y) {};
-        virtual ~Int2() {};
+        UInt2() = default;
+        UInt2(const uint32_t& x, const uint32_t& y) : x(x), y(y) {}
+        virtual ~UInt2() = default;
 
-        int x = 0;
-        int y = 0;
+        uint32_t x = 0;
+        uint32_t y = 0;
 
-        bool operator==(const Int2& other) const {
+        bool operator==(const UInt2& other) const {
             return x == other.x && y == other.y;
-        };
+        }
     };
 
     struct String2
     {
-        String2() {};
-        String2(const std::string& str0, const std::string& str1) : x(str0), y(str1) {};
-        virtual ~String2() {};
+        String2() = default;
+        String2(const std::string& str0, const std::string& str1) : x(str0), y(str1) {}
+        virtual ~String2() = default;
 
         std::string x;
         std::string y;
 
         bool operator==(const String2& other) const {
             return x == other.x && y == other.y;
-        };
+        }
     };
 
     bool DecomposeTransform(
@@ -50,7 +51,7 @@ namespace Spiecs {
         // VkTransformMatrixKHR uses a row-major memory layout, while glm::mat4
         // uses a column-major memory layout. We transpose the matrix so we can
         // memcpy the matrix's data directly.
-        glm::mat4            temp = glm::transpose(matrix);
+        const glm::mat4 temp = glm::transpose(matrix);
         VkTransformMatrixKHR out_matrix;
         memcpy(&out_matrix, &temp, sizeof(VkTransformMatrixKHR));
         return out_matrix;
@@ -65,15 +66,17 @@ namespace std {
     /**
     * @brief Hash function used for unordered_map.
     */
-    template<> struct hash<Spiecs::Int2> {
-        size_t operator()(Spiecs::Int2 const& info) const {
-            return (hash<int>()(info.x) ^
-                (hash<int>()(info.y) << 1));
+    template<> struct hash<Spiecs::UInt2> {
+        size_t operator()(Spiecs::UInt2 const& info) const noexcept
+        {
+            return (hash<uint32_t>()(info.x) ^
+                (hash<uint32_t>()(info.y) << 1));
         }
     };
 
     template<> struct hash<Spiecs::String2> {
-        size_t operator()(Spiecs::String2 const& info) const {
+        size_t operator()(Spiecs::String2 const& info) const noexcept
+        {
             return (hash<std::string>()(info.x) ^
                 (hash<std::string>()(info.y) << 1));
         }

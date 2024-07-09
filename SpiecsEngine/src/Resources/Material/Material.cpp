@@ -150,7 +150,7 @@ namespace Spiecs {
 		* @brief Iter the constantParams for creating a host buffer and it's data memoryblock.
 		*/
 		m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
-			Int2 int2(v.set, v.binding);
+			UInt2 int2(v.set, v.binding);
 
 			/**
 			* @brief Create the key to map.

@@ -8,7 +8,7 @@ namespace Spiecs {
 	RendererPass::~RendererPass()
 	{
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
-			String2 s2(m_PassName, name);
+			const String2 s2(m_PassName, name);
 			DescriptorSetManager::UnLoad(s2);
 			return false;
 		});
@@ -31,17 +31,17 @@ namespace Spiecs {
 	}
 
 	uint32_t RendererPass::AddAttachment(
-		const std::string&             attachmnetName     , 
+		const std::string&             attachmentName     , 
 		const VkAttachmentDescription& description        , 
 		uint32_t                       layers             ,
 		const VkClearValue&            clearValue 
 	)
 	{
-		if (m_AttachmentDescriptions.has_key(attachmnetName))
+		if (m_AttachmentDescriptions.has_key(attachmentName))
 		{
 			uint32_t index = 0;
 			m_AttachmentDescriptions.for_each([&](const auto& K, const auto& V) {
-				if (K == attachmnetName)
+				if (K == attachmentName)
 				{
 					return true;
 				}
@@ -54,31 +54,31 @@ namespace Spiecs {
 			return index;
 		}
 
-		if (attachmnetName == "SwapChainImage")
+		if (attachmentName == "SwapChainImage")
 		{
 			m_IsSwapChainImageInUse = true;
 		}
 
 		m_MaxLayers = glm::max(m_MaxLayers, layers);
 		m_ClearValues.push_back(clearValue);
-		m_AttachmentDescriptions.push_back(attachmnetName, description);
+		m_AttachmentDescriptions.push_back(attachmentName, description);
 
 		return static_cast<uint32_t>(m_AttachmentDescriptions.size() - 1);
 	}
 
 	uint32_t RendererPass::AddAttachment(
-		const std::string&             attachmnetName    , 
+		const std::string&             attachmentName    , 
 		const VkAttachmentDescription& description       ,
 		const VkClearValue&            clearValue        ,
 		uint32_t                       layers            ,
-		VkImageView&                   view
+		const VkImageView&             view
 	)
 	{
-		if (m_AttachmentDescriptions.has_key(attachmnetName))
+		if (m_AttachmentDescriptions.has_key(attachmentName))
 		{
 			uint32_t index = 0;
 			m_AttachmentDescriptions.for_each([&](const auto& K, const auto& V) {
-				if (K == attachmnetName)
+				if (K == attachmentName)
 				{
 					return true;
 				}
@@ -91,14 +91,14 @@ namespace Spiecs {
 			return index;
 		}
 
-		if (attachmnetName == "SwapChainImage")
+		if (attachmentName == "SwapChainImage")
 		{
 			m_IsSwapChainImageInUse = true;
 		}
 
 		m_MaxLayers = glm::max(m_MaxLayers, layers);
 		m_ClearValues.push_back(clearValue);
-		m_AttachmentDescriptions.push_back(attachmnetName, description);
+		m_AttachmentDescriptions.push_back(attachmentName, description);
 		m_ImageViews.push_back(view);
 
 		return static_cast<uint32_t>(m_AttachmentDescriptions.size() - 1);
@@ -118,14 +118,14 @@ namespace Spiecs {
 			return false;
 		});
 
-		std::vector<VkSubpassDependency> subPassDepecdency;
+		std::vector<VkSubpassDependency> subPassDependency;
 		(*m_SubPasses.first())->BuildFirstSubPassDependency();
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
-			subPassDepecdency.push_back(subpass->GetDependency());
+			subPassDependency.push_back(subpass->GetDependency());
 			return false;
 		});
 
-		VkSubpassDependency outDependency{};
+		VkSubpassDependency                               outDependency{};
 		outDependency.srcSubpass                        = static_cast<uint32_t>(m_SubPasses.size() - 1);
 		outDependency.dstSubpass                        = VK_SUBPASS_EXTERNAL;
 		outDependency.srcStageMask                      = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -134,16 +134,16 @@ namespace Spiecs {
 		outDependency.dstAccessMask                     = VK_ACCESS_MEMORY_READ_BIT;
 		outDependency.dependencyFlags                   = VK_DEPENDENCY_BY_REGION_BIT;
 
-		subPassDepecdency.push_back(outDependency);
+		subPassDependency.push_back(outDependency);
 
-		VkRenderPassCreateInfo renderPassInfo{};
+		VkRenderPassCreateInfo                            renderPassInfo{};
 		renderPassInfo.sType                            = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		renderPassInfo.attachmentCount                  = static_cast<uint32_t>(attachmentDescription.size());
 		renderPassInfo.pAttachments                     = attachmentDescription.data();
 		renderPassInfo.subpassCount                     = static_cast<uint32_t>(subPassDescription.size());
 		renderPassInfo.pSubpasses                       = subPassDescription.data();
-		renderPassInfo.dependencyCount                  = static_cast<uint32_t>(subPassDepecdency.size());
-		renderPassInfo.pDependencies                    = subPassDepecdency.data();
+		renderPassInfo.dependencyCount                  = static_cast<uint32_t>(subPassDependency.size());
+		renderPassInfo.pDependencies                    = subPassDependency.data();
 
 		if (m_AttachmentDescriptions.size() != m_ImageViews.size() + 1 && m_AttachmentDescriptions.size() != m_ImageViews.size())
 		{

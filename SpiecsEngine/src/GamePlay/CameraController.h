@@ -17,7 +17,7 @@ namespace Spiecs {
 	/**
 	* @brief CameraController Class.
 	* This class inherit from NativeScriptComponent.
-	* It receives Mouse Event and Key Event to control the Camera movement whick defined by it's owner.
+	* It receives Mouse Event and Key Event to control the Camera movement which defined by it's owner.
 	*/
 	class CameraController : public NativeScriptComponent
 	{
@@ -26,35 +26,35 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		CameraController() {};
+		CameraController() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~CameraController() {};
+		virtual ~CameraController() override = default;
 
 		/**
 		* @brief The interface inherited from Component, which is used for serialize this class.
-		* @todo Implementate it.
+		* @todo Implemented it.
 		*/
-		virtual void OnSerialize() override {};
+		virtual void OnSerialize() override {}
 
 		/**
-		* @brief The interface inherited from Component, which is used for dserialize this class.
-		* @todo Implementate it.
+		* @brief The interface inherited from Component, which is used for deserialize this class.
+		* @todo Implemented it.
 		*/
-		virtual void OnDeSerialize() override {};
+		virtual void OnDeSerialize() override {}
 
 		/**
 		* @brief The interface inherited from NativeScriptComponent, which is called on this attached to an entity.
 		* We get the camera we want control here.
-		* We get the camera transformcomponent here.
+		* We get the camera transform component here.
 		*/
 		virtual void OnConstruction() override;
 
 		/**
 		* @brief The interface inherited from NativeScriptComponent, which is called every engine loop frame.
-		* We implementate mainly camera control here, the reason is query input has better performance than event.
+		* We implemented mainly camera control here, the reason is query input has better performance than event.
 		*/
 		virtual void OnTick(TimeStep& ts) override;
 
@@ -82,8 +82,8 @@ namespace Spiecs {
 		glm::vec3 GetForwardDirection() const;
 
 		/**
-		* @brief Get Camera quaterion rotation.
-		* @return The Camera quaterion rotation.
+		* @brief Get Camera quaternion rotation.
+		* @return The Camera quaternion rotation.
 		*/
 		glm::quat GetOrientation() const;
 
@@ -92,45 +92,45 @@ namespace Spiecs {
 		/**
 		* @brief Event OnKeyPressed.
 		* We do nothing here.
-		* @param[in] e Event Warpper.
+		* @param[in] e Event Wrapper.
 		* @return true if we need block the event.
-		* @todo Implementate it.
+		* @todo Implemented it.
 		*/
 		bool OnKeyPressed(KeyPressedEvent& e);
 
 		/**
 		* @brief Event OnMouseScroll.
 		* Scale the camera.
-		* @param[in] e Event Warpper.
+		* @param[in] e Event Wrapper.
 		* @return true if we need block the event
 		*/
 		bool OnMouseScroll(MouseScrolledEvent& e);
 
 		/**
 		* @brief Event OnWindowResized.
-		* Reset Camera aspectratio.
-		* @param[in] e Event Warpper.
+		* Reset Camera aspect ratio.
+		* @param[in] e Event Wrapper.
 		* @return true if we need block the event
 		*/
 		bool OnSlateResized(SlateResizeEvent& e);
 
 		/**
 		* @brief Calculate Camera Drag.
-		* @param[in] delta Mouse position delta on viewport during frams.
+		* @param[in] delta Mouse position delta on viewport during frames.
 		*/
 		void MousePan(const glm::vec2& delta);
 
 		/**
 		* @brief Calculate Camera Rotate.
-		* @param[in] delta Mouse position delta on viewport during frams.
+		* @param[in] delta Mouse position delta on viewport during frames.
 		*/
-		void MouseRotate(const glm::vec2& delta);
+		void MouseRotate(const glm::vec2& delta) const;
 
 		/**
 		* @brief Calculate Camera Zoom.
-		* @param[in] delta Mouse position delta y on viewport during frams.
+		* @param[in] delta Mouse position delta y on viewport during frames.
 		*/
-		void MouseZoom(float delta);
+		void MouseZoom(const float& delta);
 
 		/**
 		* @brief Calculate Camera Drag speed.
@@ -151,28 +151,28 @@ namespace Spiecs {
 		float ZoomSpeed() const;
 
 		/**
-		* @brief Setting camera transformcomponent position.
+		* @brief Setting camera transform component position.
 		* We already set rotation in MouseRotate().
 		*/
-		void UpdateView();
+		void UpdateView() const;
 
 		/**
-		* @brief Calculate camera transformcomponent position using the class member parameters.
-		* @return Returns camera transformcomponent position.
+		* @brief Calculate camera transform component position using the class member parameters.
+		* @return Returns camera transform component position.
 		*/
 		glm::vec3 CalculatePosition() const;
 
 	private:
 
 		/**
-		* @brief The camera smart pointer get from owner's cameracomponent.
+		* @brief The camera smart pointer get from owner's camera component.
 		*/
 		std::shared_ptr<Camera> m_Camera;
 
 		/**
-		* @brief The camera transformcomponent pointer get from owner's transformcomponent.
+		* @brief The camera transform component pointer get from owner's transform component.
 		*/
-		TransformComponent* m_CameraTranComp;
+		TransformComponent* m_CameraTranComp = nullptr;
 
 		/**
 		* @brief The Viewport size.

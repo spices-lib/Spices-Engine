@@ -11,9 +11,6 @@ namespace Spiecs {
 		m_InfoData.Clear();
 	}
 
-	Console::~Console()
-	{}
-
 	std::shared_ptr<Console> Console::Register(const std::string& name, const std::string& filePath)
 	{
 		if (m_GlobalConsolePool.find(name) == m_GlobalConsolePool.end())

@@ -124,7 +124,7 @@ namespace Spiecs {
 		* @param[in] category In category.
 		* @return Returns true if given category is contained by this event class.
 		*/
-		inline bool IsInCategory(EventCategory category)
+		bool IsInCategory(EventCategory category) const
 		{
 			return GetCategoryFlags() & category;
 		}
@@ -175,7 +175,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Dispatch the specific Event handle function pointer to Event Class.
-		* @param[in] EventFn<T> Specific Event handle function.
+		* @param[in] func Specific Event handle function.
 		* @return Returns true if execute function pointer.
 		*/
 		template<typename T>
@@ -188,7 +188,7 @@ namespace Spiecs {
 			*/
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.Handled = func(*(T*)&m_Event);
+				m_Event.Handled = func(*static_cast<T*>(&m_Event));
 				
 				return true;
 			}

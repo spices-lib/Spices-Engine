@@ -46,7 +46,7 @@ namespace Spiecs {
 
 	DescriptorSetInfo& DescriptorSetManager::GetByName(const std::string& name)
 	{
-		auto str = String2(name, name);
+		const auto str = String2(name, name);
 		return GetByName(str);
 	}
 }

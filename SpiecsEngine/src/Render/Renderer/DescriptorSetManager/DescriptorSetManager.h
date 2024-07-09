@@ -11,8 +11,8 @@ namespace Spiecs {
 	class DescriptorSetManager
 	{
 	public:
-		DescriptorSetManager() {};
-		virtual ~DescriptorSetManager() {};
+		DescriptorSetManager() = default;
+		virtual ~DescriptorSetManager() = default;
 
 		static std::shared_ptr<VulkanDescriptorSet> Registy(const String2& name, uint32_t set);
 		static std::shared_ptr<VulkanDescriptorSet> Registy(const std::string& name, uint32_t set);

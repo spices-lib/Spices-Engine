@@ -83,7 +83,7 @@ namespace Spiecs {
 		pipelineConfig.subpass                         = subPass->GetIndex();
 		pipelineConfig.pipelineLayout                  = layout;
 		pipelineConfig.rasterizationInfo.cullMode      = VK_CULL_MODE_NONE;
-		pipelineConfig.colorBlendInfo.attachmentCount  = (uint32_t)subPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.attachmentCount  = static_cast<uint32_t>(subPass->GetColorBlend().size());
 		pipelineConfig.colorBlendInfo.pAttachments     = subPass->GetColorBlend().data();
 
 		return std::make_shared<VulkanPipeline>(

@@ -38,13 +38,13 @@ namespace Spiecs {
 		* @brief Get New Windows Width.
 		* @return Returns New Windows Width.
 		*/
-		inline uint32_t GetWidth() const { return m_Width; }
+		const uint32_t& GetWidth() const { return m_Width; }
 
 		/**
 		* @brief Get New Windows Height.
 		* @return Returns New Windows Height.
 		*/
-		inline uint32_t GetHeight() const { return m_Height; }
+		const uint32_t& GetHeight() const { return m_Height; }
 
 		/**
 		* @brief Serialize this Event Class to string.
@@ -112,7 +112,7 @@ namespace Spiecs {
 	/**
 	* @breif This Class is inherited from Event Class.
 	* Called when window resized over.
-	* This Event registed by VkSwapchain.
+	* This Event register by VkSwapchain.
 	*/
 	class WindowResizeOverEvent : public Event
 	{
@@ -137,13 +137,13 @@ namespace Spiecs {
 		* @brief Get New Windows Width.
 		* @return Returns New Windows Width.
 		*/
-		inline uint32_t GetWidth() const { return m_Width; }
+		const uint32_t& GetWidth() const { return m_Width; }
 
 		/**
 		* @brief Get New Windows Height.
 		* @return Returns New Windows Height.
 		*/
-		inline uint32_t GetHeight() const { return m_Height; }
+		const uint32_t& GetHeight() const { return m_Height; }
 
 		/**
 		* @brief Serialize this Event Class to string.

@@ -11,11 +11,11 @@ namespace Spiecs {
 	class MeshController : public NativeScriptComponent
 	{
 	public:
-		MeshController() {};
-		virtual ~MeshController() {};
+		MeshController() = default;
+		virtual ~MeshController() override = default;
 
-		virtual void OnSerialize() override {};
-		virtual void OnDeSerialize() override {};
+		virtual void OnSerialize() override {}
+		virtual void OnDeSerialize() override {}
 
 		virtual void OnConstruction() override;
 		virtual void OnTick(TimeStep& ts) override;
@@ -30,14 +30,14 @@ namespace Spiecs {
 		bool OnKeyPressed(KeyPressedEvent& e);
 
 		void MousePan(const glm::vec2& delta);
-		void MouseRotate(const glm::vec2& delta);
+		void MouseRotate(const glm::vec2& delta) const;
 		void MouseZoom(float delta);
 
 		std::pair<float, float> PanSpeed() const;
 		float RotationSpeed() const;
 		float ZoomSpeed() const;
 
-		void UpdateView();
+		void UpdateView() const;
 		glm::vec3 CalculatePosition() const;
 
 	private:

@@ -37,13 +37,13 @@ namespace Spiecs {
 		* @brief Get New Viewport Width.
 		* @return Returns the New Viewport Width.
 		*/
-		inline uint32_t GetWidth() const { return m_Width; }
+		const uint32_t& GetWidth() const { return m_Width; }
 
 		/**
 		* @brief Get New Viewport Height.
 		* @return Returns the New Viewport Width.
 		*/
-		inline uint32_t GetHeight() const { return m_Height; }
+		const uint32_t& GetHeight() const { return m_Height; }
 
 		/**
 		* @brief Serialize this Event Class to string.

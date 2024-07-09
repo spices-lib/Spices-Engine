@@ -38,7 +38,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~BasePassRenderer() {};
+		virtual ~BasePassRenderer() override = default;
 
 		/**
 		* @brief The interface is inherited from Renderer.

@@ -64,7 +64,12 @@ namespace Spiecs {
         * @param[out] out_handle Out The file handle pointer.
         * @return true if open the file succeed.
         */
-        static bool FileLibrary_Open(const char* path, FileModes mode, bool binary, FileHandle* out_handle);
+        static bool FileLibrary_Open(
+            const char*  path       ,
+            FileModes    mode       ,
+            bool         binary     ,
+            FileHandle*  out_handle
+        );
 
         /**
         * @brief Close the file by the file handle.
@@ -78,7 +83,7 @@ namespace Spiecs {
         * @param[out] out_size The file size(byte).
         * @return true if file handle is valid.
         */
-        static bool FileLibrary_Size(FileHandle* handle, uint64_t* out_size);
+        static bool FileLibrary_Size(const FileHandle* handle, uint64_t* out_size);
 
         /**
         * @brief Read Specific size of data form the current file handle pointer, and move pointer the same size.
@@ -88,7 +93,12 @@ namespace Spiecs {
         * @param[out] out_bytes_read How much bytes we read.
         * @return true if file handle is valid and successfully read data.
         */
-        static bool FileLibrary_Read(FileHandle* handle, uint64_t data_size, void* out_data, uint64_t* out_bytes_read);
+        static bool FileLibrary_Read(
+            const FileHandle* handle         ,
+            uint64_t          data_size      ,
+            void*             out_data       ,
+            uint64_t*         out_bytes_read
+        );
 
         /**
         * @brief Read one line from the current file handle pointer, and move pointer the same size.
@@ -98,7 +108,12 @@ namespace Spiecs {
         * @param[out] out_line_length How much bytes we read.
         * @return true if file handle is valid and successfully read data.
         */
-        static bool FileLibrary_Read_Line(FileHandle* handle, uint64_t max_length, char** line_buf, uint64_t* out_line_length);
+        static bool FileLibrary_Read_Line(
+            const FileHandle* handle          ,
+            uint64_t          max_length      ,
+            char**            line_buf        ,
+            uint64_t*         out_line_length
+        );
 
         /**
         * @brief Read all data form the current file handle pointer.
@@ -107,7 +122,7 @@ namespace Spiecs {
         * @param[out] out_bytes_read How much bytes we read.
         * @return true if file handle is valid and successfully read data.
         */
-        static bool FileLibrary_Read_all_bytes(FileHandle* handle, char* out_bytes, uint64_t* out_bytes_read);
+        static bool FileLibrary_Read_all_bytes(const FileHandle* handle, char* out_bytes, uint64_t* out_bytes_read);
 
         /**
         * @brief Write given data to the file handle pointer.
@@ -117,7 +132,12 @@ namespace Spiecs {
         * @param[out] out_bytes_written How much bytes we written.
         * @return true if file handle is valid and successfully write data.
         */
-        static bool FileLibrary_Write(FileHandle* handle, uint64_t data_size, const void* data, uint64_t* out_bytes_written);
+        static bool FileLibrary_Write(
+            const FileHandle* handle            ,
+            uint64_t          data_size         ,
+            const void*       data              ,
+            uint64_t*         out_bytes_written
+        );
 
         /**
         * @brief Write one line data to the file handle pointer.
@@ -125,7 +145,7 @@ namespace Spiecs {
         * @param[in] text The one line data pointer.
         * @return true if file handle is valid and successfully write data.
         */
-        static bool FileLibrary_Write_Line(FileHandle* handle, const char* text);
+        static bool FileLibrary_Write_Line(const FileHandle* handle, const char* text);
 
         /**
         * @brief Select a file to open in explore.

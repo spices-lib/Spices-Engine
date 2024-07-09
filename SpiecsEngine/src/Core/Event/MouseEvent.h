@@ -34,15 +34,15 @@ namespace Spiecs {
 
 		/**
 		* @brief Get Mouse Position X.
-		* @return Returns Mouse Postion X.
+		* @return Returns Mouse Position X.
 		*/
-		inline float GetX() const { return m_MouseX; }
+		const float& GetX() const { return m_MouseX; }
 
 		/**
 		* @brief Get Mouse Position Y.
-		* @return Returns Mouse Postion Y.
+		* @return Returns Mouse Position Y.
 		*/
-		inline float GetY() const { return m_MouseY; }
+		const float& GetY() const { return m_MouseY; }
 
 		/**
 		* @brief Serialize this Event Class to string.
@@ -105,13 +105,13 @@ namespace Spiecs {
 		* @brief Get Mouse offset in X.
 		* @return Returns Mouse offset in X.
 		*/
-		inline float GetXOffset() const { return m_XOffset; }
+		const float& GetXOffset() const { return m_XOffset; }
 
 		/**
 		* @brief Get Mouse offset in Y.
 		* @return Returns Mouse offset in Y.
 		*/
-		inline float GetYOffset() const { return m_YOffset; }
+		const float& GetYOffset() const { return m_YOffset; }
 
 		/**
 		* @brief Serialize this Event Class to string.
@@ -164,7 +164,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		inline int GetMouseButton() const { return m_Button; }
+		const int& GetMouseButton() const { return m_Button; }
 
 		/**
 		* @brief Specific this Class Category with EventCategoryMouse and EventCategoryInput.
