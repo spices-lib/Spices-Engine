@@ -75,9 +75,9 @@ namespace Spiecs {
 	{
 		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return false;
 
-		float ratio = m_ViewportWidth / static_cast<float>(m_ViewportHeight);
+		const float ratio = m_ViewportWidth / static_cast<float>(m_ViewportHeight);
 
-		float delta = e.GetYOffset() * 0.1f;
+		const float delta = e.GetYOffset() * 0.1f;
 
 		m_ZoomLevel += delta;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.2f);

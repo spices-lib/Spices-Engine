@@ -17,7 +17,7 @@ namespace Spiecs {
 		* @brief Init GameTime and FrameTime.
 		*/
 		m_StartTime = std::chrono::high_resolution_clock::now();
-		m_LastTime = std::chrono::high_resolution_clock::now();
+		m_LastTime  = std::chrono::high_resolution_clock::now();
 	}
 
 	void TimeStep::Flush()
@@ -27,7 +27,7 @@ namespace Spiecs {
 		/**
 		* @brief Recording the current time.
 		*/
-		auto nowTime = std::chrono::high_resolution_clock::now();
+		const auto nowTime = std::chrono::high_resolution_clock::now();
 
 		/**
 		* @brief Calculate frmae time.

@@ -39,17 +39,17 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		Camera() {};
+		Camera() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Camera() {};
+		virtual ~Camera() = default;
 
 		/**
 		* @brief Set ProjectionMatrix by using perspective type.
 		* @param[in] fov Field of View, usually 45.0 degree.
-		* @param[in] nearPlane NearPalne, usually 0.01.
+		* @param[in] nearPlane NearPlane, usually 0.01.
 		* @param[in] farPlane FarPlane, usually infinity far.
 		* @param[in] aspectRatio AspectRatio, viewport width / viewport height.
 		*/
@@ -86,25 +86,25 @@ namespace Spiecs {
 		* @brief Get camera projection matrix.
 		* @return Returns the camera projection matrix.
 		*/
-		inline glm::mat4 GetPMatrix() { return m_ProjectionMatrix; };
+		inline glm::mat4 GetPMatrix() const { return m_ProjectionMatrix; };
 
 		/**
 		* @brief Get camera projection type.
 		* @return Returns the camera projection type.
 		*/
-		inline ProjectionType GetProjectionType() { return m_ProjectionType; };
+		inline ProjectionType GetProjectionType() const { return m_ProjectionType; };
 
 		/**
 		* @brief Get camera AspectRatio.
 		* @return Returns the camera AspectRatio.
 		*/
-		inline float GetAspectRatio() { return m_AspectRatio; };
+		inline float GetAspectRatio() const { return m_AspectRatio; };
 
 		/**
 		* @brief Get camera StableFrames.
 		* @return Return the camera StableFrames.
 		*/
-		inline unsigned int GetStableFrames() { return m_StableFrames; };
+		inline unsigned int GetStableFrames() const { return m_StableFrames; };
 
 	private:
 

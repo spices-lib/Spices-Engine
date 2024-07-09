@@ -11,8 +11,8 @@
 namespace Spiecs {
 
 	/**
-	* @brief This Class handles our engine timestep during frames.
-	* Golbal Unique.
+	* @brief This Class handles our engine time step during frames.
+	* Global Unique.
 	* @todo Entity timeStep System.
 	* @todo operator() return m_FrameTime.
 	* @todo ms / s / us counting.
@@ -29,11 +29,11 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~TimeStep() {};
+		virtual ~TimeStep() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		TimeStep(const TimeStep&) = delete;
 
@@ -44,20 +44,19 @@ namespace Spiecs {
 		TimeStep& operator=(const TimeStep&) = delete;
 
 		/**
-		* @brief Get timestep during frames.
-		* @return timestep(s) during frames.
+		* @brief Get time step during frames.
+		* @return time step(s) during frames.
 		*/
-		float ft() { return m_FrameTime; };
+		inline float ft() const { return m_FrameTime; };
 
 		/**
-		* @brief Get timestep since Engine Start.
-		* @return timestep(s) since Engine Start.
+		* @brief Get time step since Engine Start.
+		* @return time step(s) since Engine Start.
 		*/
-		float gt() { return m_GameTime; };
+		inline float gt() const { return m_GameTime; };
 
 		/**
-		* @brief Refrush time in each engine loop.
-		* @return no return.
+		* @brief Refresh time in each engine loop.
 		*/
 		void Flush();
 
@@ -74,12 +73,12 @@ namespace Spiecs {
 		std::chrono::steady_clock::time_point m_LastTime;
 
 		/**
-		* @brief timestep(s) during frames.
+		* @brief time step(s) during frames.
 		*/
 		float m_FrameTime = 0;
 
 		/**
-		* @brief timestep(s) since Engine Start.
+		* @brief time step(s) since Engine Start.
 		*/
 		float m_GameTime = 0;
 	};

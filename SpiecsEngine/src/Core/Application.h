@@ -44,12 +44,8 @@ namespace Spiecs {
 
 		/**
 		* @brief Run Our World.
-		* @return no return.
 		*/
-		void Run();
-
-	private:
-		
+		static void Run();
 	};
 
 	/**
@@ -60,5 +56,6 @@ namespace Spiecs {
 
 /**
 * @brief extern WorldCreation definition in Game.
+* @return Returns World Pointer.
 */
 extern std::shared_ptr<Spiecs::World> Spiecs::CreateWorld();
