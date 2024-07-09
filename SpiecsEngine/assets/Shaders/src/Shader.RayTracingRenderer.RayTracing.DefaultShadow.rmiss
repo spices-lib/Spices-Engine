@@ -14,7 +14,7 @@
 
 /************************************Missing Input Output*********************************/
 
-layout(location = 1) rayPayloadInEXT bool isShadowed;
+layout(location = 1) rayPayloadInEXT bool isShadowArea;
 
 /*****************************************************************************************/
 
@@ -22,7 +22,7 @@ layout(location = 1) rayPayloadInEXT bool isShadowed;
 
 void main()
 {
-    isShadowed = false;
+    isShadowArea = false;
 }
 
 /******************************************************************************************/

@@ -22,9 +22,9 @@ using uint = unsigned int;
 
 #else
 
-#extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align.                       */
-#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.                             */
-#extension GL_EXT_debug_printf                           : require  /* @brief Enable shader debug info. (debugPrintfEXT("Hello Shader");) */
+#extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align.                         */
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.                               */
+#extension GL_EXT_debug_printf                           : require  /* @brief Enable shader debug info. (debugPrintfEXT("Hello: %d", num);) */
 
 #endif
 
@@ -34,7 +34,7 @@ using uint = unsigned int;
 #define PI                           3.14159265f
 #define BIAS                         0.01f
 
-const vec2 invAtan = vec2(0.1591, 0.3183);
+#define invAtan                      vec2(0.1591, 0.3183)
 
 /*****************************************************************************************/
 
@@ -50,6 +50,17 @@ struct Vertex
 	vec3 normal;              /* @brief Vertex Normal.                  */
 	vec3 color;               /* @brief Vertex Color.                   */
 	vec2 texCoord;            /* @brief Vertex UV.                      */
+};
+
+/**
+* @brief This Struct defines PBR Material Attribute.
+*/
+struct MaterialAttributes
+{
+	vec3  albedo;              /* @brief Albedo, used for Reflection attenuation.  */
+	float roughness;           /* @brief Roughness, used for Reflection direction. */
+	vec3  emissive;            /* @brief Emissive, used for Direct illumination.   */
+	vec3  normal;              /* @brief Normal, used for light effect.            */
 };
 
 /*****************************************************************************************/
@@ -134,36 +145,12 @@ struct MeshDesc
 */
 struct HitPayLoad
 {
-	vec3 hitValue;                  /* @brief Current Hit Fragment Color. */
+	vec3 hitValue;                  /* @brief Current Hit Fragment Color.                                        */
 	uint seed;                      /* @brief Random Seed for BRDF Lambertian Light Reflection Direction Select. */
-	int  depth;                     /* @brief Ray Tracing Depth for diffuse. */
-	vec3 rayOrigin;                 /* @brief Next Ray Original World Position. */
-	vec3 rayDirection;              /* @brief Next Ray Direction in World Space. */
-	vec3 weight;                    /* @brief Current Fragment Color Weight. */
-};
-
-// Push constant structure for the raster
-struct PushConstantRaster
-{
-	mat4  modelMatrix;  // matrix of the instance
-	vec3  lightPosition;
-	uint  objIndex;
-	float lightIntensity;
-	int   lightType;
-};
-
-struct WaveFrontMaterial  // See ObjLoader, copy of MaterialObj, could be compressed for device
-{
-	vec3  ambient;
-	vec3  diffuse;
-	vec3  specular;
-	vec3  transmittance;
-	vec3  emission;
-	float shininess;
-	float ior;       // index of refraction
-	float dissolve;  // 1 == opaque; 0 == fully transparent
-	int   illum;     // illumination model (see http://www.fileformat.info/format/material/)
-	int   textureId;
+	int  depth;                     /* @brief Ray Tracing Depth for diffuse.                                     */
+	vec3 rayOrigin;                 /* @brief Next Ray Original World Position.                                  */
+	vec3 rayDirection;              /* @brief Next Ray Direction in World Space.                                 */
+	vec3 weight;                    /* @brief Current Fragment Color Weight.                                     */
 };
 
 /*****************************************************************************************/

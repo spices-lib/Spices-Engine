@@ -42,11 +42,11 @@ namespace Spiecs {
 			TransformComponent& transformComp = dirlightentity.GetComponent<TransformComponent>();
 			DirectionalLightComponent& dirlightComp = dirlightentity.AddComponent<DirectionalLightComponent>();
 			transformComp.SetRotation({0.0f, 0.0f, 0.0f});
-			dirlightComp.SetColor({ 1.0f, 0.0f, 0.0f });
-			dirlightComp.SetIntensity(1.0f);
+			dirlightComp.SetColor({ 1.0f, 1.0f, 1.0f });
+			dirlightComp.SetIntensity(0.5f);
 		}
 	}
-
+ 
 	void EditorWorld::OnActivate(TimeStep& ts)
 	{
 		SPIECS_PROFILE_ZONE;

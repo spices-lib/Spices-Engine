@@ -300,11 +300,16 @@ namespace Spiecs {
 			DirectionalLightComponent&   dirlightComp
 			) {
 
-			SpiecsShader::DirectionalLight directionalLight = dirlightComp.GetLight();
-			dLightBuffer[index] = std::move(directionalLight);
+			const SpiecsShader::DirectionalLight directionalLight = dirlightComp.GetLight();
+			dLightBuffer[index] = directionalLight;
 			index++;
 			return true;
 		});
+
+		/**
+		* @brief End of DirectionalLightBuffer.
+		*/
+		dLightBuffer[index].intensity = -1000.0f;
 	}
 
 	void Renderer::GetDirectionalLightMatrix(FrameInfo& frameInfo, std::array<glm::mat4, MAX_DIRECTIONALLIGHT_NUM>& directionalLight)
@@ -372,10 +377,15 @@ namespace Spiecs {
 
 			SpiecsShader::PointLight pointLight = plightComp.GetLight();
 			pointLight.position = transComp.GetPosition();
-			pLightBuffer[index] = std::move(pointLight);
+			pLightBuffer[index] = pointLight;
 			index++;
 			return false;
 		});
+
+		/**
+		* @brief End of PointLightBuffer.
+		*/
+		pLightBuffer[index].intensity = -1000.0f;
 	}
 
 	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(

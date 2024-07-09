@@ -1,0 +1,341 @@
+/**
+* @file ShaderClosestHit.glsl.
+* @brief This Shader Defines a Closest Hit Shader Basic Behaver.
+* @author Spiecs.
+*/
+
+/************************************Pre Compile*******************************************/
+
+#ifndef SHADER_CLOSEST_HIT
+#define SHADER_CLOSEST_HIT
+
+#extension GL_EXT_ray_tracing           : require   /* @brief Enable Ray Tracing Shader.           */
+#extension GL_EXT_nonuniform_qualifier  : enable    /* @brief Enable Bindless DescriptorSet.       */
+#extension GL_EXT_buffer_reference2     : require   /* @brief Enable Shader Buffer Address access. */
+
+#include "ShaderCommon.h"
+#include "ShaderFunctionLibrary.glsl"
+
+/*****************************************************************************************/
+
+/**********************************Closest Hit Input**************************************/
+
+/** 
+* @brief Hit Triangle Center Weight. 
+*/
+hitAttributeEXT vec3 attribs;
+
+/*****************************************************************************************/
+
+/*******************************Closest Hit Input Output**********************************/
+
+/**
+* @brief Ray trace payloads.
+*/
+layout(location = 0) rayPayloadInEXT HitPayLoad prd;
+
+/**
+* @brief True if is shadow area, data from Miss Shader.
+*/
+layout(location = 1) rayPayloadEXT bool isShadowArea;
+
+/*****************************************************************************************/
+
+/********************************Specific Renderer Data***********************************/
+
+/**
+* @brief Buffer of all Vertices in World.
+*/
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices { 
+    Vertex v[];             /* @see Vertex. */
+};
+
+/**
+* @brief Buffer of all Indices in World.
+*/
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices { 
+    ivec3 i[]; 
+};
+
+/**
+* @brief Acceleration Structure.
+*/
+layout(set = 1, binding = 0) uniform accelerationStructureEXT topLevelAS;
+
+/**
+* @brief MeshDescription Buffer of all Mesh in World.
+*/
+layout(set = 1, binding = 2, scalar) readonly buffer MeshDescBuffer { 
+    MeshDesc i[];           /* @see MeshDesc. */
+} meshDescBuffer;
+
+/**
+* @brief DirectionalLight Buffer in World.
+*/
+layout(set = 1, binding = 3, scalar) readonly buffer DLightBuffer   { 
+    DirectionalLight i[];   /* @see DirectionalLight. */
+} dLightBuffer;
+
+/**
+* @brief PointLight Buffer in World.
+*/
+layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   { 
+    PointLight i[];         /* @see PointLight. */
+} pLightBuffer;
+
+/*****************************************************************************************/
+
+/******************************************Functions**************************************/
+
+/**
+* @brief Unpack Vertex from MeshDescBuffer.
+* @param[in] weight, attribs.
+* @return Returns the Vertex ray intersected.
+* @see Vertex.
+*/
+Vertex UnPackVertex(in vec3 weight);
+
+/**
+* @brief Calculate Point Lights contribution for pixel emissive.
+* @param[in] vt Intersected Vertex.
+* @param[in] attr MaterialAttributes.
+* @return Returns the contribution of Point Lights.
+*/
+vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr);
+
+/**
+* @brief Calculate Directional Lights contribution for pixel emissive.
+* @param[in] vt Intersected Vertex.
+* @param[in] attr MaterialAttributes.
+* @return Returns the contribution of Directional Lights.
+*/
+vec3 CalculateDirectionalLights(in Vertex vt , in MaterialAttributes attr);
+
+/**
+* @brief Get Material Attributes, must be implementated by specific rchit shader.
+* @param[in] vt Intersected Vertex.
+* @return Return specific MaterialAttributes.
+*/
+MaterialAttributes GetMaterialAttributes(in Vertex vt);
+
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
+
+void main()
+{
+    /**
+    * @brief Get interest Vertex data.
+    */
+    Vertex vt = UnPackVertex(attribs);
+    
+    /**
+    * @brief Get material specific attributes.
+    */
+    MaterialAttributes materialAttributes = GetMaterialAttributes(vt);
+
+    /**
+    * @brief Reverse normal in back side.
+    */
+    if(dot(-prd.rayDirection, materialAttributes.normal) < 0.0f)
+    {
+        materialAttributes.normal *= -1.0f;
+    }
+
+    /**
+    * @brief Add emissive with Lights.
+    */
+    materialAttributes.emissive += CalculatePointLights(vt, materialAttributes) + CalculateDirectionalLights(vt, materialAttributes);
+
+    /**
+    * @brief Calculate Next Ray recursion attributes.
+    */
+    vec3 tangent, bitangent;
+    CreateCoordinateSystem(materialAttributes.normal, tangent, bitangent);
+    
+    vec3 rayOrigin    = vt.position;
+    
+    vec3 rayDirection = mix(
+        reflect(prd.rayDirection, materialAttributes.normal), 
+        SamplingHemisphere(prd.seed, tangent, bitangent, materialAttributes.normal), 
+        materialAttributes.roughness
+    );
+    
+    const float cos_theta = dot(rayDirection, materialAttributes.normal);
+    const float p = cos_theta / PI;
+
+    vec3 BRDF = materialAttributes.albedo / PI;
+
+    /**
+    * @brief Fill in rayPayloadInEXT.
+    */
+    prd.rayOrigin    = rayOrigin;
+    prd.rayDirection = rayDirection;
+    prd.hitValue     = materialAttributes.emissive;
+    prd.weight       = BRDF * cos_theta / p;
+}
+
+/*****************************************************************************************/
+
+Vertex UnPackVertex(in vec3 weight)
+{
+    /**
+    * @brief Access Buffer by GPU address.
+    */
+    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
+    Vertices vertices   = Vertices(desc.vertexAddress);
+    Indices  indices    = Indices(desc.indexAddress);
+    
+    /**
+    * @brief Get Indices of the triangle.
+    */ 
+    ivec3 index = indices.i[gl_PrimitiveID];
+    
+    /**
+    * @brief Get Vertex of the triangle.
+    */ 
+    Vertex v0 = vertices.v[index.x];
+    Vertex v1 = vertices.v[index.y];
+    Vertex v2 = vertices.v[index.z];
+    
+    const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
+    
+    /**
+    * @brief Computing the coordinates of the hit position.
+    */ 
+    const vec3 localpos = v0.position * barycentrics.x + v1.position * barycentrics.y + v2.position * barycentrics.z;
+    const vec3 worldPos = vec3(gl_ObjectToWorldEXT * vec4(localpos, 1.0));
+    //const vec3 worldPos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT; /* @brief another way, low accuracy. */
+    
+    /**
+    * @brief Computing the normal at hit position.
+    */ 
+    const vec3 localnrm = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
+    const vec3 worldNrm = normalize(vec3(localnrm * gl_WorldToObjectEXT));
+    
+    /**
+    * @brief Computing the color at hit position.
+    */
+    const vec3 color = v0.color * barycentrics.x + v1.color * barycentrics.y + v2.color * barycentrics.z;
+    
+    /**
+    * @brief Computing the uv at hit position.
+    */ 
+    const vec2 uv = v0.texCoord * barycentrics.x + v1.texCoord * barycentrics.y + v2.texCoord * barycentrics.z;
+    
+    /**
+    * @brief Make Vertex.
+    */
+    Vertex vt;
+    vt.position   = worldPos;
+    vt.normal     = worldNrm;
+    vt.color      = color;
+    vt.texCoord   = uv;
+    
+    return vt;
+}
+
+vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
+{
+    vec3 col = vec3(0.0f);
+
+    /**
+    * @brief Iter all PointLights in Buffer.
+    */
+    for(int i = 0; i < pLightBuffer.i.length(); i++)
+    {
+        /**
+        * @brief If hit break condition, than break.
+        */
+        if(pLightBuffer.i[i].intensity < -500.0f) break;
+
+        /**
+        * @brief light position
+        */ 
+        vec3 lpos = pLightBuffer.i[i].position;
+        vec3 dir = normalize(lpos - vt.position);
+
+        if(dot(attr.normal, dir) > 0)
+        {
+            float tMin   = 0.001f;
+            float tMax   = length(lpos - vt.position);
+            vec3  origin = vt.position;
+            vec3  rayDir = dir;
+            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
+            isShadowArea   = true;
+            
+            traceRayEXT(topLevelAS,          // acceleration structure
+                        flags,               // rayFlags
+                        0xFF,                // cullMask
+                        0,                   // sbtRecordOffset
+                        0,                   // sbtRecordStride
+                        1,                   // missIndex
+                        origin,              // ray origin
+                        tMin,                // ray min range
+                        rayDir,              // ray direction
+                        tMax,                // ray max range
+                        1                    // payload (location = 1)
+            );
+
+            if(!isShadowArea)
+            {
+                col += max(dot(attr.normal, dir), 0.0f) * pLightBuffer.i[0].color * pLightBuffer.i[0].intensity / (tMax * tMax);
+            }
+        }
+    }
+    
+    return col;
+}
+
+vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
+{
+    vec3 col = vec3(0.0f);
+
+    /**
+    * @brief Iter all DirectionalLights in Buffer.
+    */
+    for(int i = 0; i < dLightBuffer.i.length(); i++)
+    {
+        /**
+        * @brief If hit break condition, than break.
+        */
+        if(dLightBuffer.i[i].intensity < -500.0f) break;
+
+        /**
+        * @brief light position
+        */ 
+        vec3 dir = normalize(vec3(1.0f, 1.0f, -1.0f));
+
+        if(dot(attr.normal, dir) > 0)
+        {
+            float tMin   = 0.001f;
+            float tMax   = 100000.0f;
+            vec3  origin = vt.position;
+            vec3  rayDir = dir;
+            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
+            isShadowArea   = true;
+            
+            traceRayEXT(topLevelAS,          // acceleration structure
+                        flags,               // rayFlags
+                        0xFF,                // cullMask
+                        0,                   // sbtRecordOffset
+                        0,                   // sbtRecordStride
+                        1,                   // missIndex
+                        origin,              // ray origin
+                        tMin,                // ray min range
+                        rayDir,              // ray direction
+                        tMax,                // ray max range
+                        1                    // payload (location = 1)
+            );
+
+            if(!isShadowArea)
+            {
+                col += max(dot(attr.normal, dir), 0.0f) * dLightBuffer.i[0].color * dLightBuffer.i[0].intensity;
+            }
+        }
+    }
+    
+    return col;
+}
+
+#endif

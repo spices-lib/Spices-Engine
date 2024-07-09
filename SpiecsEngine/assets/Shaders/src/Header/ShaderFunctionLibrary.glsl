@@ -6,6 +6,9 @@
 
 /************************************Pre Compile*******************************************/
 
+#ifndef SHADER_FUNCTION_LIBRARY
+#define SHADER_FUNCTION_LIBRARY
+
 #include "ShaderCommon.h"
 
 /*****************************************************************************************/
@@ -96,7 +99,12 @@ void CreateCoordinateSystem(in vec3 N, out vec3 Nt, out vec3 Nb)
 	Nb = cross(N, Nt);
 }
 
-vec2 SampleSphericalMap(vec3 v)
+/**
+* @brief Transform space TextureCube sampler uv to flatten uv.
+* @param[in] v space TextureCube sampler uv.
+* @return Returns flatten uv.
+*/
+vec2 SampleSphericalMap(in vec3 v)
 {
     vec2 uv = vec2(atan(-v.z, v.x), asin(-v.y));
     uv *= invAtan;
@@ -106,3 +114,5 @@ vec2 SampleSphericalMap(vec3 v)
 }
 
 /*****************************************************************************************/
+
+#endif
