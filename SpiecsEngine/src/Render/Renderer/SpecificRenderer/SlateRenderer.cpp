@@ -99,7 +99,7 @@ namespace Spiecs {
 		init_info.QueueFamily               = m_VulkanState.m_GraphicQueueFamily;
 		init_info.Queue                     = m_VulkanState.m_GraphicQueue;
 		init_info.PipelineCache             = VK_NULL_HANDLE;
-		init_info.DescriptorPool            = m_DesctiptorPool->GetPool();
+		init_info.DescriptorPool            = m_DescriptorPool->GetPool();
 		init_info.RenderPass                = m_Pass->Get();
 		init_info.Subpass                   = 0;
 		init_info.MinImageCount             = 2;
@@ -161,7 +161,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		ImGuiIO& io = ImGui::GetIO();
+		const ImGuiIO& io = ImGui::GetIO();
 
 		ImGui::Render();
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_VulkanState.m_CommandBuffer[index]);

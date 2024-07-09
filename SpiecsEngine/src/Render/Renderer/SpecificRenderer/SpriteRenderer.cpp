@@ -46,14 +46,13 @@ namespace Spiecs {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Sprite" }));
-
-		glm::vec3 camPos;
+		
 		auto& [ invViewMatrix, projectionMatrix, stableFrames ] = GetActiveCameraMatrix(frameInfo);
-		camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
+		const glm::vec3 camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
 
 		std::map<float, int> sortedEntity;
 		IterWorldComp<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
-			glm::vec3 dis = transComp.GetPosition() - camPos;
+			const glm::vec3 dis = transComp.GetPosition() - camPos;
 			sortedEntity[glm::dot(dis, dis)] = entityId;
 
 			return false;
@@ -61,7 +60,7 @@ namespace Spiecs {
 
 		for (auto it = sortedEntity.rbegin(); it != sortedEntity.rend(); ++it)
 		{
-			auto [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>((entt::entity)it->second);
+			auto [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>(static_cast<entt::entity>(it->second));
 
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 

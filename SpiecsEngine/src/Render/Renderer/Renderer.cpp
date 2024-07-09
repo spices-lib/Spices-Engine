@@ -15,20 +15,17 @@ namespace Spiecs {
 	(
 		const std::string&                     rendererName          , 
 		VulkanState&                           vulkanState           , 
-		std::shared_ptr<VulkanDescriptorPool>  desctiptorPool        , 
+		std::shared_ptr<VulkanDescriptorPool>  DescriptorPool        , 
 		std::shared_ptr<VulkanDevice>          device                , 
 		std::shared_ptr<RendererResourcePool>  rendererResourcePool  ,
 		bool isLoadDefaultMaterial
 	)
 		: m_VulkanState             (vulkanState           )
-		, m_DesctiptorPool          (desctiptorPool        )
+		, m_DescriptorPool          (DescriptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
-		, m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
-	    , m_RendererName            (rendererName          )
-	{}
-
-	Renderer::~Renderer()
+		, m_RendererName            (rendererName          )
+	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 	{}
 
 	void Renderer::OnSystemInitialize()
@@ -66,7 +63,7 @@ namespace Spiecs {
 		CreateDescriptorSet();
 	}
 
-	void Renderer::RegistyMaterial(const std::string& materialName, const std::string& subpassName)
+	void Renderer::RegistryMaterial(const std::string& materialName, const std::string& subpassName)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -79,7 +76,7 @@ namespace Spiecs {
 		/**
 		* @brief PreRenderer's DescriptorSetInfo.
 		*/
-		auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
+		const auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
 		for (auto& pair : preRendererSetInfo)
 		{
 			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
@@ -88,7 +85,7 @@ namespace Spiecs {
 		/**
 		* @brief SpecificRenderer's DescriptorSetInfo.
 		*/
-		auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subpassName});
+		const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subpassName});
 		for (auto& pair : specificRendererSetInfo)
 		{
 			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
@@ -97,8 +94,8 @@ namespace Spiecs {
 		/**
 		* @brief Material's DescriptorSetInfo.
 		*/
-		auto material = ResourcePool<Material>::Load<Material>(materialName);
-		auto materialSetInfo = material->GetMaterialDescriptorSet();
+		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+		const auto materialSetInfo = material->GetMaterialDescriptorSet();
 		for (auto& pair : materialSetInfo)
 		{
 			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
@@ -117,17 +114,17 @@ namespace Spiecs {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
+		const auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
 		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
 		* @brief Create Pipeline.
 		*/
-		auto pipeline = CreatePipeline(material, pipelinelayout, subPass);
+		const auto pipeline = CreatePipeline(material, pipelinelayout, subPass);
 		m_Pipelines[materialName] = pipeline;
 	}
 
-	void Renderer::CreateDefaultMaterial()
+	void Renderer::CreateDefaultMaterial() const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -141,7 +138,7 @@ namespace Spiecs {
 				std::stringstream ss;
 				ss << m_RendererName << "." << K << ".Default";
 
-				auto material = ResourcePool<Material>::Load<Material>(ss.str());
+				const auto material = ResourcePool<Material>::Load<Material>(ss.str());
 				material->BuildMaterial();
 
 				/**
@@ -153,16 +150,16 @@ namespace Spiecs {
 	}
 
 	VkPipelineLayout Renderer::CreatePipelineLayout(
-		std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
-		std::shared_ptr<RendererSubPass>    subPass
-	)
+		const std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
+		std::shared_ptr<RendererSubPass>          subPass
+	) const
 	{
 		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Instance a VkPipelineLayoutCreateInfo.
 		*/
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+		VkPipelineLayoutCreateInfo                         pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType                         = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount                = static_cast<uint32_t>(rowSetLayouts.size());
 		pipelineLayoutInfo.pSetLayouts                   = rowSetLayouts.data();
@@ -205,7 +202,7 @@ namespace Spiecs {
 		pipelineConfig.renderPass                     = m_Pass->Get();
 		pipelineConfig.subpass                        = subPass->GetIndex();
 		pipelineConfig.pipelineLayout                 = layout;
-		pipelineConfig.colorBlendInfo.attachmentCount = (uint32_t)subPass->GetColorBlend().size();
+		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
 		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
 
 		/**
@@ -327,9 +324,9 @@ namespace Spiecs {
 		IterWorldComp<CameraComponent>(
 			frameInfo,
 			[&](
-			int                          entityId,
-			TransformComponent& transComp,
-			CameraComponent& camComp
+			int                  entityId,
+			TransformComponent&  transComp,
+			CameraComponent&     camComp
 			) {
 				camTranComp = transComp;
 				ratio = camComp.GetCamera()->GetAspectRatio();
@@ -348,10 +345,8 @@ namespace Spiecs {
 				tempComp.SetPostion(camTranComp.GetPosition());
 				tempComp.SetRotation(camTranComp.GetRotation());
 
-				glm::mat4 view = tempComp.GetModelMatrix();
-				glm::mat4 projection = Otrhographic(-ratio * 30, ratio * 30, -1.0f * 30, 1.0f * 30, -100000.0f, 100000.0f);
-
-				auto [invViewMatrix, projectionMatrix, stableFrames] = GetActiveCameraMatrix(frameInfo);
+				const glm::mat4 view = tempComp.GetModelMatrix();
+				const glm::mat4 projection = Otrhographic(-ratio * 30, ratio * 30, -1.0f * 30, 1.0f * 30, -100000.0f, 100000.0f);
 
 				directionalLight[index] = projection * glm::inverse(view);
 				index++;
@@ -404,20 +399,20 @@ namespace Spiecs {
 		}
 	}
 
-	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint)
+	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint) const
 	{
 		SPIECS_PROFILE_ZONE;
 
 		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame, bindPoint);
 	}
 
-	void Renderer::RenderBehaverBuilder::SetViewPort()
+	void Renderer::RenderBehaverBuilder::SetViewPort() const
 	{
 		/**
 		* @brief Use Negative Viewport height filp here to handle axis difference.
 		* Remember enable device extension (VK_KHR_MAINTENANCE1)
 		*/
-		VkViewport viewport {};
+		VkViewport                   viewport {};
 		viewport.x                =  0.0f;
 		viewport.y                =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height);
 		viewport.width            =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width);
@@ -431,7 +426,7 @@ namespace Spiecs {
 		*/
 		if (SlateSystem::GetRegister())
 		{
-			ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+			const ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 
 			viewport.y            =  viewPortSize.y;
 			viewport.width        =  viewPortSize.x;
@@ -446,7 +441,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkRect2D
 		*/
-		VkRect2D scissor {};
+		VkRect2D                      scissor {};
 		scissor.offset            = { 0, 0 };
 		scissor.extent            = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 
@@ -492,12 +487,12 @@ namespace Spiecs {
 		}
 		else
 		{
-			ImVec2 size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-			VkExtent2D extent = { static_cast<uint32_t>(size.x) , static_cast<uint32_t>(size.y) };
+			const ImVec2 size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+			const VkExtent2D extent = { static_cast<uint32_t>(size.x) , static_cast<uint32_t>(size.y) };
 			renderPassInfo.renderArea.extent    = extent;
 		}
 
-		renderPassInfo.clearValueCount          = (uint32_t)m_Renderer->m_Pass->GetClearValues().size();
+		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
 		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_Renderer->m_Pass->GetName());
@@ -506,7 +501,7 @@ namespace Spiecs {
 		vkCmdBeginRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void Renderer::RenderBehaverBuilder::EndRenderPass()
+	void Renderer::RenderBehaverBuilder::EndRenderPass() const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -516,7 +511,7 @@ namespace Spiecs {
 		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -526,14 +521,14 @@ namespace Spiecs {
 		BindDescriptorSet(infos, ss.str(), bindPoint);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint) const
 	{
 		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Iter all desctiptorsets.
 		*/
-		for (auto pair : infos)
+		for (const auto& pair : infos)
 		{
 			vkCmdBindDescriptorSets(
 				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
@@ -574,18 +569,18 @@ namespace Spiecs {
 		/**
 		* @brief fill in imageInfos.
 		*/
-		for (int i = 0; i < textureNames.size(); i++)
+		for (size_t i = 0; i < textureNames.size(); i++)
 		{
-			RendererResourceCreateInfo Info;
-			Info.name                                = textureNames[i];
-			Info.type                                = type;
-			Info.width                               = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
-			Info.height                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
-			Info.description.samples                 = VK_SAMPLE_COUNT_1_BIT;
-			Info.description.format                  = format;
-			Info.usage                               = VK_IMAGE_USAGE_STORAGE_BIT;
+			RendererResourceCreateInfo info;
+			info.name                                = textureNames[i];
+			info.type                                = type;
+			info.width                               = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
+			info.height                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
+			info.description.samples                 = VK_SAMPLE_COUNT_1_BIT;
+			info.description.format                  = format;
+			info.usage                               = VK_IMAGE_USAGE_STORAGE_BIT;
 
-			VkDescriptorImageInfo* imageInfo         = m_Renderer->m_RendererResourcePool->AccessResource(Info);
+			VkDescriptorImageInfo* imageInfo         = m_Renderer->m_RendererResourcePool->AccessResource(info);
 			imageInfo->imageLayout                   = VK_IMAGE_LAYOUT_GENERAL;
 
 			m_ImageInfos[set][binding].push_back(*imageInfo);
@@ -594,7 +589,7 @@ namespace Spiecs {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, stageFlags, static_cast<uint32_t>(textureNames.size()));
 
 		return *this;
@@ -612,16 +607,16 @@ namespace Spiecs {
 		/**
 		* @brief fill in imageInfos.
 		*/
-		for (int i = 0; i < textureNames.size(); i++)
+		for (size_t i = 0; i < textureNames.size(); i++)
 		{
-			RendererResourceCreateInfo Resinfo;
-			Resinfo.name = textureNames[i];
-			auto info = m_Renderer->m_RendererResourcePool->AccessResource(Resinfo);
+			RendererResourceCreateInfo resinfo;
+			resinfo.name = textureNames[i];
+			const auto info = m_Renderer->m_RendererResourcePool->AccessResource(resinfo);
 
 			m_ImageInfos[set][binding].push_back(*info);
 		}
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags,  static_cast<uint32_t>(textureNames.size()));
 
 		return *this;
@@ -639,16 +634,16 @@ namespace Spiecs {
 		/**
 		* @brief fill in imageInfos.
 		*/
-		for (int i = 0; i < inputAttachmentNames.size(); i++)
+		for (size_t i = 0; i < inputAttachmentNames.size(); i++)
 		{
-			RendererResourceCreateInfo Resinfo;
-			Resinfo.name = inputAttachmentNames[i];
-			auto info = m_Renderer->m_RendererResourcePool->AccessResource(Resinfo);
+			RendererResourceCreateInfo resinfo;
+			resinfo.name = inputAttachmentNames[i];
+			const auto info = m_Renderer->m_RendererResourcePool->AccessResource(resinfo);
 
 			m_ImageInfos[set][binding].push_back(*info);
 		}
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, stageFlags, static_cast<uint32_t>(inputAttachmentNames.size()));
 
 		return *this;
@@ -662,7 +657,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, stageFlags, 1);
 
 		return *this;
@@ -672,7 +667,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		auto descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
+		const auto descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
 
 		for (auto& pair : descriptorSets)
 		{
@@ -701,7 +696,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		size_t size = m_Renderer->m_Pass->GetSubPasses().size();
+		const size_t size = m_Renderer->m_Pass->GetSubPasses().size();
 		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, static_cast<uint32_t>(size));
 		return *this;
 	}
@@ -712,12 +707,12 @@ namespace Spiecs {
 
 		m_HandledRendererSubPass->BuildSubPassDescription();
 
-		size_t index = m_Renderer->m_Pass->GetSubPasses().size() - 1;
+		const size_t index = m_Renderer->m_Pass->GetSubPasses().size() - 1;
 		m_HandledRendererSubPass->BuildSubPassDependency(static_cast<uint32_t>(index));
 		return *this;
 	}
 
-	void Renderer::RendererPassBuilder::Build()
+	void Renderer::RendererPassBuilder::Build() const
 	{
 		SPIECS_PROFILE_ZONE;
 

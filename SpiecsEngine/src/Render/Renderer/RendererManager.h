@@ -28,12 +28,12 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		RendererManager() {};
+		RendererManager() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~RendererManager() {};
+		virtual ~RendererManager() = default;
 
 		/**
 		* @brief Get Static RendererManager.
@@ -43,13 +43,14 @@ namespace Spiecs {
 
 		/**
 		* @brief All renderer Start to Render.
+		* @param[in] ts TimeStep.
 		* @param[in] frameInfo The current frame data.
 		*/
 		static void Run(TimeStep& ts, FrameInfo& frameInfo);
 
 		/**
-		* @brief This function is called on swapchian resized or out of data.
-		* Recreate all renderer renderpass, resource and framebuffer.
+		* @brief This function is called on swapchain resized or out of data.
+		* Recreate all renderer render pass, resource and framebuffer.
 		* @todo Event from glfw.
 		*/
 		static void OnWindowResizeOver();
@@ -67,7 +68,7 @@ namespace Spiecs {
 		/**
 		* @brief Push a renderer to this manager, and initialize it.
 		* @param[in] T Specific Renderer Class.
-		* @param[in] rendererName Specific Renderer Name.
+		* @param[in] args Args.
 		*/
 		template<typename T, typename ... Args>
 		RendererManager& Push(Args&& ... args)
@@ -88,7 +89,7 @@ namespace Spiecs {
 			}
 
 			m_Identities.push_back(rendererName, std::shared_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...)));
-			auto ptr = *m_Identities.find_value(rendererName);
+			const auto ptr = *m_Identities.find_value(rendererName);
 			ptr->OnSystemInitialize();
 
 			/**
@@ -105,7 +106,7 @@ namespace Spiecs {
 		* @brief Pop a renderer from this manager, and destroy it.
 		* @param[in] rendererName Specific Renderer Name.
 		*/
-		RendererManager& Pop(const std::string& rendererName)
+		static RendererManager& Pop(const std::string& rendererName)
 		{
 			SPIECS_PROFILE_ZONE;
 
@@ -115,7 +116,7 @@ namespace Spiecs {
 			if (!m_Identities.has_key(rendererName))
 			{
 				std::stringstream ss;
-				ss << rendererName << " has been poped ";
+				ss << rendererName << " has been popped ";
 
 				SPIECS_CORE_ERROR(ss.str());
 			}
@@ -124,7 +125,7 @@ namespace Spiecs {
 			* @brief System shutdown
 			*/
 			std::stringstream ss;
-			ss << rendererName << " poped ";
+			ss << rendererName << " popped ";
 
 			SPIECS_CORE_INFO(ss.str());
 
@@ -133,12 +134,12 @@ namespace Spiecs {
 			return *m_RendererManager;
 		}
 
-		static std::shared_ptr<Renderer> GetRenderer(const std::string name);
+		static std::shared_ptr<Renderer> GetRenderer(const std::string& name);
 
 	private:
 
 		/**
-		* @brief Sttaic RendererManager.
+		* @brief Static RendererManager.
 		*/
 		static std::unique_ptr<RendererManager> m_RendererManager;
 

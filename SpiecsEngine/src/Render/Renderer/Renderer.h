@@ -46,7 +46,7 @@ namespace Spiecs {
 
 	/**
 	* @brief Renderer Class.
-	* This class defines the basic behaver of renderer.
+	* This class defines the basic behaves of renderer.
 	* When we add an new Renderer, we need inherit from this.
 	*/
 	class Renderer
@@ -57,38 +57,39 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] rendererName The name of this Renderer.
 		* @param[in] vulkanState The core vulkan objects that in use.
-		* @param[in] desctiptorPool The shared pointer of DesctiptorPool, used for allocate descriptor and free descriptor.
-		* @param[in] device The shared pointer of VulkanDevice, used for renderpass's formats query.
-		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for regist/access rendertarget.
+		* @param[in] DescriptorPool The shared pointer of DescriptorPool, used for allocate descriptor and free descriptor.
+		* @param[in] device The shared pointer of VulkanDevice, used for render pass's formats query.
+		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for registry/access RT.
+		* @param[in] isLoadDefaultMaterial True if need load a default material.
 		*/
 		Renderer
 		(
 			const std::string&                      rendererName            , 
 			VulkanState&                            vulkanState             , 
-			std::shared_ptr<VulkanDescriptorPool>   desctiptorPool          , 
+			std::shared_ptr<VulkanDescriptorPool>   DescriptorPool          , 
 			std::shared_ptr<VulkanDevice>           device                  , 
 			std::shared_ptr<RendererResourcePool>   rendererResourcePool    ,
-			bool isLoadDefaultMaterial = true
+			bool                                    isLoadDefaultMaterial = true
 		);
 
 		/**
 		* @brief Destructor Function.
 		* We destroy pipeline layout and free descriptors that holed by this renderer here.
 		*/
-		virtual ~Renderer();
+		virtual ~Renderer() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Renderer(const Renderer&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Renderer& operator=(const Renderer&) = delete;
 
@@ -97,9 +98,9 @@ namespace Spiecs {
 		/******************************The interface do not needs override now******************************/
 
 		/**
-		* @brief This interface is called on rendersystem is registed.
-		* Initialize the specific renderer's pipeline, renderpass. framebuffer, descriptor, and so on...
-		* @note Though this is a interface, Usually not makeing scene in overriding it.
+		* @brief This interface is called on render system is registered.
+		* Initialize the specific renderer's pipeline, render pass. framebuffer, descriptor, and so on...
+		* @note Though this is a interface, Usually not making scene in overriding it.
 		*/
 		virtual void OnSystemInitialize();
 
@@ -110,35 +111,36 @@ namespace Spiecs {
 		/**
 		* @brief The interface is called every frame.
 		* Defines what data needs to be renderer and how to render.
+		* @param[in] ts TimeStep.
 		* @param[in] frameInfo The current frame data.
 		*/
 		virtual void Render(TimeStep& ts, FrameInfo& frameInfo) = 0;
 
 		/**
-		* @brief This interface is called on Window resized over (regist by swapchain).
-		* If the specific renderer uses swpachianimage attachment during CreateRenderPass(), 
+		* @brief This interface is called on Window resized over (registry by swapchain).
+		* If the specific renderer uses swapchain image attachment during CreateRenderPass(), 
 		* this interface needs to override, callOnSlateResize here just will be fine.
 		*/
-		virtual void OnWindowResizeOver() {};
+		virtual void OnWindowResizeOver() {}
 
 		/**
-		* @breif This interface is called on Viewport resize (regist by ImguiViewport).
+		* @breif This interface is called on Viewport resize (registry by Imgui Viewport).
 		* If the specific renderer uses the attachment that needs recreated during CreateRenderPass(), 
 		* this interface needs to override, call CreateRenderPass() and CreateDescriptorSet() here just will be fine.
 		*/
 		virtual void OnSlateResize();
 
 		/**
-		* @breif This interface is called on worldmarkqueryer tick (regist by MeshComponent).
+		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
 		*/
-		virtual void OnMeshAddedWorld() {};
+		virtual void OnMeshAddedWorld() {}
 
 		/**
 		* @brief Register material to Specific Renderer.
 		* @param[in] materialName Material Name.
 		* @param[in] subpassName SubPass Name.
 		*/
-		void RegistyMaterial(
+		void RegistryMaterial(
 			const std::string& materialName , 
 			const std::string& subpassName
 		);
@@ -147,37 +149,37 @@ namespace Spiecs {
 		* @brief Get RendererPass.
 		* @return Returns the RendererPass.
 		*/
-		inline std::shared_ptr<RendererPass>& GetPasses() { return m_Pass; };
+		inline std::shared_ptr<RendererPass>& GetPasses() { return m_Pass; }
 
 	private:
 
 		/**
 		* @brief The interface is called during OnSystemInitialize().
-		* Create specific renderpass.
-		* @todo Implementate specific renderpass
+		* Create specific render pass.
+		* @todo Implemented specific render pass
 		*/
 		virtual void CreateRendererPass() = 0;
 
 		/**
-		* @brief This interface is called buring OnSystemInitialize().
-		* Create all subpass descriptorSet.
+		* @brief This interface is called during OnSystemInitialize().
+		* Create all sub pass descriptorSet.
 		*/
 		virtual void CreateDescriptorSet() = 0;
 
 		/**
 		* @brief Create Specific Renderer Default Material. 
 		*/
-		void CreateDefaultMaterial();
+		void CreateDefaultMaterial() const;
 
 		/**
-		* @brief Create Pipeline Layout with material's descriptorset and renderer's descriptorset.
-		* @param[in] rowSetLayouts All descriptorset collected.
-		* @param[in] subPass material used subpass.
+		* @brief Create Pipeline Layout with material's descriptorset and renderer's descriptor set.
+		* @param[in] rowSetLayouts All descriptor set collected.
+		* @param[in] subPass material used sub pass.
 		*/
 		VkPipelineLayout CreatePipelineLayout(
-			std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
-			std::shared_ptr<RendererSubPass>    subPass
-		);
+			const std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
+			std::shared_ptr<RendererSubPass>          subPass
+		) const;
 
 		/**
 		* @brief Create Specific Material Pipeline.
@@ -199,16 +201,16 @@ namespace Spiecs {
 		/******************************Renderer Help Function**********************************************/
 
 		/**
-		* @brief Iterater the specific Component in World.
+		* @brief Iterator the specific Component in World.
 		* @param[in] T The specific Component class.
 		* @param[in] frameInfo The current frame data.
-		* @param[in] F The function pointer that need to execute during this function.
+		* @param[in] func The function pointer that need to execute during this function.
 		*/
 		template<typename T, typename F>
 		inline void IterWorldComp(FrameInfo& frameInfo, F func);
 
 		/**
-		* @brief Get The actived camera entity's view matrix and projection matrix.
+		* @brief Get The activated camera entity's view matrix and projection matrix.
 		* @param[in] frameInfo The current frame data.
 		* @return Returns a tuple of view matrix, projection matrix, stable frames.
 		*/
@@ -218,7 +220,7 @@ namespace Spiecs {
 		* @brief Get DirectionalLightComponent's render data in World.
 		* @param[in] frameInfo The current frame data.
 		* @param[out] directionalLight DirectionalLight.
-		* @todo Mutiple directional light.
+		* @todo Multiple directional light.
 		*/
 		void GetDirectionalLight(FrameInfo& frameInfo, std::array<SpiecsShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM>& dLightBuffer);
 
@@ -236,10 +238,10 @@ namespace Spiecs {
 
 	protected:
 
-		/******************************Help Calss for quick build*******************************************/
+		/******************************Help Class for quick build*******************************************/
 
 		/**
-		* @brief This Class is a helpper for Buinding RendererPass.
+		* @brief This Class is a helper for Building RendererPass.
 		* Only instanced during CreateRendererPass().
 		*/
 		class RendererPassBuilder
@@ -259,18 +261,18 @@ namespace Spiecs {
 			/**
 			* @brief Destructor Function.
 			*/
-			virtual ~RendererPassBuilder() {};
+			virtual ~RendererPassBuilder() = default;
 
 			/**
-			* @brief Add a new SubPass to RedererPass.
+			* @brief Add a new SubPass to Renderer Pass.
 			* @param[in] subPassName SunPass Name.
 			* @return Returns the RendererPassBuilder.
 			*/
 			RendererPassBuilder& AddSubPass(const std::string& subPassName);
 
 			/**
-			* @brief Add a swpachianimage attachment.
-			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @brief Add a swapchain image attachment.
+			* @param[in] func Defines Specific VkAttachmentDescription.
 			* @return Returns the RendererPassBuilder.
 			*/
 			template<typename T>
@@ -280,7 +282,7 @@ namespace Spiecs {
 			* @brief Add a color attachment.
 			* @param[in] attachmentName Attachment Name.
 			* @param[in] type Attachment TextureType.
-			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @param[in] func Defines Specific VkAttachmentDescription.
 			* @return Returns the RendererPassBuilder.
 			*/
 			template<typename T>
@@ -294,7 +296,7 @@ namespace Spiecs {
 			* @brief Add a depth attachment.
 			* @param[in] attachmentName Attachment Name.
 			* @param[in] type Attachment TextureType.
-			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @param[in] func Defines Specific VkAttachmentDescription.
 			* @return Returns the RendererPassBuilder.
 			*/
 			template<typename T>
@@ -308,7 +310,7 @@ namespace Spiecs {
 			* @brief Add a input attachment.
 			* @param[in] attachmentName Attachment Name.
 			* @param[in] type Attachment TextureType.
-			* @param[in] T Defines Specific VkAttachmentDescription.
+			* @param[in] func Defines Specific VkAttachmentDescription.
 			* @return Returns the RendererPassBuilder.
 			*/
 			template<typename T>
@@ -319,7 +321,7 @@ namespace Spiecs {
 			);
 
 			/**
-			* @brief End recording a subpass.
+			* @brief End recording a sub pass.
 			* @return Returns the RendererPassBuilder.
 			*/
 			RendererPassBuilder& EndSubPass();
@@ -327,7 +329,7 @@ namespace Spiecs {
 			/**
 			* @brief Build the RendererPass.
 			*/
-			void Build();
+			void Build() const;
 
 		private:
 
@@ -338,18 +340,18 @@ namespace Spiecs {
 
 			/**
 			* @brief Specific Renderer pointer.
-			* Passed while this class instanecd.
+			* Passed while this class instanced.
 			*/
 			Renderer* m_Renderer;
 
 			/**
-			* @brief Handled Subpass.
+			* @brief Handled Sub pass.
 			*/
 			std::shared_ptr<RendererSubPass> m_HandledRendererSubPass;
 		};
 
 		/**
-		* @brief This Class is a helpper for Building Specific Renderer DescriptorSet.
+		* @brief This Class is a helper for Building Specific Renderer DescriptorSet.
 		* Only instanced during CreateDescriptorSets().
 		*/
 		class DescriptorSetBuilder
@@ -358,8 +360,8 @@ namespace Spiecs {
 
 			/**
 			* @brief Constructor Function.
-			* @param[in] subPassName Subpass name.
-			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			* @param[in] subPassName Sub pass name.
+			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			*/
 			DescriptorSetBuilder(
 				const std::string& subPassName      ,
@@ -369,11 +371,11 @@ namespace Spiecs {
 			/**
 			* @brief Destructor Function.
 			*/
-			virtual ~DescriptorSetBuilder() {};
+			virtual ~DescriptorSetBuilder() = default;
 
 			/**
-			* @brief Set VkPushConstantRange by a specific pushconstant struct.
-			* @param[in] T Specific pushconstant struct.
+			* @brief Set VkPushConstantRange by a specific push constant struct.
+			* @param[in] T Specific push constant struct.
 			* @return Returns this reference.
 			*/
 			template<typename T>
@@ -410,7 +412,7 @@ namespace Spiecs {
 			);
 
 			/**
-			* @brief Add the texture set binding to descriptorsetlayout.
+			* @brief Add the texture set binding to descriptor set layout.
 			* @param[in] T Texture Type.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
@@ -427,7 +429,7 @@ namespace Spiecs {
 			);
 
 			/**
-			* @brief Add the storage texture set binding to descriptorsetlayout.
+			* @brief Add the storage texture set binding to descriptor set layout.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
@@ -445,7 +447,7 @@ namespace Spiecs {
 			);
 
 			/**
-			* @brief Add the attachment as texture to descriptorsetlayout.
+			* @brief Add the attachment as texture to descriptor set layout.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
@@ -460,7 +462,7 @@ namespace Spiecs {
 			);
 
 			/**
-			* @brief Add the texture set binding to descriptorsetlayout.
+			* @brief Add the texture set binding to descriptor set layout.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
@@ -475,7 +477,7 @@ namespace Spiecs {
 			);
 
 			/**
-			* @brief Add the Acceleration Structure set binding to descriptorsetlayout.
+			* @brief Add the Acceleration Structure set binding to descriptor set layout.
 			* @param[in] set Which set this Acceleration Structure wil use.
 			* @param[in] binding Which binding this Acceleration Structure wil use.
 			* @param[in] stageFlags Which buffer stage this Acceleration Structure will use.
@@ -499,22 +501,22 @@ namespace Spiecs {
 
 			/**
 			* @brief Specific Renderer pointer.
-			* Passed while this class instanecd.
+			* Passed while this class instanced.
 			*/
 			Renderer* m_Renderer;
 
 			/**
-			* @brief Handled Subpass.
+			* @brief Handled Sub pass.
 			*/
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 
 			/**
-			* @brief The DesctiptorSetManager ID descriptorSet belongs to.
+			* @brief The Descriptor Set Manager ID descriptorSet belongs to.
 			*/
 			String2 m_DescriptorSetId;
 
 			/**
-			* @brief DescriptorSet Buffer type binginginfo.
+			* @brief DescriptorSet Buffer type binging info.
 			* [set] - [binding] - [info]
 			*/
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> m_BufferInfos;
@@ -536,9 +538,10 @@ namespace Spiecs {
 
 			/**
 			* @brief Constructor Function.
-			* Bind pipleine and all buffer type descriptorset.
-			* @param[in] renderer When instanecd during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			* Bind pipeline and all buffer type descriptor set.
+			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			* @param[in] currentFrame Passed from FrameInfo.
+			* @param[in] currentImage Passed from FrameInfo.
 			* @param[in] isNonGraphicRender set to true if cmd is not use with a graphic pipeline.
 			*/
 			RenderBehaverBuilder(
@@ -551,20 +554,20 @@ namespace Spiecs {
 			/**
 			* @brief Destructor Function.
 			*/
-			virtual ~RenderBehaverBuilder() {};
+			virtual ~RenderBehaverBuilder() = default;
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaverBuilder instanced.
-			* @param[name] materialName, also pipelineName.
+			* @param[in] materialName also pipelineName.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
+			void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS) const;
 
 			/**
 			* @brief DynamicState Set Viewport and Scissor.
 			*/
-			void SetViewPort();
+			void SetViewPort() const;
 
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo.
@@ -575,7 +578,7 @@ namespace Spiecs {
 			void BindDescriptorSet(
 				DescriptorSetInfo&   infos                                       , 
 				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
-			);
+			) const;
 
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo and name.
@@ -585,17 +588,17 @@ namespace Spiecs {
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			void BindDescriptorSet(
-				DescriptorSetInfo&   infos                                       , 
+				const DescriptorSetInfo&   infos                                       , 
 				const std::string&   name                                        , 
 				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
-			);
+			) const;
 
 			/******************************Update By Value**********************************************************/
 
 			/**
 			* @brief Update local pushconstant buffer.
 			* @param[in] T Specific push constant struct Type.
-			* @param[in] F A function pointer, which defines what data inside the buffer.
+			* @param[in] func A function pointer, which defines what data inside the buffer.
 			*/
 			template<typename T, typename F>
 			void UpdatePushConstant(F func);
@@ -603,7 +606,7 @@ namespace Spiecs {
 			/**
 			* @brief Update a local buffer.
 			* @param[in] T Specific buffer struct Type.
-			* @param[in] F A function pointer, which defines what data inside the buffer.
+			* @param[in] func A function pointer, which defines what data inside the buffer.
 			* @param[in] set Which set the descriptor will use.
 			* @param[in] binding Which binding the descriptor will use.
 			*/
@@ -613,7 +616,7 @@ namespace Spiecs {
 			/**
 			* @brief Update a local buffer.
 			* @param[in] T Specific buffer struct Type.
-			* @param[in] F A function pointer, which defines what data inside the buffer.
+			* @param[in] func A function pointer, which defines what data inside the buffer.
 			* @param[in] set Which set the descriptor will use.
 			* @param[in] binding Which binding the descriptor will use.
 			*/
@@ -628,7 +631,7 @@ namespace Spiecs {
 			* @param[in] data push constant data pointer.
 			*/
 			template<typename T>
-			void UpdatePushConstant(void* data);
+			void UpdatePushConstant(void* data) const;
 
 			/**
 			* @brief Update a local buffer.
@@ -636,7 +639,7 @@ namespace Spiecs {
 			* @param[in] binding Which binding the descriptor will use.
 			* @param[in] data ubo data pointer.
 			*/
-			void UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data);
+			void UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data) const;
 
 			/**
 			* @brief Update a local buffer.
@@ -644,11 +647,11 @@ namespace Spiecs {
 			* @param[in] binding Which binding the descriptor will use.
 			* @param[in] data uubo data pointer.
 			*/
-			void UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data);
+			void UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data) const;
 
 			/**
-			* @brief End a preview subpass and stat next subpass.
-			* @param[in] subpassName The name of next subpass.
+			* @brief End a preview sub pass and stat next sub pass.
+			* @param[in] subpassName The name of next sub pass.
 			*/
 			void BeginNextSubPass(const std::string& subpassName);
 
@@ -660,32 +663,32 @@ namespace Spiecs {
 			/**
 			* @brief End this Renderer's RenderPass.
 			*/
-			void EndRenderPass();
+			void EndRenderPass() const;
 
 		private:
 
 			/**
 			* @brief Specific Renderer pointer.
-			* Passed while this class instanecd.
+			* Passed while this class instanced.
 			*/
 			Renderer* m_Renderer;
 
 			/**
 			* @brief Current frame index.
-			* Passed while this class instanecd.
+			* Passed while this class instanced.
 			* @see FrameInfo.
 			*/
 			uint32_t m_CurrentFrame;
 
 			/**
 			* @brief Current frame index.
-			* Passed while this class instanecd.
+			* Passed while this class instanced.
 			* @see FrameInfo.
 			*/
 			uint32_t m_CurrentImage;
 
 			/**
-			* @brief Handled Subpass.
+			* @brief Handled Sub pass.
 			*/
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 		};
@@ -693,14 +696,14 @@ namespace Spiecs {
 	protected:
 		
 		/**
-		* @brief This variable is passed while renderer instaned.
+		* @brief This variable is passed while renderer instanced.
 		*/
 		VulkanState& m_VulkanState;
 
 		/**
-		* @brief This variable is passed while renderer instaned.
+		* @brief This variable is passed while renderer instanced.
 		*/
-		std::shared_ptr<VulkanDescriptorPool> m_DesctiptorPool;
+		std::shared_ptr<VulkanDescriptorPool> m_DescriptorPool;
 
 		/**
 		* @brief VulkanDevice , Passed by instanced.
@@ -740,7 +743,7 @@ namespace Spiecs {
 	};
 
 	template<typename T, typename F>
-	inline void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
+	void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -760,17 +763,12 @@ namespace Spiecs {
 			* @param[in] tComp TComponent.
 			* @return Returns true if need break for for loop.
 			*/
-			bool isIterBreak = func((int)e, transComp, tComp);
-
-			/**
-			* @brief Whether break this for loop.
-			*/
-			if (isIterBreak) break;
+			if (func(static_cast<int>(e), transComp, tComp)) break;
 		}
 	}
 
 	template<typename T, typename F>
-	inline void Renderer::RenderBehaverBuilder::UpdatePushConstant(F func)
+	void Renderer::RenderBehaverBuilder::UpdatePushConstant(F func)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -802,7 +800,7 @@ namespace Spiecs {
 	}
 
 	template<typename T, typename F>
-	inline void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, F func)
+	void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, F func)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -824,7 +822,7 @@ namespace Spiecs {
 	}
 
 	template<typename T, typename F>
-	inline void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, F func)
+	void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, F func)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -846,7 +844,7 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline void Renderer::RenderBehaverBuilder::UpdatePushConstant(void* data)
+	void Renderer::RenderBehaverBuilder::UpdatePushConstant(void* data) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -866,7 +864,7 @@ namespace Spiecs {
 		);
 	}
 
-	inline void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data)
+	inline void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -876,7 +874,7 @@ namespace Spiecs {
 		m_HandledSubPass->SetBuffer({ set, binding }, data);
 	}
 
-	inline void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data)
+	inline void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -887,7 +885,7 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -904,7 +902,7 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddUniformBuffer(
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddUniformBuffer(
 		uint32_t           set        , 
 		uint32_t           binding    , 
 		VkShaderStageFlags stageFlags
@@ -912,7 +910,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		UInt2 id(set, binding);
+		const UInt2 id(set, binding);
 
 		/**
 		* @brief Creating VulkanBuffer.
@@ -937,14 +935,14 @@ namespace Spiecs {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
 
 		return *this;
 	}
 
 	template<typename T>
-	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageBuffer(
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageBuffer(
 		uint32_t           set        , 
 		uint32_t           binding    , 
 		VkShaderStageFlags stageFlags
@@ -952,7 +950,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		UInt2 id(set, binding);
+		const UInt2 id(set, binding);
 
 		/**
 		* @brief Creating VulkanBuffer.
@@ -978,14 +976,14 @@ namespace Spiecs {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
 
 		return *this;
 	}
 
 	template<typename T>
-	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddTexture(
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddTexture(
 		uint32_t                        set        ,
 		uint32_t                        binding    ,
 		VkShaderStageFlags              stageFlags ,
@@ -999,28 +997,28 @@ namespace Spiecs {
 		*/
 		for (int i = 0; i < textureNames.size(); i++)
 		{
-			std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i]);
+			const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i]);
 			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
 		}
 
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
 
 		return *this;
 	}
 
 	template<typename T>
-	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSwapChainAttachment(T func)
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSwapChainAttachment(T func)
 	{
 		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Instance a VkAttachmentDescription.
 		*/
-		VkAttachmentDescription attachmentDescription{};
+		VkAttachmentDescription                attachmentDescription{};
 		attachmentDescription.format         = m_Renderer->m_Device->GetSwapChainSupport().format.format;
 		attachmentDescription.samples        = VK_SAMPLE_COUNT_1_BIT;
 		attachmentDescription.loadOp         = VK_ATTACHMENT_LOAD_OP_LOAD;
@@ -1039,13 +1037,13 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkClearValue.
 		*/
-		VkClearValue clearValue{};
+		VkClearValue                            clearValue{};
 		clearValue.color                     = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		/**
 		* @brief Instance a VkPipelineColorBlendAttachmentState.
 		*/
-		VkPipelineColorBlendAttachmentState colorBlend{};
+		VkPipelineColorBlendAttachmentState    colorBlend{};
 		colorBlend.colorWriteMask            = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
 			                                   VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 		colorBlend.blendEnable               = VK_FALSE;
@@ -1056,12 +1054,12 @@ namespace Spiecs {
 		colorBlend.dstAlphaBlendFactor       = VK_BLEND_FACTOR_ZERO;
 		colorBlend.alphaBlendOp              = VK_BLEND_OP_ADD;
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment("SwapChainImage", attachmentDescription, 1, clearValue);
+		const uint32_t index = m_Renderer->m_Pass->AddAttachment("SwapChainImage", attachmentDescription, 1, clearValue);
 
 		/**
 		* @brief Instance a VkAttachmentReference.
 		*/
-		VkAttachmentReference attachmentRef{};
+		VkAttachmentReference                  attachmentRef{};
 		attachmentRef.attachment             = index;
 		attachmentRef.layout                 = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -1071,7 +1069,7 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddColorAttachment(
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddColorAttachment(
 		const std::string& attachmentName , 
 		TextureType        type           ,
 		T                  func
@@ -1082,7 +1080,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkAttachmentDescription.
 		*/
-		VkAttachmentDescription attachmentDescription{};
+		VkAttachmentDescription                   attachmentDescription{};
 		attachmentDescription.format            = m_Renderer->m_Device->GetSwapChainSupport().format.format;
 		attachmentDescription.samples           = VK_SAMPLE_COUNT_1_BIT;
 		attachmentDescription.loadOp            = VK_ATTACHMENT_LOAD_OP_LOAD;
@@ -1166,7 +1164,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkAttachmentReference.
 		*/
-		VkAttachmentReference attachmentRef{};
+		VkAttachmentReference                     attachmentRef{};
 		attachmentRef.attachment                = index;
 		attachmentRef.layout                    = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -1176,7 +1174,7 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddDepthAttachment(
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddDepthAttachment(
 		const std::string& attachmentName ,
 		TextureType        type           ,
 		T func
@@ -1187,7 +1185,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkAttachmentDescription.
 		*/
-		VkAttachmentDescription depthAttachment{};
+		VkAttachmentDescription                   depthAttachment{};
 		depthAttachment.format                  = VulkanSwapChain::FindDepthFormat(m_Renderer->m_VulkanState.m_PhysicalDevice);
 		depthAttachment.samples                 = VK_SAMPLE_COUNT_1_BIT;
 		depthAttachment.loadOp                  = VK_ATTACHMENT_LOAD_OP_LOAD;
@@ -1206,7 +1204,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkClearValue.
 		*/
-		VkClearValue clearValue{};
+		VkClearValue                              clearValue{};
 		clearValue.depthStencil                 = { 1.0f, 0 };
 
 		/**
@@ -1220,7 +1218,7 @@ namespace Spiecs {
 		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 		Info.isDepthResource                    = true;
 
-		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
+		const VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
 		/**
 		* @brief Get layers.
@@ -1238,12 +1236,12 @@ namespace Spiecs {
 			break;
 		}
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, depthAttachment, clearValue, layers, view);
+		const uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, depthAttachment, clearValue, layers, view);
 
 		/**
 		* @brief Instance a VkAttachmentReference.
 		*/
-		VkAttachmentReference depthAttachmentRef{};
+		VkAttachmentReference                     depthAttachmentRef{};
 		depthAttachmentRef.attachment           = index;
 		depthAttachmentRef.layout               = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
@@ -1253,7 +1251,7 @@ namespace Spiecs {
 	}
 
 	template<typename T>
-	inline Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddInputAttachment(
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddInputAttachment(
 		const std::string& attachmentName , 
 		TextureType        type           ,
 		T                  func
@@ -1264,7 +1262,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkAttachmentDescription.
 		*/
-		VkAttachmentDescription attachmentDescription{};
+		VkAttachmentDescription                   attachmentDescription{};
 		attachmentDescription.format            = m_Renderer->m_Device->GetSwapChainSupport().format.format;
 		attachmentDescription.samples           = VK_SAMPLE_COUNT_1_BIT;
 		attachmentDescription.loadOp            = VK_ATTACHMENT_LOAD_OP_LOAD;
@@ -1283,7 +1281,7 @@ namespace Spiecs {
 		/**
 		* @brief Instance a VkClearValue.
 		*/
-		VkClearValue clearValue{};
+		VkClearValue                              clearValue{};
 		clearValue.color                        = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		/**
@@ -1296,14 +1294,14 @@ namespace Spiecs {
 		Info.width                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
 		Info.height                             = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
 
-		VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
+		const VkImageView& view = m_Renderer->m_RendererResourcePool->AccessResource(Info)->imageView;
 
-		uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, 1, view); /*todo: layer config */
+		const uint32_t index = m_Renderer->m_Pass->AddAttachment(attachmentName, attachmentDescription, clearValue, 1, view); /*todo: layer config */
 
 		/**
 		* @brief Instance a VkAttachmentReference.
 		*/
-		VkAttachmentReference attachmentRef{};
+		VkAttachmentReference                    attachmentRef{};
 		attachmentRef.attachment                = index;
 		attachmentRef.layout                    = attachmentDescription.finalLayout;
 

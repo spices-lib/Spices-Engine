@@ -34,7 +34,7 @@ namespace Spiecs {
 		builder.UpdateUniformBuffer<SpiecsShader::View>(0, 0, [&](auto& ubo) {
 			auto [ invViewMatrix, projectionMatrix, stableFrames ] = GetActiveCameraMatrix(frameInfo);
 			ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
-			VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
+			const VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
 
 			ubo.projection = projectionMatrix;
 			

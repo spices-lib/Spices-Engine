@@ -12,7 +12,7 @@ namespace Spiecs {
 
 	/**
 	* @brief SlateRenderer Class.
-	* This class defines the imgui render behaver.
+	* This class defines the imgui render behaves.
 	*/
 	class SlateRenderer : public Renderer
 	{
@@ -20,28 +20,31 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] rendererName The name of this Renderer.
 		* @param[in] vulkanState The core vulkan objects that in use.
-		* @param[in] desctiptorPool The DesctiptorPool.
+		* @param[in] descriptorPool The DescriptorPool.
+		* @param[in] device The VulkanDevice, used for format query.
+		* @param[in] rendererResourcePool The RendererResourcePool, RT Pool.
 		*/
 		SlateRenderer(
 			const std::string&                     rendererName          ,
 			VulkanState&                           vulkanState           ,
-			std::shared_ptr<VulkanDescriptorPool>  desctiptorPool        ,
+			std::shared_ptr<VulkanDescriptorPool>  descriptorPool        ,
 			std::shared_ptr<VulkanDevice>          device                ,
 			std::shared_ptr<RendererResourcePool>  rendererResourcePool
 		)
-			: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool, false) 
-		{};
+			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, false) 
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SlateRenderer() { ShutdownImgui(); };
+		virtual ~SlateRenderer() override { ShutdownImgui(); }
 
 		/**
 		* @brief The interface is inherited from Renderer.
+		* @param[in] ts TimeStep.
 		* @param[in] frameInfo The current frame data.
 		*/
 		virtual void Render(TimeStep& ts, FrameInfo& frameInfo) override;
@@ -66,8 +69,8 @@ namespace Spiecs {
 		virtual void OnSystemInitialize() override;
 
 		/**
-		* @brief This interface is called on Window resized over (regist by swapchain).
-		* If the specific renderer uses swpachianimage attachment during CreateRenderPass(),
+		* @brief This interface is called on Window resized over (registry by swapchain).
+		* If the specific renderer uses swapchain image attachment during CreateRenderPass(),
 		* this interface needs to override, callOnSlateResize here just will be fine.
 		*/
 		virtual void OnWindowResizeOver() override;

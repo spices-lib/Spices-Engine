@@ -13,13 +13,13 @@
 namespace Spiecs{
 
 	/**
-	* @brief Forward Declear
+	* @brief Forward Declare
 	*/
 	struct VulkanState;
 
 	/**
 	* @brief This struct defines the data used to create a texture2d.
-	* From renderpass.
+	* From render pass.
 	* @todo More type of texture support.
 	*/
 	struct RendererResourceCreateInfo
@@ -27,22 +27,22 @@ namespace Spiecs{
 		/**
 		* @brief Constructor Function.
 		*/
-		RendererResourceCreateInfo() {};
+		RendererResourceCreateInfo() = default;
 
 		/**
 		* @brief Constructor Function.
 		*/
-		RendererResourceCreateInfo(const std::string name) : name(name) {};
+		RendererResourceCreateInfo(const std::string& name) : name(name) {}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~RendererResourceCreateInfo() {};
+		virtual ~RendererResourceCreateInfo() = default;
 
 		/**
 		* @brief Texture's description info.
 		*/
-		VkAttachmentDescription description{};
+		VkAttachmentDescription description {};
 		
 		/**
 		* @brief Texture's name.
@@ -55,12 +55,12 @@ namespace Spiecs{
 		TextureType type = TextureType::Texture2D;
 
 		/**
-		* @brief Texture'width.
+		* @brief Texture' width.
 		*/
 		uint32_t width = 1920;
 
 		/**
-		* @brief Texture'height..
+		* @brief Texture' height..
 		*/
 		uint32_t height = 1080;
 
@@ -87,7 +87,7 @@ namespace Spiecs{
 
 	/**
 	* @brief RendererResource Class.
-	* This class is a wapper of framebuffer attachment.
+	* This class is a wrapper of framebuffer attachment.
 	*/
 	class RendererResource
 	{
@@ -95,7 +95,7 @@ namespace Spiecs{
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] info RendererResourceCreateInfo.
 		*/
 		RendererResource(const RendererResourceCreateInfo& info);
@@ -103,27 +103,27 @@ namespace Spiecs{
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~RendererResource() {};
+		virtual ~RendererResource() = default;
 
 		/**
-		* @brief Called On SwapChian Resized.
-		* Event received from VulkanRenderBackeEnd.
+		* @brief Called On SwapChain Resized.
+		* Event received from VulkanRenderBackEnd.
 		* @param[in] width	The new width of this resource.
 		* @param[in] height	The new height of this resource.
 		*/
 		void OnResized(uint32_t width, uint32_t height);
 
 		/**
-		* @brief Get Texture this class wappered.
+		* @brief Get Texture this class wrapped.
 		* @return Returns the reference of unique pointer  of the Texture.
 		*/
-		inline std::unique_ptr<Texture2D>& GetTexture() { return m_Texture; };
+		std::unique_ptr<Texture2D>& GetTexture() { return m_Texture; }
 
 		/**
 		* @brief Get isResizeable variable.
 		* @return Returns true if can resize.
 		*/
-		inline const bool IsResizeable() { return m_IsResizeable; };
+		bool IsResizeable() const { return m_IsResizeable; }
 
 	private:
 
@@ -135,10 +135,10 @@ namespace Spiecs{
 		/**
 		* @brief The information of this resource.
 		*/
-		RendererResourceCreateInfo m_Info{};
+		RendererResourceCreateInfo m_Info {};
 
 		/**
-		* @brief The testure this calss Wappered.
+		* @brief The texture this class Wrapped.
 		*/
 		std::unique_ptr<Texture2D> m_Texture;
 	};

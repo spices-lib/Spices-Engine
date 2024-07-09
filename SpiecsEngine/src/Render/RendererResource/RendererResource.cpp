@@ -39,7 +39,7 @@ namespace Spiecs {
 		}
 	}
 
-	void RendererResource::OnResized(uint32_t width, uint32_t height)
+	void RendererResource::OnResized(const uint32_t width, const uint32_t height)
 	{
 		SPIECS_PROFILE_ZONE;
 

@@ -77,7 +77,7 @@ namespace Spiecs {
 		});
 	}
 
-	std::shared_ptr<Renderer> RendererManager::GetRenderer(const std::string name)
+	std::shared_ptr<Renderer> RendererManager::GetRenderer(const std::string& name)
 	{
 		SPIECS_PROFILE_ZONE;
 

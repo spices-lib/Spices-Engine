@@ -21,11 +21,11 @@ namespace Spiecs {
 	ShadowRenderer::ShadowRenderer(
 		const std::string&                     rendererName         ,
 		VulkanState&                           vulkanState          ,
-		std::shared_ptr<VulkanDescriptorPool>  desctiptorPool       ,
+		std::shared_ptr<VulkanDescriptorPool>  descriptorPool       ,
 		std::shared_ptr<VulkanDevice>          device               ,
 		std::shared_ptr<RendererResourcePool>  rendererResourcePool
 	)
-		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
+		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool)
 	{}
 
 	void ShadowRenderer::CreateRendererPass()

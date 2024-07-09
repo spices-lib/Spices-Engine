@@ -15,11 +15,11 @@ namespace Spiecs {
 	RayTracingRenderer::RayTracingRenderer(
 		const std::string&                     rendererName          ,
 		VulkanState&                           vulkanState           ,
-		std::shared_ptr<VulkanDescriptorPool>  desctiptorPool        ,
+		std::shared_ptr<VulkanDescriptorPool>  descriptorPool        ,
 		std::shared_ptr<VulkanDevice>          device                ,
 		std::shared_ptr<RendererResourcePool>  rendererResourcePool
 	)
-		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
+		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool)
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -222,19 +222,19 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		auto rayTracingMaterial                 = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default");
-				 				               
-		uint32_t rayGenCount                    = rayTracingMaterial->GetShaderPath("rgen").size();
-		uint32_t missCount                      = rayTracingMaterial->GetShaderPath("rmiss").size();
-		uint32_t hitCount                       = static_cast<uint32_t>(m_HitGroups.size());
+		const auto rayTracingMaterial                 = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default");
 
-		auto     handleCount                    = rayGenCount + missCount + hitCount;
+		const uint32_t rayGenCount              = rayTracingMaterial->GetShaderPath("rgen").size();
+		const uint32_t missCount                = rayTracingMaterial->GetShaderPath("rmiss").size();
+		const uint32_t hitCount                 = static_cast<uint32_t>(m_HitGroups.size());
+
+		const auto handleCount          = rayGenCount + missCount + hitCount;
 		uint32_t handleSize                     = m_Device->GetRTPipelineProperties().shaderGroupHandleSize;
 
 		/**
 		* @brief The SBT(buffer) need to have starting groups to be aligned and handles in the group to be aligned.
 		*/
-		uint32_t handleSizeAligned              = MemoryLibrary::align_up(handleSize, m_Device->GetRTPipelineProperties().shaderGroupHandleAlignment);
+		const uint32_t handleSizeAligned              = MemoryLibrary::align_up(handleSize, m_Device->GetRTPipelineProperties().shaderGroupHandleAlignment);
 
 		m_RgenRegion.stride                     = MemoryLibrary::align_up(handleSizeAligned, m_Device->GetRTPipelineProperties().shaderGroupBaseAlignment);
 		m_RgenRegion.size                       = m_RgenRegion.stride;  // The size member of pRayGenShaderBindingTable must be equal to its stride member
@@ -247,10 +247,10 @@ namespace Spiecs {
 
 		/**
 		* @brief Get the shader group handles.
-		*/ 
-		uint32_t dataSize                       = handleCount * handleSize;
+		*/
+		const uint32_t dataSize                 = handleCount * handleSize;
 		std::vector<uint8_t> handles(dataSize);
-		VK_CHECK(vkGetRayTracingShaderGroupHandlesKHR(m_VulkanState.m_Device, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline(), 0, handleCount, dataSize, handles.data()));
+		VK_CHECK(vkGetRayTracingShaderGroupHandlesKHR(m_VulkanState.m_Device, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline(), 0, handleCount, dataSize, handles.data()))
 
 		/**
 		* @brief Allocate a buffer for storing the SBT.

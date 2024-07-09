@@ -25,22 +25,22 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		RendererResourcePool() {};
+		RendererResourcePool() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~RendererResourcePool() {};
+		virtual ~RendererResourcePool() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		RendererResourcePool(const RendererResourcePool&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		RendererResourcePool& operator=(const RendererResourcePool&) = delete;
 
@@ -49,7 +49,7 @@ namespace Spiecs {
 		* @param[in] width Slate new width.
 		* @param[in] height Slate new height.
 		*/
-		void OnSlateResize(uint32_t width, uint32_t height);
+		void OnSlateResize(uint32_t width, uint32_t height) const;
 
 		/**
 		* @brief Get Resource with specific name, create it if it have not been created.
