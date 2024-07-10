@@ -68,7 +68,7 @@ namespace Spiecs {
 			ImGui::NextColumn();
 
 			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
@@ -163,7 +163,7 @@ namespace Spiecs {
 			ImGui::NextColumn();
 
 			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
@@ -249,7 +249,7 @@ namespace Spiecs {
 			ImGui::NextColumn();
 
 			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
@@ -292,12 +292,18 @@ namespace Spiecs {
 		}
 	}
 
-	void TransformComponent::CalMatrix()
+	glm::mat4 TransformComponent::GetRotateMatrix() const
 	{
 		/**
 		* @brief Use raidans
 		*/
-		glm::mat4 rotation = glm::toMat4(glm::quat(m_Rotation));
+		return glm::toMat4(glm::quat(m_Rotation));
+	}
+
+	void TransformComponent::CalMatrix()
+	{
+		const glm::mat4 rotation = GetRotateMatrix();
 		m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Position) * rotation * glm::scale(glm::mat4(1.0f), m_Scale);
 	}
+	
 }

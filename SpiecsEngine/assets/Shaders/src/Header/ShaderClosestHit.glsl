@@ -96,6 +96,13 @@ layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   {
 Vertex UnPackVertex(in vec3 weight);
 
 /**
+* @brief Init Material Attributes.
+* @param[in] vt Intersected Vertex.
+* @return Return specific MaterialAttributes.
+*/
+MaterialAttributes InitMaterialAttributes(in Vertex vt);
+
+/**
 * @brief Calculate Point Lights contribution for pixel emissive.
 * @param[in] vt Intersected Vertex.
 * @param[in] attr MaterialAttributes.
@@ -114,9 +121,9 @@ vec3 CalculateDirectionalLights(in Vertex vt , in MaterialAttributes attr);
 /**
 * @brief Get Material Attributes, must be implementated by specific rchit shader.
 * @param[in] vt Intersected Vertex.
-* @return Return specific MaterialAttributes.
+* @param[in,out] attributes specific MaterialAttributes.
 */
-MaterialAttributes GetMaterialAttributes(in Vertex vt);
+void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes);
 
 /*****************************************************************************************/
 
@@ -130,9 +137,14 @@ void main()
     Vertex vt = UnPackVertex(attribs);
     
     /**
+    * @brief Init material attributes.
+    */
+    MaterialAttributes materialAttributes = InitMaterialAttributes(vt);
+    
+    /**
     * @brief Get material specific attributes.
     */
-    MaterialAttributes materialAttributes = GetMaterialAttributes(vt);
+    GetMaterialAttributes(vt, materialAttributes);
 
     /**
     * @brief Reverse normal in back side.
@@ -235,6 +247,18 @@ Vertex UnPackVertex(in vec3 weight)
     return vt;
 }
 
+MaterialAttributes InitMaterialAttributes(in Vertex vt)
+{
+    MaterialAttributes attributes;
+    
+    attributes.albedo    = vec3(0.5f);     /* @brief 50% energy reflect.            */
+    attributes.roughness = 1.0f;           /* @brief 100% random direction reflect. */
+    attributes.emissive  = vec3(0.0f);     /* @brief self no energy.                */
+    attributes.normal    = vt.normal;      /* @brief Pixel World Normal.            */
+    
+    return attributes;
+}
+
 vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
@@ -304,7 +328,8 @@ vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
         /**
         * @brief light position
         */ 
-        vec3 dir = normalize(vec3(1.0f, 1.0f, -1.0f));
+        vec4 dir4 = dLightBuffer.i[i].rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        vec3 dir = dir4.xyz;
 
         if(dot(attr.normal, dir) > 0)
         {

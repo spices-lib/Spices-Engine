@@ -96,7 +96,7 @@ namespace Spiecs {
 	void MeshController::UpdateView() const
 	{
 		const glm::vec3 pos = CalculatePosition();
-		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPostion(pos);
+		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetPosition(pos);
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 
 	}

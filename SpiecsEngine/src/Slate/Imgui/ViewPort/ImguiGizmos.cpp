@@ -196,7 +196,7 @@ namespace Spiecs {
                         DecomposeTransform(model, translation, rotation, scale);
 
                         glm::vec3 deltaRotation = rotation - tc.GetRotation();
-                        tc.SetPostion(translation);
+                        tc.SetPosition(translation);
                         tc.SetRotation(tc.GetRotation() + deltaRotation);
                         tc.SetScale(scale);
                     }

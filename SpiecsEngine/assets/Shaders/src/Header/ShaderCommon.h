@@ -111,7 +111,7 @@ struct PushConstantMesh
 */
 struct DirectionalLight
 {
-	vec3  rotation;            /* @brief Rotation of SunLight.   */
+	mat4  rotationMatrix;      /* @brief Rotation of SunLight.   */
 	vec3  color;               /* @brief Color of SunLight.      */
 	float intensity;           /* @brief Intensity of SunLight.  */
 };

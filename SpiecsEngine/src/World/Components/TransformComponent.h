@@ -16,7 +16,7 @@ namespace Spiecs {
 
 	/**
 	* @brief TransformComponent Class.
-	* This class defines the specific behaver of TransformComponent.
+	* This class defines the specific behaves of TransformComponent.
 	*/
 	class TransformComponent : public Component
 	{
@@ -25,95 +25,101 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		TransformComponent() {};
+		TransformComponent() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~TransformComponent() {};
+		virtual ~TransformComponent() override = default;
 
 		/**
 		* @brief This interface defines how to serialize.
 		* @todo Finish it.
 		*/
-		virtual void OnSerialize();
+		virtual void OnSerialize() override;
 
 		/**
-		* @brief This interface defines how to dserialize.
-		* @todo Finsih it.
+		* @brief This interface defines how to deserialize.
+		* @todo Finish it.
 		*/
-		virtual void OnDeSerialize();
+		virtual void OnDeSerialize() override;
 
 		/**
 		* @brief This interface defines how to draw this component to property panel.
 		*/
-		virtual void DrawThis();
+		virtual void DrawThis() override;
 
 		/**
 		* @brief Set the position this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] position The entity's world position.
 		*/
-		void SetPostion(const glm::vec3& position) { m_Position = position; CalMatrix(); };
+		void SetPosition(const glm::vec3& position) { m_Position = position; CalMatrix(); }
 
 		/**
 		* @brief Set the rotation this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] rotation The entity's world rotation.
 		*/
-		void SetRotation(const glm::vec3& rotation) { m_Rotation = rotation; CalMatrix(); };
+		void SetRotation(const glm::vec3& rotation) { m_Rotation = rotation; CalMatrix(); }
 
 		/**
 		* @brief Set the scale this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] scale The entity's world scale.
 		*/
-		void SetScale(const glm::vec3& scale) { m_Scale = scale; CalMatrix(); };
+		void SetScale(const glm::vec3& scale) { m_Scale = scale; CalMatrix(); }
 
 		/**
 		* @brief Add the position to this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] position The entity's world position.
 		*/
-		void AddPostion(const glm::vec3& position) { m_Position += position; CalMatrix(); };
+		void AddPosition(const glm::vec3& position) { m_Position += position; CalMatrix(); }
 
 		/**
 		* @brief Add the rotation to this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] rotation The entity's world rotation.
 		*/
-		void AddRotation(const glm::vec3& rotation) { m_Rotation += rotation; CalMatrix(); };
+		void AddRotation(const glm::vec3& rotation) { m_Rotation += rotation; CalMatrix(); }
 
 		/**
 		* @brief Add the scale to this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] scale The entity's world scale.
 		*/
-		void AddScale(const glm::vec3& scale) { m_Scale += scale; CalMatrix(); };
+		void AddScale(const glm::vec3& scale) { m_Scale += scale; CalMatrix(); }
 
 		/**
 		* @brief Get the modelMatrix variable.
 		* @return Returns the modelMatrix variable.
 		*/
-		inline const glm::mat4& GetModelMatrix() { CalMatrix(); return m_ModelMatrix; };
+		const glm::mat4& GetModelMatrix() { CalMatrix(); return m_ModelMatrix; }
 
+		/**
+		* @brief Get Rotate Matrix.
+		* @return Returns the Rotate Matrix.
+		*/
+		glm::mat4 GetRotateMatrix() const;
+		
 		/**
 		* @brief Get the position variable.
 		* @return Returns the position variable.
 		*/
-		inline const glm::vec3& GetPosition() { return m_Position; };
+		const glm::vec3& GetPosition() const { return m_Position; }
 
 		/**
 		* @brief Get the rotation variable.
 		* @return Returns the rotation variable.
 		*/
-		inline const glm::vec3& GetRotation() { return m_Rotation; };
+		const glm::vec3& GetRotation() const { return m_Rotation; }
 
 		/**
 		* @brief Get the scale variable.
 		* @return Returns the scale variable.
 		*/
-		inline const glm::vec3& GetScale() { return m_Scale; };
+		const glm::vec3& GetScale() const { return m_Scale; }
 
 	private:
 

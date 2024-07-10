@@ -17,7 +17,7 @@ namespace Spiecs {
 		* @brief Begin render Property.
 		*/
 		Begin();
-
+	    
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2.0f, 4.0f));
 
         /**
@@ -29,7 +29,7 @@ namespace Spiecs {
             ImGui::Separator();
             ImGui::PushItemWidth(m_PanelSize.x);
             char search[128] = "";
-            if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
+            if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128)) {}
             ImGui::PopItemWidth();
             ImGui::Separator();
         }
@@ -40,7 +40,7 @@ namespace Spiecs {
         if (m_FrameInfo.m_PickEntityID.size() == 0)
         {
             SPIECS_PROFILE_ZONEN("ImguiProperty::End");
-
+            
             ImGui::PopStyleVar();
             End();
 
@@ -79,12 +79,11 @@ namespace Spiecs {
                 ImGui::Text("Prim Path");
                 ImGui::NextColumn();
 
-                std::string ss;
-                ss = *m_FrameInfo.m_PickEntityID.end();
-                ss = "/" + ss;
+                std::stringstream ss;
+                ss << "/" << *m_FrameInfo.m_PickEntityID.end();
                 ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 4.0f);
                 char textpath[128] = "";
-                if (ImGui::InputTextWithHint("##", ss.c_str(), textpath, 128)) {}
+                if (ImGui::InputTextWithHint("##", ss.str().c_str(), textpath, 128)) {}
                 ImGui::PopItemWidth();
 
                 ImGui::Columns(1);
@@ -112,7 +111,7 @@ namespace Spiecs {
         {
             SPIECS_PROFILE_ZONEN("ImguiProperty::Components");
 
-            Entity entity((entt::entity)*m_FrameInfo.m_PickEntityID.endk(), m_FrameInfo.m_World.get());
+            Entity entity(static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.endk()), m_FrameInfo.m_World.get());
 
             DrawComponent<TransformComponent>("Transform", entity);
             DrawComponent<CameraComponent>("Camera", entity);

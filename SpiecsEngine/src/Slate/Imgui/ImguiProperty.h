@@ -57,7 +57,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Draw Entity Component on Property Panel.
-		* @param[in] T Component Class.
+		* @tparam T Component Class.
 		* @param[in] name ComponentName.
 		* @param[in] entity Entity.
 		*/
@@ -66,26 +66,34 @@ namespace Spiecs {
 	};
 
 	template<typename T>
-	inline void ImguiProperty::DrawComponent(const std::string& name, Entity entity)
+	void ImguiProperty::DrawComponent(const std::string& name, Entity entity)
 	{
 		if (entity.HasComponent<T>())
 		{
 			auto& component = entity.GetComponent<T>();
 
-			const ImGuiTreeNodeFlags treeNodeFlags = 
+			constexpr ImGuiTreeNodeFlags treeNodeFlags = 
 				ImGuiTreeNodeFlags_DefaultOpen      | 
 				ImGuiTreeNodeFlags_AllowItemOverlap | 
 				ImGuiTreeNodeFlags_Framed           | 
 				ImGuiTreeNodeFlags_FramePadding     ;
+			
+			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 6.0f));
 
-			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
-
+			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
+			
 			/*ImGui::SameLine(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 			if (ImGui::Button("+", ImGuiH::GetLineItemSize()))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}*/
 
+			ImGui::PopStyleVar();
+			
 			bool removeComponent = false;
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
@@ -107,6 +115,8 @@ namespace Spiecs {
 			{
 				entity.RemoveComponent<T>();
 			}
+			
+			ImGui::PopStyleColor(4);
 		}
 	}
 }

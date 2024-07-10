@@ -15,7 +15,7 @@ namespace Spiecs {
 
 	/**
 	* @brief DirectionalLightComponent Class.
-	* This class defines the specific behaver of DirectionalLightComponent.
+	* This class defines the specific behaves of DirectionalLightComponent.
 	*/
 	class DirectionalLightComponent : public Component
 	{
@@ -25,12 +25,11 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		*/
 		DirectionalLightComponent(
-			const glm::vec3& rotation = glm::vec3(0.0f),
 			const glm::vec3& color = glm::vec3(1.0f),
 			float intensity = 1.0f
 		)
-			: m_DirectionalLight{ rotation, color, intensity }
-		{};
+			: m_DirectionalLight{ glm::mat4(1.0f), color, intensity }
+		{}
 
 		/**
 		* @brief Constructor Function.
@@ -40,12 +39,12 @@ namespace Spiecs {
 		*/
 		DirectionalLightComponent(const SpiecsShader::DirectionalLight& directionalLight)
 			: m_DirectionalLight(directionalLight)
-		{};
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~DirectionalLightComponent() {};
+		virtual ~DirectionalLightComponent() override = default;
 
 		/**
 		* @brief This interface defines how to serialize.
@@ -54,19 +53,24 @@ namespace Spiecs {
 		virtual void OnSerialize() override;
 
 		/**
-		* @brief This interface defines how to dserialize.
-		* @todo Finsih it.
+		* @brief This interface defines how to deserialize.
+		* @todo Finish it.
 		*/
 		virtual void OnDeSerialize() override;
 
 		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis() override;
+		
+		/**
 		* @brief Get the DirectionalLight variable.
 		* @return Returns the DirectionalLight variable.
 		*/
-		inline const SpiecsShader::DirectionalLight& GetLight() { return m_DirectionalLight; };
+		const SpiecsShader::DirectionalLight& GetLight() const { return m_DirectionalLight; }
 
-		void SetColor(const glm::vec3& color) { m_DirectionalLight.color = color; };
-		void SetIntensity(float intensity) { m_DirectionalLight.intensity = intensity; };
+		void SetColor(const glm::vec3& color) { m_DirectionalLight.color = color; }
+		void SetIntensity(float intensity) { m_DirectionalLight.intensity = intensity; }
 
 	private:
 

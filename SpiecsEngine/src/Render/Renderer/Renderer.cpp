@@ -297,7 +297,8 @@ namespace Spiecs {
 			DirectionalLightComponent&   dirlightComp
 			) {
 
-			const SpiecsShader::DirectionalLight directionalLight = dirlightComp.GetLight();
+			SpiecsShader::DirectionalLight directionalLight = dirlightComp.GetLight();
+			directionalLight.rotationMatrix = transComp.GetRotateMatrix();
 			dLightBuffer[index] = directionalLight;
 			index++;
 			return true;
@@ -342,7 +343,7 @@ namespace Spiecs {
 			DirectionalLightComponent&   dirlightComp
 			) {
 				TransformComponent tempComp;
-				tempComp.SetPostion(camTranComp.GetPosition());
+				tempComp.SetPosition(camTranComp.GetPosition());
 				tempComp.SetRotation(camTranComp.GetRotation());
 
 				const glm::mat4 view = tempComp.GetModelMatrix();

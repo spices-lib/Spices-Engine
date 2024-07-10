@@ -52,7 +52,7 @@ namespace Spiecs {
 			Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPostion({0.0f, 10.0f, 0.0f});
+			transformComp1.SetPosition({0.0f, 10.0f, 0.0f});
 
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("Test_room");
 
@@ -66,9 +66,9 @@ namespace Spiecs {
 			Entity& meshentity = CreateEntity("Sphere");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPostion({1.0f, 3.0f, -4.0f});
+			transformComp1.SetPosition({1.0f, 3.0f, -4.0f});
 
-			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
+			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
 
 			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
@@ -80,7 +80,7 @@ namespace Spiecs {
 			Entity& meshentity = CreateEntity("Sphere");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPostion({1.0f, -3.0f, -4.0f});
+			transformComp1.SetPosition({1.0f, -3.0f, -4.0f});
 
 			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
 
@@ -96,7 +96,7 @@ namespace Spiecs {
 			plightComp.SetColor(glm::vec3(1.0f, 0.0f, 0.0f));
 			//plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
-			transformComp.SetPostion({ 1.0f, 3.0f, -4.0f });
+			transformComp.SetPosition({ 1.0f, 3.0f, -4.0f });
 		}
 		{
 			Entity& plightentity = CreateEntity("PointLight");
@@ -105,7 +105,7 @@ namespace Spiecs {
 			//plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			//transformComp.SetPostion({ -1.0f, 3.0f, 4.0f });
-			transformComp.SetPostion({ 0.0f, 10.0f, 0.0f });
+			transformComp.SetPosition({ 0.0f, 10.0f, 0.0f });
 		}
 		
 	}

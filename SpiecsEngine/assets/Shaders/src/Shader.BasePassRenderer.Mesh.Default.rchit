@@ -16,16 +16,11 @@
 
 /******************************************Functions**************************************/
 
-MaterialAttributes GetMaterialAttributes(in Vertex vt)
-{
-    MaterialAttributes attributes;
-    
+void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes)
+{  
     attributes.albedo    = vec3(0.5f);
-    attributes.roughness = 1.0f;
+    attributes.roughness = 0.0f;
     attributes.emissive  = vec3(0.0f);
-    attributes.normal    = vt.normal;
-    
-    return attributes;
 }
 
 /*****************************************************************************************/

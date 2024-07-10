@@ -40,12 +40,12 @@ namespace Spiecs {
         style.SeparatorTextAlign            = ImVec2(0.0f, 0.5f);
         style.SeparatorTextPadding          = ImVec2(0.0f, 3.0f);
         style.SeparatorTextBorderSize       = 1.0f;
-        style.Colors[ImGuiCol_WindowBg]     = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+        style.Colors[ImGuiCol_WindowBg]     = ImVec4(0.27f, 0.27f, 0.27f, 1.0f);
         style.Colors[ImGuiCol_MenuBarBg]    = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_ScrollbarBg]  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
         style.Colors[ImGuiCol_PopupBg]      = ImVec4(0.135f, 0.135f, 0.135f, 1.0f);
         style.Colors[ImGuiCol_Border]       = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
-        style.Colors[ImGuiCol_FrameBg]      = ImVec4(0.05f, 0.05f, 0.05f, 0.5f);
+        style.Colors[ImGuiCol_FrameBg]      = ImVec4(0.125f, 0.129f, 0.137f, 1.0f);
 
         /**
         * @brief Set Botton Style.
