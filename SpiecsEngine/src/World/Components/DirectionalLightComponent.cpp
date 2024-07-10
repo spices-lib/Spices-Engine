@@ -8,6 +8,7 @@
 #include "DirectionalLightComponent.h"
 
 #include "imgui_internal.h"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Spiecs {
 
@@ -22,9 +23,11 @@ namespace Spiecs {
 
 	void DirectionalLightComponent::DrawThis()
 	{
+		SPIECS_PROFILE_ZONE;
+
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
-		static float columeWidth = ImGuiH::GetLineItemSize().x * 6.5f;
-		
+		float columeWidth = ImGuiH::GetLineItemSize().x * 6.5f;
+
 		{
 			SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color");
 			
@@ -35,7 +38,7 @@ namespace Spiecs {
 			ImGui::Text("Color");
 			ImGui::NextColumn();
 			
-			ImGui::PushMultiItemsWidths(4, ImGui::CalcItemWidth());
+			float itemWidth = (ImGui::GetContentRegionAvail().x - 8.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
 
 			{
 				SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color R");
@@ -46,10 +49,11 @@ namespace Spiecs {
 				if (ImGui::Button("R", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.x = 1.0f;
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
+				ImGui::PushItemWidth(itemWidth);
 				ImGui::DragFloat("##R", &m_DirectionalLight.color.x, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK);
 				ImGui::PopItemWidth();
+				ImGui::SameLine();
+				ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 				ImGui::SameLine();
 			}
 
@@ -62,10 +66,11 @@ namespace Spiecs {
 				if (ImGui::Button("G", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.y = 1.0f;
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
+				ImGui::PushItemWidth(itemWidth);
 				ImGui::DragFloat("##G", &m_DirectionalLight.color.y, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK);
 				ImGui::PopItemWidth();
+				ImGui::SameLine();
+				ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 				ImGui::SameLine();
 			}
 
@@ -78,10 +83,11 @@ namespace Spiecs {
 				if (ImGui::Button("B", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.z = 1.0f;
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
+				ImGui::PushItemWidth(itemWidth);
 				ImGui::DragFloat("##B", &m_DirectionalLight.color.z, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK_OPEN);
 				ImGui::PopItemWidth();
+				ImGui::SameLine();
+				ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
 				ImGui::SameLine();
 			}
 
@@ -89,16 +95,9 @@ namespace Spiecs {
 				SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color Picker");
 				
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
-				static float lightColor[3] = { m_DirectionalLight.color.x, m_DirectionalLight.color.y, m_DirectionalLight.color.z };
-				if(ImGui::ColorEdit3("##", lightColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar))
-				{
-					m_DirectionalLight.color.x = lightColor[0];
-					m_DirectionalLight.color.y = lightColor[1];
-					m_DirectionalLight.color.z = lightColor[2];
-				}
+				ImGui::ColorEdit3("##", glm::value_ptr(m_DirectionalLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
 				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK_OPEN);
-				ImGui::PopItemWidth();
+				ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
 				ImGui::PopStyleColor();
 			}
 			
@@ -120,8 +119,8 @@ namespace Spiecs {
 			ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN);
-			
+			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
+
 			ImGui::Columns(1);
 			ImGui::PopID();
 		}

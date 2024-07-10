@@ -26,15 +26,32 @@ namespace Spiecs {
 
 	void TransformComponent::DrawThis()
 	{
+		SPIECS_PROFILE_ZONE;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
+
+		/**
+		* @brief colume_0 width.
+		*/
+		float columeWidth = ImGuiH::GetLineItemSize().x * 5.0f;
+
+		/**
+		* @brief drag float width, 3 * drag float + 6 * buttom + colume_0 = ImGui::GetContentRegionAvail().
+		*/
+		float itemWidth = (ImGui::GetContentRegionAvail().x - 11.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
+
 		{
-			ImGui::PushID("Translate");
+			SPIECS_PROFILE_ZONEN("TransformComponent Translate");
+
+			ImGui::PushID("TransformComponent Translate");
 
 			ImGui::Columns(2);
-			ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 5.0f);
+			ImGui::SetColumnWidth(0, columeWidth);
 			
 			static bool selected = false;
-			if (ImGui::Selectable("Translate", selected))
-				selected = !selected;
+			if (ImGui::Selectable("Translate", selected)) selected = !selected;
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
 			if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 			{
 				ImGui::MenuItem("Copy");
@@ -64,11 +81,9 @@ namespace Spiecs {
 				ImGui::EndPopup();
 			}
 			ImGui::SetItemTooltip("xformOp:translate(float3)\nRight click it to disable or delete it.");
+			ImGui::PopStyleVar(2);
 
 			ImGui::NextColumn();
-
-			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
@@ -76,10 +91,11 @@ namespace Spiecs {
 			if (ImGui::Button("X", ImGuiH::GetLineItemSize())) m_Position.x = 0.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##X", &m_Position.x, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
@@ -88,10 +104,11 @@ namespace Spiecs {
 			if (ImGui::Button("Y", ImGuiH::GetLineItemSize())) m_Position.y = 0.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Y", &m_Position.y, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
@@ -100,21 +117,23 @@ namespace Spiecs {
 			if (ImGui::Button("Z", ImGuiH::GetLineItemSize())) m_Position.z = 0.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Z", &m_Position.z, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
 
-			ImGui::PopStyleVar();
 			ImGui::Columns(1);
 			ImGui::PopID();
 		}
 
 		{
-			ImGui::PushID("Rotate");
+			SPIECS_PROFILE_ZONEN("TransformComponent Rotate");
+
+			ImGui::PushID("TransformComponent Rotate");
 
 			ImGui::Columns(2);
-			ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 5.0f);
+			ImGui::SetColumnWidth(0, columeWidth);
 			/*if (ImGui::BeginMenu("Rotate"))
 			{
 				ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, XYZ));
@@ -128,8 +147,9 @@ namespace Spiecs {
 			}*/
 			
 			static bool selected = false;
-			if (ImGui::Selectable("Rotate", selected))
-				selected = !selected;
+			if (ImGui::Selectable("Rotate", selected)) selected = !selected;
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
 			if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 			{
 				ImGui::MenuItem("Copy");
@@ -159,11 +179,9 @@ namespace Spiecs {
 				ImGui::EndPopup();
 			}
 			ImGui::SetItemTooltip("xformOp:rotateXYZ(float3)\nRight click it to disable or delete it.\nLeft click it to change the rotate order, default is XYZ.");
+			ImGui::PopStyleVar(2);
 
 			ImGui::NextColumn();
-
-			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
@@ -171,10 +189,11 @@ namespace Spiecs {
 			if (ImGui::Button("X", ImGuiH::GetLineItemSize())) m_Rotation.x = 0.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##X", &m_Rotation.x, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
@@ -183,10 +202,11 @@ namespace Spiecs {
 			if (ImGui::Button("Y", ImGuiH::GetLineItemSize())) m_Rotation.y = 0.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Y", &m_Rotation.y, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
@@ -195,25 +215,28 @@ namespace Spiecs {
 			if (ImGui::Button("Z", ImGuiH::GetLineItemSize())) m_Rotation.z = 0.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Z", &m_Rotation.z, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
 
-			ImGui::PopStyleVar();
 			ImGui::Columns(1);
 			ImGui::PopID();
 		}
 
 		{
-			ImGui::PushID("Scale");
+			SPIECS_PROFILE_ZONEN("TransformComponent Scale");
+
+			ImGui::PushID("TransformComponent Scale");
 
 			ImGui::Columns(2);
-			ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 5.0f);
+			ImGui::SetColumnWidth(0, columeWidth);
 			
 			static bool selected = false;
-			if (ImGui::Selectable("Scale", selected))
-				selected = !selected;
+			if (ImGui::Selectable("Scale", selected)) selected = !selected;
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
 			if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 			{
 				ImGui::MenuItem("Copy");
@@ -243,53 +266,55 @@ namespace Spiecs {
 				ImGui::EndPopup();
 			}
 			ImGui::SetItemTooltip("xformOp:scale(float3)\nRight click it for more options.");
+			ImGui::PopStyleVar(2);
 
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LINK);
+			ImGui::Button(ICON_MD_LINK, ImGuiH::GetLineItemSize());
 			ImGui::NextColumn();
-
-			ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-			if (ImGui::Button("X", ImGuiH::GetLineItemSize())) m_Scale.x = 0.0f;
+			if (ImGui::Button("X", ImGuiH::GetLineItemSize())) m_Scale.x = 1.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##X", &m_Scale.x, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-			if (ImGui::Button("Y", ImGuiH::GetLineItemSize())) m_Scale.y = 0.0f;
+			if (ImGui::Button("Y", ImGuiH::GetLineItemSize())) m_Scale.y = 1.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Y", &m_Scale.y, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-			if (ImGui::Button("Z", ImGuiH::GetLineItemSize())) m_Scale.z = 0.0f;
+			if (ImGui::Button("Z", ImGuiH::GetLineItemSize())) m_Scale.z = 1.0f;
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
+			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Z", &m_Scale.z, 0.1f, 0.0f, 0.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN);
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
 
-			ImGui::PopStyleVar();
 			ImGui::Columns(1);
 			ImGui::PopID();
 		}
+
+		ImGui::PopStyleVar();
 	}
 
 	glm::mat4 TransformComponent::GetRotateMatrix() const

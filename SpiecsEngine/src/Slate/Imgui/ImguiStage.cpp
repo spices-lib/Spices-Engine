@@ -80,11 +80,22 @@ namespace Spiecs {
                     ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
                     std::stringstream ss;
-                    ss << ICON_MD_POLYMER << " " << (*tComp.GetTag().begin()).c_str();
+                    ss << ICON_MD_POLYMER << " " << (*tComp.GetTag().begin()).c_str() << "##" << (int)entityID;
                     // todo: multiple select.
                     if (ImGui::Selectable(ss.str().c_str(), item_is_selected, selectable_flags, ImVec2(0, ImGuiH::GetLineItemSize().x)))
                     {
-                        if (ImGui::GetIO().KeyCtrl)
+                        if (ImGui::GetIO().KeyShift)
+                        {
+                            if (!item_is_selected)
+                            {
+                                /**
+                                * @brief Add select entity.
+                                */
+
+                                m_FrameInfo.m_PickEntityID.push_back((int)entityID, (*tComp.GetTag().begin()));
+                            }
+                        }
+                        else if (ImGui::GetIO().KeyCtrl)
                         {
                             if (item_is_selected)
                             {
@@ -93,14 +104,6 @@ namespace Spiecs {
                                 */
 
                                 m_FrameInfo.m_PickEntityID.erase((int)entityID);
-                            }
-                            else
-                            {
-                                /**
-                                * @brief Add select entity.
-                                */
-
-                                m_FrameInfo.m_PickEntityID.push_back((int)entityID, (*tComp.GetTag().begin()));
                             }
                         }
                         else

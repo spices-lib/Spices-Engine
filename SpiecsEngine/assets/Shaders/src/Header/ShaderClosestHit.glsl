@@ -303,7 +303,7 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
 
             if(!isShadowArea)
             {
-                col += max(dot(attr.normal, dir), 0.0f) * pLightBuffer.i[0].color * pLightBuffer.i[0].intensity / (tMax * tMax);
+                col += max(dot(attr.normal, dir), 0.0f) * pLightBuffer.i[i].color * pLightBuffer.i[i].intensity / (tMax * tMax);
             }
         }
     }
@@ -355,7 +355,7 @@ vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
 
             if(!isShadowArea)
             {
-                col += max(dot(attr.normal, dir), 0.0f) * dLightBuffer.i[0].color * dLightBuffer.i[0].intensity;
+                col += max(dot(attr.normal, dir), 0.0f) * dLightBuffer.i[i].color * dLightBuffer.i[i].intensity;
             }
         }
     }
