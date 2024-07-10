@@ -64,7 +64,7 @@ namespace Spiecs {
 		glfwTerminate();
 	}
 
-	void VulkanWindows::SetInternalCallBack()
+	void VulkanWindows::SetInternalCallBack() const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -92,7 +92,7 @@ namespace Spiecs {
 			/**
 			* @brief Reinterpretate the pointer to this class.
 			*/
-			auto vulkanWindow = reinterpret_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
+			const auto vulkanWindow = static_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
 
 			/**
 			* @brief Set this class's variable.
@@ -118,11 +118,6 @@ namespace Spiecs {
 		glfwSetWindowCloseCallback(m_VulkanState.m_Windows, [](GLFWwindow* window) 
 		{
 			/**
-			* @brief Reinterpretate the pointer to this class.
-			*/
-			auto vulkanWindow = reinterpret_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
-
-			/**
 			* @brief Create an specific event.
 			*/
 			WindowCloseEvent event;
@@ -138,11 +133,6 @@ namespace Spiecs {
 		*/
 		glfwSetKeyCallback(m_VulkanState.m_Windows, [](GLFWwindow* window, int key, int scancode, int action, int mods) 
 		{
-			/**
-			* @brief Reinterpretate the pointer to this class.
-			*/
-			auto vulkanWindow = reinterpret_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
-
 			switch (action)
 			{
 				case GLFW_PRESS:
@@ -196,14 +186,9 @@ namespace Spiecs {
 		glfwSetCharCallback(m_VulkanState.m_Windows, [](GLFWwindow* window, unsigned int keycode) 
 		{
 			/**
-			* @brief Reinterpretate the pointer to this class.
-			*/
-			auto vulkanWindow = reinterpret_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
-
-			/**
 			* @brief Create an specific event.
 			*/
-			KeyTypedEvent event(keycode);
+			KeyTypedEvent event(static_cast<int>(keycode));
 
 			/**
 			* @brief Execute the global event function pointer by passing the specific event.
@@ -216,11 +201,6 @@ namespace Spiecs {
 		*/
 		glfwSetMouseButtonCallback(m_VulkanState.m_Windows, [](GLFWwindow* window, int button, int action, int mods) 
 		{
-			/**
-			* @brief Reinterpretate the pointer to this class.
-			*/
-			auto vulkanWindow = reinterpret_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
-
 			switch (action)
 			{
 				case GLFW_PRESS:
@@ -257,17 +237,12 @@ namespace Spiecs {
 		/**
 		* @brief Mouse Scroll event Callback.
 		*/
-		glfwSetScrollCallback(m_VulkanState.m_Windows, [](GLFWwindow* window, double xOffest, double yOffest) 
+		glfwSetScrollCallback(m_VulkanState.m_Windows, [](GLFWwindow* window, double xOffset, double yOffset) 
 		{
-			/**
-			* @brief Reinterpretate the pointer to this class.
-			*/
-			auto vulkanWindow = reinterpret_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
-
 			/**
 			* @brief Create an specific event.
 			*/
-			MouseScrolledEvent event((float)xOffest, (float)yOffest);
+			MouseScrolledEvent event(static_cast<float>(xOffset), static_cast<float>(yOffset));
 
 			/**
 			* @brief Execute the global event function pointer by passing the specific event.
@@ -281,14 +256,9 @@ namespace Spiecs {
 		glfwSetCursorPosCallback(m_VulkanState.m_Windows, [](GLFWwindow* window, double xPos, double yPos) 
 		{
 			/**
-			* @brief Reinterpretate the pointer to this class.
-			*/
-			auto vulkanWindow = reinterpret_cast<VulkanWindows*>(glfwGetWindowUserPointer(window));
-
-			/**
 			* @brief Create an specific event.
 			*/
-			MouseMovedEvent event((float)xPos, (float)yPos);
+			MouseMovedEvent event(static_cast<float>(xPos), static_cast<float>(yPos));
 
 			/**
 			* @brief Execute the global event function pointer by passing the specific event.

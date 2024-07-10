@@ -62,8 +62,8 @@ namespace Spiecs {
 	VkFormat VulkanSwapChain::findSupportedFormat(
 		const VkPhysicalDevice&      physicalDevice , 
 		const std::vector<VkFormat>& candidates     , 
-		VkImageTiling tiling                        , 
-		VkFormatFeatureFlags features
+		VkImageTiling                tiling         , 
+		VkFormatFeatureFlags         features
 	)
 	{
 		SPIECS_PROFILE_ZONE;
@@ -71,7 +71,7 @@ namespace Spiecs {
 		/**
 		* @brief Iter all candidates.
 		*/
-		for (VkFormat format : candidates)
+		for (const VkFormat format : candidates)
 		{
 			VkFormatProperties props;
 			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
@@ -92,7 +92,7 @@ namespace Spiecs {
 		return candidates[0];
 	}
 
-	void VulkanSwapChain::Create()
+	void VulkanSwapChain::Create() const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -106,7 +106,7 @@ namespace Spiecs {
 		createInfo.imageFormat                 = m_VulkanDevice->GetSwapChainSupport().format.format;                 // RGBA8 Linear.
 		createInfo.imageColorSpace             = m_VulkanDevice->GetSwapChainSupport().format.colorSpace;
 		createInfo.imageExtent                 = m_VulkanDevice->GetSwapChainSupport().surfaceSize;
-		createInfo.imageArrayLayers            = 1;                                                                   // Might be used with MultipViewPort.
+		createInfo.imageArrayLayers            = 1;                                                                   // Might be used with MultipleViewPort.
 		createInfo.imageUsage                  = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 
 		uint32_t queueFamilyIndices[2] = 
@@ -158,26 +158,26 @@ namespace Spiecs {
 				/**
 				* @brief Instance a VkImageViewCreateInfo.
 				*/
-				VkImageViewCreateInfo createInfo{};
-				createInfo.sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-				createInfo.image    = m_VulkanState.m_SwapChainImages[i];
+				VkImageViewCreateInfo info{};
+				info.sType    = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+				info.image    = m_VulkanState.m_SwapChainImages[i];
 
-				createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-				createInfo.format   = m_VulkanDevice->GetSwapChainSupport().format.format;
+				info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+				info.format   = m_VulkanDevice->GetSwapChainSupport().format.format;
 
-				createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-				createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-				createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-				createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+				info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+				info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+				info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+				info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
 
-				createInfo.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
-				createInfo.subresourceRange.baseMipLevel   = 0;
-				createInfo.subresourceRange.levelCount     = 1;
-				createInfo.subresourceRange.baseArrayLayer = 0;
-				createInfo.subresourceRange.layerCount     = 1;
+				info.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+				info.subresourceRange.baseMipLevel   = 0;
+				info.subresourceRange.levelCount     = 1;
+				info.subresourceRange.baseArrayLayer = 0;
+				info.subresourceRange.layerCount     = 1;
 
 				VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, m_VulkanState.m_SwapChainImages[i], m_VulkanState.m_Device, "SwapChainImage");
-				VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &createInfo, nullptr, &m_VulkanState.m_SwapChainImageViews[i]));
+				VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &info, nullptr, &m_VulkanState.m_SwapChainImageViews[i]))
 			}
 
 			/**
@@ -210,19 +210,19 @@ namespace Spiecs {
 				samplerInfo.minLod                  = 0.0f;
 				samplerInfo.maxLod                  = static_cast<float>(0);
 
-				VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_VulkanState.m_SwapChainImageSamplers[i]));
+				VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_VulkanState.m_SwapChainImageSamplers[i]))
 			}
 		}
 	}
 
-	void VulkanSwapChain::Destroy()
+	void VulkanSwapChain::Destroy() const
 	{
 		SPIECS_PROFILE_ZONE;
 
 		/**
 		* @brief Destroy ImageView.
 		*/
-		for (auto imageView : m_VulkanState.m_SwapChainImageViews) 
+		for (const auto imageView : m_VulkanState.m_SwapChainImageViews) 
 		{
 			vkDestroyImageView(m_VulkanState.m_Device, imageView, nullptr);
 		}
@@ -230,7 +230,7 @@ namespace Spiecs {
 		/**
 		* @brief Destroy Sampler.
 		*/
-		for (auto sampler : m_VulkanState.m_SwapChainImageSamplers) 
+		for (const auto sampler : m_VulkanState.m_SwapChainImageSamplers) 
 		{
 			vkDestroySampler(m_VulkanState.m_Device, sampler, nullptr);
 		}
@@ -241,7 +241,7 @@ namespace Spiecs {
 		vkDestroySwapchainKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, nullptr);
 	}
 
-	void VulkanSwapChain::CreateSyncObjects()
+	void VulkanSwapChain::CreateSyncObjects() const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -267,18 +267,18 @@ namespace Spiecs {
 		*/
 		for (size_t i = 0; i < MaxFrameInFlight; i++) 
 		{
-			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ImageSemaphore[i]));
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ImageSemaphore[i]))
 			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_ImageSemaphore[i], m_VulkanState.m_Device, "ImageSemaphore");
 
-			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_QueueSemaphore[i]));
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_QueueSemaphore[i]))
 			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_QueueSemaphore[i], m_VulkanState.m_Device, "QueueSemaphore");
 
-			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_Fence[i]));
+			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_Fence[i]))
 			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FENCE, m_VulkanState.m_Fence[i], m_VulkanState.m_Device, "Fence");
 		}
 	}
 
-	void VulkanSwapChain::DestroySyncObjects()
+	void VulkanSwapChain::DestroySyncObjects() const
 	{
 		SPIECS_PROFILE_ZONE;
 

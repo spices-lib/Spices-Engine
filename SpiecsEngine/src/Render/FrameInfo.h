@@ -14,7 +14,7 @@
 namespace Spiecs {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class World;
 
@@ -29,22 +29,22 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		FrameInfo() {};
+		FrameInfo() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~FrameInfo() {};
+		virtual ~FrameInfo() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		FrameInfo(const FrameInfo&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		FrameInfo& operator=(const FrameInfo&) = delete;
 

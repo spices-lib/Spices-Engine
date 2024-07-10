@@ -85,7 +85,7 @@ namespace Spiecs {
 		/**
 		* @brief Destroy FrameBuffer.
 		*/
-		for (auto framebuffer : m_SwapChainFramebuffers) 
+		for (const auto framebuffer : m_SwapChainFramebuffers) 
 		{
 			vkDestroyFramebuffer(m_VulkanState.m_Device, framebuffer, nullptr);
 		}

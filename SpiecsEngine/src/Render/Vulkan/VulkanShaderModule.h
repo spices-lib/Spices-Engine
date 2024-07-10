@@ -11,7 +11,7 @@
 namespace Spiecs {
 
 	/**
-	* @brief This Class is a Wapper of VkShaderModule.
+	* @brief This Class is a Wrapper of VkShaderModule.
 	*/
 	class VulkanShaderModule : public VulkanObject
 	{
@@ -33,26 +33,26 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanShaderModule();
+		virtual ~VulkanShaderModule() override;
 
 		/**
 		* @brief Get VkShaderModule this class handled.
 		* @return Returns the VkShaderModule this class handled.
 		*/
-		VkShaderModule& Get() { return m_ShaderModule; };
+		VkShaderModule& Get() { return m_ShaderModule; }
 
 
-		VkPipelineShaderStageCreateInfo GetShaderStageCreateInfo();
+		VkPipelineShaderStageCreateInfo GetShaderStageCreateInfo() const;
 
 	private:
 
 		/**
-		* @brief Get sahder path string.
+		* @brief Get shader path string.
 		* @param[in] name What shader name is.
 		* @param[in] shaderType What shader type is.
-		* @return Returns the sahder path string.
+		* @return Returns the shader path string.
 		*/
-		std::string GetSahderPath(
+		std::string GetShaderPath(
 			const std::string& name       , 
 			const std::string& shaderType
 		);

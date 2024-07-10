@@ -23,7 +23,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Pipeline.
 		*/
-		CreateGraphicsPipeline(pipelineName, shaders, config);
+		VulkanPipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
 	}
 
 	VulkanPipeline::~VulkanPipeline()
@@ -247,7 +247,7 @@ namespace Spiecs {
 		/**
 		* @brief Create RT Pipeline.
 		*/
-		CreateGraphicsPipeline(pipelineName, shaders, config);
+		VulkanRayTracingPipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
 	}
 
 	void VulkanRayTracingPipeline::CreateGraphicsPipeline(
@@ -269,7 +269,7 @@ namespace Spiecs {
 		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
-			for(int i = 0; i < pair.second.size(); i++)
+			for(size_t i = 0; i < pair.second.size(); i++)
 			{
 				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
 			}
@@ -279,7 +279,7 @@ namespace Spiecs {
 		* @brief Instance VkPipelineShaderStageCreateInfo.
 		*/
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-		for (int i = 0; i < shaderModules.size(); i++)
+		for (size_t i = 0; i < shaderModules.size(); i++)
 		{
 			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
 		}
@@ -359,7 +359,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Pipeline.
 		*/
-		VK_CHECK(vkCreateRayTracingPipelinesKHR(m_VulkanState.m_Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_Pipeline));
+		VK_CHECK(vkCreateRayTracingPipelinesKHR(m_VulkanState.m_Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_Pipeline))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 

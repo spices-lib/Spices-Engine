@@ -176,7 +176,7 @@ namespace Spiecs {
 		* @brief Create a VkPipelineLayout.
 		*/
 		VkPipelineLayout pipelineLayout;
-		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout));
+		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE_LAYOUT, pipelineLayout, m_VulkanState.m_Device, "PipelineLayout");
 
 		return pipelineLayout;
@@ -511,7 +511,7 @@ namespace Spiecs {
 		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint) const
+	void Renderer::RenderBehaverBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint) const
 	{
 		SPIECS_PROFILE_ZONE;
 

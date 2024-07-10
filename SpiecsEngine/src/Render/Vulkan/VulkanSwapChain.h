@@ -62,12 +62,12 @@ namespace Spiecs {
 		/**
 		* @brief Create this.
 		*/
-		void Create();
+		void Create() const;
 
 		/**
 		* @brief Destroy this.
 		*/
-		void Destroy();
+		void Destroy() const;
 
 	private:
 
@@ -75,12 +75,12 @@ namespace Spiecs {
 		* @brief Create Sync Objects
 		* @todo Move to another file.
 		*/
-		void CreateSyncObjects();
+		void CreateSyncObjects() const;
 
 		/**
 		* @brief Destroy Sync Objects
 		*/
-		void DestroySyncObjects();
+		void DestroySyncObjects() const;
 
 	private:
 

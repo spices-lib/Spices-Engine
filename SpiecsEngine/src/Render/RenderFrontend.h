@@ -10,13 +10,13 @@ namespace Spiecs {
 	{
 	public:
 		RenderFrontend();
-		virtual ~RenderFrontend() {};
+		virtual ~RenderFrontend() = default;
 
 		RenderFrontend(const RenderFrontend&) = delete;
 		RenderFrontend& operator=(const RenderFrontend&) = delete;
 
-		bool isWindowClosed() { return m_RenderBackend->isWindowClosed(); };
-		void WaitIdle() { m_RenderBackend->WaitIdle(); };
+		bool isWindowClosed() { return m_RenderBackend->isWindowClosed(); }
+		void WaitIdle() { m_RenderBackend->WaitIdle(); }
 
 		void BeginFrame(FrameInfo& frameInfo);
 		void EndFrame(FrameInfo& frameInfo);
@@ -25,7 +25,7 @@ namespace Spiecs {
 		void OnEvent(Event& event);
 
 		// Temp:
-		VulkanState& GetState() { return VulkanRenderBackend::GetState(); };
+		VulkanState& GetState() { return VulkanRenderBackend::GetState(); }
 
 	private:
 		std::unique_ptr<VulkanRenderBackend> m_RenderBackend;

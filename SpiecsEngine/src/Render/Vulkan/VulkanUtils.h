@@ -29,13 +29,13 @@ namespace Spiecs {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		VulkanState(const VulkanState&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		VulkanState& operator=(const VulkanState&) = delete;
 
@@ -146,7 +146,7 @@ namespace Spiecs {
 
 	/**
 	* @brief VulkanObject Class.
-	* This class defines the basic behaver of VulkanObject.
+	* This class defines the basic behaves of VulkanObject.
 	* When we create an new VulkanObject, we need inherit from this.
 	*/
 	class VulkanObject
@@ -155,28 +155,28 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] vulkanState The global VulkanState.
 		*/
 		VulkanObject(VulkanState& vulkanState) 
 			: m_VulkanState(vulkanState)
-		{};
+		{}
 
 		/**
 		* @brief Destructor Function.
 		* We destroy pipeline layout here.
 		*/
-		virtual ~VulkanObject() {};
+		virtual ~VulkanObject() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		VulkanObject(const VulkanObject&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		VulkanObject& operator=(const VulkanObject&) = delete;
 

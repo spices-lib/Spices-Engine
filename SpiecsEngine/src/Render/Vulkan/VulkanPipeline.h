@@ -7,7 +7,6 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
-#include "VulkanShaderModule.h"
 
 namespace Spiecs {
 
@@ -47,42 +46,42 @@ namespace Spiecs {
 		/**
 		* @brief Viewport.
 		*/
-		VkViewport viewport;
+		VkViewport viewport{};
 
 		/**
 		* @brief Scissor.
 		*/
-		VkRect2D scissor;
+		VkRect2D scissor{};
 
 		/**
 		* @brief VkPipelineViewportStateCreateInfo.
 		*/
-		VkPipelineViewportStateCreateInfo              viewportInfo;
+		VkPipelineViewportStateCreateInfo              viewportInfo{};
 
 		/**
 		* @brief VkPipelineInputAssemblyStateCreateInfo.
 		*/
-		VkPipelineInputAssemblyStateCreateInfo         inputAssemblyInfo;
+		VkPipelineInputAssemblyStateCreateInfo         inputAssemblyInfo{};
 
 		/**
 		* @brief VkPipelineRasterizationStateCreateInfo.
 		*/
-		VkPipelineRasterizationStateCreateInfo         rasterizationInfo;
+		VkPipelineRasterizationStateCreateInfo         rasterizationInfo{};
 
 		/**
 		* @brief VkPipelineMultisampleStateCreateInfo.
 		*/
-		VkPipelineMultisampleStateCreateInfo           multisampleInfo;
+		VkPipelineMultisampleStateCreateInfo           multisampleInfo{};
 
 		/**
 		* @brief VkPipelineColorBlendStateCreateInfo.
 		*/
-		VkPipelineColorBlendStateCreateInfo            colorBlendInfo;
+		VkPipelineColorBlendStateCreateInfo            colorBlendInfo{};
 
 		/**
 		* @brief VkPipelineDepthStencilStateCreateInfo.
 		*/
-		VkPipelineDepthStencilStateCreateInfo          depthStencilInfo;
+		VkPipelineDepthStencilStateCreateInfo          depthStencilInfo{};
 
 		/**
 		* @brief VkDynamicState.
@@ -92,17 +91,17 @@ namespace Spiecs {
 		/**
 		* @brief VkPipelineDynamicStateCreateInfo.
 		*/
-		VkPipelineDynamicStateCreateInfo               dynamicStateInfo;
+		VkPipelineDynamicStateCreateInfo               dynamicStateInfo{};
 
 		/**
 		* @brief VkPipelineLayout.
 		*/
-		VkPipelineLayout                               pipelineLayout = nullptr;
+		VkPipelineLayout                               pipelineLayout{};
 
 		/**
 		* @brief VkRenderPass.
 		*/
-		VkRenderPass                                   renderPass = nullptr;
+		VkRenderPass                                   renderPass{};
 
 		/**
 		* @brief SubPass num.
@@ -121,7 +120,7 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		* @param[in] vulkanState The global VulkanState.
 		*/
-		VulkanPipeline(VulkanState& vulkanState) : VulkanObject(vulkanState) {};
+		VulkanPipeline(VulkanState& vulkanState) : VulkanObject(vulkanState) {}
 
 		/**
 		* @brief Constructor Function.
@@ -145,7 +144,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Create a PipelineConfigInfo with default parameter.
-		* @param[in out] configInfo PipelineConfigInfo.
+		* @param[in,out] configInfo PipelineConfigInfo.
 		*/
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
@@ -160,13 +159,13 @@ namespace Spiecs {
 		* @brief Get VkPipelineLayout.
 		* @return Returns the VkPipelineLayout.
 		*/
-		inline VkPipelineLayout& GetPipelineLayout() { return m_PipelineLayout; };
+		VkPipelineLayout& GetPipelineLayout() { return m_PipelineLayout; }
 
 		/**
 		* @brief Get VkPipeline.
 		* @return Returns the VkPipeline.
 		*/
-		inline VkPipeline& GetPipeline() { return m_Pipeline; };
+		VkPipeline& GetPipeline() { return m_Pipeline; }
 
 	private:
 

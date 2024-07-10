@@ -24,7 +24,7 @@ namespace Spiecs {
 		/**
 		* @brief Get Shader File Path.
 		*/
-		std::string filePath = GetSahderPath(shaderName, shaderStage);
+		const std::string filePath = GetShaderPath(shaderName, shaderStage);
 
 		/**
 		* @brief Confirm file existence.
@@ -63,7 +63,7 @@ namespace Spiecs {
 		/**
 		* @brief Create Shader Module.
 		*/
-		VK_CHECK(vkCreateShaderModule(vulkanState.m_Device, &createInfo, nullptr, &m_ShaderModule));
+		VK_CHECK(vkCreateShaderModule(vulkanState.m_Device, &createInfo, nullptr, &m_ShaderModule))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SHADER_MODULE, m_ShaderModule, m_VulkanState.m_Device, shaderName);
 	}
 
@@ -77,7 +77,7 @@ namespace Spiecs {
 		vkDestroyShaderModule(m_VulkanState.m_Device, m_ShaderModule, nullptr);
 	}
 
-	VkPipelineShaderStageCreateInfo VulkanShaderModule::GetShaderStageCreateInfo()
+	VkPipelineShaderStageCreateInfo VulkanShaderModule::GetShaderStageCreateInfo() const
 	{
 		VkPipelineShaderStageCreateInfo shaderStages{};
 
@@ -102,7 +102,7 @@ namespace Spiecs {
 		return shaderStages;
 	}
 
-	std::string VulkanShaderModule::GetSahderPath(const std::string& name, const std::string& shaderType)
+	std::string VulkanShaderModule::GetShaderPath(const std::string& name, const std::string& shaderType)
 	{
 		SPIECS_PROFILE_ZONE;
 

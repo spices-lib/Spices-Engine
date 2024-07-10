@@ -11,19 +11,19 @@
 namespace Spiecs {
 
 	/**
-	* @brief This struct defiens the basic information of window.
+	* @brief This struct defines the basic information of window.
 	*/
 	struct WindowInfo
 	{
 		/**
 		* @brief Window's width.
 		*/
-		uint32_t width;
+		int width;
 
 		/**
 		* @brief Window's height.
 		*/
-		uint32_t height;
+		int height;
 
 		/**
 		* @brief Window's name.
@@ -33,7 +33,7 @@ namespace Spiecs {
 
 	/**
 	* @brief VulkanWindows Class.
-	* This class defines the windows behaver.
+	* This class defines the windows behaves.
 	*/
 	class VulkanWindows : public VulkanObject
 	{
@@ -53,26 +53,26 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanWindows();
+		virtual ~VulkanWindows() override;
 
 		/**
 		* @brief Get m_WindowsResized variable.
 		* @return Returns the m_WindowsResized variable.
 		*/
-		inline bool IsResized() { return m_WindowsResized; };
+		bool IsResized() const { return m_WindowsResized; }
 
 		/**
 		* @brief Set m_WindowsResized variable.
-		* @param[in] isResized.
+		* @param[in] isResized .
 		*/
-		void SetResized(bool isResized) { m_WindowsResized = isResized; };
+		void SetResized(bool isResized) { m_WindowsResized = isResized; }
 
 	private:
 
 		/**
 		* @brief Set all needed GLFW events call back.
 		*/
-		void SetInternalCallBack();
+		void SetInternalCallBack() const;
 
 	private:
 

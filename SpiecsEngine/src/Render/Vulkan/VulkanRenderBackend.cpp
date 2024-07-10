@@ -183,7 +183,7 @@ namespace Spiecs {
 		/**
 		* @brief Prepare Writing another SwapchainImage.
 		*/
-		VkResult result = vkAcquireNextImageKHR(
+		const VkResult result = vkAcquireNextImageKHR(
 			m_VulkanState.m_Device, 
 			m_VulkanState.m_SwapChain, 
 			UINT64_MAX, 
@@ -215,7 +215,7 @@ namespace Spiecs {
 		/**
 		* @brief Start recording a CommandBuffer.
 		*/
-		VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo));
+		VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
 	}
 
 	void VulkanRenderBackend::EndFrame(FrameInfo& frameInfo)
@@ -225,16 +225,16 @@ namespace Spiecs {
 		/**
 		* @brief End recording the CommandBuffer.
 		*/
-		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]));
+		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]))
 
 		/**
 		* @brief Reset Fences.
 		*/
-		vkResetFences(
+		VK_CHECK(vkResetFences(
 			m_VulkanState.m_Device, 
 			1, 
 			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
-		);
+		))
 
 		/**
 		* @brief Instance a VkSubmitInfo.
@@ -258,7 +258,7 @@ namespace Spiecs {
 		/**
 		* @brief Submit all commands recorded to graphic queue.
 		*/
-		VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]));
+		VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]))
 
 		/**
 		* @brief Instance a VkPresentInfoKHR.

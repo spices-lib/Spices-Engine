@@ -124,14 +124,14 @@ namespace Spiecs {
 		virtual void OnWindowResizeOver() {}
 
 		/**
-		* @breif This interface is called on Viewport resize (registry by Imgui Viewport).
+		* @breif This interface is called on Viewport resize (registry by ImGui Viewport).
 		* If the specific renderer uses the attachment that needs recreated during CreateRenderPass(), 
 		* this interface needs to override, call CreateRenderPass() and CreateDescriptorSet() here just will be fine.
 		*/
 		virtual void OnSlateResize();
 
 		/**
-		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
+		* @breif This interface is called on world mark query tick (registry by MeshComponent).
 		*/
 		virtual void OnMeshAddedWorld() {}
 
@@ -202,7 +202,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Iterator the specific Component in World.
-		* @param[in] T The specific Component class.
+		* @tparam T The specific Component class.
 		* @param[in] frameInfo The current frame data.
 		* @param[in] func The function pointer that need to execute during this function.
 		*/
@@ -219,7 +219,7 @@ namespace Spiecs {
 		/**
 		* @brief Get DirectionalLightComponent's render data in World.
 		* @param[in] frameInfo The current frame data.
-		* @param[out] directionalLight DirectionalLight.
+		* @param[out] dLightBuffer DirectionalLight.
 		* @todo Multiple directional light.
 		*/
 		void GetDirectionalLight(FrameInfo& frameInfo, std::array<SpiecsShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM>& dLightBuffer);
@@ -288,7 +288,7 @@ namespace Spiecs {
 			template<typename T>
 			RendererPassBuilder& AddColorAttachment(
 				const std::string& attachmentName ,
-				TextureType        type           ,
+				const TextureType& type           ,
 				T                  func
 			);
 
@@ -302,7 +302,7 @@ namespace Spiecs {
 			template<typename T>
 			RendererPassBuilder& AddDepthAttachment(
 				const std::string& attachmentName ,
-				TextureType        type           ,
+				const TextureType& type           ,
 				T                  func
 			);
 
@@ -316,7 +316,7 @@ namespace Spiecs {
 			template<typename T>
 			RendererPassBuilder& AddInputAttachment(
 				const std::string& attachmentName , 
-				TextureType        type           ,
+				const TextureType& type           ,
 				T                  func
 			);
 
@@ -375,7 +375,7 @@ namespace Spiecs {
 
 			/**
 			* @brief Set VkPushConstantRange by a specific push constant struct.
-			* @param[in] T Specific push constant struct.
+			* @tparam T Specific push constant struct.
 			* @return Returns this reference.
 			*/
 			template<typename T>
@@ -383,7 +383,7 @@ namespace Spiecs {
 
 			/**
 			* @brief Create local buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
-			* @param[in] T Buffer struct.
+			* @tparam T Buffer struct.
 			* @param[in] set Which set this buffer wil use.
 			* @param[in] binding Which binding this buffer will use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
@@ -398,7 +398,7 @@ namespace Spiecs {
 
 			/**
 			* @brief Create local buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
-			* @param[in] T Buffer struct.
+			* @tparam T Buffer struct.
 			* @param[in] set Which set this buffer wil use.
 			* @param[in] binding Which binding this buffer will use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
@@ -413,7 +413,7 @@ namespace Spiecs {
 
 			/**
 			* @brief Add the texture set binding to descriptor set layout.
-			* @param[in] T Texture Type.
+			* @tparam T Texture Type.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
@@ -434,6 +434,7 @@ namespace Spiecs {
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
 			* @param[in] textureNames All Texture's Name.
+			* @param[in] format Texture Format.
 			* @param[in] type Texture's type.
 			* @return Returns this reference.
 			*/
@@ -522,7 +523,7 @@ namespace Spiecs {
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkDescriptorBufferInfo>> m_BufferInfos;
 
 			/**
-			* @brief DescriptorSet Image type binginginfo.
+			* @brief DescriptorSet Image type binging info.
 			* [set] - [binding] - [info]
 			*/
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> m_ImageInfos;
@@ -576,7 +577,7 @@ namespace Spiecs {
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			void BindDescriptorSet(
-				DescriptorSetInfo&   infos                                       , 
+				const DescriptorSetInfo&   infos                                       , 
 				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
 			) const;
 
@@ -596,8 +597,8 @@ namespace Spiecs {
 			/******************************Update By Value**********************************************************/
 
 			/**
-			* @brief Update local pushconstant buffer.
-			* @param[in] T Specific push constant struct Type.
+			* @brief Update local push constant buffer.
+			* @tparam T Specific push constant struct Type.
 			* @param[in] func A function pointer, which defines what data inside the buffer.
 			*/
 			template<typename T, typename F>
@@ -605,7 +606,7 @@ namespace Spiecs {
 
 			/**
 			* @brief Update a local buffer.
-			* @param[in] T Specific buffer struct Type.
+			* @tparam T Specific buffer struct Type.
 			* @param[in] func A function pointer, which defines what data inside the buffer.
 			* @param[in] set Which set the descriptor will use.
 			* @param[in] binding Which binding the descriptor will use.
@@ -615,7 +616,7 @@ namespace Spiecs {
 
 			/**
 			* @brief Update a local buffer.
-			* @param[in] T Specific buffer struct Type.
+			* @tparam T Specific buffer struct Type.
 			* @param[in] func A function pointer, which defines what data inside the buffer.
 			* @param[in] set Which set the descriptor will use.
 			* @param[in] binding Which binding the descriptor will use.
@@ -626,8 +627,8 @@ namespace Spiecs {
 			/*******************************************************************************************************/
 
 			/**
-			* @brief Update local pushconstant buffer.
-			* @param[in] T Specific push constant struct Type.
+			* @brief Update local push constant buffer.
+			* @tparam T Specific push constant struct Type.
 			* @param[in] data push constant data pointer.
 			*/
 			template<typename T>
@@ -645,7 +646,7 @@ namespace Spiecs {
 			* @brief Update a local buffer.
 			* @param[in] set Which set the descriptor will use.
 			* @param[in] binding Which binding the descriptor will use.
-			* @param[in] data uubo data pointer.
+			* @param[in] data ssbo data pointer.
 			*/
 			void UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data) const;
 
@@ -1071,7 +1072,7 @@ namespace Spiecs {
 	template<typename T>
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddColorAttachment(
 		const std::string& attachmentName , 
-		TextureType        type           ,
+		const TextureType& type           ,
 		T                  func
 	)
 	{
@@ -1176,7 +1177,7 @@ namespace Spiecs {
 	template<typename T>
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddDepthAttachment(
 		const std::string& attachmentName ,
-		TextureType        type           ,
+		const TextureType& type           ,
 		T func
 	)
 	{
@@ -1252,8 +1253,8 @@ namespace Spiecs {
 
 	template<typename T>
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddInputAttachment(
-		const std::string& attachmentName , 
-		TextureType        type           ,
+		const std::string& attachmentName ,
+		const TextureType& type           ,
 		T                  func
 	)
 	{

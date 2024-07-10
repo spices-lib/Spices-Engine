@@ -13,7 +13,7 @@ namespace Spiecs {
 	VulkanInstance::VulkanInstance(
 		VulkanState&       vulkanState , 
 		const std::string& name        , 
-		const std::string& enginename
+		const std::string& engineName
 	)
 		: VulkanObject(vulkanState)
 	{
@@ -26,7 +26,7 @@ namespace Spiecs {
 		appInfo.sType                 = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName      = name.c_str();
 		appInfo.applicationVersion    = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName           = enginename.c_str();
+		appInfo.pEngineName           = engineName.c_str();
 		appInfo.engineVersion         = VK_MAKE_VERSION(1, 0, 0);
 		appInfo.apiVersion            = VK_API_VERSION_1_3;
 
@@ -98,7 +98,7 @@ namespace Spiecs {
 		/**
 		* @brief Create instance and set it global.
 		*/
-		VK_CHECK(vkCreateInstance(&createInfo, nullptr, &vulkanState.m_Instance));
+		VK_CHECK(vkCreateInstance(&createInfo, nullptr, &vulkanState.m_Instance))
 
 		/**
 		* @brief Set Vulkan's debug message callback function pointer.
@@ -297,7 +297,7 @@ namespace Spiecs {
 		* @brief Create surface and set it global.
 		* @note Init with Window's size, but we need resize it to viewport's size after.
 		*/
-		VK_CHECK(glfwCreateWindowSurface(m_VulkanState.m_Instance, m_VulkanState.m_Windows, nullptr, &m_VulkanState.m_Surface));
+		VK_CHECK(glfwCreateWindowSurface(m_VulkanState.m_Instance, m_VulkanState.m_Windows, nullptr, &m_VulkanState.m_Surface))
 	}
 
 	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanInstance::InstanceDebugCallback(

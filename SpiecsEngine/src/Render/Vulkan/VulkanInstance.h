@@ -24,12 +24,12 @@ namespace Spiecs {
 		* Create vkinstance and vksurface.
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] name Application name.
-		* @param[in] enginename Engine name.
+		* @param[in] engineName Engine name.
 		*/
 		VulkanInstance(
 			VulkanState&       vulkanState , 
 			const std::string& name        , 
-			const std::string& enginename
+			const std::string& engineName
 		);
 
 		/**
@@ -55,7 +55,7 @@ namespace Spiecs {
 		bool CheckExtensionRequirementsSatisfied();
 
 		/**
-		* @brief Get all instance layer requirements our engine needede.
+		* @brief Get all instance layer requirements our engine needed.
 		* Source 1 : user Setting.
 		* @todo Configurable
 		*/
@@ -115,7 +115,7 @@ namespace Spiecs {
 		VkDebugUtilsMessengerEXT m_DebugMessenger{};
 
 		/**
-		* @brief Debug Utils Messagers used to execute message callback function.
+		* @brief Debug Utils Messages used to execute message callback function.
 		* Also debug vkinstance create.
 		*/
 		VkDebugUtilsMessengerCreateInfoEXT m_DebugMessengerCreateInfo{};

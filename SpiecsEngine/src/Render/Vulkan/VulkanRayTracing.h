@@ -47,7 +47,7 @@ namespace Spiecs {
 		void Destroy();
 
 		const VkAccelerationStructureKHR& GetAccelerationStructure() const { return m_tlas.accel; };
-		VkDeviceAddress GetBlasDeviceAddress(uint32_t blasId);
+		VkDeviceAddress GetBlasDeviceAddress(uint32_t blasId) const;
 
 		/**
 		* @brief Create all the BLAS from the vector of BlasInput.
@@ -62,7 +62,7 @@ namespace Spiecs {
 			VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR
 		);
 
-		void UpdateBlas(uint32_t blasIdx, BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags);
+		void UpdateBlas(uint32_t blasIdx, const BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags) const;
 
 		/**
 		* @brief Creating the top-level acceleration structure from the vector of Instance.
@@ -122,11 +122,11 @@ namespace Spiecs {
 		* memory needed when compacting the BLAS.
 		*/
 		void CmdCreateBLAS(VkCommandBuffer           cmdBuf,
-			std::vector<uint32_t>                    indices,
+		                   const std::vector<uint32_t>& indices,
 			std::vector<BuildAccelerationStructure>& buildAs,
 			VkDeviceAddress                          scratchAddress,
 			VkQueryPool                              queryPool
-		);
+		) const;
 
 		/**
 		* @brief Create and replace a new acceleration structure and buffer based on the size retrieved by the Query.
@@ -135,14 +135,14 @@ namespace Spiecs {
 		*/
 		void CmdCompactBLAS(
 			VkCommandBuffer                          cmdBuf,
-			std::vector<uint32_t>                    indices,
+			const std::vector<uint32_t>& indices,
 			std::vector<BuildAccelerationStructure>& buildAs,
 			VkQueryPool                              queryPool
-		);
+		) const;
 
-		void DestroyNonCompacted(std::vector<uint32_t> indices, std::vector<BuildAccelerationStructure>& buildAs);
+		void DestroyNonCompacted(const std::vector<uint32_t>& indices, std::vector<BuildAccelerationStructure>& buildAs) const;
 		bool hasFlag(VkFlags item, VkFlags flag) { return (item & flag) == flag; }
-		AccelKHR CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel);
+		AccelKHR CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel) const;
 
 	private:
 

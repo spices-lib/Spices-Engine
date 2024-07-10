@@ -56,13 +56,13 @@ namespace Spiecs {
 		m_tlas.FreeBuffer();
 	}
 
-	VkDeviceAddress VulkanRayTracing::GetBlasDeviceAddress(uint32_t blasId)
+	VkDeviceAddress VulkanRayTracing::GetBlasDeviceAddress(uint32_t blasId) const
 	{
 		SPIECS_PROFILE_ZONE;
 
-		assert(size_t(blasId) < m_blas.size());
+		assert(static_cast<size_t>(blasId) < m_blas.size());
 
-		VkAccelerationStructureDeviceAddressInfoKHR addressInfo{};
+		VkAccelerationStructureDeviceAddressInfoKHR     addressInfo{};
 		addressInfo.sType                             = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
 		addressInfo.accelerationStructure             = m_blas[blasId].accel;
 
@@ -76,10 +76,10 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
-		uint32_t         nbBlas = static_cast<uint32_t>(input.size());
-		VkDeviceSize     asTotalSize{ 0 };     
-		uint32_t         nbCompactions{ 0 };   
-		VkDeviceSize     maxScratchSize{ 0 };  
+		const auto       nbBlas         = static_cast<uint32_t>(input.size());
+		VkDeviceSize     asTotalSize    = 0;     
+		uint32_t         nbCompactions  = 0;   
+		VkDeviceSize     maxScratchSize = 0;  
 
 		/**
 		* @brief Preparing the information for the acceleration build commands..
@@ -136,8 +136,8 @@ namespace Spiecs {
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 
 			0
 		);
-		
-		VkDeviceAddress scratchAddress = scratchBuffer.GetAddress();
+
+		const VkDeviceAddress scratchAddress = scratchBuffer.GetAddress();
 
 		/**
 		* @brief Allocate a query pool for storing the needed size for every BLAS compaction.
@@ -165,8 +165,8 @@ namespace Spiecs {
 		* @brief Batching creation / compaction of BLAS to allow staying in restricted amount of memory.
 		*/ 
 		std::vector<uint32_t>     indices;                    // Indices of the BLAS to create
-		VkDeviceSize              batchSize{ 0 }; 
-		VkDeviceSize              batchLimit{ 256'000'000 };  // 256 MB
+		VkDeviceSize              batchSize = 0;
+		constexpr VkDeviceSize    batchLimit = 256'000'000;  // 256 MB
 
 		for (uint32_t idx = 0; idx < nbBlas; idx++)
 		{
@@ -216,17 +216,17 @@ namespace Spiecs {
 		vkDestroyQueryPool(m_VulkanState.m_Device, queryPool, nullptr);
 	}
 
-	void VulkanRayTracing::UpdateBlas(uint32_t blasIdx, BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags)
+	void VulkanRayTracing::UpdateBlas(uint32_t blasIdx, const BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags) const
 	{
 		SPIECS_PROFILE_ZONE;
 
-		assert(size_t(blasIdx) < m_blas.size());
+		assert(static_cast<size_t>(blasIdx) < m_blas.size());
 
 		// Preparing all build information, acceleration is filled later
 		VkAccelerationStructureBuildGeometryInfoKHR buildInfos{};
 		buildInfos.sType                           = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
 		buildInfos.flags                           = flags;
-		buildInfos.geometryCount                   = (uint32_t)blas.asGeometry.size();
+		buildInfos.geometryCount                   = static_cast<uint32_t>(blas.asGeometry.size());
 		buildInfos.pGeometries                     = blas.asGeometry.data();
 		buildInfos.mode                            = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;  // UPDATE
 		buildInfos.type                            = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
@@ -406,12 +406,12 @@ namespace Spiecs {
 	}
 
 	void VulkanRayTracing::CmdCreateBLAS(
-		VkCommandBuffer                            cmdBuf          , 
-		std::vector<uint32_t>                      indices         , 
+		VkCommandBuffer                            cmdBuf          ,
+		const std::vector<uint32_t>&               indices         , 
 		std::vector<BuildAccelerationStructure>&   buildAs         , 
 		VkDeviceAddress                            scratchAddress  , 
 		VkQueryPool                                queryPool
-	)
+	) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -499,15 +499,15 @@ namespace Spiecs {
 	}
 
 	void VulkanRayTracing::CmdCompactBLAS(
-		VkCommandBuffer                          cmdBuf    , 
-		std::vector<uint32_t>                    indices   , 
+		VkCommandBuffer                          cmdBuf    ,
+		const std::vector<uint32_t>&             indices   , 
 		std::vector<BuildAccelerationStructure>& buildAs   , 
 		VkQueryPool                              queryPool
-	)
+	) const
 	{
 		SPIECS_PROFILE_ZONE;
 
-		uint32_t queryCtn{ 0 };
+		uint32_t queryCtn = 0;
 
 		/**
 		* @brief Get the compacted size result back.
@@ -518,14 +518,14 @@ namespace Spiecs {
 			m_VulkanState.m_Device, 
 			queryPool, 
 			0, 
-			(uint32_t)compactSizes.size(), 
+			static_cast<uint32_t>(compactSizes.size()), 
 			compactSizes.size() * sizeof(VkDeviceSize),
 			compactSizes.data(), 
 			sizeof(VkDeviceSize), 
 			VK_QUERY_RESULT_WAIT_BIT
 		);
 
-		for (auto idx : indices)
+		for (const auto idx : indices)
 		{
 			buildAs[idx].cleanupAS                          = buildAs[idx].as;              // previous AS to destroy
 			buildAs[idx].sizeInfo.accelerationStructureSize = compactSizes[queryCtn++];     // new reduced size
@@ -553,9 +553,9 @@ namespace Spiecs {
 	}
 
 	void VulkanRayTracing::DestroyNonCompacted(
-		std::vector<uint32_t> indices, 
+		const std::vector<uint32_t>&             indices, 
 		std::vector<BuildAccelerationStructure>& buildAs
-	)
+	) const
 	{
 		SPIECS_PROFILE_ZONE;
 
@@ -566,7 +566,7 @@ namespace Spiecs {
 		}
 	}
 
-	VulkanRayTracing::AccelKHR VulkanRayTracing::CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel)
+	VulkanRayTracing::AccelKHR VulkanRayTracing::CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel) const
 	{
 		SPIECS_PROFILE_ZONE;
 

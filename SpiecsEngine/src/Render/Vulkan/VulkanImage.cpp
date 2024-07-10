@@ -30,8 +30,8 @@ namespace Spiecs {
 		uint32_t              mipLevels
 	)
 		: VulkanObject(vulkanState)
-		, m_Width(width)
-		, m_Height(height)
+		, m_Width(static_cast<int>(width))
+		, m_Height(static_cast<int>(height))
 		, m_Layers(layers)
 		, m_ImageType(type)
 		, m_Format(format)
@@ -302,6 +302,8 @@ namespace Spiecs {
 			break;
 		case VK_FORMAT_R32G32B32A32_SFLOAT:      // 16 bytes.
 			channelize = 16;
+			break;
+		default:
 			break;
 		}
 
