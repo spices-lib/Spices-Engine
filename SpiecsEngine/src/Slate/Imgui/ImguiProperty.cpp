@@ -26,12 +26,11 @@ namespace Spiecs {
         {
             SPIECS_PROFILE_ZONEN("ImguiProperty::Search");
 
-            ImGui::Separator();
+		    ImGui::Spacing();
             ImGui::PushItemWidth(m_PanelSize.x);
             char search[128] = "";
             if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128)) {}
             ImGui::PopItemWidth();
-            ImGui::Separator();
         }
 
         /**
@@ -58,7 +57,12 @@ namespace Spiecs {
 
                 ImGui::Columns(2);
                 ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 4.0f);
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.16f, 0.16f, 0.16f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.619f, 0.619f, 0.619f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.408f, 0.451f, 0.18f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.341f, 0.486f, 0.353f, 1.0f));
                 ImGui::Button(ICON_TEXT(ICON_MD_ADD, Add));
+                ImGui::PopStyleColor(4);
                 ImGui::NextColumn();
 
                 std::string ss;
@@ -98,8 +102,7 @@ namespace Spiecs {
                 ImGui::NextColumn();
 
                 static bool isChecked;
-                ImGui::Checkbox("##", &isChecked);
-
+                ImGuiH::Checkbox(&isChecked);
                 ImGui::Columns(1);
                 ImGui::PopID();
             }

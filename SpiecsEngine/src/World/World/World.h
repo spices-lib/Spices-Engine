@@ -38,7 +38,7 @@ namespace Spiecs {
 
 	/**
 	* @brief World Class.
-	* This class defines the basic behaver of World.
+	* This class defines the basic behaves of World.
 	* When we create an new world, we need inherit from this.
 	*/
 	class World
@@ -48,26 +48,26 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		World() {};
+		World() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~World() {};
+		virtual ~World() = default;
 
 		/**
-		* @brief This interface define the specific world behaver before on actived.
+		* @brief This interface define the specific world behaves before on actived.
 		*/
 		virtual void OnPreActivate() = 0;
 
 		/**
-		* @brief This interface define the specific world behaver on actived.
+		* @brief This interface define the specific world behaves on actived.
 		* @param[in] ts TimeStep.
 		*/
 		virtual void OnActivate(TimeStep& ts) = 0;
 
 		/**
-		* @brief This interface defines the specific world behaver after on actived.
+		* @brief This interface defines the specific world behaves after on actived.
 		*/
 		virtual void OnDeactivate() = 0;
 
@@ -94,10 +94,10 @@ namespace Spiecs {
 		* @brief Get Registry variable.
 		* @return Returns the Registry variable.
 		*/
-		inline entt::registry& GetRegistry() { return m_Registry; };
+		entt::registry& GetRegistry() { return m_Registry; }
 
 		/**
-		* @brief Get World Entiry by id(entt::entity).
+		* @brief Get World Entity by id(entt::entity).
 		* @param[in] id Id(entt::entity)
 		* @return Returns valid Entity if fined.
 		*/
@@ -107,25 +107,25 @@ namespace Spiecs {
 		* @brief Get WorldMarkFlags this frame.
 		* @return Returns the WorldMarkFlags this frame.
 		*/
-		inline WorldMarkFlags GetMarker() { return m_Marker; };
+		WorldMarkFlags GetMarker() const { return m_Marker; }
 
 		/**
 		* @brief Mark WorldMarkFlags with flags.
 		* @param[in] flags In flags.
 		*/
-		void Mark(WorldMarkFlags flags) { m_Marker |= flags; };
+		void Mark(WorldMarkFlags flags) { m_Marker |= flags; }
 
 		/**
 		* @brief Reset WorldMarkFlags to Clean.
 		*/
-		void ReserMark() { m_Marker = WorldMarkBits::Clean; };
+		void ReserMark() { m_Marker = WorldMarkBits::Clean; }
 		
 	private:
 
 		/**
 		* @brief Called On any Component Added to this world.
 		* @param[in] entity Entity row pointer.
-		* @param[in] T Specific Component reference.
+		* @param[in] component Specific Component reference.
 		*/
 		template<typename T>
 		void OnComponentAdded(Entity* entity, T& component);
@@ -156,7 +156,7 @@ namespace Spiecs {
 	};
 
 	template<typename T>
-	inline void World::OnComponentAdded(Entity* entity, T& component)
+	void World::OnComponentAdded(Entity* entity, T& component)
 	{
 		component.OnComponentAdded(*entity);
 	}

@@ -28,17 +28,19 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		ImGui::Spacing();
+		
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
-
+		
 		/**
 		* @brief colume_0 width.
 		*/
-		float columeWidth = ImGuiH::GetLineItemSize().x * 5.0f;
+		const float columeWidth = ImGuiH::GetLineItemSize().x * 5.0f;
 
 		/**
 		* @brief drag float width, 3 * drag float + 6 * buttom + colume_0 = ImGui::GetContentRegionAvail().
 		*/
-		float itemWidth = (ImGui::GetContentRegionAvail().x - 11.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
+		const float itemWidth = (ImGui::GetContentRegionAvail().x - 11.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
 
 		{
 			SPIECS_PROFILE_ZONEN("TransformComponent Translate");
@@ -88,40 +90,40 @@ namespace Spiecs {
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-			if (ImGui::Button("X", ImGuiH::GetLineItemSize())) m_Position.x = 0.0f;
+			ImGui::Button("X", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##X", &m_Position.x, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Position.x != 0.0f)){ m_Position.x = 0.0f; }
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-			if (ImGui::Button("Y", ImGuiH::GetLineItemSize())) m_Position.y = 0.0f;
+			ImGui::Button("Y", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Y", &m_Position.y, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+			if(ImGuiH::DrawResetIcon(m_Position.y != 0.0f)) { m_Position.y = 0.0f; };
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-			if (ImGui::Button("Z", ImGuiH::GetLineItemSize())) m_Position.z = 0.0f;
+			ImGui::Button("Z", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Z", &m_Position.z, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Position.z != 0.0f)) { m_Position.z = 0.0f; };
 
 			ImGui::Columns(1);
 			ImGui::PopID();
@@ -186,40 +188,40 @@ namespace Spiecs {
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-			if (ImGui::Button("X", ImGuiH::GetLineItemSize())) m_Rotation.x = 0.0f;
+			ImGui::Button("X", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##X", &m_Rotation.x, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Rotation.x != 0.0f)) { m_Rotation.x = 0.0f; };
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-			if (ImGui::Button("Y", ImGuiH::GetLineItemSize())) m_Rotation.y = 0.0f;
+			ImGui::Button("Y", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Y", &m_Rotation.y, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Rotation.y != 0.0f)) { m_Rotation.y = 0.0f; };
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-			if (ImGui::Button("Z", ImGuiH::GetLineItemSize())) m_Rotation.z = 0.0f;
+			ImGui::Button("Z", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Z", &m_Rotation.z, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Rotation.z != 0.0f)) { m_Rotation.z = 0.0f; };
 
 			ImGui::Columns(1);
 			ImGui::PopID();
@@ -275,46 +277,47 @@ namespace Spiecs {
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-			if (ImGui::Button("X", ImGuiH::GetLineItemSize())) m_Scale.x = 1.0f;
+			ImGui::Button("X", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##X", &m_Scale.x, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Scale.x != 1.0f)) { m_Scale.x = 1.0f; };
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-			if (ImGui::Button("Y", ImGuiH::GetLineItemSize())) m_Scale.y = 1.0f;
+			ImGui::Button("Y", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Y", &m_Scale.y, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Scale.y != 1.0f)) { m_Scale.y = 1.0f; };
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-			if (ImGui::Button("Z", ImGuiH::GetLineItemSize())) m_Scale.z = 1.0f;
+			ImGui::Button("Z", ImGuiH::GetLineItemSize());
 			ImGui::PopStyleColor(3);
 			ImGui::SameLine();
 			ImGui::PushItemWidth(itemWidth);
 			ImGui::DragFloat("##Z", &m_Scale.z, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_Scale.z != 1.0f)) { m_Scale.z = 1.0f; };
 
 			ImGui::Columns(1);
 			ImGui::PopID();
 		}
-
+		
 		ImGui::PopStyleVar();
+		ImGui::Spacing();
 	}
 
 	glm::mat4 TransformComponent::GetRotateMatrix() const

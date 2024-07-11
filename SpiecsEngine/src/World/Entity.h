@@ -15,7 +15,7 @@ namespace Spiecs {
 
 	/**
 	* @brief Entity Class.
-	* This class defines the specific behaver of Entity.
+	* This class defines the specific behaves of Entity.
 	*/
 	class Entity
 	{
@@ -24,7 +24,7 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		Entity() {};
+		Entity() = default;
 
 		/**
 		* @brief Constructor Function.
@@ -36,17 +36,17 @@ namespace Spiecs {
 		Entity(entt::entity handle, World* world)
 			: m_EntityHandle(handle)
 			, m_World(world)
-		{};
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Entity() {};
+		virtual ~Entity() = default;
 
 		/**
 		* @brief Template Function.
 		* Used for add specific component to entity.
-		* @param[in] T Specific component.
+		* @tparam T Specific component.
 		* @return Returns The specific component reference that added.
 		*/
 		template<typename T, typename... Args>
@@ -59,7 +59,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Get Component owned by this entity.
-		* @param[in] T Which Component we will get.
+		* @tparam T Which Component we will get.
 		* @return Returns the specific Component.
 		*/
 		template<typename T>
@@ -70,7 +70,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Remove Component owned from this entity.
-		* @param[in] T Which Component we will remove.
+		* @tparam T Which Component we will remove.
 		*/
 		template<typename T>
 		void RemoveComponent()
@@ -80,7 +80,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Judje Component is owned by this entity or not.
-		* @param[in] T Which Component we will search.
+		* @tparam T Which Component we will search.
 		* @return Returns true if finded.
 		*/
 		template<typename T>
@@ -99,19 +99,19 @@ namespace Spiecs {
 		* @brief Empty Operation.
 		* @return Returns true if m_EntityHandle is valid.
 		*/
-		operator bool() const { return m_EntityHandle != entt::null; };
+		operator bool() const { return m_EntityHandle != entt::null; }
 
 		/**
 		* @brief Empty Operation.
 		* @return Returns m_EntityHandle's value.
 		*/
-		operator uint32_t() const { return (uint32_t)m_EntityHandle; };
+		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
 
 		/**
 		* @brief Empty Operation.
 		* @return Returns m_EntityHandle.
 		*/
-		operator entt::entity() const { return m_EntityHandle; };
+		operator entt::entity() const { return m_EntityHandle; }
 
 		/**
 		* @brief Equal Operation.
@@ -121,7 +121,7 @@ namespace Spiecs {
 		bool operator ==(const Entity& other) const
 		{
 			return m_EntityHandle == other.m_EntityHandle && m_World == other.m_World;
-		};
+		}
 
 		/**
 		* @brief Not equal Operation.
@@ -131,7 +131,7 @@ namespace Spiecs {
 		bool operator !=(const Entity& other) const
 		{
 			return !operator==(other);
-		};
+		}
 
 	private:
 

@@ -25,6 +25,7 @@ namespace Spiecs {
 	{
 		SPIECS_PROFILE_ZONE;
 
+		ImGui::Spacing();
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
 		float columeWidth = ImGuiH::GetLineItemSize().x * 6.5f;
 
@@ -53,7 +54,7 @@ namespace Spiecs {
 				ImGui::DragFloat("##R", &m_DirectionalLight.color.x, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.x != 1.0f)) { m_DirectionalLight.color.x = 1.0f; };
 				ImGui::SameLine();
 			}
 
@@ -70,7 +71,7 @@ namespace Spiecs {
 				ImGui::DragFloat("##G", &m_DirectionalLight.color.y, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK, ImGuiH::GetLineItemSize());
+				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.y != 1.0f)) { m_DirectionalLight.color.y = 1.0f; };
 				ImGui::SameLine();
 			}
 
@@ -87,7 +88,7 @@ namespace Spiecs {
 				ImGui::DragFloat("##B", &m_DirectionalLight.color.z, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
+				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.z != 1.0f)) { m_DirectionalLight.color.z = 1.0f; };
 				ImGui::SameLine();
 			}
 
@@ -97,7 +98,7 @@ namespace Spiecs {
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
 				ImGui::ColorEdit3("##", glm::value_ptr(m_DirectionalLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
 				ImGui::SameLine();
-				ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
+				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color != glm::vec3(0.0f, 0.0f, 0.0f))) { m_DirectionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f); };
 				ImGui::PopStyleColor();
 			}
 			
@@ -119,12 +120,13 @@ namespace Spiecs {
 			ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			ImGui::Button(ICON_MD_LOCK_OPEN, ImGuiH::GetLineItemSize());
+			if (ImGuiH::DrawResetIcon(m_DirectionalLight.intensity != 1.0f)) { m_DirectionalLight.intensity = 1.0f; };
 
 			ImGui::Columns(1);
 			ImGui::PopID();
 		}
 
 		ImGui::PopStyleVar();
+		ImGui::Spacing();
 	}
 }

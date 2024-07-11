@@ -78,6 +78,19 @@ namespace Spiecs {
 		*/
 		static ImVec2 GetLineItemSize();
 
+		/**
+		* @brief Draw Reset Icon.
+		* @param[in] isMove Is Value Moved compare with default.
+		* @return Returns true if need reset.
+		*/
+		static bool DrawResetIcon(const bool& isMove);
+
+		/**
+		* @brief ImGuiHelper Style Checkbox.
+		* @param[in] isChecked Bool Pointer of is checked or not.
+		*/
+		static void Checkbox(bool* isChecked);
+
 	private:
 
 		/**

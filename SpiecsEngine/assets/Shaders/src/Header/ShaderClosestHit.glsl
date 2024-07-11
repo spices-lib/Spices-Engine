@@ -269,14 +269,19 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
     for(int i = 0; i < pLightBuffer.i.length(); i++)
     {
         /**
+        * @brief Get PointLight from Buffer.
+        */
+        PointLight light = pLightBuffer.i[i];
+
+        /**
         * @brief If hit break condition, than break.
         */
-        if(pLightBuffer.i[i].intensity < -500.0f) break;
+        if(light.intensity < -500.0f) break;
 
         /**
         * @brief light position
         */ 
-        vec3 lpos = pLightBuffer.i[i].position;
+        vec3 lpos = light.position;
         vec3 dir = normalize(lpos - vt.position);
 
         if(dot(attr.normal, dir) > 0)
@@ -303,7 +308,8 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
 
             if(!isShadowArea)
             {
-                col += max(dot(attr.normal, dir), 0.0f) * pLightBuffer.i[i].color * pLightBuffer.i[i].intensity / (tMax * tMax);
+                float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
+                col += dot(attr.normal, dir) * light.color * light.intensity * attenuation;
             }
         }
     }
@@ -321,14 +327,19 @@ vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
     for(int i = 0; i < dLightBuffer.i.length(); i++)
     {
         /**
+        * @brief Get PointLight from Buffer.
+        */
+        DirectionalLight light = dLightBuffer.i[i];
+        
+        /**
         * @brief If hit break condition, than break.
         */
-        if(dLightBuffer.i[i].intensity < -500.0f) break;
+        if(light.intensity < -500.0f) break;
 
         /**
         * @brief light position
         */ 
-        vec4 dir4 = dLightBuffer.i[i].rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        vec4 dir4 = light.rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
         vec3 dir = dir4.xyz;
 
         if(dot(attr.normal, dir) > 0)
@@ -355,7 +366,7 @@ vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
 
             if(!isShadowArea)
             {
-                col += max(dot(attr.normal, dir), 0.0f) * dLightBuffer.i[i].color * dLightBuffer.i[i].intensity;
+                col += dot(attr.normal, dir) * light.color * light.intensity;
             }
         }
     }

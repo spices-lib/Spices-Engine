@@ -248,6 +248,39 @@ namespace Spiecs {
         return ImVec2(x, x);
     }
 
+    bool ImGuiH::DrawResetIcon(const bool& isMove)
+    {
+        bool IsReset = false;
+
+        if (isMove)
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyle().Colors[ImGuiCol_Button]);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.31f, 0.49f, 0.62f, 1.0f));
+            IsReset = ImGui::Button(ICON_MD_SQUARE, ImGuiH::GetLineItemSize());
+            ImGui::PopStyleColor(2);
+        }
+        else
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyle().Colors[ImGuiCol_Button]);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyle().Colors[ImGuiCol_Button]);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 0.4f, 0.4f, 1.0f));
+            ImGui::Button(ICON_MD_CROP_SQUARE, ImGuiH::GetLineItemSize());
+            ImGui::PopStyleColor(3);
+        }
+
+        return IsReset;
+    }
+
+    void ImGuiH::Checkbox(bool* isChecked)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
+        if (ImGui::Button(*isChecked ? ICON_MD_CHECK_BOX : ICON_MD_SQUARE, ImGuiH::GetLineItemSize()))
+        {
+            *isChecked = !*isChecked;
+        }
+        ImGui::PopStyleColor();
+    }
+
     float ImGuiH::GetDPIScale()
     {
         SPIECS_PROFILE_ZONE;
