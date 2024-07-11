@@ -1,6 +1,6 @@
 /**
-* @file ImguiGizmos.cpp.
-* @brief The ImguiGizmos Class Implementation.
+* @file ImguiWindow.cpp.
+* @brief The ImguiWindow Class Implementation.
 * @author Spiecs.
 */
 

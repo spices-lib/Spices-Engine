@@ -1,6 +1,6 @@
 /**
-* @file ImguiGizmos.cpp.
-* @brief The ImguiGizmos Class Implementation.
+* @file ImguiConsole.cpp
+* @brief The ImguiConsole Class Implementation.
 * @author Spiecs.
 */
 
@@ -8,8 +8,6 @@
 #include "ImguiConsole.h"
 
 #include "Core/Log/Console.h"
-#include "Resources/ResourcePool/ResourcePool.h"
-#include "Resources/Texture/Texture2D.h"
 #include "Core/Library/FileLibrary.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Core/Library/ProcessLibrary.h"
@@ -34,13 +32,13 @@ namespace Spiecs {
 		*/
 		Begin();
 
-		ImGui::Separator();
+		ImGui::Spacing();
 
 		/**
 		* @brief Render ClearConsoleIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render ClearConsoleIcon");
+			SPIECS_PROFILE_ZONEN("Console ClearConsoleIcon");
 
 			if (ImGui::Button(ICON_MD_FORMAT_CLEAR, ImGuiH::GetLineItemSize()))
 			{
@@ -53,7 +51,7 @@ namespace Spiecs {
 		* @brief Render OpenLogFileIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render OpenLogFileIcon");
+			SPIECS_PROFILE_ZONEN("Console OpenLogFileIcon");
 
 			ImGui::SameLine();
 			if (ImGui::Button(ICON_MD_EDIT_NOTE, ImGuiH::GetLineItemSize()))
@@ -73,7 +71,7 @@ namespace Spiecs {
 		* @brief Render OpenLogFolderIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render OpenLogFolderIcon");
+			SPIECS_PROFILE_ZONEN("Console OpenLogFolderIcon");
 
 			ImGui::SameLine();
 			if (ImGui::Button(ICON_MD_FOLDER, ImGuiH::GetLineItemSize()))
@@ -86,7 +84,7 @@ namespace Spiecs {
 					glfwGetWin32Window((GLFWwindow*)VulkanRenderBackend::GetState().m_Windows)
 				);
 
-				if (filepath != "")
+				if (!filepath.empty())
 				{
 					std::stringstream ss;
 					ss << "C:/Windows/System32/notepad.exe " << filepath;
@@ -104,7 +102,7 @@ namespace Spiecs {
 		* @brief Render EnableCommandFieldIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render EnableCommandFieldIcon");
+			SPIECS_PROFILE_ZONEN("Console EnableCommandFieldIcon");
 
 			ImGui::SameLine();
 			if (ImGui::Button(ICON_MD_TERMINAL, ImGuiH::GetLineItemSize())) m_EnableCmdInput = !m_EnableCmdInput;
@@ -115,7 +113,7 @@ namespace Spiecs {
 		* @brief Render FilterIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render FilterIcon");
+			SPIECS_PROFILE_ZONEN("Console FilterIcon");
 
 			ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 5.7f - 220.0f);
 			if (ImGui::Button(ICON_MD_FILTER_LIST, ImGuiH::GetLineItemSize())) {}
@@ -126,7 +124,7 @@ namespace Spiecs {
 		* @brief Render VerboseIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render VerboseIcon");
+			SPIECS_PROFILE_ZONEN("Console VerboseIcon");
 
 			ImGui::SameLine();
 			if (ImGui::Button(ICON_MD_RUNNING_WITH_ERRORS, ImGuiH::GetLineItemSize())) m_Level = 0;
@@ -137,7 +135,7 @@ namespace Spiecs {
 		* @brief Render InfoIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render InfoIcon");
+			SPIECS_PROFILE_ZONEN("Console InfoIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -150,15 +148,14 @@ namespace Spiecs {
 		* @brief Render WarningIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render WarningIcon");
+			SPIECS_PROFILE_ZONEN("Console WarningIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
 			if (ImGui::Button(ICON_MD_WARNING_AMBER, ImGuiH::GetLineItemSize())) m_Level = 2;
 			ImGui::SetItemTooltip("Warning");
 			ImGui::SameLine();
-			std::string num = std::to_string(m_Console->GetInfos().m_WarnLogInfos.size());
-			ImGui::Text(num.c_str());
+			ImGui::Text(std::to_string(m_Console->GetInfos().m_WarnLogInfos.size()).c_str());
 			ImGui::PopStyleColor();
 		}
 
@@ -166,42 +163,54 @@ namespace Spiecs {
 		* @brief Render ErrorIcon.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render ErrorIcon");
+			SPIECS_PROFILE_ZONEN("Console ErrorIcon");
 
 			ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			if (ImGui::Button(ICON_MD_NEARBY_ERROR, ImGuiH::GetLineItemSize())) m_Level = 3;
 			ImGui::SetItemTooltip("Error");
 			ImGui::SameLine();
-			std::string num = std::to_string(m_Console->GetInfos().m_ErrorLogInfos.size());
-			ImGui::Text(num.c_str());
+			ImGui::Text(std::to_string(m_Console->GetInfos().m_ErrorLogInfos.size()).c_str());
 			ImGui::PopStyleColor();
 		}
+
+		/**
+		* @brief Search String.
+		*/
+		static std::string searchString;
+		static bool isEnableSearch = false;
 
 		/**
 		* @brief Render Search Input Text.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render Search Input Text");
+			SPIECS_PROFILE_ZONEN("Console Search Input Text");
 
 			ImGui::SameLine();
 			ImGui::PushItemWidth(200);
-			char search[128] = "";
-			if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
+			static char search[128] = "";
+			if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128)) 
+			{
+				searchString = std::string(search);
+				if (searchString.size() == 0) isEnableSearch = false;
+				else isEnableSearch = true;
+			}
 			ImGui::PopItemWidth();
+			ImGui::Spacing();
 			ImGui::Separator();
+			ImGui::Spacing();
 		}
 
 		/**
 		* @brief Render Console ScrollingRegion.
 		*/
 		{
-			SPIECS_PROFILE_ZONEN("Render Console ScrollingRegion");
+			SPIECS_PROFILE_ZONEN("Console ScrollingRegion");
 
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetStyleColorVec4(ImGuiCol_Border));
 
-			float itemHeight = m_EnableCmdInput ? ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing() : ImGui::GetStyle().ItemSpacing.y;
+			float itemHeight = m_EnableCmdInput ? 5.0f * ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing() : ImGui::GetStyle().ItemSpacing.y;
 			if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -itemHeight), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
@@ -210,10 +219,18 @@ namespace Spiecs {
 
 				switch (m_Level)
 				{
+				default:
+					break;
 				case 0:
-					for (auto it = m_Console->GetInfos().m_TraceLogInfos.rbegin(); it != m_Console->GetInfos().m_TraceLogInfos.rend(); it++)
+					for (auto it = m_Console->GetInfos().m_TraceLogInfos.rbegin(); it != m_Console->GetInfos().m_TraceLogInfos.rend(); ++it)
 					{
 						const InfoLevelHelper& helper = *it;
+
+						if (isEnableSearch)
+						{
+							if (helper.str.find(searchString) == std::string::npos) continue;
+						}
+
 						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "trace")
 						{
@@ -226,9 +243,15 @@ namespace Spiecs {
 					}
 					break;
 				case 1:
-					for (auto it = m_Console->GetInfos().m_InfoLogInfos.rbegin(); it != m_Console->GetInfos().m_InfoLogInfos.rend(); it++)
+					for (auto it = m_Console->GetInfos().m_InfoLogInfos.rbegin(); it != m_Console->GetInfos().m_InfoLogInfos.rend(); ++it)
 					{
 						const InfoLevelHelper& helper = *it;
+
+						if (isEnableSearch)
+						{
+							if (helper.str.find(searchString) == std::string::npos) continue;
+						}
+
 						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "info")
 						{
@@ -241,9 +264,15 @@ namespace Spiecs {
 					}
 					break;
 				case 2:
-					for (auto it = m_Console->GetInfos().m_WarnLogInfos.rbegin(); it != m_Console->GetInfos().m_WarnLogInfos.rend(); it++)
+					for (auto it = m_Console->GetInfos().m_WarnLogInfos.rbegin(); it != m_Console->GetInfos().m_WarnLogInfos.rend(); ++it)
 					{
 						const InfoLevelHelper& helper = *it;
+
+						if (isEnableSearch)
+						{
+							if (helper.str.find(searchString) == std::string::npos) continue;
+						}
+
 						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "warn")
 						{
@@ -256,9 +285,15 @@ namespace Spiecs {
 					}
 					break;
 				case 3:
-					for (auto it = m_Console->GetInfos().m_ErrorLogInfos.rbegin(); it != m_Console->GetInfos().m_ErrorLogInfos.rend(); it++)
+					for (auto it = m_Console->GetInfos().m_ErrorLogInfos.rbegin(); it != m_Console->GetInfos().m_ErrorLogInfos.rend(); ++it)
 					{
 						const InfoLevelHelper& helper = *it;
+
+						if (isEnableSearch)
+						{
+							if (helper.str.find(searchString) == std::string::npos) continue;
+						}
+
 						ImGui::PushStyleColor(ImGuiCol_Text, { helper.color.x,  helper.color.y,  helper.color.z,  helper.color.w });
 						if (helper.level == "error")
 						{
@@ -285,9 +320,11 @@ namespace Spiecs {
 		{
 			if (m_EnableCmdInput)
 			{
-				SPIECS_PROFILE_ZONEN("Render Console Command-line");
+				SPIECS_PROFILE_ZONEN("Console Command-line");
 
+				ImGui::Spacing();
 				ImGui::Separator();
+				ImGui::Spacing();
 				ImGui::PushItemWidth(-1);
 				bool reclaim_focus = false;
 				char InputBuf[512] = "";
@@ -307,6 +344,7 @@ namespace Spiecs {
 					(void*)this
 				);
 				ImGui::PopItemWidth();
+				ImGui::Spacing();
 			}
 		}
 

@@ -90,7 +90,7 @@ namespace Spiecs {
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.16f, 0.16f, 0.16f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.608f, 0.608f, 0.608f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.396f, 0.439f, 0.168f, 1.0f));
-			if (ImGui::Button(ICON_MD_KEYBOARD_OPTION, ImGuiH::GetLineItemSize()))
+			if (ImGui::Button(ICON_MD_FILTER_VINTAGE, ImGuiH::GetLineItemSize()))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}

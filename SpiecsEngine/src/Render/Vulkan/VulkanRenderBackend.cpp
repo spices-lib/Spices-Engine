@@ -27,7 +27,7 @@ namespace Spiecs {
 	/**
 	* @brief Window create parameter.
 	*/
-	const WindowInfo initInfo{ 1600, 900, "Spiecs Engine"};
+	const WindowInfo initInfo{ 2200, 1300, "Spiecs Engine"};
 
 	VulkanState                           VulkanRenderBackend::m_VulkanState;
 	std::shared_ptr<VulkanDescriptorPool> VulkanRenderBackend::m_VulkanDescriptorPool;

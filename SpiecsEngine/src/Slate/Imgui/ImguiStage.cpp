@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "ImguiStage.h"
 
+#include "Core/Library/StringLibrary.h"
 #include "World/World/World.h"
 
 namespace Spiecs {
@@ -28,6 +29,12 @@ namespace Spiecs {
         Begin();
 
         /**
+        * @brief Search String.
+        */
+        static std::string searchString;
+        static bool isEnableSearch = false;
+
+        /**
         * @brief Begin render Search Input Text.
         */
         {
@@ -35,8 +42,13 @@ namespace Spiecs {
 
             ImGui::Separator();
             ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
-            char search[128] = "";
-            if (ImGui::InputTextWithHint("##", "Search", search, 128)) {}
+            static char search[256] = {};
+            if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128))
+            {
+                searchString = std::string(search);
+                if (searchString.size() == 0) isEnableSearch = false;
+                else isEnableSearch = true;
+            }
             ImGui::PopItemWidth();
 
             ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
@@ -59,9 +71,9 @@ namespace Spiecs {
                 | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY
                 | ImGuiTableFlags_SizingFixedFit;
 
-            ImGuiTableColumnFlags columns_base_flags = ImGuiTableColumnFlags_None;
-            int freeze_cols = 1;
-            int freeze_rows = 1;
+            constexpr ImGuiTableColumnFlags columns_base_flags = ImGuiTableColumnFlags_None;
+            constexpr int freeze_cols = 1;
+            constexpr int freeze_rows = 1;
 
             if (ImGui::BeginTable("Entity Stage", 3, flags, ImVec2(0, 0), 0.0))
             {
@@ -72,12 +84,21 @@ namespace Spiecs {
                 ImGui::TableHeadersRow();
 
                 m_FrameInfo.m_World->GetRegistry().view<TagComponent>().each([&](auto entityID, auto& tComp) {
+
+                    /**
+                    * @brief Search Filter here.
+                    */
+                    if(isEnableSearch)
+                    {
+                        if((*tComp.GetTag().begin()).find(searchString) == std::string::npos) return;
+                    }
+                    
                     ImGui::TableNextRow();
 
                     ImGui::TableSetColumnIndex(0);
 
                     const bool item_is_selected = m_FrameInfo.m_PickEntityID.has_key((int)entityID);
-                    ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
+                    constexpr ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
                     std::stringstream ss;
                     ss << ICON_MD_POLYMER << " " << (*tComp.GetTag().begin()).c_str() << "##" << (int)entityID;

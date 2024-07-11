@@ -32,13 +32,13 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiUtilities() {};
+		virtual ~ImguiUtilities() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnUpdate(TimeStep& ts) override {}
 
 		/**
 		* @brief This interface is called On SlateRenderer Render.
@@ -48,7 +48,7 @@ namespace Spiecs {
 		/**
 		* @brief This interface is called On Global Event Function Pointer is called.
 		*/
-		virtual void OnEvent(Event& event) override {};
+		virtual void OnEvent(Event& event) override {}
 
 	private:
 
