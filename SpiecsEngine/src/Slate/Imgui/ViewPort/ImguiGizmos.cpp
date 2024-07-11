@@ -67,7 +67,7 @@ namespace Spiecs {
             {
                 auto& [tComp, transComp] = m_FrameInfo.m_World->GetRegistry().get<CameraComponent, TransformComponent>(e);
 
-                if (tComp.IsActived())
+                if (tComp.IsActive())
                 {
                     viewMat = glm::inverse(transComp.GetModelMatrix());
                     projectionMat = tComp.GetCamera()->GetPMatrix();

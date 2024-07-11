@@ -53,23 +53,18 @@ namespace Spiecs
 		* @param[in] entity this component's Owner entity.
 		*/
 		virtual void OnComponentAdded(const entt::entity& entity);
-
+		
 		/**
 		* @brief This interface defines how to draw this component to property panel.
 		*/
 		virtual void DrawThis() {}
-
+	
 	protected:
 
 		/**
 		* @brief This component's Owner entity.
 		*/
 		entt::entity m_Owner{ entt::null };
-
-		/**
-		* @brief This component's icon file path.
-		*/
-		std::string m_SlateStageIconPath;
 	};
 
 }

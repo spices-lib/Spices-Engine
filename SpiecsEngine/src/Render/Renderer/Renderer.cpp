@@ -240,7 +240,7 @@ namespace Spiecs {
 			CameraComponent&      camComp
 			){
 
-			if (camComp.IsActived())
+			if (camComp.IsActive())
 			{
 				/**
 				* @brief Viewmaterix is the inverse of camera's modelmatrix. 

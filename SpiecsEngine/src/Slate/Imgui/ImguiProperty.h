@@ -87,11 +87,14 @@ namespace Spiecs {
 			const bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
 			
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-			if (ImGui::Button("+", ImGuiH::GetLineItemSize()))
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.16f, 0.16f, 0.16f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.608f, 0.608f, 0.608f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.396f, 0.439f, 0.168f, 1.0f));
+			if (ImGui::Button(ICON_MD_KEYBOARD_OPTION, ImGuiH::GetLineItemSize()))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
-
+			ImGui::PopStyleColor(3);
 			ImGui::PopStyleVar();
 			
 			bool removeComponent = false;
