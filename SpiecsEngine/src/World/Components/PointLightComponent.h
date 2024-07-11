@@ -27,7 +27,9 @@ namespace Spiecs {
 		* Usually call it.
 		* @param[in] pointLight Use a pointLight struct Init this component.
 		*/
-		PointLightComponent(const SpiecsShader::PointLight& pointLight) : m_PointLight(pointLight) {}
+		PointLightComponent(const SpiecsShader::PointLight& pointLight)
+			: m_PointLight(pointLight)
+		{}
 
 		PointLightComponent()
 			: m_PointLight{ glm::vec3(0.0f), glm::vec3(1.0f), 1.0f, 1.0f, 0.35f, 0.44f }

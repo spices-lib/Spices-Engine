@@ -47,7 +47,7 @@ namespace Spiecs {
 
 			ImGui::PushID("TransformComponent Translate");
 
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			ImGui::SetColumnWidth(0, columeWidth);
 			
 			static bool selected = false;
@@ -110,7 +110,7 @@ namespace Spiecs {
 			ImGui::DragFloat("##Y", &m_Position.y, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			if(ImGuiH::DrawResetIcon(m_Position.y != 0.0f)) { m_Position.y = 0.0f; };
+			if(ImGuiH::DrawResetIcon(m_Position.y != 0.0f)) { m_Position.y = 0.0f; }
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
@@ -123,7 +123,7 @@ namespace Spiecs {
 			ImGui::DragFloat("##Z", &m_Position.z, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			if (ImGuiH::DrawResetIcon(m_Position.z != 0.0f)) { m_Position.z = 0.0f; };
+			if (ImGuiH::DrawResetIcon(m_Position.z != 0.0f)) { m_Position.z = 0.0f; }
 
 			ImGui::Columns(1);
 			ImGui::PopID();
@@ -134,7 +134,7 @@ namespace Spiecs {
 
 			ImGui::PushID("TransformComponent Rotate");
 
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			ImGui::SetColumnWidth(0, columeWidth);
 			/*if (ImGui::BeginMenu("Rotate"))
 			{
@@ -195,7 +195,7 @@ namespace Spiecs {
 			ImGui::DragFloat("##X", &m_Rotation.x, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			if (ImGuiH::DrawResetIcon(m_Rotation.x != 0.0f)) { m_Rotation.x = 0.0f; };
+			if (ImGuiH::DrawResetIcon(m_Rotation.x != 0.0f)) { m_Rotation.x = 0.0f; }
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
@@ -221,7 +221,7 @@ namespace Spiecs {
 			ImGui::DragFloat("##Z", &m_Rotation.z, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			if (ImGuiH::DrawResetIcon(m_Rotation.z != 0.0f)) { m_Rotation.z = 0.0f; };
+			if (ImGuiH::DrawResetIcon(m_Rotation.z != 0.0f)) { m_Rotation.z = 0.0f; }
 
 			ImGui::Columns(1);
 			ImGui::PopID();
@@ -232,7 +232,7 @@ namespace Spiecs {
 
 			ImGui::PushID("TransformComponent Scale");
 
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			ImGui::SetColumnWidth(0, columeWidth);
 			
 			static bool selected = false;
@@ -297,7 +297,7 @@ namespace Spiecs {
 			ImGui::DragFloat("##Y", &m_Scale.y, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			if (ImGuiH::DrawResetIcon(m_Scale.y != 1.0f)) { m_Scale.y = 1.0f; };
+			if (ImGuiH::DrawResetIcon(m_Scale.y != 1.0f)) { m_Scale.y = 1.0f; }
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
@@ -310,7 +310,7 @@ namespace Spiecs {
 			ImGui::DragFloat("##Z", &m_Scale.z, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-			if (ImGuiH::DrawResetIcon(m_Scale.z != 1.0f)) { m_Scale.z = 1.0f; };
+			if (ImGuiH::DrawResetIcon(m_Scale.z != 1.0f)) { m_Scale.z = 1.0f; }
 
 			ImGui::Columns(1);
 			ImGui::PopID();

@@ -15,7 +15,7 @@ namespace Spiecs {
 
 	/**
 	* @brief TagComponent Class.
-	* This class defines the specific behaver of TagComponent.
+	* This class defines the specific behaves of TagComponent.
 	*/
 	class TagComponent : public Component
 	{
@@ -24,7 +24,7 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		TagComponent() {};
+		TagComponent() = default;
 
 		/**
 		* @brief Constructor Function.
@@ -34,7 +34,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~TagComponent() {};
+		virtual ~TagComponent() override = default;
 
 		/**
 		* @brief This interface defines how to serialize.
@@ -43,28 +43,33 @@ namespace Spiecs {
 		virtual void OnSerialize() override;
 
 		/**
-		* @brief This interface defines how to dserialize.
-		* @todo Finsih it.
+		* @brief This interface defines how to deserialize.
+		* @todo Finish it.
 		*/
 		virtual void OnDeSerialize() override;
 
 		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis() override;
+		
+		/**
 		* @brief Add the tag this component handled.
 		* @param[in] tag The string type.
 		*/
-		void AddTag(const std::string& tag) { m_Tags.insert(tag); };
+		void AddTag(const std::string& tag) { m_Tags.insert(tag); }
 
 		/**
 		* @brief Remove a tag from this component handled.
 		* @param[in] tag The string type.
 		*/
-		void RemoveTag(const std::string& tag) { if (m_Tags.find(tag) != m_Tags.end()) m_Tags.erase(tag); };
+		void RemoveTag(const std::string& tag) { if (m_Tags.find(tag) != m_Tags.end()) m_Tags.erase(tag); }
 
 		/**
 		* @brief Get the tags variable.
 		* @return Returns the tags variable.
 		*/
-		inline const std::set<std::string>& GetTag() { return m_Tags; };
+		const std::set<std::string>& GetTag() { return m_Tags; }
 
 	private:
 

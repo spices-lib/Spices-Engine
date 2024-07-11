@@ -33,7 +33,7 @@ namespace Spiecs {
 			SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color");
 			
 			ImGui::PushID("DLight Color");
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			
 			ImGui::SetColumnWidth(0, columeWidth);
 			ImGui::Text("Color");
@@ -110,7 +110,7 @@ namespace Spiecs {
 			SPIECS_PROFILE_ZONEN("DirectionalLightComponent Intensity");
 			
 			ImGui::PushID("DLight Intensity");
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			
 			ImGui::SetColumnWidth(0, columeWidth);
 			ImGui::Text("Intensity");

@@ -15,7 +15,7 @@ namespace Spiecs {
 
 	/**
 	* @brief SkyBoxComponent Class.
-	* This class defines the specific behaver of SkyBoxComponent.
+	* This class defines the specific behaves of SkyBoxComponent.
 	*/
 	class SkyBoxComponent : public Component
 	{
@@ -37,7 +37,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SkyBoxComponent() {};
+		virtual ~SkyBoxComponent() override = default;
 
 		/**
 		* @brief This interface defines how to serialize.
@@ -46,8 +46,8 @@ namespace Spiecs {
 		virtual void OnSerialize() override;
 
 		/**
-		* @brief This interface defines how to dserialize.
-		* @todo Finsih it.
+		* @brief This interface defines how to deserialize.
+		* @todo Finish it.
 		*/
 		virtual void OnDeSerialize() override;
 
@@ -55,7 +55,7 @@ namespace Spiecs {
 		* @brief Get the Mesh variable.
 		* @return Returns the Mesh variable.
 		*/
-		inline const std::shared_ptr<Mesh> GetMesh() { return m_Mesh; };
+		std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
 
 	private:
 

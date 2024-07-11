@@ -15,7 +15,7 @@ namespace Spiecs {
 
 	/**
 	* @brief MeshComponent Class.
-	* This class defines the specific behaver of MeshComponent.
+	* This class defines the specific behaves of MeshComponent.
 	*/
 	class MeshComponent : public Component
 	{
@@ -29,7 +29,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~MeshComponent() {};
+		virtual ~MeshComponent() override = default;
 
 		/**
 		* @brief This interface defines how to serialize.
@@ -38,8 +38,8 @@ namespace Spiecs {
 		virtual void OnSerialize() override;
 
 		/**
-		* @brief This interface defines how to dserialize.
-		* @todo Finsih it.
+		* @brief This interface defines how to deserialize.
+		* @todo Finish it.
 		*/
 		virtual void OnDeSerialize() override;
 
@@ -53,7 +53,7 @@ namespace Spiecs {
 		* @brief Get the Mesh variable.
 		* @return Returns the Mesh variable.
 		*/
-		inline std::shared_ptr<Mesh> GetMesh() { return m_Mesh; };
+		std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
 
 	private:
 

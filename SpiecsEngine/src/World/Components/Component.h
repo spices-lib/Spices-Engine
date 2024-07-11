@@ -14,13 +14,13 @@
 namespace Spiecs
 {
 	/**
-	* @brief Forward Declear
+	* @brief Forward Declare
 	*/
 	class Entity;
 
 	/**
 	* @brief Component Class.
-	* This class defines the basic behaver of component.
+	* This class defines the basic behaves of component.
 	* When we add an new Component, we need inherit from this.
 	*/
 	class Component
@@ -30,12 +30,12 @@ namespace Spiecs
 		/**
 		* @brief Constructor Function.
 		*/
-		Component();
+		Component() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Component() {};
+		virtual ~Component() = default;
 
 		/**
 		* @brief This interface defines how to serialize. 
@@ -43,12 +43,12 @@ namespace Spiecs
 		virtual void OnSerialize() = 0;
 
 		/**
-		* @brief This interface defines how to dserialize.
+		* @brief This interface defines how to deserialize.
 		*/
 		virtual void OnDeSerialize() = 0;
 
 		/**
-		* @brief This interface defines the behaver on specific component added.
+		* @brief This interface defines the behaves on specific component added.
 		* Init with variable.
 		* @param[in] entity this component's Owner entity.
 		*/
@@ -57,7 +57,7 @@ namespace Spiecs
 		/**
 		* @brief This interface defines how to draw this component to property panel.
 		*/
-		virtual void DrawThis() {};
+		virtual void DrawThis() {}
 
 	protected:
 

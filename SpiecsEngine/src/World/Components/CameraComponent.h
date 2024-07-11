@@ -13,7 +13,7 @@ namespace Spiecs {
 
 	/**
 	* @brief CameraComponent Class.
-	* This class defines the specific behaver of CameraComponent.
+	* This class defines the specific behaves of CameraComponent.
 	*/
 	class CameraComponent : public Component
 	{
@@ -23,14 +23,14 @@ namespace Spiecs {
 		* @brief Constructor Function.
 		* Init class variable.
 		* Usually call it.
-		* @param[in] isActived Whether this cameracomponent's camera is a primary camera.
+		* @param[in] isActive Whether this camera component's camera is a primary camera.
 		*/
-		CameraComponent(bool isActived = false);
+		CameraComponent(bool isActive = false);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~CameraComponent() {};
+		virtual ~CameraComponent() override = default;
 
 		/**
 		* @brief This interface defines how to serialize.
@@ -39,8 +39,8 @@ namespace Spiecs {
 		virtual void OnSerialize() override;
 
 		/**
-		* @brief This interface defines how to dserialize.
-		* @todo Finsih it.
+		* @brief This interface defines how to deserialize.
+		* @todo Finish it.
 		*/
 		virtual void OnDeSerialize() override;
 
@@ -48,19 +48,19 @@ namespace Spiecs {
 		* @brief Set the camera this component handled.
 		* @param[in] camera The camera shared pointer.
 		*/
-		void SetCamera(std::shared_ptr<Camera> camera) { m_Camera = camera; };
+		void SetCamera(std::shared_ptr<Camera> camera) { m_Camera = camera; }
 
 		/**
 		* @brief Get the camera variable.
 		* @return Returns the camera variable.
 		*/
-		inline std::shared_ptr<Camera> GetCamera() { return m_Camera; };
+		std::shared_ptr<Camera> GetCamera() { return m_Camera; }
 
 		/**
 		* @brief Query whether this camera is primary.
 		* @return Returns true if id primary.
 		*/
-		inline bool IsActived() { return m_IsActived; };
+		bool IsActive() const { return m_IsActive; }
 
 	private:
 
@@ -72,6 +72,6 @@ namespace Spiecs {
 		/**
 		* @brief True if the camera is primary.
 		*/
-		bool m_IsActived = false;
+		bool m_IsActive = false;
 	};
 }

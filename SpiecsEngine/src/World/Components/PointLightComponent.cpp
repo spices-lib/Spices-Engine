@@ -32,7 +32,7 @@ namespace Spiecs {
 			SPIECS_PROFILE_ZONEN("PointLightComponent Color");
 			
 			ImGui::PushID("PointLightComponent Color");
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			
 			ImGui::SetColumnWidth(0, columeWidth);
 			ImGui::Text("Color");
@@ -112,7 +112,7 @@ namespace Spiecs {
 			SPIECS_PROFILE_ZONEN("PointLightComponent Intensity");
 			
 			ImGui::PushID("Intensity");
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			
 			ImGui::SetColumnWidth(0, columeWidth);
 			ImGui::Text("Intensity");
@@ -132,7 +132,7 @@ namespace Spiecs {
 			SPIECS_PROFILE_ZONEN("PointLightComponent Constantf");
 			
 			ImGui::PushID("Constantf");
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			
 			ImGui::SetColumnWidth(0, columeWidth);
 			ImGui::Text("Constantf");
@@ -152,7 +152,7 @@ namespace Spiecs {
 			SPIECS_PROFILE_ZONEN("PointLightComponent Linear");
 			
 			ImGui::PushID("Linear");
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			
 			ImGui::SetColumnWidth(0, columeWidth);
 			ImGui::Text("Linear");
@@ -172,7 +172,7 @@ namespace Spiecs {
 			SPIECS_PROFILE_ZONEN("PointLightComponent Quadratic");
 			
 			ImGui::PushID("Quadratic");
-			ImGui::Columns(2);
+			ImGui::Columns(2, 0, false);
 			
 			ImGui::SetColumnWidth(0, columeWidth);
 			ImGui::Text("Quadratic");

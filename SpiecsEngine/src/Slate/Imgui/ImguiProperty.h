@@ -30,18 +30,18 @@ namespace Spiecs {
 			FrameInfo&         frameInfo
 		) 
 			: ImguiSlate(panelName, frameInfo) 
-		{};
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiProperty() {};
+		virtual ~ImguiProperty() = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnUpdate(TimeStep& ts) override {}
 
 		/**
 		* @brief This interface is called On SlateRenderer Render.
@@ -51,7 +51,7 @@ namespace Spiecs {
 		/**
 		* @brief This interface is called On Global Event Function Pointer is called.
 		*/
-		virtual void OnEvent(Event& event) override {};
+		virtual void OnEvent(Event& event) override {}
 
 	private:
 
@@ -84,13 +84,13 @@ namespace Spiecs {
 			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 6.0f));
 
-			bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
+			const bool open = ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(T).hash_code()), treeNodeFlags, name.c_str());
 			
-			/*ImGui::SameLine(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 			if (ImGui::Button("+", ImGuiH::GetLineItemSize()))
 			{
 				ImGui::OpenPopup("ComponentSettings");
-			}*/
+			}
 
 			ImGui::PopStyleVar();
 			

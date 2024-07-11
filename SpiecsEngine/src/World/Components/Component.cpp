@@ -13,9 +13,6 @@
 
 namespace Spiecs {
 
-	Component::Component()
-	{}
-
 	void Component::OnComponentAdded(const entt::entity& entity)
 	{
 		SPIECS_PROFILE_ZONE;

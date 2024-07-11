@@ -9,8 +9,8 @@
 
 namespace Spiecs {
 
-	CameraComponent::CameraComponent(bool isActived)
-		: m_IsActived(isActived)
+	CameraComponent::CameraComponent(bool isActive)
+		: m_IsActive(isActive)
 	{}
 
 	void CameraComponent::OnSerialize()

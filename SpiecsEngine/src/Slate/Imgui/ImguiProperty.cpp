@@ -55,7 +55,7 @@ namespace Spiecs {
             {
                 ImGui::PushID("ImguiProperty::Add");
 
-                ImGui::Columns(2);
+                ImGui::Columns(2, 0, false);
                 ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 4.0f);
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.16f, 0.16f, 0.16f, 1.0f));
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.619f, 0.619f, 0.619f, 1.0f));
@@ -78,7 +78,7 @@ namespace Spiecs {
 
             {
                 ImGui::PushID("ImguiProperty::Prim Path");
-                ImGui::Columns(2);
+                ImGui::Columns(2, 0, false);
                 ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 4.0f);
                 ImGui::Text("Prim Path");
                 ImGui::NextColumn();
@@ -96,7 +96,7 @@ namespace Spiecs {
 
             {
                 ImGui::PushID("ImguiProperty::Instanceable");
-                ImGui::Columns(2);
+                ImGui::Columns(2, 0, false);
                 ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 4.0f);
                 ImGui::Text("Instanceable");
                 ImGui::NextColumn();

@@ -13,7 +13,7 @@ namespace Spiecs {
 
 	/**
 	* @brief UUIDComponent Class.
-	* This class defines the specific behaver of UUIDComponent.
+	* This class defines the specific behaves of UUIDComponent.
 	*/
 	class UUIDComponent : public Component
 	{
@@ -22,12 +22,12 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		UUIDComponent() {};
+		UUIDComponent() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~UUIDComponent() {};
+		virtual ~UUIDComponent() override = default;
 
 		/**
 		* @brief This interface defines how to serialize.
@@ -36,22 +36,27 @@ namespace Spiecs {
 		virtual void OnSerialize() override;
 
 		/**
-		* @brief This interface defines how to dserialize.
-		* @todo Finsih it.
+		* @brief This interface defines how to deserialize.
+		* @todo Finish it.
 		*/
 		virtual void OnDeSerialize() override;
 
 		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis() override;
+		
+		/**
 		* @brief Set the uuid this component handled.
 		* @param[in] uuid UUID.
 		*/
-		void SetUUID(UUID uuid) { m_uuid = uuid; };
+		void SetUUID(UUID uuid) { m_uuid = uuid; }
 
 		/**
 		* @brief Get the uuid variable.
 		* @return Returns the uuid variable.
 		*/
-		inline const UUID GetUUID() { return m_uuid; };
+		const UUID& GetUUID() const { return m_uuid; }
 
 	private:
 
