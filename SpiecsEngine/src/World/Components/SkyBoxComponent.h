@@ -24,7 +24,7 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		SkyBoxComponent() {};
+		SkyBoxComponent() = default;
 
 		/**
 		* @brief Constructor Function.

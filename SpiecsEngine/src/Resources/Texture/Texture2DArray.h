@@ -12,7 +12,7 @@ namespace Spiecs {
 
 	/**
 	* @brief Texture2D Class.
-	* This class defines the basic behaver of Texture2DArray.
+	* This class defines the basic behaves of Texture2DArray.
 	* @todo finish it.
 	*/
 	class Texture2DArray : public Texture2D
@@ -22,7 +22,7 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		Texture2DArray() {};
+		Texture2DArray() {}
 
 		/**
 		* @brief Constructor Function.
@@ -33,17 +33,17 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init class variable, load date immediatelly.
+		* Init class variable, load date immediately.
 		* Usually call it.
 		* @param[in] path Image Path in disk.
-		* @noto Do not exectue Texture::Texture(const std::string& path).
+		* @noto Do not execute Texture::Texture(const std::string& path).
 		*/
 		Texture2DArray(const std::string& path);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Texture2DArray() {};
+		virtual ~Texture2DArray() override = default;
 
 	private:
 

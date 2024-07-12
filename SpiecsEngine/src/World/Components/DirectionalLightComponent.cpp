@@ -51,7 +51,7 @@ namespace Spiecs {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				ImGui::DragFloat("##R", &m_DirectionalLight.color.x, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+				ImGui::SliderFloat("##R", &m_DirectionalLight.color.x, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.x != 1.0f)) { m_DirectionalLight.color.x = 1.0f; };
@@ -68,7 +68,7 @@ namespace Spiecs {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				ImGui::DragFloat("##G", &m_DirectionalLight.color.y, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+				ImGui::SliderFloat("##G", &m_DirectionalLight.color.y, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.y != 1.0f)) { m_DirectionalLight.color.y = 1.0f; };
@@ -85,7 +85,7 @@ namespace Spiecs {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				ImGui::DragFloat("##B", &m_DirectionalLight.color.z, 0.002f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+				ImGui::SliderFloat("##B", &m_DirectionalLight.color.z, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.z != 1.0f)) { m_DirectionalLight.color.z = 1.0f; };

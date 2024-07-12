@@ -3,6 +3,7 @@
 * @brief EntryPoint Definitions.
 * @author Spiecs.
 */
+#pragma once
 
 #include "Core/Core.h"
 #include "core/Application.h"
@@ -10,7 +11,7 @@
 /**
 * @brief Main Function.
 */
-int main() {
+inline int main() {
 
 	try 
 	{

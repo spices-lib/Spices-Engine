@@ -36,7 +36,7 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		Texture() {};
+		Texture() {}
 
 		/**
 		* @brief Constructor Function.
@@ -49,11 +49,11 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Texture() {};
+		virtual ~Texture() {}
 
 		/**
-		* @brief Get Specific resource, usually is a wapper of VulkanImage.
-		* @param[in] T How to get the resource.
+		* @brief Get Specific resource, usually is a wrapper of VulkanImage.
+		* @tparam T How to get the resource.
 		* @return Returns the pointer of T.
 		* @todo Only returns T.
 		*/

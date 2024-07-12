@@ -12,15 +12,15 @@
 
 namespace Spiecs {
 	
-	void MeshPack::OnBind(VkCommandBuffer& commandBuffer)
+	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
 	{
-		VkBuffer buffers[] = { m_VertexBuffer->Get() };
-		VkDeviceSize offests[] = { 0 };
+		const VkBuffer buffers[] = { m_VertexBuffer->Get() };
+		const VkDeviceSize offests[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offests);
 		vkCmdBindIndexBuffer(commandBuffer, m_IndicesBuffer->Get(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
-	void MeshPack::OnDraw(VkCommandBuffer& commandBuffer)
+	void MeshPack::OnDraw(VkCommandBuffer& commandBuffer) const
 	{
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 	}
@@ -31,7 +31,7 @@ namespace Spiecs {
 		m_Material->BuildMaterial();
 	}
 
-	uint32_t MeshPack::GetMaterialHandle()
+	uint32_t MeshPack::GetMaterialHandle() const
 	{
 		if(!m_MaterialHandle.has_value())
 		{
@@ -46,15 +46,15 @@ namespace Spiecs {
 	
 #ifdef RENDERAPI_VULKAN
 
-	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR()
+	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR() const
 	{
 		/**
 		* @brief BLAS builder requires raw device addresses.
 		*/
-		VkDeviceAddress vertexAddress                =  m_VertexBuffer->GetAddress();
-		VkDeviceAddress indicesAddress               =  m_IndicesBuffer->GetAddress();
+		const VkDeviceAddress vertexAddress          =  m_VertexBuffer->GetAddress();
+		const VkDeviceAddress indicesAddress         =  m_IndicesBuffer->GetAddress();
 
-		uint32_t maxPrimitiveCount = static_cast<uint32_t>(m_Indices.size() / 3);
+		const uint32_t maxPrimitiveCount             = static_cast<uint32_t>(m_Indices.size() / 3);
 
 		/**
 		* @brief device pointer to the buffers holding triangle vertex/index data, 
@@ -63,7 +63,7 @@ namespace Spiecs {
 		VkAccelerationStructureGeometryTrianglesDataKHR triangles {};
 		triangles.sType                              = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
 		triangles.vertexFormat                       = VK_FORMAT_R32G32B32_SFLOAT;  // vec3 vertex position data.
-		triangles.vertexData.deviceAddress           = vertexAddress;          /*@note position needs to be the first attribute of Vertex, otherwise correct offest is needs to be added here.*/
+		triangles.vertexData.deviceAddress           = vertexAddress;          /* @note position needs to be the first attribute of Vertex, otherwise correct offset is needs to be added here. */
 		triangles.vertexStride                       = sizeof(Vertex);
 		triangles.indexType                          = VK_INDEX_TYPE_UINT32;
 		triangles.indexData.deviceAddress            = indicesAddress;
@@ -165,23 +165,23 @@ namespace Spiecs {
 
 	void MeshPack::ApplyMatrix(const glm::mat4& matrix)
 	{
-		for (int i = 0; i < m_Vertices.size(); i++)
+		for (uint64_t i = 0; i < m_Vertices.size(); i++)
 		{
 			glm::vec4 newPos = matrix * glm::vec4(m_Vertices[i].position, 1.0f);
 			m_Vertices[i].position = { newPos.x, newPos.y, newPos.z };
 		}
 	}
 
-	void MeshPack::CopyToVertices(std::vector<Vertex>& vertices)
+	void MeshPack::CopyToVertices(std::vector<Vertex>& vertices) const
 	{
 		ContainerLibrary::Append<Vertex>(vertices, m_Vertices);
 	}
 
-	void MeshPack::CopyToIndices(std::vector<uint32_t>& indices, uint32_t offest)
+	void MeshPack::CopyToIndices(std::vector<uint32_t>& indices, uint32_t offset)
 	{
-		for (int i = 0; i < m_Indices.size(); i++)
+		for (uint64_t i = 0; i < m_Indices.size(); i++)
 		{
-			m_Indices[i] += offest;
+			m_Indices[i] += offset;
 		}
 
 		ContainerLibrary::Append<uint32_t>(indices, m_Indices);
@@ -191,11 +191,11 @@ namespace Spiecs {
 	{
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
-			float rowRamp = i / float(m_Rows - 1) - 0.5f;  // -0.5f ~ 0.5f
+			float rowRamp = i / static_cast<float>(m_Rows - 1) - 0.5f;  // -0.5f ~ 0.5f
 
-			for (uint32_t j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Columns; j++)
 			{
-				float colRamp = j / float(m_Colums - 1) - 0.5f; // -0.5f ~ 0.5f
+				float colRamp = j / static_cast<float>(m_Columns - 1) - 0.5f; // -0.5f ~ 0.5f
 
 				Vertex vt;
 				vt.position = { colRamp, rowRamp, 0.0f};
@@ -209,18 +209,18 @@ namespace Spiecs {
 
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
-			for (uint32_t j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Columns; j++)
 			{
-				if (i == (m_Rows - 1) || j == (m_Colums - 1)) continue;
+				if (i == (m_Rows - 1) || j == (m_Columns - 1)) continue;
 
-				int vtIndex = i * m_Colums + j;
+				const int vtIndex = i * m_Columns + j;
 
 				m_Indices.push_back(vtIndex);
 				m_Indices.push_back(vtIndex + 1);
-				m_Indices.push_back(vtIndex + m_Colums + 1);
+				m_Indices.push_back(vtIndex + m_Columns + 1);
 
-				m_Indices.push_back(vtIndex + m_Colums + 1);
-				m_Indices.push_back(vtIndex + m_Colums);
+				m_Indices.push_back(vtIndex + m_Columns + 1);
+				m_Indices.push_back(vtIndex + m_Columns);
 				m_Indices.push_back(vtIndex);
 			}
 		}
@@ -232,7 +232,7 @@ namespace Spiecs {
 	{	
 		// Front
 		{
-			SquarePack pack(m_Rows, m_Colums);
+			SquarePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
 			pack.ApplyMatrix(tran);
@@ -243,7 +243,7 @@ namespace Spiecs {
 
 		// Back
 		{
-			SquarePack pack(m_Rows, m_Colums);
+			SquarePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
 			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
@@ -255,7 +255,7 @@ namespace Spiecs {
 
 		// Left
 		{
-			SquarePack pack(m_Rows, m_Colums);
+			SquarePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
@@ -267,7 +267,7 @@ namespace Spiecs {
 
 		// Right
 		{
-			SquarePack pack(m_Rows, m_Colums);
+			SquarePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
@@ -279,7 +279,7 @@ namespace Spiecs {
 
 		// Top
 		{
-			SquarePack pack(m_Rows, m_Colums);
+			SquarePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
@@ -291,7 +291,7 @@ namespace Spiecs {
 
 		// Button
 		{
-			SquarePack pack(m_Rows, m_Colums);
+			SquarePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
@@ -314,17 +314,17 @@ namespace Spiecs {
 	{
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
-			float rowRamp = i / float(m_Rows - 1) * 180.0f; // 0 ~ 180
+			const float rowRamp = i / static_cast<float>(m_Rows - 1) * 180.0f; // 0 ~ 180
 
-			for (uint32_t j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Columns; j++)
 			{
-				float colRamp = j * 360.0f / float(m_Colums - 1); // 0 ~ 360
+				const float colRamp = j * 360.0f / static_cast<float>(m_Columns - 1); // 0 ~ 360
 
 				Vertex vt;
 				vt.position = { glm::sin(glm::radians(rowRamp)) * glm::sin(glm::radians(colRamp)), glm::cos(glm::radians(rowRamp)), glm::sin(glm::radians(rowRamp)) * glm::cos(glm::radians(colRamp)) };
 				vt.normal = glm::normalize(vt.position);
 				vt.color = glm::vec3{ 1.0f };
-				vt.texCoord = {j / float(m_Colums - 1), i / float(m_Rows - 1) };
+				vt.texCoord = {j / static_cast<float>(m_Columns - 1), i / static_cast<float>(m_Rows - 1) };
 
 				m_Vertices.push_back(std::move(vt));
 			}
@@ -332,18 +332,18 @@ namespace Spiecs {
 
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
-			for (uint32_t j = 0; j < m_Colums; j++)
+			for (uint32_t j = 0; j < m_Columns; j++)
 			{
-				if (i == (m_Rows - 1) || j == (m_Colums - 1)) continue;
+				if (i == (m_Rows - 1) || j == (m_Columns - 1)) continue;
 
-				int vtIndex = i * m_Colums + j;
+				const int vtIndex = i * m_Columns + j;
 
 				m_Indices.push_back(vtIndex);
 				m_Indices.push_back(vtIndex + 1);
-				m_Indices.push_back(vtIndex + m_Colums + 1);
+				m_Indices.push_back(vtIndex + m_Columns + 1);
 
-				m_Indices.push_back(vtIndex + m_Colums + 1);
-				m_Indices.push_back(vtIndex + m_Colums);
+				m_Indices.push_back(vtIndex + m_Columns + 1);
+				m_Indices.push_back(vtIndex + m_Columns);
 				m_Indices.push_back(vtIndex);
 			}
 		}

@@ -22,4 +22,42 @@ namespace Spiecs {
 	{
 
 	}
+
+	void CameraComponent::DrawThis()
+	{
+		SPIECS_PROFILE_ZONE;
+
+		ImGui::Spacing();
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 3.0f });
+		float columeWidth = ImGuiH::GetLineItemSize().x * 6.5f;
+
+		{
+			SPIECS_PROFILE_ZONEN("CameraComponent Projection Type");
+
+			
+		}
+
+		{
+			SPIECS_PROFILE_ZONEN("CameraComponent Intensity");
+			
+			ImGui::PushID("DLight Intensity");
+			ImGui::Columns(2, 0, false);
+			
+			ImGui::SetColumnWidth(0, columeWidth);
+			ImGui::Text("FOV");
+			ImGui::NextColumn();
+			
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
+			ImGui::DragFloat("##", &m_Camera->GetPerspectiveParam().fov, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			if (ImGuiH::DrawResetIcon(m_Camera->GetPerspectiveParam().fov != glm::radians(45.0f))) { m_Camera->GetPerspectiveParam().fov = glm::radians(45.0f); };
+
+			ImGui::Columns(1);
+			ImGui::PopID();
+		}
+		
+		ImGui::PopStyleVar();
+		ImGui::Spacing();
+	}
 }

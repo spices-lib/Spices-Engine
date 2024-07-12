@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "Component.h"
+#include "World/Entity.h"
 #include "Resources/ResourcePool/ResourcePool.h"
 #include "Resources/Texture/Texture2D.h"
 #include "Render/Vulkan/VulkanImage.h"

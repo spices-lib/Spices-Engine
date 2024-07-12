@@ -35,7 +35,7 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiProperty() = default;
+		virtual ~ImguiProperty() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

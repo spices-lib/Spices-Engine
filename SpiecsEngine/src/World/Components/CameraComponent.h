@@ -45,6 +45,11 @@ namespace Spiecs {
 		virtual void OnDeSerialize() override;
 
 		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis() override;
+		
+		/**
 		* @brief Set the camera this component handled.
 		* @param[in] camera The camera shared pointer.
 		*/

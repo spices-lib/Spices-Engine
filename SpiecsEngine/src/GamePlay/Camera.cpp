@@ -14,10 +14,10 @@ namespace Spiecs {
 	{
 		m_ProjectionType = ProjectionType::Perspective;
 
-		m_FOV = fov;
-		m_NearPlane = nearPlane;
-		m_FarPlane = farPlane;
-		m_AspectRatio = aspectRatio;
+		m_PerspectiveParam.fov         = fov;
+		m_PerspectiveParam.nearPlane   = nearPlane;
+		m_PerspectiveParam.farPlane    = farPlane;
+		m_PerspectiveParam.aspectRatio = aspectRatio;
 
 		const float tanHalfFovy = tan(fov / 2.0f);
 
@@ -31,14 +31,22 @@ namespace Spiecs {
 
 	void Camera::SetPerspective(float aspectRatio)
 	{
-		SetPerspective(m_FOV, m_NearPlane, m_FarPlane, aspectRatio);
+		m_ProjectionType = ProjectionType::Perspective;
+		
+		SetPerspective(m_PerspectiveParam.fov, m_PerspectiveParam.nearPlane, m_PerspectiveParam.farPlane, aspectRatio);
 	}
 
 	void Camera::SetOrthographic(float left, float right, float top, float bottom, float nearPlane, float farPlane)
 	{
 		m_ProjectionType = ProjectionType::Orthographic;
 
+		m_OrthographicParam.left        = left;
+		m_OrthographicParam.right       = right;
+		m_OrthographicParam.top         = top;
+		m_OrthographicParam.bottom      = bottom;
+		m_OrthographicParam.nearPlane   = nearPlane;
+		m_OrthographicParam.farPlane    = farPlane;
+		
 		m_ProjectionMatrix = Otrhographic(left, right, top, bottom, nearPlane, farPlane);
 	}
-
 }

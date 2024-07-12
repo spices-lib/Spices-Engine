@@ -23,7 +23,7 @@ namespace Spiecs {
 
 	/**
 	* @brief MeshPack Class.
-	* This class defines some basic behaver and variables.
+	* This class defines some basic behaves and variables.
 	* This class need to be inherited while use.
 	*/
 	class MeshPack
@@ -33,22 +33,22 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		MeshPack() {};
+		MeshPack() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~MeshPack() {};
+		virtual ~MeshPack() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		MeshPack(const MeshPack&) = delete;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		MeshPack& operator=(const MeshPack&) = delete;
 
@@ -56,7 +56,7 @@ namespace Spiecs {
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		*/
-		virtual void OnCreatePack(bool isCreateBuffer = true) {};
+		virtual void OnCreatePack(bool isCreateBuffer = true) {}
 
 		/**
 		* @brief Set specific material for this class.
@@ -68,43 +68,49 @@ namespace Spiecs {
 		* @brief Get material in this class.
 		* @return Returns the material in this class.
 		*/
-		inline std::shared_ptr<Material> GetMaterial() { return m_Material; };
+		std::shared_ptr<Material> GetMaterial() { return m_Material; }
 
 		/**
 		* @brief Set Material Handle.
 		* @param[in] handle the material handle.
 		*/
-		void SetMaterialHandle(uint32_t handle) { m_MaterialHandle = handle; };
+		void SetMaterialHandle(uint32_t handle) { m_MaterialHandle = handle; }
 
 		/**
 		* @brief Get Material Handle, which accessed by ray gen shader.
 		* @return Returns the material handle.
 		*/
-		uint32_t GetMaterialHandle();
+		uint32_t GetMaterialHandle() const;
 		
 		/**
 		* @brief Bind VBO and EBO.
-		* @param[in] commandBuffer Which commandbufer we will submit commmand.
+		* @param[in] commandBuffer Which command buffer we will submit commands.
 		*/
-		void OnBind(VkCommandBuffer& commandBuffer);
+		void OnBind(VkCommandBuffer& commandBuffer) const;
 
 		/**
 		* @brief Draw indexed.
-		* @param[in] commandBuffer Which commandbufer we will submit commmand.
+		* @param[in] commandBuffer Which command buffer we will submit commands.
 		*/
-		void OnDraw(VkCommandBuffer& commandBuffer);
+		void OnDraw(VkCommandBuffer& commandBuffer) const;
 
 		/**
 		* @brief Get Vertices array.
 		* @return Returns the Vertices array.
 		*/
-		inline const std::vector<Vertex>& GetVertices() const { return m_Vertices; };
+		const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
 
 		/**
 		* @brief Get Indices array.
 		* @return Returns the Indices array.
 		*/
-		inline const std::vector<uint32_t>& GetIndices() const { return m_Indices; };
+		const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
+
+		/**
+		* @brief Get Pack Type.
+		* @return Returns the Pack Type.
+		*/
+		const std::string& GetPackType() const { return m_PackType; }
 
 #ifdef RENDERAPI_VULKAN
 
@@ -112,19 +118,19 @@ namespace Spiecs {
 		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS.
 		* @return Returns VulkanRayTracing::BlasInput.
 		*/
-		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR();
+		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR() const;
 
 		/**
 		* @brief Get VerticesBuffer Video memory address.
 		* @return Returns the VerticesBuffer Video memory address.
 		*/
-		VkDeviceAddress GetVerticesBufferAddress() const { return m_VertexBuffer->GetAddress(); };
+		VkDeviceAddress GetVerticesBufferAddress() const { return m_VertexBuffer->GetAddress(); }
 
 		/**
 		* @brief Get IndicesBuffer Video memory address.
 		* @return Returns the IndicesBuffer Video memory address.
 		*/
-		VkDeviceAddress GetIndicesBufferAddress() const { return m_IndicesBuffer->GetAddress(); };
+		VkDeviceAddress GetIndicesBufferAddress() const { return m_IndicesBuffer->GetAddress(); }
 
 #endif
 
@@ -146,14 +152,14 @@ namespace Spiecs {
 		* @brief Copy this Vertices to another pack
 		* @param[out] vertices Which vertices we want Copy to.
 		*/
-		void CopyToVertices(std::vector<Vertex>& vertices);
+		void CopyToVertices(std::vector<Vertex>& vertices) const;
 
 		/**
 		* @brief Copy this Indices to another pack
 		* @param[out] indices Which indices we want Copy to.
-		* @param[in] offest How much offest we want apply.
+		* @param[in] offset How much offset we want apply.
 		*/
-		void CopyToIndices(std::vector<uint32_t>& indices, uint32_t offest = 0);
+		void CopyToIndices(std::vector<uint32_t>& indices, uint32_t offset = 0);
 
 	protected:
 
@@ -186,6 +192,11 @@ namespace Spiecs {
 		* @brief specific material handle.
 		*/
 		std::optional<uint32_t> m_MaterialHandle;
+
+		/**
+		* @brief specific meshpack type.
+		*/
+		std::string m_PackType;
 		
 		/**
 		* @brief Allow MeshLoader access all data.
@@ -195,7 +206,7 @@ namespace Spiecs {
 
 	/**
 	* @brief SquarePack Class.
-	* This class defines suqare type meshpack.
+	* This class defines square type meshpack.
 	*/
 	class SquarePack : public MeshPack
 	{
@@ -203,12 +214,15 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] rows The rows number.
-		* @param[in] colums The colums number.
+		* @param[in] columns The columns number.
 		*/
-		SquarePack(uint32_t rows = 2, uint32_t colums = 2)
-			: MeshPack(), m_Rows(rows), m_Colums(colums) {};
+		SquarePack(uint32_t rows = 2, uint32_t columns = 2)
+			: MeshPack(), m_Rows(rows), m_Columns(columns)
+		{
+			m_PackType = "SquarePack";
+		}
 
 		/**
 		* @brief This interface is used for build specific meshpack data.
@@ -226,7 +240,7 @@ namespace Spiecs {
 		/**
 		* @brief How much cols number we use.
 		*/
-		uint32_t m_Colums;
+		uint32_t m_Columns;
 	};
 
 
@@ -240,12 +254,15 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] rows The rows number.
-		* @param[in] colums The colums number.
+		* @param[in] columns The columns number.
 		*/
-		BoxPack(uint32_t rows = 2, uint32_t colums = 2)
-			: MeshPack(), m_Rows(rows), m_Colums(colums) {};
+		BoxPack(uint32_t rows = 2, uint32_t columns = 2)
+			: MeshPack(), m_Rows(rows), m_Columns(columns)
+		{
+			m_PackType = "BoxPack";
+		}
 
 		/**
 		* @brief This interface is used for build specific meshpack data.
@@ -263,7 +280,7 @@ namespace Spiecs {
 		/**
 		* @brief How much cols number we use.
 		*/
-		uint32_t m_Colums;
+		uint32_t m_Columns;
 	};
 
 	/**
@@ -276,12 +293,15 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] rows The rows number.
-		* @param[in] colums The colums number.
+		* @param[in] columns The columns number.
 		*/
-		SpherePack(uint32_t rows = 15, uint32_t colums = 24)
-			: MeshPack(), m_Rows(rows), m_Colums(colums) {};
+		SpherePack(uint32_t rows = 15, uint32_t columns = 24)
+			: MeshPack(), m_Rows(rows), m_Columns(columns)
+		{
+			m_PackType = "SpherePack";
+		}
 
 		/**
 		* @brief This interface is used for build specific meshpack data.
@@ -299,7 +319,7 @@ namespace Spiecs {
 		/**
 		* @brief How much cols number we use.
 		*/
-		uint32_t m_Colums;
+		uint32_t m_Columns;
 	};
 
 	/**
@@ -312,10 +332,15 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] filePath The mesh file path in disk.
 		*/
-		FilePack(const std::string& filePath) : MeshPack(), m_Path(filePath) {};
+		FilePack(const std::string& filePath)
+			: MeshPack()
+			, m_Path(filePath)
+		{
+			m_PackType = "FilePack";
+		}
 
 		/**
 		* @brief This interface is used for build specific meshpack data.

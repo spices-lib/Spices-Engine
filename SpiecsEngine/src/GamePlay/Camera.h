@@ -27,6 +27,24 @@ namespace Spiecs {
 		Orthographic = 1,
 	};
 
+	struct PerspectiveParam
+	{
+		float fov = glm::radians(45.0f);
+		float nearPlane = 0.01f;
+		float farPlane = 1000.0f;
+		float aspectRatio = 1.777f;
+	};
+
+	struct OrthographicParam
+	{
+		float left;
+		float right;
+		float top;
+		float bottom;
+		float nearPlane = 0.01f;
+		float farPlane = 1000.0f;
+	};
+	
 	/**
 	* @brief Camera Class.
 	* This class just encapsulate Projection Matrix.
@@ -86,7 +104,7 @@ namespace Spiecs {
 		* @brief Get camera projection matrix.
 		* @return Returns the camera projection matrix.
 		*/
-		inline glm::mat4 GetPMatrix() const { return m_ProjectionMatrix; }
+		glm::mat4 GetPMatrix() const { return m_ProjectionMatrix; }
 
 		/**
 		* @brief Get camera projection type.
@@ -98,13 +116,17 @@ namespace Spiecs {
 		* @brief Get camera AspectRatio.
 		* @return Returns the camera AspectRatio.
 		*/
-		inline float GetAspectRatio() const { return m_AspectRatio; }
+		float GetAspectRatio() const { return m_PerspectiveParam.aspectRatio; }
 
 		/**
 		* @brief Get camera StableFrames.
 		* @return Return the camera StableFrames.
 		*/
-		inline unsigned int GetStableFrames() const { return m_StableFrames; }
+		unsigned int GetStableFrames() const { return m_StableFrames; }
+
+		PerspectiveParam& GetPerspectiveParam() { return m_PerspectiveParam; }
+
+		OrthographicParam& GOrthographicParam() { return m_OrthographicParam; }
 
 	private:
 
@@ -121,32 +143,18 @@ namespace Spiecs {
 		ProjectionType m_ProjectionType = Perspective;
 
 		/**
-		* @brief Field of View.
-		* Init with 45.0 degree.
-		*/
-		float m_FOV = glm::radians(45.0f);
-
-		/**
-		* @brief Perspective NearPlane.
-		* Init with 0.01f.
-		*/
-		float m_NearPlane = 0.01f;
-
-		/**
-		* @brief Perspective FarPlane.
-		* Init with 1000.0.
-		*/
-		float m_FarPlane = 1000.0f;
-
-		/**
-		* @breif Perspective AspectRatio.
-		* Init with 1.777.
-		*/
-		float m_AspectRatio = 1.777f;
-
-		/**
 		* @brief Camera Stable Frames Number.
 		*/
 		unsigned int m_StableFrames = 0;
+
+		/**
+		* @brief Camera PerspectiveParam.
+		*/
+		PerspectiveParam m_PerspectiveParam;
+
+		/**
+		* @brief Camera OrthographicParam.
+		*/
+		OrthographicParam m_OrthographicParam;
 	};
 }

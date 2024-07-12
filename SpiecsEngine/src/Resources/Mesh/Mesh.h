@@ -15,7 +15,7 @@ namespace Spiecs {
 
 	/**
 	* @brief MeshRenderer Class.
-	* This class is a wapper of mashpack.
+	* This class is a wrapper of mashpack.
 	*/
 	class Mesh
 	{
@@ -32,12 +32,12 @@ namespace Spiecs {
 			/**
 			* @brief Constructor Function.
 			*/
-			Builder() {};
+			Builder() = default;
 
 			/**
 			* @brief Destructor Function.
 			*/
-			virtual ~Builder() {};
+			virtual ~Builder() = default;
 
 			/**
 			* @brief Add pack to mesh.
@@ -47,8 +47,8 @@ namespace Spiecs {
 			Builder& AddPack(std::shared_ptr<MeshPack> meshPack);
 
 			/**
-			* @brief Build a mesh shaderd pointer.
-			* @return Retuens the mesh shaderd pointer.
+			* @brief Build a mesh shared pointer.
+			* @return Returns the mesh shared pointer.
 			*/
 			std::shared_ptr<Mesh> Build() const;
 
@@ -69,7 +69,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init member veriables.
+		* Init member variables.
 		* @param[in] meshPacks The meshpack that used for create mesh.
 		*/
 		Mesh(std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPacks);
@@ -77,12 +77,12 @@ namespace Spiecs {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Mesh() {};
+		virtual ~Mesh() = default;
 
 		/**
 		* @brief Call meshpacks Draw().
-		* @param[in] commandBuffer Which commandbuffer we want submit command.
-		* @param[in] F the function pointer used for bind material parameters.
+		* @param[in] commandBuffer Which command buffer we want submit command.
+		* @param[in] func the function pointer used for bind material parameters.
 		*/
 		template<typename F>
 		void Draw(VkCommandBuffer& commandBuffer, F func);
@@ -91,7 +91,7 @@ namespace Spiecs {
 		* @brief Get m_Pack.
 		* @return Returns m_Pack.
 		*/
-		inline std::unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; };
+		std::unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; }
 
 #ifdef RENDERAPI_VULKAN
 
@@ -103,7 +103,7 @@ namespace Spiecs {
 
 		/**
 		* @brief Add Mesh's material to hit group.
-		* @param[in out] hitGroup RayTracingRenderer HitGroup.
+		* @param[in,out] hitGroup RayTracingRenderer HitGroup.
 		*/
 		void AddMaterialToHitGroup(std::unordered_map<std::string, uint32_t>& hitGroup);
 

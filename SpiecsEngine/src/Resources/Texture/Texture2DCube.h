@@ -12,7 +12,7 @@ namespace Spiecs {
 
 	/**
 	* @brief Texture2DCube Class.
-	* This class defines the basic behaver of Texture2DCube.
+	* This class defines the basic behaves of Texture2DCube.
 	*/
 	class Texture2DCube : public Texture2D
 	{
@@ -32,17 +32,17 @@ namespace Spiecs {
 
 		/**
 		* @brief Constructor Function.
-		* Init class variable, load date immediatelly.
+		* Init class variable, load date immediately.
 		* Usually call it.
 		* @param[in] path Image Path in disk.
-		* @noto Do not exectue Texture::Texture(const std::string& path).
+		* @noto Do not execute Texture::Texture(const std::string& path).
 		*/
 		Texture2DCube(const std::string& path);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Texture2DCube() {};
+		virtual ~Texture2DCube() override = default;
 
 	private:
 

@@ -24,7 +24,7 @@ namespace Spiecs {
 		/**
 		* @brief Constructor Function.
 		*/
-		MeshComponent() {};
+		MeshComponent() = default;
 
 		/**
 		* @brief Destructor Function.
@@ -43,6 +43,11 @@ namespace Spiecs {
 		*/
 		virtual void OnDeSerialize() override;
 
+		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis() override;
+		
 		/**
 		* @brief Set the Mesh this component handled.
 		* @param[in] mesh The Mesh shared pointer.
