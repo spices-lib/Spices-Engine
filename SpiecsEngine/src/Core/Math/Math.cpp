@@ -91,7 +91,21 @@ namespace Spiecs {
 		return false;
     }
 
-	glm::mat4 Otrhographic(float left, float right, float top, float bottom, float nearPlane, float farPlane)
+    glm::mat4 PerspectiveMatrix(float fov, float nearPlane, float farPlane, float aspectRatio)
+    {
+    	const float tanHalfFovy = tan(glm::radians(fov) / 2.0f);
+    	
+    	glm::mat4 mat = glm::mat4{ 0.0f };
+    	mat[0][0] = 1.0f / (aspectRatio * tanHalfFovy);
+    	mat[1][1] = 1.0f / (tanHalfFovy);
+    	mat[2][2] = farPlane / (farPlane - nearPlane);
+    	mat[2][3] = 1.0f;
+    	mat[3][2] = -(farPlane * nearPlane) / (farPlane - nearPlane);
+
+    	return mat;
+    }
+
+    glm::mat4 OtrhographicMatrix(float left, float right, float top, float bottom, float nearPlane, float farPlane)
 	{
 		glm::mat4 mat = glm::mat4{ 1.0f };
 		mat[0][0] = 2.0f / (right - left);

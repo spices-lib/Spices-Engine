@@ -28,18 +28,18 @@ namespace Spiecs {
 			FrameInfo&         frameInfo
 		) 
 			: ImguiSlate(panelName, frameInfo) 
-		{};
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiContentBrowser() {};
+		virtual ~ImguiContentBrowser()  override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnUpdate(TimeStep& ts) override {}
 
 		/**
 		* @brief This interface is called On SlateRenderer Render.

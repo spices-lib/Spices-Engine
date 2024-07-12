@@ -18,15 +18,6 @@ namespace Spiecs {
 		m_PerspectiveParam.nearPlane   = nearPlane;
 		m_PerspectiveParam.farPlane    = farPlane;
 		m_PerspectiveParam.aspectRatio = aspectRatio;
-
-		const float tanHalfFovy = tan(fov / 2.0f);
-
-		m_ProjectionMatrix = glm::mat4{ 0.0f };
-		m_ProjectionMatrix[0][0] = 1.0f / (aspectRatio * tanHalfFovy);
-		m_ProjectionMatrix[1][1] = 1.0f / (tanHalfFovy);
-		m_ProjectionMatrix[2][2] = farPlane / (farPlane - nearPlane);
-		m_ProjectionMatrix[2][3] = 1.0f;
-		m_ProjectionMatrix[3][2] = -(farPlane * nearPlane) / (farPlane - nearPlane);
 	}
 
 	void Camera::SetPerspective(float aspectRatio)
@@ -46,7 +37,30 @@ namespace Spiecs {
 		m_OrthographicParam.bottom      = bottom;
 		m_OrthographicParam.nearPlane   = nearPlane;
 		m_OrthographicParam.farPlane    = farPlane;
-		
-		m_ProjectionMatrix = Otrhographic(left, right, top, bottom, nearPlane, farPlane);
+	}
+
+	void Camera::CalculatePMatrix()
+	{
+		switch (m_ProjectionType)
+		{
+		case ProjectionType::Perspective:
+			m_ProjectionMatrix = PerspectiveMatrix(
+				m_PerspectiveParam.fov        , 
+				m_PerspectiveParam.nearPlane  ,
+				m_PerspectiveParam.farPlane   ,
+				m_PerspectiveParam.aspectRatio
+			);
+			break;
+		case ProjectionType::Orthographic:
+			m_ProjectionMatrix = OtrhographicMatrix(
+				m_OrthographicParam.left      ,
+				m_OrthographicParam.right     ,
+				m_OrthographicParam.top       ,
+				m_OrthographicParam.bottom    ,
+				m_OrthographicParam.nearPlane ,
+				m_OrthographicParam.farPlane
+			);
+			break;
+		}
 	}
 }

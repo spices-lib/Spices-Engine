@@ -60,7 +60,7 @@ namespace Spiecs {
 		*/
 		std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
 
-	private:
+	protected:
 
 		/**
 		* @brief The Mesh this component handled.

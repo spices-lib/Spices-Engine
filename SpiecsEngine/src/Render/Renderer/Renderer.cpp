@@ -347,7 +347,7 @@ namespace Spiecs {
 				tempComp.SetRotation(camTranComp.GetRotation());
 
 				const glm::mat4 view = tempComp.GetModelMatrix();
-				const glm::mat4 projection = Otrhographic(-ratio * 30, ratio * 30, -1.0f * 30, 1.0f * 30, -100000.0f, 100000.0f);
+				const glm::mat4 projection = OtrhographicMatrix(-ratio * 30, ratio * 30, -1.0f * 30, 1.0f * 30, -100000.0f, 100000.0f);
 
 				directionalLight[index] = projection * glm::inverse(view);
 				index++;

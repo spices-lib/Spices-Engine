@@ -58,7 +58,7 @@ namespace Spiecs {
         /**
         * @brief Set Normal Style.
         */
-        ImVec4                normal_color(0.465f, 0.465f, 0.525f, 1.0f);
+        constexpr ImVec4                normal_color(0.465f, 0.465f, 0.525f, 1.0f);
         std::vector<ImGuiCol> to_change_nrm;
         to_change_nrm.push_back(ImGuiCol_Header);
         to_change_nrm.push_back(ImGuiCol_SliderGrab);
@@ -75,7 +75,7 @@ namespace Spiecs {
         /**
         * @brief Set Active Style.
         */
-        ImVec4                active_color(0.365f, 0.365f, 0.425f, 1.0f);
+        constexpr ImVec4                active_color(0.365f, 0.365f, 0.425f, 1.0f);
         std::vector<ImGuiCol> to_change_act;
         to_change_act.push_back(ImGuiCol_HeaderActive);
         to_change_act.push_back(ImGuiCol_SliderGrabActive);
@@ -89,7 +89,7 @@ namespace Spiecs {
         /**
         * @brief Set Hovered Style.
         */
-        ImVec4                hovered_color(0.565f, 0.565f, 0.625f, 1.0f);
+        constexpr ImVec4                hovered_color(0.565f, 0.565f, 0.625f, 1.0f);
         std::vector<ImGuiCol> to_change_hover;
         to_change_hover.push_back(ImGuiCol_HeaderHovered);
         to_change_hover.push_back(ImGuiCol_FrameBgHovered);
@@ -161,7 +161,7 @@ namespace Spiecs {
         float iconFontSize = 15.0f * high_dpi_scale;
 
         // merge in icons from Font Awesome
-        static const ImWchar icons_ranges[] = { ICON_MIN_MD, ICON_MAX_16_MD, 0 };
+        static constexpr ImWchar icons_ranges[] = { ICON_MIN_MD, ICON_MAX_16_MD, 0 };
         ImFontConfig icons_config;
         icons_config.MergeMode = true;
         icons_config.PixelSnapH = true;
@@ -184,7 +184,7 @@ namespace Spiecs {
         ImGuiID dockspaceID = ImGui::GetID("DockSpace");
 
         // The dock need a dummy window covering the entire viewport.
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->WorkPos);
         ImGui::SetNextWindowSize(viewport->WorkSize);
         ImGui::SetNextWindowViewport(viewport->ID);
@@ -265,7 +265,10 @@ namespace Spiecs {
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyle().Colors[ImGuiCol_Button]);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyle().Colors[ImGuiCol_Button]);
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 0.4f, 0.4f, 1.0f));
-            ImGui::Button(ICON_MD_CROP_SQUARE, ImGuiH::GetLineItemSize());
+            //ImGui::Button(ICON_MD_CROP_SQUARE, ImGuiH::GetLineItemSize());
+            ImGui::SetWindowFontScale(0.65f);
+            ImGui::Button(ICON_MD_STOP, ImGuiH::GetLineItemSize());
+            ImGui::SetWindowFontScale(1.0f);
             ImGui::PopStyleColor(3);
         }
 

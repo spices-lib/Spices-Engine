@@ -15,7 +15,7 @@ namespace Spiecs {
 
 	/**
 	* @brief SlateSystem Class.
-	* This class defines the specific behaver of SlateSystem.
+	* This class defines the specific behaves of SlateSystem.
 	*/
 	class SlateSystem : public System
 	{
@@ -27,33 +27,35 @@ namespace Spiecs {
 		* Usually call it.
 		* @param[in] systemName The System name.
 		*/
-		SlateSystem(const std::string& systemName) : System(systemName) {};
+		SlateSystem(const std::string& systemName)
+			: System(systemName)
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SlateSystem() override {};
+		virtual ~SlateSystem() override = default;
 
 		/**
-		* @brief This interface defines the behaver on specific system initialized.
+		* @brief This interface defines the behaves on specific system initialized.
 		* Called when system Pushed to SystemManager.
 		*/
 		virtual void OnSystemInitialize() override;
 
 		/**
-		* @brief This interface defines the behaver on specific system shutdown.
-		* Called when system poped from SystemManager.
+		* @brief This interface defines the behaves on specific system shutdown.
+		* Called when system popped from SystemManager.
 		*/
 		virtual void OnSystemShutDown() override;
 
 		/**
-		* @brief This interface defines the bahaver on specific system updated every frame.
+		* @brief This interface defines the behaves on specific system updated every frame.
 		* @param[in] ts TimeStep.
 		*/
 		virtual void OnSystemUpdate(TimeStep& ts) override;
 
 		/**
-		* @brief This interface defines the bahaver on golbal event function pointer is called.
+		* @brief This interface defines the behaves on global event function pointer is called.
 		* @param[in] event Event.
 		*/
 		virtual void OnEvent(Event& event) override;
@@ -62,7 +64,7 @@ namespace Spiecs {
 		* @brief Get slate register.
 		* @return Returns the shared pointer of slate register.
 		*/
-		static std::shared_ptr<SlateRegister> GetRegister() { return m_SlateRegister; };
+		static std::shared_ptr<SlateRegister> GetRegister() { return m_SlateRegister; }
 
 	private:
 

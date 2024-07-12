@@ -29,7 +29,7 @@ namespace Spiecs {
 
 	struct PerspectiveParam
 	{
-		float fov = glm::radians(45.0f);
+		float fov = 45.0f;            /* @brief Use degree as well, While PerspectiveMatrix() turn it to radians for calculate. */
 		float nearPlane = 0.01f;
 		float farPlane = 1000.0f;
 		float aspectRatio = 1.777f;
@@ -101,11 +101,16 @@ namespace Spiecs {
 		void IncreaseStableFrames() { m_StableFrames++; }
 
 		/**
+		* @brief Calculate Projection Matrix by parameter.
+		*/
+		void CalculatePMatrix();
+		
+		/**
 		* @brief Get camera projection matrix.
 		* @return Returns the camera projection matrix.
 		*/
-		glm::mat4 GetPMatrix() const { return m_ProjectionMatrix; }
-
+		glm::mat4 GetPMatrix() { CalculatePMatrix(); return m_ProjectionMatrix; }
+		
 		/**
 		* @brief Get camera projection type.
 		* @return Returns the camera projection type.

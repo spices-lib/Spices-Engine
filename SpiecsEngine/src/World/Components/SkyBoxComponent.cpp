@@ -26,4 +26,9 @@ namespace Spiecs {
 	void SkyBoxComponent::OnDeSerialize()
 	{
 	}
+
+	void SkyBoxComponent::DrawThis()
+	{
+		MeshComponent::DrawThis();
+	}
 }

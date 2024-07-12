@@ -48,12 +48,7 @@ namespace Spiecs {
 			}
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
-
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyle().Colors[ImGuiCol_Button]);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyle().Colors[ImGuiCol_Button]);
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 0.4f, 0.4f, 1.0f));
-			ImGui::Button(ICON_MD_CROP_SQUARE, ImGuiH::GetLineItemSize());
-			ImGui::PopStyleColor(3);
+			ImGuiH::DrawResetIcon(false);
 
 			ImGui::Columns(1);
 			ImGui::PopID();

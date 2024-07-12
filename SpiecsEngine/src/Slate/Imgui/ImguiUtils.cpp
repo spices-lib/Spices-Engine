@@ -13,7 +13,7 @@ namespace Spiecs {
 
     void ImguiSlate::Begin(float alpha, ImGuiWindowFlags flags)
     {
-        Begin(m_PanelName, alpha);
+        Begin(m_PanelName, alpha, flags);
     }
 
     void ImguiSlate::Begin(const std::string& panelName, float alpha, ImGuiWindowFlags flags)

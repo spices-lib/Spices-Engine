@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "Component.h"
 #include "Resources/Mesh/Mesh.h"
+#include "MeshComponent.h"
 
 #include <memory>
 
@@ -17,7 +18,7 @@ namespace Spiecs {
 	* @brief SkyBoxComponent Class.
 	* This class defines the specific behaves of SkyBoxComponent.
 	*/
-	class SkyBoxComponent : public Component
+	class SkyBoxComponent : public MeshComponent
 	{
 	public:
 
@@ -52,16 +53,21 @@ namespace Spiecs {
 		virtual void OnDeSerialize() override;
 
 		/**
+		* @brief This interface defines how to draw this component to property panel.
+		*/
+		virtual void DrawThis() override;
+		
+		/**
 		* @brief Get the Mesh variable.
 		* @return Returns the Mesh variable.
 		*/
-		std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
+		//std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
 
 	private:
 
 		/**
 		* @brief The Mesh this component handled.
 		*/
-		std::shared_ptr<Mesh> m_Mesh;
+		//std::shared_ptr<Mesh> m_Mesh;
 	};
 }

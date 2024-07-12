@@ -39,7 +39,8 @@ namespace Spiecs {
         glm::vec3&       outScale
     );
 
-    glm::mat4 Otrhographic(float left, float right, float top, float bottom, float nearPlane, float farPlane);
+    glm::mat4 PerspectiveMatrix(float fov, float nearPlane, float farPlane, float aspectRatio);
+    glm::mat4 OtrhographicMatrix(float left, float right, float top, float bottom, float nearPlane, float farPlane);
 
 #ifdef RENDERAPI_VULKAN
 

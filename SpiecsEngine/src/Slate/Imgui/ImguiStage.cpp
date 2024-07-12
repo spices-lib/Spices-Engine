@@ -40,7 +40,8 @@ namespace Spiecs {
         {
             SPIECS_PROFILE_ZONEN("ImguiStage::Search");
 
-            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::Spacing();
             ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
             static char search[256] = {};
             if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128))
@@ -55,7 +56,7 @@ namespace Spiecs {
             ImGui::Button(ICON_MD_FILTER_LIST, ImGuiH::GetLineItemSize());
             ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 1.0f);
             ImGui::Button(ICON_MD_LINE_WEIGHT, ImGuiH::GetLineItemSize());
-            ImGui::Separator();
+            ImGui::Spacing();
         }
 
         /**
