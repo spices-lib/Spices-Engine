@@ -84,6 +84,8 @@ namespace Spiecs {
 
                 if (ImGui::BeginMenu("Tools"))
                 {
+                    ImGuiH::MainMenuTitleSeparator();
+
                     if (ImGui::BeginMenu(ICON_TEXT(ICON_MD_CHECK, Variants)))
                     {
                         if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Variant Editor))) {}
@@ -125,6 +127,8 @@ namespace Spiecs {
             */
             if (ImGui::BeginMenu("Layout"))
             {
+                ImGuiH::MainMenuTitleSeparator();
+
                 SPIECS_PROFILE_ZONEN("Render Menu Layout");
 
                 if (ImGui::MenuItem("Default", "Ctrl+1")) {}

@@ -37,11 +37,11 @@ namespace Spiecs {
 
         if (location >= 0)
         {
-            const float PAD = 5.0f;
+            const float PAD = ImGui::GetStyle().WindowPadding.x;
             
             ImVec2 window_pos, window_pos_pivot;
             window_pos.x = (location & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
-            window_pos.y = (location & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD + ImGuiH::GetLineItemSize().x * 1.5f + 2.0f);
+            window_pos.y = (location & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD + ImGuiH::GetLineItemSize().x * 1.5f + 2.0f + ImGui::GetStyle().WindowPadding.y);
             window_pos_pivot.x = (location & 1) ? 1.0f : 0.0f;
             window_pos_pivot.y = (location & 2) ? 1.0f : 0.0f;
 
@@ -56,7 +56,7 @@ namespace Spiecs {
             window_flags |= ImGuiWindowFlags_NoMove;
         }
 
-        ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
+        ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
         bool open = true;
         if (ImGui::Begin(m_PanelName.c_str(), &open, window_flags))
         {

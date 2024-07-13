@@ -27,6 +27,8 @@ namespace Spiecs {
         */
         if (ImGui::BeginMenu("Create"))
         {
+            ImGuiH::MainMenuTitleSeparator();
+
             /**
             * @brief Begin render Mesh.
             */

@@ -27,6 +27,8 @@ namespace Spiecs {
         */
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
+            ImGuiH::MainMenuTitleSeparator();
+
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_NEW_LABEL, New), "Ctrl+N")) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_FOLDER_OPEN, Open), "Ctrl+O")) {}
             if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Open Rencent)))

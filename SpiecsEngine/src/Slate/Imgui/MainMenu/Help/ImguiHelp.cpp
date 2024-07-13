@@ -35,6 +35,8 @@ namespace Spiecs {
         */
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
+            ImGuiH::MainMenuTitleSeparator();
+
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Provide Feedback))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Omni UI Docs))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, User Manual), "F1")) {}

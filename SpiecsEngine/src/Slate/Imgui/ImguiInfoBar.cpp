@@ -17,8 +17,6 @@ namespace Spiecs {
         * @brief Begin render ContentBrowser.
         */
         Begin(m_PanelName, 0.5f, ImGuiWindowFlags_NoTitleBar);
-
-        ImGui::Separator();
         
         /**
         * @brief End render ContentBrowser.

@@ -21,19 +21,26 @@ namespace Spiecs {
         const ImVec2 buttonSize = ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x);
         const float fontSize = ImGui::GetContentRegionAvail().x / ImGuiH::GetLineItemSize().x;
 
-        ImGui::Spacing();
-        ImGui::Spacing();
-        ImGui::Spacing();
-        ImGui::SetWindowFontScale(0.2f);
-        ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-        ImGui::PushStyleVar(ImGuiStyleVar_SeparatorTextBorderSize, 2.0f);
-        ImGui::SeparatorText("##");
-        ImGui::SeparatorText("##");
-        ImGui::SeparatorText("##");
-        ImGui::SetWindowFontScale(1.0f);
-        ImGui::PopStyleVar();
-        ImGui::PopStyleColor();
+        {
+            ImGui::Spacing();
+            ImGui::Spacing();
+            ImGui::Spacing();
+            ImGui::SetWindowFontScale(0.2f);
+            ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(0.19f, 0.19f, 0.19f, 1.0f));
+            ImGui::PushStyleVar(ImGuiStyleVar_SeparatorTextBorderSize, 2.0f);
+            ImGui::SeparatorText("##");
+            ImGui::SeparatorText("##");
+            ImGui::SeparatorText("##");
+            ImGui::SetWindowFontScale(1.0f);
+            ImGui::PopStyleVar();
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+            ImGui::Spacing();
+            ImGui::Spacing();
+        }
 
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2.0f, 4.0f));
         ImGui::SetWindowFontScale(fontSize);
         ImGui::Button(ICON_MD_PLAY_ARROW, buttonSize);
         ImGui::Button(ICON_MD_PAUSE, buttonSize);
@@ -45,6 +52,7 @@ namespace Spiecs {
         ImGui::Button(ICON_MD_SNAPCHAT, buttonSize);
 
         ImGui::SetWindowFontScale(1.0f);
+        ImGui::PopStyleVar();
         /**
         * @brief End render ContentBrowser.
         */

@@ -25,28 +25,33 @@ namespace Spiecs {
         /**
         * @brief Set Style.
         */
-        ImGuiStyle& style                   = ImGui::GetStyle();
-        style.WindowRounding                = 0.0f;
-        style.WindowBorderSize              = 0.0f;
-        style.WindowPadding                 = ImVec2(0.0f, 0.0f);
-        style.ColorButtonPosition           = ImGuiDir_Left;
-        style.FrameRounding                 = 4.0f;
-        style.FrameBorderSize               = 0.0f;
-        style.FramePadding                  = ImVec2(2.0f, 2.0f);
-        style.GrabRounding                  = 4.0f;
-        style.IndentSpacing                 = 12.0f;
-        style.ItemSpacing                   = ImVec2(2.0f, 2.0f);
-        style.ScrollbarSize                 = 4.0f;
-        style.SeparatorTextAlign            = ImVec2(0.0f, 0.5f);
-        style.SeparatorTextPadding          = ImVec2(0.0f, 0.0f);
-        style.SeparatorTextBorderSize       = 1.0f;
-        style.GrabMinSize                   = 2.0f;
-        style.Colors[ImGuiCol_WindowBg]     = ImVec4(0.27f, 0.27f, 0.27f, 1.0f);
-        style.Colors[ImGuiCol_MenuBarBg]    = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-        style.Colors[ImGuiCol_ScrollbarBg]  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-        style.Colors[ImGuiCol_PopupBg]      = ImVec4(0.135f, 0.135f, 0.135f, 1.0f);
-        style.Colors[ImGuiCol_Border]       = ImVec4(0.4f, 0.4f, 0.4f, 0.5f);
-        style.Colors[ImGuiCol_FrameBg]      = ImVec4(0.125f, 0.129f, 0.137f, 1.0f);
+        ImGuiStyle& style                         = ImGui::GetStyle();
+        style.WindowRounding                      = 0.0f;
+        style.WindowBorderSize                    = 0.0f;
+        style.WindowPadding                       = ImVec2(3.0f, 3.0f);
+        style.ColorButtonPosition                 = ImGuiDir_Left;
+        style.FrameRounding                       = 4.0f;
+        style.FrameBorderSize                     = 0.0f;
+        style.FramePadding                        = ImVec2(2.0f, 2.0f);
+        style.GrabRounding                        = 4.0f;
+        style.IndentSpacing                       = 12.0f;
+        style.ItemSpacing                         = ImVec2(2.0f, 2.0f);
+        style.ScrollbarSize                       = 4.0f;
+        style.SeparatorTextAlign                  = ImVec2(0.0f, 0.5f);
+        style.SeparatorTextPadding                = ImVec2(0.0f, 0.0f);
+        style.SeparatorTextBorderSize             = 1.0f;
+        style.GrabMinSize                         = 2.0f;
+        style.Colors[ImGuiCol_WindowBg]           = ImVec4(0.27f, 0.27f, 0.27f, 1.0f);
+        style.Colors[ImGuiCol_MenuBarBg]          = style.Colors[ImGuiCol_WindowBg];
+        style.Colors[ImGuiCol_ScrollbarBg]        = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+        style.Colors[ImGuiCol_PopupBg]            = ImVec4(0.135f, 0.135f, 0.135f, 1.0f);
+        style.Colors[ImGuiCol_Border]             = ImVec4(0.141f, 0.129f, 0.121f, 1.0f);
+        style.Colors[ImGuiCol_FrameBg]            = ImVec4(0.125f, 0.129f, 0.137f, 1.0f);
+        style.Colors[ImGuiCol_PopupBg]            = ImVec4(0.22f, 0.231f, 0.239f, 1.0f);
+        style.Colors[ImGuiCol_TabUnfocused]       = style.Colors[ImGuiCol_WindowBg];
+        style.Colors[ImGuiCol_TabActive]          = style.Colors[ImGuiCol_WindowBg];
+        style.Colors[ImGuiCol_TabUnfocusedActive] = style.Colors[ImGuiCol_WindowBg];
+        style.Colors[ImGuiCol_TabHovered]         = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 
         /**
         * @brief Set Botton Style.
@@ -283,6 +288,13 @@ namespace Spiecs {
             *isChecked = !*isChecked;
         }
         ImGui::PopStyleColor();
+    }
+
+    void ImGuiH::MainMenuTitleSeparator()
+    {
+        ImGui::SetWindowFontScale(0.5f);
+        ImGui::SeparatorText("##");
+        ImGui::SetWindowFontScale(1.0f);
     }
 
     float ImGuiH::GetDPIScale()

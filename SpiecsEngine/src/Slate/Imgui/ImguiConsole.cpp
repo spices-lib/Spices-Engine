@@ -197,7 +197,9 @@ namespace Spiecs {
 			}
 			ImGui::PopItemWidth();
 			ImGui::Spacing();
+			ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(0.121f, 0.129f, 0.141f, 1.0f));
 			ImGui::Separator();
+			ImGui::PopStyleColor();
 			ImGui::Spacing();
 		}
 
@@ -210,7 +212,7 @@ namespace Spiecs {
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetStyleColorVec4(ImGuiCol_Border));
 
-			float itemHeight = m_EnableCmdInput ? 5.0f * ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing() : ImGui::GetStyle().ItemSpacing.y;
+			float itemHeight = m_EnableCmdInput ? 3.0f * ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing() : ImGui::GetStyle().ItemSpacing.y;
 			if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -itemHeight), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
@@ -344,7 +346,6 @@ namespace Spiecs {
 					(void*)this
 				);
 				ImGui::PopItemWidth();
-				ImGui::Spacing();
 			}
 		}
 

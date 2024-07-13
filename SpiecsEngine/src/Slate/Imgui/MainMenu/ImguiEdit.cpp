@@ -27,6 +27,8 @@ namespace Spiecs {
         */
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
+            ImGuiH::MainMenuTitleSeparator();
+
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Undo), "Ctrl+Z")) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Redo), "Ctrl+Y")) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Repeat), "Ctrl+R")) {}

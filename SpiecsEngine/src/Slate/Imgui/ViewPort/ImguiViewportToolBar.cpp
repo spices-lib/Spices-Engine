@@ -16,6 +16,14 @@ namespace Spiecs {
 
 	void ImguiViewportToolBar::OnRender()
 	{
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.149f, 0.16f, 0.164f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.156f, 0.302f, 0.353f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.156f, 0.302f, 0.353f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.149f, 0.16f, 0.168f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
+
 		ImGuiWindowFlags window_flags =
 			ImGuiWindowFlags_NoDecoration |
 			ImGuiWindowFlags_NoDocking |
@@ -29,10 +37,11 @@ namespace Spiecs {
 		ImGui::SetNextWindowPos(StartPos);
 
 		bool open = true;
-		Begin("Left ToolBar", 0.35f, window_flags);
+		Begin("Left ToolBar", 0.0f, window_flags);
 
 		ImVec2 ItemSize = ImGuiH::GetLineItemSize() * 1.5f;
 		ItemSize.x *= 3.5f;
+		float offest = ImGui::GetStyle().WindowPadding.y;
 
 		if (ImGui::Button(ICON_MD_LINE_WEIGHT, ImGuiH::GetLineItemSize() * 1.5f))
 		{
@@ -86,7 +95,7 @@ namespace Spiecs {
 		NextPos.x += m_Owner->GetPanelSize().x - ItemSize.x - ItemSize.y - 10.0f;
 		ImGui::SetNextWindowPos(NextPos);
 
-		Begin("Right ToolBar", 0.35f, window_flags);
+		Begin("Right ToolBar", 0.0f, window_flags);
 		if (ImGui::Button(ICON_TEXT(ICON_MD_SUNNY, Stage Lights), ItemSize))
 		{
 			m_OptionMenuOn = false;
@@ -116,14 +125,28 @@ namespace Spiecs {
 
 		if (m_OptionMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(0, ItemSize.y + 2.0f));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
+			
 			ImGui::Begin("##", &open, window_flags);
-				
+			ImGuiH::MainMenuTitleSeparator();
+
 			if (ImGui::BeginMenu("Navigation"))
 			{
-				if (ImGui::MenuItem("Navigation Speed")) {}
+				ImGuiH::MainMenuTitleSeparator();
+
+				ImGui::BeginGroup();
+				ImGui::MenuItem("Navigation Speed");
+				ImGui::SameLine(200.0f);
+				ImGui::PushItemWidth(100.0f);
+				static float test = 0.0f;
+				ImGui::DragFloat("##", &test);
+				ImGui::PopItemWidth();
+				ImGui::SameLine(300.0f);
+				ImGuiH::DrawResetIcon(true);
+				ImGui::EndGroup();
+
 				if (ImGui::MenuItem("Navigation Speed Scalar")) {}
 				if (ImGui::MenuItem("Lock Navigation Height")) {}
 				if (ImGui::MenuItem("Gamepad Camera Control")) {}
@@ -214,10 +237,11 @@ namespace Spiecs {
 	
 		if (m_RenderMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y, ItemSize.y + 2.0f));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + 2.0f * offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
+			ImGuiH::MainMenuTitleSeparator();
 
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Real-Time))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Interactive(Path Tracing)))) {}
@@ -304,10 +328,11 @@ namespace Spiecs {
 
 		if (m_ViewMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + ItemSize.x, ItemSize.y + 2.0f));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + ItemSize.x + 3.0f * offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
+			ImGuiH::MainMenuTitleSeparator();
 
 			if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Heads Up Display)))
 			{
@@ -424,10 +449,11 @@ namespace Spiecs {
 
 		if (m_CameraMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(2.0f * ItemSize.y + ItemSize.x, ItemSize.y + 2.0f));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(2.0f * ItemSize.y + ItemSize.x + 4.0f * offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
+			ImGuiH::MainMenuTitleSeparator();
 
 			if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Cameras)))
 			{
@@ -450,10 +476,11 @@ namespace Spiecs {
 
 		if (m_LightMenuOn)
 		{
-			ImGui::SetNextWindowPos(NextPos + ImVec2(0.0f, ItemSize.y + 2.0f));
+			ImGui::SetNextWindowPos(NextPos + ImVec2(offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
+			ImGuiH::MainMenuTitleSeparator();
 
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Lights Off))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Camera Light))) {}
@@ -474,5 +501,6 @@ namespace Spiecs {
 
 		ImGui::PopItemFlag();
 		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(7);
 	}
 }

@@ -91,6 +91,8 @@ namespace Spiecs {
 		*/
 		static void Checkbox(bool* isChecked);
 		
+		static void MainMenuTitleSeparator();
+
 		template<typename T>
 		static void DrawPropertyItem(const std::string& itemName, float columeWidth, T func);
 

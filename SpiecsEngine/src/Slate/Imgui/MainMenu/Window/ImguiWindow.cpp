@@ -44,6 +44,8 @@ namespace Spiecs {
 
         if (ImGui::BeginMenu(m_PanelName.c_str()))
         {
+            ImGuiH::MainMenuTitleSeparator();
+
             if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Animation)))
             {
                 if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Animation Graph))) {}
