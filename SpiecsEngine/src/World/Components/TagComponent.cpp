@@ -39,30 +39,21 @@ namespace Spiecs {
 			
 			for(int i = 0; i < tagBuffer.size(); i++)
 			{
-				ImGui::PushID("TagComponent Tags");
-				ImGui::Columns(2, 0, false);
-			
-				ImGui::SetColumnWidth(0, columeWidth);
 				std::stringstream ss;
 				ss << "Tag[" << i << "]";
-				ImGui::Text(ss.str().c_str());
-				ImGui::NextColumn();
-			
-				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-
-				char buffer[256];
-				memset(buffer, 0, sizeof(buffer));
-				strcpy_s(buffer, sizeof(buffer), tagBuffer[i].c_str());
-				if(ImGui::InputText("##", buffer, sizeof(buffer)))
-				{
-					m_Tags.erase(tagBuffer[i]);
-					m_Tags.insert(std::string(buffer));
-				}
-				ImGui::PopItemWidth();
-				ImGui::SameLine();
-				ImGuiH::DrawResetIcon(false);
-				ImGui::Columns(1);
-				ImGui::PopID();
+				ImGuiH::DrawPropertyItem(ss.str(), columeWidth, [&]() {
+					ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
+					char buffer[256] = {};
+					strcpy_s(buffer, sizeof(buffer), tagBuffer[i].c_str());
+					if (ImGui::InputText("##", buffer, sizeof(buffer)))
+					{
+						m_Tags.erase(tagBuffer[i]);
+						m_Tags.insert(std::string(buffer));
+					}
+					ImGui::PopItemWidth();
+					ImGui::SameLine();
+					ImGuiH::DrawResetIcon(false);
+				});
 			}
 		}
 		

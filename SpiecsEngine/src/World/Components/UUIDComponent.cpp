@@ -29,29 +29,19 @@ namespace Spiecs {
 
 		{
 			SPIECS_PROFILE_ZONEN("UUIDComponent UUID");
-			
-			ImGui::PushID("TagComponent Tags");
-			ImGui::Columns(2, 0, false);
-		
-			ImGui::SetColumnWidth(0, columeWidth);
-			ImGui::Text("UUID");
-			ImGui::NextColumn();
 
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-			
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), std::to_string(m_uuid).c_str());
-			if(ImGui::InputText("##", buffer, sizeof(buffer)))
-			{
+			ImGuiH::DrawPropertyItem("UUID", columeWidth, [&]() {
+				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
+				char buffer[256] = {};
 				strcpy_s(buffer, sizeof(buffer), std::to_string(m_uuid).c_str());
-			}
-			ImGui::PopItemWidth();
-			ImGui::SameLine();
-			ImGuiH::DrawResetIcon(false);
-
-			ImGui::Columns(1);
-			ImGui::PopID();
+				if (ImGui::InputText("##", buffer, sizeof(buffer)))
+				{
+					strcpy_s(buffer, sizeof(buffer), std::to_string(m_uuid).c_str());
+				}
+				ImGui::PopItemWidth();
+				ImGui::SameLine();
+				ImGuiH::DrawResetIcon(false);
+			});
 		}
 		
 		ImGui::PopStyleVar();

@@ -42,7 +42,7 @@ namespace Spiecs {
 
             ImGui::Spacing();
             ImGui::Spacing();
-            ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
+            ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f - ImGui::GetStyle().WindowPadding.x);
             static char search[256] = {};
             if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128))
             {

@@ -93,8 +93,7 @@ namespace Spiecs {
 		
 		static void MainMenuTitleSeparator();
 
-		template<typename T>
-		static void DrawPropertyItem(const std::string& itemName, float columeWidth, T func);
+		static void DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> func);
 
 	private:
 
@@ -103,24 +102,6 @@ namespace Spiecs {
 		*/
 		static float GetDPIScale();
 	};
-
-	template<typename T>
-	inline void ImGuiH::DrawPropertyItem(const std::string& itemName, float columeWidth, T func)
-	{
-		SPIECS_PROFILE_ZONEN("DrawPropertyItem itemName");
-
-		ImGui::PushID("itemName");
-		ImGui::Columns(2, 0, false);
-
-		ImGui::SetColumnWidth(0, columeWidth);
-		ImGui::Text(itemName.c_str());
-		ImGui::NextColumn();
-
-		auto r = func;
-
-		ImGui::Columns(1);
-		ImGui::PopID();
-	}
 }
 
 namespace ImGui {

@@ -32,98 +32,91 @@ namespace Spiecs {
 		{
 			SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color");
 			
-			ImGui::PushID("DLight Color");
-			ImGui::Columns(2, 0, false);
+			ImGuiH::DrawPropertyItem("Color", columeWidth, [&]() {
 			
-			ImGui::SetColumnWidth(0, columeWidth);
-			ImGui::Text("Color");
-			ImGui::NextColumn();
-			
-			float itemWidth = (ImGui::GetContentRegionAvail().x - 8.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
+				float itemWidth = (ImGui::GetContentRegionAvail().x - 8.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
 
-			{
-				SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color R");
-				
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-				if (ImGui::Button("R", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.x = 1.0f;
-				ImGui::PopStyleColor(3);
-				ImGui::SameLine();
-				ImGui::PushItemWidth(itemWidth);
-				ImGui::SliderFloat("##R", &m_DirectionalLight.color.x, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-				ImGui::PopItemWidth();
-				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.x != 1.0f)) { m_DirectionalLight.color.x = 1.0f; };
-				ImGui::SameLine();
-			}
+				{
+					SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color R");
+					ImGui::PushID("DirectionalLightComponent Color R");
 
-			{
-				SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color G");
-				
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-				if (ImGui::Button("G", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.y = 1.0f;
-				ImGui::PopStyleColor(3);
-				ImGui::SameLine();
-				ImGui::PushItemWidth(itemWidth);
-				ImGui::SliderFloat("##G", &m_DirectionalLight.color.y, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-				ImGui::PopItemWidth();
-				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.y != 1.0f)) { m_DirectionalLight.color.y = 1.0f; };
-				ImGui::SameLine();
-			}
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+					if (ImGui::Button("R", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.x = 1.0f;
+					ImGui::PopStyleColor(3);
+					ImGui::SameLine();
+					ImGui::PushItemWidth(itemWidth);
+					ImGui::SliderFloat("##R", &m_DirectionalLight.color.x, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+					ImGui::PopItemWidth();
+					ImGui::SameLine();
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.x != 1.0f)) { m_DirectionalLight.color.x = 1.0f; };
+					ImGui::SameLine();
+					ImGui::PopID();
+				}
 
-			{
-				SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color B");
-				
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-				if (ImGui::Button("B", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.z = 1.0f;
-				ImGui::PopStyleColor(3);
-				ImGui::SameLine();
-				ImGui::PushItemWidth(itemWidth);
-				ImGui::SliderFloat("##B", &m_DirectionalLight.color.z, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-				ImGui::PopItemWidth();
-				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.z != 1.0f)) { m_DirectionalLight.color.z = 1.0f; };
-				ImGui::SameLine();
-			}
+				{
+					SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color G");
+					ImGui::PushID("DirectionalLightComponent Color G");
 
-			{
-				SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color Picker");
-				
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
-				ImGui::ColorEdit3("##", glm::value_ptr(m_DirectionalLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
-				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_DirectionalLight.color != glm::vec3(0.0f, 0.0f, 0.0f))) { m_DirectionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f); };
-				ImGui::PopStyleColor();
-			}
-			
-			ImGui::Columns(1);
-			ImGui::PopID();
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+					if (ImGui::Button("G", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.y = 1.0f;
+					ImGui::PopStyleColor(3);
+					ImGui::SameLine();
+					ImGui::PushItemWidth(itemWidth);
+					ImGui::SliderFloat("##G", &m_DirectionalLight.color.y, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+					ImGui::PopItemWidth();
+					ImGui::SameLine();
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.y != 1.0f)) { m_DirectionalLight.color.y = 1.0f; };
+					ImGui::SameLine();
+					ImGui::PopID();
+				}
+
+				{
+					SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color B");
+					ImGui::PushID("DirectionalLightComponent Color B");
+
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+					if (ImGui::Button("B", ImGuiH::GetLineItemSize())) m_DirectionalLight.color.z = 1.0f;
+					ImGui::PopStyleColor(3);
+					ImGui::SameLine();
+					ImGui::PushItemWidth(itemWidth);
+					ImGui::SliderFloat("##B", &m_DirectionalLight.color.z, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+					ImGui::PopItemWidth();
+					ImGui::SameLine();
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.z != 1.0f)) { m_DirectionalLight.color.z = 1.0f; };
+					ImGui::SameLine();
+					ImGui::PopID();
+				}
+
+				{
+					SPIECS_PROFILE_ZONEN("DirectionalLightComponent Color Picker");
+					ImGui::PushID("DirectionalLightComponent Color Picker");
+
+					ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
+					ImGui::ColorEdit3("##", glm::value_ptr(m_DirectionalLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
+					ImGui::SameLine();
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color != glm::vec3(1.0f, 1.0f, 1.0f))) { m_DirectionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f); };
+					ImGui::PopStyleColor();
+					ImGui::PopID();
+				}
+			});
 		}
 
 		{
 			SPIECS_PROFILE_ZONEN("DirectionalLightComponent Intensity");
-			
-			ImGui::PushID("DLight Intensity");
-			ImGui::Columns(2, 0, false);
-			
-			ImGui::SetColumnWidth(0, columeWidth);
-			ImGui::Text("Intensity");
-			ImGui::NextColumn();
-			
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-			ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-			ImGui::PopItemWidth();
-			ImGui::SameLine();
-			if (ImGuiH::DrawResetIcon(m_DirectionalLight.intensity != 1.0f)) { m_DirectionalLight.intensity = 1.0f; };
 
-			ImGui::Columns(1);
-			ImGui::PopID();
+			ImGuiH::DrawPropertyItem("Intensity", columeWidth, [&]() {
+				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
+				ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+				ImGui::PopItemWidth();
+				ImGui::SameLine();
+				if (ImGuiH::DrawResetIcon(m_DirectionalLight.intensity != 1.0f)) { m_DirectionalLight.intensity = 1.0f; };
+			});
 		}
 
 		ImGui::PopStyleVar();

@@ -123,44 +123,30 @@ namespace Spiecs {
 							
 							{
 								SPIECS_PROFILE_ZONEN("MeshComponent Mesh Pack Shadows");
-								
-								ImGui::PushID("Geometries Shadows");
-								ImGui::Columns(2, 0, false);
-			
-								ImGui::SetColumnWidth(0, columnWidth);
-								ImGui::Text("Cast Shadows");
-								ImGui::NextColumn();
 
-								static bool isCastShadow = true;
-								ImGuiH::Checkbox(&isCastShadow);
-								ImGui::SameLine();
-								ImGui::SeparatorText("##");
-								ImGui::SameLine(ImGui::GetContentRegionAvail().x - seperatorWidthS);
-								if(ImGuiH::DrawResetIcon(isCastShadow != true)) { isCastShadow = true; }
-								
-								ImGui::Columns(1);
-								ImGui::PopID();
+								ImGuiH::DrawPropertyItem("Cast Shadows", columnWidth, [&]() {
+									static bool isCastShadow = true;
+									ImGuiH::Checkbox(&isCastShadow);
+									ImGui::SameLine();
+									ImGui::PushItemWidth(100.0f);
+									ImGui::SeparatorText("##");
+									ImGui::PopItemWidth();
+									ImGui::SameLine(ImGui::GetContentRegionAvail().x - seperatorWidthS);
+									if (ImGuiH::DrawResetIcon(isCastShadow != true)) { isCastShadow = true; }
+								});
 							}
 
 							{
 								SPIECS_PROFILE_ZONEN("MeshComponent Mesh Pack Visible");
-								
-								ImGui::PushID("Geometries Visible");
-								ImGui::Columns(2, 0, false);
-			
-								ImGui::SetColumnWidth(0, columnWidth);
-								ImGui::Text("Visible");
-								ImGui::NextColumn();
 
-								static bool isVisible = true;
-								ImGuiH::Checkbox(&isVisible);
-								ImGui::SameLine();
-								ImGui::SeparatorText("##");
-								ImGui::SameLine(ImGui::GetContentRegionAvail().x - seperatorWidthS);
-								if(ImGuiH::DrawResetIcon(isVisible != true)) { isVisible = true; }
-								
-								ImGui::Columns(1);
-								ImGui::PopID();
+								ImGuiH::DrawPropertyItem("Visible", columnWidth, [&]() {
+									static bool isVisible = true;
+									ImGuiH::Checkbox(&isVisible);
+									ImGui::SameLine();
+									ImGui::SeparatorText("##");
+									ImGui::SameLine(ImGui::GetContentRegionAvail().x - seperatorWidthS);
+									if (ImGuiH::DrawResetIcon(isVisible != true)) { isVisible = true; }
+								});
 							}
 
 							ImGui::Spacing();

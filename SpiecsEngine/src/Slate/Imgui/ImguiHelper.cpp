@@ -297,6 +297,23 @@ namespace Spiecs {
         ImGui::SetWindowFontScale(1.0f);
     }
 
+    void ImGuiH::DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> func)
+    {
+        SPIECS_PROFILE_ZONEN("DrawPropertyItem");
+
+        ImGui::PushID(itemName.c_str());
+        ImGui::Columns(2, 0, false);
+
+        ImGui::SetColumnWidth(0, columeWidth);
+        ImGui::Text(itemName.c_str());
+        ImGui::NextColumn();
+
+        func();
+
+        ImGui::Columns(1);
+        ImGui::PopID();
+    }
+
     float ImGuiH::GetDPIScale()
     {
         SPIECS_PROFILE_ZONE;
