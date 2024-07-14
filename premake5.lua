@@ -1,6 +1,6 @@
-workspace "SpiecsEngine"
+workspace "SpicesEngine"
 	architecture "x64"
-	startproject "SpiecsGame"
+	startproject "SpicesGame"
 
 	configurations
 	{
@@ -12,14 +12,14 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "lib.lua"
 
-include "SpiecsEngine"
-include "SpiecsGame"
-include "SpiecsTest"
+include "SpicesEngine"
+include "SpicesGame"
+include "SpicesTest"
 
 group "Dependencies"
-	include "SpiecsEngine/vendor/GLFW/"
-	include "SpiecsEngine/vendor/imgui"
-	include "SpiecsEngine/vendor/yaml-cpp"
-	include "SpiecsEngine/vendor/implot"
-	include "SpiecsTest/vendor/googletest"
+	include "SpicesEngine/vendor/GLFW/"
+	include "SpicesEngine/vendor/imgui"
+	include "SpicesEngine/vendor/yaml-cpp"
+	include "SpicesEngine/vendor/implot"
+	include "SpicesTest/vendor/googletest"
 group ""

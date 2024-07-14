@@ -1,4 +1,4 @@
-# Spiecs-Engine
+# Spices-Engine
 since 2024.03.27, we start here
 
 ## Update on 24/06/10
@@ -12,7 +12,7 @@ TODO:
 - [ ] 9.physics system (maynot)
 - [ ] 11.unit test
 - [ ] 12.document
-- [ ] 13.profernece analysis
+- [ ] 13.proference analysis
 - [ ] 14.Multiple Viewport
 - [ ] 15.Shadow Map
 - [ ] 16.More Shader Support

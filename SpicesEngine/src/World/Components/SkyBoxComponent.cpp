@@ -1,0 +1,34 @@
+/**
+* @file SkyBoxComponent.cpp.
+* @brief The SkyBoxComponent Class Implementation.
+* @author Spices.
+*/
+
+#include "Pchheader.h"
+#include "SkyBoxComponent.h"
+
+namespace Spices {
+
+	SkyBoxComponent::SkyBoxComponent(const std::string& path)
+	{
+		/**
+		* @brief Use SpherePack Instead
+		*/
+		std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>(2, 2);
+		pack->SetMaterial(path);
+		m_Mesh = Mesh::Builder().AddPack(pack).Build();
+	}
+
+	void SkyBoxComponent::OnSerialize()
+	{
+	}
+
+	void SkyBoxComponent::OnDeSerialize()
+	{
+	}
+
+	void SkyBoxComponent::DrawThis()
+	{
+		MeshComponent::DrawThis();
+	}
+}
