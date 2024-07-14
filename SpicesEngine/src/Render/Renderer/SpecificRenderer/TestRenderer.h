@@ -9,11 +9,11 @@ namespace Spices {
 	public:
 
 		TestRenderer(
-			const std::string&                     rendererName   ,
-			VulkanState&                           vulkanState    ,
-			std::shared_ptr<VulkanDescriptorPool>  desctiptorPool ,
-			std::shared_ptr<VulkanDevice>          device         ,
-			std::shared_ptr<RendererResourcePool>  rendererResourcePool
+			const std::string&                           rendererName   ,
+			VulkanState&                                 vulkanState    ,
+			const std::shared_ptr<VulkanDescriptorPool>& desctiptorPool ,
+			const std::shared_ptr<VulkanDevice>&         device         ,
+			const std::shared_ptr<RendererResourcePool>& rendererResourcePool
 		);
 
 		virtual ~TestRenderer() {};

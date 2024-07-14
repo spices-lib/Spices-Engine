@@ -29,7 +29,7 @@ namespace Spices {
 				stbi_image_free(image.pixels);
 			}
 
-			int texChannels, width, height;
+			int texChannels;
 			image.pixels = stbi_load(iconPath.c_str(), &image.width, &image.height, &texChannels, STBI_rgb_alpha);
 			if (!image.pixels)
 			{

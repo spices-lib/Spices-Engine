@@ -48,11 +48,11 @@ namespace Spices {
 		* @param[in] rendererResourcePool The RendererResourcePool, RT Pool.
 		*/
 		RayTracingRenderer(
-			const std::string&                     rendererName          ,
-			VulkanState&                           vulkanState           ,
-			std::shared_ptr<VulkanDescriptorPool>  descriptorPool        ,
-			std::shared_ptr<VulkanDevice>          device                ,
-			std::shared_ptr<RendererResourcePool>  rendererResourcePool
+			const std::string&                           rendererName          ,
+			VulkanState&                                 vulkanState           ,
+			const std::shared_ptr<VulkanDescriptorPool>& descriptorPool        ,
+			const std::shared_ptr<VulkanDevice>&         device                ,
+			const std::shared_ptr<RendererResourcePool>& rendererResourcePool
 		);
 
 		/**

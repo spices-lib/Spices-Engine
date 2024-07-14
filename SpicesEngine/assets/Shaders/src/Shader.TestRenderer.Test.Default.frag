@@ -1,7 +1,7 @@
 /**
 * @file Shader.TestRenderer.Test.Default.frag.
 * @brief This Shader Defines Test Renderer Test SubPass Default Fragment Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

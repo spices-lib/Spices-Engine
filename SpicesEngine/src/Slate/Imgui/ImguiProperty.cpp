@@ -114,7 +114,7 @@ namespace Spices {
         {
             SPICES_PROFILE_ZONEN("ImguiProperty::Components");
 
-            Entity entity(static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.endk()), m_FrameInfo.m_World.get());
+            Entity entity(static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.end_k()), m_FrameInfo.m_World.get());
 
             DrawComponent<TransformComponent>("Transform", entity);
             DrawComponent<CameraComponent>("Camera", entity);

@@ -1,7 +1,7 @@
 /**
 * @file Shader.SpriteRenderer.Sprite.Default.vert.
 * @brief This Shader Defines Sprite Renderer Sprite SubPass Default Vertex Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

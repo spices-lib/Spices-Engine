@@ -27,7 +27,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+		RenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();
 

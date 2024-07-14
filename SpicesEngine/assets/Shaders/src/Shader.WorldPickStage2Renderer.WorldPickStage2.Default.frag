@@ -1,7 +1,7 @@
 /**
 * @file Shader.WorldPickStage2Renderer.WorldPickStage2.Default.frag.
 * @brief This Shader Defines WorldPick Renderer WorldPick SubPass Default Fragment Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

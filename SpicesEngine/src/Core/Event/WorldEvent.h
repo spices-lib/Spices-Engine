@@ -13,8 +13,8 @@ namespace Spices {
 	/**
 	* @brief This Class is inherited from Event Class.
 	* Inherit from it and create specific KeyEvent class. 
-	* Called when WorldMarkQueryer tick.
-	* This Event registed by ...
+	* Called when WorldMarkQuery tick.
+	* This Event register by ...
 	*/
 	class WorldEvent : public Event
 	{

@@ -1,7 +1,7 @@
 /**
 * @file Shader.TestRenderer.Test.Default.geom.
 * @brief This Shader Defines Test Renderer Test SubPass Default Geometry Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

@@ -6,12 +6,11 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "Core/Library/ClassLibrary.h"
 
 namespace scl {
 
     /**
-    * @brief The container is wapper of a continue memory block.
+    * @brief The container is wrapper of a continue memory block.
     * Used in Material::BuildMaterial(), helps to update buffer.
     */
     class runtime_memory_block
@@ -30,7 +29,7 @@ namespace scl {
 
         /**
         * @brief The data information of the continue memory block handled.
-        * Data: parameter name - parameter position offest with begin_.
+        * Data: parameter name - parameter position offset with begin_.
         */
         std::unordered_map<std::string, size_t> object_;
         
@@ -39,7 +38,7 @@ namespace scl {
         /**
         * @brief Constructor Function.
         */
-        runtime_memory_block() {};
+        runtime_memory_block() = default;
 
         /**
         * @brief Destructor Function.
@@ -60,7 +59,7 @@ namespace scl {
 
         /**
         * @brief Fill in a memory with given data. 
-        * @param[in] T The type of parameter.
+        * @tparam T The type of parameter.
         * @param[in] name The name of parameter.
         * @param[in] value The value of parameter.
         */
@@ -72,11 +71,11 @@ namespace scl {
         * @param[in] fn The function pointer of how to fill in data.
         * @noto Not Unit Test, so do not use it.
         */
-        void for_each(std::function<bool(const std::string& name, void* pt)> fn);
+        void for_each(std::function<bool(const std::string& name, void* pt)> fn) const;
 
         /**
         * @brief Get value that explained by name.
-        * @param[in] T the type of parameter.
+        * @tparam T the type of parameter.
         * @param[in] name The name of parameter.
         * @return Returns the value of parameter.
         */
@@ -87,19 +86,19 @@ namespace scl {
         * @brief Get the begin_.
         * @return Return the begin_.
         */
-        void* get_addr() const { return begin_; };
+        void* get_addr() const { return begin_; }
 
         /**
         * @brief Get the bytes_.
         * @return Return the bytes_.
         */
-        size_t get_bytes() const { return bytes_; };
+        size_t get_bytes() const { return bytes_; }
 
         /**
         * @brief Get the size of object_.
         * @return Return the size of object_.
         */
-        size_t size() { return object_.size(); };
+        size_t size() const { return object_.size(); }
     };
 
     template <typename T>
@@ -114,18 +113,17 @@ namespace scl {
             ss << "runtime_memory_block:: explain failed: without the element: " << name;
             
             throw std::runtime_error(ss.str());
-            return;
         }
 
         /**
         * @brief Offest the begin_ to correct position.
         */
-        void* mem = reinterpret_cast<char*>(begin_) + object_[name];
+        void* mem = static_cast<char*>(begin_) + object_[name];
 
         /**
         * @brief Writing the value of parameter.
         */
-        *reinterpret_cast<T*>(mem) = value;
+        *static_cast<T*>(mem) = value;
     }
 
     template <typename T>
@@ -145,8 +143,8 @@ namespace scl {
         /**
         * @brief Offest the begin_ to correct position.
         */
-        void* mem = reinterpret_cast<char*>(begin_) + object_[name];
+        void* mem = static_cast<char*>(begin_) + object_[name];
 
-        return *reinterpret_cast<T*>(mem);
+        return *static_cast<T*>(mem);
     }
 }

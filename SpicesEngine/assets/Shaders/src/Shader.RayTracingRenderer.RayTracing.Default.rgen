@@ -1,7 +1,7 @@
 /**
 * @file Shader.RayTracingRenderer.RayTracing.Default.rgen.
 * @brief This Shader Defines RayTracing Renderer RayTracing SubPass Default Ray Generation Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

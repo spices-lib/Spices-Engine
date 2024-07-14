@@ -1,6 +1,6 @@
 # @file Material.RayTracingRenderer.RayTracing.Default.material.
 # @brief This File is the sample of Defining a RayTracing Renderer RayTracing SubPass Default Material.
-# @author Spiecs.
+# @author Spices.
 
 # @brief Material Name.
 # [Renderer Name].[SubPass Name].[Material Identify]

@@ -1,6 +1,6 @@
 # @file Material.WorldPickRenderer.WorldPick.Default.material.
 # @brief This File is the sample of Defining a WorldPick Renderer WorldPick SubPass Default Material.
-# @author Spiecs.
+# @author Spices.
 
 # @brief Material Name.
 # [Renderer Name].[SubPass Name].[Material Identify]

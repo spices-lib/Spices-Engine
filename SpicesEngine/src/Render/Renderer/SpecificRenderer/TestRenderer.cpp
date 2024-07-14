@@ -6,11 +6,11 @@
 namespace Spices {
 
 	TestRenderer::TestRenderer(
-		const std::string&                     rendererName   ,
-		VulkanState&                           vulkanState    ,
-		std::shared_ptr<VulkanDescriptorPool>  desctiptorPool ,
-		std::shared_ptr<VulkanDevice>          device         ,
-		std::shared_ptr<RendererResourcePool>  rendererResourcePool
+		const std::string&                           rendererName   ,
+		VulkanState&                                 vulkanState    ,
+		const std::shared_ptr<VulkanDescriptorPool>& desctiptorPool ,
+		const std::shared_ptr<VulkanDevice>&         device         ,
+		const std::shared_ptr<RendererResourcePool>& rendererResourcePool
 	)
 		: Renderer(rendererName, vulkanState, desctiptorPool, device, rendererResourcePool)
 	{
@@ -47,7 +47,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+		RenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();
 

@@ -13,7 +13,7 @@ namespace Spices {
 	/**
 	* @brief This Class is inherited from Event Class.
 	* Called when window resized.
-	* This Event registed by glfw window.
+	* This Event register by glfw window.
 	*/
 	class WindowResizeEvent : public Event
 	{

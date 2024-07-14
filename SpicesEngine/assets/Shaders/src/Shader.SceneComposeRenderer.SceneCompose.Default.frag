@@ -1,7 +1,7 @@
 /**
 * @file Shader.SceneComposeRenderer.SceneCompose.Default.frag.
 * @brief This Shader Defines SceneCompose Renderer SceneCompose SubPass Default Fragemt Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

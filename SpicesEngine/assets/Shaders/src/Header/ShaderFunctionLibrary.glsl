@@ -1,7 +1,7 @@
 /**
 * @file ShaderFunctionLibrary.glsl.
 * @brief This Shader Header File Defines Shader Functions.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

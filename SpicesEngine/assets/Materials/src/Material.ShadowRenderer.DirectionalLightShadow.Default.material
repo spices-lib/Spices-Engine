@@ -1,6 +1,6 @@
 # @file Material.ShadowRenderer.DirectionalLightShadow.Default.material.
 # @brief This File is the sample of Defining a Shadow Renderer DirectionalLightShadow SubPass Default Material.
-# @author Spiecs.
+# @author Spices.
 
 # @brief Material Name.
 # [Renderer Name].[SubPass Name].[Material Identify]

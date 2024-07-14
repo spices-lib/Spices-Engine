@@ -1,7 +1,7 @@
 /**
 * @file ShaderPreRendererLayout.glsl.
 * @brief This Shader Header File Defines Pre Shader DescriptorSets.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

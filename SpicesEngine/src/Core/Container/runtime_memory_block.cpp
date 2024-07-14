@@ -56,7 +56,7 @@ namespace scl {
         begin_ = malloc(bytes_);
     }
 
-    void runtime_memory_block::for_each(std::function<bool(const std::string& name, void* pt)> fn)
+    void runtime_memory_block::for_each(std::function<bool(const std::string& name, void* pt)> fn) const
     {
         /**
         * @brief Iter without order.
@@ -66,7 +66,7 @@ namespace scl {
             /**
             * @brief Move begin_ to correct position.
             */
-            void* it = reinterpret_cast<char*>(begin_) + pair.second;
+            void* it = static_cast<char*>(begin_) + pair.second;
 
             /**
             * @brief The function pointer of how to explain the memory with parameter.

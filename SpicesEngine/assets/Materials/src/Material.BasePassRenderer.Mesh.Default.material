@@ -1,6 +1,6 @@
 # @file Material.BasePassRenderer.Mesh.Default.material.
 # @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass Default Material.
-# @author Spiecs.
+# @author Spices.
 
 # @brief Material Name.
 # [Renderer Name].[SubPass Name].[Material Identify]

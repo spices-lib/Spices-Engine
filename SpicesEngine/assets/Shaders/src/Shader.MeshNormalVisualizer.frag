@@ -1,7 +1,7 @@
 /**
 * @file Shader.MeshNormalVisualizer.frag.
 * @brief This Shader Defines MeshNormalVisualizer SubPass Default Vertex Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

@@ -13,11 +13,11 @@
 namespace Spices {
 	
 	RayTracingRenderer::RayTracingRenderer(
-		const std::string&                     rendererName          ,
-		VulkanState&                           vulkanState           ,
-		std::shared_ptr<VulkanDescriptorPool>  descriptorPool        ,
-		std::shared_ptr<VulkanDevice>          device                ,
-		std::shared_ptr<RendererResourcePool>  rendererResourcePool
+		const std::string&                           rendererName          ,
+		VulkanState&                                 vulkanState           ,
+		const std::shared_ptr<VulkanDescriptorPool>& descriptorPool        ,
+		const std::shared_ptr<VulkanDevice>&         device                ,
+		const std::shared_ptr<RendererResourcePool>& rendererResourcePool
 	)
 		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool)
 	{
@@ -109,7 +109,7 @@ namespace Spices {
 
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
-		RenderBehaverBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex, true };
+		RenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex, true };
 
 		VulkanDebugUtils::BeginLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], "RayTracing");
 

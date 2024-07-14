@@ -67,12 +67,12 @@ namespace Spices {
 		*/
 		Renderer
 		(
-			const std::string&                      rendererName            , 
-			VulkanState&                            vulkanState             , 
-			std::shared_ptr<VulkanDescriptorPool>   DescriptorPool          , 
-			std::shared_ptr<VulkanDevice>           device                  , 
-			std::shared_ptr<RendererResourcePool>   rendererResourcePool    ,
-			bool                                    isLoadDefaultMaterial = true
+			const std::string&                           rendererName            , 
+			VulkanState&                                 vulkanState             ,
+			const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool          ,
+			const std::shared_ptr<VulkanDevice>&         device                  ,
+			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
+			bool                                         isLoadDefaultMaterial = true
 		);
 
 		/**
@@ -533,7 +533,7 @@ namespace Spices {
 		* @brief This class helps to bind pipeline and bind buffer.
 		* Only instanced during Render().
 		*/
-		class RenderBehaverBuilder
+		class RenderBehaveBuilder
 		{
 		public:
 
@@ -545,7 +545,7 @@ namespace Spices {
 			* @param[in] currentImage Passed from FrameInfo.
 			* @param[in] isNonGraphicRender set to true if cmd is not use with a graphic pipeline.
 			*/
-			RenderBehaverBuilder(
+			RenderBehaveBuilder(
 				Renderer* renderer     , 
 				uint32_t  currentFrame , 
 				uint32_t  currentImage ,
@@ -555,11 +555,11 @@ namespace Spices {
 			/**
 			* @brief Destructor Function.
 			*/
-			virtual ~RenderBehaverBuilder() = default;
+			virtual ~RenderBehaveBuilder() = default;
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
-			* Called on RenderBehaverBuilder instanced.
+			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
@@ -769,7 +769,7 @@ namespace Spices {
 	}
 
 	template<typename T, typename F>
-	void Renderer::RenderBehaverBuilder::UpdatePushConstant(F func)
+	void Renderer::RenderBehaveBuilder::UpdatePushConstant(F func)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -801,7 +801,7 @@ namespace Spices {
 	}
 
 	template<typename T, typename F>
-	void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, F func)
+	void Renderer::RenderBehaveBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, F func)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -823,7 +823,7 @@ namespace Spices {
 	}
 
 	template<typename T, typename F>
-	void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, F func)
+	void Renderer::RenderBehaveBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, F func)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -845,7 +845,7 @@ namespace Spices {
 	}
 
 	template<typename T>
-	void Renderer::RenderBehaverBuilder::UpdatePushConstant(void* data) const
+	void Renderer::RenderBehaveBuilder::UpdatePushConstant(void* data) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -865,7 +865,7 @@ namespace Spices {
 		);
 	}
 
-	inline void Renderer::RenderBehaverBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data) const
+	inline void Renderer::RenderBehaveBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -875,7 +875,7 @@ namespace Spices {
 		m_HandledSubPass->SetBuffer({ set, binding }, data);
 	}
 
-	inline void Renderer::RenderBehaverBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data) const
+	inline void Renderer::RenderBehaveBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data) const
 	{
 		SPICES_PROFILE_ZONE;
 

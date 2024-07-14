@@ -19,7 +19,7 @@ namespace Spices {
 		/**
 		* @brief Template Function.
 		* Append a Container to another.
-		* @param[in out] dst The Container we want to Append to.
+		* @param[in,out] dst The Container we want to Append to.
 		* @param[in] src The Container we want to Append from.
 		*/
 		template<typename T>

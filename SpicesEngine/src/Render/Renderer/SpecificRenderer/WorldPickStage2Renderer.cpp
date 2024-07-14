@@ -12,11 +12,11 @@
 namespace Spices {
 
 	WorldPickStage2Renderer::WorldPickStage2Renderer(
-		const std::string&                     rendererName           , 
-		VulkanState&                           vulkanState            , 
-		std::shared_ptr<VulkanDescriptorPool>  descriptorPool         , 
-		std::shared_ptr<VulkanDevice>          device                 , 
-		std::shared_ptr<RendererResourcePool>  rendererResourcePool
+		const std::string&                           rendererName           , 
+		VulkanState&                                 vulkanState            ,
+		const std::shared_ptr<VulkanDescriptorPool>& descriptorPool         ,
+		const std::shared_ptr<VulkanDevice>&         device                 ,
+		const std::shared_ptr<RendererResourcePool>& rendererResourcePool
 	)
 		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool)
 	{
@@ -57,7 +57,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		RenderBehaverBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+		RenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();
 

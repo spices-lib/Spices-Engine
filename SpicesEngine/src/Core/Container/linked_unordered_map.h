@@ -38,12 +38,12 @@ namespace scl {
 		/**
 		* @brief Constructor Function.
 		*/
-		linked_unordered_map() {};
+		linked_unordered_map() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~linked_unordered_map() {};
+		virtual ~linked_unordered_map() = default;
 
 		/**
 		* @brief Clear this container's data.
@@ -61,7 +61,7 @@ namespace scl {
 		* @return Returns true if the size of the keys_ and map_.
 		* @note Used for unit test, shou not be called during game.
 		*/
-		bool has_equalsize();
+		bool has_equal_size();
 
 		/**
 		* @brief Add a element to this container.
@@ -114,21 +114,21 @@ namespace scl {
 
 		/**
 		* @brief Get the first element of this container.
-		* @return Returns the first element finded.
+		* @return Returns the first element found.
 		*/
 		V* first();
 
 		/**
 		* @brief Get the end element of this container.
-		* @return Returns the end element finded.
+		* @return Returns the end element found.
 		*/
 		V* end();
 
 		/**
 		* @breif Get the end key of this container.
-		* @return Returns the end key finded.
+		* @return Returns the end key found.
 		*/
-		K* endk();
+		K* end_k();
 	};
 
 	template<typename K, typename V>
@@ -156,7 +156,7 @@ namespace scl {
 	}
 
 	template<typename K, typename V>
-	inline bool linked_unordered_map<K, V>::has_equalsize()
+	inline bool linked_unordered_map<K, V>::has_equal_size()
 	{
 		return keys_.size() == map_.size();
 	}
@@ -225,9 +225,7 @@ namespace scl {
 			* @param[in] value V the value.
 			* @return Retunrs True if want break this for loop.
 			*/
-			bool isbreak = fn(key, map_[key]);
-			
-			if(isbreak) break;   //Break If want.
+			if(fn(key, map_[key])) break;   //Break If want.
 		}
 	}
 
@@ -247,7 +245,7 @@ namespace scl {
 		/**
 		* @brief Iter the list.
 		*/
-		for (auto it = keys_.begin(); it != keys_.end(); it++)
+		for (auto it = keys_.begin(); it != keys_.end(); ++it)
 		{
 			if (*it == key)
 			{
@@ -274,7 +272,7 @@ namespace scl {
 		/**
 		* @brief Iter the list.
 		*/
-		for (auto it = keys_.begin(); it != keys_.end(); it++)
+		for (auto it = keys_.begin(); it != keys_.end(); ++it)
 		{
 			if (*it == key)
 			{
@@ -302,7 +300,7 @@ namespace scl {
 	}
 
 	template<typename K, typename V>
-	K* linked_unordered_map<K, V>::endk()
+	K* linked_unordered_map<K, V>::end_k()
 	{
 		if (size() == 0) return nullptr;
 

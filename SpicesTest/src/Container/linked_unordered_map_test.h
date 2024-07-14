@@ -58,9 +58,9 @@ namespace SpicesTest {
 		/**
 		* @brief Testing initialized container's euqlity.
 		*/
-		EXPECT_EQ(c0.has_equalsize(), true);
-		EXPECT_EQ(c1.has_equalsize(), true);
-		EXPECT_EQ(c2.has_equalsize(), true);
+		EXPECT_EQ(c0.has_equal_size(), true);
+		EXPECT_EQ(c1.has_equal_size(), true);
+		EXPECT_EQ(c2.has_equal_size(), true);
 	}
 
 	/**
@@ -93,9 +93,9 @@ namespace SpicesTest {
 		/**
 		* @brief Testing container's euqlity after remove element.
 		*/
-		EXPECT_EQ(c0.has_equalsize(), true);
-		EXPECT_EQ(c1.has_equalsize(), true);
-		EXPECT_EQ(c2.has_equalsize(), true);
+		EXPECT_EQ(c0.has_equal_size(), true);
+		EXPECT_EQ(c1.has_equal_size(), true);
+		EXPECT_EQ(c2.has_equal_size(), true);
 	}
 
 	/**
@@ -124,9 +124,9 @@ namespace SpicesTest {
 		/**
 		* @brief Testing container's euqlity after find element.
 		*/
-		EXPECT_EQ(c0.has_equalsize(), true);
-		EXPECT_EQ(c1.has_equalsize(), true);
-		EXPECT_EQ(c2.has_equalsize(), true);
+		EXPECT_EQ(c0.has_equal_size(), true);
+		EXPECT_EQ(c1.has_equal_size(), true);
+		EXPECT_EQ(c2.has_equal_size(), true);
 	}
 
 	/**
@@ -158,9 +158,9 @@ namespace SpicesTest {
 		/**
 		* @brief Testing container's euqlity after add element.
 		*/
-		EXPECT_EQ(c0.has_equalsize(), true);
-		EXPECT_EQ(c1.has_equalsize(), true);
-		EXPECT_EQ(c2.has_equalsize(), true);
+		EXPECT_EQ(c0.has_equal_size(), true);
+		EXPECT_EQ(c1.has_equal_size(), true);
+		EXPECT_EQ(c2.has_equal_size(), true);
 	}
 
 	/**
@@ -209,9 +209,9 @@ namespace SpicesTest {
 		/**
 		* @brief Testing container's euqlity after iter.
 		*/
-		EXPECT_EQ(c0.has_equalsize(), true);
-		EXPECT_EQ(c1.has_equalsize(), true);
-		EXPECT_EQ(c2.has_equalsize(), true);
+		EXPECT_EQ(c0.has_equal_size(), true);
+		EXPECT_EQ(c1.has_equal_size(), true);
+		EXPECT_EQ(c2.has_equal_size(), true);
 	}
 
 	/**
@@ -254,17 +254,17 @@ namespace SpicesTest {
 		/**
 		* @breif Testing end key is getted successfully.
 		*/
-		EXPECT_EQ(*c0.endk(), "ccc");
-		EXPECT_EQ(*c1.endk(), 3);
-		EXPECT_EQ(*c2.endk(), 3.0);
-		EXPECT_EQ(c3.endk(), nullptr);
+		EXPECT_EQ(*c0.end_k(), "ccc");
+		EXPECT_EQ(*c1.end_k(), 3);
+		EXPECT_EQ(*c2.end_k(), 3.0);
+		EXPECT_EQ(c3.end_k(), nullptr);
 
 		/**
 		* @brief Testing container's euqlity after NoLinearFind.
 		*/
-		EXPECT_EQ(c0.has_equalsize(), true);
-		EXPECT_EQ(c1.has_equalsize(), true);
-		EXPECT_EQ(c2.has_equalsize(), true);
-		EXPECT_EQ(c3.has_equalsize(), true);
+		EXPECT_EQ(c0.has_equal_size(), true);
+		EXPECT_EQ(c1.has_equal_size(), true);
+		EXPECT_EQ(c2.has_equal_size(), true);
+		EXPECT_EQ(c3.has_equal_size(), true);
 	}
 }

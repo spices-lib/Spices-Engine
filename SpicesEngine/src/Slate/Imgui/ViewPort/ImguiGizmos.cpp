@@ -138,7 +138,7 @@ namespace Spices {
                 * @brief Get Selected Entity.
                 */
                 Entity entity(
-                    static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.endk()),
+                    static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.end_k()),
                     m_FrameInfo.m_World.get()
                 );
 

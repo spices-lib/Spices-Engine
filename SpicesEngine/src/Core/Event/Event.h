@@ -157,7 +157,7 @@ namespace Spices {
 
 		/**
 		* @brief Helper type of the function pointer to handle specific event.
-		* @param[in] T Specific Event Class.
+		* @tparam T Specific Event Class.
 		* @return Returns true if needs block event chain.
 		*/
 		template<typename T>

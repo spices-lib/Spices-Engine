@@ -1,7 +1,7 @@
 /**
 * @file Shader.RayTracingRenderer.RayTracing.DefaultShadow.rmiss.
 * @brief This Shader Defines RayTracing Renderer RayTracing SubPass DefaultShadow Ray Missing Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile******************************************/

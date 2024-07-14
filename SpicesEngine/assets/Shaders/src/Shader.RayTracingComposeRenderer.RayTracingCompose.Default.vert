@@ -1,7 +1,7 @@
 /**
 * @file Shader.RayTracingComposeRenderer.RayTracingCompose.Default.
 * @brief This Shader Defines RayTracingComposeRenderer Renderer RayTracingCompose SubPass Default Vertex Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

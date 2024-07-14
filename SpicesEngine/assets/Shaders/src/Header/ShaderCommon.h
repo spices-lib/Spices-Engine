@@ -1,5 +1,5 @@
 /**
-* @file ShaderStructures.h.
+* @file ShaderCommon.h.
 * @brief This Shader Header File Defines Shader Structure both Shader side and C++ side.
 * @author Spices.
 */

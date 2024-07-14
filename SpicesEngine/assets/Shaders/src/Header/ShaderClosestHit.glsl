@@ -1,7 +1,7 @@
 /**
 * @file ShaderClosestHit.glsl.
 * @brief This Shader Defines a Closest Hit Shader Basic Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

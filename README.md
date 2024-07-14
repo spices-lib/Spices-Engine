@@ -9,16 +9,16 @@ TODO:
 - [ ] 3.Lighting system (pointlight directional light)
 - [ ] 5.mesh system (obj, gltf, custom, predefines)
 - [ ] 8.save/load system
-- [ ] 9.physics system (maynot)
+- [ ] 9.physics system (mayn't)
 - [ ] 11.unit test
 - [ ] 12.document
-- [ ] 13.proference analysis
+- [ ] 13.preference analysis
 - [ ] 14.Multiple Viewport
 - [ ] 15.Shadow Map
 - [ ] 16.More Shader Support
-- [ ] 17.Property Panel/Content Broswer Panel
+- [ ] 17.Property Panel/Content Browser Panel
 - [ ] 18.Reflection
-- [ ] 19.Seralizer
+- [ ] 19.Serializer
 
 PURPOSE:
 - [ ] 1.loading a bing Max Scene

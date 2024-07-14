@@ -13,18 +13,18 @@ namespace Spices {
 
 	Renderer::Renderer
 	(
-		const std::string&                     rendererName          , 
-		VulkanState&                           vulkanState           , 
-		std::shared_ptr<VulkanDescriptorPool>  DescriptorPool        , 
-		std::shared_ptr<VulkanDevice>          device                , 
-		std::shared_ptr<RendererResourcePool>  rendererResourcePool  ,
+		const std::string&                           rendererName          , 
+		VulkanState&                                 vulkanState           ,
+		const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool        ,
+		const std::shared_ptr<VulkanDevice>&         device                ,
+		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
 		bool isLoadDefaultMaterial
 	)
 		: m_VulkanState             (vulkanState           )
 		, m_DescriptorPool          (DescriptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
-		, m_RendererName            (rendererName          )
+		, m_RendererName            (rendererName        )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 	{}
 
@@ -384,7 +384,7 @@ namespace Spices {
 		pLightBuffer[index].intensity = -1000.0f;
 	}
 
-	Renderer::RenderBehaverBuilder::RenderBehaverBuilder(
+	Renderer::RenderBehaveBuilder::RenderBehaveBuilder(
 		Renderer*         renderer       , 
 		uint32_t          currentFrame   , 
 		uint32_t          currentImage   ,
@@ -400,14 +400,14 @@ namespace Spices {
 		}
 	}
 
-	void Renderer::RenderBehaverBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint) const
+	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame, bindPoint);
 	}
 
-	void Renderer::RenderBehaverBuilder::SetViewPort() const
+	void Renderer::RenderBehaveBuilder::SetViewPort() const
 	{
 		/**
 		* @brief Use Negative Viewport height filp here to handle axis difference.
@@ -452,7 +452,7 @@ namespace Spices {
 		vkCmdSetScissor(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], 0, 1, &scissor);
 	}
 
-	void Renderer::RenderBehaverBuilder::BeginNextSubPass(const std::string& subpassName)
+	void Renderer::RenderBehaveBuilder::BeginNextSubPass(const std::string& subpassName)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -464,7 +464,7 @@ namespace Spices {
 		vkCmdNextSubpass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void Renderer::RenderBehaverBuilder::BeginRenderPass()
+	void Renderer::RenderBehaveBuilder::BeginRenderPass()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -502,7 +502,7 @@ namespace Spices {
 		vkCmdBeginRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void Renderer::RenderBehaverBuilder::EndRenderPass() const
+	void Renderer::RenderBehaveBuilder::EndRenderPass() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -512,7 +512,7 @@ namespace Spices {
 		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint) const
+	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -522,7 +522,7 @@ namespace Spices {
 		BindDescriptorSet(infos, ss.str(), bindPoint);
 	}
 
-	void Renderer::RenderBehaverBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint) const
+	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint) const
 	{
 		SPICES_PROFILE_ZONE;
 

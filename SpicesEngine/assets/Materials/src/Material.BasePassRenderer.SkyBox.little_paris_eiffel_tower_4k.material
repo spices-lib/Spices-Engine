@@ -1,6 +1,6 @@
 # @file Material.BasePassRenderer.SkyBox.little_paris_eiffel_tower_4k.material.
 # @brief This File is the sample of Defining a BasePass Renderer SkyBox SubPass little_paris_eiffel_tower_4k Material.
-# @author Spiecs.
+# @author Spices.
 
 Material: BasePassRenderer.SkyBox.little_paris_eiffel_tower_4k
 Shaders:

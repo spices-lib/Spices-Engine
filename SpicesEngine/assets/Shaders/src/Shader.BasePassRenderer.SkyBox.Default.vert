@@ -1,7 +1,7 @@
 /**
 * @file Shader.BasePassRenderer.SkyBox.Default.vert.
 * @brief This Shader Defines BasePass Renderer SkyBox SubPass Default Vertex Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/

@@ -1,6 +1,6 @@
 ﻿# @file Material.BasePassRenderer.SkyBox.Default.material.
 # @brief This File is the sample of Defining a BasePass Renderer SkyBox SubPass Default Material.
-# @author Spiecs.
+# @author Spices.
 
 # @brief Material Name.
 # [Renderer Name].[SubPass Name].[Material Identify]

@@ -1,6 +1,6 @@
 # @file Material.BasePassRenderer.Mesh.1.material.
 # @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass 1 Material.
-# @author Spiecs.
+# @author Spices.
 
 Material: BasePassRenderer.Mesh.1
 Shaders:

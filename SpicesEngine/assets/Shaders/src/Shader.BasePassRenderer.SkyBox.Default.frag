@@ -1,7 +1,7 @@
 /**
 * @file Shader.BasePassRenderer.SkyBox.Default.frag.
 * @brief This Shader Defines BasePass Renderer SkyBox SubPass Default Fragment Shader Behaver.
-* @author Spiecs.
+* @author Spices.
 */
 
 /************************************Pre Compile*******************************************/
