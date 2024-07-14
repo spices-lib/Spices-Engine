@@ -1,30 +1,30 @@
-[submodule "SpiecsEngine/vendor/imgui"]
-	path = SpiecsEngine/vendor/imgui
-	url = https://github.com/spiecs/imgui
-[submodule "SpiecsEngine/vendor/GLFW"]
-	path = SpiecsEngine/vendor/GLFW
+[submodule "SpicesEngine/vendor/imgui"]
+	path = SpicesEngine/vendor/imgui
+	url = https://github.com/Spices/imgui
+[submodule "SpicesEngine/vendor/GLFW"]
+	path = SpicesEngine/vendor/GLFW
 	url = https://github.com/TheCherno/glfw
-[submodule "SpiecsEngine/vendor/yaml-cpp"]
-	path = SpiecsEngine/vendor/yaml-cpp
-	url = https://github.com/spiecs/yaml-cpp
-[submodule "SpiecsEngine/vendor/implot"]
-	path = SpiecsEngine/vendor/implot
-	url = https://github.com/spiecs/implot
-[submodule "SpiecsEngine/vendor/spdlog"]
-	path = SpiecsEngine/vendor/spdlog
+[submodule "SpicesEngine/vendor/yaml-cpp"]
+	path = SpicesEngine/vendor/yaml-cpp
+	url = https://github.com/Spices/yaml-cpp
+[submodule "SpicesEngine/vendor/implot"]
+	path = SpicesEngine/vendor/implot
+	url = https://github.com/Spices/implot
+[submodule "SpicesEngine/vendor/spdlog"]
+	path = SpicesEngine/vendor/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "SpiecsTest/vendor/googletest"]
-	path = SpiecsTest/vendor/googletest
-	url = https://github.com/spiecs/googletest
-[submodule "SpiecsEngine/vendor/glm"]
-	path = SpiecsEngine/vendor/glm
-	url = https://github.com/spiecs/glm
-[submodule "SpiecsEngine/vendor/ImGuizmo"]
-	path = SpiecsEngine/vendor/ImGuizmo
+[submodule "SpicesTest/vendor/googletest"]
+	path = SpicesTest/vendor/googletest
+	url = https://github.com/Spices/googletest
+[submodule "SpicesEngine/vendor/glm"]
+	path = SpicesEngine/vendor/glm
+	url = https://github.com/Spices/glm
+[submodule "SpicesEngine/vendor/ImGuizmo"]
+	path = SpicesEngine/vendor/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo
-[submodule "SpiecsEngine/vendor/tracy"]
-	path = SpiecsEngine/vendor/tracy
+[submodule "SpicesEngine/vendor/tracy"]
+	path = SpicesEngine/vendor/tracy
 	url = https://github.com/wolfpld/tracy
-[submodule "SpiecsEngine/vendor/IconFontCppHeaders"]
-	path = SpiecsEngine/vendor/IconFontCppHeaders
+[submodule "SpicesEngine/vendor/IconFontCppHeaders"]
+	path = SpicesEngine/vendor/IconFontCppHeaders
 	url = https://github.com/juliettef/IconFontCppHeaders
