@@ -13,3 +13,18 @@
 [submodule "SpicesEngine/vendor/IconFontCppHeaders"]
 	path = SpicesEngine/vendor/IconFontCppHeaders
 	url = https://github.com/juliettef/IconFontCppHeaders
+[submodule "SpicesEngine/vendor/imgui"]
+	path = SpicesEngine/vendor/imgui
+	url = https://github.com/spices-lib/imgui
+[submodule "SpicesEngine/vendor/yaml-cpp"]
+	path = SpicesEngine/vendor/yaml-cpp
+	url = https://github.com/spices-lib/yaml-cpp
+[submodule "SpicesEngine/vendor/implot"]
+	path = SpicesEngine/vendor/implot
+	url = https://github.com/spices-lib/implot
+[submodule "SpicesTest/vendor/googletest"]
+	path = SpicesTest/vendor/googletest
+	url = https://github.com/spices-lib/googletest
+[submodule "SpicesEngine/vendor/glm"]
+	path = SpicesEngine/vendor/glm
+	url = https://github.com/spices-lib/glm
