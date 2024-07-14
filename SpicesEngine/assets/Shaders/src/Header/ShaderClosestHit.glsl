@@ -58,6 +58,13 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices {
 };
 
 /**
+* @brief Buffer of all Material Parameters in World.
+*/
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialParameters { 
+    MaterialParameter i[]; 
+};
+
+/**
 * @brief Acceleration Structure.
 */
 layout(set = 1, binding = 0) uniform accelerationStructureEXT topLevelAS;
@@ -70,16 +77,23 @@ layout(set = 1, binding = 2, scalar) readonly buffer MeshDescBuffer {
 } meshDescBuffer;
 
 /**
+* @brief MeshDescription Buffer of all Mesh in World.
+*/
+layout(set = 1, binding = 3, scalar) readonly buffer MaterialParameterBuffer { 
+    uint64_t i[];           /* @brief MaterialParameter Address. */
+} materialParameterBuffer;
+
+/**
 * @brief DirectionalLight Buffer in World.
 */
-layout(set = 1, binding = 3, scalar) readonly buffer DLightBuffer   { 
+layout(set = 1, binding = 4, scalar) readonly buffer DLightBuffer   { 
     DirectionalLight i[];   /* @see DirectionalLight. */
 } dLightBuffer;
 
 /**
 * @brief PointLight Buffer in World.
 */
-layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   { 
+layout(set = 1, binding = 5, scalar) readonly buffer PLightBuffer   { 
     PointLight i[];         /* @see PointLight. */
 } pLightBuffer;
 
@@ -94,6 +108,12 @@ layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   {
 * @see Vertex.
 */
 Vertex UnPackVertex(in vec3 weight);
+
+/**
+* @brief Unpack Material Parameter from MaterialParameterBuffer.
+* @return Returns the Material Parameter.
+*/
+MaterialParameter UnPackMaterialParameter();
 
 /**
 * @brief Init Material Attributes.
@@ -137,6 +157,11 @@ void main()
     Vertex vt = UnPackVertex(attribs);
     
     /**
+    * @brief Get material parameter data.
+    */
+    MaterialParameter parameter = UnPackMaterialParameter();
+    
+    /**
     * @brief Init material attributes.
     */
     MaterialAttributes materialAttributes = InitMaterialAttributes(vt);
@@ -144,7 +169,7 @@ void main()
     /**
     * @brief Get material specific attributes.
     */
-    GetMaterialAttributes(vt, materialAttributes);
+    GetMaterialAttributes(vt, parameter, materialAttributes);
 
     /**
     * @brief Reverse normal in back side.
@@ -245,6 +270,15 @@ Vertex UnPackVertex(in vec3 weight)
     vt.texCoord   = uv;
     
     return vt;
+}
+
+MaterialParameter UnPackMaterialParameter()
+{
+    /**
+    * @brief Access Buffer by GPU address.
+    */
+    uint64_t address = materialParameterBuffer.i[gl_InstanceCustomIndexEXT];
+    return MaterialParameters(address);
 }
 
 MaterialAttributes InitMaterialAttributes(in Vertex vt)

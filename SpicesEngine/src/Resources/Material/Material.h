@@ -47,7 +47,7 @@ namespace Spices {
 		uint32_t binding;
 
 		/**
-		* @breif Which arrayindex this texture will use.
+		* @breif Which array index this texture will use.
 		*/
 		uint32_t index;
 	};
@@ -80,7 +80,7 @@ namespace Spices {
 	
 	/**
 	* @brief Material Class.
-	* This class contains a banch of parameter and shader, alse descriptor.
+	* This class contains a branch of parameter and shader, also descriptor.
 	*/
 	class Material
 	{
@@ -94,7 +94,8 @@ namespace Spices {
 				Image,
 			};
 			
-			DescriptorSetBindingInfoHelp() {};
+			DescriptorSetBindingInfoHelp() = default;
+			virtual ~DescriptorSetBindingInfoHelp() = default;
 			
 			uint32_t count = 0;
 			size_t size = 0;
@@ -106,11 +107,11 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		Material() {};
+		Material() = default;
 
 		/**
 		* @brief Constructor Function.
-		* Dserialize immediatelly.
+		* Deserialize immediately.
 		* Usually call it.
 		* @param[in] materialPath Material Path in disk.
 		*/
@@ -128,15 +129,15 @@ namespace Spices {
 		void Serialize();
 
 		/**
-		* @brief Dserialize the data from a disk file(.material) to this class.
+		* @brief Deserialize the data from a disk file(.material) to this class.
 		* @todo Finish it.
 		*/
-		void Dserialize();
+		void Deserialize();
 
-		inline const std::string& GetName() { return m_MaterialPath; };
+		const std::string& GetName() { return m_MaterialPath; }
 
 		/**
-		* @brief Get material material descriptorset.
+		* @brief Get material material descriptor set.
 		* @return Returns the material descriptorSet.
 		* @note Must call BuildMaterial() first.
 		*/
@@ -153,22 +154,24 @@ namespace Spices {
 		* @brief Get material shader path.
 		* @return Returns all the stage shader path that needed.
 		*/
-		inline const std::unordered_map<std::string, std::vector<std::string>>& GetShaderPath() { return m_Shaders; };
+		const std::unordered_map<std::string, std::vector<std::string>>& GetShaderPath() { return m_Shaders; }
 
 		/**
 		* @brief Get material texture parameters.
 		* @return Returns the material texture parameters.
 		*/
-		inline std::unordered_map<std::string, TextureParam>& GetTextureParams() { return m_TextureParams; };
+		std::unordered_map<std::string, TextureParam>& GetTextureParams() { return m_TextureParams; }
 
 		/**
 		* @brief Get material constant parameters.
 		* @return Returns the material constant parameters.
 		*/
-		inline scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; };
+		scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; }
 
+		uint64_t GetConstantParamsAddress();
+		
 		/**
-		* @brief This interface need to be overwitten by specific material.
+		* @brief This interface need to be overwritten by specific material.
 		* It defines how we build texture and descriptor set.
 		* @todo empty texture.
 		*/
@@ -193,22 +196,22 @@ namespace Spices {
 
 		/**
 		* @brief Shader path
-		* 0 - vertshader
-		* 1 - fragshader
-		* ... othershader
-		* Key: shaderusage, Value: shaderfilename.
+		* 0 - vertex shader
+		* 1 - fragment shader
+		* ... other shader
+		* Key: shader usage, Value: shader file name.
 		*/
 		std::unordered_map<std::string, std::vector<std::string>> m_Shaders;
 
 		/**
 		* @brief Texture parameters.
-		* Key: paramname, Value: paramvalue.
+		* Key: parameter name, Value: parameter value.
 		*/
 		std::unordered_map<std::string, TextureParam> m_TextureParams;
 
 		/**
 		* @brief Constant parameters.
-		* Key: paramname, Value: paramvalue.
+		* Key: parameter name, Value: parameter value.
 		*/
 		scl::linked_unordered_map<std::string, ConstantParam> m_ConstantParams;
 

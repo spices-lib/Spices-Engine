@@ -383,24 +383,8 @@ namespace Spices {
 		*/
 		pLightBuffer[index].intensity = -1000.0f;
 	}
-
-	Renderer::RenderBehaveBuilder::RenderBehaveBuilder(
-		Renderer*         renderer       , 
-		uint32_t          currentFrame   , 
-		uint32_t          currentImage   ,
-		bool              isNonGraphicRender 
-	)
-		: m_Renderer    ( renderer       )
-		, m_CurrentFrame( currentFrame   )
-		, m_CurrentImage( currentImage   )
-	{
-		if (isNonGraphicRender)
-		{
-			m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
-		}
-	}
-
-	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint) const
+	
+	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -511,8 +495,70 @@ namespace Spices {
 		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
 	}
+	
+	Renderer::RayTracingRenderBehaveBuilder::RayTracingRenderBehaveBuilder(
+		Renderer* renderer     ,
+		uint32_t  currentFrame ,
+		uint32_t  currentImage
+	)
+		:RenderBehaveBuilder(renderer, currentFrame, currentImage)
+	{
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetInstanceProcAddr(renderer->m_VulkanState.m_Instance, "vkCmdTraceRaysKHR"));
+	}
 
-	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint) const
+	void Renderer::RayTracingRenderBehaveBuilder::Recording(const std::string& caption)
+	{
+		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], caption);
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::Endrecording()
+	{
+		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint bindPoint)
+	{
+		RenderBehaveBuilder::BindPipeline(materialName, bindPoint);
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	{
+		RenderBehaveBuilder::BindDescriptorSet(infos, bindPoint);
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
+	{
+		RenderBehaveBuilder::BindDescriptorSet(infos, name, bindPoint);
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::TraceRays(
+		const VkStridedDeviceAddressRegionKHR* rgenRegion ,
+		const VkStridedDeviceAddressRegionKHR* missRegion ,
+		const VkStridedDeviceAddressRegionKHR* hitRegion  ,
+		const VkStridedDeviceAddressRegionKHR* callRegion
+	)
+	{
+		const uint32_t width = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
+		const uint32_t height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
+
+		/*
+		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
+		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
+		*/
+		vkCmdTraceRaysKHR(
+			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			rgenRegion,
+			missRegion,
+			hitRegion,
+			callRegion,
+			width,
+			height,
+			1
+		);
+	}
+
+	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -522,7 +568,7 @@ namespace Spices {
 		BindDescriptorSet(infos, ss.str(), bindPoint);
 	}
 
-	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint) const
+	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 

@@ -543,14 +543,16 @@ namespace Spices {
 			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			* @param[in] currentFrame Passed from FrameInfo.
 			* @param[in] currentImage Passed from FrameInfo.
-			* @param[in] isNonGraphicRender set to true if cmd is not use with a graphic pipeline.
 			*/
 			RenderBehaveBuilder(
 				Renderer* renderer     , 
 				uint32_t  currentFrame , 
-				uint32_t  currentImage ,
-				bool      isNonGraphicRender = false
-			);
+				uint32_t  currentImage
+			)
+				: m_Renderer(renderer)
+				, m_CurrentFrame(currentFrame)
+				, m_CurrentImage(currentImage)
+			{}
 
 			/**
 			* @brief Destructor Function.
@@ -563,7 +565,7 @@ namespace Spices {
 			* @param[in] materialName also pipelineName.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS) const;
+			virtual void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 			/**
 			* @brief DynamicState Set Viewport and Scissor.
@@ -576,10 +578,10 @@ namespace Spices {
 			* @param[in] infos DescriptorSetInfo.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void BindDescriptorSet(
-				const DescriptorSetInfo&   infos                                       , 
-				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
-			) const;
+			virtual void BindDescriptorSet(
+				const DescriptorSetInfo&   infos                                   , 
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
 
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo and name.
@@ -588,11 +590,11 @@ namespace Spices {
 			* @param[in] name The material name.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void BindDescriptorSet(
+			virtual void BindDescriptorSet(
 				const DescriptorSetInfo&   infos                                       , 
-				const std::string&   name                                        , 
-				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
-			) const;
+				const std::string&         name                                        , 
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
 
 			/******************************Update By Value**********************************************************/
 
@@ -666,7 +668,7 @@ namespace Spices {
 			*/
 			void EndRenderPass() const;
 
-		private:
+		protected:
 
 			/**
 			* @brief Specific Renderer pointer.
@@ -694,6 +696,90 @@ namespace Spices {
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 		};
 
+		/**
+		* @brief This class helps to bind pipeline and bind buffer.
+		* Specific for RayTracing Renderer.
+		* Only instanced during Render().
+		*/
+		class RayTracingRenderBehaveBuilder : public RenderBehaveBuilder
+		{
+		public:
+			
+			/**
+			* @brief Constructor Function.
+			* Bind pipeline and all buffer type descriptor set.
+			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			* @param[in] currentFrame Passed from FrameInfo.
+			* @param[in] currentImage Passed from FrameInfo.
+			*/
+			RayTracingRenderBehaveBuilder(
+				Renderer* renderer     , 
+				uint32_t  currentFrame , 
+				uint32_t  currentImage
+			);
+
+			/**
+			* @brief Destructor Function.
+			*/
+			virtual ~RayTracingRenderBehaveBuilder() override = default;
+
+			void Recording(const std::string& caption);
+			void Endrecording();
+			
+			/**
+			* @brief Bind the pipeline created by CreatePipeline().
+			* Called on RenderBehaveBuilder instanced.
+			* @param[in] materialName also pipelineName.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR) override;
+			
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo.
+			* For Binding a Renderer DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSet(
+				const DescriptorSetInfo&   infos                                       , 
+				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+			) override;
+
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo and name.
+			* For Binding a Material DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] name The material name.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSet(
+				const DescriptorSetInfo&   infos                                       , 
+				const std::string&   name                                              , 
+				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+			) override;
+
+			/**
+			* @brief Call  vkCmdTraceRaysKHR here.
+			* @param[in] rgenRegion RayGen Shader Group.
+			* @param[in] missRegion Miss Shader Group.
+			* @param[in] hitRegion Hit Shader Group.
+			* @param[in] callRegion Callable Shader Group.
+			*/
+			void TraceRays(
+				const VkStridedDeviceAddressRegionKHR* rgenRegion,
+				const VkStridedDeviceAddressRegionKHR* missRegion,
+				const VkStridedDeviceAddressRegionKHR* hitRegion,
+				const VkStridedDeviceAddressRegionKHR* callRegion
+			);
+
+		private:
+			
+			/**
+			* @brief Function Pointer of vkCmdTraceRaysKHR.
+			*/
+			PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
+		};
+		
 	protected:
 		
 		/**

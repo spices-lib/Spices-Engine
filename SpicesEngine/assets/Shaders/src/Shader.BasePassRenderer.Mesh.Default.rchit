@@ -14,9 +14,14 @@
 
 /*****************************************************************************************/
 
+struct MaterialParameter
+{
+    
+}
+
 /******************************************Functions**************************************/
 
-void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes)
+void GetMaterialAttributes(in Vertex vt, in MaterialParameter param, inout MaterialAttributes attributes)
 {  
     attributes.albedo    = vec3(0.5f);
     attributes.roughness = 1.0f;

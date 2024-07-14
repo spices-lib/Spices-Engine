@@ -112,8 +112,6 @@ namespace Spices {
 		*/
 		const std::string& GetPackType() const { return m_PackType; }
 
-#ifdef RENDERAPI_VULKAN
-
 		/**
 		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS.
 		* @return Returns VulkanRayTracing::BlasInput.
@@ -131,8 +129,6 @@ namespace Spices {
 		* @return Returns the IndicesBuffer Video memory address.
 		*/
 		VkDeviceAddress GetIndicesBufferAddress() const { return m_IndicesBuffer->GetAddress(); }
-
-#endif
 
 	protected:
 

@@ -43,8 +43,6 @@ namespace Spices {
 		
 		return m_MaterialHandle.value();
 	}
-	
-#ifdef RENDERAPI_VULKAN
 
 	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR() const
 	{
@@ -97,8 +95,6 @@ namespace Spices {
 
 		return input;
 	}
-
-#endif
 
 	void MeshPack::CreateBuffer()
 	{

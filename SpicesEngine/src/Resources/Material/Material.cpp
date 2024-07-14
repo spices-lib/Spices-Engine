@@ -38,7 +38,7 @@ namespace Spices {
 		}
 	}
 
-	void Material::Dserialize()
+	void Material::Deserialize()
 	{
 		if (m_MaterialPath.empty())
 		{

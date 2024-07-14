@@ -26,7 +26,6 @@ namespace Spices {
 		m_VulkanRayTracing = std::make_unique<VulkanRayTracing>(m_VulkanState);
 
 		vkGetRayTracingShaderGroupHandlesKHR  = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesKHR>(vkGetInstanceProcAddr(vulkanState.m_Instance, "vkGetRayTracingShaderGroupHandlesKHR"));
-		vkCmdTraceRaysKHR                     = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCmdTraceRaysKHR"));
 	}
 
 	void RayTracingRenderer::CreateRendererPass()
@@ -47,8 +46,9 @@ namespace Spices {
 		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)   /* @brief Acceleration Structure.         */
 		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)      /* @brief Ray Tracing Output Image.       */
 		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(1, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)               /* @brief World Mesh Buffer.              */
-		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)       /* @brief World Directional Light Buffer. */
-		.AddStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)             /* @brief World PointLight Buffer.        */
+		.AddStorageBuffer<RayTracingR::MaterialParameterBuffer>(1, 3, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)               /* @brief World Mesh Buffer.              */
+		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 4, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)       /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer<RayTracingR::PointLightBuffer>(1, 5, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)             /* @brief World PointLight Buffer.        */
 		.AddTexture<Texture2D>(2, 0, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR, {"interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg"})  /* @brief temp */
 		.AddTexture<Texture2D>(2, 1, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr "})                                    /* @brief temp */
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
@@ -109,45 +109,33 @@ namespace Spices {
 
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
-		RenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex, true };
-
-		VulkanDebugUtils::BeginLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], "RayTracing");
-
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
-
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName("RayTracing"), VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
+		CreateTopLevelAS(frameInfo, true);
 		
-		builder.BindPipeline("RayTracingRenderer.RayTracing.Default", VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR);
+		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+
+		builder.Recording("RayTracing");
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("RayTracing"));
+		
+		builder.BindPipeline("RayTracingRenderer.RayTracing.Default");
 
 		builder.UpdateStorageBuffer(1, 2, m_DescArray.get());
+
+		builder.UpdateStorageBuffer(1, 3, m_ParamArray.get());
 		
-		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 4, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
 		});
 		
-		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(1, 5, [&](auto& ssbo) {
 			GetPointLight(frameInfo, ssbo.lights);
 		});
 
-		uint32_t width = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
-		uint32_t height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
+		builder.TraceRays(&m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion);
 
-		/*
-		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
-		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
-		*/
-		vkCmdTraceRaysKHR(
-			m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex],
-			&m_RgenRegion,
-			&m_MissRegion,
-			&m_HitRegion,
-			&m_CallRegion,
-			width,
-			height,
-			1
-		);
-
-		VulkanDebugUtils::EndLabel(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+		builder.Endrecording();
 	}
 
 	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo)
@@ -180,7 +168,7 @@ namespace Spices {
 		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR);
 	}
 
-	void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo)
+	void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo, bool update)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -188,6 +176,7 @@ namespace Spices {
 
 		int index = 0;
 		m_DescArray = std::make_unique<RayTracingR::MeshDescBuffer>();
+		m_ParamArray = std::make_unique<RayTracingR::MaterialParameterBuffer>();
 		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
@@ -207,6 +196,7 @@ namespace Spices {
 
 				m_DescArray->descs[index].vertexAddress = pair.second->GetVerticesBufferAddress();
 				m_DescArray->descs[index].indexAddress  = pair.second->GetIndicesBufferAddress();
+				m_ParamArray->params[index] = pair.second->GetMaterial()->GetConstantParamsAddress();
 				
 				index += 1;
 			}
@@ -215,7 +205,13 @@ namespace Spices {
 		/**
 		* @brief Build TLAS.
 		*/
-		m_VulkanRayTracing->BuildTLAS(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR);
+		m_VulkanRayTracing->BuildTLAS(
+			tlas,
+			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR |
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
+			update
+		);
 	}
 	
 	void RayTracingRenderer::CreateRTShaderBindingTable(FrameInfo& frameInfo)

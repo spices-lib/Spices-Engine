@@ -19,6 +19,11 @@ namespace Spices {
 			std::array<SpicesShader::MeshDesc, MESHBUFFERMAXNUM> descs;
 		};
 
+		struct MaterialParameterBuffer
+		{
+			std::array<uint64_t, MESHBUFFERMAXNUM> params;
+		};
+		
 		struct DirectionalLightBuffer
 		{
 			std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM> lights;
@@ -109,7 +114,7 @@ namespace Spices {
 		* @brief Create TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
 		*/
-		void CreateTopLevelAS(FrameInfo& frameInfo);
+		void CreateTopLevelAS(FrameInfo& frameInfo, bool update = false);
 
 		/**
 		* @brief Create Shader Binding Table.
@@ -133,8 +138,8 @@ namespace Spices {
 		VkStridedDeviceAddressRegionKHR m_CallRegion{};
 
 		PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
-		PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
 
 		std::unique_ptr<RayTracingR::MeshDescBuffer> m_DescArray;
+		std::unique_ptr<RayTracingR::MaterialParameterBuffer> m_ParamArray;
 	};
 }

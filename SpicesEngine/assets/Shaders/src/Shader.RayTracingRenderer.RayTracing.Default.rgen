@@ -98,7 +98,7 @@ void main()
 
     /**
     * @brief Do accumulation over time.
-    */ 
+    */
     if(view.stableFrames > 0)
     {
         float a         = 1.0f / float(view.stableFrames + 1);
