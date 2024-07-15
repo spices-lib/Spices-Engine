@@ -46,9 +46,8 @@ namespace Spices {
 		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)   /* @brief Acceleration Structure.         */
 		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)      /* @brief Ray Tracing Output Image.       */
 		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(1, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)               /* @brief World Mesh Buffer.              */
-		.AddStorageBuffer<RayTracingR::MaterialParameterBuffer>(1, 3, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)               /* @brief World Mesh Buffer.              */
-		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 4, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)       /* @brief World Directional Light Buffer. */
-		.AddStorageBuffer<RayTracingR::PointLightBuffer>(1, 5, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)             /* @brief World PointLight Buffer.        */
+		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)       /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)             /* @brief World PointLight Buffer.        */
 		.AddTexture<Texture2D>(2, 0, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR, {"interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg"})  /* @brief temp */
 		.AddTexture<Texture2D>(2, 1, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr "})                                    /* @brief temp */
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
@@ -122,14 +121,12 @@ namespace Spices {
 		builder.BindPipeline("RayTracingRenderer.RayTracing.Default");
 
 		builder.UpdateStorageBuffer(1, 2, m_DescArray.get());
-
-		builder.UpdateStorageBuffer(1, 3, m_ParamArray.get());
 		
-		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 4, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
 		});
 		
-		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(1, 5, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, [&](auto& ssbo) {
 			GetPointLight(frameInfo, ssbo.lights);
 		});
 
@@ -176,7 +173,6 @@ namespace Spices {
 
 		int index = 0;
 		m_DescArray = std::make_unique<RayTracingR::MeshDescBuffer>();
-		m_ParamArray = std::make_unique<RayTracingR::MaterialParameterBuffer>();
 		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
@@ -199,7 +195,7 @@ namespace Spices {
 
 				m_DescArray->descs[index].vertexAddress = v->GetVerticesBufferAddress();
 				m_DescArray->descs[index].indexAddress  = v->GetIndicesBufferAddress();
-				m_ParamArray->params[index] = v->GetMaterial()->GetConstantParamsAddress();
+				m_DescArray->descs[index].materialParameterAddress  = v->GetMaterial()->GetMaterialParamsAddress();
 				
 				index += 1;
 				return false;

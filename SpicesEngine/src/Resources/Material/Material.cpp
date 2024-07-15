@@ -102,7 +102,7 @@ namespace Spices {
 			layouts[v.set][v.binding].type = DescriptorSetBindingInfoHelp::Type::Buffer;                      // set to buffer type.
 			return false;
 		});
-
+		
 		/**
 		* @brief Container like that: Set - [ binding - [imageInfo0, imageInfo1, imageInfo2...]].
 		*/
@@ -160,7 +160,7 @@ namespace Spices {
 			/**
 			* @brief Create the key to map, and add element to value.
 			*/
-			m_Buffermemoryblocks[int2].add_element(k, v.paramType);
+			m_Buffermemoryblocks.find_value(int2)->add_element(k, v.paramType);
 
 			return false;
 		});
@@ -198,19 +198,32 @@ namespace Spices {
 		}
 
 		/**
+		* @brief Create a buffer to store all address and index.
+		*/
+		uint64_t size = m_Buffers.size() * sizeof(uint64_t); // + m_TextureParams.size() * sizeof(uint);
+		m_MaterialParameterBuffer = std::make_unique<VulkanBuffer>(
+			VulkanRenderBackend::GetState(),
+			size,
+			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT |
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+		);
+		
+		/**
 		* @brief Iter m_Buffermemoryblocks for filling data on m_ConstantParams.
 		*/
-		for (auto& pair : m_Buffermemoryblocks)
-		{
+		int index = 0;
+		m_Buffermemoryblocks.for_each([&](const UInt2& k, scl::runtime_memory_block& v){
+			
 			/**
 			* @brief Malloc the memory to this container.
 			*/
-			pair.second.build();
+			v.build();
 
 			/**
 			* @brief Iter the block's element and filling data.
 			*/
-			pair.second.for_each([&](const std::string& name, void* pt) {
+			v.for_each([&](const std::string& name, void* pt) {
 
 				/**
 				* @brief Get constantParam by param's name.
@@ -242,13 +255,20 @@ namespace Spices {
 			/**
 			* @brief Write the memeoryblock's data to m_Buffers.
 			*/
-			m_Buffers[pair.first]->WriteToBuffer(pair.second.get_addr());
+			m_Buffers[k]->WriteToBuffer(v.get_addr());
 
 			/**
 			* @brief Flush the m_Buffers's memory.
 			*/
-			m_Buffers[pair.first]->Flush();
-		}
+			m_Buffers[k]->Flush();
+
+			m_MaterialParameterBuffer->WriteToBuffer(&m_Buffers[k]->GetAddress(), sizeof(uint64_t), index * sizeof(uint64_t));
+			m_MaterialParameterBuffer->Flush();
+
+			index++;
+
+			return false;
+		});
 
 		/**
 		* @brief Iter layouts set for creating descriptorset.

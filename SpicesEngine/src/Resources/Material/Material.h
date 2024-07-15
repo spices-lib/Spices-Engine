@@ -168,7 +168,7 @@ namespace Spices {
 		*/
 		scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; }
 
-		uint64_t GetConstantParamsAddress();
+		uint64_t GetMaterialParamsAddress() { return m_MaterialParameterBuffer->GetAddress(); };
 		
 		/**
 		* @brief This interface need to be overwritten by specific material.
@@ -225,6 +225,11 @@ namespace Spices {
 		* @brief m_Buffers's c++ data container.
 		* Key: set, Value: scl::runtime_memory_block.
 		*/
-		std::unordered_map<UInt2, scl::runtime_memory_block> m_Buffermemoryblocks;
+		scl::linked_unordered_map<UInt2, scl::runtime_memory_block> m_Buffermemoryblocks;
+
+		/*
+		* @brief Buffer takes all textures index and all constant params buffer address. 
+		*/
+		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer; 
 	};
 }

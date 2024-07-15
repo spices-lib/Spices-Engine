@@ -18,11 +18,6 @@ namespace Spices {
 		{
 			std::array<SpicesShader::MeshDesc, MESHBUFFERMAXNUM> descs;
 		};
-
-		struct MaterialParameterBuffer
-		{
-			std::array<uint64_t, MESHBUFFERMAXNUM> params;
-		};
 		
 		struct DirectionalLightBuffer
 		{
@@ -140,6 +135,5 @@ namespace Spices {
 		PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
 
 		std::unique_ptr<RayTracingR::MeshDescBuffer> m_DescArray;
-		std::unique_ptr<RayTracingR::MaterialParameterBuffer> m_ParamArray;
 	};
 }

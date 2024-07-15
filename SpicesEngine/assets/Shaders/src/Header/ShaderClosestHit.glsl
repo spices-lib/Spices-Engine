@@ -77,13 +77,6 @@ layout(set = 1, binding = 2, scalar) readonly buffer MeshDescBuffer {
 } meshDescBuffer;
 
 /**
-* @brief MeshDescription Buffer of all Mesh in World.
-*/
-layout(set = 1, binding = 3, scalar) readonly buffer MaterialParameterBuffer { 
-    uint64_t i[];           /* @brief MaterialParameter Address. */
-} materialParameterBuffer;
-
-/**
 * @brief DirectionalLight Buffer in World.
 */
 layout(set = 1, binding = 4, scalar) readonly buffer DLightBuffer   { 
@@ -103,7 +96,7 @@ layout(set = 1, binding = 5, scalar) readonly buffer PLightBuffer   {
 
 /**
 * @brief Unpack Vertex from MeshDescBuffer.
-* @param[in] weight, attribs.
+* @param[in] weight attribs.
 * @return Returns the Vertex ray intersected.
 * @see Vertex.
 */
@@ -114,6 +107,12 @@ Vertex UnPackVertex(in vec3 weight);
 * @return Returns the Material Parameter.
 */
 MaterialParameter UnPackMaterialParameter();
+
+/**
+* @brief Explain Material Parameter to split struct and texture.
+* @param[in] param the MaterialParameter needs to be explained.
+*/
+void ExplainMaterialParameter(in MaterialParameter param);
 
 /**
 * @brief Init Material Attributes.
@@ -162,6 +161,11 @@ void main()
     MaterialParameter parameter = UnPackMaterialParameter();
     
     /**
+    * @brief Explain Material.
+    */
+    ExplainMaterialParameter(parameter);
+    
+    /**
     * @brief Init material attributes.
     */
     MaterialAttributes materialAttributes = InitMaterialAttributes(vt);
@@ -169,7 +173,7 @@ void main()
     /**
     * @brief Get material specific attributes.
     */
-    GetMaterialAttributes(vt, parameter, materialAttributes);
+    GetMaterialAttributes(vt, materialAttributes);
 
     /**
     * @brief Reverse normal in back side.
@@ -277,8 +281,10 @@ MaterialParameter UnPackMaterialParameter()
     /**
     * @brief Access Buffer by GPU address.
     */
-    uint64_t address = materialParameterBuffer.i[gl_InstanceCustomIndexEXT];
-    return MaterialParameters(address);
+    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
+    MaterialParameters params = MaterialParameters(desc.materialParameterAddress);
+    
+    return params.i[0];
 }
 
 MaterialAttributes InitMaterialAttributes(in Vertex vt)
