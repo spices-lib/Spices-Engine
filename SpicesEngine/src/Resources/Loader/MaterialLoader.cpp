@@ -29,7 +29,7 @@ namespace Spices {
 	const std::string defaultBinShaderPath = SPICES_ENGINE_ASSETS_PATH + "Shaders/spv/";
 
 	/**
-	* @brief Const variable: Material File Confirm header staer.
+	* @brief Const variable: Material File Confirm header start.
 	*/
 	const char LoaderSignSatrt[100] = "#ItisSpicesMaterialSign: DataStart";
 
@@ -40,7 +40,7 @@ namespace Spices {
 
 	/**
 	* @brief Serialze Shader Config.
-	* @param[in out] out YAML Emitter.
+	* @param[in,out] out YAML Emitter.
 	* @param[in] shaderStage What Stage shader use.
 	* @param[in] shaderPath Shader path(short path).
 	*/
@@ -52,7 +52,7 @@ namespace Spices {
 
 	/**
 	* @brief Serialze Texture Config.
-	* @param[in out] out YAML Emitter.
+	* @param[in,out] out YAML Emitter.
 	* @param[in] name Texture name.
 	* @param[in] param Texture parameter.
 	*/

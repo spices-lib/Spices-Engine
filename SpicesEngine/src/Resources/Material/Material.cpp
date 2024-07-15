@@ -226,7 +226,7 @@ namespace Spices {
 				}
 				else if (ref.paramType == "float3")
 				{
-					*static_cast<glm::vec4*>(pt) = glm::vec4(std::any_cast<glm::vec3>(ref.paramValue), 0.0f);
+					*static_cast<glm::vec3*>(pt) = std::any_cast<glm::vec3>(ref.paramValue);
 				}
 				else if (ref.paramType == "float2")
 				{
