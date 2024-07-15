@@ -103,7 +103,8 @@ namespace Spices {
 								{
 									SPICES_PROFILE_ZONEN("MeshComponent Mesh Pack Type");
 									
-									std::string type =  m_Mesh->GetPacks()[static_cast<uint32_t>(i)]->GetPackType();
+									auto meshPack = *m_Mesh->GetPacks().find_value(static_cast<uint32_t>(i));
+									std::string type = meshPack->GetPackType();
 									ImGui::CenteredText("Type", textSize);
 									ImGui::SameLine(2.0f * ImGuiH::GetLineItemSize().x);
 									char buffer2[256] = {};
@@ -221,7 +222,8 @@ namespace Spices {
 									
 									char buffer1[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-									ImGui::InputTextWithHint("##_2", m_Mesh->GetPacks()[i]->GetMaterial()->GetName().c_str(), buffer1, sizeof(buffer1));
+									auto meshPack = *m_Mesh->GetPacks().find_value(i);
+									ImGui::InputTextWithHint("##_2", meshPack->GetMaterial()->GetName().c_str(), buffer1, sizeof(buffer1));
 									ImGui::PopItemWidth();
 								}
 								

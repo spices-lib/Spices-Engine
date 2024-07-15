@@ -57,7 +57,7 @@ namespace Spices {
 			/**
 			* @brief The packs that used for create mesh.
 			*/
-			std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
+			scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
 
 			/**
 			* @brief The packs nums.
@@ -72,7 +72,7 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] meshPacks The meshpack that used for create mesh.
 		*/
-		Mesh(std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPacks);
+		Mesh(scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPacks);
 
 		/**
 		* @brief Destructor Function.
@@ -91,9 +91,7 @@ namespace Spices {
 		* @brief Get m_Pack.
 		* @return Returns m_Pack.
 		*/
-		std::unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; }
-
-#ifdef RENDERAPI_VULKAN
+		inline scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; }
 
 		/**
 		* @brief Create all meshpack AS Input and return it.
@@ -107,30 +105,30 @@ namespace Spices {
 		*/
 		void AddMaterialToHitGroup(std::unordered_map<std::string, uint32_t>& hitGroup);
 
-#endif
-
 	private:
 
 		/**
 		* @brief All packs in this mesh.
 		*/
-		std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
+		scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
 	};
 
 	template<typename F>
 	inline void Mesh::Draw(VkCommandBuffer& commandBuffer, F func)
 	{
-		for (auto& pair : m_Pack)
-		{
+		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+
 			/**
 			* @brief This function is used for bind material parameters.
 			* @param[in] meshpackId MeshPack index of array.
 			* @param[in] material MeshPack's material.
 			*/
-			func(pair.first, pair.second->GetMaterial());
+			func(k, v->GetMaterial());
 
-			pair.second->OnBind(commandBuffer);
-			pair.second->OnDraw(commandBuffer);
-		}
+			v->OnBind(commandBuffer);
+			v->OnDraw(commandBuffer);
+
+			return false;
+		});
 	}
 }

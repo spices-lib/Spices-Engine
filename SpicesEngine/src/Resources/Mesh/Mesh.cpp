@@ -9,35 +9,35 @@
 
 namespace Spices {
 
-	Mesh::Mesh(std::unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPack)
+	Mesh::Mesh(scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPack)
 		: m_Pack(meshPack)
 	{}
-
-#ifdef RENDERAPI_VULKAN
 
 	std::vector<VulkanRayTracing::BlasInput> Mesh::CreateMeshPackASInput()
 	{
 		std::vector<VulkanRayTracing::BlasInput> allBlas;
 		allBlas.reserve(m_Pack.size());
 
-		for (auto& pair : m_Pack)
-		{
-			auto blas = pair.second->MeshPackToVkGeometryKHR();
+		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+			
+			auto blas = v->MeshPackToVkGeometryKHR();
 			allBlas.emplace_back(blas);
-		}
+
+			return false;
+		});
 
 		return allBlas;
 	}
 
 	void Mesh::AddMaterialToHitGroup(std::unordered_map<std::string, uint32_t>& hitGroup)
 	{
-		for (auto& pair : m_Pack)
-		{
-			auto& stages = pair.second->GetMaterial()->GetShaderPath("rchit");
+		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+
+			auto& stages = v->GetMaterial()->GetShaderPath("rchit");
 			if (stages.empty())
 			{
 				std::stringstream ss;
-				ss << "Material: " << pair.second->GetMaterial()->GetName() << " do not has vaild rchit shader.";
+				ss << "Material: " << v->GetMaterial()->GetName() << " do not has vaild rchit shader.";
 
 				SPICES_CORE_ERROR(ss.str());
 			}
@@ -46,22 +46,22 @@ namespace Spices {
 			{
 				hitGroup[stages[0]] = static_cast<uint32_t>(hitGroup.size());
 
-				pair.second->SetMaterialHandle(hitGroup[stages[0]]);
+				v->SetHitShaderHandle(hitGroup[stages[0]]);
 			}
 			else
 			{
-				pair.second->SetMaterialHandle(hitGroup[stages[0]]);
+				v->SetHitShaderHandle(hitGroup[stages[0]]);
 			}
-		}
-	}
 
-#endif
+			return false;
+		});
+	}
 
 	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)
 	{
 		meshPack->OnCreatePack();
 
-		m_Pack[m_PackNums] = meshPack;
+		m_Pack.push_back(m_PackNums, meshPack);
 		m_PackNums++;
 		return *this;
 	}

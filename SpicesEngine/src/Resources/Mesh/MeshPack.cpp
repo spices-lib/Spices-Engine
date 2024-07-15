@@ -31,9 +31,9 @@ namespace Spices {
 		m_Material->BuildMaterial();
 	}
 
-	uint32_t MeshPack::GetMaterialHandle() const
+	uint32_t MeshPack::GetHitShaderHandle() const
 	{
-		if(!m_MaterialHandle.has_value())
+		if(!m_HitShaderHandle.has_value())
 		{
 			std::stringstream ss;
 			ss << "MeshPack do not has a vaild material handle.";
@@ -41,7 +41,7 @@ namespace Spices {
 			SPICES_CORE_ERROR(ss.str());
 		}
 		
-		return m_MaterialHandle.value();
+		return m_HitShaderHandle.value();
 	}
 
 	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR() const

@@ -22,7 +22,7 @@ namespace Spices {
 		/**
 		* @breif Call Dserialize() while in Constructor.
 		*/
-		Dserialize();
+		Deserialize();
 	}
 
 	Material::~Material()

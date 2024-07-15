@@ -71,16 +71,16 @@ namespace Spices {
 		std::shared_ptr<Material> GetMaterial() { return m_Material; }
 
 		/**
-		* @brief Set Material Handle.
+		* @brief Set hit shader Handle.
 		* @param[in] handle the material handle.
 		*/
-		void SetMaterialHandle(uint32_t handle) { m_MaterialHandle = handle; }
+		void SetHitShaderHandle(uint32_t handle) { m_HitShaderHandle = handle; }
 
 		/**
-		* @brief Get Material Handle, which accessed by ray gen shader.
+		* @brief Get Hit Shader Handle, which accessed by ray gen shader.
 		* @return Returns the material handle.
 		*/
-		uint32_t GetMaterialHandle() const;
+		uint32_t GetHitShaderHandle() const;
 		
 		/**
 		* @brief Bind VBO and EBO.
@@ -185,9 +185,9 @@ namespace Spices {
 		std::shared_ptr<Material> m_Material;
 
 		/**
-		* @brief specific material handle.
+		* @brief specific hit shader handle.
 		*/
-		std::optional<uint32_t> m_MaterialHandle;
+		std::optional<uint32_t> m_HitShaderHandle;
 
 		/**
 		* @brief specific meshpack type.
