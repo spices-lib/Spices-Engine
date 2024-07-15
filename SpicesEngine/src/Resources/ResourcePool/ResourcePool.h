@@ -30,12 +30,12 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		ResourcePool() {};
+		ResourcePool() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ResourcePool() {};
+		virtual ~ResourcePool() = default;
 
 		/**
 		* @brief Copy Constructor Function.

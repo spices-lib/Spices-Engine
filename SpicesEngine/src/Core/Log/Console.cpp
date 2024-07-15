@@ -54,7 +54,7 @@ namespace Spices {
 		{
 		case spdlog::level::level_enum::trace: 
 			helper.level = "trace";
-			helper.color = glm::vec4(0.73f, 0.73f, 0.73f, 1.0f);
+			helper.color = glm::vec4(0.83f, 0.83f, 0.83f, 1.0f);
 			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
 			helper.str = ss.str();
 			if (m_InfoData.m_TraceLogInfos.size() == 50)
@@ -65,7 +65,7 @@ namespace Spices {
 			break;
 		case spdlog::level::level_enum::info:
 			helper.level = "info";
-			helper.color = glm::vec4(0.474f, 0.729f, 0.921f, 1.0f);
+			helper.color = glm::vec4(0.574f, 0.829f, 1.0f, 1.0f);
 			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
 			helper.str = ss.str();
 			if (m_InfoData.m_InfoLogInfos.size() == 50)
@@ -76,7 +76,7 @@ namespace Spices {
 			break;
 		case spdlog::level::level_enum::warn:
 			helper.level = "warn";
-			helper.color = glm::vec4(0.874f, 0.796f, 0.29f, 1.0f);
+			helper.color = glm::vec4(0.974f, 0.896f, 0.39f, 1.0f);
 			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
 			helper.str = ss.str();
 			if (m_InfoData.m_WarnLogInfos.size() == 50)
@@ -87,7 +87,7 @@ namespace Spices {
 			break;
 		case spdlog::level::level_enum::err:
 			helper.level = "error";
-			helper.color = glm::vec4(0.972f, 0.541f, 0.49f, 1.0f);
+			helper.color = glm::vec4(1.0f, 0.641f, 0.59f, 1.0f);
 			ss << "[" << times << "] [" << msg.logger_name.data() << "] [" << helper.level << "] " << msg.payload.data();
 			helper.str = ss.str();
 			if (m_InfoData.m_ErrorLogInfos.size() == 50)

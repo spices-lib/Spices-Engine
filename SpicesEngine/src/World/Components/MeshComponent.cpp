@@ -133,7 +133,11 @@ namespace Spices {
 									ImGui::SeparatorText("##");
 									ImGui::PopItemWidth();
 									ImGui::SameLine(ImGui::GetContentRegionAvail().x - seperatorWidthS);
-									if (ImGuiH::DrawResetIcon(isCastShadow != true)) { isCastShadow = true; }
+									if (ImGuiH::DrawResetIcon(isCastShadow != true)) 
+									{ 
+										isCastShadow = true; 
+										FrameInfo::Get().m_World->Mark(FrushStableFrame);
+									}
 								});
 							}
 
@@ -146,7 +150,11 @@ namespace Spices {
 									ImGui::SameLine();
 									ImGui::SeparatorText("##");
 									ImGui::SameLine(ImGui::GetContentRegionAvail().x - seperatorWidthS);
-									if (ImGuiH::DrawResetIcon(isVisible != true)) { isVisible = true; }
+									if (ImGuiH::DrawResetIcon(isVisible != true)) 
+									{ 
+										isVisible = true;
+										FrameInfo::Get().m_World->Mark(FrushStableFrame);
+									}
 								});
 							}
 

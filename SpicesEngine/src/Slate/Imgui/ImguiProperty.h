@@ -100,10 +100,10 @@ namespace Spices {
 			bool removeComponent = false;
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
-				if (ImGui::MenuItem("Remove component"))
-				{
-					removeComponent = true;
-				}
+				//if (ImGui::MenuItem("Remove component"))
+				//{
+				//	removeComponent = true;
+				//}
 
 				ImGui::EndPopup();
 			}

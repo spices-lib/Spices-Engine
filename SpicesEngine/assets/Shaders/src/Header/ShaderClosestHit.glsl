@@ -59,6 +59,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices {
 
 /**
 * @brief Buffer of all Material Parameters in World.
+* Only Access index 0, unless you want access other material parameter.
 */
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialParameters { 
     MaterialParameter i[]; 
@@ -79,14 +80,14 @@ layout(set = 1, binding = 2, scalar) readonly buffer MeshDescBuffer {
 /**
 * @brief DirectionalLight Buffer in World.
 */
-layout(set = 1, binding = 4, scalar) readonly buffer DLightBuffer   { 
+layout(set = 1, binding = 3, scalar) readonly buffer DLightBuffer   { 
     DirectionalLight i[];   /* @see DirectionalLight. */
 } dLightBuffer;
 
 /**
 * @brief PointLight Buffer in World.
 */
-layout(set = 1, binding = 5, scalar) readonly buffer PLightBuffer   { 
+layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   { 
     PointLight i[];         /* @see PointLight. */
 } pLightBuffer;
 
@@ -282,9 +283,20 @@ MaterialParameter UnPackMaterialParameter()
     * @brief Access Buffer by GPU address.
     */
     MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
-    MaterialParameters params = MaterialParameters(desc.materialParameterAddress);
     
-    return params.i[0];
+    /**
+    * @brief If no vaild material parameter, just instance one and return.
+    */
+    if(desc.materialParameterAddress == 0)
+    {
+        MaterialParameter param;
+        return param;
+    }
+    else
+    {
+        MaterialParameters params = MaterialParameters(desc.materialParameterAddress);
+        return params.i[0];
+    }
 }
 
 MaterialAttributes InitMaterialAttributes(in Vertex vt)

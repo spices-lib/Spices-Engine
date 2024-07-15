@@ -168,7 +168,7 @@ namespace Spices {
 		*/
 		scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; }
 
-		uint64_t GetMaterialParamsAddress() { return m_MaterialParameterBuffer->GetAddress(); };
+		uint64_t GetMaterialParamsAddress() const;
 		
 		/**
 		* @brief This interface need to be overwritten by specific material.
@@ -230,6 +230,6 @@ namespace Spices {
 		/*
 		* @brief Buffer takes all textures index and all constant params buffer address. 
 		*/
-		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer; 
+		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer = nullptr; 
 	};
 }

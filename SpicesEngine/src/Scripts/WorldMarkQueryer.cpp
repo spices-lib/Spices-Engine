@@ -19,6 +19,20 @@ namespace Spices {
 			Event::GetEventCallbackFn()(event);
 		}
 
+		if (mark & WorldMarkBits::FrushStableFrame)
+		{
+			auto view = FrameInfo::Get().m_World->GetRegistry().view<CameraComponent>();
+			for(auto& e : view)
+			{
+				auto& camComp = FrameInfo::Get().m_World->GetRegistry().get<CameraComponent>(e);
+
+				if(camComp.IsActive())
+				{
+					camComp.GetCamera()->ResetStableFrames();
+				}
+			}
+		}
+
 		FrameInfo::Get().m_World->ReserMark();
 	}
 }

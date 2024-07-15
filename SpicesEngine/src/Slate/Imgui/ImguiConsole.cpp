@@ -127,7 +127,7 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("Console VerboseIcon");
 
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.73f, 0.73f, 0.73f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.83f, 0.83f, 0.83f, 1.0f));
 			if (ImGui::Button(ICON_MD_EMERGENCY, ImGuiH::GetLineItemSize())) m_Level = 0;
 			ImGui::PopStyleColor();
 			ImGui::SetItemTooltip("Verbose");
@@ -140,7 +140,7 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("Console InfoIcon");
 
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.474f, 0.729f, 0.921f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.574f, 0.829f, 1.0f, 1.0f));
 			if (ImGui::Button(ICON_MD_ERROR_OUTLINE, ImGuiH::GetLineItemSize())) m_Level = 1;
 			ImGui::PopStyleColor();
 			ImGui::SetItemTooltip("Info");
@@ -153,12 +153,12 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("Console WarningIcon");
 
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.874f, 0.796f, 0.29f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.974f, 0.896f, 0.39f, 1.0f));
 			if (ImGui::Button(ICON_MD_WARNING_AMBER, ImGuiH::GetLineItemSize())) m_Level = 2;
 			ImGui::PopStyleColor();
 			ImGui::SetItemTooltip("Warning");
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.874f, 0.796f, 0.29f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.974f, 0.896f, 0.39f, 1.0f));
 			ImGui::Text(std::to_string(m_Console->GetInfos().m_WarnLogInfos.size()).c_str());
 			ImGui::PopStyleColor();
 		}
@@ -170,12 +170,12 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("Console ErrorIcon");
 
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.972f, 0.541f, 0.49f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.641f, 0.59f, 1.0f));
 			if (ImGui::Button(ICON_MD_NEARBY_ERROR, ImGuiH::GetLineItemSize())) m_Level = 3;
 			ImGui::PopStyleColor();
 			ImGui::SetItemTooltip("Error");
 			ImGui::SameLine();
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.972f, 0.541f, 0.49f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.641f, 0.59f, 1.0f));
 			ImGui::Text(std::to_string(m_Console->GetInfos().m_ErrorLogInfos.size()).c_str());
 			ImGui::PopStyleColor();
 		}

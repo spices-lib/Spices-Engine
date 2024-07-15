@@ -6,6 +6,8 @@
 
 #include "Pchheader.h"
 #include "DirectionalLightComponent.h"
+#include "Render/FrameInfo.h"
+#include "World/World/World.h"
 
 #include "imgui_internal.h"
 #include <glm/gtc/type_ptr.hpp>
@@ -47,10 +49,17 @@ namespace Spices {
 					ImGui::PopStyleColor(3);
 					ImGui::SameLine();
 					ImGui::PushItemWidth(itemWidth);
-					ImGui::SliderFloat("##R", &m_DirectionalLight.color.x, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+					if(ImGui::SliderFloat("##R", &m_DirectionalLight.color.x, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+					{
+						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
-					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.x != 1.0f)) { m_DirectionalLight.color.x = 1.0f; };
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.x != 1.0f)) 
+					{
+						m_DirectionalLight.color.x = 1.0f; 
+						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					};
 					ImGui::SameLine();
 					ImGui::PopID();
 				}
@@ -66,10 +75,17 @@ namespace Spices {
 					ImGui::PopStyleColor(3);
 					ImGui::SameLine();
 					ImGui::PushItemWidth(itemWidth);
-					ImGui::SliderFloat("##G", &m_DirectionalLight.color.y, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+					if(ImGui::SliderFloat("##G", &m_DirectionalLight.color.y, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+					{
+						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
-					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.y != 1.0f)) { m_DirectionalLight.color.y = 1.0f; };
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.y != 1.0f)) 
+					{ 
+						m_DirectionalLight.color.y = 1.0f; 
+						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					};
 					ImGui::SameLine();
 					ImGui::PopID();
 				}
@@ -85,10 +101,17 @@ namespace Spices {
 					ImGui::PopStyleColor(3);
 					ImGui::SameLine();
 					ImGui::PushItemWidth(itemWidth);
-					ImGui::SliderFloat("##B", &m_DirectionalLight.color.z, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+					if(ImGui::SliderFloat("##B", &m_DirectionalLight.color.z, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+					{
+						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
-					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.z != 1.0f)) { m_DirectionalLight.color.z = 1.0f; };
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.z != 1.0f)) 
+					{
+						m_DirectionalLight.color.z = 1.0f; 
+						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					};
 					ImGui::SameLine();
 					ImGui::PopID();
 				}
@@ -100,7 +123,11 @@ namespace Spices {
 					ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
 					ImGui::ColorEdit3("##", glm::value_ptr(m_DirectionalLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
 					ImGui::SameLine();
-					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color != glm::vec3(1.0f, 1.0f, 1.0f))) { m_DirectionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f); };
+					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color != glm::vec3(1.0f, 1.0f, 1.0f))) 
+					{
+						m_DirectionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					};
 					ImGui::PopStyleColor();
 					ImGui::PopID();
 				}
@@ -115,7 +142,11 @@ namespace Spices {
 				ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_DirectionalLight.intensity != 1.0f)) { m_DirectionalLight.intensity = 1.0f; };
+				if (ImGuiH::DrawResetIcon(m_DirectionalLight.intensity != 1.0f)) 
+				{ 
+					m_DirectionalLight.intensity = 1.0f;
+					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+				};
 			});
 		}
 

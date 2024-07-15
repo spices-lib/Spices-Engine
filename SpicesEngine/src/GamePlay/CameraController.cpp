@@ -24,12 +24,12 @@ namespace Spices {
 
 	void CameraController::OnTick(TimeStep& ts)
 	{
+		m_Camera->IncreaseStableFrames();
+
 		/**
 		* @breif Only update view while viewport is hovered.
 		*/
 		if (!SlateSystem::GetRegister()->GetViewPort()->IsHovered()) return;
-
-		m_Camera->IncreaseStableFrames();
 
 		if (Input::IsKeyPressed(Key::LeftAlt))
 		{

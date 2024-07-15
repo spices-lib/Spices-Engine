@@ -199,6 +199,8 @@ namespace Spices {
                         tc.SetPosition(translation);
                         tc.SetRotation(tc.GetRotation() + deltaRotation);
                         tc.SetScale(scale);
+
+                        FrameInfo::Get().m_World->Mark(FrushStableFrame);
                     }
                 }
             }

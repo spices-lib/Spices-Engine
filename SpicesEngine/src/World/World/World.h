@@ -31,6 +31,7 @@ namespace Spices {
 	{
 		Clean = 0,
 		MeshAddedToWorld = 1,
+		FrushStableFrame = 2,
 		MAX = 0x7FFFFFFF
 	};
 

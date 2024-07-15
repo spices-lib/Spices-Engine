@@ -67,12 +67,19 @@ namespace Spices {
 		return m_Shaders[stage];
 	}
 
+	uint64_t Material::GetMaterialParamsAddress() const
+	{
+		if(m_MaterialParameterBuffer == nullptr) return 0;
+		else return m_MaterialParameterBuffer->GetAddress();
+	}
+
 	void Material::BuildMaterial()
 	{
 		/**
 		* @brief If ReBuild, need clear old descripotrset first.
 		*/
 		DescriptorSetManager::UnLoad(m_MaterialPath);
+		m_MaterialParameterBuffer = nullptr;
 
 		/**
 		* @brief Container like that: Set - [ binding - [index - (type, count, size)]].
@@ -160,6 +167,10 @@ namespace Spices {
 			/**
 			* @brief Create the key to map, and add element to value.
 			*/
+			if (!m_Buffermemoryblocks.has_key(int2))
+			{
+				m_Buffermemoryblocks.push_back(int2, scl::runtime_memory_block());
+			}
 			m_Buffermemoryblocks.find_value(int2)->add_element(k, v.paramType);
 
 			return false;
@@ -201,13 +212,17 @@ namespace Spices {
 		* @brief Create a buffer to store all address and index.
 		*/
 		uint64_t size = m_Buffers.size() * sizeof(uint64_t); // + m_TextureParams.size() * sizeof(uint);
-		m_MaterialParameterBuffer = std::make_unique<VulkanBuffer>(
-			VulkanRenderBackend::GetState(),
-			size,
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT |
-			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-		);
+		if(size != 0)
+		{
+			m_MaterialParameterBuffer = std::make_unique<VulkanBuffer>(
+				VulkanRenderBackend::GetState(),
+				size,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+			);
+			m_MaterialParameterBuffer->Map();
+		}
 		
 		/**
 		* @brief Iter m_Buffermemoryblocks for filling data on m_ConstantParams.
@@ -261,7 +276,7 @@ namespace Spices {
 			* @brief Flush the m_Buffers's memory.
 			*/
 			m_Buffers[k]->Flush();
-
+			
 			m_MaterialParameterBuffer->WriteToBuffer(&m_Buffers[k]->GetAddress(), sizeof(uint64_t), index * sizeof(uint64_t));
 			m_MaterialParameterBuffer->Flush();
 
