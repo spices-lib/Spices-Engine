@@ -56,7 +56,7 @@ namespace Spices {
 
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("Test_room");
 
-			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			pack1->SetMaterial("BasePassRenderer.Mesh.0");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
 		}
@@ -70,7 +70,7 @@ namespace Spices {
 
 			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
 
-			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			pack1->SetMaterial("BasePassRenderer.Mesh.1");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
 		}
@@ -84,7 +84,7 @@ namespace Spices {
 
 			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
 
-			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			pack1->SetMaterial("BasePassRenderer.Mesh.1");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
 		}

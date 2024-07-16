@@ -77,7 +77,7 @@ void main()
     vec3 curWeight          = vec3(1.0f);
     vec3 hitValue           = vec3(0.0f);
     
-    for(; prd.depth < 8; prd.depth++)
+    for(; prd.depth < 4; prd.depth++)
     {
         traceRayEXT(topLevelAS,        /* @brief Acceleration Structure.         */
                     rayFlags,          /* @brief RayFlags.                       */

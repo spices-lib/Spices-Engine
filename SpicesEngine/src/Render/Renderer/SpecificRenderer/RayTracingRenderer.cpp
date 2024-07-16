@@ -108,7 +108,7 @@ namespace Spices {
 
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
-		//CreateTopLevelAS(frameInfo, true);
+		UpdateTopLevelAS(frameInfo);
 		
 		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
@@ -214,6 +214,58 @@ namespace Spices {
 		);
 	}
 	
+	void RayTracingRenderer::UpdateTopLevelAS(FrameInfo& frameInfo, bool update)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkAccelerationStructureInstanceKHR> tlas;
+
+		int index = 0;
+		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
+		for (auto& e : view)
+		{
+			MeshComponent meshComp;
+			TransformComponent tranComp;
+
+			std::tie(meshComp, tranComp) = frameInfo.m_World->GetRegistry().get<MeshComponent, TransformComponent>(e);
+
+			if (!tranComp.GetMarker() & TransformComponent::NeedUpdateTLAS)
+			{
+				index += 1;
+				continue;
+			}
+			SPICES_CORE_INFO("Update TLAS");
+			tranComp.ClearMarkerWithBits(TransformComponent::NeedUpdateTLAS);
+
+			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+
+				VkAccelerationStructureInstanceKHR rayInst{};
+				rayInst.transform = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());                    // Position of the instance
+				rayInst.instanceCustomIndex = index;                                                      // gl_InstanceCustomIndexEXT
+				rayInst.accelerationStructureReference = m_VulkanRayTracing->GetBlasDeviceAddress(index);
+				rayInst.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+				rayInst.mask = 0xFF;                                                                      //  Only be hit if rayMask & instance.mask != 0
+				rayInst.instanceShaderBindingTableRecordOffset = v->GetHitShaderHandle();                 // We will use the same hit group for all objects
+
+				tlas.push_back(rayInst);
+
+				index += 1;
+				return false;
+			});
+		}
+
+		/**
+		* @brief Build TLAS.
+		*/
+		m_VulkanRayTracing->BuildTLAS(
+			tlas,
+			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR |
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
+			update
+		);
+	}
+
 	void RayTracingRenderer::CreateRTShaderBindingTable(FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;

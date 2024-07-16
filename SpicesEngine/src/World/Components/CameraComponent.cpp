@@ -40,14 +40,14 @@ namespace Spices {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_Camera->GetPerspectiveParam().fov, 0.1f, 1.0f, 179.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Camera->GetPerspectiveParam().fov != 45.0f)) 
 				{
 					m_Camera->GetPerspectiveParam().fov = 45.0f; 
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 			});
 		}
@@ -59,14 +59,14 @@ namespace Spices {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if (ImGui::DragFloat("##", &m_Camera->GetPerspectiveParam().nearPlane, 0.1f, 0.01f, 1000.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
 				{
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Camera->GetPerspectiveParam().nearPlane != 0.01f)) 
 				{ 
 					m_Camera->GetPerspectiveParam().nearPlane = 0.01f; 
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 			});
 		}
@@ -78,14 +78,14 @@ namespace Spices {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if (ImGui::DragFloat("##", &m_Camera->GetPerspectiveParam().farPlane, 10.0f, 1000.0f, 100000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Camera->GetPerspectiveParam().farPlane != 1000.0f)) 
 				{ 
 					m_Camera->GetPerspectiveParam().farPlane = 1000.0f; 
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 			});
 		}

@@ -27,16 +27,6 @@ namespace Spices {
 	*/
 	class Entity;
 
-	enum WorldMarkBits
-	{
-		Clean = 0,
-		MeshAddedToWorld = 1,
-		FrushStableFrame = 2,
-		MAX = 0x7FFFFFFF
-	};
-
-	typedef uint32_t WorldMarkFlags;
-
 	/**
 	* @brief World Class.
 	* This class defines the basic behaves of World.
@@ -44,6 +34,18 @@ namespace Spices {
 	*/
 	class World
 	{
+	public:
+
+		enum WorldMarkBits
+		{
+			Clean = 0,
+			MeshAddedToWorld = 1,
+			FrushStableFrame = 2,
+			MAX = 0x7FFFFFFF
+		};
+
+		typedef uint32_t WorldMarkFlags;
+
 	public:
 
 		/**

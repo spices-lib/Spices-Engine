@@ -11,15 +11,15 @@ namespace Spices {
 
 	void WorldMarkQueryer::OnTick(TimeStep& ts)
 	{
-		WorldMarkFlags mark = FrameInfo::Get().m_World->GetMarker();
+		World::WorldMarkFlags mark = FrameInfo::Get().m_World->GetMarker();
 
-		if (mark & WorldMarkBits::MeshAddedToWorld)
+		if (mark & World::MeshAddedToWorld)
 		{
 			MeshAddedWorldEvent event;
 			Event::GetEventCallbackFn()(event);
 		}
 
-		if (mark & WorldMarkBits::FrushStableFrame)
+		if (mark & World::FrushStableFrame)
 		{
 			auto view = FrameInfo::Get().m_World->GetRegistry().view<CameraComponent>();
 			for(auto& e : view)

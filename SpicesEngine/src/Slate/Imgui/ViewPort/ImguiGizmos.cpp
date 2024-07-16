@@ -200,7 +200,8 @@ namespace Spices {
                         tc.SetRotation(tc.GetRotation() + deltaRotation);
                         tc.SetScale(scale);
 
-                        FrameInfo::Get().m_World->Mark(FrushStableFrame);
+                        FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
+                        tc.Mark(TransformComponent::NeedUpdateTLAS);
                     }
                 }
             }

@@ -51,14 +51,14 @@ namespace Spices {
 					ImGui::PushItemWidth(itemWidth);
 					if(ImGui::SliderFloat("##R", &m_DirectionalLight.color.x, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 					{
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.x != 1.0f)) 
 					{
 						m_DirectionalLight.color.x = 1.0f; 
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					};
 					ImGui::SameLine();
 					ImGui::PopID();
@@ -77,14 +77,14 @@ namespace Spices {
 					ImGui::PushItemWidth(itemWidth);
 					if(ImGui::SliderFloat("##G", &m_DirectionalLight.color.y, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 					{
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.y != 1.0f)) 
 					{ 
 						m_DirectionalLight.color.y = 1.0f; 
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					};
 					ImGui::SameLine();
 					ImGui::PopID();
@@ -103,14 +103,14 @@ namespace Spices {
 					ImGui::PushItemWidth(itemWidth);
 					if(ImGui::SliderFloat("##B", &m_DirectionalLight.color.z, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 					{
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color.z != 1.0f)) 
 					{
 						m_DirectionalLight.color.z = 1.0f; 
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					};
 					ImGui::SameLine();
 					ImGui::PopID();
@@ -126,7 +126,7 @@ namespace Spices {
 					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color != glm::vec3(1.0f, 1.0f, 1.0f))) 
 					{
 						m_DirectionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					};
 					ImGui::PopStyleColor();
 					ImGui::PopID();
@@ -145,7 +145,7 @@ namespace Spices {
 				if (ImGuiH::DrawResetIcon(m_DirectionalLight.intensity != 1.0f)) 
 				{ 
 					m_DirectionalLight.intensity = 1.0f;
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				};
 			});
 		}

@@ -50,14 +50,14 @@ namespace Spices {
 					ImGui::PushItemWidth(itemWidth);
 					if(ImGui::SliderFloat("##R", &m_PointLight.color.x, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 					{
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_PointLight.color.x != 1.0f)) 
 					{ 
 						m_PointLight.color.x = 1.0f;
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::SameLine();
 					ImGui::PopID();
@@ -76,14 +76,14 @@ namespace Spices {
 					ImGui::PushItemWidth(itemWidth);
 					if(ImGui::SliderFloat("##G", &m_PointLight.color.y, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 					{
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_PointLight.color.y != 1.0f)) 
 					{ 
 						m_PointLight.color.y = 1.0f;
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::SameLine();
 					ImGui::PopID();
@@ -102,14 +102,14 @@ namespace Spices {
 					ImGui::PushItemWidth(itemWidth);
 					if(ImGui::SliderFloat("##B", &m_PointLight.color.z, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 					{
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					}
 					ImGui::PopItemWidth();
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_PointLight.color.z != 1.0f)) 
 					{
 						m_PointLight.color.z = 1.0f; 
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					};
 					ImGui::SameLine();
 					ImGui::PopID();
@@ -125,7 +125,7 @@ namespace Spices {
 					if (ImGuiH::DrawResetIcon(m_PointLight.color != glm::vec3(1.0f, 1.0f, 1.0f))) 
 					{ 
 						m_PointLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
-						FrameInfo::Get().m_World->Mark(FrushStableFrame);
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 					};
 					ImGui::PopStyleColor();
 					ImGui::PopID();
@@ -140,14 +140,14 @@ namespace Spices {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_PointLight.intensity != 1.0f)) 
 				{
 					m_PointLight.intensity = 1.0f; 
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				};
 			});
 		}
@@ -159,14 +159,14 @@ namespace Spices {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.constantf, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_PointLight.constantf != 1.0f)) 
 				{ 
 					m_PointLight.constantf = 1.0f; 
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				};
 			});
 		}
@@ -178,14 +178,14 @@ namespace Spices {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.linear, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_PointLight.linear != 0.35f)) 
 				{
 					m_PointLight.linear = 0.35f; 
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				};
 			});
 		}
@@ -197,14 +197,14 @@ namespace Spices {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.quadratic, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_PointLight.quadratic != 0.44f)) 
 				{ 
 					m_PointLight.quadratic = 0.44f; 
-					FrameInfo::Get().m_World->Mark(FrushStableFrame);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 				};
 			});
 		}

@@ -136,7 +136,7 @@ namespace Spices {
 									if (ImGuiH::DrawResetIcon(isCastShadow != true)) 
 									{ 
 										isCastShadow = true; 
-										FrameInfo::Get().m_World->Mark(FrushStableFrame);
+										FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 									}
 								});
 							}
@@ -153,7 +153,7 @@ namespace Spices {
 									if (ImGuiH::DrawResetIcon(isVisible != true)) 
 									{ 
 										isVisible = true;
-										FrameInfo::Get().m_World->Mark(FrushStableFrame);
+										FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
 									}
 								});
 							}
@@ -280,6 +280,6 @@ namespace Spices {
 		/**
 		* @brief Mark World with MeshAddedToWorld bits.
 		*/
-		FrameInfo::Get().m_World->Mark(WorldMarkBits::MeshAddedToWorld);
+		FrameInfo::Get().m_World->Mark(World::WorldMarkBits::MeshAddedToWorld);
 	}
 }

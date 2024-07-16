@@ -18,11 +18,7 @@ Textures:
   - Name: specular
     Value: [1, 0, 2, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Specular.jpg]
 Parameters:
-  - Name: diffuseIntensity
-    Value: [1, 1, float4, [1.0, 2.0, 3.0, 4.0]]
-  - Name: normalIntensity
-    Value: [1, 1, float3, [4.0, 5.0, 6.0]]
-  - Name: specularIntensity
-    Value: [1, 1, float2, [7.0, 8.0]]
-  - Name: otherIntensity
-    Value: [1, 1, float, 9.0]
+  - Name: albedo
+    Value: [1, 1, float3, [0.5, 0.5, 0.5]]
+  - Name: roughness
+    Value: [1, 1, float, 0.0]

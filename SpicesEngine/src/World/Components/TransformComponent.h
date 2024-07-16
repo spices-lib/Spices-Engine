@@ -22,6 +22,17 @@ namespace Spices {
 	{
 	public:
 
+		enum TransformComponentBits
+		{
+			Clean = 0,
+			NeedUpdateTLAS = 1,
+			MAX = 0x7FFFFFFF
+		};
+
+		typedef uint32_t TransformComponentFlags;
+
+	public:
+
 		/**
 		* @brief Constructor Function.
 		*/
@@ -121,6 +132,24 @@ namespace Spices {
 		*/
 		const glm::vec3& GetScale() const { return m_Scale; }
 
+		/**
+		* @brief Get WorldMarkFlags this frame.
+		* @return Returns the TransformComponentFlags.
+		*/
+		inline TransformComponentFlags GetMarker() const { return m_Marker; }
+
+		/**
+		* @brief Mark TransformComponentFlags with flags.
+		* @param[in] flags In flags.
+		*/
+		void Mark(TransformComponentFlags flags) { m_Marker |= flags; }
+
+		/**
+		* @brief Clear TransformComponentFlags with flags.
+		* @param[in] flags In flags.
+		*/
+		void ClearMarkerWithBits(TransformComponentFlags flags);
+
 	private:
 
 		/**
@@ -149,5 +178,10 @@ namespace Spices {
 		* @brief The scale this component handled.
 		*/
 		glm::vec3 m_Scale { 1.0f, 1.0f, 1.0f };
+
+		/**
+		* @brief World State this frame.
+		*/
+		TransformComponentFlags m_Marker = TransformComponentBits::Clean;
 	};
 }

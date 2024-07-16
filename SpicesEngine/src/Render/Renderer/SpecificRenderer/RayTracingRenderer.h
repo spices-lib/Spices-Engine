@@ -108,8 +108,17 @@ namespace Spices {
 		/**
 		* @brief Create TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
+		* @param[in] update , default false.
 		*/
 		void CreateTopLevelAS(FrameInfo& frameInfo, bool update = false);
+
+		/**
+		* @brief Update TopLevelAS.
+		* @param[in] frameInfo FrameInfo.
+		* @param[in] update , default true.
+		* @todo Event Queue.
+		*/
+		void UpdateTopLevelAS(FrameInfo& frameInfo, bool update = true);
 
 		/**
 		* @brief Create Shader Binding Table.

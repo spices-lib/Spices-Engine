@@ -18,11 +18,7 @@ Textures:
   - Name: specular
     Value: [1, 0, 2, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg]
 Parameters:
-  - Name: diffuseIntensity
-    Value: [1, 1, float4, [10.0, 20.0, 30.0, 40.0]]
-  - Name: normalIntensity
-    Value: [1, 1, float3, [40.0, 50.0, 60.0]]
-  - Name: specularIntensity
-    Value: [1, 1, float2, [70.0, 80.0]]
-  - Name: otherIntensity
-    Value: [1, 1, float, 90.0]
+  - Name: albedo
+    Value: [1, 1, float3, [0.5, 0.5, 0.5]]
+  - Name: roughness
+    Value: [1, 1, float, 1.0]
