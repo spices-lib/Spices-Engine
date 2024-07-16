@@ -183,7 +183,7 @@ namespace Spices {
 
 			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 
-				VkAccelerationStructureInstanceKHR rayInst{};
+				VkAccelerationStructureInstanceKHR                            rayInst{};
 				rayInst.transform                                           = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());          // Position of the instance
 				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
 				rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(index);
@@ -224,10 +224,9 @@ namespace Spices {
 		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
-			MeshComponent meshComp;
-			TransformComponent tranComp;
-
-			std::tie(meshComp, tranComp) = frameInfo.m_World->GetRegistry().get<MeshComponent, TransformComponent>(e);
+			std::tuple<MeshComponent&, TransformComponent&> tuple = frameInfo.m_World->GetRegistry().get<MeshComponent, TransformComponent>(e);
+			MeshComponent& meshComp = std::get<0>(tuple);
+			TransformComponent& tranComp = std::get<1>(tuple);
 
 			if (!tranComp.GetMarker() & TransformComponent::NeedUpdateTLAS)
 			{
@@ -239,13 +238,13 @@ namespace Spices {
 
 			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 
-				VkAccelerationStructureInstanceKHR rayInst{};
-				rayInst.transform = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());                    // Position of the instance
-				rayInst.instanceCustomIndex = index;                                                      // gl_InstanceCustomIndexEXT
-				rayInst.accelerationStructureReference = m_VulkanRayTracing->GetBlasDeviceAddress(index);
-				rayInst.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-				rayInst.mask = 0xFF;                                                                      //  Only be hit if rayMask & instance.mask != 0
-				rayInst.instanceShaderBindingTableRecordOffset = v->GetHitShaderHandle();                 // We will use the same hit group for all objects
+				VkAccelerationStructureInstanceKHR                            rayInst{};
+				rayInst.transform                                           = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());                    // Position of the instance
+				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
+				rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(index);
+				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+				rayInst.mask                                                = 0xFF;                                                                      //  Only be hit if rayMask & instance.mask != 0
+				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                 // We will use the same hit group for all objects
 
 				tlas.push_back(rayInst);
 
