@@ -108,7 +108,7 @@ namespace Spices {
 
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
-		CreateTopLevelAS(frameInfo, true);
+		//CreateTopLevelAS(frameInfo, true);
 		
 		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 

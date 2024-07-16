@@ -24,7 +24,12 @@ using uint = unsigned int;
 
 #extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align.                         */
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.                               */
+
+#ifdef SPICES_DEBUG
+
 #extension GL_EXT_debug_printf                           : require  /* @brief Enable shader debug info. (debugPrintfEXT("Hello: %d", num);) */
+
+#endif
 
 #endif
 

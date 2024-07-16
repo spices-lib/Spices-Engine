@@ -161,25 +161,33 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Wait for last frame done.
-		*/
-		vkWaitForFences(
-			m_VulkanState.m_Device, 
-			1, 
-			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex], 
-			VK_TRUE, UINT64_MAX
-		);
+		{
+			SPICES_PROFILE_ZONEN("BeginFrame::WaitForFences");
+			
+			/**
+			* @brief Wait for last frame done.
+			*/
+			vkWaitForFences(
+				m_VulkanState.m_Device, 
+				1, 
+				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex], 
+				VK_TRUE, UINT64_MAX
+			);
+		}
 
-		/**
-		* @brief Reset Fences.
-		*/
-		vkResetFences(
-			m_VulkanState.m_Device, 
-			1, 
-			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
-		);
-
+		{
+			SPICES_PROFILE_ZONEN("BeginFrame::ResetFences");
+			
+			/**
+			* @brief Reset Fences.
+			*/
+			vkResetFences(
+				m_VulkanState.m_Device, 
+				1, 
+				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
+			);
+		}
+		
 		/**
 		* @brief Prepare Writing another SwapchainImage.
 		*/
@@ -204,38 +212,50 @@ namespace Spices {
 			SPICES_CORE_ERROR("Failed to acquire swap chain image!");
 		}
 
-		/**
-		* @brief Instance a VkCommandBufferBeginInfo.
-		*/
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags            = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-		beginInfo.pInheritanceInfo = nullptr;
+		{
+			SPICES_PROFILE_ZONEN("BeginFrame::BeginCommandBuffer");
+			
+			/**
+			* @brief Instance a VkCommandBufferBeginInfo.
+			*/
+			VkCommandBufferBeginInfo beginInfo{};
+			beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			beginInfo.flags            = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			beginInfo.pInheritanceInfo = nullptr;
 
-		/**
-		* @brief Start recording a CommandBuffer.
-		*/
-		VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
+			/**
+			* @brief Start recording a CommandBuffer.
+			*/
+			VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
+		}
 	}
 
 	void VulkanRenderBackend::EndFrame(FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief End recording the CommandBuffer.
-		*/
-		VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]))
+		{
+			SPICES_PROFILE_ZONEN("EndFrame::EndCommandBuffer");
+			
+			/**
+			* @brief End recording the CommandBuffer.
+			*/
+			VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]))
+		}
 
-		/**
-		* @brief Reset Fences.
-		*/
-		VK_CHECK(vkResetFences(
-			m_VulkanState.m_Device, 
-			1, 
-			&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
-		))
-
+		{
+			SPICES_PROFILE_ZONEN("EndFrame::ResetFences");
+			
+			/**
+			* @brief Reset Fences.
+			*/
+			VK_CHECK(vkResetFences(
+				m_VulkanState.m_Device, 
+				1, 
+				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
+			))
+		}
+		
 		/**
 		* @brief Instance a VkSubmitInfo.
 		*/
@@ -255,37 +275,45 @@ namespace Spices {
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores    = signalSemaphores;
 
-		/**
-		* @brief Submit all commands recorded to graphic queue.
-		*/
-		VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]))
-
-		/**
-		* @brief Instance a VkPresentInfoKHR.
-		*/
-		VkPresentInfoKHR presentInfo{};
-		presentInfo.sType               = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		presentInfo.waitSemaphoreCount  = 1;
-		presentInfo.pWaitSemaphores     = signalSemaphores;
-
-		VkSwapchainKHR swapChains[]     = { m_VulkanState.m_SwapChain };
-		presentInfo.swapchainCount      = 1;
-		presentInfo.pSwapchains         = swapChains;
-		presentInfo.pImageIndices       = &frameInfo.m_Imageindex;
-
-		presentInfo.pResults = nullptr;
-
-		/**
-		* @brief Present the swapchain image to windows.
-		*/
-		VkResult result = vkQueuePresentKHR(m_VulkanState.m_PresentQueue, &presentInfo);
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_VulkanWindows->IsResized()) 
 		{
-			m_VulkanWindows->SetResized(false);
-			RecreateSwapChain();
+			SPICES_PROFILE_ZONEN("EndFrame::QueueSubmit");
+			
+			/**
+			* @brief Submit all commands recorded to graphic queue.
+			*/
+			VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]))
 		}
-		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-			SPICES_CORE_ERROR("Failed to present swap chain image!");
+
+		{
+			SPICES_PROFILE_ZONEN("EndFrame::QueuePresent");
+			
+			/**
+			* @brief Instance a VkPresentInfoKHR.
+			*/
+			VkPresentInfoKHR presentInfo{};
+			presentInfo.sType               = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+			presentInfo.waitSemaphoreCount  = 1;
+			presentInfo.pWaitSemaphores     = signalSemaphores;
+
+			VkSwapchainKHR swapChains[]     = { m_VulkanState.m_SwapChain };
+			presentInfo.swapchainCount      = 1;
+			presentInfo.pSwapchains         = swapChains;
+			presentInfo.pImageIndices       = &frameInfo.m_Imageindex;
+
+			presentInfo.pResults = nullptr;
+
+			/**
+			* @brief Present the swapchain image to windows.
+			*/
+			VkResult result = vkQueuePresentKHR(m_VulkanState.m_PresentQueue, &presentInfo);
+			if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_VulkanWindows->IsResized()) 
+			{
+				m_VulkanWindows->SetResized(false);
+				RecreateSwapChain();
+			}
+			else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+				SPICES_CORE_ERROR("Failed to present swap chain image!");
+			}
 		}
 	}
 

@@ -91,7 +91,11 @@ namespace Spices {
 		validationFeatures.enabledValidationFeatureCount    = static_cast<uint32_t>(validationFeatureEnable.size());
 		validationFeatures.pEnabledValidationFeatures       = validationFeatureEnable.data();
 
-		m_DebugMessengerCreateInfo.pNext                    = &validationFeatures;
+#ifdef SPICES_DEBUG
+
+		//m_DebugMessengerCreateInfo.pNext                    = &validationFeatures;
+
+#endif
 
 		createInfo.pNext = &m_DebugMessengerCreateInfo;
 
@@ -394,5 +398,6 @@ namespace Spices {
 		
 		m_DebugMessengerCreateInfo.pfnUserCallback     = InstanceDebugCallback;
 		m_DebugMessengerCreateInfo.pUserData           = nullptr; // Optional
+		m_DebugMessengerCreateInfo.pNext               = nullptr;
 	}
 }

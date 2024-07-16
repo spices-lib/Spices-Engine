@@ -41,7 +41,9 @@ namespace Spices {
 		auto state = fopen_s(&file, path, mode_str);
 		
 		if (!file) {
-			SPICES_CORE_INFO("Error opening file");
+			std::stringstream ss;
+			ss << "Error opening file: " << path;
+			SPICES_CORE_WARN(ss.str().c_str());
 			return false;
 		}
 
