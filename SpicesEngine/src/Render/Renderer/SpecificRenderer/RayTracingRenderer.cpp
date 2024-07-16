@@ -257,13 +257,16 @@ namespace Spices {
 		/**
 		* @brief Build TLAS.
 		*/
-		m_VulkanRayTracing->BuildTLAS(
-			tlas,
-			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
-			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR |
-			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
-			update
-		);
+		if (!tlas.empty())
+		{
+			m_VulkanRayTracing->BuildTLAS(
+				tlas,
+				VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
+				VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR |
+				VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
+				update
+			);
+		}
 	}
 
 	void RayTracingRenderer::CreateRTShaderBindingTable(FrameInfo& frameInfo)
