@@ -59,7 +59,7 @@ namespace Spices {
 					{
 						m_DirectionalLight.color.x = 1.0f; 
 						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					};
+					}
 					ImGui::SameLine();
 					ImGui::PopID();
 				}
@@ -85,7 +85,7 @@ namespace Spices {
 					{ 
 						m_DirectionalLight.color.y = 1.0f; 
 						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					};
+					}
 					ImGui::SameLine();
 					ImGui::PopID();
 				}
@@ -111,7 +111,7 @@ namespace Spices {
 					{
 						m_DirectionalLight.color.z = 1.0f; 
 						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					};
+					}
 					ImGui::SameLine();
 					ImGui::PopID();
 				}
@@ -121,13 +121,16 @@ namespace Spices {
 					ImGui::PushID("DirectionalLightComponent Color Picker");
 
 					ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
-					ImGui::ColorEdit3("##", glm::value_ptr(m_DirectionalLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
+					if(ImGui::ColorEdit3("##", glm::value_ptr(m_DirectionalLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar))
+					{
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
+					}
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_DirectionalLight.color != glm::vec3(1.0f, 1.0f, 1.0f))) 
 					{
 						m_DirectionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
 						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					};
+					}
 					ImGui::PopStyleColor();
 					ImGui::PopID();
 				}
@@ -139,14 +142,17 @@ namespace Spices {
 
 			ImGuiH::DrawPropertyItem("Intensity", columeWidth, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-				ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+				if(ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+				{
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
+				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_DirectionalLight.intensity != 1.0f)) 
 				{ 
 					m_DirectionalLight.intensity = 1.0f;
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-				};
+				}
 			});
 		}
 

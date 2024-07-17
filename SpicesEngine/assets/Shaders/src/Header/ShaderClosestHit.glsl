@@ -224,8 +224,12 @@ void main()
 
     /**
     * @brief Add emissive with Lights.
+    * Skip if reach material maxLightDepth.
     */
-    materialAttributes.emissive += CalculatePointLights(vt, materialAttributes) + CalculateDirectionalLights(vt, materialAttributes);
+    if(prd.rayDepth < materialAttributes.maxLightDepth)
+    {
+        materialAttributes.emissive += CalculatePointLights(vt, materialAttributes) + CalculateDirectionalLights(vt, materialAttributes);
+    }
 
     /**
     * @brief Calculate Next Ray recursion attributes.
@@ -253,7 +257,7 @@ void main()
     prd.rayDirection   = rayDirection;
     prd.hitValue       = materialAttributes.emissive;
     prd.weight         = BRDF * cos_theta / p;
-    prd.maxraydepth    = materialAttributes.maxraydepth;
+    prd.maxRayDepth    = materialAttributes.maxRayDepth;
 }
 
 /*****************************************************************************************/
@@ -342,11 +346,13 @@ MaterialAttributes InitMaterialAttributes(in Vertex vt)
 {
     MaterialAttributes attributes;
     
-    attributes.albedo       = vec3(0.5f);     /* @brief 50% energy reflect.            */
-    attributes.roughness    = 1.0f;           /* @brief 100% random direction reflect. */
-    attributes.emissive     = vec3(0.0f);     /* @brief self no energy.                */
-    attributes.normal       = vt.normal;      /* @brief Pixel World Normal.            */
-    attributes.maxraydepth  = 1;              /* @brief Pixel Ray Tracing Max Depth.   */
+    attributes.albedo           = vec3(0.5f);     /* @brief 50% energy reflect.                   */
+    attributes.roughness        = 1.0f;           /* @brief 100% random direction reflect.        */
+    attributes.emissive         = vec3(0.0f);     /* @brief self no energy.                       */
+    attributes.normal           = vt.normal;      /* @brief Pixel World Normal.                   */
+    attributes.maxRayDepth      = 1;              /* @brief Pixel Ray Tracing Max Depth.          */
+    attributes.maxLightDepth    = 1;              /* @brief Pixel Ray Tracing Max Light Depth.    */
+    attributes.maxShadowDepth   = 1;              /* @brief Pixel Ray Tracing Max Shadow Depth.   */
     
     return attributes;
 }

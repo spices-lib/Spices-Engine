@@ -12,7 +12,7 @@ namespace Spices {
 	{
 		EditorWorld::OnPreActivate();
 
-		// mesh1
+		// 3dsmax poly canton
 		{
 			/*Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
@@ -26,12 +26,13 @@ namespace Spices {
 			meshComp.SetMesh(mesh);*/
 		}
 
-		// mesh2
+		// bridge pbr model
 		{
 			Entity& meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-
+			transformComp1.SetPosition({-10.0f, 0.0f, 0.0f});
+			
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("interior_stair_wl3ieamdw/interior_stair_wl3ieamdw_01");
 			std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw/interior_stair_wl3ieamdw_02");
 			std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw/interior_stair_wl3ieamdw_03");
@@ -47,47 +48,67 @@ namespace Spices {
 			meshComp.SetMesh(mesh);
 		}
 
-		// mesh2
+		// CornellBox
 		{
-			Entity& meshentity = CreateEntity("DefaultMesh");
+			for(int i = 0; i < 2; i++)
+			{
+				std::stringstream ss;
+				ss << "CornellBox_" << i;
+				Entity meshentity = CreateEntity("CornellBox");
+				MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+				TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+				transformComp1.SetPosition({-10.0f, 10.0f, i * 5.0f});
+
+				std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("Test_room");
+
+				std::stringstream mss;
+				mss << "BasePassRenderer.Mesh.CornellBox" << i;
+				pack1->SetMaterial(mss.str());
+				std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
+				meshComp.SetMesh(mesh);
+			}
+		}
+
+		// sphere
+		{
+			for(int i = 0; i < 3; i++)  // range in albedo
+			{
+				for(int j = 0; j < 10; j++)  // range in roughness
+				{
+					std::stringstream ss;
+					ss << "SphereRangeInRoughness_" << 10 * i + j;
+					Entity meshentity = CreateEntity(ss.str());
+					MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+					TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+					transformComp1.SetPosition({3.0f * i, 0.0f, 3.0f * j});
+
+					std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
+
+					std::stringstream mss;
+					mss << "BasePassRenderer.Mesh." << 10 * i + j;
+					pack1->SetMaterial(mss.str());
+					std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
+					meshComp.SetMesh(mesh);
+				}
+			}
+		}
+
+		// ground
+		{
+			Entity meshentity = CreateEntity("Ground");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPosition({0.0f, 10.0f, 0.0f});
+			transformComp1.SetPosition({0.0f, -1.1f, 15.0f});
+			transformComp1.SetRotation({glm::radians(90.0f), 0.0f, 0.0f});
+			transformComp1.SetScale({50.0f, 50.0f, 50.0f});
 
-			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("Test_room");
+			std::shared_ptr<SquarePack> pack1 = std::make_shared<SquarePack>();
 
-			pack1->SetMaterial("BasePassRenderer.Mesh.0");
+			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
 		}
-
-		// mesh2
-		{
-			Entity& meshentity = CreateEntity("Sphere");
-			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPosition({1.0f, 3.0f, -4.0f});
-
-			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
-
-			pack1->SetMaterial("BasePassRenderer.Mesh.1");
-			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-			meshComp.SetMesh(mesh);
-		}
-
-		// mesh2
-		{
-			Entity& meshentity = CreateEntity("Sphere");
-			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPosition({1.0f, -3.0f, -4.0f});
-
-			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
-
-			pack1->SetMaterial("BasePassRenderer.Mesh.1");
-			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-			meshComp.SetMesh(mesh);
-		}
+		
 		
 		// pointlight
 		{

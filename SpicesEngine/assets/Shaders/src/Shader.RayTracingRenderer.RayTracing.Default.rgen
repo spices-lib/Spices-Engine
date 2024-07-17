@@ -49,7 +49,7 @@ void main()
     */
     prd.seed                = tea(gl_LaunchIDEXT.y * gl_LaunchSizeEXT.x + gl_LaunchIDEXT.x, int(clockARB()));
     prd.hitValue            = vec3(0.0f);
-    prd.raydepth            = 0;
+    prd.rayDepth            = 0;
     prd.weight              = vec3(0.0f);
     
     /**
@@ -76,7 +76,7 @@ void main()
     
     vec3 curWeight          = vec3(1.0f);
     vec3 hitValue           = vec3(0.0f);
-    int  maxraydepth        = 0;
+    int  maxRayDepth        = 0;
  
     /**
     * @brief First Entry.
@@ -96,12 +96,12 @@ void main()
 
     hitValue    += prd.hitValue * curWeight;
     curWeight   *= prd.weight;
-    maxraydepth  = prd.maxraydepth;
+    maxRayDepth  = prd.maxRayDepth;
     
     /**
     * @brief Recursive Ray by hit material ateribute.
     */
-    for(; prd.raydepth < maxraydepth; prd.raydepth++)
+    for(; prd.rayDepth < maxRayDepth; prd.rayDepth++)
     {
         traceRayEXT(topLevelAS,        /* @brief Acceleration Structure.         */
                     rayFlags,          /* @brief RayFlags.                       */

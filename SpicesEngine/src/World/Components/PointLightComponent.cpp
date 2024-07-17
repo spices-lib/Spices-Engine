@@ -110,7 +110,7 @@ namespace Spices {
 					{
 						m_PointLight.color.z = 1.0f; 
 						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					};
+					}
 					ImGui::SameLine();
 					ImGui::PopID();
 				}
@@ -120,13 +120,16 @@ namespace Spices {
 					ImGui::PushID("PointLightComponent Color Picker");
 				
 					ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
-					ImGui::ColorEdit3("##", glm::value_ptr(m_PointLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
+					if(ImGui::ColorEdit3("##", glm::value_ptr(m_PointLight.color), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar))
+					{
+						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
+					}
 					ImGui::SameLine();
 					if (ImGuiH::DrawResetIcon(m_PointLight.color != glm::vec3(1.0f, 1.0f, 1.0f))) 
 					{ 
 						m_PointLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
 						FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					};
+					}
 					ImGui::PopStyleColor();
 					ImGui::PopID();
 				}
@@ -148,7 +151,7 @@ namespace Spices {
 				{
 					m_PointLight.intensity = 1.0f; 
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-				};
+				}
 			});
 		}
 
@@ -167,7 +170,7 @@ namespace Spices {
 				{ 
 					m_PointLight.constantf = 1.0f; 
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-				};
+				}
 			});
 		}
 
@@ -186,7 +189,7 @@ namespace Spices {
 				{
 					m_PointLight.linear = 0.35f; 
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-				};
+				}
 			});
 		}
 
@@ -205,7 +208,7 @@ namespace Spices {
 				{ 
 					m_PointLight.quadratic = 0.44f; 
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-				};
+				}
 			});
 		}
 

@@ -1,8 +1,8 @@
-# @file Material.BasePassRenderer.Mesh.0.material.
-# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass 0 Material.
+﻿# @file Material.BasePassRenderer.Mesh.1.material.
+# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass 1 Material.
 # @author Spices.
 
-Material: BasePassRenderer.Mesh.0
+Material: BasePassRenderer.Mesh.1
 Shaders:
   - Stage: vert
     Path: BasePassRenderer.Mesh.Default
@@ -12,18 +12,18 @@ Shaders:
     Path: BasePassRenderer.Mesh.Default
 Textures:
   - Name: diffuse
-    Value: [1, 0, 0, Texture2D, default.jpg]
+    Value: [1, 0, 0, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Albedo.jpg]
   - Name: normal
-    Value: [1, 0, 1, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg]
+    Value: [1, 0, 1, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Normal.jpg]
   - Name: specular
-    Value: [1, 0, 2, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg]
+    Value: [1, 0, 2, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Specular.jpg]
 Parameters:
   - Name: albedo
     Value: [1, 1, float3, [1.0, 1.0, 1.0]]
   - Name: roughness
-    Value: [1, 1, float, 0.0]
+    Value: [1, 1, float, 0.2]
   - Name: maxRayDepth
-    Value: [1, 1, int, 6]
+    Value: [ 1, 1, int, 6]
   - Name: maxLightDepth
     Value: [1, 1, int, 3]
   - Name: maxShadowDepth

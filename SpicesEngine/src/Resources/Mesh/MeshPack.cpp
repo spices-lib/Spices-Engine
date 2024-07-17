@@ -195,7 +195,7 @@ namespace Spices {
 
 				Vertex vt;
 				vt.position = { colRamp, rowRamp, 0.0f};
-				vt.normal = glm::normalize(vt.position);
+				vt.normal = glm::vec3(0.0f, 0.0f, 1.0f);
 				vt.color = glm::vec3{ 1.0f };
 				vt.texCoord = { colRamp + 0.5, 0.5 - rowRamp };
 
