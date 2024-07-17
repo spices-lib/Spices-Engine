@@ -48,4 +48,12 @@ namespace Spices {
 	{
 		return id == -1 ? Entity() : Entity((entt::entity)id, this);
 	}
+
+	void World::ClearMarkerWithBits(WorldMarkFlags flags)
+	{
+		if (m_Marker & flags)
+		{
+			m_Marker ^= flags;
+		}
+	}
 }

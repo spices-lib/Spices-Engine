@@ -41,7 +41,8 @@ void main()
     }
     vec2 uv = SampleSphericalMap(normalize(prd.rayDirection));
     prd.hitValue = texture(samplers, uv).xyz;
-    prd.depth = 100;                  // Ending trace
+    prd.raydepth = 100;                  // Ending trace
+    prd.maxraydepth = 0;
 }
 
 /*****************************************************************************************/

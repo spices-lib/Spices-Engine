@@ -17,6 +17,8 @@ namespace Spices {
 		{
 			MeshAddedWorldEvent event;
 			Event::GetEventCallbackFn()(event);
+
+			FrameInfo::Get().m_World->ClearMarkerWithBits(World::MeshAddedToWorld);
 		}
 
 		if (mark & World::FrushStableFrame)
@@ -30,9 +32,9 @@ namespace Spices {
 				{
 					camComp.GetCamera()->ResetStableFrames();
 				}
+
+				FrameInfo::Get().m_World->ClearMarkerWithBits(World::FrushStableFrame);
 			}
 		}
-
-		FrameInfo::Get().m_World->ReserMark();
 	}
 }

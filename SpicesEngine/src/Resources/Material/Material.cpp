@@ -264,6 +264,14 @@ namespace Spices {
 				{
 					*static_cast<float*>(pt) = std::any_cast<float>(ref.paramValue);
 				}
+				else if (ref.paramType == "int")
+				{
+					*static_cast<int*>(pt) = std::any_cast<int>(ref.paramValue);
+				}
+				else
+				{
+					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.");
+				}
 				return false;
 			});
 

@@ -16,6 +16,8 @@ namespace Spices {
 
 	void ImguiViewportToolBar::OnRender()
 	{
+		SPICES_PROFILE_ZONE;
+
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.149f, 0.16f, 0.164f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.156f, 0.302f, 0.353f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.156f, 0.302f, 0.353f, 1.0f));
@@ -40,7 +42,7 @@ namespace Spices {
 		Begin("Left ToolBar", 0.0f, window_flags);
 
 		ImVec2 ItemSize = ImGuiH::GetLineItemSize() * 1.5f;
-		ItemSize.x *= 3.5f;
+		ItemSize.x *= 4.0f;
 		float offest = ImGui::GetStyle().WindowPadding.y;
 
 		if (ImGui::Button(ICON_MD_TUNE, ImGuiH::GetLineItemSize() * 1.5f))
@@ -53,16 +55,34 @@ namespace Spices {
 			m_WayPointOn = false;
 		}
 		ImGui::SameLine();
-		if (ImGui::Button(ICON_TEXT(ICON_MD_LIGHTBULB, Real - Time), ItemSize))
+
+
+		static std::string renderingMode[5] = {
+			"Rasterization",
+			"RTX-Real-Time",
+			"RTX-Interactive(Path Tracing)",
+			"RTX-Accurate(lray)",
+			"Pixar-Storm"
+		};
+
+		static int rendererSelected = 0;
+
 		{
-			m_OptionMenuOn = false;
-			m_RenderMenuOn = !m_RenderMenuOn;
-			m_ViewMenuOn = false;
-			m_CameraMenuOn = false;
-			m_LightMenuOn = false;
-			m_WayPointOn = false;
+			SPICES_PROFILE_ZONEN("ImguiViewportToolBar::RendererMode");
+
+			if (ImGui::Button(ICON_TEXT(ICON_MD_LIGHTBULB, RTX - Interactive), ItemSize))
+			{
+				m_OptionMenuOn     = false;
+				m_RenderMenuOn     = !m_RenderMenuOn;
+				m_ViewMenuOn       = false;
+				m_CameraMenuOn     = false;
+				m_LightMenuOn      = false;
+				m_WayPointOn       = false;
+			}
+
+			ImGui::SameLine();
 		}
-		ImGui::SameLine();
+
 		if (ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize() * 1.5f))
 		{
 			m_OptionMenuOn = false;
@@ -237,7 +257,7 @@ namespace Spices {
 	
 		if (m_RenderMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + 2.0f * offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
@@ -328,7 +348,7 @@ namespace Spices {
 
 		if (m_ViewMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + ItemSize.x + 3.0f * offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + ItemSize.x + 2.0f * offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
@@ -449,7 +469,7 @@ namespace Spices {
 
 		if (m_CameraMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(2.0f * ItemSize.y + ItemSize.x + 4.0f * offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(2.0f * ItemSize.y + ItemSize.x + 3.0f * offest, ItemSize.y + 2.0f + offest));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
@@ -471,7 +491,6 @@ namespace Spices {
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Create from View))) {}
 
 			ImGui::End();
-
 		}
 
 		if (m_LightMenuOn)

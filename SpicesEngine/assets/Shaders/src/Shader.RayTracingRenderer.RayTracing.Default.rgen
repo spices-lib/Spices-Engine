@@ -4,7 +4,7 @@
 * @author Spices.
 */
 
-/************************************Pre Compile*******************************************/
+/************************************Pre Compile******************************************/
 
 #version 460
 
@@ -49,7 +49,7 @@ void main()
     */
     prd.seed                = tea(gl_LaunchIDEXT.y * gl_LaunchSizeEXT.x + gl_LaunchIDEXT.x, int(clockARB()));
     prd.hitValue            = vec3(0.0f);
-    prd.depth               = 0;
+    prd.raydepth            = 0;
     prd.weight              = vec3(0.0f);
     
     /**
@@ -76,8 +76,32 @@ void main()
     
     vec3 curWeight          = vec3(1.0f);
     vec3 hitValue           = vec3(0.0f);
+    int  maxraydepth        = 0;
+ 
+    /**
+    * @brief First Entry.
+    */
+    traceRayEXT(topLevelAS,        /* @brief Acceleration Structure.         */
+                rayFlags,          /* @brief RayFlags.                       */
+                cullMask,          /* @brief CullMask.                       */
+                0,                 /* @brief SBTRecordOffset.                */
+                0,                 /* @brief SBTRecordStride.                */
+                0,                 /* @brief Miss Shader Index.              */
+                prd.rayOrigin,     /* @brief Ray Origin.                     */
+                tMin,              /* @brief Ray min range.                  */
+                prd.rayDirection,  /* @brief Ray Direction.                  */
+                tMax,              /* @brief Ray max range.                  */
+                0                  /* @brief rayPayloadEXT (location = 0).   */
+    );
+
+    hitValue    += prd.hitValue * curWeight;
+    curWeight   *= prd.weight;
+    maxraydepth  = prd.maxraydepth;
     
-    for(; prd.depth < 4; prd.depth++)
+    /**
+    * @brief Recursive Ray by hit material ateribute.
+    */
+    for(; prd.raydepth < maxraydepth; prd.raydepth++)
     {
         traceRayEXT(topLevelAS,        /* @brief Acceleration Structure.         */
                     rayFlags,          /* @brief RayFlags.                       */

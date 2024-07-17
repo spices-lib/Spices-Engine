@@ -16,7 +16,7 @@
 * It should be the struct of all textures index and parameter buffer address.
 * One index per texture, One address per buffer set binding.
 */
-struct MaterialParameter
+struct MaterialParameter 
 {
     uint64_t address_11;         /* @brief Address of Set 1 Binding 1 Buffer. */
 };
@@ -30,41 +30,27 @@ struct MaterialParameter
 
 /********************************Specific Material Data***********************************/
 
-/**
-* @brief Set 1 Binding 1 Buffer Data Struct.
-* Both Declear and Instance here.
-*/
-struct MaterialConstantParameter_11 
-{
-    vec3 albedo;
-    float roughness;
-} constParam_11;
-
-/**
-* @brief Set 1 Binding 1 Buffer Reference.
-* Only Access index 0, though buffer reference no binding check, must be careful work with it.
-*/
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialConstantParameters_11 { 
-    MaterialConstantParameter_11 i[]; 
-};
+BEGIN_DECLEAR_CONST_PARAM(11)
+vec3  albedo;
+float roughness;
+int   maxraydepth;
+END_DECLEAR_CONST_PARAM(11)
 
 /*****************************************************************************************/
-
 
 /******************************************Functions**************************************/
 
 void ExplainMaterialParameter(in MaterialParameter param)
 {
-    uint64_t address_11 = param.address_11;
-    MaterialConstantParameters_11 constantParams_11 = MaterialConstantParameters_11(address_11);
-    constParam_11 = constantParams_11.i[0];
+    EXPLAIN_CONST_PARAM(11)
 }
 
 void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes)
 {  
-    attributes.albedo    = constParam_11.albedo;
-    attributes.roughness = constParam_11.roughness;
-    attributes.emissive  = vec3(0.0f);
+    attributes.albedo      = CONST_PARAM(11).albedo;
+    attributes.roughness   = CONST_PARAM(11).roughness;
+    attributes.emissive    = vec3(0.0f);
+    attributes.maxraydepth = CONST_PARAM(11).maxraydepth;
 }
 
 /*****************************************************************************************/

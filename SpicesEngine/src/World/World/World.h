@@ -38,9 +38,10 @@ namespace Spices {
 
 		enum WorldMarkBits
 		{
-			Clean = 0,
-			MeshAddedToWorld = 1,
-			FrushStableFrame = 2,
+			Clean = 0x00000001,
+			MeshAddedToWorld = 0x00000002,
+			FrushStableFrame = 0x00000004,
+			NeedUpdateTLAS = 0x00000008,
 			MAX = 0x7FFFFFFF
 		};
 
@@ -122,6 +123,12 @@ namespace Spices {
 		* @brief Reset WorldMarkFlags to Clean.
 		*/
 		void ReserMark() { m_Marker = WorldMarkBits::Clean; }
+
+		/**
+		* @brief Clear WorldMarkFlags with flags.
+		* @param[in] flags In flags.
+		*/
+		void ClearMarkerWithBits(WorldMarkFlags flags);
 		
 	private:
 

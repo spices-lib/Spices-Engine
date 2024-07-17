@@ -9,9 +9,9 @@
 
 namespace Spices {
 
-	void ImguiProperty::OnRender()
-	{
-		SPICES_PROFILE_ZONE;
+    void ImguiProperty::OnRender()
+    {
+        SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Begin render Property.

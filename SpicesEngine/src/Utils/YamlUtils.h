@@ -109,11 +109,11 @@ namespace YAML {
 				return false;
 			}
 			
-			param.set = node[0].as<uint32_t>();
-			param.binding = node[1].as<uint32_t>();
-			param.index = node[2].as<uint32_t>();
-			param.textureType = node[3].as<std::string>();
-			param.texturePath = node[4].as<std::string>();
+			param.set           = node[0].as<uint32_t>();
+			param.binding       = node[1].as<uint32_t>();
+			param.index         = node[2].as<uint32_t>();
+			param.textureType   = node[3].as<std::string>();
+			param.texturePath   = node[4].as<std::string>();
 
 			return true;
 		}
@@ -133,6 +133,7 @@ namespace YAML {
 			else if(param.paramType == "float3") node.push_back(std::any_cast<glm::vec3>(param.paramValue));
 			else if(param.paramType == "float2") node.push_back(std::any_cast<glm::vec2>(param.paramValue));
 			else if(param.paramType == "float")  node.push_back(std::any_cast<float>(param.paramValue));
+			else if(param.paramType == "int")    node.push_back(std::any_cast<int>(param.paramValue));
 			else
 			{
 				std::stringstream ss;
@@ -155,14 +156,15 @@ namespace YAML {
 				return false;
 			}
 
-			param.set = node[0].as<uint32_t>();
-			param.binding = node[1].as<uint32_t>();
-			param.paramType = node[2].as<std::string>();
+			param.set        = node[0].as<uint32_t>();
+			param.binding    = node[1].as<uint32_t>();
+			param.paramType  = node[2].as<std::string>();
 
 			if     (param.paramType == "float4") param.paramValue = node[3].as<glm::vec4>();
 			else if(param.paramType == "float3") param.paramValue = node[3].as<glm::vec3>();
 			else if(param.paramType == "float2") param.paramValue = node[3].as<glm::vec2>();
 			else if(param.paramType == "float")  param.paramValue = node[3].as<float>();
+			else if(param.paramType == "int")    param.paramValue = node[3].as<int>();
 			else
 			{
 				std::stringstream ss;
@@ -226,6 +228,10 @@ namespace Spices {
 		else if(p.paramType == "float")
 		{
 			out << std::any_cast<float>(p.paramValue);
+		}
+		else if(p.paramType == "int")
+		{
+			out << std::any_cast<int>(p.paramValue);
 		}
 		else
 		{

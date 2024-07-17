@@ -16,6 +16,44 @@
 #include "ShaderCommon.h"
 #include "ShaderFunctionLibrary.glsl"
 
+/**
+* @brief Begin declear a const parameter struct by set binding.
+* @example :
+* 
+* BEGIN_DECLEAR_CONST_PARAM(00)
+* int   Param0;
+* float Param1;
+* vec2  Param2;
+* END_DECLEAR_CONST_PARAM(00)
+*
+* EXPLAIN_CONST_PARAM(00)
+*
+* CONST_PARAM(00)
+*/
+#define BEGIN_DECLEAR_CONST_PARAM(setBinding)                  \
+struct MaterialConstantParameter_##setBinding  {
+
+/**
+* @brief End declear a const parameter struct and buffer reference by set binding.
+*/
+#define END_DECLEAR_CONST_PARAM(setBinding)                    \
+} constParam_##setBinding;                                     \
+layout(buffer_reference, scalar, buffer_reference_align = 8)   \
+buffer MaterialConstantParameters_##setBinding                 \
+{ MaterialConstantParameter_##setBinding i[]; };
+
+/**
+* @brief Explain MaterialParameter to a const parameter struct instance.
+*/
+#define EXPLAIN_CONST_PARAM(setBinding)                        \
+constParam_##setBinding = MaterialConstantParameters_##setBinding(param.address_##setBinding).i[0];
+
+/**
+* @brief Get const parameter struct instance by set binding.
+*/
+#define CONST_PARAM(setBinding)                                \
+constParam_##setBinding
+
 /*****************************************************************************************/
 
 /**********************************Closest Hit Input**************************************/
@@ -211,10 +249,11 @@ void main()
     /**
     * @brief Fill in rayPayloadInEXT.
     */
-    prd.rayOrigin    = rayOrigin;
-    prd.rayDirection = rayDirection;
-    prd.hitValue     = materialAttributes.emissive;
-    prd.weight       = BRDF * cos_theta / p;
+    prd.rayOrigin      = rayOrigin;
+    prd.rayDirection   = rayDirection;
+    prd.hitValue       = materialAttributes.emissive;
+    prd.weight         = BRDF * cos_theta / p;
+    prd.maxraydepth    = materialAttributes.maxraydepth;
 }
 
 /*****************************************************************************************/
@@ -303,10 +342,11 @@ MaterialAttributes InitMaterialAttributes(in Vertex vt)
 {
     MaterialAttributes attributes;
     
-    attributes.albedo    = vec3(0.5f);     /* @brief 50% energy reflect.            */
-    attributes.roughness = 1.0f;           /* @brief 100% random direction reflect. */
-    attributes.emissive  = vec3(0.0f);     /* @brief self no energy.                */
-    attributes.normal    = vt.normal;      /* @brief Pixel World Normal.            */
+    attributes.albedo       = vec3(0.5f);     /* @brief 50% energy reflect.            */
+    attributes.roughness    = 1.0f;           /* @brief 100% random direction reflect. */
+    attributes.emissive     = vec3(0.0f);     /* @brief self no energy.                */
+    attributes.normal       = vt.normal;      /* @brief Pixel World Normal.            */
+    attributes.maxraydepth  = 1;              /* @brief Pixel Ray Tracing Max Depth.   */
     
     return attributes;
 }

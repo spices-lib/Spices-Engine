@@ -62,10 +62,11 @@ struct Vertex
 */
 struct MaterialAttributes
 {
-	vec3  albedo;              /* @brief Albedo, used for Reflection attenuation.  */
-	float roughness;           /* @brief Roughness, used for Reflection direction. */
-	vec3  emissive;            /* @brief Emissive, used for Direct illumination.   */
-	vec3  normal;              /* @brief Normal, used for light effect.            */
+	vec3  albedo;              /* @brief Albedo, used for Reflection attenuation.                */
+	float roughness;           /* @brief Roughness, used for Reflection direction.               */
+	vec3  emissive;            /* @brief Emissive, used for Direct illumination.                 */
+	vec3  normal;              /* @brief Normal, used for light effect.                          */
+	int   maxraydepth;         /* @brief Max Ray Tracing Depth, defined specific from material.  */
 };
 
 /*****************************************************************************************/
@@ -153,10 +154,11 @@ struct HitPayLoad
 {
 	vec3 hitValue;                  /* @brief Current Hit Fragment Color.                                        */
 	uint seed;                      /* @brief Random Seed for BRDF Lambertian Light Reflection Direction Select. */
-	int  depth;                     /* @brief Ray Tracing Depth for diffuse.                                     */
+	int  raydepth;                  /* @brief Ray Tracing Depth for diffuse.                                     */
 	vec3 rayOrigin;                 /* @brief Next Ray Original World Position.                                  */
 	vec3 rayDirection;              /* @brief Next Ray Direction in World Space.                                 */
 	vec3 weight;                    /* @brief Current Fragment Color Weight.                                     */
+	int  maxraydepth;               /* @brief Max Ray Tracing Depth, defined specific from material.             */
 };
 
 /*****************************************************************************************/

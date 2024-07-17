@@ -218,54 +218,10 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<VkAccelerationStructureInstanceKHR> tlas;
-
-		int index = 0;
-		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
-		for (auto& e : view)
-		{
-			std::tuple<MeshComponent&, TransformComponent&> tuple = frameInfo.m_World->GetRegistry().get<MeshComponent, TransformComponent>(e);
-			MeshComponent& meshComp = std::get<0>(tuple);
-			TransformComponent& tranComp = std::get<1>(tuple);
-
-			if (!tranComp.GetMarker() & TransformComponent::NeedUpdateTLAS)
-			{
-				index += 1;
-				continue;
-			}
-			SPICES_CORE_INFO("Update TLAS");
-			tranComp.ClearMarkerWithBits(TransformComponent::NeedUpdateTLAS);
-
-			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
-
-				VkAccelerationStructureInstanceKHR                            rayInst{};
-				rayInst.transform                                           = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());                    // Position of the instance
-				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
-				rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(index);
-				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-				rayInst.mask                                                = 0xFF;                                                                      //  Only be hit if rayMask & instance.mask != 0
-				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                 // We will use the same hit group for all objects
-
-				tlas.push_back(rayInst);
-
-				index += 1;
-				return false;
-			});
-		}
-
-		/**
-		* @brief Build TLAS.
-		*/
-		if (!tlas.empty())
-		{
-			m_VulkanRayTracing->BuildTLAS(
-				tlas,
-				VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
-				VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR |
-				VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
-				update
-			);
-		}
+		if(!(frameInfo.m_World->GetMarker() & World::NeedUpdateTLAS)) return;
+		frameInfo.m_World->ClearMarkerWithBits(World::NeedUpdateTLAS);
+		
+		CreateTopLevelAS(frameInfo, update);
 	}
 
 	void RayTracingRenderer::CreateRTShaderBindingTable(FrameInfo& frameInfo)

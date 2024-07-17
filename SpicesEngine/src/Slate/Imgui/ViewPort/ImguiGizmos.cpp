@@ -62,10 +62,10 @@ namespace Spices {
             /**
             * @brief Iter by view.
             */
-            auto& view = m_FrameInfo.m_World->GetRegistry().view<CameraComponent>();
+            auto view = m_FrameInfo.m_World->GetRegistry().view<CameraComponent>();
             for (auto& e : view)
             {
-                auto& [tComp, transComp] = m_FrameInfo.m_World->GetRegistry().get<CameraComponent, TransformComponent>(e);
+                auto [tComp, transComp] = m_FrameInfo.m_World->GetRegistry().get<CameraComponent, TransformComponent>(e);
 
                 if (tComp.IsActive())
                 {
@@ -200,8 +200,7 @@ namespace Spices {
                         tc.SetRotation(tc.GetRotation() + deltaRotation);
                         tc.SetScale(scale);
 
-                        FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-                        tc.Mark(TransformComponent::NeedUpdateTLAS);
+                        FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
                     }
                 }
             }

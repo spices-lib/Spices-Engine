@@ -107,16 +107,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##X", &m_Position.x, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Position.x != 0.0f)) 
 				{ 
 					m_Position.x = 0.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::SameLine();
 				ImGui::PopID();
@@ -135,16 +133,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##Y", &m_Position.y, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Position.y != 0.0f)) 
 				{
 					m_Position.y = 0.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::SameLine();
 				ImGui::PopID();
@@ -163,16 +159,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##Z", &m_Position.z, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Position.z != 0.0f)) 
 				{ 
 					m_Position.z = 0.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopID();
 			}
@@ -254,16 +248,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##X", &m_Rotation.x, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Rotation.x != 0.0f)) 
 				{ 
 					m_Rotation.x = 0.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::SameLine();
 				ImGui::PopID();
@@ -282,16 +274,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##Y", &m_Rotation.y, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Rotation.y != 0.0f)) 
 				{ 
 					m_Rotation.y = 0.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				};
 				ImGui::SameLine();
 				ImGui::PopID();
@@ -310,16 +300,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##Z", &m_Rotation.z, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Rotation.z != 0.0f)) 
 				{ 
 					m_Rotation.z = 0.0f;
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopID();
 			}
@@ -393,17 +381,15 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##X", &m_Scale.x, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Scale.x != 1.0f)) 
 				{ 
 					m_Scale.x = 1.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
-				};
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
+				}
 				ImGui::SameLine();
 				ImGui::PopID();
 			}
@@ -421,16 +407,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##Y", &m_Scale.y, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Scale.y != 1.0f)) 
 				{ 
 					m_Scale.y = 1.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::SameLine();
 				ImGui::PopID();
@@ -449,16 +433,14 @@ namespace Spices {
 				ImGui::PushItemWidth(itemWidth);
 				if(ImGui::DragFloat("##Z", &m_Scale.z, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				if (ImGuiH::DrawResetIcon(m_Scale.z != 1.0f))
 				{ 
 					m_Scale.z = 1.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-					Mark(NeedUpdateTLAS);
+					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopID();
 			}
