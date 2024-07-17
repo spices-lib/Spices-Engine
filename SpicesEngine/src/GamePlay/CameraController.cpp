@@ -125,8 +125,8 @@ namespace Spices {
 		glm::vec3 rot = m_CameraTranComp->GetRotation();
 		const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 
-		rot.y -= yawSign * delta.x * RotationSpeed();
-		rot.x += delta.y * RotationSpeed();
+		rot.y -= glm::degrees(yawSign * delta.x * RotationSpeed());
+		rot.x += glm::degrees(delta.y * RotationSpeed());
 
 		m_CameraTranComp->SetRotation(rot);
 	}
@@ -196,6 +196,6 @@ namespace Spices {
 	glm::quat CameraController::GetOrientation() const
 	{
 		const glm::vec3& rot = m_CameraTranComp->GetRotation();
-		return glm::quat(glm::vec3(rot.x, rot.y, rot.z));
+		return glm::quat({ glm::radians(rot.x), glm::radians(rot.y), glm::radians(rot.z) });
 	}
 }

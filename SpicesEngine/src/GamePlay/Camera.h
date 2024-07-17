@@ -77,7 +77,7 @@ namespace Spices {
 		* @param[in] farPlane FarPlane, usually infinity far.
 		* @param[in] aspectRatio AspectRatio, viewport width / viewport height.
 		*/
-		void SetPerspective(float fov, float nearPlane, float farPlane, float aspectRatio);
+		void SetPerspective(float fov, float nearPlane, float farPlane, float aspectRatio = 1.777);
 
 		/**
 		* @brief Set ProjectionMatrix by using perspective type with one param.

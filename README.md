@@ -1,24 +1,17 @@
 # Spices-Engine
 since 2024.03.27, we start here
 
-## Update on 24/06/10
+## Update on 24.07.17
 
 TODO:
-- [ ] 1.better vulkan rendering system
-- [ ] 2.PBR Rendering
-- [ ] 3.Lighting system (pointlight directional light)
-- [ ] 5.mesh system (obj, gltf, custom, predefines)
-- [ ] 8.save/load system
-- [ ] 9.physics system (mayn't)
-- [ ] 11.unit test
-- [ ] 12.document
-- [ ] 13.preference analysis
-- [ ] 14.Multiple Viewport
-- [ ] 15.Shadow Map
-- [ ] 16.More Shader Support
-- [ ] 17.Property Panel/Content Browser Panel
-- [ ] 18.Reflection
-- [ ] 19.Serializer
+- [ ] 1.PBR Material.
+- [ ] 2.Sprite Renderer & World Pick Renderer Work with Path Tracing Pipeline.
+- [ ] 3.Material hot reload.
+- [ ] 4.Material Edit Panel.
+- [ ] 5.Mesh Edit Panel.
+- [ ] 6.Texture Bind ness.
+- [ ] 7.Metallic Material Light appearance fix.
+- [ ] 8.Rasterization Pipeline & Ray Tracing Pipeline switch.
 
 PURPOSE:
 - [ ] 1.loading a bing Max Scene

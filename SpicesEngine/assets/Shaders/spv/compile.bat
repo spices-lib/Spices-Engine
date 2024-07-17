@@ -1,6 +1,7 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.vert  -o Shader.BasePassRenderer.Mesh.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.frag  -o Shader.BasePassRenderer.Mesh.Default.frag.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.rchit -o Shader.BasePassRenderer.Mesh.Default.rchit.spv       --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.CornelBox.rchit -o Shader.BasePassRenderer.Mesh.CornelBox.rchit.spv       --target-env=vulkan1.3
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.vert -o Shader.BasePassRenderer.SkyBox.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.frag -o Shader.BasePassRenderer.SkyBox.Default.frag.spv

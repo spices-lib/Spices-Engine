@@ -194,6 +194,8 @@ namespace Spices {
                         */
                         glm::vec3 translation, rotation, scale;
                         DecomposeTransform(model, translation, rotation, scale);
+                        rotation = { glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z) };
+
 
                         glm::vec3 deltaRotation = rotation - tc.GetRotation();
                         tc.SetPosition(translation);

@@ -458,7 +458,7 @@ namespace Spices {
 		/**
 		* @brief Use raidans
 		*/
-		return glm::toMat4(glm::quat(m_Rotation));
+		return glm::toMat4(glm::quat({glm::radians(m_Rotation.x), glm::radians(m_Rotation.y), glm::radians(m_Rotation.z)}));
 	}
 
 	void TransformComponent::ClearMarkerWithBits(TransformComponentFlags flags)

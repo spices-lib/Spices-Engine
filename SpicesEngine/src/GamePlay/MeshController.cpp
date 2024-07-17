@@ -52,8 +52,8 @@ namespace Spices {
 		glm::vec3 rot = std::any_cast<TransformComponent*>(m_CameraTranComp)->GetRotation();
 		const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 
-		rot.y += yawSign * delta.x * RotationSpeed();
-		rot.x += delta.y * RotationSpeed();
+		rot.y += glm::degrees(yawSign * delta.x * RotationSpeed());
+		rot.x += glm::degrees(delta.y * RotationSpeed());
 
 		std::any_cast<TransformComponent*>(m_CameraTranComp)->SetRotation(rot);
 	}

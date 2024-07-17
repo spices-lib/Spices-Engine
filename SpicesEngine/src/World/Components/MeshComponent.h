@@ -62,6 +62,10 @@ namespace Spices {
 
 	protected:
 
+		void DrawMaterialPanel(std::shared_ptr<Material> material);
+		
+	protected:
+		
 		/**
 		* @brief The Mesh this component handled.
 		*/

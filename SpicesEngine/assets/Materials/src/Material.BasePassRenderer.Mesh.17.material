@@ -19,7 +19,7 @@ Textures:
     Value: [1, 0, 2, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg]
 Parameters:
   - Name: albedo
-    Value: [1, 1, float3, [1.0, 0.8, 0.0]]
+    Value: [1, 1, float3, [0.8, 0.8, 0.2]]
   - Name: roughness
     Value: [1, 1, float, 0.7]
   - Name: maxRayDepth

@@ -9,7 +9,7 @@ Shaders:
   - Stage: frag
     Path: BasePassRenderer.Mesh.Default
   - Stage: rchit
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.Mesh.CornelBox
 Textures:
   - Name: diffuse
     Value: [1, 0, 0, Texture2D, default.jpg]
@@ -19,12 +19,12 @@ Textures:
     Value: [1, 0, 2, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg]
 Parameters:
   - Name: albedo
-    Value: [1, 1, float3, [0.5, 0.5, 0.5]]
+    Value: [1, 1, float3, [1.0, 1.0, 1.0]]
   - Name: roughness
     Value: [1, 1, float, 1.0]
   - Name: maxRayDepth
-    Value: [1, 1, int, 6]
+    Value: [1, 1, int, 8]
   - Name: maxLightDepth
-    Value: [1, 1, int, 3]
+    Value: [1, 1, int, 8]
   - Name: maxShadowDepth
     Value: [1, 1, int, 1]

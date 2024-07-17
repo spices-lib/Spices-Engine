@@ -23,8 +23,8 @@ Parameters:
   - Name: roughness
     Value: [1, 1, float, 0.0]
   - Name: maxRayDepth
-    Value: [1, 1, int, 6]
+    Value: [1, 1, int, 8]
   - Name: maxLightDepth
-    Value: [1, 1, int, 3]
+    Value: [1, 1, int, 8]
   - Name: maxShadowDepth
     Value: [1, 1, int, 1]

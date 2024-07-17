@@ -22,8 +22,8 @@ namespace Spices {
         * @todo Remove it.
         */
         ImGui::ShowDemoWindow();
-        ImGui::ShowDebugLogWindow();
-        ImPlot::ShowDemoWindow();
+        //ImGui::ShowDebugLogWindow();
+        //ImPlot::ShowDemoWindow();
 
         /**
         * @brief End render ContentBrowser.

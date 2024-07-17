@@ -168,7 +168,23 @@ namespace Spices {
 		*/
 		scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; }
 
+		/**
+		* @brief Get material parameter address on GPU.
+		* @return the material parameter address on GPU.
+		*/
 		uint64_t GetMaterialParamsAddress() const;
+
+		/**
+		* @brief Get boolean of whether draw a material window.
+		* @return the boolean of whether draw a material window.
+		*/
+		bool GetIsDrawWindow() const { return m_IsDrawWindow; }
+
+		/**
+		* @brief Set boolean of whether draw a material window.
+		* @param[in] isDrawWindow the boolean of whether draw a material window.
+		*/
+		void SetIsDrawWindow(bool isDrawWindow) { m_IsDrawWindow = isDrawWindow; }
 		
 		/**
 		* @brief This interface need to be overwritten by specific material.
@@ -230,6 +246,11 @@ namespace Spices {
 		/*
 		* @brief Buffer takes all textures index and all constant params buffer address. 
 		*/
-		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer = nullptr; 
+		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer = nullptr;
+
+		/**
+		* @brief True if this material needs to draw a window.
+		*/
+		bool m_IsDrawWindow = false;
 	};
 }

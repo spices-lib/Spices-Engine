@@ -301,7 +301,7 @@ namespace Spices {
 			directionalLight.rotationMatrix = transComp.GetRotateMatrix();
 			dLightBuffer[index] = directionalLight;
 			index++;
-			return true;
+			return false;
 		});
 
 		/**
