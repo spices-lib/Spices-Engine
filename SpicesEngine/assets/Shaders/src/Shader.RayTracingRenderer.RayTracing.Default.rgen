@@ -36,7 +36,8 @@ layout(set = 1, binding = 0) uniform accelerationStructureEXT topLevelAS;
 /**
 * @brief Ray Tracing Out Image.
 */
-layout(set = 1, binding = 1, rgba32f) uniform image2D image;
+layout(set = 1, binding = 1, rgba32f) uniform image2D RayImage;    /* @brief Color. */
+layout(set = 1, binding = 2, r32f) uniform image2D RayID;          /* @brief ID.    */
 
 /*****************************************************************************************/
 
@@ -77,7 +78,8 @@ void main()
     vec3 curWeight          = vec3(1.0f);
     vec3 hitValue           = vec3(0.0f);
     int  maxRayDepth        = 0;
- 
+    int  entityID           = 0;
+    
     /**
     * @brief First Entry.
     */
@@ -97,6 +99,7 @@ void main()
     hitValue    += prd.hitValue * curWeight;
     curWeight   *= prd.weight;
     maxRayDepth  = prd.maxRayDepth;
+    entityID     = prd.entityID;
     
     /**
     * @brief Recursive Ray by hit material ateribute.
@@ -126,16 +129,17 @@ void main()
     if(view.stableFrames > 0)
     {
         float a         = 1.0f / float(view.stableFrames + 1);
-        vec3  old_color = imageLoad(image, ivec2(gl_LaunchIDEXT.xy)).xyz;
-        imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(mix(old_color, hitValue, a), 1.0f));
+        vec3  old_color = imageLoad(RayImage, ivec2(gl_LaunchIDEXT.xy)).xyz;
+        imageStore(RayImage, ivec2(gl_LaunchIDEXT.xy), vec4(mix(old_color, hitValue, a), 1.0f));
     }
     else
     {
         /**
         * @brief First frame, replace the value in the buffer.
         */ 
-        imageStore(image, ivec2(gl_LaunchIDEXT.xy), vec4(hitValue, 1.0f));
+        imageStore(RayImage, ivec2(gl_LaunchIDEXT.xy), vec4(hitValue, 1.0f));
     }
+    imageStore(RayID, ivec2(gl_LaunchIDEXT.xy), vec4(entityID));
 }
 
 /*****************************************************************************************/

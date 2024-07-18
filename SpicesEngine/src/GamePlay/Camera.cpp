@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "Camera.h"
 #include "Core/Math/Math.h"
+#include "Render/FrameInfo.h"
 
 namespace Spices {
 
@@ -37,6 +38,12 @@ namespace Spices {
 		m_OrthographicParam.bottom      = bottom;
 		m_OrthographicParam.nearPlane   = nearPlane;
 		m_OrthographicParam.farPlane    = farPlane;
+	}
+
+	void Camera::ResetStableFrames()
+	{
+		if (FrameInfo::Get().m_RendererType == RendererType::Rasterization) return;
+		m_StableFrames = 0;
 	}
 
 	void Camera::CalculatePMatrix()

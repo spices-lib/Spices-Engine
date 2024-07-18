@@ -28,6 +28,12 @@ namespace Spices {
 		{
 			std::array<SpicesShader::PointLight, POINTLIGHTBUFFERMAXNUM> lights;
 		};
+
+		struct PushConstant
+		{
+			int entityID;
+		};
+		
 	}
 
 	/**

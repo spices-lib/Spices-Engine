@@ -99,7 +99,7 @@ namespace Spices {
 		/**
 		* @brief Reset m_StableFrames to 0.
 		*/
-		void ResetStableFrames() { m_StableFrames = 0; }
+		void ResetStableFrames();
 
 		/**
 		* @brief InCreate 1 to m_StableFrames per frame.

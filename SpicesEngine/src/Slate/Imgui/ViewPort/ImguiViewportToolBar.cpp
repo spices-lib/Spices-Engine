@@ -1,5 +1,6 @@
 #include "Pchheader.h"
 #include "ImguiViewportToolBar.h"
+#include "World/World/World.h"
 
 #include <imgui_internal.h>
 
@@ -70,7 +71,18 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("ImguiViewportToolBar::RendererMode");
 
-			if (ImGui::Button(ICON_TEXT(ICON_MD_LIGHTBULB, RTX - Interactive), ItemSize))
+			std::string buttonName;
+			switch(FrameInfo::Get().m_RendererType)
+			{
+			case RendererType::Rasterization:
+				buttonName = ICON_TEXT(ICON_MD_LIGHTBULB, Rasterization);
+				break;
+			case RendererType::PathTracing:
+				buttonName = ICON_TEXT(ICON_MD_LIGHTBULB, RTX - Interactive);
+				break;
+			}
+			
+			if (ImGui::Button(buttonName.c_str(), ItemSize))
 			{
 				m_OptionMenuOn     = false;
 				m_RenderMenuOn     = !m_RenderMenuOn;
@@ -263,8 +275,16 @@ namespace Spices {
 			ImGui::Begin("##", &open, window_flags);
 			ImGuiH::MainMenuTitleSeparator();
 
+			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Rasterization)))
+			{
+				FrameInfo::Get().m_RendererType = RendererType::Rasterization;
+			}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Real-Time))) {}
-			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Interactive(Path Tracing)))) {}
+			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Interactive(Path Tracing))))
+			{
+				FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
+				FrameInfo::Get().m_RendererType = RendererType::PathTracing;
+			}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, RTX-Accurate(lray)))) {}
 			if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Pixar-Storm))) {}
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));

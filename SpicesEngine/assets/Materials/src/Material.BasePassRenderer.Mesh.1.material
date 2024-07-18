@@ -12,7 +12,7 @@ Shaders:
     Path: BasePassRenderer.Mesh.Default
 Textures:
   - Name: diffuse
-    Value: [1, 0, 0, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Albedo.jpg]
+    Value: [1, 0, 0, Texture2D, default.jpg]
   - Name: normal
     Value: [1, 0, 1, Texture2D, metal_sheet_xhtnbhlg/xhtnbhlg_4K_Normal.jpg]
   - Name: specular

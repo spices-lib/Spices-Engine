@@ -25,7 +25,10 @@ layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 /*****************************************************************************************/
 
-layout(set = 2, binding = 1) uniform sampler2D samplers;
+layout(set = 3, binding = 0) uniform sampler2D samplers;
+layout(push_constant) uniform Push {
+    int entityID;
+} push;
 
 /**********************************Shader Entry*******************************************/
 
@@ -40,9 +43,10 @@ void main()
         //prd.hitValue   = vec3(1.0f);
     }
     vec2 uv = SampleSphericalMap(normalize(prd.rayDirection));
-    prd.hitValue = texture(samplers, uv).xyz;
-    prd.rayDepth = 100;                  // Ending trace
-    prd.maxRayDepth = 0;
+    prd.hitValue      = texture(samplers, uv).xyz;
+    prd.rayDepth      = 100;                  // Ending trace
+    prd.maxRayDepth   = 0;
+    prd.entityID      = push.entityID;
 }
 
 /*****************************************************************************************/

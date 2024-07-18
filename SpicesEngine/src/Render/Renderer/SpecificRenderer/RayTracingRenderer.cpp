@@ -43,13 +43,14 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "RayTracing", this }
-		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)   /* @brief Acceleration Structure.         */
-		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "Ray" }, VK_FORMAT_R32G32B32A32_SFLOAT)      /* @brief Ray Tracing Output Image.       */
-		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(1, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)               /* @brief World Mesh Buffer.              */
-		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)       /* @brief World Directional Light Buffer. */
-		.AddStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)             /* @brief World PointLight Buffer.        */
-		.AddTexture<Texture2D>(2, 0, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR, {"interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg"})  /* @brief temp */
-		.AddTexture<Texture2D>(2, 1, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr "})                                    /* @brief temp */
+		.AddPushConstant<RayTracingR::PushConstant>()
+		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                    /* @brief Acceleration Structure.         */
+		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayImage" }, VK_FORMAT_R32G32B32A32_SFLOAT)             /* @brief Ray Tracing Output Image.       */
+		.AddStorageTexture(1, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayID" }, VK_FORMAT_R32_SFLOAT)                          /* @brief Ray Tracing Output Image.       */
+		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(2, 0, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                                /* @brief World Mesh Buffer.              */
+		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(2, 1, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                        /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer<RayTracingR::PointLightBuffer>(2, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                              /* @brief World PointLight Buffer.        */
+		.AddTexture<Texture2D>(3, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})  /* @brief temp */
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
 
@@ -106,6 +107,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		if(frameInfo.m_RendererType != RendererType::PathTracing) return;
+		
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
 		UpdateTopLevelAS(frameInfo);
@@ -120,16 +123,23 @@ namespace Spices {
 		
 		builder.BindPipeline("RayTracingRenderer.RayTracing.Default");
 
-		builder.UpdateStorageBuffer(1, 2, m_DescArray.get());
+		builder.UpdateStorageBuffer(2, 0, m_DescArray.get());
 		
-		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(1, 3, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(2, 1, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
 		});
 		
-		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(1, 4, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(2, 2, [&](auto& ssbo) {
 			GetPointLight(frameInfo, ssbo.lights);
 		});
 
+		builder.UpdatePushConstant<RayTracingR::PushConstant>([&](auto& push) {
+			IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& camComp){
+				push.entityID = entityId;
+				return true;
+			});
+		});
+		
 		builder.TraceRays(&m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion);
 
 		builder.Endrecording();
@@ -196,6 +206,7 @@ namespace Spices {
 				m_DescArray->descs[index].vertexAddress = v->GetVerticesBufferAddress();
 				m_DescArray->descs[index].indexAddress  = v->GetIndicesBufferAddress();
 				m_DescArray->descs[index].materialParameterAddress  = v->GetMaterial()->GetMaterialParamsAddress();
+				m_DescArray->descs[index].entityID  = static_cast<int>(e);
 				
 				index += 1;
 				return false;

@@ -111,21 +111,21 @@ layout(set = 1, binding = 0) uniform accelerationStructureEXT topLevelAS;
 /**
 * @brief MeshDescription Buffer of all Mesh in World.
 */
-layout(set = 1, binding = 2, scalar) readonly buffer MeshDescBuffer { 
+layout(set = 2, binding = 0, scalar) readonly buffer MeshDescBuffer { 
     MeshDesc i[];           /* @see MeshDesc. */
 } meshDescBuffer;
 
 /**
 * @brief DirectionalLight Buffer in World.
 */
-layout(set = 1, binding = 3, scalar) readonly buffer DLightBuffer   { 
+layout(set = 2, binding = 1, scalar) readonly buffer DLightBuffer   { 
     DirectionalLight i[];   /* @see DirectionalLight. */
 } dLightBuffer;
 
 /**
 * @brief PointLight Buffer in World.
 */
-layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   { 
+layout(set = 2, binding = 2, scalar) readonly buffer PLightBuffer   { 
     PointLight i[];         /* @see PointLight. */
 } pLightBuffer;
 
@@ -142,11 +142,17 @@ layout(set = 1, binding = 4, scalar) readonly buffer PLightBuffer   {
 Vertex UnPackVertex(in vec3 weight);
 
 /**
+* @brief Unpack Entity ID from MeshDescBuffer.
+* @return Returns the Entity ID.
+*/
+int UnPackEntityID();
+
+/**
 * @brief Unpack Material Parameter from MaterialParameterBuffer.
 * @return Returns the Material Parameter.
 */
 MaterialParameter UnPackMaterialParameter();
-
+        
 /**
 * @brief Explain Material Parameter to split struct and texture.
 * @param[in] param the MaterialParameter needs to be explained.
@@ -193,7 +199,12 @@ void main()
     * @brief Get interest Vertex data.
     */
     Vertex vt = UnPackVertex(attribs);
-    
+
+    /**
+    * @brief Get Entity ID.
+    */
+    int entityID = UnPackEntityID();
+
     /**
     * @brief Get material parameter data.
     */
@@ -258,6 +269,7 @@ void main()
     prd.hitValue       = materialAttributes.emissive;
     prd.weight         = BRDF * cos_theta / p;
     prd.maxRayDepth    = materialAttributes.maxRayDepth;
+    prd.entityID       = entityID;
 }
 
 /*****************************************************************************************/
@@ -320,6 +332,15 @@ Vertex UnPackVertex(in vec3 weight)
     return vt;
 }
 
+int UnPackEntityID()
+{
+    /**
+    * @brief Access Buffer by GPU address.
+    */
+    MeshDesc desc = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
+    return desc.entityID;
+}
+
 MaterialParameter UnPackMaterialParameter()
 {
     /**
@@ -341,7 +362,7 @@ MaterialParameter UnPackMaterialParameter()
         return params.i[0];
     }
 }
-
+        
 MaterialAttributes InitMaterialAttributes(in Vertex vt)
 {
     MaterialAttributes attributes;

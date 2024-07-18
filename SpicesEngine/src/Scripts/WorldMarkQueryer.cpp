@@ -25,11 +25,11 @@ namespace Spices {
 		if (mark & World::FrushStableFrame)
 		{
 			auto view = FrameInfo::Get().m_World->GetRegistry().view<CameraComponent>();
-			for(auto& e : view)
+			for (auto& e : view)
 			{
 				auto& camComp = FrameInfo::Get().m_World->GetRegistry().get<CameraComponent>(e);
 
-				if(camComp.IsActive())
+				if (camComp.IsActive())
 				{
 					camComp.GetCamera()->ResetStableFrames();
 				}

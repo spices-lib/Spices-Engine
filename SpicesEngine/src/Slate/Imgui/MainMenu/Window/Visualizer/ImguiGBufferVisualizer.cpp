@@ -53,7 +53,7 @@ namespace Spices {
             SPICES_PROFILE_ZONEN("Render Diffuse");
 
             ImGui::Text("Diffuse");
-            //ImGui::Image(m_GBufferID.DiffuseID, size);
+            ImGui::Image(m_GBufferID.DiffuseID, size);
             ImGui::Separator();
         }
 
@@ -64,7 +64,7 @@ namespace Spices {
             SPICES_PROFILE_ZONEN("Render Normal");
 
             ImGui::Text("Normal");
-            //ImGui::Image(m_GBufferID.NormalID, size);
+            ImGui::Image(m_GBufferID.NormalID, size);
             ImGui::Separator();
         }
 
@@ -75,7 +75,7 @@ namespace Spices {
             SPICES_PROFILE_ZONEN("Render Specular");
 
             ImGui::Text("Specular");
-            //ImGui::Image(m_GBufferID.SpecularID, size);
+            ImGui::Image(m_GBufferID.SpecularID, size);
             ImGui::Separator();
         }
 
@@ -129,13 +129,13 @@ namespace Spices {
         SPICES_PROFILE_ZONE;
 
         VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
-        //VkDescriptorImageInfo* diffuseInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Diffuse" });
-        //VkDescriptorImageInfo* normalInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal" });
-        //VkDescriptorImageInfo* specularInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Specular" });
+        VkDescriptorImageInfo* diffuseInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Diffuse" });
+        VkDescriptorImageInfo* normalInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal" });
+        VkDescriptorImageInfo* specularInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Specular" });
 
         m_GBufferID.SceneColorID  = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
-        //m_GBufferID.DiffuseID     = ImGui_ImplVulkan_AddTexture(diffuseInfo->sampler    , diffuseInfo->imageView   ,  diffuseInfo->imageLayout     );
-        //m_GBufferID.NormalID      = ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      );
-        //m_GBufferID.SpecularID    = ImGui_ImplVulkan_AddTexture(specularInfo->sampler   , specularInfo->imageView   , specularInfo->imageLayout    );
+        m_GBufferID.DiffuseID     = ImGui_ImplVulkan_AddTexture(diffuseInfo->sampler    , diffuseInfo->imageView   ,  diffuseInfo->imageLayout     );
+        m_GBufferID.NormalID      = ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      );
+        m_GBufferID.SpecularID    = ImGui_ImplVulkan_AddTexture(specularInfo->sampler   , specularInfo->imageView   , specularInfo->imageLayout    );
     }
 }

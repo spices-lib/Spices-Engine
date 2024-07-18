@@ -29,13 +29,13 @@ namespace Spices {
 		void Free() 
 		{
 			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SceneColorID));
-			//ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(DiffuseID));
-			//ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
-			//ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SpecularID));
-		};
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(DiffuseID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SpecularID));
+		}
 	};
 
-	/**
+	/*
 	* @brief The ImguiGBufferVisualizer Class.
 	* This class defines how to render a GBuffer Visualizer.
 	*/
@@ -56,13 +56,13 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiGBufferVisualizer() {};
+		virtual ~ImguiGBufferVisualizer() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnUpdate(TimeStep& ts) override {}
 
 		/**
 		* @brief This interface is called On SlateRenderer Render.

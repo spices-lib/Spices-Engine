@@ -18,6 +18,12 @@ namespace Spices {
 	*/
 	class World;
 
+	enum RendererType
+	{
+		Rasterization,
+		PathTracing,
+	};
+	
 	/**
 	* @brief FrameInfo Class.
 	* This class defines the FrameInfo data.
@@ -93,5 +99,10 @@ namespace Spices {
 		* @brief The shared pointer of specific world.
 		*/
 		std::shared_ptr<World> m_World;
+
+		/**
+		* @brief The renderer type of current world.
+		*/
+		RendererType m_RendererType = RendererType::PathTracing;
 	};
 }
