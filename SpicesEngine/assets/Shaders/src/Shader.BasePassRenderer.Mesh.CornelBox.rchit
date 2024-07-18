@@ -33,6 +33,7 @@ struct MaterialParameter
 BEGIN_DECLEAR_CONST_PARAM(11)
 vec3  albedo;
 float roughness;
+float metallic;
 int   maxRayDepth;
 int   maxLightDepth;
 int   maxShadowDepth;
@@ -62,7 +63,8 @@ void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes)
         attributes.albedo      = CONST_PARAM(11).albedo;
     }
     attributes.roughness       = CONST_PARAM(11).roughness;
-    attributes.emissive      = vec3(0.0f);
+    attributes.metallic        = CONST_PARAM(11).metallic;
+    attributes.emissive        = vec3(0.0f);
     attributes.maxRayDepth     = CONST_PARAM(11).maxRayDepth;
     attributes.maxLightDepth   = CONST_PARAM(11).maxLightDepth;
     attributes.maxShadowDepth  = CONST_PARAM(11).maxShadowDepth;

@@ -64,6 +64,7 @@ struct MaterialAttributes
 {
 	vec3  albedo;              /* @brief Albedo, used for Reflection attenuation.                       */
 	float roughness;           /* @brief Roughness, used for Reflection direction.                      */
+	float metallic;            /* @brief Metallic, used for                                             */
 	vec3  emissive;            /* @brief Emissive, used for Direct illumination.                        */
 	vec3  normal;              /* @brief Normal, used for light effect.                                 */
 	int   maxRayDepth;         /* @brief Max Ray Tracing Depth, defined specific from material.         */

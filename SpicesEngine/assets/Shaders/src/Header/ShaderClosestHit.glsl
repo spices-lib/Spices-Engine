@@ -15,6 +15,7 @@
 
 #include "ShaderCommon.h"
 #include "ShaderFunctionLibrary.glsl"
+#include "ShaderPreRendererLayout.glsl"
 
 /**
 * @brief Begin declear a const parameter struct by set binding.
@@ -239,7 +240,7 @@ void main()
     */
     if(prd.rayDepth < materialAttributes.maxLightDepth)
     {
-        materialAttributes.emissive += CalculatePointLights(vt, materialAttributes) + CalculateDirectionalLights(vt, materialAttributes);
+        //materialAttributes.emissive += 
     }
 
     /**
@@ -259,7 +260,9 @@ void main()
     const float cos_theta = dot(rayDirection, materialAttributes.normal);
     const float p = cos_theta / PI;
 
-    vec3 BRDF = materialAttributes.albedo / PI;
+    
+    //vec3 brdf = materialAttributes.albedo / PI;
+    vec3 brdf = materialAttributes.albedo / PI + CalculatePointLights(vt, materialAttributes) + CalculateDirectionalLights(vt, materialAttributes);
 
     /**
     * @brief Fill in rayPayloadInEXT.
@@ -267,7 +270,7 @@ void main()
     prd.rayOrigin      = rayOrigin;
     prd.rayDirection   = rayDirection;
     prd.hitValue       = materialAttributes.emissive;
-    prd.weight         = BRDF * cos_theta / p;
+    prd.weight         = brdf * cos_theta / p;
     prd.maxRayDepth    = materialAttributes.maxRayDepth;
     prd.entityID       = entityID;
 }
@@ -369,6 +372,7 @@ MaterialAttributes InitMaterialAttributes(in Vertex vt)
     
     attributes.albedo           = vec3(0.5f);     /* @brief 50% energy reflect.                   */
     attributes.roughness        = 1.0f;           /* @brief 100% random direction reflect.        */
+    attributes.metallic         = 0.0f;
     attributes.emissive         = vec3(0.0f);     /* @brief self no energy.                       */
     attributes.normal           = vt.normal;      /* @brief Pixel World Normal.                   */
     attributes.maxRayDepth      = 1;              /* @brief Pixel Ray Tracing Max Depth.          */
@@ -381,7 +385,9 @@ MaterialAttributes InitMaterialAttributes(in Vertex vt)
 vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
-
+    vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec3 V = normalize(origin.xyz - vt.position);
+ 
     /**
     * @brief Iter all PointLights in Buffer.
     */
@@ -428,7 +434,9 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
             if(!isShadowArea)
             {
                 float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
-                col += dot(attr.normal, dir) * light.color * light.intensity * attenuation;
+                //col += dot(attr.normal, dir) * light.color * light.intensity * attenuation;
+                
+                col += BRDF(dir, V, attr.normal, light.color * light.intensity * attenuation, attr.albedo, attr.metallic, attr.roughness);
             }
         }
     }
@@ -439,7 +447,9 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
 vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
-
+    vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec3 V = normalize(origin.xyz - vt.position);
+    
     /**
     * @brief Iter all DirectionalLights in Buffer.
     */
@@ -485,7 +495,8 @@ vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
 
             if(!isShadowArea)
             {
-                col += dot(attr.normal, dir) * light.color * light.intensity;
+                //col += dot(attr.normal, dir) * light.color * light.intensity;
+                col += BRDF(dir, V, attr.normal, light.color * light.intensity, attr.albedo, attr.metallic, attr.roughness);
             }
         }
     }

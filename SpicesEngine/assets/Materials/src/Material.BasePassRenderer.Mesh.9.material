@@ -22,6 +22,8 @@ Parameters:
     Value: [1, 1, float3, [0.8, 0.8, 0.8]]
   - Name: roughness
     Value: [1, 1, float, 0.9]
+  - Name: metallic
+    Value: [1, 1, float, 0.0]
   - Name: maxRayDepth
     Value: [ 1, 1, int, 6]
   - Name: maxLightDepth
