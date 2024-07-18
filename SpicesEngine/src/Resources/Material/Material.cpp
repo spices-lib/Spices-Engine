@@ -80,6 +80,8 @@ namespace Spices {
 		*/
 		DescriptorSetManager::UnLoad(m_MaterialPath);
 		m_MaterialParameterBuffer = nullptr;
+		m_Buffers.clear();
+		m_Buffermemoryblocks.clear();
 
 		/**
 		* @brief Container like that: Set - [ binding - [index - (type, count, size)]].

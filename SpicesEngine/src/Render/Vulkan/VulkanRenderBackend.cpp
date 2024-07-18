@@ -167,12 +167,12 @@ namespace Spices {
 			/**
 			* @brief Wait for last frame done.
 			*/
-			vkWaitForFences(
+			VK_CHECK(vkWaitForFences(
 				m_VulkanState.m_Device, 
 				1, 
 				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex], 
 				VK_TRUE, UINT64_MAX
-			);
+			));
 		}
 
 		{
@@ -181,11 +181,11 @@ namespace Spices {
 			/**
 			* @brief Reset Fences.
 			*/
-			vkResetFences(
+			VK_CHECK(vkResetFences(
 				m_VulkanState.m_Device, 
 				1, 
 				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
-			);
+			));
 		}
 		
 		/**

@@ -18,6 +18,7 @@
 #include "Slate/Imgui/ViewPort/ImguiGizmos.h"
 #include "Slate/Imgui/ImguiOperation.h"
 #include "Slate/Imgui/ImguiInfoBar.h"
+#include "Slate/Imgui/ImguiMaterialPanel.h"
 
 // STL Header
 #include <memory>

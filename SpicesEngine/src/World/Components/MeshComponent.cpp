@@ -205,14 +205,9 @@ namespace Spices {
 								ImGui::Columns(2, 0, false);
 			
 								ImGui::SetColumnWidth(0, columnWidth);
-								std::shared_ptr<MeshPack> meshPack = *m_Mesh->GetPacks().find_value(i);
 								if(ImGui::ColorButton("##", ImVec4(0.0f, 1.0f, 0.0f, 0.0f), 0, ImVec2(imageIconSize, imageIconSize)))
 								{
-									meshPack->GetMaterial()->SetIsDrawWindow(true);
-								}
-								if(meshPack->GetMaterial()->GetIsDrawWindow())
-								{
-									DrawMaterialPanel(meshPack->GetMaterial());
+									FrameInfo::Get().m_PickMaterial = i;
 								}
 								ImGui::NextColumn();
 

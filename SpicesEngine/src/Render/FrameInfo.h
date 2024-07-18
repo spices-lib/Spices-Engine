@@ -76,6 +76,20 @@ namespace Spices {
 		scl::linked_unordered_map<int, std::string> m_PickEntityID{};
 
 		/**
+		* @brief Identify of selected material.
+		* @note The first value is entity index, the second value is mesh pack index.
+		* @attention Not support multiple mesh component in one entity.
+		*/
+		uint32_t m_PickMaterial = 0;
+
+		/**
+		* @brief Holds all material build event, does it in world query.
+		* For Temperial use.
+		* @todo Event Queuue & Message Queue design.
+		*/
+		std::vector<std::shared_ptr<Material>> m_MaterialBuildEventQueue;
+
+		/**
 		* @brief The shared pointer of specific world.
 		*/
 		std::shared_ptr<World> m_World;

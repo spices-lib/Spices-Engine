@@ -3,6 +3,7 @@
 #include "Render/FrameInfo.h"
 #include "World/World/World.h"
 #include "Core/Event/WorldEvent.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spices {
 
@@ -35,6 +36,19 @@ namespace Spices {
 
 				FrameInfo::Get().m_World->ClearMarkerWithBits(World::FrushStableFrame);
 			}
+		}
+
+		if (mark & World::ReBuildMaterial)
+		{
+			for (int i = 0; i < FrameInfo::Get().m_MaterialBuildEventQueue.size(); i++)
+			{
+				vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device);
+
+				FrameInfo::Get().m_MaterialBuildEventQueue[i]->BuildMaterial();
+			}
+
+			FrameInfo::Get().m_MaterialBuildEventQueue.clear();
+			FrameInfo::Get().m_World->ClearMarkerWithBits(World::ReBuildMaterial);
 		}
 	}
 }

@@ -242,7 +242,7 @@ void main()
     vec3 rayDirection = mix(
         reflect(prd.rayDirection, materialAttributes.normal), 
         SamplingHemisphere(prd.seed, tangent, bitangent, materialAttributes.normal), 
-        materialAttributes.roughness
+        clamp(materialAttributes.roughness, 0.0f, 1.0f)
     );
     
     const float cos_theta = dot(rayDirection, materialAttributes.normal);

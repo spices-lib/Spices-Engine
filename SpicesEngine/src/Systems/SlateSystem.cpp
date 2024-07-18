@@ -32,6 +32,7 @@ namespace Spices {
 		m_SlateRegister->Register<ImguiStage>         (true, "Stage"   );
 		m_SlateRegister->Register<ImguiOperation>     (true, "Operation");
 		m_SlateRegister->Register<ImguiInfoBar>       (true, "InfoBar" );
+		m_SlateRegister->Register<ImguiMaterialPanel> (true, "Material");
 	}
 
 	void SlateSystem::OnSystemShutDown()

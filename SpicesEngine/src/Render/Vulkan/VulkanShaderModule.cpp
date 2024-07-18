@@ -65,6 +65,8 @@ namespace Spices {
 		*/
 		VK_CHECK(vkCreateShaderModule(vulkanState.m_Device, &createInfo, nullptr, &m_ShaderModule))
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SHADER_MODULE, m_ShaderModule, m_VulkanState.m_Device, shaderName);
+
+		FileLibrary::FileLibrary_Close(&fileHandle);
 	}
 
 	VulkanShaderModule::~VulkanShaderModule()

@@ -183,7 +183,7 @@ namespace Spices {
 		std::string path = filepath;
 		GetBinPath(path);
 
-		if (FileLibrary::FileLibrary_Exists(path.c_str())) {
+		if (!FileLibrary::FileLibrary_Exists(path.c_str())) {
 			return false;
 		}
 

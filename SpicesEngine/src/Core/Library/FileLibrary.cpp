@@ -39,7 +39,7 @@ namespace Spices {
 
 		FILE* file;
 		auto state = fopen_s(&file, path, mode_str);
-		
+
 		if (!file) {
 			std::stringstream ss;
 			ss << "Error opening file: " << path;

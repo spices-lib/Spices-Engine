@@ -38,11 +38,12 @@ namespace Spices {
 
 		enum WorldMarkBits
 		{
-			Clean = 0x00000001,
+			Clean            = 0x00000001,
 			MeshAddedToWorld = 0x00000002,
 			FrushStableFrame = 0x00000004,
-			NeedUpdateTLAS = 0x00000008,
-			MAX = 0x7FFFFFFF
+			NeedUpdateTLAS   = 0x00000008,
+			ReBuildMaterial  = 0x00000010,
+			MAX              = 0x7FFFFFFF
 		};
 
 		typedef uint32_t WorldMarkFlags;

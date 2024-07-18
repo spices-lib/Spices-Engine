@@ -12,6 +12,3 @@ TODO:
 - [ ] 6.Texture Bind ness.
 - [ ] 7.Metallic Material Light appearance fix.
 - [ ] 8.Rasterization Pipeline & Ray Tracing Pipeline switch.
-
-PURPOSE:
-- [ ] 1.loading a bing Max Scene
