@@ -251,18 +251,17 @@ void main()
     
     vec3 rayOrigin    = pi.position;
     
-    vec3 rayDirection = mix(
+    vec3 rayDirection = normalize(mix(
         reflect(prd.rayDirection, materialAttributes.normal), 
         SamplingHemisphere(prd.seed, tangent, bitangent, materialAttributes.normal), 
         clamp(materialAttributes.roughness, 0.0f, 1.0f)
-    );
+    ));
     
     const float cos_theta = dot(rayDirection, materialAttributes.normal);
     const float p = cos_theta / PI;
-
     
-    //vec3 brdf = materialAttributes.albedo / PI;
-    vec3 brdf = materialAttributes.albedo / PI + CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes);
+    //vec3 BRDF = materialAttributes.albedo / PI + CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes);
+    vec3 BRDF = CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes);
 
     /**
     * @brief Fill in rayPayloadInEXT.
@@ -270,7 +269,7 @@ void main()
     prd.rayOrigin      = rayOrigin;
     prd.rayDirection   = rayDirection;
     prd.hitValue       = materialAttributes.emissive;
-    prd.weight         = brdf * cos_theta / p;
+    prd.weight         = BRDF * cos_theta / p;
     prd.maxRayDepth    = materialAttributes.maxRayDepth;
     prd.entityID       = entityID;
 }
@@ -385,8 +384,6 @@ MaterialAttributes InitMaterialAttributes(in Pixel pi)
 vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
-    vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec3 V = normalize(origin.xyz - pi.position);
  
     /**
     * @brief Iter all PointLights in Buffer.
@@ -436,7 +433,7 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
                 float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
                 //col += dot(attr.normal, dir) * light.color * light.intensity * attenuation;
                 
-                col += BRDF(dir, V, attr.normal, light.color * light.intensity * attenuation, attr.albedo, attr.metallic, attr.roughness);
+                col += BRDF_Specular_CookTorrance(dir, prd.rayDirection, attr.normal, light.color * light.intensity * attenuation, attr.albedo, attr.metallic, attr.roughness);
             }
         }
     }
@@ -447,8 +444,6 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
 vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
-    vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec3 V = normalize(origin.xyz - pi.position);
     
     /**
     * @brief Iter all DirectionalLights in Buffer.
@@ -496,7 +491,7 @@ vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
             if(!isShadowArea)
             {
                 //col += dot(attr.normal, dir) * light.color * light.intensity;
-                col += BRDF(dir, V, attr.normal, light.color * light.intensity, attr.albedo, attr.metallic, attr.roughness);
+                col += BRDF_Specular_CookTorrance(dir, prd.rayDirection, attr.normal, light.color * light.intensity, attr.albedo, attr.metallic, attr.roughness);
             }
         }
     }

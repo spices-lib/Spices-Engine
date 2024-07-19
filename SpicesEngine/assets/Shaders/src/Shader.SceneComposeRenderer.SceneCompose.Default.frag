@@ -101,7 +101,7 @@ void main()
     vec3 lpos = light.position;
     vec3 L = normalize(lpos - gbp.position);
     
-	vec3 col = gbp.albedo / PI + BRDF(L, V, gbp.normal, light.color * light.intensity, gbp.albedo, gbp.metallic, gbp.roughness);
+	vec3 col = gbp.albedo / PI + BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color * light.intensity, gbp.albedo, gbp.metallic, gbp.roughness);
 	outSceneColor = vec4(col, 1.0f);
 }
 
