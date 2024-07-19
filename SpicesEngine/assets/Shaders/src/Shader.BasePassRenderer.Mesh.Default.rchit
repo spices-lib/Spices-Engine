@@ -48,7 +48,7 @@ void ExplainMaterialParameter(in MaterialParameter param)
     EXPLAIN_CONST_PARAM(11)
 }
 
-void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes)
+void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
 {  
     attributes.albedo          = CONST_PARAM(11).albedo;
     attributes.roughness       = CONST_PARAM(11).roughness;

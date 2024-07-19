@@ -48,13 +48,13 @@ void ExplainMaterialParameter(in MaterialParameter param)
     EXPLAIN_CONST_PARAM(11)
 }
 
-void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes)
+void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
 {
-    if(vt.normal.z > 0.999f)
+    if(pi.normal.z > 0.999f)
     {
         attributes.albedo      = vec3(1.0f, 0.0f, 0.0f);
     }
-    else if(vt.normal.z < -0.999f)
+    else if(pi.normal.z < -0.999f)
     {
         attributes.albedo      = vec3(0.0f, 1.0f, 0.0f);
     }

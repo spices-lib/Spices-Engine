@@ -135,12 +135,12 @@ layout(set = 2, binding = 2, scalar) readonly buffer PLightBuffer   {
 /******************************************Functions**************************************/
 
 /**
-* @brief Unpack Vertex from MeshDescBuffer.
+* @brief Unpack Pixel from MeshDescBuffer.
 * @param[in] weight attribs.
-* @return Returns the Vertex ray intersected.
-* @see Vertex.
+* @return Returns the Pixel ray intersected.
+* @see Pixel.
 */
-Vertex UnPackVertex(in vec3 weight);
+Pixel UnPackPixel(in vec3 weight);
 
 /**
 * @brief Unpack Entity ID from MeshDescBuffer.
@@ -162,33 +162,33 @@ void ExplainMaterialParameter(in MaterialParameter param);
 
 /**
 * @brief Init Material Attributes.
-* @param[in] vt Intersected Vertex.
+* @param[in] pi Intersected Pixel.
 * @return Return specific MaterialAttributes.
 */
-MaterialAttributes InitMaterialAttributes(in Vertex vt);
+MaterialAttributes InitMaterialAttributes(in Pixel pi);
 
 /**
 * @brief Calculate Point Lights contribution for pixel emissive.
-* @param[in] vt Intersected Vertex.
+* @param[in] pi Intersected Pixel.
 * @param[in] attr MaterialAttributes.
 * @return Returns the contribution of Point Lights.
 */
-vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr);
+vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr);
 
 /**
 * @brief Calculate Directional Lights contribution for pixel emissive.
-* @param[in] vt Intersected Vertex.
+* @param[in] pi Intersected Pixel.
 * @param[in] attr MaterialAttributes.
 * @return Returns the contribution of Directional Lights.
 */
-vec3 CalculateDirectionalLights(in Vertex vt , in MaterialAttributes attr);
+vec3 CalculateDirectionalLights(in Pixel pi , in MaterialAttributes attr);
 
 /**
 * @brief Get Material Attributes, must be implementated by specific rchit shader.
-* @param[in] vt Intersected Vertex.
+* @param[in] pi Intersected Pixel.
 * @param[in,out] attributes specific MaterialAttributes.
 */
-void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes);
+void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes);
 
 /*****************************************************************************************/
 
@@ -197,9 +197,9 @@ void GetMaterialAttributes(in Vertex vt, inout MaterialAttributes attributes);
 void main()
 {
     /**
-    * @brief Get interest Vertex data.
+    * @brief Get interest Pixel data.
     */
-    Vertex vt = UnPackVertex(attribs);
+    Pixel pi = UnPackPixel(attribs);
 
     /**
     * @brief Get Entity ID.
@@ -219,12 +219,12 @@ void main()
     /**
     * @brief Init material attributes.
     */
-    MaterialAttributes materialAttributes = InitMaterialAttributes(vt);
+    MaterialAttributes materialAttributes = InitMaterialAttributes(pi);
     
     /**
     * @brief Get material specific attributes.
     */
-    GetMaterialAttributes(vt, materialAttributes);
+    GetMaterialAttributes(pi, materialAttributes);
 
     /**
     * @brief Reverse normal in back side.
@@ -249,7 +249,7 @@ void main()
     vec3 tangent, bitangent;
     CreateCoordinateSystem(materialAttributes.normal, tangent, bitangent);
     
-    vec3 rayOrigin    = vt.position;
+    vec3 rayOrigin    = pi.position;
     
     vec3 rayDirection = mix(
         reflect(prd.rayDirection, materialAttributes.normal), 
@@ -262,7 +262,7 @@ void main()
 
     
     //vec3 brdf = materialAttributes.albedo / PI;
-    vec3 brdf = materialAttributes.albedo / PI + CalculatePointLights(vt, materialAttributes) + CalculateDirectionalLights(vt, materialAttributes);
+    vec3 brdf = materialAttributes.albedo / PI + CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes);
 
     /**
     * @brief Fill in rayPayloadInEXT.
@@ -277,7 +277,7 @@ void main()
 
 /*****************************************************************************************/
 
-Vertex UnPackVertex(in vec3 weight)
+Pixel UnPackPixel(in vec3 weight)
 {
     /**
     * @brief Access Buffer by GPU address.
@@ -324,15 +324,15 @@ Vertex UnPackVertex(in vec3 weight)
     const vec2 uv = v0.texCoord * barycentrics.x + v1.texCoord * barycentrics.y + v2.texCoord * barycentrics.z;
     
     /**
-    * @brief Make Vertex.
+    * @brief Make Pixel.
     */
-    Vertex vt;
-    vt.position   = worldPos;
-    vt.normal     = worldNrm;
-    vt.color      = color;
-    vt.texCoord   = uv;
+    Pixel pi;
+    pi.position   = worldPos;
+    pi.normal     = worldNrm;
+    pi.color      = color;
+    pi.texCoord   = uv;
     
-    return vt;
+    return pi;
 }
 
 int UnPackEntityID()
@@ -365,8 +365,8 @@ MaterialParameter UnPackMaterialParameter()
         return params.i[0];
     }
 }
-        
-MaterialAttributes InitMaterialAttributes(in Vertex vt)
+
+MaterialAttributes InitMaterialAttributes(in Pixel pi)
 {
     MaterialAttributes attributes;
     
@@ -374,7 +374,7 @@ MaterialAttributes InitMaterialAttributes(in Vertex vt)
     attributes.roughness        = 1.0f;           /* @brief 100% random direction reflect.        */
     attributes.metallic         = 0.0f;
     attributes.emissive         = vec3(0.0f);     /* @brief self no energy.                       */
-    attributes.normal           = vt.normal;      /* @brief Pixel World Normal.                   */
+    attributes.normal           = pi.normal;      /* @brief Pixel World Normal.                   */
     attributes.maxRayDepth      = 1;              /* @brief Pixel Ray Tracing Max Depth.          */
     attributes.maxLightDepth    = 1;              /* @brief Pixel Ray Tracing Max Light Depth.    */
     attributes.maxShadowDepth   = 1;              /* @brief Pixel Ray Tracing Max Shadow Depth.   */
@@ -382,11 +382,11 @@ MaterialAttributes InitMaterialAttributes(in Vertex vt)
     return attributes;
 }
 
-vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
+vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
     vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec3 V = normalize(origin.xyz - vt.position);
+    vec3 V = normalize(origin.xyz - pi.position);
  
     /**
     * @brief Iter all PointLights in Buffer.
@@ -407,13 +407,13 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
         * @brief light position
         */ 
         vec3 lpos = light.position;
-        vec3 dir = normalize(lpos - vt.position);
+        vec3 dir = normalize(lpos - pi.position);
 
         if(dot(attr.normal, dir) > 0)
         {
             float tMin   = 0.001f;
-            float tMax   = length(lpos - vt.position);
-            vec3  origin = vt.position;
+            float tMax   = length(lpos - pi.position);
+            vec3  origin = pi.position;
             vec3  rayDir = dir;
             uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
             isShadowArea   = true;
@@ -444,11 +444,11 @@ vec3 CalculatePointLights(in Vertex vt, in MaterialAttributes attr)
     return col;
 }
 
-vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
+vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
     vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec3 V = normalize(origin.xyz - vt.position);
+    vec3 V = normalize(origin.xyz - pi.position);
     
     /**
     * @brief Iter all DirectionalLights in Buffer.
@@ -475,7 +475,7 @@ vec3 CalculateDirectionalLights(in Vertex vt, in MaterialAttributes attr)
         {
             float tMin   = 0.001f;
             float tMax   = 100000.0f;
-            vec3  origin = vt.position;
+            vec3  origin = pi.position;
             vec3  rayDir = dir;
             uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
             isShadowArea   = true;

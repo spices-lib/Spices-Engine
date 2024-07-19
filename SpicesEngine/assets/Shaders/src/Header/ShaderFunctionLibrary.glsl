@@ -161,8 +161,8 @@ vec3 BRDF(vec3 L, vec3 V, vec3 N, vec3 lightColor, vec3 albedo, float metallic, 
 		// F = Fresnel factor (Reflectance depending on angle of incidence)
 		vec3 F = F_Schlick(dotNV, albedo, metallic);
 
-		//vec3 spec = D * F * G / (4.0 * dotNL * dotNV);
-		vec3 spec = D * F * G / (4.0 * dotNL);
+		vec3 spec = D * F * G / (4.0 * dotNL * dotNV);
+		//vec3 spec = D * F * G / (4.0 * dotNL);
 
 		color += spec * dotNL * lightColor;
 	}

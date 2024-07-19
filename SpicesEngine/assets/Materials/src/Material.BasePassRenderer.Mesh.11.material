@@ -11,12 +11,14 @@ Shaders:
   - Stage: rchit
     Path: BasePassRenderer.Mesh.Default
 Textures:
-  - Name: diffuse
+  - Name: albedo
     Value: [1, 0, 0, Texture2D, default.jpg]
   - Name: normal
-    Value: [1, 0, 1, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Normal.jpg]
-  - Name: specular
-    Value: [1, 0, 2, Texture2D, stone_tile_vjqifhu/vjqifhu_4K_Specular.jpg]
+    Value: [1, 0, 1, Texture2D, default.jpg]
+  - Name: roughness
+    Value: [1, 0, 2, Texture2D, default.jpg]
+  - Name: metallic
+    Value: [1, 0, 3, Texture2D, default.jpg]
 Parameters:
   - Name: albedo
     Value: [1, 1, float3, [0.8, 0.8, 0.2]]

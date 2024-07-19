@@ -27,8 +27,8 @@ Shaders:
 # @brief Material Textures usages.
 Textures:
 
-  # @brief Usage: diffuse.
-  - Name: diffuse
+  # @brief Usage: albedo.
+  - Name: albedo
     # @brief [set, binding, index, Texture Type, Texture Path]
     Value: [1, 0, 0, Texture2D, default.jpg]
     
@@ -37,30 +37,45 @@ Textures:
     # @brief [set, binding, index, Texture Type, Texture Path]
     Value: [1, 0, 1, Texture2D, default.jpg]
     
-  # @brief Usage: specular.
-  - Name: specular
+  # @brief Usage: roughness.
+  - Name: roughness
     # @brief [set, binding, index, Texture Type, Texture Path]
     Value: [1, 0, 2, Texture2D, default.jpg]
+      
+  # @brief Usage: metallic.
+  - Name: metallic
+    # @brief [set, binding, index, Texture Type, Texture Path]
+    Value: [ 1, 0, 2, Texture2D, default.jpg ]
     
 # @brief Material Parameters usages. 
 Parameters:
   
-  # @brief Usage: diffuseIntensity.
-  - Name: diffuseIntensity
+  # @brief Usage: albedo.
+  - Name: albedo
     # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, float4, [1.0, 1.0, 1.0, 1.0]]
+    Value: [1, 1, float3, [0.5, 0.5, 0.5]]
     
-  # @brief Usage: diffuseIntensity.
-  - Name: normalIntensity
+  # @brief Usage: roughness.
+  - Name: roughness
     # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, float3, [1.0, 1.0, 1.0]]
+    Value: [1, 1, float, 0.5]
     
-  # @brief Usage: diffuseIntensity.
-  - Name: specularIntensity
+  # @brief Usage: metallic.
+  - Name: metallic
     # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, float2, [1.0, 1.0]]
+    Value: [1, 1, float, 0.0]
     
-  # @brief Usage: diffuseIntensity.
-  - Name: otherIntensity
+  # @brief Usage: maxRayDepth.
+  - Name: maxRayDepth
     # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, float, 1.0]
+    Value: [1, 1, int, 6]
+      
+  # @brief Usage: maxRayDepth.
+  - Name: maxLightDepth
+    # @brief [set, binding, Parameter Type, Parameter Value]
+    Value: [1, 1, int, 3]
+    
+  # @brief Usage: maxRayDepth.
+  - Name: maxShadowDepth
+    # @brief [set, binding, Parameter Type, Parameter Value]
+    Value: [1, 1, int, 1]

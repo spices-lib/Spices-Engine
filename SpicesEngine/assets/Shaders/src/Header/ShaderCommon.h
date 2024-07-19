@@ -58,6 +58,12 @@ struct Vertex
 };
 
 /**
+* @brief Using Pixel rather than Vertex in shader mey be easier to understand.
+* It defines pixel data, not be original vertex data.
+*/
+#define Pixel Vertex
+
+/**
 * @brief This Struct defines PBR Material Attribute.
 */
 struct MaterialAttributes
@@ -70,6 +76,19 @@ struct MaterialAttributes
 	int   maxRayDepth;         /* @brief Max Ray Tracing Depth, defined specific from material.         */
 	int   maxLightDepth;       /* @brief Max Ray Tracing Light Depth, defined specific from material.   */
 	int   maxShadowDepth;      /* @brief Max Ray Tracing Shadow Depth, defined specific from material.  */
+};
+
+/**
+ * @brief Gbuffer Data per pixel, for Fragment Shader use.
+ */
+struct GBufferPixel
+{
+	vec3  albedo;              /* @brief Albedo.     */
+	vec3  normal;              /* @brief Normal.     */
+	float roughness;           /* @brief Roughness.  */
+	float metallic;            /* @brief Metallic.   */
+	vec3  position;            /* @brief Position.   */
+	float depth;               /* @brief Depth.      */
 };
 
 /*****************************************************************************************/

@@ -9,5 +9,5 @@ Shaders:
   - Stage: frag
     Path: BasePassRenderer.SkyBox.Default
 Textures:
-  - Name: diffuse
+  - Name: albedo
     Value: [1, 0, 0, Texture2D, skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr]

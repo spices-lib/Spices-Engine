@@ -33,11 +33,12 @@ layout(location = 0) in struct FragInput {
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4  outColor;                /* @brief diffuse Attachment.  */
+layout(location = 0) out vec4  outAlbedo;               /* @brief albedo Attachment.   */
 layout(location = 1) out vec4  outNormal;               /* @brief normal Attachment.   */
-layout(location = 2) out vec4  outSpecular;             /* @brief specular Attachment. */
-layout(location = 3) out vec4  outPosition;             /* @brief position Attachment. */
-layout(location = 4) out float outID;                   /* @brief ID Attachment.       */
+layout(location = 2) out vec4  outRoughness;            /* @brief roughness Attachment.*/
+layout(location = 3) out vec4  outMetallic;             /* @brief metallic Attachment. */
+layout(location = 4) out vec4  outPosition;             /* @brief position Attachment. */
+layout(location = 5) out float outID;                   /* @brief ID Attachment.       */
 
 /*****************************************************************************************/
 
@@ -56,28 +57,32 @@ layout(push_constant) uniform Push {
 
 /**
 * @brief Textures struct like that:
-* 0 - Diffuse.
+* 0 - Albedo.
 * 1 - Normal.
-* 2 - Specular.
+* 2 - Roughness.
+* 3 - Metallic.
 */
 
-#define DIFFUSE 0
-#define NORMAL 1
-#define SPECULAR 2
+#define ALBEDO    0
+#define NORMAL    1
+#define ROUGHNESS 2
+#define METALLIC  3
 
 /**
 * @brief Material Textures.
 */
-layout(set = 1, binding = 0) uniform sampler2D samplers[3];
+layout(set = 1, binding = 0) uniform sampler2D samplers[4];
 
 /**
 * @brief Material Parameters.
 */
 layout(set = 1, binding = 1) uniform Parameter {
-    vec4  diffuseIntensity;
-    vec3  normalIntensity;
-    vec2  specularIntensity;
-    float otherIntensity;
+    vec3  albedo;
+    float roughness;
+    float metallic;
+    int   maxRayDepth;
+    int   maxLightDepth;
+    int   maxShadowDepth;
 };
 
 /*****************************************************************************************/
@@ -86,11 +91,19 @@ layout(set = 1, binding = 1) uniform Parameter {
 
 void main()
 {
-    outColor    = texture(samplers[DIFFUSE], fragInput.texCoord);
-    outNormal   = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
-    outSpecular = texture(samplers[SPECULAR], fragInput.texCoord);
-    outPosition = vec4(fragInput.position, 1.0f);
-    outID       = push.entityID;
+    /*outAlbedo     = texture(samplers[ALBEDO], fragInput.texCoord);
+    outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
+    outRoughness  = texture(samplers[ROUGHNESS], fragInput.texCoord);
+    outMetallic   = texture(samplers[METALLIC], fragInput.texCoord);
+    outPosition   = vec4(fragInput.position, 1.0f);
+    outID         = push.entityID;*/
+    
+    outAlbedo     = vec4(albedo, 1.0f);
+    outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
+    outRoughness  = vec4(vec3(clamp(roughness, 0.0f, 1.0f)), 1.0f);
+    outMetallic   = vec4(vec3(clamp(metallic, 0.0f, 1.0f)), 1.0f);
+    outPosition   = vec4(fragInput.position, 1.0f);
+    outID         = push.entityID;
 }
 
 /*****************************************************************************************/

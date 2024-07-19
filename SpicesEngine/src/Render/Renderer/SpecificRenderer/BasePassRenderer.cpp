@@ -15,7 +15,7 @@ namespace Spices {
 
 		RendererPassBuilder{ "BassPass", this }
 		.AddSubPass("SkyBox")
-		.AddColorAttachment("Diffuse", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
@@ -35,12 +35,16 @@ namespace Spices {
 		})
 		.EndSubPass()
 		.AddSubPass("Mesh")
-		.AddColorAttachment("Diffuse", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
+		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
 		.AddColorAttachment("Normal", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
-		.AddColorAttachment("Specular", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Roughness", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		})
+		.AddColorAttachment("Metallic", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
