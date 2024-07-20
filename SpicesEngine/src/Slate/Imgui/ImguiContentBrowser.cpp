@@ -21,7 +21,7 @@ namespace Spices {
         /**
         * @todo Remove it.
         */
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
         //ImGui::ShowDebugLogWindow();
         //ImPlot::ShowDemoWindow();
 

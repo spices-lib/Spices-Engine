@@ -166,6 +166,12 @@ void ExplainMaterialParameter(in MaterialParameter param);
 * @return Return specific MaterialAttributes.
 */
 MaterialAttributes InitMaterialAttributes(in Pixel pi);
+        
+/**
+* @brief MaterialAttributes Post Handle.
+* @param[in, out] attr MaterialAttributes.
+*/
+void PostHandleWithMaterialAttributes(in out MaterialAttributes attr);
 
 /**
 * @brief Calculate Point Lights contribution for pixel emissive.
@@ -196,52 +202,13 @@ void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes);
 
 void main()
 {
-    /**
-    * @brief Get interest Pixel data.
-    */
-    Pixel pi = UnPackPixel(attribs);
-
-    /**
-    * @brief Get Entity ID.
-    */
-    int entityID = UnPackEntityID();
-
-    /**
-    * @brief Get material parameter data.
-    */
-    MaterialParameter parameter = UnPackMaterialParameter();
-    
-    /**
-    * @brief Explain Material.
-    */
-    ExplainMaterialParameter(parameter);
-    
-    /**
-    * @brief Init material attributes.
-    */
-    MaterialAttributes materialAttributes = InitMaterialAttributes(pi);
-    
-    /**
-    * @brief Get material specific attributes.
-    */
-    GetMaterialAttributes(pi, materialAttributes);
-
-    /**
-    * @brief Reverse normal in back side.
-    */
-    if(dot(-prd.rayDirection, materialAttributes.normal) < 0.0f)
-    {
-        materialAttributes.normal *= -1.0f;
-    }
-
-    /**
-    * @brief Add emissive with Lights.
-    * Skip if reach material maxLightDepth.
-    */
-    if(prd.rayDepth < materialAttributes.maxLightDepth)
-    {
-        //materialAttributes.emissive += 
-    }
+    Pixel pi = UnPackPixel(attribs);                                      /* @brief Get interest Pixel data.           */
+    int entityID = UnPackEntityID();                                      /* @brief Get Entity ID.                     */
+    MaterialParameter parameter = UnPackMaterialParameter();              /* @brief Get material parameter data.       */
+    ExplainMaterialParameter(parameter);                                  /* @brief Explain Material.                  */
+    MaterialAttributes materialAttributes = InitMaterialAttributes(pi);   /* @brief Init material attributes.          */
+    GetMaterialAttributes(pi, materialAttributes);                        /* @brief Get material specific attributes.  */
+    PostHandleWithMaterialAttributes(materialAttributes);                 /* @brief Post handle materialAttributes.    */
 
     /**
     * @brief Calculate Next Ray recursion attributes.
@@ -249,24 +216,32 @@ void main()
     vec3 tangent, bitangent;
     CreateCoordinateSystem(materialAttributes.normal, tangent, bitangent);
     
-    vec3 rayOrigin    = pi.position;
-    
     vec3 rayDirection = normalize(mix(
         reflect(prd.rayDirection, materialAttributes.normal), 
         SamplingHemisphere(prd.seed, tangent, bitangent, materialAttributes.normal), 
-        clamp(materialAttributes.roughness, 0.0f, 1.0f)
+        materialAttributes.roughness
     ));
+
+    /**
+    * @brief calaculate BRDF with Lights.
+    * Skip if reach material maxLightDepth.
+    */
+    vec3 brdf_diffuse = BRDF_Diffuse_Lambert(materialAttributes.albedo);
+    vec3 brdf_specular = vec3(0.0f);
+    if(prd.rayDepth < materialAttributes.maxLightDepth)
+    {
+        brdf_specular += (CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes));
+    }
+    
+    vec3 BRDF = brdf_diffuse + brdf_specular;
     
     const float cos_theta = dot(rayDirection, materialAttributes.normal);
     const float p = cos_theta / PI;
-    
-    //vec3 BRDF = materialAttributes.albedo / PI + CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes);
-    vec3 BRDF = CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes);
 
     /**
     * @brief Fill in rayPayloadInEXT.
     */
-    prd.rayOrigin      = rayOrigin;
+    prd.rayOrigin      = pi.position;
     prd.rayDirection   = rayDirection;
     prd.hitValue       = materialAttributes.emissive;
     prd.weight         = BRDF * cos_theta / p;
@@ -381,6 +356,18 @@ MaterialAttributes InitMaterialAttributes(in Pixel pi)
     return attributes;
 }
 
+void PostHandleWithMaterialAttributes(in out MaterialAttributes attr)
+{
+    attr.albedo = clamp(attr.albedo, vec3(0.0f), vec3(1.0f));    /* @brief Clamp to  0.0f - 1.0f */
+    attr.roughness = clamp(attr.roughness, 0.0f, 1.0f);          /* @brief Clamp to  0.0f - 1.0f */
+    attr.metallic = clamp(attr.metallic, 0.0f, 1.0f);            /* @brief Clamp to  0.0f - 1.0f */
+    if(dot(-prd.rayDirection, attr.normal) < 0.0f)               /* @brief Clamp to -1.0f - 1.0f */
+    {
+        attr.normal *= -1.0f;                                    /* @brief reverse normal in back face */
+    }
+    attr.normal = normalize(attr.normal);
+}
+
 vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
@@ -405,7 +392,8 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
         */ 
         vec3 lpos = light.position;
         vec3 dir = normalize(lpos - pi.position);
-
+        vec3 V = normalize(prd.rayOrigin - pi.position);
+            
         if(dot(attr.normal, dir) > 0)
         {
             float tMin   = 0.001f;
@@ -431,9 +419,7 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
             if(!isShadowArea)
             {
                 float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
-                //col += dot(attr.normal, dir) * light.color * light.intensity * attenuation;
-                
-                col += BRDF_Specular_CookTorrance(dir, prd.rayDirection, attr.normal, light.color * light.intensity * attenuation, attr.albedo, attr.metallic, attr.roughness);
+                col += BRDF_Specular_CookTorrance(dir, V, attr.normal, light.color, attr.albedo, attr.metallic, attr.roughness) * light.intensity * attenuation;
             }
         }
     }
@@ -465,6 +451,7 @@ vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
         */ 
         vec4 dir4 = light.rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
         vec3 dir = dir4.xyz;
+        vec3 V = normalize(prd.rayOrigin - pi.position);
 
         if(dot(attr.normal, dir) > 0)
         {
@@ -490,8 +477,7 @@ vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
 
             if(!isShadowArea)
             {
-                //col += dot(attr.normal, dir) * light.color * light.intensity;
-                col += BRDF_Specular_CookTorrance(dir, prd.rayDirection, attr.normal, light.color * light.intensity, attr.albedo, attr.metallic, attr.roughness);
+                col += BRDF_Specular_CookTorrance(dir, V, attr.normal, light.color, attr.albedo, attr.metallic, attr.roughness) * light.intensity;
             }
         }
     }

@@ -44,7 +44,7 @@ namespace Spices {
 			DirectionalLightComponent& dirlightComp = dirlightentity.AddComponent<DirectionalLightComponent>();
 			transformComp.SetRotation({0.0f, 25.0f, 50.0f});
 			dirlightComp.SetColor({ 1.0f, 1.0f, 1.0f });
-			dirlightComp.SetIntensity(0.25f);
+			dirlightComp.SetIntensity(5.0f);
 		}
 	}
  

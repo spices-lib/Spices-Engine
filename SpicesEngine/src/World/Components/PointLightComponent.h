@@ -69,6 +69,12 @@ namespace Spices {
 		*/
 		const SpicesShader::PointLight& GetLight() const { return m_PointLight; }
 
+		/**
+		* @brief Set PointLight Intensity.
+		* @param[in] intensity PointLight Intensity.
+		*/
+		void SetIntensity(float intensity) { m_PointLight.intensity = intensity; }
+
 	private:
 
 		/**

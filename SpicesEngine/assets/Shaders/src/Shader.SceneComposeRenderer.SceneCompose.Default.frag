@@ -97,11 +97,32 @@ void main()
 	vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
     vec3 V = normalize(origin.xyz - gbp.position);
     
-    PointLight light = pLightBuffer.i[0];
-    vec3 lpos = light.position;
-    vec3 L = normalize(lpos - gbp.position);
+    vec3 col = BRDF_Diffuse_Lambert(gbp.albedo);
     
-	vec3 col = gbp.albedo / PI + BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color * light.intensity, gbp.albedo, gbp.metallic, gbp.roughness);
+    for(int i = 0; i < pLightBuffer.i.length(); i++)
+    {
+    	PointLight light = pLightBuffer.i[i];
+    	if(light.intensity < -500.0f) break;
+    	 
+    	vec3 lpos = light.position;
+        vec3 L = normalize(lpos - gbp.position);
+        float tMax = length(lpos - gbp.position);
+        
+        float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
+        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color * light.intensity * attenuation, gbp.albedo, gbp.metallic, gbp.roughness);
+    }
+    
+	for(int i = 0; i < dLightBuffer.i.length(); i++)
+	{
+		DirectionalLight light = dLightBuffer.i[i];
+        if(light.intensity < -500.0f) break;
+        
+        vec4 dir4 = light.rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        vec3 L = dir4.xyz;
+        
+        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color * light.intensity, gbp.albedo, gbp.metallic, gbp.roughness);
+	}
+
 	outSceneColor = vec4(col, 1.0f);
 }
 

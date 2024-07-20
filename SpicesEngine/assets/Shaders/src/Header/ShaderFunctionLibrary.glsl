@@ -115,6 +115,8 @@ vec2 SampleSphericalMap(in vec3 v)
 
 /**
 * @brief BRDF Diffuse part, use lambert model.
+* @param[in] albedo .
+* @return Returns diffuse.
 */
 vec3 BRDF_Diffuse_Lambert(in vec3 albedo)
 {
@@ -125,15 +127,16 @@ vec3 BRDF_Diffuse_Lambert(in vec3 albedo)
 * @brief BRDF Specular (Normal Distribution function) part.
 * use Cook-Torrance Specular model.
 * use Trowbridge-Reitz GGX for Normal distribution.
-* @param[in] dotNH.
+* @param[in] dotNH .
 * @param[in] roughness .
+* @return Returns specular (Normal Distribution function) part.
 */
 float BRDF_Specular_D_GGX(in float dotNH, in float roughness)
 {
 	float alpha = roughness * roughness;
 	float alpha2 = alpha * alpha;
 	float denom = dotNH * dotNH * (alpha2 - 1.0) + 1.0;
-	return (alpha2)/(PI * denom*denom); 
+	return alpha2 / (PI * denom * denom); 
 }
 
 /**
@@ -141,11 +144,12 @@ float BRDF_Specular_D_GGX(in float dotNH, in float roughness)
 * @param[in] dotNL dot(Normal, LightDir).
 * @param[in] dotNV dot(Normal, ViewDir).
 * @param[in] roughness .
+* @return Returns specular (Geometric shadowing function) part.
 */
-float BRDF_Specular_G_SchlicksmithGGX(float dotNL, float dotNV, float roughness)
+float BRDF_Specular_G_SchlicksmithGGX(in float dotNL, in float dotNV, in float roughness)
 {
 	float r = (roughness + 1.0);
-	float k = (r*r) / 8.0;
+	float k = (r * r) / 8.0f;
 	float GL = dotNL / (dotNL * (1.0 - k) + k);
 	float GV = dotNV / (dotNV * (1.0 - k) + k);
 	return GL * GV;
@@ -157,19 +161,30 @@ float BRDF_Specular_G_SchlicksmithGGX(float dotNL, float dotNV, float roughness)
 * @param[in] cosTheta 
 * @param[in] dotNV dot(Normal, ViewDir).
 * @param[in] metallic .
+* @return Returns specular (Fresnel function) part.
 */
-vec3 BRDF_Specular_F_Schlick(float dotNV, vec3 albedo, float metallic)
+vec3 BRDF_Specular_F_Schlick(in float dotNV, in vec3 albedo, in float metallic)
 {
-	vec3 F0 = mix(vec3(0.04), albedo, metallic); // * material.specular
+	vec3 F0 = mix(vec3(0.04f), albedo, metallic); // * material.specular
 	vec3 F = F0 + (1.0 - F0) * pow(1.0 - dotNV, 5.0); 
 	return F;
 }
 
 /**
-* @brief PBR Calculate.
+* @brief BRDF Specular part, use Cook-Torrance model.
+* @param[in] L LightDirection.
+* @param[in] V ViewDirection.
+* @param[in] N Normal.
+* @param[in] lightColor .
+* @param[in] albedo .
+* @param[in] metallic .
+* @param[in] roughness .
 */
-vec3 BRDF_Specular_CookTorrance(vec3 L, vec3 V, vec3 N, vec3 lightColor, vec3 albedo, float metallic, float roughness)
+vec3 BRDF_Specular_CookTorrance(in vec3 L, in vec3 V, in vec3 N, in vec3 lightColor, in vec3 albedo, in float metallic, in float roughness)
 {
+	if(dot(L, N) < 0) return vec3(0.0f);
+
+	float rroughness = max(0.05f, roughness);
     vec3 H = normalize (V + L);
 	float dotNV = clamp(dot(N, V), 0.0, 1.0);
 	float dotNL = clamp(dot(N, L), 0.0, 1.0);
@@ -179,12 +194,12 @@ vec3 BRDF_Specular_CookTorrance(vec3 L, vec3 V, vec3 N, vec3 lightColor, vec3 al
 	/**
 	* @brief Calaulate specular - Normal distribution (Distribution of the microfacets).
 	*/
-	float D = BRDF_Specular_D_GGX(dotNH, roughness);
+	float D = BRDF_Specular_D_GGX(dotNH, rroughness);
 	
 	/**
 	* @brief Calaulate specular - Geometric shadowing term (Microfacets shadowing).
 	*/
-	float G = BRDF_Specular_G_SchlicksmithGGX(dotNL, dotNV, roughness);
+	float G = BRDF_Specular_G_SchlicksmithGGX(dotNL, dotNV, rroughness);
 	
 	/**
 	* @brief Calaulate specular - Fresnel factor (Reflectance depending on angle of incidence)
@@ -193,6 +208,11 @@ vec3 BRDF_Specular_CookTorrance(vec3 L, vec3 V, vec3 N, vec3 lightColor, vec3 al
 
 	vec3 spec = D * F * G / (4.0 * dotNL * dotNV);
 
+    /**
+    * @brief Use Clamp to Handle “firefly” effect.
+    * @todo Bi-Directional Path Tracing.
+    */
+    if(max(max(spec.x, spec.y), spec.z) > 5.0f) return vec3(0.0f);
 	return spec * dotNL * lightColor;
 }
 
