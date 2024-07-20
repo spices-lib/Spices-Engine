@@ -6,8 +6,7 @@
 /SpiecsEngine/bin-int
 /SpiecsEngine/bin
 
-/Document/html
-/Document/latex
+/Document/
 
 *.user
 *.sln
