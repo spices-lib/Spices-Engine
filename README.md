@@ -250,19 +250,19 @@ All unit tests are located at folder **SpicesTest/src** as a project<br />![imag
 
 User Interface is designed based on Nvidia USD Composer style<br />MainMenu<br />
 viewpoet operation<br />
--**Alt + Mouse Left Button + Mouse Drag = Viewport Rotate**<br />
--**Alt + Mouse Middle Button + Mouse Drag = Viewport Translate**<br />
--**Alt +Mouse Right Button + Mouse Y Drag = Viewport Scale**<br />
--**Mouse Wheel = Viewport Scale**<br />
+- **Alt + Mouse Left Button + Mouse Drag = Viewport Rotate**<br />
+- **Alt + Mouse Middle Button + Mouse Drag = Viewport Translate**<br />
+- **Alt +Mouse Right Button + Mouse Y Drag = Viewport Scale**<br />
+- **Mouse Wheel = Viewport Scale**<br />
 Object Select<br />
--**Mouse Left Button = Pick one Object**<br />
--**Mouse Left Button + Shift = Add Pick Object**<br />
--**Mouse Left Button + Ctrl = Sub Pick Object**<br />
+- **Mouse Left Button = Pick one Object**<br />
+- **Mouse Left Button + Shift = Add Pick Object**<br />
+- **Mouse Left Button + Ctrl = Sub Pick Object**<br />
 Render Mode Switch<br />
--**ViewportToolbar Render Menu - Rasterization = Rasterization Mode**<br />
--**ViewportToolbar Render Menu - RTX-Interactive = Path Tracing Mode**<br />
+- **ViewportToolbar Render Menu - Rasterization = Rasterization Mode**<br />
+- **ViewportToolbar Render Menu - RTX-Interactive = Path Tracing Mode**<br />
 Property Panel<br />
--**Pick one Object**<br />
+- **Pick one Object**<br />
 Material Panel<br />
--**Pick one Object and click one material color icon**<br />
+- **Pick one Object and click one material color icon**<br />
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553266885-9b37500d-c02e-4a3e-9ee6-a4ebde9b1a75.png#averageHue=%236b6f79&clientId=uf73232b3-ecc6-4&from=paste&height=521&id=ufe49f289&originHeight=573&originWidth=749&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=305373&status=done&style=none&taskId=u5b80bb96-1d78-42f5-9888-e3f50e91f13&title=&width=680.9090761507841)<br />stage<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553031419-042db42d-29ed-4dfe-a8bc-4370ed10d5fe.png#averageHue=%23515151&clientId=uf73232b3-ecc6-4&from=paste&height=509&id=u67f79c83&originHeight=560&originWidth=522&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=73108&status=done&style=none&taskId=u64abf96e-7ac9-41c3-96f9-021f3099b5a&title=&width=474.545444259959)<br />Property<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553169122-b8a144ba-7b7b-4b9b-a24b-965fff8fe751.png#averageHue=%231bdf1b&clientId=uf73232b3-ecc6-4&from=paste&height=678&id=u920f6fd6&originHeight=746&originWidth=523&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=60076&status=done&style=none&taskId=uc496f10d-76ea-46ba-9022-4e69c9a1e79&title=&width=475.45453514934593)<br />Material Panel<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553195253-f9bc1a52-a7d0-4eca-971c-a943ea436e43.png#averageHue=%23323433&clientId=uf73232b3-ecc6-4&from=paste&height=508&id=u23bc9d47&originHeight=559&originWidth=527&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=47297&status=done&style=none&taskId=u2b8a3afe-4f05-4628-9984-ed53101c889&title=&width=479.09089870689354)<br />Console<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553215980-2ba352e6-db3a-4980-89e6-4cfc184a0285.png#averageHue=%23212224&clientId=uf73232b3-ecc6-4&from=paste&height=305&id=u3ca1342e&originHeight=336&originWidth=2003&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=86911&status=done&style=none&taskId=u1ffacb54-f17e-4bb9-b41e-c4a042bd924&title=&width=1820.9090514419502)<br />Viewport<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553239664-4be35d01-9317-45e9-8c78-d131d45db375.png#averageHue=%23667388&clientId=uf73232b3-ecc6-4&from=paste&height=878&id=u97504a6d&originHeight=966&originWidth=1991&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=2596285&status=done&style=none&taskId=uaf757af9-ed32-46b3-9202-0b5254e2353&title=&width=1809.9999607693073)<br />Gizmo<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553322404-bb4d700f-03d7-462c-bafc-8dcd34e7852b.png#averageHue=%233b506b&clientId=uf73232b3-ecc6-4&from=paste&height=760&id=uadbb4435&originHeight=836&originWidth=1080&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=1472584&status=done&style=none&taskId=uf300c367-b953-46ac-a7e8-ec6281b91d0&title=&width=981.8181605378463)
