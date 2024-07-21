@@ -4,7 +4,6 @@
 #include <GamePlay/MeshController.h>
 #include <Resources/ResourcePool/ResourcePool.h>
 
-#include <new>
 
 namespace Spices {
 

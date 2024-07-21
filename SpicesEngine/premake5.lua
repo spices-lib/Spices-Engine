@@ -87,6 +87,7 @@ project "SpicesEngine"
 		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
 		"%{IncludeDir.tracy}",                 -- Library: tracy Source Folder.
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
+		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 	}
 
 	-- The Solution Dependency
@@ -98,6 +99,7 @@ project "SpicesEngine"
 		"yaml-cpp",                           -- Dependency: yaml-cpp
 		"implot",                             -- Dependency: implot
 		"%{Library.NvPerfUtility}",           -- Dependency: NvPerfUtility
+		"%{Library.HoudiniEnginelib}",        -- Dependency: HoudiniEngine
 	}
 
 	-- Library: std_image is included this solution, do not use PreCompiler Header.

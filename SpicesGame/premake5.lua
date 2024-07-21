@@ -35,11 +35,17 @@ project "SpicesGame"
 		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
 		"%{IncludeDir.tracy}",
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
+		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
+	}
+
+	debugenvs 
+	{ 
+		"PATH=%{LibraryDir.HoudiniEnginedll}"
 	}
 
 	links
 	{
-		"SpicesEngine"
+		"SpicesEngine",
 	}
 
 	filter "system:windows"

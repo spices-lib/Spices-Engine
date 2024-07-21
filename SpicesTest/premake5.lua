@@ -40,12 +40,13 @@ project "SpicesTest"
 		"%{IncludeDir.NvPerf}",                -- Library: NvPerf Source Folder.
 		"%{IncludeDir.NvPerfUtility}",         -- Library: NvPerfUtility Source Folder.
 		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
+		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 	}
 
 	links
 	{
 		"SpicesEngine",
-		"googlemock"
+		"googlemock",
 	}
 
 	filter "system:windows"

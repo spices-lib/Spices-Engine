@@ -27,8 +27,9 @@ namespace Spices {
 */
 #define ASSERT(expr)                                                                                          \
     {                                                                                                         \
-        if (expr) {                                                                                           \
-        } else {                                                                                              \
+        if (expr) {}                                                                                          \
+        else                                                                                                  \
+        {                                                                                                     \
             std::stringstream ss;                                                                             \
             ss << "Assert Failed \n    At File: " << __FILE__ << " \n   At Line: " << __LINE__ << "\n   ";    \
             SPICES_CORE_ERROR(ss.str());                                                                      \
@@ -41,6 +42,6 @@ namespace Spices {
 */
 #define VK_CHECK(expr)               \
     {                                \
-        ASSERT(expr == VK_SUCCESS); \
+        ASSERT(expr == VK_SUCCESS);  \
     }
 }
