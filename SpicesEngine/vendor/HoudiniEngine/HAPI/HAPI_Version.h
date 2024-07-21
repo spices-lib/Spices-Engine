@@ -21,13 +21,13 @@
 // The three components of the Houdini version that HAPI is
 // expecting to compile against.
 #define HAPI_VERSION_HOUDINI_MAJOR 20
-#define HAPI_VERSION_HOUDINI_MINOR 0
-#define HAPI_VERSION_HOUDINI_BUILD 751
+#define HAPI_VERSION_HOUDINI_MINOR 5
+#define HAPI_VERSION_HOUDINI_BUILD 278
 #define HAPI_VERSION_HOUDINI_PATCH 0
 
 // The two components of the Houdini Engine (marketed) version.
-#define HAPI_VERSION_HOUDINI_ENGINE_MAJOR 6
-#define HAPI_VERSION_HOUDINI_ENGINE_MINOR 2
+#define HAPI_VERSION_HOUDINI_ENGINE_MAJOR 7
+#define HAPI_VERSION_HOUDINI_ENGINE_MINOR 0
 
 // This is a monotonously increasing API version number that can be used
 // to lock against a certain API for compatibility purposes. Basically,

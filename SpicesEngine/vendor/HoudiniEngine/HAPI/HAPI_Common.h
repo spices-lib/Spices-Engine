@@ -28,6 +28,8 @@
 
 #define HAPI_INVALID_PARM_ID                -1
 
+#define HAPI_MAX_NUM_CONNECTIONS            128
+
 /// Common Default Attributes' Names
 /// @{
 #define HAPI_ATTRIB_POSITION                "P"
@@ -118,17 +120,17 @@
 #endif // __cplusplus
 
 // x-bit Integers
-// Thrift doesn't support unsigned integers, so we cast it as a 16-bit int, but only
-// for automated code generation
+// Thrift doesn't support unsigned integers, so we cast it as a signed 8-bit int, but only
+// for automated code generation and thrift
 #ifdef HAPI_AUTOGEN
     typedef signed char int8_t;
     typedef short int16_t;
     typedef long long int64_t;
-    typedef short HAPI_UInt8; // 16-bit type for thrift
+    typedef signed char HAPI_UInt8; // signed 8-bit int for thrift to avoid overflow 
 #else
     #include <stdint.h>
     #ifdef HAPI_THRIFT_ABI
-        typedef int16_t HAPI_UInt8; 
+        typedef int8_t HAPI_UInt8; // signed 8-bit int for thrift to avoid overflow 
     #else
         typedef uint8_t HAPI_UInt8;
         HAPI_STATIC_ASSERT(sizeof(HAPI_UInt8) == 1, unsupported_size_of_uint8);
@@ -224,6 +226,14 @@ enum HAPI_StatusVerbosity
     HAPI_STATUSVERBOSITY_MESSAGES = HAPI_STATUSVERBOSITY_2,
 };
 HAPI_C_ENUM_TYPEDEF( HAPI_StatusVerbosity )
+
+enum HAPI_JobStatus
+{
+    HAPI_JOB_STATUS_RUNNING,
+    HAPI_JOB_STATUS_IDLE,
+    HAPI_JOB_STATUS_MAX
+};
+HAPI_C_ENUM_TYPEDEF( HAPI_JobStatus )
 
 enum HAPI_Result
 {
@@ -425,6 +435,7 @@ enum HAPI_PrmScriptType
     HAPI_PRM_SCRIPT_TYPE_COLOR,
     ///  "color4", "rgba"
     HAPI_PRM_SCRIPT_TYPE_COLOR4,
+    HAPI_PRM_SCRIPT_TYPE_HUECIRCLE,
     HAPI_PRM_SCRIPT_TYPE_OPPATH,
     HAPI_PRM_SCRIPT_TYPE_OPLIST,
     HAPI_PRM_SCRIPT_TYPE_OBJECT,
@@ -973,6 +984,8 @@ enum HAPI_PDG_EventType
     /// Deprecated
     HAPI_PDG_EVENT_WORKITEM_SET_FILE,
     /// Deprecated
+    HAPI_PDG_EVENT_WORKITEM_SET_DICT,
+    /// Deprecated
     HAPI_PDG_EVENT_WORKITEM_SET_PYOBJECT,
     /// Deprecated
     HAPI_PDG_EVENT_WORKITEM_SET_GEOMETRY,
@@ -1036,6 +1049,21 @@ HAPI_C_ENUM_TYPEDEF( HAPI_PDG_WorkItemState )
 /// Backwards compatibility for HAPI_PDG_WorkitemState
 typedef HAPI_PDG_WorkItemState HAPI_PDG_WorkitemState;
 
+enum HAPI_TCP_PortType
+{
+    HAPI_TCP_PORT_ANY,
+    HAPI_TCP_PORT_RANGE,
+    HAPI_TCP_PORT_LIST
+};
+HAPI_C_ENUM_TYPEDEF( HAPI_TCP_PortType )
+
+enum HAPI_ThriftSharedMemoryBufferType
+{
+    HAPI_THRIFT_SHARED_MEMORY_FIXED_LENGTH_BUFFER,
+    HAPI_THRIFT_SHARED_MEMORY_RING_BUFFER
+};
+HAPI_C_ENUM_TYPEDEF( HAPI_ThriftSharedMemoryBufferType )
+
 /////////////////////////////////////////////////////////////////////////////
 // Main API Structs
 
@@ -1081,6 +1109,33 @@ struct HAPI_API HAPI_Session
 };
 HAPI_C_STRUCT_TYPEDEF( HAPI_Session )
 
+/// Configurations for sessions
+struct HAPI_API HAPI_SessionInfo
+{
+    /// The number of subconnections in this session
+    int connectionCount;
+
+    /// Specification for the port numbers
+    HAPI_TCP_PortType portType;
+
+    /// Specifies a range of port numbers, [minPort, maxPort]
+    int minPort;
+    int maxPort;
+
+    /// Specifies a list of port numbers
+    int ports[ HAPI_MAX_NUM_CONNECTIONS ];
+
+    // Must match the buffer type passed to the HARS executable through the
+    // command line or ::HAPI_StartThriftSharedMemoryServer
+    HAPI_ThriftSharedMemoryBufferType sharedMemoryBufferType;
+
+    // Must match the buffer size passed to the HARS executable through the
+    // command line or ::HAPI_StartThriftSharedMemoryServer. This is the size of
+    // the shared memory buffer in megabytes (MB).
+    HAPI_Int64 sharedMemoryBufferSize;
+};
+HAPI_C_STRUCT_TYPEDEF( HAPI_SessionInfo )
+
 /// Options to configure a Thrift server being started from HARC.
 struct HAPI_API HAPI_ThriftServerOptions
 {
@@ -1095,6 +1150,18 @@ struct HAPI_API HAPI_ThriftServerOptions
 
     // Specifies the maximum status verbosity that will be logged.
     HAPI_StatusVerbosity verbosity;
+
+    // Only used when starting a Thrift shared memory server. This controls the
+    // type of buffer that is used in the underlying communication protocol. A
+    // fixed length buffer is faster but the data passed to any single HAPI API
+    // call cannot exceed the total length of the buffer. A ring buffer is
+    // slower but has no limitations on the size of the data.
+    HAPI_ThriftSharedMemoryBufferType sharedMemoryBufferType;
+
+    // Only used when starting a Thrift shared memory server. This variable
+    // specifies the size in megabytes (MB) of the allocated shared memory
+    // buffer.
+    HAPI_Int64 sharedMemoryBufferSize;
 };
 HAPI_C_STRUCT_TYPEDEF( HAPI_ThriftServerOptions )
 

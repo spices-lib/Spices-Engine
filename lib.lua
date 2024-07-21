@@ -22,8 +22,8 @@ IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/g
 LibraryDir = {}
 LibraryDir["VulkanSDK"]                   = "C:/VulkanSDK/1.3.275.0/Lib"
 LibraryDir["NvPerfUtility"]               = "%{wks.location}/SpicesEngine/vendor/NvPerfUtility/lib"
-LibraryDir["HoudiniEnginedll"]            = "C:/Program Files/Side Effects Software/Houdini 20.0.751/bin"
-LibraryDir["HoudiniEnginelib"]            = "C:/Program Files/Side Effects Software/Houdini 20.0.751/custom/houdini/dsolib"
+LibraryDir["HoudiniEnginedll"]            = "C:/Program Files/Side Effects Software/Houdini 20.5.278/bin"
+LibraryDir["HoudiniEnginelib"]            = "C:/Program Files/Side Effects Software/Houdini 20.5.278/custom/houdini/dsolib"
 
 Library = {}
 Library["VulkanSDK"]                      = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"

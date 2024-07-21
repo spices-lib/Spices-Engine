@@ -12,6 +12,13 @@
 #include "HAPI_API.h"
 #include "HAPI_Common.h"
 
+// Session ------------------------------------------------------------------
+
+HAPI_DECL_RETURN( void )
+    HAPI_SessionInfo_Init( HAPI_SessionInfo * in );
+HAPI_DECL_RETURN( HAPI_SessionInfo )
+    HAPI_SessionInfo_Create();
+
 // Server -------------------------------------------------------------------
 
 HAPI_DECL_RETURN( void )
