@@ -59,7 +59,7 @@ namespace Spices {
 
 		/**
 		* @brief This function regist slate instance.
-		* @param[in] T Slate specific type.
+		* @tparam T Slate specific type.
 		* @param[in] isPrimary Is this slate's render function is called by register or owner.
 		* @param[in] panelName The slate name.
 		* @return Returns the shared pointer of T.

@@ -66,7 +66,7 @@ namespace Spices {
 
 		/**
 		* @brief Event Dispatcher target. Registy on Key Resized.
-		* @param[in] event KeyPressedEvent.
+		* @param[in] e KeyPressedEvent.
 		* @return Returns true if need block the event.
 		*/
 		bool OnKeyPressed(KeyPressedEvent& e);

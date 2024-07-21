@@ -51,7 +51,7 @@ namespace Spices {
 		/**
 		* @brief Public called API, it is entrance.
 		* @param[in] fileName meshfile name.
-		* @param[in out] outMeshPack meshpack pointer, only pass this to it.
+		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* Feel free for using row pointer here, it's very safe, for this API only called during MeshPack.
 		* @return Returns true if load data succssfully.
 		*/
@@ -62,7 +62,7 @@ namespace Spices {
 		/**
 		* @brief Load data from a .obj file.
 		* @param[in] filepath Mesh file path in disk.
-		* @param[in out] outMeshPack meshpack pointer, only pass this to it.
+		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if load data succssfully.
 		*/
 		static bool LoadFromOBJ(const std::string& filepath, MeshPack* outMeshPack);
@@ -70,7 +70,7 @@ namespace Spices {
 		/**
 		* @brief Load data from a .fbx file.
 		* @param[in] filepath Mesh file path in disk.
-		* @param[in out] outMeshPack meshpack pointer, only pass this to it.
+		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if load data succssfully.
 		*/
 		static bool LoadFromFBX(const std::string& filepath, MeshPack* outMeshPack);
@@ -78,7 +78,7 @@ namespace Spices {
 		/**
 		* @brief Load data from a .sasset file.
 		* @param[in] filepath Mesh file path in disk.
-		* @param[in out] outMeshPack meshpack pointer, only pass this to it.
+		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if load data succssfully.
 		*/
 		static bool LoadFromSASSET(const std::string& filepath, MeshPack* outMeshPack);
@@ -86,7 +86,7 @@ namespace Spices {
 		/**
 		* @brief Write the readed data to the sasset file.
 		* @param[in] filepath Mesh file path in disk.
-		* @param[in out] outMeshPack meshpack pointer, only pass this to it.
+		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if write data succssfully.
 		*/
 		static bool WriteSASSET(const std::string& filepath, MeshPack* outMeshPack);
