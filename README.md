@@ -258,6 +258,10 @@ Object Select<br />
 - **Mouse Left Button = Pick one Object**<br />
 - **Mouse Left Button + Shift = Add Pick Object**<br />
 - **Mouse Left Button + Ctrl = Sub Pick Object**<br />
+Gizmo<br />
+- **Pick one Object + Key W = Translate Gizmo**<br />
+- **Pick one Object + Key R = Rotate Gizmo**<br />
+- **Pick one Object + Key T = Scale Gizmo**<br />
 Render Mode Switch<br />
 - **ViewportToolbar Render Menu - Rasterization = Rasterization Mode**<br />
 - **ViewportToolbar Render Menu - RTX-Interactive = Path Tracing Mode**<br />
