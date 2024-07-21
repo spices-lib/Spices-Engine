@@ -46,7 +46,7 @@ namespace SpicesTest {
 		/**
 		* @brief Testing initialized container's bytes.
 		*/
-		EXPECT_EQ(m0.get_bytes(), 44);
+		EXPECT_EQ(m0.get_bytes(), 40);
 
 		/**
 		* @brief Testing initialized container's address.
@@ -73,7 +73,7 @@ namespace SpicesTest {
 		/**
 		* @brief Testing initialized container's bytes.
 		*/
-		EXPECT_EQ(m0.get_bytes(), 56);
+		EXPECT_EQ(m0.get_bytes(), 52);
 
 		/**
 		* @brief Testing initialized container's address.
