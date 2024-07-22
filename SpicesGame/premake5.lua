@@ -38,8 +38,10 @@ project "SpicesGame"
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 	}
 
+	-- In Visual Studio, it only works when generated a new solution, remember update solution will not works.
+    -- In Rider, it will not work, needs to add environment variables manually in project configurations setting.
 	debugenvs 
-	{ 
+	{
 		"PATH=%{LibraryDir.HoudiniEnginedll}"
 	}
 
