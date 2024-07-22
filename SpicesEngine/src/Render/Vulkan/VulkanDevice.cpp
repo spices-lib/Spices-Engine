@@ -247,11 +247,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Get all Properties that supported.
-		*/
-		vkGetPhysicalDeviceProperties(device, &m_DeviceProperties);
-
-		/**
 		* @brief Get all RayTracing Properties supported.
 		*/
 		VkPhysicalDeviceProperties2 prop2{};
