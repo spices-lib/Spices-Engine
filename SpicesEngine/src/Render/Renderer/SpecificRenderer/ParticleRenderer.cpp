@@ -9,14 +9,6 @@
 
 namespace Spices {
 
-	namespace ParticleR
-	{
-		struct Placeholder
-		{
-			int a;
-		};
-	}
-
 	void ParticleRenderer::CreateRendererPass()
 	{
 		SPICES_PROFILE_ZONE;
@@ -35,7 +27,7 @@ namespace Spices {
 		{
 			DescriptorSetBuilder{ "Particle", this }
 			.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-			.AddStorageBuffer<ParticleR::Placeholder>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.AddStorageBuffer<SpicesShader::Vertex>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
 			.Build();
 
 			return;
@@ -58,7 +50,7 @@ namespace Spices {
 		{
 			DescriptorSetBuilder{ "Particle", this }
 			.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-			.AddStorageBuffer<ParticleR::Placeholder>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.AddStorageBuffer<SpicesShader::Vertex>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
 			.Build();
 
 			return;
