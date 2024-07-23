@@ -848,6 +848,14 @@ namespace Spices {
 				const std::string&   name                                              , 
 				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE
 			) override;
+
+			/**
+			* @brief Dispatch Compute Shader.
+			* @param[in] x X group.
+			* @param[in] y Y group.
+			* @param[in] z Z group.
+			*/
+			void Dispatch(uint32_t x, uint32_t y, uint32_t z);
 		};
 
 	protected:

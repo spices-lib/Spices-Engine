@@ -806,4 +806,9 @@ namespace Spices {
 		RenderBehaveBuilder::BindDescriptorSet(infos, name, bindPoint);
 	}
 
+	void Renderer::ComputeRenderBehaveBuilder::Dispatch(uint32_t x, uint32_t y, uint32_t z)
+	{
+		vkCmdDispatch(m_CommandBuffer, x, y, z);
+	}
+
 }

@@ -62,8 +62,8 @@ namespace Spices {
 
 		builder.BindPipeline("ParticleRenderer.Particle.Default");
 
-		vkCmdDispatch(m_VulkanState.m_ComputeCommandBuffer[frameInfo.m_FrameIndex], 16, 1, 1);
-
+		builder.Dispatch(16, 1, 1);
+		
 		builder.Endrecording();
 	}
 }
