@@ -388,7 +388,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->m_Pipelines[materialName]->Bind(m_CurrentFrame, bindPoint);
+		m_Renderer->m_Pipelines[materialName]->Bind(m_CommandBuffer, bindPoint);
 	}
 
 	void Renderer::RenderBehaveBuilder::SetViewPort() const
@@ -421,7 +421,7 @@ namespace Spices {
 		/**
 		* @brief Set VkViewport with viewport slate.
 		*/
-		vkCmdSetViewport(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], 0, 1, &viewport);
+		vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
 
 		/**
 		* @brief Instance a VkRect2D
@@ -433,7 +433,7 @@ namespace Spices {
 		/**
 		* @brief Set VkRect2D.
 		*/
-		vkCmdSetScissor(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], 0, 1, &scissor);
+		vkCmdSetScissor(m_CommandBuffer, 0, 1, &scissor);
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginNextSubPass(const std::string& subpassName)
@@ -442,10 +442,10 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
 
-		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
-		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_HandledSubPass->GetName());
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
 
-		vkCmdNextSubpass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginRenderPass()
@@ -480,20 +480,20 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
-		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_Renderer->m_Pass->GetName());
-		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], m_HandledSubPass->GetName());
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
 
-		vkCmdBeginRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void Renderer::RenderBehaveBuilder::EndRenderPass() const
 	{
 		SPICES_PROFILE_ZONE;
 
-		vkCmdEndRenderPass(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+		vkCmdEndRenderPass(m_CommandBuffer);
 
-		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
-		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 	
 	Renderer::RayTracingRenderBehaveBuilder::RayTracingRenderBehaveBuilder(
@@ -501,7 +501,7 @@ namespace Spices {
 		uint32_t  currentFrame ,
 		uint32_t  currentImage
 	)
-		:RenderBehaveBuilder(renderer, currentFrame, currentImage)
+		: RenderBehaveBuilder(renderer, currentFrame, currentImage)
 	{
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetInstanceProcAddr(renderer->m_VulkanState.m_Instance, "vkCmdTraceRaysKHR"));
@@ -509,12 +509,12 @@ namespace Spices {
 
 	void Renderer::RayTracingRenderBehaveBuilder::Recording(const std::string& caption)
 	{
-		VulkanDebugUtils::BeginLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame], caption);
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, caption);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::Endrecording()
 	{
-		VulkanDebugUtils::EndLabel(m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame]);
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint bindPoint)
@@ -547,7 +547,7 @@ namespace Spices {
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
 		vkCmdTraceRaysKHR(
-			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			m_CommandBuffer,
 			rgenRegion,
 			missRegion,
 			hitRegion,
@@ -568,7 +568,11 @@ namespace Spices {
 		BindDescriptorSet(infos, ss.str(), bindPoint);
 	}
 
-	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
+	void Renderer::RenderBehaveBuilder::BindDescriptorSet(
+		const DescriptorSetInfo& infos          , 
+		const std::string&       name           , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -578,7 +582,7 @@ namespace Spices {
 		for (const auto& pair : infos)
 		{
 			vkCmdBindDescriptorSets(
-				m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+				m_CommandBuffer,
 				bindPoint,
 				m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
 				pair.first,
@@ -765,4 +769,41 @@ namespace Spices {
 
 		m_Renderer->m_Pass->BuildRendererPass();
 	}
+
+	Renderer::ComputeRenderBehaveBuilder::ComputeRenderBehaveBuilder(
+		Renderer* renderer      , 
+		uint32_t  currentFrame  , 
+		uint32_t  currentImage
+	)
+		: RenderBehaveBuilder(renderer, currentFrame, currentImage)
+	{
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_CommandBuffer = m_Renderer->m_VulkanState.m_ComputeCommandBuffer[currentFrame];
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::Recording(const std::string& caption)
+	{
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, caption);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::Endrecording()
+	{
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint bindPoint)
+	{
+		RenderBehaveBuilder::BindPipeline(materialName, bindPoint);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	{
+		RenderBehaveBuilder::BindDescriptorSet(infos, bindPoint);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
+	{
+		RenderBehaveBuilder::BindDescriptorSet(infos, name, bindPoint);
+	}
+
 }

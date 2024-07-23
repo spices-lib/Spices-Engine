@@ -72,8 +72,8 @@ namespace Spices {
 
 		builder.BindPipeline("RayTracingComposeRenderer.RayTracingCompose.Default");
 
-		m_Square->OnBind(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
-		m_Square->OnDraw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]);
+		m_Square->OnBind(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
+		m_Square->OnDraw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
 
 		builder.EndRenderPass();
 	}

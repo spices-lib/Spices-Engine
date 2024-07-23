@@ -45,27 +45,24 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief The CommandBuffer's num should be equals to max frams in flight.
-		*/
-		vulkanState.m_CommandBuffer.resize(MaxFrameInFlight);
-
-		/**
 		* @brief Create VkCommandBufferAllocateInfo struct.
 		*/
 		VkCommandBufferAllocateInfo       allocInfo{};
 		allocInfo.sType                 = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.commandPool           = vulkanState.m_CommandPool;
 		allocInfo.level                 = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount    = static_cast<uint32_t>(vulkanState.m_CommandBuffer.size());
+		allocInfo.commandBufferCount    = MaxFrameInFlight;
 
 		/**
 		* @brief  Create commandbuffer and set it global.
 		*/
-		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_CommandBuffer.data()));
+		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_GraphicCommandBuffer.data()));
+		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_ComputeCommandBuffer.data()));
 
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, vulkanState.m_CommandBuffer[i], vulkanState.m_Device, "SpicesEngineCommandBuffer");
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, vulkanState.m_GraphicCommandBuffer[i], vulkanState.m_Device, "GraphicCommandBuffer");
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, vulkanState.m_ComputeCommandBuffer[i], vulkanState.m_Device, "ComputeCommandBuffer");
 		}
 	}
 }

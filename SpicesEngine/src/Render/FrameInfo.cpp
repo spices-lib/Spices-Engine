@@ -15,4 +15,9 @@ namespace Spices
 	{
 		return m_FrameInfo;
 	}
+
+	void FrameInfo::DetermainFirstFrame()
+	{
+		if (m_IsFirstFrame) m_IsFirstFrame = false;
+	}
 }

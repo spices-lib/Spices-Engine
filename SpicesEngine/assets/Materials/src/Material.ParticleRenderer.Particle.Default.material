@@ -1,0 +1,15 @@
+# @file Material.ParticleRenderer.Particle.Default.material.
+# @brief This File is the sample of Defining a Particle Renderer Particle SubPass Default Material.
+# @author Spices.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
+Material: ParticleRenderer.Particle.Default
+
+# @brief Material Shaders usages.
+Shaders:
+  
+  # @brief Compute Shader Stage Shader File Path.
+  - Stage: comp
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: ParticleRenderer.Particle.Default

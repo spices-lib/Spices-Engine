@@ -51,7 +51,7 @@ namespace Spices {
 
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
@@ -68,7 +68,7 @@ namespace Spices {
 
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			spriteComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {

@@ -117,7 +117,7 @@ namespace Spices {
 		IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			skyboxComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			skyboxComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 
 				builder.BindPipeline(material->GetName());
 
@@ -139,7 +139,7 @@ namespace Spices {
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 
 				builder.BindPipeline(material->GetName());
 

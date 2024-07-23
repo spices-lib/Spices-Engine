@@ -90,11 +90,11 @@ namespace Spices {
 		static void DefaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
 		/**
-		* @brief Bind Pipeline with commandbuffer index.
-		* @param[in] frameIndex The CommandBuffer Index.
+		* @brief Bind Pipeline with commandbuffer.
+		* @param[in] commandBuffer The CommandBuffer
 		* @param[in] bindPoint VkPipelineBindPoint.
 		*/
-		void Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS) const;
+		void Bind(VkCommandBuffer commandBuffer, VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS) const;
 
 		/**
 		* @brief Get VkPipelineLayout.

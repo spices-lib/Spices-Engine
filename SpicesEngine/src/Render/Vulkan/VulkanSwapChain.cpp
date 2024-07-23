@@ -245,10 +245,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_VulkanState.m_ImageSemaphore.resize(MaxFrameInFlight);
-		m_VulkanState.m_QueueSemaphore.resize(MaxFrameInFlight);
-		m_VulkanState.m_Fence.resize(MaxFrameInFlight);
-
 		/**
 		* @brief Instance a VkSemaphoreCreateInfo.
 		*/
@@ -267,14 +263,26 @@ namespace Spices {
 		*/
 		for (size_t i = 0; i < MaxFrameInFlight; i++) 
 		{
-			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ImageSemaphore[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_ImageSemaphore[i], m_VulkanState.m_Device, "ImageSemaphore");
+			// Graphic SyncObkects.
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_GraphicImageSemaphore[i]))
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_GraphicImageSemaphore[i], m_VulkanState.m_Device, "GraphicImageSemaphore");
 
-			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_QueueSemaphore[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_QueueSemaphore[i], m_VulkanState.m_Device, "QueueSemaphore");
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_GraphicQueueSemaphore[i]))
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_GraphicQueueSemaphore[i], m_VulkanState.m_Device, "GraphicQueueSemaphore");
 
-			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_Fence[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FENCE, m_VulkanState.m_Fence[i], m_VulkanState.m_Device, "Fence");
+			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_GraphicFence[i]))
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FENCE, m_VulkanState.m_GraphicFence[i], m_VulkanState.m_Device, "GraphicFence");
+
+
+			// Compute SyncObkects.
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ComputeImageSemaphore[i]))
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_ComputeImageSemaphore[i], m_VulkanState.m_Device, "ComputeImageSemaphore");
+
+			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ComputeQueueSemaphore[i]))
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, m_VulkanState.m_ComputeQueueSemaphore[i], m_VulkanState.m_Device, "ComputeQueueSemaphore");
+
+			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_ComputeFence[i]))
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FENCE, m_VulkanState.m_ComputeFence[i], m_VulkanState.m_Device, "ComputeFence");
 		}
 	}
 
@@ -287,9 +295,15 @@ namespace Spices {
 		*/
 		for (size_t i = 0; i < MaxFrameInFlight; i++) 
 		{
-			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_ImageSemaphore[i], nullptr);
-			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_QueueSemaphore[i], nullptr);
-			vkDestroyFence(m_VulkanState.m_Device, m_VulkanState.m_Fence[i], nullptr);
+			// Graphic SyncObkects.
+			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_GraphicImageSemaphore[i], nullptr);
+			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_GraphicQueueSemaphore[i], nullptr);
+			vkDestroyFence(m_VulkanState.m_Device, m_VulkanState.m_GraphicFence[i], nullptr);
+
+			// Compute SyncObkects.
+			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_ComputeImageSemaphore[i], nullptr);
+			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_ComputeQueueSemaphore[i], nullptr);
+			vkDestroyFence(m_VulkanState.m_Device, m_VulkanState.m_ComputeFence[i], nullptr);
 		}
 	}
 }

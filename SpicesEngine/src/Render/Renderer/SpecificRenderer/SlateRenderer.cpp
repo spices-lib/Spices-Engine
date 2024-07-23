@@ -164,7 +164,7 @@ namespace Spices {
 		const ImGuiIO& io = ImGui::GetIO();
 
 		ImGui::Render();
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_VulkanState.m_CommandBuffer[index]);
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_VulkanState.m_GraphicCommandBuffer[index]);
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{

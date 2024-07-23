@@ -552,7 +552,9 @@ namespace Spices {
 				: m_Renderer(renderer)
 				, m_CurrentFrame(currentFrame)
 				, m_CurrentImage(currentImage)
-			{}
+			{
+				m_CommandBuffer = m_Renderer->m_VulkanState.m_GraphicCommandBuffer[currentFrame];
+			}
 
 			/**
 			* @brief Destructor Function.
@@ -691,6 +693,11 @@ namespace Spices {
 			uint32_t m_CurrentImage;
 
 			/**
+			* @brief Current CommandBuffer.
+			*/
+			VkCommandBuffer m_CommandBuffer;
+
+			/**
 			* @brief Handled Sub pass.
 			*/
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
@@ -753,9 +760,9 @@ namespace Spices {
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			virtual void BindDescriptorSet(
-				const DescriptorSetInfo&   infos                                       , 
-				const std::string&   name                                              , 
-				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+				const DescriptorSetInfo&   infos                                             , 
+				const std::string&         name                                              , 
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
 			) override;
 
 			/**
@@ -780,6 +787,69 @@ namespace Spices {
 			PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
 		};
 		
+		/**
+		* @brief This class helps to bind pipeline and bind buffer.
+		* Specific for pure Compute Renderer.
+		* Only instanced during Render().
+		*/
+		class ComputeRenderBehaveBuilder : public RenderBehaveBuilder
+		{
+		public:
+			
+			/**
+			* @brief Constructor Function.
+			* Bind pipeline and all buffer type descriptor set.
+			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			* @param[in] currentFrame Passed from FrameInfo.
+			* @param[in] currentImage Passed from FrameInfo.
+			*/
+			ComputeRenderBehaveBuilder(
+				Renderer* renderer     , 
+				uint32_t  currentFrame , 
+				uint32_t  currentImage
+			);
+
+			/**
+			* @brief Destructor Function.
+			*/
+			virtual ~ComputeRenderBehaveBuilder() override = default;
+
+			void Recording(const std::string& caption);
+			void Endrecording();
+			
+			/**
+			* @brief Bind the pipeline created by CreatePipeline().
+			* Called on RenderBehaveBuilder instanced.
+			* @param[in] materialName also pipelineName.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE) override;
+			
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo.
+			* For Binding a Renderer DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSet(
+				const DescriptorSetInfo&   infos                                       , 
+				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE
+			) override;
+
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo and name.
+			* For Binding a Material DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] name The material name.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSet(
+				const DescriptorSetInfo&   infos                                       , 
+				const std::string&   name                                              , 
+				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE
+			) override;
+		};
+
 	protected:
 		
 		/**
@@ -877,7 +947,7 @@ namespace Spices {
 		* @breif Update PushConstants
 		*/
 		vkCmdPushConstants(
-			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			m_CommandBuffer,
 			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
 			VK_SHADER_STAGE_ALL,
 			0,

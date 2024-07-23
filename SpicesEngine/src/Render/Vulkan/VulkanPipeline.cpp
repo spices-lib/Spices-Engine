@@ -140,18 +140,18 @@ namespace Spices {
 		configInfo.attributeDescriptions                     = Vertex::GetAttributeDescriptions();
 	}
 
-	void VulkanPipeline::Bind(uint32_t frameIndex, VkPipelineBindPoint bindPoint) const
+	void VulkanPipeline::Bind(VkCommandBuffer commandBuffer, VkPipelineBindPoint bindPoint) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Bind Pipeline.
 		*/
-		vkCmdBindPipeline(m_VulkanState.m_CommandBuffer[frameIndex], bindPoint, m_Pipeline);
+		vkCmdBindPipeline(commandBuffer, bindPoint, m_Pipeline);
 	}
 
 	void VulkanPipeline::CreateGraphicsPipeline(
-		const std::string&                                                pipelineName    ,
+		const std::string&                                                pipelineName  ,
 		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
 		const PipelineConfigInfo&                                         config
 	)

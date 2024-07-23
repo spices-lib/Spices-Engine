@@ -19,6 +19,7 @@
 #include "Render/Renderer/SpecificRenderer/WorldPickRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SpriteRenderer.h"
 #include "Render/Renderer/SpecificRenderer/WorldPickStage2Renderer.h"
+#include "Render/Renderer/SpecificRenderer/ParticleRenderer.h"
 #include "Render/Renderer/SpecificRenderer/TestRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingComposeRenderer.h"
 
@@ -96,6 +97,7 @@ namespace Spices {
 			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<ParticleRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<TestRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>          (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 		}
@@ -122,6 +124,7 @@ namespace Spices {
 			RendererManager::Get()
 			.Pop("SlateRenderer")
 			.Pop("TestRenderer")
+			.Pop("ParticleRenderer")
 			.Pop("WorldPickStage2Renderer")
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
@@ -165,18 +168,15 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		VkFence fence[2] = { m_VulkanState.m_ComputeFence[frameInfo.m_FrameIndex], m_VulkanState.m_GraphicFence[frameInfo.m_FrameIndex] };
+
 		{
 			SPICES_PROFILE_ZONEN("BeginFrame::WaitForFences");
 			
 			/**
 			* @brief Wait for last frame done.
 			*/
-			VK_CHECK(vkWaitForFences(
-				m_VulkanState.m_Device, 
-				1, 
-				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex], 
-				VK_TRUE, UINT64_MAX
-			));
+			VK_CHECK(vkWaitForFences(m_VulkanState.m_Device, 2, fence, VK_TRUE, UINT64_MAX))
 		}
 
 		{
@@ -185,11 +185,7 @@ namespace Spices {
 			/**
 			* @brief Reset Fences.
 			*/
-			VK_CHECK(vkResetFences(
-				m_VulkanState.m_Device, 
-				1, 
-				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
-			));
+			VK_CHECK(vkResetFences(m_VulkanState.m_Device, 2, fence));
 		}
 		
 		/**
@@ -199,7 +195,7 @@ namespace Spices {
 			m_VulkanState.m_Device, 
 			m_VulkanState.m_SwapChain, 
 			UINT64_MAX, 
-			m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex], 
+			m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex],
 			VK_NULL_HANDLE, 
 			&frameInfo.m_Imageindex
 		);
@@ -230,7 +226,8 @@ namespace Spices {
 			/**
 			* @brief Start recording a CommandBuffer.
 			*/
-			VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
+			VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_ComputeCommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
+			VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
 		}
 	}
 
@@ -244,7 +241,8 @@ namespace Spices {
 			/**
 			* @brief End recording the CommandBuffer.
 			*/
-			VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex]))
+			VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_ComputeCommandBuffer[frameInfo.m_FrameIndex]))
+			VK_CHECK(vkEndCommandBuffer(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]))
 		}
 
 		{
@@ -253,39 +251,64 @@ namespace Spices {
 			/**
 			* @brief Reset Fences.
 			*/
-			VK_CHECK(vkResetFences(
-				m_VulkanState.m_Device, 
-				1, 
-				&m_VulkanState.m_Fence[frameInfo.m_FrameIndex]
-			))
+			VkFence fence[2] = { m_VulkanState.m_ComputeFence[frameInfo.m_FrameIndex], m_VulkanState.m_GraphicFence[frameInfo.m_FrameIndex] };
+			VK_CHECK(vkResetFences(m_VulkanState.m_Device, 1, fence))
 		}
 		
-		/**
-		* @brief Instance a VkSubmitInfo.
-		*/
-		VkSubmitInfo submitInfo{};
-		submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-										    
-		VkSemaphore waitSemphores[]         = { m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex]};
-		VkPipelineStageFlags waitStages[]   = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-										    
-		submitInfo.waitSemaphoreCount       = 1;
-		submitInfo.pWaitSemaphores          = waitSemphores;
-		submitInfo.pWaitDstStageMask        = waitStages;
-		submitInfo.commandBufferCount       = 1;
-		submitInfo.pCommandBuffers          = &m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex];
-										    
-		VkSemaphore signalSemaphores[]      = { m_VulkanState.m_QueueSemaphore[frameInfo.m_FrameIndex] };
-		submitInfo.signalSemaphoreCount     = 1;
-		submitInfo.pSignalSemaphores        = signalSemaphores;
-
 		{
-			SPICES_PROFILE_ZONEN("EndFrame::QueueSubmit");
+			SPICES_PROFILE_ZONEN("EndFrame::ComputeQueueSubmit");
+
+			/**
+			* @brief Instance a VkSubmitInfo.
+			*/
+			VkSubmitInfo submitInfo{};
+			submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+			VkSemaphore waitSemphores[]         = { m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex]};
+			VkPipelineStageFlags waitStages[]   = { VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT };
+
+			submitInfo.waitSemaphoreCount       = 0;
+			submitInfo.pWaitSemaphores          = nullptr;
+			submitInfo.pWaitDstStageMask        = waitStages;
+			submitInfo.commandBufferCount       = 1;
+			submitInfo.pCommandBuffers          = &m_VulkanState.m_ComputeCommandBuffer[frameInfo.m_FrameIndex];
+							    
+			VkSemaphore signalSemaphores[]      = { m_VulkanState.m_ComputeQueueSemaphore[frameInfo.m_FrameIndex] };
+			submitInfo.signalSemaphoreCount     = 1;
+			submitInfo.pSignalSemaphores        = signalSemaphores;
 			
 			/**
 			* @brief Submit all commands recorded in queue.
 			*/
-			VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]))
+			VK_CHECK(vkQueueSubmit(m_VulkanState.m_ComputeQueue, 1, &submitInfo, m_VulkanState.m_ComputeFence[frameInfo.m_FrameIndex]))
+		}
+
+		{
+			SPICES_PROFILE_ZONEN("EndFrame::GraphicQueueSubmit");
+
+			/**
+			* @brief Instance a VkSubmitInfo.
+			*/
+			VkSubmitInfo                          submitInfo{};
+			submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+										        
+			VkSemaphore waitSemphores[]         = { m_VulkanState.m_ComputeQueueSemaphore[frameInfo.m_FrameIndex], m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex] };
+			VkPipelineStageFlags waitStages[]   = { VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+			submitInfo.waitSemaphoreCount       = 2;
+			submitInfo.pWaitSemaphores          = waitSemphores;
+			submitInfo.pWaitDstStageMask        = waitStages;
+			submitInfo.commandBufferCount       = 1;
+			submitInfo.pCommandBuffers          = &m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex];
+
+			VkSemaphore signalSemaphores[]      = { m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex] };
+			submitInfo.signalSemaphoreCount     = 1;
+			submitInfo.pSignalSemaphores        = signalSemaphores;
+
+			/**
+			* @brief Submit all commands recorded in queue.
+			*/
+			VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_GraphicFence[frameInfo.m_FrameIndex]))
 		}
 
 		{
@@ -297,7 +320,7 @@ namespace Spices {
 			VkPresentInfoKHR presentInfo{};
 			presentInfo.sType               = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 			presentInfo.waitSemaphoreCount  = 1;
-			presentInfo.pWaitSemaphores     = signalSemaphores;
+			presentInfo.pWaitSemaphores     = &m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex];
 
 			VkSwapchainKHR swapChains[]     = { m_VulkanState.m_SwapChain };
 			presentInfo.swapchainCount      = 1;
