@@ -9,6 +9,14 @@
 
 namespace Spices {
 
+	namespace ParticleR
+	{
+		struct Placeholder
+		{
+			int a;
+		};
+	}
+
 	void ParticleRenderer::CreateRendererPass()
 	{
 		SPICES_PROFILE_ZONE;
@@ -23,9 +31,53 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		if (!FrameInfo::Get().m_World)
+		{
+			DescriptorSetBuilder{ "Particle", this }
+			.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
+			.AddStorageBuffer<ParticleR::Placeholder>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.Build();
+
+			return;
+		}
+
+		std::shared_ptr<VulkanBuffer> buffer = nullptr;
+
+		IterWorldComp<TagComponent>(FrameInfo::Get(), [&](int entityID, TransformComponent& tranComp, TagComponent& tagComp) {
+			if (tagComp.GetTag().find("Ground") != tagComp.GetTag().end())
+			{
+				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);
+				std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
+				buffer = meshPack->GetVerticesBuffer();
+				return true;
+			}
+			return false;
+		});
+		
+		if (!buffer)
+		{
+			DescriptorSetBuilder{ "Particle", this }
+			.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
+			.AddStorageBuffer<ParticleR::Placeholder>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.Build();
+
+			return;
+		}
+
 		DescriptorSetBuilder{ "Particle", this }
 		.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
+		.AddStorageBuffer(1, 1, VK_SHADER_STAGE_COMPUTE_BIT, buffer)
 		.Build();
+	}
+
+	void ParticleRenderer::OnMeshAddedWorld()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @breif ReCreate RenderPass, DescriptorSet and DefaultMaterial.
+		*/
+		Renderer::OnSystemInitialize();
 	}
 
 	std::shared_ptr<VulkanPipeline> ParticleRenderer::CreatePipeline(
@@ -54,7 +106,24 @@ namespace Spices {
 
 		ComputeRenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
-		builder.Recording("RayTracing");
+		builder.Recording("Particle");
+
+		std::shared_ptr<VulkanBuffer> buffer = nullptr;
+
+		IterWorldComp<TagComponent>(FrameInfo::Get(), [&](int entityID, TransformComponent& tranComp, TagComponent& tagComp) {
+			if (tagComp.GetTag().find("Ground") != tagComp.GetTag().end())
+			{
+				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);
+				std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
+				buffer = meshPack->GetVerticesBuffer();
+				return true;
+			}
+			return false;
+		});
+
+		if (!buffer) return;
+
+		builder.AddBarriers(buffer->Get(), 0, VK_ACCESS_SHADER_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
@@ -62,8 +131,10 @@ namespace Spices {
 
 		builder.BindPipeline("ParticleRenderer.Particle.Default");
 
-		builder.Dispatch(16, 1, 1);
+		builder.Dispatch(16 * 16, 1, 1);
 		
+		builder.ReleaseBarriers(buffer->Get(), VK_ACCESS_SHADER_WRITE_BIT, 0, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+
 		builder.Endrecording();
 	}
 }

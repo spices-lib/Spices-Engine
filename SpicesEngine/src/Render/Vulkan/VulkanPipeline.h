@@ -209,8 +209,8 @@ namespace Spices {
 
 		/**
 		* @brief Destructor Function.
-		*/
-		virtual ~VulkanComputePipeline() override = default;
+		*
+		virtual ~VulkanComputePipeline() override = defau/lt;
 
 	private:
 

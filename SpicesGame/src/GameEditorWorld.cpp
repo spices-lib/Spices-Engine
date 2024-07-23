@@ -103,7 +103,7 @@ namespace Spices {
 			transformComp1.SetRotation({90.0f, 0.0f, 0.0f});
 			transformComp1.SetScale({50.0f, 50.0f, 50.0f});
 
-			std::shared_ptr<SquarePack> pack1 = std::make_shared<SquarePack>();
+			std::shared_ptr<SquarePack> pack1 = std::make_shared<SquarePack>(257, 257);
 
 			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();

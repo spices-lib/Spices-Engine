@@ -115,13 +115,14 @@ namespace Spices {
 			memcpy(data, m_Vertices.data(), (size_t)bufferSize);
 			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
 
-			m_VertexBuffer = std::make_unique<VulkanBuffer>(
+			m_VertexBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
 				bufferSize, 
-				VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
-				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | 
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
-				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     | 
+				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT                                    |
+				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT                                   |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
+				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 			);
 
@@ -145,13 +146,14 @@ namespace Spices {
 			memcpy(data, m_Indices.data(), (size_t)bufferSize);
 			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
 
-			m_IndicesBuffer = std::make_unique<VulkanBuffer>(
+			m_IndicesBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(), 
 				bufferSize, 
-				VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
-				VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
-				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     | 
+				VK_BUFFER_USAGE_INDEX_BUFFER_BIT                                     |
+				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT                                   |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
+				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 			);
 

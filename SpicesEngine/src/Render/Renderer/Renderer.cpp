@@ -606,6 +606,36 @@ namespace Spices {
 		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageBuffer(
+		uint32_t                      set        , 
+		uint32_t                      binding    , 
+		VkShaderStageFlags            stageFlags , 
+		std::shared_ptr<VulkanBuffer> buffer
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		const UInt2 id(set, binding);
+
+		/**
+		* @brief Creating VulkanBuffer.
+		*/
+		m_HandledSubPass->GetBuffers(id) = buffer;
+
+		/**
+		* @brief fill in bufferInfos.
+		*/
+		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
+
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
+
+		return *this;
+	}
+
 	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageTexture(
 		uint32_t                         set           , 
 		uint32_t                         binding       , 
@@ -809,6 +839,91 @@ namespace Spices {
 	void Renderer::ComputeRenderBehaveBuilder::Dispatch(uint32_t x, uint32_t y, uint32_t z)
 	{
 		vkCmdDispatch(m_CommandBuffer, x, y, z);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::AddBarriers(
+		VkBuffer              buffer        , 
+		VkAccessFlags         srcAccessMask , 
+		VkAccessFlags         dstAccessMask , 
+		VkPipelineStageFlags  srcStageMask  , 
+		VkPipelineStageFlags  dstStageMask
+	)
+	{
+		VkBufferMemoryBarrier                   bufferBarrier {};
+		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		bufferBarrier.srcAccessMask           = srcAccessMask;
+		bufferBarrier.dstAccessMask           = dstAccessMask;
+		bufferBarrier.srcQueueFamilyIndex     = m_Renderer->m_VulkanState.m_GraphicQueueFamily;
+		bufferBarrier.dstQueueFamilyIndex     = m_Renderer->m_VulkanState.m_ComputeQueueFamily;
+		bufferBarrier.size                    = VK_WHOLE_SIZE;
+		bufferBarrier.buffer                  = buffer;
+
+		vkCmdPipelineBarrier(
+			m_CommandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			0, nullptr,
+			1, &bufferBarrier,
+			0, nullptr
+		);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::ReleaseBarriers(
+		VkBuffer              buffer        , 
+		VkAccessFlags         srcAccessMask , 
+		VkAccessFlags         dstAccessMask , 
+		VkPipelineStageFlags  srcStageMask  , 
+		VkPipelineStageFlags  dstStageMask
+	)
+	{
+		
+		VkBufferMemoryBarrier                   bufferBarrier {};
+		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		bufferBarrier.srcAccessMask           = srcAccessMask;
+		bufferBarrier.dstAccessMask           = dstAccessMask;
+		bufferBarrier.srcQueueFamilyIndex     = m_Renderer->m_VulkanState.m_ComputeQueueFamily;
+		bufferBarrier.dstQueueFamilyIndex     = m_Renderer->m_VulkanState.m_GraphicQueueFamily;
+		bufferBarrier.size                    = VK_WHOLE_SIZE;
+		bufferBarrier.buffer                  = buffer;
+
+		vkCmdPipelineBarrier(
+			m_CommandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			0, nullptr,
+			1, &bufferBarrier,
+			0, nullptr
+		);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::InternalBarriers(
+		VkBuffer              buffer        , 
+		VkAccessFlags         srcAccessMask , 
+		VkAccessFlags         dstAccessMask , 
+		VkPipelineStageFlags  srcStageMask  , 
+		VkPipelineStageFlags  dstStageMask
+	)
+	{
+		VkBufferMemoryBarrier                   bufferBarrier {};
+		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		bufferBarrier.srcAccessMask           = srcAccessMask;
+		bufferBarrier.dstAccessMask           = dstAccessMask;
+		bufferBarrier.srcQueueFamilyIndex     = VK_QUEUE_FAMILY_IGNORED;
+		bufferBarrier.dstQueueFamilyIndex     = VK_QUEUE_FAMILY_IGNORED;
+		bufferBarrier.size                    = VK_WHOLE_SIZE;
+		bufferBarrier.buffer                  = buffer;
+
+		vkCmdPipelineBarrier(
+			m_CommandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			0, nullptr,
+			1, &bufferBarrier,
+			0, nullptr
+		);
 	}
 
 }

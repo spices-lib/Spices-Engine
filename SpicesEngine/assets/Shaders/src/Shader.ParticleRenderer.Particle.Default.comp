@@ -1,0 +1,20 @@
+#version 460
+
+#extension GL_GOOGLE_include_directive  : enable                    /* @brief Enable include Macro.           */
+#include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+
+layout(set = 1, binding = 0, rgba32f) uniform image2D RayImage;    /* @brief Color. */
+layout(set = 1, binding = 1, scalar) buffer SSBO   { 
+    Vertex i[]; 
+} ssbo;
+
+layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+void main()
+{
+	uint index = gl_GlobalInvocationID.x;
+
+	ssbo.i[gl_GlobalInvocationID.x].position.z = 1.0f * sin(spiecsInput.gameTime);
+	//imageStore(RayImage, ivec2(gl_GlobalInvocationID.xy), vec4(1.0f));
+}

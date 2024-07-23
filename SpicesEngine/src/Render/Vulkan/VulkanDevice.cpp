@@ -438,6 +438,7 @@ namespace Spices {
 				if (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) 
 				{
 					m_QueueHelper.computequeuefamily = i;
+					m_VulkanState.m_ComputeQueueFamily = i;
 				}
 
 				/**

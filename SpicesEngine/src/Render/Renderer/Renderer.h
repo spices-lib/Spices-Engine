@@ -412,6 +412,21 @@ namespace Spices {
 			);
 
 			/**
+			* @brief Add buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
+			* @param[in] set Which set this buffer wil use.
+			* @param[in] binding Which binding this buffer will use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @param[in] buffer SSBO.
+			* @return Returns this reference.
+			*/
+			DescriptorSetBuilder& AddStorageBuffer(
+				uint32_t                      set        ,
+				uint32_t                      binding    ,
+				VkShaderStageFlags            stageFlags ,
+				std::shared_ptr<VulkanBuffer> buffer
+			);
+
+			/**
 			* @brief Add the texture set binding to descriptor set layout.
 			* @tparam T Texture Type.
 			* @param[in] set Which set this texture wil use.
@@ -856,6 +871,30 @@ namespace Spices {
 			* @param[in] z Z group.
 			*/
 			void Dispatch(uint32_t x, uint32_t y, uint32_t z);
+
+			void AddBarriers(
+				VkBuffer              buffer         , 
+				VkAccessFlags         srcAccessMask  , 
+				VkAccessFlags         dstAccessMask  , 
+				VkPipelineStageFlags  srcStageMask   , 
+				VkPipelineStageFlags  dstStageMask
+			);
+
+			void ReleaseBarriers(
+				VkBuffer              buffer         ,
+				VkAccessFlags         srcAccessMask  ,
+				VkAccessFlags         dstAccessMask  ,
+				VkPipelineStageFlags  srcStageMask   ,
+				VkPipelineStageFlags  dstStageMask
+			);
+
+			void InternalBarriers(
+				VkBuffer              buffer                                               ,
+				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
+				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
+			);
 		};
 
 	protected:
@@ -1080,7 +1119,7 @@ namespace Spices {
 		/**
 		* @brief Creating VulkanBuffer.
 		*/
-		m_HandledSubPass->GetBuffers(id) = std::make_unique<VulkanBuffer>(
+		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
 			m_Renderer->m_VulkanState,
 			sizeof(T),
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -1120,7 +1159,7 @@ namespace Spices {
 		/**
 		* @brief Creating VulkanBuffer.
 		*/
-		m_HandledSubPass->GetBuffers(id) = std::make_unique<VulkanBuffer>(
+		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
 			m_Renderer->m_VulkanState,
 			sizeof(T),
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |

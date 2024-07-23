@@ -371,8 +371,12 @@ namespace Spices {
 		const std::unordered_map<std::string, std::vector<std::string>>& shaders       ,
 		const PipelineConfigInfo&                                        config
 	)
-		:VulkanPipeline(vulkanState, pipelineName, shaders, config)
-	{}
+		:VulkanPipeline(vulkanState)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VulkanComputePipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
+	}
 
 	void VulkanComputePipeline::CreateGraphicsPipeline(
 		const std::string&                                               pipelineName  , 

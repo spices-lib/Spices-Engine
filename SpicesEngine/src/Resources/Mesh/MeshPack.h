@@ -119,6 +119,18 @@ namespace Spices {
 		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR() const;
 
 		/**
+		* @brief Get VerticesBuffer.
+		* @return Returns the VerticesBuffer.
+		*/
+		std::shared_ptr<VulkanBuffer> GetVerticesBuffer() const { return m_VertexBuffer; }
+
+		/**
+		* @brief Get IndicesBuffer.
+		* @return Returns the IndicesBuffer.
+		*/
+		std::shared_ptr<VulkanBuffer> GetIndicesBuffer() const { return m_IndicesBuffer; }
+
+		/**
 		* @brief Get VerticesBuffer Video memory address.
 		* @return Returns the VerticesBuffer Video memory address.
 		*/
@@ -172,12 +184,12 @@ namespace Spices {
 		/**
 		* @brief Vertices buffer.
 		*/
-		std::unique_ptr<VulkanBuffer> m_VertexBuffer;
+		std::shared_ptr<VulkanBuffer> m_VertexBuffer;
 
 		/**
 		* @brief Indices buffer.
 		*/
-		std::unique_ptr<VulkanBuffer> m_IndicesBuffer;
+		std::shared_ptr<VulkanBuffer> m_IndicesBuffer;
 
 		/**
 		* @brief specific material poinnter.

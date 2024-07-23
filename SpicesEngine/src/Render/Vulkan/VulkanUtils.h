@@ -49,6 +49,7 @@ namespace Spices {
 		VkQueue                                          m_PresentQueue;               /* @brief From VulkanDevice, Queue for present windows.                   */
 		VkQueue                                          m_TransformQueue;             /* @brief From VulkanDevice, Queue for transfer buffer.                   */
 		VkQueue                                          m_ComputeQueue;               /* @brief From VulkanDevice, Queue for compute shader.                    */
+		uint32_t                                         m_ComputeQueueFamily;         /* @brief From VulkanDevice, ID for compute queue.                        */
 		VkSwapchainKHR                                   m_SwapChain;                  /* @brief From VulkanSwapChain.                                           */
 		std::array<VkImage,           MaxFrameInFlight>  m_SwapChainImages;            /* @brief The SwapChain's image, used for present.                        */
 		std::array<VkImageView,       MaxFrameInFlight>  m_SwapChainImageViews;        /* @brief The SwapChain's imageView.                                      */
