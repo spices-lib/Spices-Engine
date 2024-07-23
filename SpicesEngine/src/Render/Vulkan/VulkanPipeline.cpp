@@ -294,6 +294,8 @@ namespace Spices {
 		group.generalShader                 = VK_SHADER_UNUSED_KHR;
 		group.intersectionShader            = VK_SHADER_UNUSED_KHR;
 		
+		std::vector<VkRayTracingShaderGroupCreateInfoKHR> m_RTShaderGroups;
+
 		for (auto& pair : shaders)
 		{
 			/**
@@ -360,6 +362,66 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(vkCreateRayTracingPipelinesKHR(m_VulkanState.m_Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_Pipeline))
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
+	}
+
+	VulkanComputePipeline::VulkanComputePipeline(
+		VulkanState&                                                     vulkanState   , 
+		const std::string&                                               pipelineName  , 
+		const std::unordered_map<std::string, std::vector<std::string>>& shaders       ,
+		const PipelineConfigInfo&                                        config
+	)
+		:VulkanPipeline(vulkanState, pipelineName, shaders, config)
+	{}
+
+	void VulkanComputePipeline::CreateGraphicsPipeline(
+		const std::string&                                               pipelineName  , 
+		const std::unordered_map<std::string, std::vector<std::string>>& shaders       , 
+		const PipelineConfigInfo&                                        config
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Receive PipelineLayout from parameter.
+		*/
+		m_PipelineLayout = config.pipelineLayout;
+
+		/**
+		* @brief Create the VulkanShaderModule.
+		*/
+		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		for (auto& pair : shaders)
+		{
+			if (pair.first == "comp")
+			{
+				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[0], pair.first));
+				break;
+			}
+		}
+
+		/**
+		* @brief Instance VkPipelineShaderStageCreateInfo.
+		*/
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (int i = 0; i < shaderModules.size(); i++)
+		{
+			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
+		}
+		
+		/**
+		* @brief Instance VkComputePipelineCreateInfo.
+		* @note one shader stage per compute pipeline.
+		*/
+		VkComputePipelineCreateInfo     pipelineInfo {};
+		pipelineInfo.sType            = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+		pipelineInfo.layout           = m_PipelineLayout;
+		pipelineInfo.stage            = shaderStages[0];
+
+		/**
+		* @brief Create Pipeline.
+		*/
+		VK_CHECK(vkCreateComputePipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 

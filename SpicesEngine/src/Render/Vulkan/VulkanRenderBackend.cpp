@@ -264,26 +264,26 @@ namespace Spices {
 		* @brief Instance a VkSubmitInfo.
 		*/
 		VkSubmitInfo submitInfo{};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-		VkSemaphore waitSemphores[]       = { m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex]};
-		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-
-		submitInfo.waitSemaphoreCount   = 1;
-		submitInfo.pWaitSemaphores      = waitSemphores;
-		submitInfo.pWaitDstStageMask    = waitStages;
-		submitInfo.commandBufferCount   = 1;
-		submitInfo.pCommandBuffers      = &m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex];
-
-		VkSemaphore signalSemaphores[]  = { m_VulkanState.m_QueueSemaphore[frameInfo.m_FrameIndex] };
-		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores    = signalSemaphores;
+		submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+										    
+		VkSemaphore waitSemphores[]         = { m_VulkanState.m_ImageSemaphore[frameInfo.m_FrameIndex]};
+		VkPipelineStageFlags waitStages[]   = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+										    
+		submitInfo.waitSemaphoreCount       = 1;
+		submitInfo.pWaitSemaphores          = waitSemphores;
+		submitInfo.pWaitDstStageMask        = waitStages;
+		submitInfo.commandBufferCount       = 1;
+		submitInfo.pCommandBuffers          = &m_VulkanState.m_CommandBuffer[frameInfo.m_FrameIndex];
+										    
+		VkSemaphore signalSemaphores[]      = { m_VulkanState.m_QueueSemaphore[frameInfo.m_FrameIndex] };
+		submitInfo.signalSemaphoreCount     = 1;
+		submitInfo.pSignalSemaphores        = signalSemaphores;
 
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::QueueSubmit");
 			
 			/**
-			* @brief Submit all commands recorded to graphic queue.
+			* @brief Submit all commands recorded in queue.
 			*/
 			VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueue, 1, &submitInfo, m_VulkanState.m_Fence[frameInfo.m_FrameIndex]))
 		}

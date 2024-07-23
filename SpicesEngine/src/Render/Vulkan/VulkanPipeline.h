@@ -33,80 +33,21 @@ namespace Spices {
 		*/
 		PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
 
-		/**
-		* @brief VertexInputBindingDescription, from Vertex.
-		*/
-		std::vector<VkVertexInputBindingDescription>   bindingDescriptions{};
-
-		/**
-		* @brief VertexInputAttributeDescription, from Vertex.
-		*/
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-
-		/**
-		* @brief Viewport.
-		*/
-		VkViewport viewport{};
-
-		/**
-		* @brief Scissor.
-		*/
-		VkRect2D scissor{};
-
-		/**
-		* @brief VkPipelineViewportStateCreateInfo.
-		*/
-		VkPipelineViewportStateCreateInfo              viewportInfo{};
-
-		/**
-		* @brief VkPipelineInputAssemblyStateCreateInfo.
-		*/
-		VkPipelineInputAssemblyStateCreateInfo         inputAssemblyInfo{};
-
-		/**
-		* @brief VkPipelineRasterizationStateCreateInfo.
-		*/
-		VkPipelineRasterizationStateCreateInfo         rasterizationInfo{};
-
-		/**
-		* @brief VkPipelineMultisampleStateCreateInfo.
-		*/
-		VkPipelineMultisampleStateCreateInfo           multisampleInfo{};
-
-		/**
-		* @brief VkPipelineColorBlendStateCreateInfo.
-		*/
-		VkPipelineColorBlendStateCreateInfo            colorBlendInfo{};
-
-		/**
-		* @brief VkPipelineDepthStencilStateCreateInfo.
-		*/
-		VkPipelineDepthStencilStateCreateInfo          depthStencilInfo{};
-
-		/**
-		* @brief VkDynamicState.
-		*/
-		std::vector<VkDynamicState>                    dynamicStateEnables;
-
-		/**
-		* @brief VkPipelineDynamicStateCreateInfo.
-		*/
-		VkPipelineDynamicStateCreateInfo               dynamicStateInfo{};
-
-		/**
-		* @brief VkPipelineLayout.
-		*/
-		VkPipelineLayout                               pipelineLayout{};
-
-		/**
-		* @brief VkRenderPass.
-		*/
-		VkRenderPass                                   renderPass{};
-
-		/**
-		* @brief SubPass num.
-		*/
-		uint32_t                                       subpass = 0;
+		std::vector<VkVertexInputBindingDescription>     bindingDescriptions{};    /* @brief VertexInputBindingDescription, from Vertex.   */
+		std::vector<VkVertexInputAttributeDescription>   attributeDescriptions{};  /* @brief VertexInputAttributeDescription, from Vertex. */
+		VkViewport                                       viewport{};               /* @brief Viewport.                                     */
+		VkRect2D                                         scissor{};                /* @brief Scissor.                                      */
+		VkPipelineViewportStateCreateInfo                viewportInfo{};           /* @brief VkPipelineViewportStateCreateInfo.            */
+		VkPipelineInputAssemblyStateCreateInfo           inputAssemblyInfo{};      /* @brief VkPipelineInputAssemblyStateCreateInfo.       */
+		VkPipelineRasterizationStateCreateInfo           rasterizationInfo{};      /* @brief VkPipelineRasterizationStateCreateInfo.       */
+		VkPipelineMultisampleStateCreateInfo             multisampleInfo{};        /* @brief VkPipelineMultisampleStateCreateInfo.         */
+		VkPipelineColorBlendStateCreateInfo              colorBlendInfo{};         /* @brief VkPipelineColorBlendStateCreateInfo.          */
+		VkPipelineDepthStencilStateCreateInfo            depthStencilInfo{};       /* @brief VkPipelineDepthStencilStateCreateInfo.        */
+		std::vector<VkDynamicState>                      dynamicStateEnables;      /* @brief VkDynamicState.                               */
+		VkPipelineDynamicStateCreateInfo                 dynamicStateInfo{};       /* @brief VkPipelineDynamicStateCreateInfo.             */
+		VkPipelineLayout                                 pipelineLayout{};         /* @brief VkPipelineLayout.                             */
+		VkRenderPass                                     renderPass{};             /* @brief VkRenderPass.                                 */
+		uint32_t                                         subpass = 0;              /* @brief SubPass num.                                  */
 	};
 
 	/**
@@ -177,7 +118,7 @@ namespace Spices {
 		*/
 		virtual void CreateGraphicsPipeline(
 			const std::string&                                                pipelineName   ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders        ,
 			const PipelineConfigInfo&                                         config
 		);
 
@@ -196,7 +137,7 @@ namespace Spices {
 	};
 
 	/**
-	* @brief This class is a wrapper of VkPipelineLayout and VkPipeline.
+	* @brief This class is a wrapper of RayTracing Pipeline.
 	*/
 	class VulkanRayTracingPipeline : public VulkanPipeline
 	{
@@ -211,8 +152,8 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanRayTracingPipeline(
-			VulkanState&                                                      vulkanState  ,
-			const std::string&                                                pipelineName ,
+			VulkanState&                                                      vulkanState   ,
+			const std::string&                                                pipelineName  ,
 			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       , 
 			const PipelineConfigInfo&                                         config
 		);
@@ -231,14 +172,58 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		virtual void CreateGraphicsPipeline(
-			const std::string&                                                pipelineName ,
+			const std::string&                                                pipelineName  ,
 			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
 			const PipelineConfigInfo&                                         config
 		) override;
 
 	private:
 
-		std::vector<VkRayTracingShaderGroupCreateInfoKHR> m_RTShaderGroups;
+		/**
+		* @brief Function Pointer of Create RayTracing Pipeline.
+		*/
 		PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR;
+	};
+
+	/**
+	* @brief This class is a wrapper of Compute Pipeline.
+	*/
+	class VulkanComputePipeline : public VulkanPipeline
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		* Create VkPipeline.
+		* @param[in] vulkanState The global VulkanState.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		VulkanComputePipeline(
+			VulkanState&                                                      vulkanState    ,
+			const std::string&                                                pipelineName   ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders        ,
+			const PipelineConfigInfo&                                         config
+		);
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~VulkanComputePipeline() override = default;
+
+	private:
+
+		/**
+		* @brief Create the VkPipeline.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		virtual void CreateGraphicsPipeline(
+			const std::string&                                                pipelineName ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders      ,
+			const PipelineConfigInfo&                                         config
+		) override;
 	};
 }

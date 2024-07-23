@@ -6,6 +6,6 @@ namespace HoudiniEngine {
 
     void HoudiniSession::StartSession()
     {
-        //Groups_Sample();
+        //Curve_Marshalling();
     }
 }

@@ -26,6 +26,7 @@ namespace HoudiniEngine {
 
 	static void Marshalling_Geometry_Into_Houdini()
 	{
+        // Create Session
         HAPI_Session session;
 
         HAPI_ThriftServerOptions serverOptions{ 0 };
@@ -38,14 +39,17 @@ namespace HoudiniEngine {
 
         HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
 
+        // Initialize Session
         HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
         HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
 
+        // create null node
         HAPI_NodeId newNode;
-
         HE_CHECK(HAPI_CreateInputNode(&session, -1, &newNode, "Marshalling_Point_Clouds"))
+        // cook null node
         HE_CHECK(HAPI_CookNode(&session, newNode, &cookOptions))
 
+        // Wait for cook over.
         int cookStatus;
         HAPI_Result cookResult;
 
@@ -57,37 +61,37 @@ namespace HoudiniEngine {
         HE_CHECK(cookResult)
         HE_CHECK_COOK(cookStatus)
 
+        // null node part info
         HAPI_PartInfo newNodePart = HAPI_PartInfo_Create();
-
         newNodePart.type = HAPI_PARTTYPE_MESH;
         newNodePart.faceCount = 1;
         newNodePart.vertexCount = 3;
         newNodePart.pointCount = 3;
-
         HE_CHECK(HAPI_SetPartInfo(&session, newNode, 0, &newNodePart))
 
+        // null node attribute info
         HAPI_AttributeInfo newNodePointInfo = HAPI_AttributeInfo_Create();
         newNodePointInfo.count = 3;
         newNodePointInfo.tupleSize = 3;
         newNodePointInfo.exists = true;
         newNodePointInfo.storage = HAPI_STORAGETYPE_FLOAT;
         newNodePointInfo.owner = HAPI_ATTROWNER_POINT;
-
         HE_CHECK(HAPI_AddAttribute(&session, newNode, 0, "P", &newNodePointInfo))
 
+        // set null node attribute
         float positions[9] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f };
-
         HE_CHECK(HAPI_SetAttributeFloatData(&session, newNode, 0, "P", &newNodePointInfo, positions, 0, 3))
 
+        // set null node vertices
         int vertices[3] = { 0, 1, 2 };
-
         HE_CHECK(HAPI_SetVertexList(&session, newNode, 0, vertices, 0, 3))
 
+        // set null node faces
         int face_counts[1] = { 3 };
-
         HE_CHECK(HAPI_SetFaceCounts(&session, newNode, 0, face_counts, 0, 1))
 
-        char** strs = new char* [3];
+        // set null node str attriute
+        std::array<char*, 3> strs;
         strs[0] = _strdup("strPoint1");
         strs[1] = _strdup("strPoint2");
         strs[2] = _strdup("strPoint3");
@@ -99,10 +103,15 @@ namespace HoudiniEngine {
         newNodePointInfo.owner = HAPI_ATTROWNER_POINT;
 
         HE_CHECK(HAPI_AddAttribute(&session, newNode, 0, "srcData", &newNodePointInfo))
-        HE_CHECK(HAPI_SetAttributeStringData(&session, newNode, 0, "srcData", &newNodePointInfo, (const char**)strs, 0, 3))
+        HE_CHECK(HAPI_SetAttributeStringData(&session, newNode, 0, "srcData", &newNodePointInfo, (const char**)strs.data(), 0, 3))
+
+        // commit null node
         HE_CHECK(HAPI_CommitGeo(&session, newNode));
+
+        // save to hip file
         HE_CHECK(HAPI_SaveHIPFile(&session, "C:/Users/Administrator/Desktop/Marshalling_Point_Clouds.hip", false))
-        delete[] strs;
+        
+        // clean up session, needs recall initialize
         HE_CHECK(HAPI_Cleanup(&session))
 
         return;
@@ -110,6 +119,7 @@ namespace HoudiniEngine {
 
     static void Marshalling_Point_Clouds()
     {
+        // Create Session
         HAPI_Session session;
 
         HAPI_ThriftServerOptions serverOptions{ 0 };
@@ -122,12 +132,14 @@ namespace HoudiniEngine {
 
         HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
 
+        // Initialize Session
         HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
         HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
 
+        // create null node
         HAPI_NodeId newNode;
-
         HE_CHECK(HAPI_CreateInputNode(&session, -1, &newNode, "Marshalling_Point_Clouds"))
+        // cook null node
         HE_CHECK(HAPI_CookNode(&session, newNode, &cookOptions))
 
         int cookStatus;
@@ -142,18 +154,17 @@ namespace HoudiniEngine {
         HE_CHECK(cookResult)
         HE_CHECK_COOK(cookStatus)
 
+        // get null node geo info
         HAPI_GeoInfo newNodeGeoInfo;
         HE_CHECK(HAPI_GetDisplayGeoInfo(&session, newNode, &newNodeGeoInfo))
 
         HAPI_NodeId sopNodeId = newNodeGeoInfo.nodeId;
 
         HAPI_PartInfo newNodePart = HAPI_PartInfo_Create();
-
         newNodePart.type = HAPI_PARTTYPE_MESH;
         newNodePart.faceCount = 0;
         newNodePart.vertexCount = 0;
         newNodePart.pointCount = 8;
-
         HE_CHECK(HAPI_SetPartInfo(&session, sopNodeId, 0, &newNodePart))
 
         HAPI_AttributeInfo newNodePointInfo = HAPI_AttributeInfo_Create();
@@ -162,7 +173,6 @@ namespace HoudiniEngine {
         newNodePointInfo.exists = true;
         newNodePointInfo.storage = HAPI_STORAGETYPE_FLOAT;
         newNodePointInfo.owner = HAPI_ATTROWNER_POINT;
-
         HE_CHECK(HAPI_AddAttribute(&session, sopNodeId, 0, "P", &newNodePointInfo))
 
         float positions[24] = { 
@@ -177,13 +187,15 @@ namespace HoudiniEngine {
         };
 
         HE_CHECK(HAPI_SetAttributeFloatData(&session, sopNodeId, 0, "P", &newNodePointInfo, positions, 0, 8))
+
         HE_CHECK(HAPI_CommitGeo(&session, sopNodeId))
+
         HE_CHECK(HAPI_SaveHIPFile(&session, "C:/Users/Administrator/Desktop/Marshalling_Point_Clouds.hip", false))
+
         HE_CHECK(HAPI_Cleanup(&session))
 
         return;
     }
-
 
     static void Connecting_Assets()
     {
@@ -311,8 +323,9 @@ namespace HoudiniEngine {
         HAPI_NodeInfo curveNodeInfo;
         HE_CHECK(HAPI_GetNodeInfo(&session, curveNode, &curveNodeInfo))
 
-        HAPI_ParmInfo* paramInfos = new HAPI_ParmInfo[curveNodeInfo.parmCount];
-        HE_CHECK(HAPI_GetParameters(&session, curveNode, paramInfos, 0, curveNodeInfo.parmCount))
+        std::vector<HAPI_ParmInfo> paramInfos;
+        paramInfos.resize(curveNodeInfo.parmCount);
+        HE_CHECK(HAPI_GetParameters(&session, curveNode, paramInfos.data(), 0, curveNodeInfo.parmCount))
 
         int coordsParmIndex = -1;
         int typeParmIndex = -1;
@@ -323,7 +336,7 @@ namespace HoudiniEngine {
             {
                 coordsParmIndex = i;
             }
-            if (parmName == "outputtype")
+            if (parmName == "type")
             {
                 typeParmIndex = i;
             }
@@ -349,10 +362,111 @@ namespace HoudiniEngine {
         HE_CHECK(HAPI_SetParmStringValue(&session, curveNode, "-4, 0, 4, -4, 0, -4, 4, 0, -4, 4, 0, 4", parm.id, 0))
         HE_CHECK(HAPI_SaveHIPFile(&session, "C:/Users/Administrator/Desktop/Curve_Node.hip", true))
 
-        delete[] paramInfos;
         HE_CHECK(HAPI_Cleanup(&session))
 
         return;
+    }
+
+    static void Curve_Marshalling()
+    {
+        HAPI_Session session;
+
+        HAPI_ThriftServerOptions serverOptions{ 0 };
+        serverOptions.autoClose = true;
+        serverOptions.timeoutMs = 3000.0f;
+
+        HE_CHECK(HAPI_StartThriftNamedPipeServer(&serverOptions, "hapi", nullptr, nullptr))
+
+        HAPI_SessionInfo sessionInfo = HAPI_SessionInfo_Create();
+
+        HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
+
+        HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
+        HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
+
+        HAPI_NodeId newNode;
+        HE_CHECK(HAPI_CreateInputNode(&session, -1, &newNode, "Curve"))
+        HE_CHECK(HAPI_CookNode(&session, newNode, &cookOptions))
+        
+        int cookStatus;
+        HAPI_Result cookResult;
+
+        do
+        {
+            cookResult = HAPI_GetStatus(&session, HAPI_STATUS_COOK_STATE, &cookStatus);
+        }
+        while(cookStatus > HAPI_STATE_MAX_READY_STATE && cookResult == HAPI_RESULT_SUCCESS);
+
+        HE_CHECK(cookResult)
+        HE_CHECK_COOK(cookStatus)
+
+        HAPI_PartInfo newNodePart = HAPI_PartInfo_Create();
+        newNodePart.type = HAPI_PARTTYPE_CURVE;
+        newNodePart.faceCount = 1;
+        newNodePart.vertexCount = 4;
+        newNodePart.pointCount = 4;
+        HE_CHECK(HAPI_SetPartInfo(&session, newNode, 0, &newNodePart))
+
+        HAPI_CurveInfo curveInfo;
+        curveInfo.curveType = HAPI_CURVETYPE_NURBS;
+        curveInfo.curveCount = 1;
+        curveInfo.vertexCount = 4;
+        curveInfo.knotCount = 8;
+        curveInfo.isPeriodic = false;
+        curveInfo.order = 4;
+        curveInfo.hasKnots = true;
+        HE_CHECK(HAPI_SetCurveInfo(&session, newNode, 0, &curveInfo))
+
+        int curveCount = 4;
+        HE_CHECK(HAPI_SetCurveCounts(&session, newNode, newNodePart.id, &curveCount, 0, 1))
+
+        float curveKnots[8] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+        HE_CHECK(HAPI_SetCurveKnots(&session, newNode, newNodePart.id, curveKnots, 0, 8))
+
+        HAPI_AttributeInfo attrInfo = HAPI_AttributeInfo_Create();
+        attrInfo.count = 4;
+        attrInfo.tupleSize = 3;
+        attrInfo.exists = true;
+        attrInfo.storage = HAPI_STORAGETYPE_FLOAT;
+        attrInfo.owner = HAPI_ATTROWNER_POINT;
+
+        HE_CHECK(HAPI_AddAttribute(&session, newNode, 0, "P", &attrInfo))
+
+        float positions[12] = { -4.0f, 0.0f, 4.0f, -4.0f, 0.0f, -4.0f, 4.0f, 0.0f, -4.0f, 4.0f, 0.0f, 4.0f };
+        HE_CHECK(HAPI_SetAttributeFloatData(&session, newNode, 0, "P", &attrInfo, positions, 0, 4))
+
+        HE_CHECK(HAPI_CommitGeo(&session, newNode))
+        HE_CHECK(HAPI_SaveHIPFile(&session, "C:/Users/Administrator/Desktop/Curve_Marshalling.hip", true))
+
+        HE_CHECK(HAPI_Cleanup(&session))
+
+        return;
+    }
+
+    static void Curve_Output()
+    {
+        const char* hdaFile = "examples/nurbs_curve.hda";
+        HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
+
+        HAPI_Session session;
+        HAPI_SessionInfo sessionInfo = HAPI_SessionInfo_Create();
+        HE_CHECK(HAPI_CreateInProcessSession(&session, &sessionInfo))
+        HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
+
+        HAPI_AssetLibraryId assetLibId;
+        HE_CHECK(HAPI_LoadAssetLibraryFromFile(&session, hdaFile, true, &assetLibId))
+
+        int assetCount;
+        HE_CHECK(HAPI_GetAvailableAssetCount(&session, assetLibId, &assetCount))
+
+        if(assetCount > 1)
+        {
+            std::cout << "Should only be loading 1 asset here" << std::endl;
+            HE_CHECK(HAPI_Cleanup(&session))
+            return;
+        }
+
+
     }
 
     static void Groups_Sample()
