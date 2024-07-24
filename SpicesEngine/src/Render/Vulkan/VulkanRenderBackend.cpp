@@ -97,7 +97,7 @@ namespace Spices {
 			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<ParticleRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<ParticleRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<TestRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>          (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 		}
@@ -124,7 +124,7 @@ namespace Spices {
 			RendererManager::Get()
 			.Pop("SlateRenderer")
 			.Pop("TestRenderer")
-			.Pop("ParticleRenderer")
+			//.Pop("ParticleRenderer")
 			.Pop("WorldPickStage2Renderer")
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
