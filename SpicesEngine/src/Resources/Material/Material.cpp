@@ -132,7 +132,22 @@ namespace Spices {
 
 					auto descriptorSet = DescriptorSetManager::Registy("PreRenderer", BINDLESSTEXTURESET);
 
-					//descriptorSet->UpdateDescriptorSet();
+					/**
+					* @brief Instance a VkWriteDescriptorSet.
+					*/
+					VkWriteDescriptorSet         write {};
+					write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					write.dstBinding           = BINDLESSTEXTUREBINDING;
+					write.dstSet               = descriptorSet->Get();
+					write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
+					write.descriptorCount      = 1;
+					write.dstArrayElement      = tp.index;
+
+					/**
+					* @brief Update DescriptorSet.
+					*/
+					vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
 
 					m_MaterialParameterBuffer->WriteToBuffer(&tp.index, sizeof(unsigned int), tindex * sizeof(unsigned int));
 				}
@@ -179,12 +194,30 @@ namespace Spices {
 				/**
 				* @brief Fill in data to memory block.
 				*/
-				if      (ref.paramType == "float4") *static_cast<glm::vec4*>(pt) = std::any_cast<glm::vec4>(ref.paramValue);
-				else if (ref.paramType == "float3") *static_cast<glm::vec3*>(pt) = std::any_cast<glm::vec3>(ref.paramValue);
-				else if (ref.paramType == "float2") *static_cast<glm::vec2*>(pt) = std::any_cast<glm::vec2>(ref.paramValue);
-				else if (ref.paramType == "float" ) *static_cast<float*>(pt)     = std::any_cast<float>(ref.paramValue);
-				else if (ref.paramType == "int"   ) *static_cast<int*>(pt)       = std::any_cast<int>(ref.paramValue);
-				else     SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.");
+				if      (ref.paramType == "float4")
+				{
+					*static_cast<glm::vec4*>(pt)     = std::any_cast<glm::vec4>(ref.paramValue);
+				}
+				else if (ref.paramType == "float3")
+				{
+					*static_cast<glm::vec3*>(pt)     = std::any_cast<glm::vec3>(ref.paramValue);
+				}
+				else if (ref.paramType == "float2")
+				{
+					*static_cast<glm::vec2*>(pt)     = std::any_cast<glm::vec2>(ref.paramValue);
+				}
+				else if (ref.paramType == "float")
+				{
+					*static_cast<float*>(pt)         = std::any_cast<float>(ref.paramValue);
+				}
+				else if (ref.paramType == "int")
+				{
+					*static_cast<int*>(pt)           = std::any_cast<int>(ref.paramValue);
+				}
+				else
+				{
+					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.");
+				}
 	
 				return false;
 			});
@@ -203,6 +236,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
 			);
 
+			m_Buffers->Map();
 			m_Buffers->WriteToBuffer(m_Buffermemoryblocks.get_addr());
 			m_Buffers->Flush();
 

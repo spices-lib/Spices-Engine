@@ -29,6 +29,7 @@ namespace Spices {
 				{
 					m_TextureInfoMap[i] = "";
 					m_TextureIDMap[name] = i;
+					return i;
 				}
 			}
 

@@ -106,8 +106,8 @@ namespace YAML {
 				return false;
 			}
 			
-			param.textureType   = node[3].as<std::string>();
-			param.texturePath   = node[4].as<std::string>();
+			param.textureType   = node[0].as<std::string>();
+			param.texturePath   = node[1].as<std::string>();
 
 			return true;
 		}
@@ -148,13 +148,13 @@ namespace YAML {
 				return false;
 			}
 
-			param.paramType  = node[2].as<std::string>();
+			param.paramType  = node[0].as<std::string>();
 
-			if     (param.paramType == "float4") param.paramValue = node[3].as<glm::vec4>();
-			else if(param.paramType == "float3") param.paramValue = node[3].as<glm::vec3>();
-			else if(param.paramType == "float2") param.paramValue = node[3].as<glm::vec2>();
-			else if(param.paramType == "float")  param.paramValue = node[3].as<float>();
-			else if(param.paramType == "int")    param.paramValue = node[3].as<int>();
+			if     (param.paramType == "float4") param.paramValue = node[1].as<glm::vec4>();
+			else if(param.paramType == "float3") param.paramValue = node[1].as<glm::vec3>();
+			else if(param.paramType == "float2") param.paramValue = node[1].as<glm::vec2>();
+			else if(param.paramType == "float")  param.paramValue = node[1].as<float>();
+			else if(param.paramType == "int")    param.paramValue = node[1].as<int>();
 			else
 			{
 				std::stringstream ss;

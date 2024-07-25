@@ -107,6 +107,6 @@ namespace Spices {
 		/**
 		* @brief The renderer type of current world.
 		*/
-		RendererType m_RendererType = RendererType::PathTracing;
+		RendererType m_RendererType = RendererType::Rasterization;
 	};
 }

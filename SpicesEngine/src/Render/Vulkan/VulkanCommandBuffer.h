@@ -122,12 +122,7 @@ namespace Spices {
 		/**
 		* @brief Wait for queu execute.
 		*/
-		VkResult result = vkQueueWaitIdle(vulkanState.m_GraphicQueue);
-		if (result != VK_SUCCESS) {
-			std::stringstream ss;
-			ss << "Assert Failed \n    At File: " << __FILE__ << " \n   At Line: " << __LINE__ << "\n   ";
-			SPICES_CORE_ERROR(ss.str());
-		}
+		VK_CHECK(vkQueueWaitIdle(vulkanState.m_GraphicQueue));
 
 		/**
 		* @brief Free the CommandBuffer that created.

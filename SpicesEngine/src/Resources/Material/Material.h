@@ -26,7 +26,7 @@ namespace Spices {
 	{
 		std::string textureType;      /* @brief Texture type. */
 		std::string texturePath;      /* @brief Texture path. */
-		uint32_t index = 0;           /* @breif Which array index this texture will use. */
+		uint32_t    index = 0;        /* @breif Which array index this texture will use. */
 	};
 
 	/**
@@ -35,7 +35,7 @@ namespace Spices {
 	struct ConstantParam
 	{	
 		std::string paramType;        /* @brief parameter type. */
-		std::any paramValue;          /* @brief parameter value. */
+		std::any    paramValue;       /* @brief parameter value. */
 	};
 	
 	/**
