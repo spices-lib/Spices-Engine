@@ -33,6 +33,7 @@ namespace Spices {
 		.AddSubPass("RayTracingCompose")
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			description.loadOp            = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
@@ -49,8 +50,8 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "RayTracingCompose", this }
-		.AddStorageTexture(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "RayImage" })
-		.AddStorageTexture(1, 1, VK_SHADER_STAGE_FRAGMENT_BIT, { "RayID" })
+		.AddStorageTexture(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "RayImage" })
+		.AddStorageTexture(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT, { "RayID" })
 		.Build();
 	}
 

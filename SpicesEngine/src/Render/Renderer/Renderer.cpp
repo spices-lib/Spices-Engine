@@ -93,13 +93,14 @@ namespace Spices {
 
 		/**
 		* @brief Material's DescriptorSetInfo.
+		* @note remove for material use bindless descriptorset.
 		*/
 		const auto material = ResourcePool<Material>::Load<Material>(materialName);
-		const auto materialSetInfo = material->GetMaterialDescriptorSet();
+		/*const auto materialSetInfo = material->GetMaterialDescriptorSet();
 		for (auto& pair : materialSetInfo)
 		{
 			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
-		}
+		}*/
 
 		/**
 		* @brief Instance a temp empty vector for VkDescriptorSetLayout.
@@ -753,10 +754,26 @@ namespace Spices {
 		for (auto& pair : descriptorSets)
 		{
 			/**
+			* @brief UpdateDescriptorSet, skip bindless texture set.
+			*/
+			if (pair.first == BINDLESSTEXTURESET)
+			{
+				static bool isFirstEntry = true;
+				if (isFirstEntry)
+				{
+					pair.second->BuildBindLessTextureDescriptorSet(m_HandledSubPass->GetName());
+					isFirstEntry = false;
+				}
+
+				pair.second->UpdateBindLessTextureDescriptorSet(m_ImageInfos[pair.first]);
+				continue;
+			}
+
+			/**
 			* @brief AllocateDescriptorSet for Pool.
 			*/
 			pair.second->BuildDescriptorSet(m_HandledSubPass->GetName());
-			
+
 			/**
 			* @brief UpdateDescriptorSet.
 			*/

@@ -50,7 +50,6 @@ layout(push_constant) uniform Push {
 
 /********************************Specific Renderer Data***********************************/
 
-layout(set = 1, binding = 0) uniform sampler2D samplers;    /* @brief SkyBox Diffuse */
 
 /*****************************************************************************************/
 
@@ -71,8 +70,9 @@ vec2 SampleSphericalMap(vec3 v)
 
 void main()
 {
-    vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
-    outColor = texture(samplers, uv);
+    //vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
+    //outColor = texture(samplers, uv);
+    outColor = vec4(0.2f, 0.2f, 0.2f, 1.0f);
     outPosition = vec4(fragInput.worldPosition, 1.0f);
     outID = push.entityID;
 }

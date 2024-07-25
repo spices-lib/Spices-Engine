@@ -107,26 +107,26 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialPara
 /**
 * @brief Acceleration Structure.
 */
-layout(set = 1, binding = 0) uniform accelerationStructureEXT topLevelAS;
+layout(set = 2, binding = 0) uniform accelerationStructureEXT topLevelAS;
 
 /**
 * @brief MeshDescription Buffer of all Mesh in World.
 */
-layout(set = 2, binding = 0, scalar) readonly buffer MeshDescBuffer { 
+layout(set = 3, binding = 0, scalar) readonly buffer MeshDescBuffer { 
     MeshDesc i[];           /* @see MeshDesc. */
 } meshDescBuffer;
 
 /**
 * @brief DirectionalLight Buffer in World.
 */
-layout(set = 2, binding = 1, scalar) readonly buffer DLightBuffer   { 
+layout(set = 3, binding = 1, scalar) readonly buffer DLightBuffer   { 
     DirectionalLight i[];   /* @see DirectionalLight. */
 } dLightBuffer;
 
 /**
 * @brief PointLight Buffer in World.
 */
-layout(set = 2, binding = 2, scalar) readonly buffer PLightBuffer   { 
+layout(set = 3, binding = 2, scalar) readonly buffer PLightBuffer   { 
     PointLight i[];         /* @see PointLight. */
 } pLightBuffer;
 

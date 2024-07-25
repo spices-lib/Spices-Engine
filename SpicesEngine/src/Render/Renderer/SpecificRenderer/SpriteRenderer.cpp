@@ -71,8 +71,6 @@ namespace Spices {
 					push.model = modelMatrix;
 					push.entityID = it->second;
 				});
-
-				builder.BindDescriptorSet(material->GetMaterialDescriptorSet());
 			});
 		}
 

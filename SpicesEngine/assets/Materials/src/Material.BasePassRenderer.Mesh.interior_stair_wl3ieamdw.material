@@ -12,23 +12,23 @@ Shaders:
     Path: BasePassRenderer.Mesh.Default
 Textures:
   - Name: albedo
-    Value: [1, 0, 0, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]
+    Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]
   - Name: normal
-    Value: [1, 0, 1, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg]
+    Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg]
   - Name: roughness
-    Value: [1, 0, 2, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
+    Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
   - Name: metallic
-    Value: [1, 0, 3, Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
+    Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
 Parameters:
   - Name: albedo
-    Value: [1, 1, float3, [0.5, 0.5, 0.5]]
+    Value: [float3, [0.5, 0.5, 0.5]]
   - Name: roughness
-    Value: [1, 1, float, 0.0]
+    Value: [float, 0.0]
   - Name: metallic
-    Value: [1, 1, float, 0.0]
+    Value: [float, 0.0]
   - Name: maxRayDepth
-    Value: [1, 1, int, 4]
+    Value: [int, 4]
   - Name: maxLightDepth
-    Value: [1, 1, int, 1]
+    Value: [int, 1]
   - Name: maxShadowDepth
-    Value: [1, 1, int, 1]
+    Value: [int, 1]

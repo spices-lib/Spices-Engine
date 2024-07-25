@@ -49,7 +49,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "WorldPickStage2", this }
-		.AddAttachmentTexture(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"SelectBuffer"})
+		.AddAttachmentTexture(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"SelectBuffer"})
 		.Build();
 	}
 

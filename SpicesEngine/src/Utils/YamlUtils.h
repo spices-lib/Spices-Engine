@@ -94,9 +94,6 @@ namespace YAML {
 		static Node encode(const Spices::TextureParam& param)
 		{
 			Node node;
-			node.push_back(param.set);
-			node.push_back(param.binding);
-			node.push_back(param.index);
 			node.push_back(param.textureType);
 			node.push_back(param.texturePath);
 			return node;
@@ -104,14 +101,11 @@ namespace YAML {
 
 		static bool decode(const Node& node, Spices::TextureParam& param)
 		{
-			if (!node.IsSequence() || node.size() != 5)
+			if (!node.IsSequence() || node.size() != 2)
 			{
 				return false;
 			}
 			
-			param.set           = node[0].as<uint32_t>();
-			param.binding       = node[1].as<uint32_t>();
-			param.index         = node[2].as<uint32_t>();
 			param.textureType   = node[3].as<std::string>();
 			param.texturePath   = node[4].as<std::string>();
 
@@ -125,8 +119,6 @@ namespace YAML {
 		static Node encode(const Spices::ConstantParam& param)
 		{
 			Node node;
-			node.push_back(param.set);
-			node.push_back(param.binding);
 			node.push_back(param.paramType);
 
 			if     (param.paramType == "float4") node.push_back(std::any_cast<glm::vec4>(param.paramValue));
@@ -147,7 +139,7 @@ namespace YAML {
 
 		static bool decode(const Node& node, Spices::ConstantParam& param)
 		{
-			if (!node.IsSequence() || node.size() != 4)
+			if (!node.IsSequence() || node.size() != 2)
 			{
 				std::stringstream ss;
 				ss << "YAML::convert<Spices::Material::ConstantParam>: bad node size, current size is" << node.size() << ", required 4";
@@ -156,8 +148,6 @@ namespace YAML {
 				return false;
 			}
 
-			param.set        = node[0].as<uint32_t>();
-			param.binding    = node[1].as<uint32_t>();
 			param.paramType  = node[2].as<std::string>();
 
 			if     (param.paramType == "float4") param.paramValue = node[3].as<glm::vec4>();
@@ -204,14 +194,14 @@ namespace Spices {
 	YAML::Emitter& operator<<(YAML::Emitter& out, const TextureParam& p)
 	{
 		out << YAML::Flow;
-		out << YAML::BeginSeq << p.set << p.binding << p.index << p.textureType << p.texturePath << YAML::EndSeq;
+		out << YAML::BeginSeq << p.textureType << p.texturePath << YAML::EndSeq;
 		return out;
 	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const ConstantParam& p)
 	{
 		out << YAML::Flow;
-		out << YAML::BeginSeq << p.set << p.binding << p.paramType;
+		out << YAML::BeginSeq << p.paramType;
 		
 		if(p.paramType == "float4")
 		{

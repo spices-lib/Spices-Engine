@@ -19,63 +19,23 @@
 
 namespace Spices {
 
-	class VulkanDescriptorSet;
-
 	/**
 	* @brief This struct's data is defined from .material file.
 	*/
 	struct TextureParam
 	{
-		/**
-		* @brief Texture type.
-		*/
-		std::string textureType;
-			
-		/**
-		* @brief Texture path.
-		*/
-		std::string texturePath;
-			
-		/**
-		* @brief Which set this texture will use.
-		*/
-		uint32_t set;
-
-		/**
-		* @breif Which binding this texture will use.
-		*/
-		uint32_t binding;
-
-		/**
-		* @breif Which array index this texture will use.
-		*/
-		uint32_t index;
+		std::string textureType;      /* @brief Texture type. */
+		std::string texturePath;      /* @brief Texture path. */
+		uint32_t index = 0;           /* @breif Which array index this texture will use. */
 	};
 
 	/**
 	* @brief This struct's data is defined from .material file.
 	*/
 	struct ConstantParam
-	{
-		/**
-		* @brief Which set this texture will use.
-		*/
-		uint32_t set;
-
-		/**
-		* @breif Which binding this texture will use.
-		*/
-		uint32_t binding;
-			
-		/**
-		* @brief parameter type.
-		*/
-		std::string paramType;
-
-		/**
-		* @brief parameter value.
-		*/
-		std::any paramValue;
+	{	
+		std::string paramType;        /* @brief parameter type. */
+		std::any paramValue;          /* @brief parameter value. */
 	};
 	
 	/**
@@ -84,24 +44,6 @@ namespace Spices {
 	*/
 	class Material
 	{
-	public:
-
-		struct DescriptorSetBindingInfoHelp
-		{
-			enum Type
-			{
-				Buffer,
-				Image,
-			};
-			
-			DescriptorSetBindingInfoHelp() = default;
-			virtual ~DescriptorSetBindingInfoHelp() = default;
-			
-			uint32_t count = 0;
-			size_t size = 0;
-			Type type = Type::Buffer;
-		};
-		
 	public:
 
 		/**
@@ -135,13 +77,6 @@ namespace Spices {
 		void Deserialize();
 
 		const std::string& GetName() { return m_MaterialPath; }
-
-		/**
-		* @brief Get material material descriptor set.
-		* @return Returns the material descriptorSet.
-		* @note Must call BuildMaterial() first.
-		*/
-		std::unordered_map<uint32_t, std::shared_ptr<VulkanDescriptorSet>>& GetMaterialDescriptorSet();
 
 		/**
 		* @brief Get material shader path.
@@ -235,13 +170,13 @@ namespace Spices {
 		* @brief m_ConstantParams's VkBuffer.
 		* Key: set, Value: VkBuffer.
 		*/
-		std::unordered_map<UInt2, std::unique_ptr<VulkanBuffer>> m_Buffers;
+		std::unique_ptr<VulkanBuffer> m_Buffers;
 
 		/**
 		* @brief m_Buffers's c++ data container.
 		* Key: set, Value: scl::runtime_memory_block.
 		*/
-		scl::linked_unordered_map<UInt2, scl::runtime_memory_block> m_Buffermemoryblocks;
+		scl::runtime_memory_block m_Buffermemoryblocks;
 
 		/*
 		* @brief Buffer takes all textures index and all constant params buffer address. 

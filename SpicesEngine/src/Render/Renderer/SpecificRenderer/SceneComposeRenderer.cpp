@@ -75,9 +75,9 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "SceneCompose", this }
-		.AddInput(1, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Albedo", "Normal", "Roughness", "Metallic", "Position", "Depth" })
-		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT)                        /* @brief World Directional Light Buffer. */
-		.AddStorageBuffer<RayTracingR::PointLightBuffer>(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT)                              /* @brief World PointLight Buffer.        */
+		.AddInput(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Albedo", "Normal", "Roughness", "Metallic", "Position", "Depth" })
+		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 0, VK_SHADER_STAGE_FRAGMENT_BIT)                        /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer<RayTracingR::PointLightBuffer>(3, 1, VK_SHADER_STAGE_FRAGMENT_BIT)                              /* @brief World PointLight Buffer.        */
 		.Build();
 	}
 
@@ -95,11 +95,11 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SceneCompose" }));
 
-		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(2, 0, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 0, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
 		});
 		
-		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(2, 1, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(3, 1, [&](auto& ssbo) {
 			GetPointLight(frameInfo, ssbo.lights);
 		});
 

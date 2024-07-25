@@ -13,6 +13,7 @@
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderFunctionLibrary.glsl"
+#include "Header/ShaderPreRendererLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -25,7 +26,7 @@ layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 /*****************************************************************************************/
 
-layout(set = 3, binding = 0) uniform sampler2D samplers;
+layout(set = 4, binding = 0) uniform sampler2D samplers;
 layout(push_constant) uniform Push {
     int entityID;
 } push;
@@ -43,7 +44,7 @@ void main()
         //prd.hitValue   = vec3(1.0f);
     }
     vec2 uv = SampleSphericalMap(normalize(prd.rayDirection));
-    prd.hitValue      = texture(samplers, uv).xyz;
+    prd.hitValue      = texture(BindLessTextureBuffer[10], uv).xyz;
     prd.rayDepth      = 100;                  // Ending trace
     prd.maxRayDepth   = 0;
     prd.entityID      = push.entityID;

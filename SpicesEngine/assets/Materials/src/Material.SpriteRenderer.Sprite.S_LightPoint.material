@@ -10,4 +10,4 @@ Shaders:
     Path: SpriteRenderer.Sprite.Default
 Textures:
   - Name: diffuse
-    Value: [1, 0, 0, Texture2D, component/S_LightPoint.PNG]
+    Value: [Texture2D, component/S_LightPoint.PNG]

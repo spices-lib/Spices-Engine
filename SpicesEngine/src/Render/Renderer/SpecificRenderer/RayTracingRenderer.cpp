@@ -44,13 +44,13 @@ namespace Spices {
 
 		DescriptorSetBuilder{ "RayTracing", this }
 		.AddPushConstant<RayTracingR::PushConstant>()
-		.AddAccelerationStructure(1, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                    /* @brief Acceleration Structure.         */
-		.AddStorageTexture(1, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayImage" }, VK_FORMAT_R32G32B32A32_SFLOAT)             /* @brief Ray Tracing Output Image.       */
-		.AddStorageTexture(1, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayID" }, VK_FORMAT_R32_SFLOAT)                          /* @brief Ray Tracing Output Image.       */
-		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(2, 0, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                                /* @brief World Mesh Buffer.              */
-		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(2, 1, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                        /* @brief World Directional Light Buffer. */
-		.AddStorageBuffer<RayTracingR::PointLightBuffer>(2, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                              /* @brief World PointLight Buffer.        */
-		.AddTexture<Texture2D>(3, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})  /* @brief temp */
+		.AddAccelerationStructure(2, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                    /* @brief Acceleration Structure.         */
+		.AddStorageTexture(2, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayImage" }, VK_FORMAT_R32G32B32A32_SFLOAT)             /* @brief Ray Tracing Output Image.       */
+		.AddStorageTexture(2, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayID" }, VK_FORMAT_R32_SFLOAT)                          /* @brief Ray Tracing Output Image.       */
+		.AddStorageBuffer<RayTracingR::MeshDescBuffer>(3, 0, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                                /* @brief World Mesh Buffer.              */
+		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 1, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                        /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer<RayTracingR::PointLightBuffer>(3, 2, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                              /* @brief World PointLight Buffer.        */
+		.AddTexture<Texture2D>(4, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})  /* @brief temp */
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
 
@@ -123,13 +123,13 @@ namespace Spices {
 		
 		builder.BindPipeline("RayTracingRenderer.RayTracing.Default");
 
-		builder.UpdateStorageBuffer(2, 0, m_DescArray.get());
+		builder.UpdateStorageBuffer(3, 0, m_DescArray.get());
 		
-		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(2, 1, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 1, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
 		});
 		
-		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(2, 2, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(3, 2, [&](auto& ssbo) {
 			GetPointLight(frameInfo, ssbo.lights);
 		});
 

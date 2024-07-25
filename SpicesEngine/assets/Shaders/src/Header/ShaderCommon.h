@@ -33,6 +33,9 @@ using uint = unsigned int;
 
 #endif
 
+#define MAXBINDLESSTEXTURECOUNT      65536
+#define BINDLESSTEXTURESET           1
+#define BINDLESSTEXTUREBINDING       0
 #define MESHBUFFERMAXNUM             100000
 #define DIRECTIONALLIGHTBUFFERMAXNUM 100
 #define POINTLIGHTBUFFERMAXNUM       10000

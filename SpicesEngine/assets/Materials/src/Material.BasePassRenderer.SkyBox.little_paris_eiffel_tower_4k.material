@@ -10,4 +10,4 @@ Shaders:
     Path: BasePassRenderer.SkyBox.Default
 Textures:
   - Name: albedo
-    Value: [1, 0, 0, Texture2D, skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr]
+    Value: [Texture2D, skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr]

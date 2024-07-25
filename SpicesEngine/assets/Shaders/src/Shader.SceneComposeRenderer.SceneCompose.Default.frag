@@ -58,19 +58,19 @@ layout(location = 0) out vec4 outSceneColor;    /*SceneColor Attachment*/
 /**
 * @brief Subpass Input Attachments.
 */
-layout(input_attachment_index = 0, set = 1, binding = 0) uniform subpassInput GBuffer[6];
+layout(input_attachment_index = 0, set = 2, binding = 0) uniform subpassInput GBuffer[6];
 
 /**
 * @brief DirectionalLight Buffer in World.
 */
-layout(set = 2, binding = 0, scalar) readonly buffer DLightBuffer {
+layout(set = 3, binding = 0, scalar) readonly buffer DLightBuffer {
 	DirectionalLight i[];   /* @see DirectionalLight. */
 } dLightBuffer;
 
 /**
 * @brief PointLight Buffer in World.
 */
-layout(set = 2, binding = 1, scalar) readonly buffer PLightBuffer {
+layout(set = 3, binding = 1, scalar) readonly buffer PLightBuffer {
 	PointLight i[];         /* @see PointLight. */
 } pLightBuffer;
 

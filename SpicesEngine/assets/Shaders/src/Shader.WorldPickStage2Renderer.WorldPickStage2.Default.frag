@@ -36,7 +36,7 @@ layout(location = 0) out vec4 outColor;
 
 /********************************Specific Renderer Data***********************************/
 
-layout(set = 1, binding = 0) uniform sampler2D selectBuffer;  /* @brief Select Buffer */
+layout(set = 2, binding = 0) uniform sampler2D selectBuffer;  /* @brief Select Buffer */
 
 /*****************************************************************************************/
 

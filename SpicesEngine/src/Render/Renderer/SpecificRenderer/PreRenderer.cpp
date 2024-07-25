@@ -20,6 +20,7 @@ namespace Spices {
  		DescriptorSetBuilder{ "PreRenderer", this }
 		.AddUniformBuffer<SpicesShader::View>(0, 0, VK_SHADER_STAGE_ALL)
 		.AddUniformBuffer<SpicesShader::Input>(0, 1, VK_SHADER_STAGE_ALL)
+		.AddBindLessTexture<Texture2D>(BINDLESSTEXTURESET, BINDLESSTEXTUREBINDING, VK_SHADER_STAGE_ALL, { "default.jpg" })
 		.Build();
 	}
 

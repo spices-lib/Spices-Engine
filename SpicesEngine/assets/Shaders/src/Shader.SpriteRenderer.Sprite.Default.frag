@@ -48,18 +48,14 @@ layout(push_constant) uniform Push {
 
 /********************************Specific Renderer Data***********************************/
 
-/**
-* @brief Sprite Texture.
-*/
-layout(set = 1, binding = 0) uniform sampler2D samplers;
-
 /*****************************************************************************************/
 
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
-    vec4 texColor = texture(samplers, fragInput.texCoord);
+    //vec4 texColor = texture(samplers, fragInput.texCoord);
+    vec4 texColor = vec4(0.2f, 0.2f, 0.2f, 1.0f);
 
     if (texColor.w < 0.01f) discard;
 

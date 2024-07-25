@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "DescriptorSetManager.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "../../../assets/Shaders/src/Header/ShaderCommon.h"
 
 namespace Spices {
 
@@ -30,13 +31,27 @@ namespace Spices {
 	{
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
-			m_DescriptorSets.erase(name);
+			if (m_DescriptorSets[name].find(BINDLESSTEXTURESET) == m_DescriptorSets[name].end())
+			{
+				m_DescriptorSets.erase(name);
+			}
+			else
+			{
+				auto descriptorSet = m_DescriptorSets[name][BINDLESSTEXTURESET];
+				m_DescriptorSets.erase(name);
+				m_DescriptorSets[name][BINDLESSTEXTURESET] = descriptorSet;
+			}
 		}
 	}
 
 	void DescriptorSetManager::UnLoad(const std::string& name)
 	{
 		UnLoad({ name , name });
+	}
+
+	void DescriptorSetManager::UnLoadAll()
+	{
+		m_DescriptorSets.clear();
 	}
 
 	DescriptorSetInfo& DescriptorSetManager::GetByName(const String2& name)

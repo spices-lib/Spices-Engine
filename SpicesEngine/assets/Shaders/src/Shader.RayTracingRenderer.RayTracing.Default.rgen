@@ -31,13 +31,13 @@ layout(location = 0) rayPayloadEXT HitPayLoad prd;
 /**
 * @brief Acceleration Structure.
 */
-layout(set = 1, binding = 0) uniform accelerationStructureEXT topLevelAS;
+layout(set = 2, binding = 0) uniform accelerationStructureEXT topLevelAS;
 
 /**
 * @brief Ray Tracing Out Image.
 */
-layout(set = 1, binding = 1, rgba32f) uniform image2D RayImage;    /* @brief Color. */
-layout(set = 1, binding = 2, r32f) uniform image2D RayID;          /* @brief ID.    */
+layout(set = 2, binding = 1, rgba32f) uniform image2D RayImage;    /* @brief Color. */
+layout(set = 2, binding = 2, r32f) uniform image2D RayID;          /* @brief ID.    */
 
 /*****************************************************************************************/
 

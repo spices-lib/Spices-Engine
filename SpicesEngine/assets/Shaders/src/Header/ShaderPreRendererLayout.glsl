@@ -9,6 +9,8 @@
 #ifndef SHADER_PRERENDERER_LAYOUT
 #define SHADER_PRERENDERER_LAYOUT
 
+#extension GL_EXT_nonuniform_qualifier : enable
+
 #include "ShaderCommon.h"
 
 /*****************************************************************************************/
@@ -28,6 +30,11 @@ layout(set = 0, binding = 0) uniform ShaderView {
 layout(set = 0, binding = 1) uniform ShaderInput {
     Input spiecsInput;          /* @see SpiecsInput */
 };
+
+/**
+* @brief BindLess Texture Buffer.
+*/
+layout (set = BINDLESSTEXTURESET, binding = BINDLESSTEXTUREBINDING) uniform sampler2D BindLessTextureBuffer[];
 
 /*****************************************************************************************/
 

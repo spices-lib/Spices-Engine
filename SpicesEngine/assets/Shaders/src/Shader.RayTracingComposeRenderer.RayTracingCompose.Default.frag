@@ -37,8 +37,8 @@ layout(location = 1) out float outID;      /* @brief ID Attachment.         */
 
 /********************************Specific Renderer Data***********************************/
 
-layout(set = 1, binding = 0, rgba32f) uniform image2D RayImage;
-layout(set = 1, binding = 1, r32f) uniform image2D RayID;
+layout(set = 2, binding = 0, rgba32f) uniform image2D RayImage;
+layout(set = 2, binding = 1, r32f) uniform image2D RayID;
 
 /*****************************************************************************************/
 

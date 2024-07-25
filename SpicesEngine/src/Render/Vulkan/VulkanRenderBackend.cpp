@@ -92,13 +92,13 @@ namespace Spices {
 
 			/* @brief Rasterization Renderer */
 			.Push<BasePassRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<WorldPickStage2Renderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			//.Push<ParticleRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<TestRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<TestRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SlateRenderer>          (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 		}
 	}
@@ -123,13 +123,13 @@ namespace Spices {
 		{
 			RendererManager::Get()
 			.Pop("SlateRenderer")
-			.Pop("TestRenderer")
+			//.Pop("TestRenderer")
 			//.Pop("ParticleRenderer")
-			.Pop("WorldPickStage2Renderer")
-			.Pop("WorldPickRenderer")
-			.Pop("SpriteRenderer")
-			.Pop("SceneComposeRenderer")
-			.Pop("ShadowRenderer")
+			//.Pop("WorldPickStage2Renderer")
+			//.Pop("WorldPickRenderer")
+			//.Pop("SpriteRenderer")
+			//.Pop("SceneComposeRenderer")
+			//.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
 			.Pop("RayTracingComposeRenderer")
 			.Pop("RayTracingRenderer")

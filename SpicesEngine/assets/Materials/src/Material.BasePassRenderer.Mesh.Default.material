@@ -29,53 +29,53 @@ Textures:
 
   # @brief Usage: albedo.
   - Name: albedo
-    # @brief [set, binding, index, Texture Type, Texture Path]
-    Value: [1, 0, 0, Texture2D, default.jpg]
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
     
   # @brief Usage: normal.
   - Name: normal
-    # @brief [set, binding, index, Texture Type, Texture Path]
-    Value: [1, 0, 1, Texture2D, default.jpg]
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
     
   # @brief Usage: roughness.
   - Name: roughness
-    # @brief [set, binding, index, Texture Type, Texture Path]
-    Value: [1, 0, 2, Texture2D, default.jpg]
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
       
   # @brief Usage: metallic.
   - Name: metallic
-    # @brief [set, binding, index, Texture Type, Texture Path]
-    Value: [ 1, 0, 2, Texture2D, default.jpg ]
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
     
 # @brief Material Parameters usages. 
 Parameters:
   
   # @brief Usage: albedo.
   - Name: albedo
-    # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, float3, [0.5, 0.5, 0.5]]
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float3, [0.5, 0.5, 0.5]]
     
   # @brief Usage: roughness.
   - Name: roughness
-    # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, float, 0.5]
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 0.5]
     
   # @brief Usage: metallic.
   - Name: metallic
-    # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, float, 0.0]
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 0.0]
     
   # @brief Usage: maxRayDepth.
   - Name: maxRayDepth
-    # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, int, 6]
+    # @brief [Parameter Type, Parameter Value]
+    Value: [int, 6]
       
   # @brief Usage: maxRayDepth.
   - Name: maxLightDepth
-    # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, int, 3]
+    # @brief [Parameter Type, Parameter Value]
+    Value: [int, 3]
     
   # @brief Usage: maxRayDepth.
   - Name: maxShadowDepth
-    # @brief [set, binding, Parameter Type, Parameter Value]
-    Value: [1, 1, int, 1]
+    # @brief [Parameter Type, Parameter Value]
+    Value: [int, 1]

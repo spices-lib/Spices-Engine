@@ -48,7 +48,7 @@ namespace Spices {
 
 		DescriptorSetBuilder{ "DirectionalLightShadow", this }
 		.AddPushConstant<SpicesShader::PushConstantMesh>()
-		.AddStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, VK_SHADER_STAGE_GEOMETRY_BIT)
+		.AddStorageBuffer<ShadowR::DirectionalLightMatrixs>(2, 0, VK_SHADER_STAGE_GEOMETRY_BIT)
 		.Build();
 	}
 
@@ -64,7 +64,7 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "DirectionalLightShadow" }));
 
-		builder.UpdateStorageBuffer<ShadowR::DirectionalLightMatrixs>(1, 0, [&](auto& ssbo) {
+		builder.UpdateStorageBuffer<ShadowR::DirectionalLightMatrixs>(2, 0, [&](auto& ssbo) {
 			GetDirectionalLightMatrix(frameInfo, ssbo.Matrixs);
 		});
 

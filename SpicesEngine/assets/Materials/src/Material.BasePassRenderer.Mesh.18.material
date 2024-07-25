@@ -10,25 +10,16 @@ Shaders:
     Path: BasePassRenderer.Mesh.Default
   - Stage: rchit
     Path: BasePassRenderer.Mesh.Default
-Textures:
-  - Name: albedo
-    Value: [1, 0, 0, Texture2D, default.jpg]
-  - Name: normal
-    Value: [1, 0, 1, Texture2D, default.jpg]
-  - Name: roughness
-    Value: [1, 0, 2, Texture2D, default.jpg]
-  - Name: metallic
-    Value: [1, 0, 3, Texture2D, default.jpg]
 Parameters:
   - Name: albedo
-    Value: [1, 1, float3, [0.8, 0.8, 0.2]]
+    Value: [float3, [0.8, 0.8, 0.2]]
   - Name: roughness
-    Value: [1, 1, float, 0.8]
+    Value: [float, 0.8]
   - Name: metallic
-    Value: [1, 1, float, 0.0]
+    Value: [float, 0.0]
   - Name: maxRayDepth
-    Value: [1, 1, int, 6]
+    Value: [int, 6]
   - Name: maxLightDepth
-    Value: [1, 1, int, 3]
+    Value: [int, 3]
   - Name: maxShadowDepth
-    Value: [1, 1, int, 1]
+    Value: [int, 1]

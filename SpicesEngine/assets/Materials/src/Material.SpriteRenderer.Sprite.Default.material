@@ -24,5 +24,5 @@ Textures:
   
   # @brief Usage: diffuse.
   - Name: diffuse
-    # @brief [set, binding, index, Texture Type, Texture Path]
-    Value: [1, 0, 0, Texture2D, default.jpg]
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]

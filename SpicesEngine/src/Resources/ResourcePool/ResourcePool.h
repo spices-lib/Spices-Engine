@@ -19,7 +19,7 @@ namespace Spices {
 	* This class will assign Every Type of Resource per Pool.
 	* When we ask for resource, we will get from here instand of load it from disk indirectlly.
 	* Now we use file path as resource identity.
-	* @param[in] T Resource basic Class.
+	* @tparam T Resource basic Class.
 	* @todo Use UUID as resource identity instead.
 	*/
 	template<typename T>

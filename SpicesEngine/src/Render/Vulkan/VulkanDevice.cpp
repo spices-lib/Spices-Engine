@@ -287,7 +287,7 @@ namespace Spices {
 													       
 		VkPhysicalDeviceDescriptorIndexingFeatures            descriptorIndexingFeatures {};
 		descriptorIndexingFeatures.sType                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-		descriptorIndexingFeatures.pNext                    = &accelerationStructureFeatures;  /*@brief Pass your other features through this chain.*/
+		descriptorIndexingFeatures.pNext                    = &accelerationStructureFeatures;
 													       
 		VkPhysicalDeviceBufferDeviceAddressFeatures           bufferDeviceAddressFeatures {};
 		bufferDeviceAddressFeatures.sType                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
@@ -325,8 +325,10 @@ namespace Spices {
 		ASSERT(descriptorIndexingFeatures.descriptorBindingUniformBufferUpdateAfterBind)      /* @brief Enable Shader descriptorBindingUniformBufferUpdateAfterBind Feature.    */
 		ASSERT(descriptorIndexingFeatures.shaderStorageBufferArrayNonUniformIndexing)         /* @brief Enable Shader shaderStorageBufferArrayNonUniformIndexing Feature.       */
 		ASSERT(descriptorIndexingFeatures.descriptorBindingStorageBufferUpdateAfterBind)      /* @brief Enable Shader descriptorBindingStorageBufferUpdateAfterBind Feature.    */
+		ASSERT(descriptorIndexingFeatures.descriptorBindingPartiallyBound)                    /* @brief Enable descriptorBindingPartiallyBound Feature.                         */
+		ASSERT(descriptorIndexingFeatures.runtimeDescriptorArray)                             /* @brief Enable runtimeDescriptorArray Feature.                                  */
 
-		ASSERT(shaderClockFeatures.shaderSubgroupClock)                                       /* @brief Enable Shader clock time Feature.               */
+		ASSERT(shaderClockFeatures.shaderSubgroupClock)                                       /* @brief Enable Shader clock time Feature.                                       */
 
 		return true;
 	}

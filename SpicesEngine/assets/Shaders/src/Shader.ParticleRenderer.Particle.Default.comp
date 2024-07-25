@@ -4,8 +4,8 @@
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
 
-layout(set = 1, binding = 0, rgba32f) uniform image2D RayImage;    /* @brief Color. */
-layout(set = 1, binding = 1, scalar) buffer SSBO   { 
+layout(set = 2, binding = 0, rgba32f) uniform image2D RayImage;    /* @brief Color. */
+layout(set = 2, binding = 1, scalar) buffer SSBO   { 
     Vertex i[]; 
 } ssbo;
 

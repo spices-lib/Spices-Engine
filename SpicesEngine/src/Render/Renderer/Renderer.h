@@ -427,19 +427,33 @@ namespace Spices {
 			);
 
 			/**
+			* @brief Init the Bindless texture set binding to descriptor set layout.
+			* @param[in] set Which set this texture wil use.
+			* @param[in] binding Which binding this texture wil use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @return Returns this reference.
+			*/
+			template<typename T>
+			inline DescriptorSetBuilder& AddBindLessTexture(
+				uint32_t                         set        ,
+				uint32_t                         binding    ,
+				VkShaderStageFlags               stageFlags ,
+				const std::vector<std::string>&  textureNames
+			);
+
+			/**
 			* @brief Add the texture set binding to descriptor set layout.
 			* @tparam T Texture Type.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
-			* @param[in] stageFlags Which buffer stage this buffer will use.
 			* @param[in] textureNames All Texture's Name.
 			* @return Returns this reference.
 			*/
 			template<typename T>
 			inline DescriptorSetBuilder& AddTexture(
-				uint32_t                         set        ,
-				uint32_t                         binding    ,
-				VkShaderStageFlags               stageFlags ,
+				uint32_t                         set,
+				uint32_t                         binding,
+				VkShaderStageFlags               stageFlags,
 				const std::vector<std::string>&  textureNames
 			);
 
@@ -1187,10 +1201,38 @@ namespace Spices {
 	}
 
 	template<typename T>
+	inline Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddBindLessTexture(
+		uint32_t                        set          , 
+		uint32_t                        binding      , 
+		VkShaderStageFlags              stageFlags   , 
+		const std::vector<std::string>& textureNames
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		/**
+		* @brief fill in imageInfos.
+		*/
+		for (int i = 0; i < textureNames.size(); i++)
+		{
+			const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i]);
+			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
+		}
+
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
+		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, MAXBINDLESSTEXTURECOUNT);
+
+		return *this;
+	}
+
+	template<typename T>
 	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddTexture(
 		uint32_t                        set        ,
 		uint32_t                        binding    ,
-		VkShaderStageFlags              stageFlags ,
+		VkShaderStageFlags              stageFlags,
 		const std::vector<std::string>& textureNames
 	)
 	{

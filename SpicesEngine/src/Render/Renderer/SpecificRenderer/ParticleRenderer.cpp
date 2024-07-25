@@ -26,8 +26,8 @@ namespace Spices {
 		if (!FrameInfo::Get().m_World)
 		{
 			DescriptorSetBuilder{ "Particle", this }
-			.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-			.AddStorageBuffer<SpicesShader::Vertex>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.AddStorageTexture(2, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
+			.AddStorageBuffer<SpicesShader::Vertex>(2, 1, VK_SHADER_STAGE_COMPUTE_BIT)
 			.Build();
 
 			return;
@@ -49,16 +49,16 @@ namespace Spices {
 		if (!buffer)
 		{
 			DescriptorSetBuilder{ "Particle", this }
-			.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-			.AddStorageBuffer<SpicesShader::Vertex>(1, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.AddStorageTexture(2, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
+			.AddStorageBuffer<SpicesShader::Vertex>(2, 1, VK_SHADER_STAGE_COMPUTE_BIT)
 			.Build();
 
 			return;
 		}
 
 		DescriptorSetBuilder{ "Particle", this }
-		.AddStorageTexture(1, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-		.AddStorageBuffer(1, 1, VK_SHADER_STAGE_COMPUTE_BIT, buffer)
+		.AddStorageTexture(2, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
+		.AddStorageBuffer(2, 1, VK_SHADER_STAGE_COMPUTE_BIT, buffer)
 		.Build();
 	}
 

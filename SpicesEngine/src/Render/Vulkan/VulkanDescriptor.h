@@ -155,6 +155,16 @@ namespace Spices {
         );
 
         /**
+        * @brief Build a bindless texture VkDescriptorSetLayout with bindings.
+        * @param[in] bindings all the bindings used in a VkDescriptorSetLayout.
+        * @param[in] caption DescriptorSetLayout Name.
+        */
+        void BuildBindLessTextureDescriptorSetLayout(
+            const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings,
+            const std::string&                                                caption = ""
+        );
+
+        /**
         * @brief Get a VkDescriptorSetLayout.
         * @return Returns the VkDescriptorSetLayout.
         */
@@ -217,11 +227,17 @@ namespace Spices {
         );
 
         /**
-        * @brief Bind this to Pipeline.
+        * @brief Build this.
         * @param[in] createrName The object this descriptor set belongs to.
         */
         void BuildDescriptorSet(const std::string& createrName);
         
+        /**
+        * @brief Build this bindless.
+        * @param[in] createrName The object this descriptor set belongs to.
+        */
+        void BuildBindLessTextureDescriptorSet(const std::string& createrName);
+
         /**
         * @brief Update this descriptor set.
         * @param[in] imageInfo ImageInfo.
@@ -250,6 +266,14 @@ namespace Spices {
             ImageInfo&  imageInfo
         ) const;
         
+        /**
+        * @brief Update this bindless descriptor set.
+        * @param[in] imageInfo ImageInfo.
+        */
+        void UpdateBindLessTextureDescriptorSet(
+            ImageInfo& imageInfo
+        ) const;
+
         /**
         * @brief Get a VkDescriptorSet.
         * @return Returns the VkDescriptorSet.
