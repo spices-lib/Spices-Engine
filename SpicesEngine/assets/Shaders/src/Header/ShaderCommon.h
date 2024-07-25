@@ -24,6 +24,8 @@ using uint = unsigned int;
 
 #extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align.                         */
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.                               */
+#extension GL_EXT_buffer_reference2                      : require  /* @brief Enable Shader Buffer Address access.                          */
+#extension GL_EXT_nonuniform_qualifier                   : enable   /* @brief Enable Bindless DescriptorSet.                                */
 
 #ifdef SPICES_DEBUG
 
@@ -116,7 +118,7 @@ struct View
 /**
 * @brief Application Inout Struct.
 */
-struct Input 
+struct Input
 {
 	vec4  mousePos;            /* @brief Mouse Postion and inverse position. */
 	float gameTime;            /* @brief Application Run time since start.   */
@@ -126,10 +128,11 @@ struct Input
 /**
 * @brief Push constant structure for the mesh basic
 */
-struct PushConstantMesh 
+struct PushConstantMesh
 {
-	mat4 model;                /* @brief MeshPack ModelMatrix.             */
-	int  entityID;             /* @brief EntityId, cast from entt::entity. */
+	mat4     model;                        /* @brief MeshPack ModelMatrix.              */
+	uint64_t materialParameterAddress;     /* Address of the Material Parameter buffer. */
+	int      entityID;                     /* @brief EntityId, cast from entt::entity.  */
 };
 
 /*****************************************************************************************/

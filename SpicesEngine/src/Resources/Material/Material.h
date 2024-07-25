@@ -181,7 +181,7 @@ namespace Spices {
 		/*
 		* @brief Buffer takes all textures index and all constant params buffer address. 
 		*/
-		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer = nullptr;
+		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer;
 
 		/**
 		* @brief True if this material needs to draw a window.

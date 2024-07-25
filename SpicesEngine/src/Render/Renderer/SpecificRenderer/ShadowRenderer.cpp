@@ -77,6 +77,7 @@ namespace Spices {
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
 					push.model = modelMatrix;
+					push.materialParameterAddress = material->GetMaterialParamsAddress();
 					push.entityID = entityId;
 				});
 			});

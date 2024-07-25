@@ -10,50 +10,11 @@
 #define SHADER_CLOSEST_HIT
 
 #extension GL_EXT_ray_tracing           : require   /* @brief Enable Ray Tracing Shader.           */
-#extension GL_EXT_nonuniform_qualifier  : enable    /* @brief Enable Bindless DescriptorSet.       */
-#extension GL_EXT_buffer_reference2     : require   /* @brief Enable Shader Buffer Address access. */
 
 #include "ShaderCommon.h"
 #include "ShaderFunctionLibrary.glsl"
 #include "ShaderPreRendererLayout.glsl"
-
-/**
-* @brief Begin declear a const parameter struct by set binding.
-* @example :
-* 
-* BEGIN_DECLEAR_CONST_PARAM(00)
-* int   Param0;
-* float Param1;
-* vec2  Param2;
-* END_DECLEAR_CONST_PARAM(00)
-*
-* EXPLAIN_CONST_PARAM(00)
-*
-* CONST_PARAM(00)
-*/
-#define BEGIN_DECLEAR_CONST_PARAM(setBinding)                  \
-struct MaterialConstantParameter_##setBinding  {
-
-/**
-* @brief End declear a const parameter struct and buffer reference by set binding.
-*/
-#define END_DECLEAR_CONST_PARAM(setBinding)                    \
-} constParam_##setBinding;                                     \
-layout(buffer_reference, scalar, buffer_reference_align = 8)   \
-buffer MaterialConstantParameters_##setBinding                 \
-{ MaterialConstantParameter_##setBinding i[]; };
-
-/**
-* @brief Explain MaterialParameter to a const parameter struct instance.
-*/
-#define EXPLAIN_CONST_PARAM(setBinding)                        \
-constParam_##setBinding = MaterialConstantParameters_##setBinding(param.address_##setBinding).i[0];
-
-/**
-* @brief Get const parameter struct instance by set binding.
-*/
-#define CONST_PARAM(setBinding)                                \
-constParam_##setBinding
+#include "ShaderBindLessMaterial.glsl"
 
 /*****************************************************************************************/
 
@@ -95,15 +56,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices {
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices { 
     ivec3 i[]; 
 };
-
-/**
-* @brief Buffer of all Material Parameters in World.
-* Only Access index 0, unless you want access other material parameter.
-*/
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialParameters { 
-    MaterialParameter i[]; 
-};
-
+ 
 /**
 * @brief Acceleration Structure.
 */
@@ -147,19 +100,7 @@ Pixel UnPackPixel(in vec3 weight);
 * @return Returns the Entity ID.
 */
 int UnPackEntityID();
-
-/**
-* @brief Unpack Material Parameter from MaterialParameterBuffer.
-* @return Returns the Material Parameter.
-*/
-MaterialParameter UnPackMaterialParameter();
         
-/**
-* @brief Explain Material Parameter to split struct and texture.
-* @param[in] param the MaterialParameter needs to be explained.
-*/
-void ExplainMaterialParameter(in MaterialParameter param);
-
 /**
 * @brief Init Material Attributes.
 * @param[in] pi Intersected Pixel.
@@ -202,13 +143,13 @@ void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes);
 
 void main()
 {
-    Pixel pi = UnPackPixel(attribs);                                      /* @brief Get interest Pixel data.           */
-    int entityID = UnPackEntityID();                                      /* @brief Get Entity ID.                     */
-    MaterialParameter parameter = UnPackMaterialParameter();              /* @brief Get material parameter data.       */
-    ExplainMaterialParameter(parameter);                                  /* @brief Explain Material.                  */
-    MaterialAttributes materialAttributes = InitMaterialAttributes(pi);   /* @brief Init material attributes.          */
-    GetMaterialAttributes(pi, materialAttributes);                        /* @brief Get material specific attributes.  */
-    PostHandleWithMaterialAttributes(materialAttributes);                 /* @brief Post handle materialAttributes.    */
+    Pixel pi = UnPackPixel(attribs);                                                                   /* @brief Get interest Pixel data.           */
+    int entityID = UnPackEntityID();                                                                   /* @brief Get Entity ID.                     */
+    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
+    if(desc.materialParameterAddress != 0) ExplainMaterialParameter(desc.materialParameterAddress);    /* @brief Get material parameter data.       */
+    MaterialAttributes materialAttributes = InitMaterialAttributes(pi);                                /* @brief Init material attributes.          */
+    GetMaterialAttributes(pi, materialAttributes);                                                     /* @brief Get material specific attributes.  */
+    PostHandleWithMaterialAttributes(materialAttributes);                                              /* @brief Post handle materialAttributes.    */
 
     /**
     * @brief Calculate Next Ray recursion attributes.
@@ -316,28 +257,6 @@ int UnPackEntityID()
     */
     MeshDesc desc = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
     return desc.entityID;
-}
-
-MaterialParameter UnPackMaterialParameter()
-{
-    /**
-    * @brief Access Buffer by GPU address.
-    */
-    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
-    
-    /**
-    * @brief If no vaild material parameter, just instance one and return.
-    */
-    if(desc.materialParameterAddress == 0)
-    {
-        MaterialParameter param;
-        return param;
-    }
-    else
-    {
-        MaterialParameters params = MaterialParameters(desc.materialParameterAddress);
-        return params.i[0];
-    }
 }
 
 MaterialAttributes InitMaterialAttributes(in Pixel pi)

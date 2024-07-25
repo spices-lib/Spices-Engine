@@ -11,6 +11,37 @@
 #extension GL_GOOGLE_include_directive : enable    /* @brief Enable include Macro. */
 
 #include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+
+/**
+* @brief Material Parameter.
+* It should be the struct of all textures index and parameter buffer address.
+* One index per texture, One address per buffer.
+*/
+struct MaterialParameter
+{
+    uint     ALBEDO;
+    uint     NORMAL;
+    uint     ROUGHNESS;
+    uint     METALLIC;
+    uint64_t address;
+} materialParam;
+
+/**
+* @brief Material Constant Parameter.
+* It should be the struct of constant parameter buffer data.
+*/
+struct MaterialConstantParameter
+{
+    vec3  albedo;
+    float roughness;
+    float metallic;
+    int   maxRayDepth;
+    int   maxLightDepth;
+    int   maxShadowDepth;
+} materialConstParam;
+
+#include "Header/ShaderBindLessMaterial.glsl"
 
 /*****************************************************************************************/
 
@@ -53,55 +84,16 @@ layout(push_constant) uniform Push {
 
 /*****************************************************************************************/
 
-/********************************Specific Renderer Data***********************************/
-
-/**
-* @brief Textures struct like that:
-* 0 - Albedo.
-* 1 - Normal.
-* 2 - Roughness.
-* 3 - Metallic.
-*/
-
-#define ALBEDO    0
-#define NORMAL    1
-#define ROUGHNESS 2
-#define METALLIC  3
-
-/**
-* @brief Material Textures.
-*/
-layout(set = 1, binding = 0) uniform sampler2D samplers[4];
-
-/**
-* @brief Material Parameters.
-*/
-layout(set = 1, binding = 1) uniform Parameter {
-    vec3  albedo;
-    float roughness;
-    float metallic;
-    int   maxRayDepth;
-    int   maxLightDepth;
-    int   maxShadowDepth;
-};
-
-/*****************************************************************************************/
-
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
-    /*outAlbedo     = texture(samplers[ALBEDO], fragInput.texCoord);
-    outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
-    outRoughness  = texture(samplers[ROUGHNESS], fragInput.texCoord);
-    outMetallic   = texture(samplers[METALLIC], fragInput.texCoord);
-    outPosition   = vec4(fragInput.position, 1.0f);
-    outID         = push.entityID;*/
+    ExplainMaterialParameter(push.materialParameterAddress);
     
-    outAlbedo     = vec4(albedo, 1.0f);
+    outAlbedo     = texture(BindLessTextureBuffer[materialParam.ALBEDO], fragInput.texCoord);
     outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
-    outRoughness  = vec4(vec3(clamp(roughness, 0.0f, 1.0f)), 1.0f);
-    outMetallic   = vec4(vec3(clamp(metallic, 0.0f, 1.0f)), 1.0f);
+    outRoughness  = texture(BindLessTextureBuffer[materialParam.ROUGHNESS], fragInput.texCoord);
+    outMetallic   = texture(BindLessTextureBuffer[materialParam.METALLIC], fragInput.texCoord);
     outPosition   = vec4(fragInput.position, 1.0f);
     outID         = push.entityID;
 }

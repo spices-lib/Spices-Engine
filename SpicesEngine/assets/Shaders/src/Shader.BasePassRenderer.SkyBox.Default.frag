@@ -11,6 +11,26 @@
 #extension GL_GOOGLE_include_directive : enable        /* @brief Enable include Macro. */
 
 #include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+
+/**
+* @brief Material Parameter.
+* It should be the struct of all textures index and parameter buffer address.
+* One index per texture, One address per buffer.
+*/
+struct MaterialParameter
+{
+    uint     ALBEDO;
+    uint64_t address;
+} materialParam;
+
+/**
+* @brief Material Constant Parameter.
+* It should be the struct of constant parameter buffer data.
+*/
+struct MaterialConstantParameter{ int empty; } materialConstParam;
+
+#include "Header/ShaderBindLessMaterial.glsl"
 
 /*****************************************************************************************/
 
@@ -48,11 +68,6 @@ layout(push_constant) uniform Push {
 
 /*****************************************************************************************/
 
-/********************************Specific Renderer Data***********************************/
-
-
-/*****************************************************************************************/
-
 /***************************************Functions*****************************************/
 
 vec2 SampleSphericalMap(vec3 v)
@@ -70,9 +85,8 @@ vec2 SampleSphericalMap(vec3 v)
 
 void main()
 {
-    //vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
-    //outColor = texture(samplers, uv);
-    outColor = vec4(0.2f, 0.2f, 0.2f, 1.0f);
+    vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
+    outColor = texture(BindLessTextureBuffer[materialParam.ALBEDO], uv);
     outPosition = vec4(fragInput.worldPosition, 1.0f);
     outID = push.entityID;
 }

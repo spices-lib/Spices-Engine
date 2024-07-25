@@ -9,8 +9,6 @@
 #ifndef SHADER_PRERENDERER_LAYOUT
 #define SHADER_PRERENDERER_LAYOUT
 
-#extension GL_EXT_nonuniform_qualifier : enable
-
 #include "ShaderCommon.h"
 
 /*****************************************************************************************/

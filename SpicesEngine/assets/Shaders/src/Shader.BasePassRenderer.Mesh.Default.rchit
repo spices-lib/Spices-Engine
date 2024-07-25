@@ -14,12 +14,26 @@
 /**
 * @brief Material Parameter.
 * It should be the struct of all textures index and parameter buffer address.
-* One index per texture, One address per buffer set binding.
+* One index per texture, One address per buffer.
 */
-struct MaterialParameter 
+struct MaterialParameter
 {
-    uint64_t address_11;         /* @brief Address of Set 1 Binding 1 Buffer. */
-};
+    uint64_t address;          /* @brief Address of Constant Parameter Buffer. */
+} materialParam;
+
+/**
+* @brief Material Constant Parameter.
+* It should be the struct of constant parameter buffer data.
+*/
+struct MaterialConstantParameter
+{
+    vec3 albedo;
+    float roughness;
+    float metallic;
+    int maxRayDepth;
+    int maxLightDepth;
+    int maxShadowDepth;
+} materialConstParam;
 
 /**
 * @brief Closest Hit Shader Entry Point.
@@ -28,35 +42,17 @@ struct MaterialParameter
 
 /*****************************************************************************************/
 
-/********************************Specific Material Data***********************************/
-
-BEGIN_DECLEAR_CONST_PARAM(11)
-vec3  albedo;
-float roughness;
-float metallic;
-int   maxRayDepth;
-int   maxLightDepth;
-int   maxShadowDepth;
-END_DECLEAR_CONST_PARAM(11)
-
-/*****************************************************************************************/
-
 /******************************************Functions**************************************/
-
-void ExplainMaterialParameter(in MaterialParameter param)
-{
-    EXPLAIN_CONST_PARAM(11)
-}
 
 void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
 {  
-    attributes.albedo          = CONST_PARAM(11).albedo;
-    attributes.roughness       = CONST_PARAM(11).roughness;
-    attributes.metallic        = CONST_PARAM(11).metallic;
+    attributes.albedo          = materialConstParam.albedo;
+    attributes.roughness       = materialConstParam.roughness;
+    attributes.metallic        = materialConstParam.metallic;
     attributes.emissive        = vec3(0.0f);
-    attributes.maxRayDepth     = CONST_PARAM(11).maxRayDepth;
-    attributes.maxLightDepth   = CONST_PARAM(11).maxLightDepth;
-    attributes.maxShadowDepth  = CONST_PARAM(11).maxShadowDepth;
+    attributes.maxRayDepth     = materialConstParam.maxRayDepth;
+    attributes.maxLightDepth   = materialConstParam.maxLightDepth;
+    attributes.maxShadowDepth  = materialConstParam.maxShadowDepth;
 }
 
 /*****************************************************************************************/
