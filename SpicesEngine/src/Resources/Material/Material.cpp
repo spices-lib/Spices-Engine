@@ -76,15 +76,27 @@ namespace Spices {
 
 			DescriptorSetManager::UnLoad(m_MaterialPath);
 			m_MaterialParameterBuffer  = nullptr;
-			m_Buffers                  = nullptr;
 			m_Buffermemoryblocks       = scl::runtime_memory_block();
+		}
+
+		/**
+		* @brief Iter the constantParams and fill it's data to memoryblock.
+		*/
+		{
+			SPICES_PROFILE_ZONEN("BuildMaterial::Build Local ConstantParameter Block");
+
+			m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
+				m_Buffermemoryblocks.add_element(k, v.paramType);
+				return false;
+			});
+
+			m_Buffermemoryblocks.build();
 		}
 
 		/**
 		* @brief Return if not valid textureParameter or constantParameter.
 		*/
-		uint64_t size = m_TextureParams.size() * sizeof(unsigned int);
-		size += m_ConstantParams.size() == 0 ? 0 : sizeof(uint64_t);
+		uint64_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.get_bytes();
 		if (size == 0)
 		{
 			std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
@@ -165,53 +177,48 @@ namespace Spices {
 			});
 		}
 
-		if (m_ConstantParams.size() == 0)
-		{
-			std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
-			auto renderer = RendererManager::GetRenderer(sv[0]);
-			renderer->RegistryMaterial(m_MaterialPath, sv[1]);
-
-			return;
-		}
-
 		/**
-		* @brief Iter the constantParams and fill it's data to memoryblock.
+		* @brief Create ConstantParameter Buffer .
 		*/
 		{
-			SPICES_PROFILE_ZONEN("BuildMaterial::Build Local ConstantParameter Block");
-
-			m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
-				m_Buffermemoryblocks.add_element(k, v.paramType);
-				return false;
-			});
-
-			m_Buffermemoryblocks.build();
+			SPICES_PROFILE_ZONEN("BuildMaterial::Add ConstantParameter Buffer");
 
 			m_Buffermemoryblocks.for_each([&](const std::string& name, void* pt) {
 				ConstantParam& ref = *m_ConstantParams.find_value(name);
-
+				size_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.item_location(name);
+				
 				/**
 				* @brief Fill in data to memory block.
 				*/
 				if      (ref.paramType == "float4")
 				{
 					*static_cast<glm::vec4*>(pt)     = std::any_cast<glm::vec4>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(glm::vec4), size);
+					m_MaterialParameterBuffer->Flush();
 				}
 				else if (ref.paramType == "float3")
 				{
 					*static_cast<glm::vec3*>(pt)     = std::any_cast<glm::vec3>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(glm::vec3), size);
+					m_MaterialParameterBuffer->Flush();
 				}
 				else if (ref.paramType == "float2")
 				{
 					*static_cast<glm::vec2*>(pt)     = std::any_cast<glm::vec2>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(glm::vec2), size);
+					m_MaterialParameterBuffer->Flush();
 				}
 				else if (ref.paramType == "float")
 				{
 					*static_cast<float*>(pt)         = std::any_cast<float>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(float), size);
+					m_MaterialParameterBuffer->Flush();
 				}
 				else if (ref.paramType == "int")
 				{
 					*static_cast<int*>(pt)           = std::any_cast<int>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(int), size);
+					m_MaterialParameterBuffer->Flush();
 				}
 				else
 				{
@@ -220,35 +227,6 @@ namespace Spices {
 	
 				return false;
 			});
-		}
-
-		/**
-		* @brief Create ConstantParameter Buffer .
-		*/
-		{
-			SPICES_PROFILE_ZONEN("BuildMaterial::Build ConstantParameter Buffer");
-
-			m_Buffers = std::make_unique<VulkanBuffer>(
-				VulkanRenderBackend::GetState(),
-				m_Buffermemoryblocks.get_bytes(),
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-			);
-
-			m_Buffers->Map();
-			m_Buffers->WriteToBuffer(m_Buffermemoryblocks.get_addr());
-			m_Buffers->Flush();
-
-		}
-		
-		/**
-		* @brief Build Material Parameter Buffer.
-		*/
-		{
-			SPICES_PROFILE_ZONEN("BuildMaterial::Build Material Parameter Buffer");
-
-			m_MaterialParameterBuffer->WriteToBuffer(&m_Buffers->GetAddress(), sizeof(uint64_t), m_TextureParams.size() * sizeof(uint64_t));
-			m_MaterialParameterBuffer->Flush();
 		}
 
 		/**

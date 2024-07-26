@@ -1,6 +1,6 @@
 /**
-* @file Shader.BasePassRenderer.Mesh.interior_stair_wl3ieamdw.frag.
-* @brief This Shader Defines BasePass Renderer Mesh SubPass interior_stair_wl3ieamdw Fragment Shader Behaver.
+* @file Shader.BasePassRenderer.Mesh.Default.frag.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass Default Fragment Shader Behaver.
 * @author Spices.
 */
 
@@ -20,26 +20,14 @@
 */
 struct MaterialParameter
 {
-    uint     albedo;
-    uint     normal;
-    uint     roughness;
-    uint     metallic;
-    uint64_t address;
-} materialParam;
-
-/**
-* @brief Material Constant Parameter.
-* It should be the struct of constant parameter buffer data.
-*/
-struct MaterialConstantParameter
-{
-    vec3  albedo;
-    float roughness;
-    float metallic;
+    uint  albedoTexture;
+    uint  normalTexture;
+    uint  roughnessTexture;
+    uint  metallicTexture;
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
-} materialConstParam;
+} materialParam;
 
 #include "Header/ShaderBindLessMaterial.glsl"
 
@@ -79,7 +67,7 @@ layout(location = 5) out float outID;                   /* @brief ID Attachment.
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-    PushConstantMesh push;                              /* @see PushConstantMesh. */
+	PushConstantMesh push;                              /* @see PushConstantMesh. */
 };
 
 /*****************************************************************************************/
@@ -89,13 +77,13 @@ layout(push_constant) uniform Push {
 void main()
 {
     ExplainMaterialParameter(push.materialParameterAddress);
-
-    outAlbedo = texture(BindLessTextureBuffer[materialParam.albedo], fragInput.texCoord);
-    outNormal = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
-    outRoughness = texture(BindLessTextureBuffer[materialParam.roughness], fragInput.texCoord);
-    outMetallic = texture(BindLessTextureBuffer[materialParam.metallic], fragInput.texCoord);
-    outPosition = vec4(fragInput.position, 1.0f);
-    outID = push.entityID;
+    
+    outAlbedo     = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
+    outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
+    outRoughness  = texture(BindLessTextureBuffer[materialParam.roughnessTexture], fragInput.texCoord);
+    outMetallic   = texture(BindLessTextureBuffer[materialParam.metallicTexture], fragInput.texCoord);
+    outPosition   = vec4(fragInput.position, 1.0f);
+    outID         = push.entityID;
 }
 
 /*****************************************************************************************/

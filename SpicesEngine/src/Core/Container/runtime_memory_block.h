@@ -99,6 +99,13 @@ namespace scl {
         * @return Return the size of object_.
         */
         size_t size() const { return object_.size(); }
+
+        /**
+        * @brief Get item loction in blocks.
+        * @param[in] name Item Name.
+        * @return Returns item location.
+        */
+        size_t item_location(const std::string& name) { return object_[name]; }
     };
 
     template <typename T>

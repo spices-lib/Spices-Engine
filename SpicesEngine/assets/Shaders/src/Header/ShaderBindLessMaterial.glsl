@@ -23,14 +23,6 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialPara
     MaterialParameter i[]; 
 };
 
-/**
-* @brief Buffer of all Material Constant Parameters in World.
-* Only Access index 0, unless you want access other material parameter.
-*/
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialConstantParameters { 
-    MaterialConstantParameter i[]; 
-};
-
 /*****************************************************************************************/
 
 /******************************************Functions**************************************/
@@ -42,7 +34,6 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialCons
 void ExplainMaterialParameter(in uint64_t materialParameterAddress)
 {
     materialParam      = MaterialParameters(materialParameterAddress).i[0];
-    materialConstParam = MaterialConstantParameters(materialParam.address).i[0];
 }
 
 /*****************************************************************************************/

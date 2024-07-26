@@ -18,41 +18,32 @@
 */
 struct MaterialParameter
 {
-    uint64_t address;          /* @brief Address of Constant Parameter Buffer. */
-} materialParam;
-
-/**
-* @brief Material Constant Parameter.
-* It should be the struct of constant parameter buffer data.
-*/
-struct MaterialConstantParameter
-{
     vec3  albedo;
     float roughness;
     float metallic;
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
-} materialConstParam;
+} materialParam;
 
 /**
 * @brief Closest Hit Shader Entry Point.
 */
-#include "Header/ShaderClosestHit.glsl"
+#include "Header/ShaderClosestHitPBR.glsl"
 
 /*****************************************************************************************/
 
 /******************************************Functions**************************************/
 
 void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
-{  
-    attributes.albedo          = materialConstParam.albedo;
-    attributes.roughness       = materialConstParam.roughness;
-    attributes.metallic        = materialConstParam.metallic;
+{
+    attributes.albedo          = materialParam.albedo;
+    attributes.roughness       = materialParam.roughness;
+    attributes.metallic        = materialParam.metallic;
     attributes.emissive        = vec3(0.0f);
-    attributes.maxRayDepth     = materialConstParam.maxRayDepth;
-    attributes.maxLightDepth   = materialConstParam.maxLightDepth;
-    attributes.maxShadowDepth  = materialConstParam.maxShadowDepth;
+    attributes.maxRayDepth     = materialParam.maxRayDepth;
+    attributes.maxLightDepth   = materialParam.maxLightDepth;
+    attributes.maxShadowDepth  = materialParam.maxShadowDepth;
 }
 
 /*****************************************************************************************/

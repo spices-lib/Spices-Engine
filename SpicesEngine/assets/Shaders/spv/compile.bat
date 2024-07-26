@@ -1,11 +1,9 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.vert  -o Shader.BasePassRenderer.Mesh.Default.vert.spv
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.frag  -o Shader.BasePassRenderer.Mesh.Default.frag.spv
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.rchit -o Shader.BasePassRenderer.Mesh.Default.rchit.spv       --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.CornelBox.frag -o Shader.BasePassRenderer.Mesh.CornelBox.frag.spv       --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.CornelBox.rchit -o Shader.BasePassRenderer.Mesh.CornelBox.rchit.spv       --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.interior_stair_wl3ieamdw.rchit -o Shader.BasePassRenderer.Mesh.interior_stair_wl3ieamdw.rchit.spv       --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.interior_stair_wl3ieamdw.frag -o Shader.BasePassRenderer.Mesh.interior_stair_wl3ieamdw.frag.spv       --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Sphere.frag -o Shader.BasePassRenderer.Mesh.Sphere.frag.spv       --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRTexture.frag  -o Shader.BasePassRenderer.Mesh.PBRTexture.frag.spv
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRConstParameter.frag -o Shader.BasePassRenderer.Mesh.PBRConstParameter.frag.spv       --target-env=vulkan1.3
+
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRTexture.rchit  -o Shader.BasePassRenderer.Mesh.PBRTexture.rchit.spv                 --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRConstParameter.rchit  -o Shader.BasePassRenderer.Mesh.PBRConstParameter.rchit.spv   --target-env=vulkan1.3
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.vert -o Shader.BasePassRenderer.SkyBox.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.frag -o Shader.BasePassRenderer.SkyBox.Default.frag.spv
@@ -35,8 +33,8 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.TestRenderer.Test.Default.frag -o Shader.TestRenderer.Test.Default.frag.spv
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Default.rgen         -o Shader.RayTracingRenderer.RayTracing.Default.rgen.spv         --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Default.rmiss        -o Shader.RayTracingRenderer.RayTracing.Default.rmiss.spv        --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.DefaultShadow.rmiss  -o Shader.RayTracingRenderer.RayTracing.DefaultShadow.rmiss.spv  --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.PBRTexture.rmiss        -o Shader.RayTracingRenderer.RayTracing.PBRTexture.rmiss.spv        --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Shadow.rmiss  -o Shader.RayTracingRenderer.RayTracing.Shadow.rmiss.spv  --target-env=vulkan1.3
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingComposeRenderer.RayTracingCompose.Default.vert -o Shader.RayTracingComposeRenderer.RayTracingCompose.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingComposeRenderer.RayTracingCompose.Default.frag -o Shader.RayTracingComposeRenderer.RayTracingCompose.Default.frag.spv

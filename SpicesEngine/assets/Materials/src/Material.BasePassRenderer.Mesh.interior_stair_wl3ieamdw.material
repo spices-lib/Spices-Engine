@@ -7,25 +7,19 @@ Shaders:
   - Stage: vert
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag
-    Path: BasePassRenderer.Mesh.interior_stair_wl3ieamdw
+    Path: BasePassRenderer.Mesh.PBRConstParameter
   - Stage: rchit
-    Path: BasePassRenderer.Mesh.interior_stair_wl3ieamdw
+    Path: BasePassRenderer.Mesh.PBRConstParameter
 Textures:
   - Name: albedo
     Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]
   - Name: normal
     Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Normal_LOD0.jpg]
   - Name: roughness
-    Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
+    Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Roughness.jpg]
   - Name: metallic
     Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Specular.jpg]
 Parameters:
-  - Name: albedo
-    Value: [float3, [0.5, 0.5, 0.5]]
-  - Name: roughness
-    Value: [float, 0.0]
-  - Name: metallic
-    Value: [float, 0.0]
   - Name: maxRayDepth
     Value: [int, 4]
   - Name: maxLightDepth

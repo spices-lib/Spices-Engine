@@ -7,9 +7,9 @@ Shaders:
   - Stage: vert
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag
-    Path: BasePassRenderer.Mesh.CornelBox
+    Path: BasePassRenderer.Mesh.PBRConstParameter
   - Stage: rchit
-    Path: BasePassRenderer.Mesh.CornelBox
+    Path: BasePassRenderer.Mesh.PBRConstParameter
 Parameters:
   - Name: albedo
     Value: [float3, [0.5, 0.5, 0.5]]

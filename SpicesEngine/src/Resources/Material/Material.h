@@ -167,12 +167,6 @@ namespace Spices {
 		scl::linked_unordered_map<std::string, ConstantParam> m_ConstantParams;
 
 		/**
-		* @brief m_ConstantParams's VkBuffer.
-		* Key: set, Value: VkBuffer.
-		*/
-		std::unique_ptr<VulkanBuffer> m_Buffers;
-
-		/**
 		* @brief m_Buffers's c++ data container.
 		* Key: set, Value: scl::runtime_memory_block.
 		*/

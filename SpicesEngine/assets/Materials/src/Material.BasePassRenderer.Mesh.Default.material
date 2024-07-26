@@ -17,12 +17,12 @@ Shaders:
   # @brief Fragment Shader Stage Shader File Path.
   - Stage: frag
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.Mesh.PBRConstParameter
 
   # @brief Ray Closest Hit Shader Stage Shader File Path.
   - Stage: rchit
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.Mesh.PBRConstParameter
 
 # @brief Material Textures usages.
 Textures:
