@@ -7,9 +7,9 @@ Shaders:
   - Stage: vert
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.Mesh.interior_stair_wl3ieamdw
   - Stage: rchit
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.Mesh.interior_stair_wl3ieamdw
 Textures:
   - Name: albedo
     Value: [Texture2D, interior_stair_wl3ieamdw/wl3ieamdw_4K_Albedo.jpg]

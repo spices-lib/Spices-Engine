@@ -20,7 +20,7 @@
 */
 struct MaterialParameter
 {
-    uint     ALBEDO;
+    uint     albedo;
     uint64_t address;
 } materialParam;
 
@@ -86,7 +86,7 @@ vec2 SampleSphericalMap(vec3 v)
 void main()
 {
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
-    outColor = texture(BindLessTextureBuffer[materialParam.ALBEDO], uv);
+    outColor = texture(BindLessTextureBuffer[materialParam.albedo], uv);
     outPosition = vec4(fragInput.worldPosition, 1.0f);
     outID = push.entityID;
 }

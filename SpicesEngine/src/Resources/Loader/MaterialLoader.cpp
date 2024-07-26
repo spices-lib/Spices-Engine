@@ -142,7 +142,7 @@ namespace Spices {
 		{
 			for (auto& texture : textures)
 			{
-				outMaterial->m_TextureParams[texture["Name"].as<std::string>()] = texture["Value"].as<TextureParam>();
+				outMaterial->m_TextureParams.push_back(texture["Name"].as<std::string>(), texture["Value"].as<TextureParam>());
 			}
 		}
 

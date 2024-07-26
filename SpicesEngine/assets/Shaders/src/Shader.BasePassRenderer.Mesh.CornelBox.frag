@@ -1,6 +1,6 @@
 /**
-* @file Shader.BasePassRenderer.Mesh.Default.frag.
-* @brief This Shader Defines BasePass Renderer Mesh SubPass Default Fragment Shader Behaver.
+* @file Shader.BasePassRenderer.Mesh.interior_stair_wl3ieamdw.frag.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass interior_stair_wl3ieamdw Fragment Shader Behaver.
 * @author Spices.
 */
 
@@ -20,10 +20,6 @@
 */
 struct MaterialParameter
 {
-    uint     albedo;
-    uint     normal;
-    uint     roughness;
-    uint     metallic;
     uint64_t address;
 } materialParam;
 
@@ -79,7 +75,7 @@ layout(location = 5) out float outID;                   /* @brief ID Attachment.
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	PushConstantMesh push;                              /* @see PushConstantMesh. */
+    PushConstantMesh push;                              /* @see PushConstantMesh. */
 };
 
 /*****************************************************************************************/
@@ -89,13 +85,13 @@ layout(push_constant) uniform Push {
 void main()
 {
     ExplainMaterialParameter(push.materialParameterAddress);
-    
-    outAlbedo     = texture(BindLessTextureBuffer[materialParam.albedo], fragInput.texCoord);
-    outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
-    outRoughness  = texture(BindLessTextureBuffer[materialParam.roughness], fragInput.texCoord);
-    outMetallic   = texture(BindLessTextureBuffer[materialParam.metallic], fragInput.texCoord);
-    outPosition   = vec4(fragInput.position, 1.0f);
-    outID         = push.entityID;
+
+    outAlbedo = vec4(materialConstParam.albedo, 1.0f);
+    outNormal = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
+    outRoughness = vec4(materialConstParam.roughness);
+    outMetallic = vec4(materialConstParam.metallic);
+    outPosition = vec4(fragInput.position, 1.0f);
+    outID = push.entityID;
 }
 
 /*****************************************************************************************/

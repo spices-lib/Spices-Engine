@@ -27,12 +27,12 @@ struct MaterialParameter
 */
 struct MaterialConstantParameter
 {
-    vec3 albedo;
+    vec3  albedo;
     float roughness;
     float metallic;
-    int maxRayDepth;
-    int maxLightDepth;
-    int maxShadowDepth;
+    int   maxRayDepth;
+    int   maxLightDepth;
+    int   maxShadowDepth;
 } materialConstParam;
 
 /**

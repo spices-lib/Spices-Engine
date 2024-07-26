@@ -95,7 +95,7 @@ namespace Spices {
 		* @brief Get material texture parameters.
 		* @return Returns the material texture parameters.
 		*/
-		std::unordered_map<std::string, TextureParam>& GetTextureParams() { return m_TextureParams; }
+		scl::linked_unordered_map<std::string, TextureParam>& GetTextureParams() { return m_TextureParams; }
 
 		/**
 		* @brief Get material constant parameters.
@@ -158,7 +158,7 @@ namespace Spices {
 		* @brief Texture parameters.
 		* Key: parameter name, Value: parameter value.
 		*/
-		std::unordered_map<std::string, TextureParam> m_TextureParams;
+		scl::linked_unordered_map<std::string, TextureParam> m_TextureParams;
 
 		/**
 		* @brief Constant parameters.

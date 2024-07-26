@@ -1,6 +1,6 @@
 /**
-* @file Shader.RayTracingRenderer.RayTracing.Default.rchit.
-* @brief This Shader Defines RayTracing Renderer RayTracing SubPass Default Ray Closest Hit Shader Behaver.
+* @file Shader.RayTracingRenderer.RayTracing.interior_stair_wl3ieamdw.rchit.
+* @brief This Shader Defines RayTracing Renderer RayTracing SubPass interior_stair_wl3ieamdw Ray Closest Hit Shader Behaver.
 * @author Spices.
 */
 
@@ -18,6 +18,10 @@
 */
 struct MaterialParameter
 {
+    uint     albedo;
+    uint     normal;
+    uint     roughness;
+    uint     metallic;
     uint64_t address;          /* @brief Address of Constant Parameter Buffer. */
 } materialParam;
 
@@ -45,14 +49,33 @@ struct MaterialConstantParameter
 /******************************************Functions**************************************/
 
 void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
-{  
-    attributes.albedo          = materialConstParam.albedo;
+{
+    /*if(pi.normal.z > 0.999f)
+    {
+        attributes.albedo      = vec3(1.0f, 0.0f, 0.0f);
+    }
+    else if(pi.normal.z < -0.999f)
+    {
+        attributes.albedo      = vec3(0.0f, 1.0f, 0.0f);
+    }
+    else
+    {
+        attributes.albedo      = materialConstParam.albedo;
+    }
     attributes.roughness       = materialConstParam.roughness;
     attributes.metallic        = materialConstParam.metallic;
     attributes.emissive        = vec3(0.0f);
     attributes.maxRayDepth     = materialConstParam.maxRayDepth;
     attributes.maxLightDepth   = materialConstParam.maxLightDepth;
-    attributes.maxShadowDepth  = materialConstParam.maxShadowDepth;
+    attributes.maxShadowDepth  = materialConstParam.maxShadowDepth;*/
+    
+    attributes.albedo          = vec3(0.0f);
+    attributes.roughness       = 0.0f;
+    attributes.metallic        = 1.0f;
+    attributes.emissive        = vec3(0.0f);
+    attributes.maxRayDepth     = 6;
+    attributes.maxLightDepth   = 3;
+    attributes.maxShadowDepth  = 3;
 }
 
 /*****************************************************************************************/

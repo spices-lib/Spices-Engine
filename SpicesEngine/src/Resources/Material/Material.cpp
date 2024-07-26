@@ -83,7 +83,8 @@ namespace Spices {
 		/**
 		* @brief Return if not valid textureParameter or constantParameter.
 		*/
-		uint64_t size = m_TextureParams.size() * sizeof(unsigned int) + m_ConstantParams.size() == 0 ? 0 : sizeof(uint64_t);
+		uint64_t size = m_TextureParams.size() * sizeof(unsigned int);
+		size += m_ConstantParams.size() == 0 ? 0 : sizeof(uint64_t);
 		if (size == 0)
 		{
 			std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
@@ -117,18 +118,16 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("BuildMaterial::Registry texture");
 
 			int tindex = 0;
-			for (auto& pair : m_TextureParams)
-			{
-				TextureParam& tp = pair.second;
+			m_TextureParams.for_each([&](const std::string& k, TextureParam& v) {
 
 				/**
 				* @brief Only work with Texture2D now.
 				* @todo more type support, reflection.
 				*/
-				if (tp.textureType == "Texture2D")
+				if (v.textureType == "Texture2D")
 				{
-					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(tp.texturePath);
-					tp.index = BindLessTextureManager::Registry(tp.texturePath);
+					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath);
+					v.index = BindLessTextureManager::Registry(v.texturePath);
 
 					auto descriptorSet = DescriptorSetManager::Registy("PreRenderer", BINDLESSTEXTURESET);
 
@@ -142,14 +141,15 @@ namespace Spices {
 					write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 					write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
 					write.descriptorCount      = 1;
-					write.dstArrayElement      = tp.index;
+					write.dstArrayElement      = v.index;
 
 					/**
 					* @brief Update DescriptorSet.
 					*/
 					vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
 
-					m_MaterialParameterBuffer->WriteToBuffer(&tp.index, sizeof(unsigned int), tindex * sizeof(unsigned int));
+					m_MaterialParameterBuffer->WriteToBuffer(&v.index, sizeof(unsigned int), tindex * sizeof(unsigned int));
+					m_MaterialParameterBuffer->Flush();
 				}
 
 				/**
@@ -161,13 +161,12 @@ namespace Spices {
 				}
 
 				tindex++;
-			}
+				return false;
+			});
 		}
 
 		if (m_ConstantParams.size() == 0)
 		{
-			m_MaterialParameterBuffer->Flush();
-
 			std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
 			auto renderer = RendererManager::GetRenderer(sv[0]);
 			renderer->RegistryMaterial(m_MaterialPath, sv[1]);

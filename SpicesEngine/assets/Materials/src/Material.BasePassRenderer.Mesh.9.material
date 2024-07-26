@@ -7,7 +7,7 @@ Shaders:
   - Stage: vert
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.Mesh.Sphere
   - Stage: rchit
     Path: BasePassRenderer.Mesh.Default
 Parameters:

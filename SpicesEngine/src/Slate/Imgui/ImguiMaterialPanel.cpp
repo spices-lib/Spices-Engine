@@ -173,19 +173,20 @@ namespace Spices {
                 SPICES_PROFILE_ZONEN("ImguiMaterialPanel::TextureParameter");
 
                 DrawParameter("Texture", [&](){
-                    for(auto& pair : material->GetTextureParams())
-                    {
-                        ImGuiH::DrawPropertyItem(pair.first, columeWidth, [&](){
+                    material->GetTextureParams().for_each([&](const auto& k, const auto& v) {
+  
+                        ImGuiH::DrawPropertyItem(k, columeWidth, [&](){
 
                             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                             char buffer[128] = {};
-                            ImGui::InputTextWithHint("##", pair.second.texturePath.c_str(), buffer, sizeof(buffer));
+                            ImGui::InputTextWithHint("##", v.texturePath.c_str(), buffer, sizeof(buffer));
                             ImGui::PopItemWidth();
 
                             ImGui::SameLine();
                             ImGuiH::DrawResetIcon(false);
                         });
-                    }
+                        return false;
+                    });
                 });
             }
 

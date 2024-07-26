@@ -44,7 +44,7 @@ void main()
         //prd.hitValue   = vec3(1.0f);
     }
     vec2 uv = SampleSphericalMap(normalize(prd.rayDirection));
-    prd.hitValue      = texture(BindLessTextureBuffer[10], uv).xyz;
+    prd.hitValue      = texture(samplers, uv).xyz;
     prd.rayDepth      = 100;                  // Ending trace
     prd.maxRayDepth   = 0;
     prd.entityID      = push.entityID;
