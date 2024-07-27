@@ -264,10 +264,14 @@ namespace Spices {
 
 		/**
 		* @brief Create the feature chain.
-		*/ 
+		*/
+		VkPhysicalDeviceMeshShaderFeaturesEXT                 meshShaderFeatures{};
+		meshShaderFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT;
+		meshShaderFeatures.pNext                            = nullptr; /*@brief Pass your other features through this chain.*/
+		
 		VkPhysicalDeviceShaderClockFeaturesKHR                shaderClockFeatures{};
 		shaderClockFeatures.sType                           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
-		shaderClockFeatures.pNext                           = nullptr;/*@brief Pass your other features through this chain.*/
+		shaderClockFeatures.pNext                           = &meshShaderFeatures;
 
 		VkPhysicalDeviceScalarBlockLayoutFeatures             layoutFeatures {};
 		layoutFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
@@ -329,6 +333,9 @@ namespace Spices {
 		ASSERT(descriptorIndexingFeatures.runtimeDescriptorArray)                             /* @brief Enable runtimeDescriptorArray Feature.                                  */
 
 		ASSERT(shaderClockFeatures.shaderSubgroupClock)                                       /* @brief Enable Shader clock time Feature.                                       */
+		
+		ASSERT(meshShaderFeatures.meshShader)                                                 /* @brief Enable Mesh Shader Feature.                                       */
+		ASSERT(meshShaderFeatures.taskShader)                                                 /* @brief Enable Task Shader Feature.                                       */
 
 		return true;
 	}
@@ -344,6 +351,9 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.  */
 		m_ExtensionProperties.push_back(VK_KHR_SHADER_CLOCK_EXTENSION_NAME);                     /* @brief Enable Shader Clock Extension.     */
 		m_ExtensionProperties.push_back(VK_KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME);         /* @brief Enable Shader Debug Print.         */
+		m_ExtensionProperties.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);                        /* @brief Enable Shader spirv1.4.         */
+		m_ExtensionProperties.push_back(VK_EXT_MESH_SHADER_EXTENSION_NAME);                         /* @brief Enable Mesh Shader, Task Shader.    */
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.      */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

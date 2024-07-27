@@ -60,7 +60,7 @@ void main()
     if (texColor.w < 0.01f) discard;
 
     outSceneColor = texColor;
-    outID = push.entityID;
+    outID = push.desc.entityID;
 }
 
 /*****************************************************************************************/

@@ -75,7 +75,7 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    ExplainMaterialParameter(push.materialParameterAddress);
+    ExplainMaterialParameter(push.desc.materialParameterAddress);
     
     if(fragInput.normal.z > 0.999)
     {
@@ -93,7 +93,7 @@ void main()
     outRoughness = vec4(materialParam.roughness);
     outMetallic = vec4(materialParam.metallic);
     outPosition = vec4(fragInput.position, 1.0f);
-    outID = push.entityID;
+    outID = push.desc.entityID;
 }
 
 /*****************************************************************************************/

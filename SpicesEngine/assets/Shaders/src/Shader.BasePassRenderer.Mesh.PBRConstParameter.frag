@@ -75,14 +75,14 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    ExplainMaterialParameter(push.materialParameterAddress);
+    ExplainMaterialParameter(push.desc.materialParameterAddress);
 
     outAlbedo = vec4(materialParam.albedo, 1.0f);
     outNormal = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
     outRoughness = vec4(materialParam.roughness);
     outMetallic = vec4(materialParam.metallic);
     outPosition = vec4(fragInput.position, 1.0f);
-    outID = push.entityID;
+    outID = push.desc.entityID;
 }
 
 /*****************************************************************************************/

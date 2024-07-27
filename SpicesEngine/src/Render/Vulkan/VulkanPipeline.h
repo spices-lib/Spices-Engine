@@ -209,8 +209,50 @@ namespace Spices {
 
 		/**
 		* @brief Destructor Function.
-		*
-		virtual ~VulkanComputePipeline() override = defau/lt;
+		*/
+		virtual ~VulkanComputePipeline() override = default;
+
+	private:
+
+		/**
+		* @brief Create the VkPipeline.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		virtual void CreateGraphicsPipeline(
+			const std::string&                                                pipelineName ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders      ,
+			const PipelineConfigInfo&                                         config
+		) override;
+	};
+
+	/**
+	* @brief This class is a wrapper of Compute Pipeline.
+	*/
+	class VulkanMeshPipeline : public VulkanPipeline
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		* Create VkPipeline.
+		* @param[in] vulkanState The global VulkanState.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		VulkanMeshPipeline(
+			VulkanState&                                                      vulkanState    ,
+			const std::string&                                                pipelineName   ,
+			const std::unordered_map<std::string, std::vector<std::string>>&  shaders        ,
+			const PipelineConfigInfo&                                         config
+		);
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~VulkanMeshPipeline() override = default;
 
 	private:
 

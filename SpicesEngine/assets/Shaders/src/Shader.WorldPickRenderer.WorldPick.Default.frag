@@ -49,7 +49,7 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    outPick = push.entityID;
+    outPick = push.desc.entityID;
 
     /*float alpha = texture(samplers, fragInput.texCoord).w;
     if (alpha < 0.01f) discard;

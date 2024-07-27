@@ -203,10 +203,12 @@ namespace Spices {
 
 				tlas.push_back(rayInst);
 
-				m_DescArray->descs[index].vertexAddress = v->GetVerticesBufferAddress();
-				m_DescArray->descs[index].indexAddress  = v->GetIndicesBufferAddress();
+				m_DescArray->descs[index].vertexAddress             = v->GetVerticesBufferAddress();
+				m_DescArray->descs[index].indexAddress              = v->GetIndicesBufferAddress();
 				m_DescArray->descs[index].materialParameterAddress  = v->GetMaterial()->GetMaterialParamsAddress();
-				m_DescArray->descs[index].entityID  = static_cast<int>(e);
+				m_DescArray->descs[index].verticesCount             = static_cast<int>(v->GetVertices().size());
+				m_DescArray->descs[index].indicesCount              = static_cast<int>(v->GetIndices().size());
+				m_DescArray->descs[index].entityID                  = static_cast<int>(e);
 				
 				index += 1;
 				return false;

@@ -171,7 +171,7 @@ namespace Spices {
 		{
 			if (pair.first == "rchit") continue;
 
-			for (int i = 0; i < pair.second.size(); i++)
+			for (size_t i = 0; i < pair.second.size(); i++)
 			{
 				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
 			}
@@ -181,7 +181,7 @@ namespace Spices {
 		* @brief Instance VkPipelineShaderStageCreateInfo.
 		*/
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-		for (int i = 0; i < shaderModules.size(); i++)
+		for (size_t i = 0; i < shaderModules.size(); i++)
 		{
 			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
 		}
@@ -192,7 +192,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkPipelineVertexInputStateCreateInfo.
 		*/
-		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+		VkPipelineVertexInputStateCreateInfo              vertexInputInfo{};
 		vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 		vertexInputInfo.vertexBindingDescriptionCount   = static_cast<uint32_t>(bindingDescriptions.size());
@@ -232,7 +232,7 @@ namespace Spices {
 	VulkanRayTracingPipeline::VulkanRayTracingPipeline(
 		VulkanState&                                                      vulkanState  ,
 		const std::string&                                                pipelineName ,
-		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
+		const std::unordered_map<std::string, std::vector<std::string>>&  shaders      ,
 		const PipelineConfigInfo&                                         config
 	)
 		: VulkanPipeline(vulkanState)
@@ -303,7 +303,7 @@ namespace Spices {
 			*/
 			if(pair.first == "rgen")
 			{
-				for(int i = 0; i < pair.second.size(); i++)
+				for(size_t i = 0; i < pair.second.size(); i++)
 		     	{
 		     		group.type                         = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
 		     		group.generalShader                = static_cast<uint32_t>(m_RTShaderGroups.size());
@@ -317,7 +317,7 @@ namespace Spices {
 			*/
 			else if(pair.first == "rmiss")
 			{
-				for(int i = 0; i < pair.second.size(); i++)
+				for(size_t i = 0; i < pair.second.size(); i++)
 				{
 					group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
 					group.generalShader               = static_cast<uint32_t>(m_RTShaderGroups.size());
@@ -331,7 +331,7 @@ namespace Spices {
 			*/
 			else if(pair.first == "rchit")
 			{
-				for(int i = 0; i < pair.second.size(); i++)
+				for(size_t i = 0; i < pair.second.size(); i++)
 				{
 					group.type                        = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
 					group.generalShader               = VK_SHADER_UNUSED_KHR;
@@ -408,7 +408,7 @@ namespace Spices {
 		* @brief Instance VkPipelineShaderStageCreateInfo.
 		*/
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-		for (int i = 0; i < shaderModules.size(); i++)
+		for (size_t i = 0; i < shaderModules.size(); i++)
 		{
 			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
 		}
@@ -429,4 +429,82 @@ namespace Spices {
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 
+	VulkanMeshPipeline::VulkanMeshPipeline(
+		VulkanState&                                                     vulkanState   ,
+		const std::string&                                               pipelineName  ,
+		const std::unordered_map<std::string, std::vector<std::string>>& shaders,
+		const PipelineConfigInfo&                                        config
+	)
+		:VulkanPipeline(vulkanState)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VulkanMeshPipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
+	}
+
+	void VulkanMeshPipeline::CreateGraphicsPipeline(
+		const std::string&                                               pipelineName  ,
+		const std::unordered_map<std::string, std::vector<std::string>>& shaders       ,
+		const PipelineConfigInfo&                                        config
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Receive PipelineLayout from parameter.
+		*/
+		m_PipelineLayout = config.pipelineLayout;
+
+		/**
+		* @brief Create the VulkanShaderModule.
+		*/
+		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		for (auto& pair : shaders)
+		{
+			if (pair.first == "rchit") continue;
+
+			for (size_t i = 0; i < pair.second.size(); i++)
+			{
+				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+			}
+		}
+
+		/**
+		* @brief Instance VkPipelineShaderStageCreateInfo.
+		*/
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (size_t i = 0; i < shaderModules.size(); i++)
+		{
+			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
+		}
+
+		/**
+		* @brief Instance a VkGraphicsPipelineCreateInfo.
+		*/
+		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
+		pipelineInfo.pStages                            = shaderStages.data();
+		pipelineInfo.pVertexInputState                  = nullptr;
+		pipelineInfo.pInputAssemblyState                = nullptr;
+		pipelineInfo.pViewportState                     = &config.viewportInfo;
+		pipelineInfo.pRasterizationState                = &config.rasterizationInfo;
+		pipelineInfo.pMultisampleState                  = &config.multisampleInfo;
+		pipelineInfo.pColorBlendState                   = &config.colorBlendInfo;
+		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
+		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
+
+		pipelineInfo.layout                             = m_PipelineLayout;
+		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.subpass                            = config.subpass;
+
+		pipelineInfo.basePipelineIndex                  = -1;
+		pipelineInfo.basePipelineHandle                 = VK_NULL_HANDLE;
+
+		/**
+		* @brief Create Pipeline.
+		*/
+		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
+	}
 }

@@ -88,6 +88,14 @@ namespace Spices {
 		void Draw(VkCommandBuffer& commandBuffer, F func);
 
 		/**
+		* @brief Call meshpacks MeshDraw().
+		* @param[in] commandBuffer Which command buffer we want submit command.
+		* @param[in] func the function pointer used for bind material parameters.
+		*/
+		template<typename F>
+		void DrawMeshTasks(VkCommandBuffer& commandBuffer, F func);
+		
+		/**
 		* @brief Get m_Pack.
 		* @return Returns m_Pack.
 		*/
@@ -127,6 +135,24 @@ namespace Spices {
 
 			v->OnBind(commandBuffer);
 			v->OnDraw(commandBuffer);
+
+			return false;
+		});
+	}
+
+	template <typename F>
+	void Mesh::DrawMeshTasks(VkCommandBuffer& commandBuffer, F func)
+	{
+		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+
+			/**
+			* @brief This function is used for bind material parameters.
+			* @param[in] k MeshPack index of array.
+			* @param[in] v MeshPack.
+			*/
+			func(k, v);
+			
+			v->OnDrawMeshTasks(commandBuffer);
 
 			return false;
 		});

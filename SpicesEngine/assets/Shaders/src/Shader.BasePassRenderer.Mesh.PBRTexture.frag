@@ -76,14 +76,14 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    ExplainMaterialParameter(push.materialParameterAddress);
+    ExplainMaterialParameter(push.desc.materialParameterAddress);
     
     outAlbedo     = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
     outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
     outRoughness  = texture(BindLessTextureBuffer[materialParam.roughnessTexture], fragInput.texCoord);
     outMetallic   = texture(BindLessTextureBuffer[materialParam.metallicTexture], fragInput.texCoord);
     outPosition   = vec4(fragInput.position, 1.0f);
-    outID         = push.entityID;
+    outID         = push.desc.entityID;
 }
 
 /*****************************************************************************************/

@@ -117,13 +117,18 @@ namespace Spices {
 		IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			skyboxComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
 
-				builder.BindPipeline(material->GetName());
+				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model = modelMatrix;
-					push.entityID = entityId;
+					push.model                          = modelMatrix;
+					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
+					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
+					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+					push.desc.verticesCount             = static_cast<int>(meshPack->GetVertices().size());
+					push.desc.indicesCount              = static_cast<int>(meshPack->GetIndices().size());
+					push.desc.entityID                  = entityId;
 				});
 			});
 
@@ -137,14 +142,18 @@ namespace Spices {
 		IterWorldComp<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			meshComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
 
-				builder.BindPipeline(material->GetName());
+				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model = modelMatrix;
-					push.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.entityID = entityId;
+					push.model                          = modelMatrix;
+					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
+					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
+					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+					push.desc.verticesCount             = static_cast<int>(meshPack->GetVertices().size());
+					push.desc.indicesCount              = static_cast<int>(meshPack->GetIndices().size());
+					push.desc.entityID                  = entityId;
 				});
 			});
 

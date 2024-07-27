@@ -125,16 +125,6 @@ struct Input
 	float frameTime;           /* @brief Duration time since last frame.     */
 };
 
-/**
-* @brief Push constant structure for the mesh basic
-*/
-struct PushConstantMesh
-{
-	mat4     model;                        /* @brief MeshPack ModelMatrix.              */
-	uint64_t materialParameterAddress;     /* Address of the Material Parameter buffer. */
-	int      entityID;                     /* @brief EntityId, cast from entt::entity.  */
-};
-
 /*****************************************************************************************/
 
 
@@ -173,6 +163,8 @@ struct MeshDesc
 	uint64_t vertexAddress;                   /* Address of the Vertex buffer.                  */
 	uint64_t indexAddress;                    /* Address of the index buffer.                   */
 	uint64_t materialParameterAddress;        /* Address of the Material Parameter buffer.      */
+	int      verticesCount;                   /* Vertices Count.                                */
+	int      indicesCount;                    /* Indices Count.                                 */
 	int      entityID;                        /* @brief EntityId, cast from entt::entity.       */
 };
 
@@ -192,6 +184,15 @@ struct HitPayLoad
 };
 
 /*****************************************************************************************/
+
+/**
+* @brief Push constant structure for the mesh basic
+*/
+struct PushConstantMesh
+{
+	mat4     model;                        /* @brief MeshPack ModelMatrix.              */
+	MeshDesc desc;                         /* MeshDescription of MeshPack.              */
+};
 
 #ifdef __cplusplus
 }

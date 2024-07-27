@@ -15,14 +15,20 @@ namespace Spices {
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
 	{
 		const VkBuffer buffers[] = { m_VertexBuffer->Get() };
-		const VkDeviceSize offests[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offests);
+		constexpr VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, m_IndicesBuffer->Get(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
 	void MeshPack::OnDraw(VkCommandBuffer& commandBuffer) const
 	{
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
+	}
+
+	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
+	{
+		static PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(vkGetInstanceProcAddr(VulkanRenderBackend::GetState().m_Instance, "vkCmdDrawMeshTasksEXT"));
+		vkCmdDrawMeshTasksEXT(commandBuffer, 1, 1, 1);
 	}
 
 	void MeshPack::SetMaterial(const std::string& materialPath)

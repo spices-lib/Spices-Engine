@@ -95,6 +95,12 @@ namespace Spices {
 		void OnDraw(VkCommandBuffer& commandBuffer) const;
 
 		/**
+		* @brief Draw Mesh Tasks.
+		* @param[in] commandBuffer Which command buffer we will submit commands.
+		*/
+		void OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const;
+		
+		/**
 		* @brief Get Vertices array.
 		* @return Returns the Vertices array.
 		*/

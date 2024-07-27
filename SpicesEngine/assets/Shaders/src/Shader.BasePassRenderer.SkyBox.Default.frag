@@ -88,7 +88,7 @@ void main()
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
     outColor = texture(BindLessTextureBuffer[materialParam.albedo], uv);
     outPosition = vec4(fragInput.worldPosition, 1.0f);
-    outID = push.entityID;
+    outID = push.desc.entityID;
 }
 
 /*****************************************************************************************/

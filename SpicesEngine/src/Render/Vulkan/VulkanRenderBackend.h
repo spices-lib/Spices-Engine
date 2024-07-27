@@ -62,13 +62,13 @@ namespace Spices {
 		* @brief Determin whether window is closed.
 		* @return Returns True if closed.
 		*/
-		bool isWindowClosed() { return glfwWindowShouldClose(m_VulkanState.m_Windows); };
+		bool isWindowClosed() { return glfwWindowShouldClose(m_VulkanState.m_Windows); }
 
 		/**
 		* @brief Wait for sync.
 		* Used in render stage.
 		*/
-		static void WaitIdle() { vkDeviceWaitIdle(m_VulkanState.m_Device); };
+		static void WaitIdle() { vkDeviceWaitIdle(m_VulkanState.m_Device); }
 
 		/**
 		* @brief Start record a new frame with vulkan render backend.
@@ -100,24 +100,24 @@ namespace Spices {
 		* @brief Get VulkanState in use.
 		* @return Returns the VulkanState in use.
 		*/
-		inline static VulkanState& GetState() { return m_VulkanState; };
+		inline static VulkanState& GetState() { return m_VulkanState; }
 
 		/**
 		* @brief Get DescriptorPool in use.
 		* @return Returns the shared pointer of VulkanDescriptorPool in use.
 		*/
-		inline static std::shared_ptr<VulkanDescriptorPool> GetDescriptorPool() { return m_VulkanDescriptorPool; };
+		inline static std::shared_ptr<VulkanDescriptorPool> GetDescriptorPool() { return m_VulkanDescriptorPool; }
 
 		/**
 		* @brief Get RendererResourcePool in use.
 		* @return Returns the shared pointer of RendererResourcePool in use.
 		*/
-		inline static std::shared_ptr<RendererResourcePool> GetRendererResourcePool() { return m_RendererResourcePool; };
+		inline static std::shared_ptr<RendererResourcePool> GetRendererResourcePool() { return m_RendererResourcePool; }
 
 	private:
 
 		/**
-		* @brief This funtion is called on window is resized over.
+		* @brief This function is called on window is resized over.
 		* @param[in] event WindowResizeOverEvent.
 		* @return Returns true if need block event.
 		* @attention: Minimize Window registy OnWindowResizeOver, OnSlateResize will not be registy.
@@ -125,14 +125,14 @@ namespace Spices {
 		bool OnWindowResizeOver(WindowResizeOverEvent& event);
 
 		/**
-		* @brief This funtion is called on viewport is resized.
+		* @brief This function is called on viewport is resized.
 		* @param[in] event SlateResizeEvent.
 		* @return Returns true if need block event.
 		*/
 		bool OnSlateResize(SlateResizeEvent& event);
 
 		/**
-		* @brief This funtion is called on worldmarkqueryer tick.
+		* @brief This function is called on worldmarkqueryer tick.
 		* @param[in] event WorldEvent.
 		* @return Returns true if need block event.
 		*/
