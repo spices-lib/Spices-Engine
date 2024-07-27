@@ -1,9 +1,11 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.vert  -o Shader.BasePassRenderer.Mesh.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRTexture.frag  -o Shader.BasePassRenderer.Mesh.PBRTexture.frag.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRConstParameter.frag -o Shader.BasePassRenderer.Mesh.PBRConstParameter.frag.spv       --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRConstParameter.CornellBox.frag -o Shader.BasePassRenderer.Mesh.PBRConstParameter.CornellBox.frag.spv       --target-env=vulkan1.3
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRTexture.rchit  -o Shader.BasePassRenderer.Mesh.PBRTexture.rchit.spv                 --target-env=vulkan1.3
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRConstParameter.rchit  -o Shader.BasePassRenderer.Mesh.PBRConstParameter.rchit.spv   --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.PBRConstParameter.CornellBox.rchit  -o Shader.BasePassRenderer.Mesh.PBRConstParameter.CornellBox.rchit.spv   --target-env=vulkan1.3
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.vert -o Shader.BasePassRenderer.SkyBox.Default.vert.spv
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.SkyBox.Default.frag -o Shader.BasePassRenderer.SkyBox.Default.frag.spv
