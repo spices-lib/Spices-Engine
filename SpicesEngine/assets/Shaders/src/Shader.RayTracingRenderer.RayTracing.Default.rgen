@@ -78,7 +78,7 @@ void main()
     vec3 curWeight          = vec3(1.0f);
     vec3 hitValue           = vec3(0.0f);
     int  maxRayDepth        = 0;
-    int  entityID           = 0;
+    uint  entityID          = 0;
     
     /**
     * @brief First Entry.

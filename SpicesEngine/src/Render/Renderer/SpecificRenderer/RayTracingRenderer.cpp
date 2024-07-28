@@ -174,7 +174,7 @@ namespace Spices {
 		*/
 		m_VulkanRayTracing->BuildBLAS(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR);
 	}
-
+ 
 	void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo, bool update)
 	{
 		SPICES_PROFILE_ZONE;
@@ -206,9 +206,9 @@ namespace Spices {
 				m_DescArray->descs[index].vertexAddress             = v->GetVerticesBufferAddress();
 				m_DescArray->descs[index].indexAddress              = v->GetIndicesBufferAddress();
 				m_DescArray->descs[index].materialParameterAddress  = v->GetMaterial()->GetMaterialParamsAddress();
-				m_DescArray->descs[index].verticesCount             = static_cast<int>(v->GetVertices().size());
-				m_DescArray->descs[index].indicesCount              = static_cast<int>(v->GetIndices().size());
-				m_DescArray->descs[index].entityID                  = static_cast<int>(e);
+				m_DescArray->descs[index].verticesCount             = static_cast<unsigned int>(v->GetVertices().size());
+				m_DescArray->descs[index].indicesCount              = static_cast<unsigned int>(v->GetIndices().size()) / 3;
+				m_DescArray->descs[index].entityID                  = static_cast<unsigned int>(e);
 				
 				index += 1;
 				return false;

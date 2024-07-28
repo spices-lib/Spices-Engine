@@ -28,7 +28,8 @@ namespace Spices {
 	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
 	{
 		static PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(vkGetInstanceProcAddr(VulkanRenderBackend::GetState().m_Instance, "vkCmdDrawMeshTasksEXT"));
-		vkCmdDrawMeshTasksEXT(commandBuffer, 1, 1, 1);
+		uint32_t groupCountX = glm::floor(m_Indices.size() / 3 / 21) + 1;
+		vkCmdDrawMeshTasksEXT(commandBuffer, groupCountX, 1, 1);
 	}
 
 	void MeshPack::SetMaterial(const std::string& materialPath)
@@ -211,13 +212,11 @@ namespace Spices {
 			}
 		}
 
-		for (uint32_t i = 0; i < m_Rows; i++)
+		for (uint32_t i = 0; i < m_Rows - 1; i++)
 		{
-			for (uint32_t j = 0; j < m_Columns; j++)
+			for (uint32_t j = 0; j < m_Columns - 1; j++)
 			{
-				if (i == (m_Rows - 1) || j == (m_Columns - 1)) continue;
-
-				const int vtIndex = i * m_Columns + j;
+				const uint32_t vtIndex = i * m_Columns + j;
 
 				m_Indices.push_back(vtIndex);
 				m_Indices.push_back(vtIndex + 1);
@@ -228,12 +227,12 @@ namespace Spices {
 				m_Indices.push_back(vtIndex);
 			}
 		}
-
+		
 		if (isCreateBuffer) CreateBuffer();
 	}
 
 	void BoxPack::OnCreatePack(bool isCreateBuffer)
-	{	
+	{
 		// Front
 		{
 			SquarePack pack(m_Rows, m_Columns);
@@ -334,13 +333,11 @@ namespace Spices {
 			}
 		}
 
-		for (uint32_t i = 0; i < m_Rows; i++)
+		for (uint32_t i = 0; i < m_Rows - 1; i++)
 		{
-			for (uint32_t j = 0; j < m_Columns; j++)
+			for (uint32_t j = 0; j < m_Columns - 1; j++)
 			{
-				if (i == (m_Rows - 1) || j == (m_Columns - 1)) continue;
-
-				const int vtIndex = i * m_Columns + j;
+				const uint32_t vtIndex = i * m_Columns + j;
 
 				m_Indices.push_back(vtIndex);
 				m_Indices.push_back(vtIndex + 1);

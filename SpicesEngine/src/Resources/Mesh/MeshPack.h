@@ -20,7 +20,7 @@
 #endif
 
 namespace Spices {
-
+	
 	/**
 	* @brief MeshPack Class.
 	* This class defines some basic behaves and variables.
@@ -180,12 +180,12 @@ namespace Spices {
 		/**
 		* @brief Vertices array.
 		*/
-		std::vector<Vertex> m_Vertices{};
+		std::vector<Vertex> m_Vertices;
 
 		/**
 		* @brief Indices array.
 		*/
-		std::vector<uint32_t> m_Indices{};
+		std::vector<uint32_t> m_Indices;
 
 		/**
 		* @brief Vertices buffer.

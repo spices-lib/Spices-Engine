@@ -4,7 +4,7 @@
 
 Material: BasePassRenderer.Mesh.1
 Shaders:
-  - Stage: vert
+  - Stage: mesh
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag
     Path: BasePassRenderer.Mesh.PBRConstParameter

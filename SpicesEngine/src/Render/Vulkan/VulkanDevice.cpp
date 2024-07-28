@@ -58,9 +58,25 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
-		VkPhysicalDeviceShaderClockFeaturesKHR                    shaderClockFeatures{};
+		VkPhysicalDeviceVulkan13Features                          vk13Frature{};
+		vk13Frature.sType                                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+		vk13Frature.pNext                                       = nullptr;
+														       
+		VkPhysicalDeviceFragmentShadingRateFeaturesKHR            fragShadingRateFeature {};
+		fragShadingRateFeature.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
+		fragShadingRateFeature.pNext                            = &vk13Frature;
+
+		VkPhysicalDeviceMultiviewFeatures                         multiviewFeatures {};
+		multiviewFeatures.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
+		multiviewFeatures.pNext                                 = &fragShadingRateFeature;
+
+		VkPhysicalDeviceMeshShaderFeaturesEXT                     meshShaderFeatures {};
+		meshShaderFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT;
+		meshShaderFeatures.pNext                                = &multiviewFeatures;
+														       
+		VkPhysicalDeviceShaderClockFeaturesKHR                    shaderClockFeatures {};
 		shaderClockFeatures.sType                               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
-		shaderClockFeatures.pNext                               = nullptr;/*@brief Pass your other features through this chain.*/
+		shaderClockFeatures.pNext                               = &meshShaderFeatures;
 															    
 		VkPhysicalDeviceScalarBlockLayoutFeatures                 layoutFeatures {};
 		layoutFeatures.sType                                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
@@ -249,12 +265,28 @@ namespace Spices {
 		/**
 		* @brief Get all RayTracing Properties supported.
 		*/
-		VkPhysicalDeviceProperties2 prop2{};
-		prop2.sType                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-		prop2.pNext                      = &m_RayTracingProperties;
-		prop2.properties                 = m_DeviceProperties;
+		VkPhysicalDeviceMeshShaderPropertiesEXT       meshShaderProperties{};
+		meshShaderProperties.sType                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT;
+		meshShaderProperties.pNext                  = &m_RayTracingProperties;
+		
+		VkPhysicalDeviceProperties2                   prop2 {};
+		prop2.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+		prop2.properties                            = m_DeviceProperties;
+		prop2.pNext                                 = &meshShaderProperties;
 		vkGetPhysicalDeviceProperties2(device, &prop2);
 
+		{
+			std::stringstream ss;
+			ss << "MeshShader : maxMeshOutputVertices = " << meshShaderProperties.maxMeshOutputVertices;
+			SPICES_CORE_INFO(ss.str());
+		}
+
+		{
+			std::stringstream ss;
+			ss << "MeshShader : maxMeshOutputPrimitives = " << meshShaderProperties.maxMeshOutputPrimitives;
+			SPICES_CORE_INFO(ss.str());
+		}
+		
 		return true;
 	}
 
@@ -265,9 +297,21 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
-		VkPhysicalDeviceMeshShaderFeaturesEXT                 meshShaderFeatures{};
+		VkPhysicalDeviceVulkan13Features                      vk13Frature{};
+		vk13Frature.sType                                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+		vk13Frature.pNext                                   = nullptr;
+
+		VkPhysicalDeviceFragmentShadingRateFeaturesKHR        fragShadingRateFeature {};
+		fragShadingRateFeature.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
+		fragShadingRateFeature.pNext                        = &vk13Frature;
+
+		VkPhysicalDeviceMultiviewFeatures                     multiviewFeatures {};
+		multiviewFeatures.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
+		multiviewFeatures.pNext                             = &fragShadingRateFeature;
+
+		VkPhysicalDeviceMeshShaderFeaturesEXT                 meshShaderFeatures {};
 		meshShaderFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT;
-		meshShaderFeatures.pNext                            = nullptr; /*@brief Pass your other features through this chain.*/
+		meshShaderFeatures.pNext                            = &multiviewFeatures;
 		
 		VkPhysicalDeviceShaderClockFeaturesKHR                shaderClockFeatures{};
 		shaderClockFeatures.sType                           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
@@ -336,6 +380,10 @@ namespace Spices {
 		
 		ASSERT(meshShaderFeatures.meshShader)                                                 /* @brief Enable Mesh Shader Feature.                                       */
 		ASSERT(meshShaderFeatures.taskShader)                                                 /* @brief Enable Task Shader Feature.                                       */
+
+		ASSERT(multiviewFeatures.multiview)                                                   /* @brief Enable Multiview Feature.                                         */
+		ASSERT(fragShadingRateFeature.pipelineFragmentShadingRate)                            /* @brief Enable pipelineFragmentShadingRate Feature.                       */
+		ASSERT(vk13Frature.maintenance4)                                                      /* @brief Enable maintenance4 Feature.                                      */
 
 		return true;
 	}

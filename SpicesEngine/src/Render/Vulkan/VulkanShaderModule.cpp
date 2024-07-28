@@ -97,6 +97,8 @@ namespace Spices {
 		else if(m_ShaderStage == "rmiss") shaderStages.stage    = VK_SHADER_STAGE_MISS_BIT_KHR;
 		else if(m_ShaderStage == "rchit") shaderStages.stage    = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
 		else if(m_ShaderStage == "comp")  shaderStages.stage    = VK_SHADER_STAGE_COMPUTE_BIT;
+		else if(m_ShaderStage == "mesh")  shaderStages.stage    = VK_SHADER_STAGE_MESH_BIT_EXT;
+		else if(m_ShaderStage == "task")  shaderStages.stage    = VK_SHADER_STAGE_TASK_BIT_EXT;
 		else
 		{
 			SPICES_CORE_ERROR("Not Supported Sahder Stage from material.");

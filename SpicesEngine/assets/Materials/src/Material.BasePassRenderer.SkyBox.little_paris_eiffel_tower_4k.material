@@ -4,8 +4,8 @@
 
 Material: BasePassRenderer.SkyBox.little_paris_eiffel_tower_4k
 Shaders:
-  - Stage: vert
-    Path: BasePassRenderer.SkyBox.Default
+  - Stage: mesh
+    Path: BasePassRenderer.Mesh.Default
   - Stage: frag
     Path: BasePassRenderer.SkyBox.Default
 Textures:

@@ -90,7 +90,7 @@ namespace Spices {
 		pipelineConfig.colorBlendInfo.attachmentCount  = static_cast<uint32_t>(subPass->GetColorBlend().size());
 		pipelineConfig.colorBlendInfo.pAttachments     = subPass->GetColorBlend().data();
 
-		return std::make_shared<VulkanPipeline>(
+		return std::make_shared<VulkanMeshPipeline>(
 			m_VulkanState,
 			material->GetName(),
 			material->GetShaderPath(),
@@ -126,8 +126,8 @@ namespace Spices {
 					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
 					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
 					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-					push.desc.verticesCount             = static_cast<int>(meshPack->GetVertices().size());
-					push.desc.indicesCount              = static_cast<int>(meshPack->GetIndices().size());
+					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
+					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
 					push.desc.entityID                  = entityId;
 				});
 			});
@@ -151,8 +151,8 @@ namespace Spices {
 					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
 					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
 					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-					push.desc.verticesCount             = static_cast<int>(meshPack->GetVertices().size());
-					push.desc.indicesCount              = static_cast<int>(meshPack->GetIndices().size());
+					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
+					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
 					push.desc.entityID                  = entityId;
 				});
 			});

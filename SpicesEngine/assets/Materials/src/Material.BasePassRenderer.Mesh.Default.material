@@ -9,8 +9,13 @@ Material: BasePassRenderer.Mesh.Default
 # @brief Material Shaders usages.
 Shaders:
   
-  # @brief Vertex Shader Stage Shader File Path.
-  - Stage: vert
+  # @brief Mesh Shader Stage Shader File Path.
+  - Stage: mesh
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: BasePassRenderer.Mesh.Default
+  
+  # @brief Task Shader Stage Shader File Path.
+  - Stage: task
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: BasePassRenderer.Mesh.Default
     

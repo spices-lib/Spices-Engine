@@ -56,7 +56,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices {
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices { 
     ivec3 i[]; 
 };
- 
+
 /**
 * @brief Acceleration Structure.
 */
@@ -99,7 +99,7 @@ Pixel UnPackPixel(in vec3 weight);
 * @brief Unpack Entity ID from MeshDescBuffer.
 * @return Returns the Entity ID.
 */
-int UnPackEntityID();
+uint UnPackEntityID();
         
 /**
 * @brief Init Material Attributes.
@@ -144,7 +144,7 @@ void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes);
 void main()
 {
     Pixel pi = UnPackPixel(attribs);                                                                   /* @brief Get interest Pixel data.           */
-    int entityID = UnPackEntityID();                                                                   /* @brief Get Entity ID.                     */
+    uint entityID = UnPackEntityID();                                                                  /* @brief Get Entity ID.                     */
     MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
     if(desc.materialParameterAddress != 0) ExplainMaterialParameter(desc.materialParameterAddress);    /* @brief Get material parameter data.       */
     MaterialAttributes materialAttributes = InitMaterialAttributes(pi);                                /* @brief Init material attributes.          */
@@ -250,7 +250,7 @@ Pixel UnPackPixel(in vec3 weight)
     return pi;
 }
 
-int UnPackEntityID()
+uint UnPackEntityID()
 {
     /**
     * @brief Access Buffer by GPU address.

@@ -163,9 +163,9 @@ struct MeshDesc
 	uint64_t vertexAddress;                   /* Address of the Vertex buffer.                  */
 	uint64_t indexAddress;                    /* Address of the index buffer.                   */
 	uint64_t materialParameterAddress;        /* Address of the Material Parameter buffer.      */
-	int      verticesCount;                   /* Vertices Count.                                */
-	int      indicesCount;                    /* Indices Count.                                 */
-	int      entityID;                        /* @brief EntityId, cast from entt::entity.       */
+	uint     verticesCount;                   /* Vertices Count.                                */
+	uint     indicesCount;                    /* Indices Count.                                 */
+	uint     entityID;                        /* @brief EntityId, cast from entt::entity.       */
 };
 
 /**
@@ -180,7 +180,7 @@ struct HitPayLoad
 	vec3 rayDirection;              /* @brief Next Ray Direction in World Space.                                 */
 	vec3 weight;                    /* @brief Current Fragment Color Weight.                                     */
 	int  maxRayDepth;               /* @brief Max Ray Tracing Depth, defined specific from material.             */
-	int  entityID;                  /* @brief Entity ID from Closeest Hit to Ray Gen Shader to RayID Image.      */
+	uint  entityID;                 /* @brief Entity ID from Closeest Hit to Ray Gen Shader to RayID Image.      */
 };
 
 /*****************************************************************************************/
