@@ -12,6 +12,7 @@
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderFunctionLibrary.glsl"
 
 /**
 * @brief Material Parameter.
@@ -44,6 +45,8 @@ layout(location = 0) in struct FragInput {
     vec3 color;                                        /* @brief Fragmet Color.  */
     vec2 texCoord;                                     /* @brief Fragmet UV.     */
 } fragInput;
+
+layout(location = 10) in flat uint seed;
 
 /*****************************************************************************************/
 

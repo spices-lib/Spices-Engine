@@ -29,8 +29,10 @@ layout(location = 0) out struct VertOut {
     vec3 position;                                
     vec3 normal;                                  
     vec3 color;                                   
-    vec2 texCoord;                                
+    vec2 texCoord;                         
 } vertOut[];
+
+layout(location = 10) out uint seed[];
 
 /*****************************************************************************************/
 
@@ -87,16 +89,19 @@ void main()
         vertOut[3 * i + 0].position = vec3(push.model * vec4(v0.position, 1.0f));
         vertOut[3 * i + 0].normal   = normalize(m3model * v0.normal);
         vertOut[3 * i + 0].color    = v0.color;
+        seed[3 * i + 0]     = id;
         vertOut[3 * i + 0].texCoord = v0.texCoord;
         
         vertOut[3 * i + 1].position = vec3(push.model * vec4(v1.position, 1.0f));
         vertOut[3 * i + 1].normal   = normalize(m3model * v1.normal);
         vertOut[3 * i + 1].color    = v1.color;
+        seed[3 * i + 1]     = id;
         vertOut[3 * i + 1].texCoord = v1.texCoord;
         
         vertOut[3 * i + 2].position = vec3(push.model * vec4(v2.position, 1.0f));
         vertOut[3 * i + 2].normal   = normalize(m3model * v2.normal);
         vertOut[3 * i + 2].color    = v2.color;
+        seed[3 * i + 2]     = id;
         vertOut[3 * i + 2].texCoord = v2.texCoord;
         
         nIndices++;
