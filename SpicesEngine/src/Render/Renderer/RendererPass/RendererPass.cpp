@@ -7,6 +7,8 @@ namespace Spices {
 
 	RendererPass::~RendererPass()
 	{
+		SPICES_PROFILE_ZONE;
+		
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			const String2 s2(m_PassName, name);
 			DescriptorSetManager::UnLoad(s2);
@@ -16,6 +18,8 @@ namespace Spices {
 
 	std::shared_ptr<RendererSubPass> RendererPass::AddSubPass(const std::string& subPassName, uint32_t index)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (m_SubPasses.has_key(subPassName))
 		{
 			std::stringstream ss;
@@ -37,6 +41,8 @@ namespace Spices {
 		const VkClearValue&            clearValue 
 	)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (m_AttachmentDescriptions.has_key(attachmentName))
 		{
 			uint32_t index = 0;
@@ -74,6 +80,8 @@ namespace Spices {
 		const VkImageView&             view
 	)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (m_AttachmentDescriptions.has_key(attachmentName))
 		{
 			uint32_t index = 0;
@@ -106,6 +114,8 @@ namespace Spices {
 
 	void RendererPass::BuildRendererPass()
 	{
+		SPICES_PROFILE_ZONE;
+		
 		std::vector<VkAttachmentDescription> attachmentDescription;
 		m_AttachmentDescriptions.for_each([&](const std::string& name, const VkAttachmentDescription& description) {
 			attachmentDescription.push_back(description);

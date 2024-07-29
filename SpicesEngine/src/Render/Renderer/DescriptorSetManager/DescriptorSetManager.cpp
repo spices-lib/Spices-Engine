@@ -1,3 +1,9 @@
+/**
+* @file DescriptorSetManager.cpp
+* @brief The DescriptorSetManager Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "DescriptorSetManager.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
@@ -7,8 +13,10 @@ namespace Spices {
 
 	DescriptorManagerContainer DescriptorSetManager::m_DescriptorSets;
 
-	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registy(const String2& name, uint32_t set)
+	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registry(const String2& name, uint32_t set)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
 			if (m_DescriptorSets[name].find(set) != m_DescriptorSets[name].end())
@@ -22,13 +30,17 @@ namespace Spices {
 		return m_DescriptorSets[name][set];
 	}
 
-	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registy(const std::string& name, uint32_t set)
+	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registry(const std::string& name, uint32_t set)
 	{
-		return Registy({ name , name }, set);
+		SPICES_PROFILE_ZONE;
+		
+		return Registry({ name , name }, set);
 	}
 
 	void DescriptorSetManager::UnLoad(const String2& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
 			if (m_DescriptorSets[name].find(BINDLESSTEXTURESET) == m_DescriptorSets[name].end())
@@ -46,11 +58,15 @@ namespace Spices {
 
 	void DescriptorSetManager::UnLoad(const std::string& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		UnLoad({ name , name });
 	}
 
 	void DescriptorSetManager::UnLoadForce(const String2& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
 			m_DescriptorSets.erase(name);
@@ -59,21 +75,29 @@ namespace Spices {
 
 	void DescriptorSetManager::UnLoadForce(const std::string& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		UnLoadForce({ name , name });
 	}
 
 	void DescriptorSetManager::UnLoadAll()
 	{
+		SPICES_PROFILE_ZONE;
+		
 		m_DescriptorSets.clear();
 	}
 
 	DescriptorSetInfo& DescriptorSetManager::GetByName(const String2& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		return m_DescriptorSets[name];
 	}
 
 	DescriptorSetInfo& DescriptorSetManager::GetByName(const std::string& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		const auto str = String2(name, name);
 		return GetByName(str);
 	}

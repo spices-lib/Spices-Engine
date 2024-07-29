@@ -18,7 +18,7 @@ namespace Spices {
 	)
 	{
 		SPICES_PROFILE_ZONE;
-
+		
 		m_ColorAttachmentReference.push_back(attachmentReference);
 		m_ColorBlends.push_back(colorBlend);
 	}

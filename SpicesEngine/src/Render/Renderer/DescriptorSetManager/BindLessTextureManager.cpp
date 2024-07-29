@@ -1,3 +1,9 @@
+/**
+* @file BindLessTextureManager.cpp
+* @brief The BindLessTextureManager Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "BindLessTextureManager.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
@@ -10,6 +16,8 @@ namespace Spices {
 
 	uint32_t BindLessTextureManager::Registry(const std::string& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		/**
 		* @brief Return ID if texture already registry.
 		*/
@@ -39,6 +47,8 @@ namespace Spices {
 
 	void BindLessTextureManager::UnRegistry(const std::string& name)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (m_TextureIDMap.find(name) != m_TextureIDMap.end())
 		{
 			m_TextureInfoMap.erase(m_TextureIDMap[name]);
