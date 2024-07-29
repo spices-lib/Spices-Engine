@@ -18,6 +18,8 @@ namespace Spices {
 		static std::shared_ptr<VulkanDescriptorSet> Registy(const std::string& name, uint32_t set);
 		static void UnLoad(const String2& name);
 		static void UnLoad(const std::string& name);
+		static void UnLoadForce(const String2& name);
+		static void UnLoadForce(const std::string& name);
 		static void UnLoadAll();
 
 		static DescriptorSetInfo& GetByName(const String2& name);

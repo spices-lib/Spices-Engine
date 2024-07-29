@@ -46,7 +46,7 @@ layout(location = 0) in struct FragInput {
     vec2 texCoord;                                     /* @brief Fragmet UV.     */
 } fragInput;
 
-layout(location = 10) in flat uint seed;
+layout(location = 4) in flat uint meshlutId;           /* @brief Meshlut ID.     */
 
 /*****************************************************************************************/
 
@@ -81,7 +81,16 @@ void main()
 {
     ExplainMaterialParameter(push.desc.materialParameterAddress);
     
-    outAlbedo     = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
+    //outAlbedo     = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
+
+    //outAlbedo = vec4(materialParam.albedo, 1.0f);
+
+    uint seed0 = meshlutId;
+    float rand0 = rnd(seed0);
+    float rand1 = rnd(seed0);
+    float rand2 = rnd(seed0);
+    outAlbedo = vec4(rand0, rand1, rand2, 1.0f);
+    
     outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
     outRoughness  = texture(BindLessTextureBuffer[materialParam.roughnessTexture], fragInput.texCoord);
     outMetallic   = texture(BindLessTextureBuffer[materialParam.metallicTexture], fragInput.texCoord);

@@ -49,6 +49,19 @@ namespace Spices {
 		UnLoad({ name , name });
 	}
 
+	void DescriptorSetManager::UnLoadForce(const String2& name)
+	{
+		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
+		{
+			m_DescriptorSets.erase(name);
+		}
+	}
+
+	void DescriptorSetManager::UnLoadForce(const std::string& name)
+	{
+		UnLoadForce({ name , name });
+	}
+
 	void DescriptorSetManager::UnLoadAll()
 	{
 		m_DescriptorSets.clear();

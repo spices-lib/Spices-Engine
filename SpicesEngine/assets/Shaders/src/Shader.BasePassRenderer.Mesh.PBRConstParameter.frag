@@ -45,7 +45,7 @@ layout(location = 0) in struct FragInput {
     vec2 texCoord;                                     /* @brief Fragmet UV.     */
 } fragInput;
 
-layout(location = 10) in flat uint seed;
+layout(location = 4) in flat uint meshlutId;           /* @brief Meshlut ID.     */
 
 /*****************************************************************************************/
 

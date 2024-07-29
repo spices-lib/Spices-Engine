@@ -116,7 +116,7 @@ namespace Spices {
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightComp.SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
 			plightComp.SetIntensity(20.0f);
-			//plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
+			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPosition({ -7.0f, 7.0f, 5.0f });
 		}
@@ -125,7 +125,7 @@ namespace Spices {
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightComp.SetColor(glm::vec3(1.0f, 0.0f, 1.0f));
 			plightComp.SetIntensity(20.0f);
-			//plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
+			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPosition({ -7.0f, 5.0f, 15.0f });
 		}
@@ -134,7 +134,7 @@ namespace Spices {
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightComp.SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
 			plightComp.SetIntensity(20.0f);
-			//plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
+			plightentity.AddComponent<SpriteComponent>("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPosition({ -7.0f, 5.0f, 25.0f });
 		}

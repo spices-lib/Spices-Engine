@@ -11,6 +11,19 @@
 #extension GL_GOOGLE_include_directive : enable    /* @brief Enable include Macro. */
 
 #include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+
+/**
+* @brief Material Parameter.
+* It should be the struct of all textures index and parameter buffer address.
+* One index per texture, One address per buffer.
+*/
+struct MaterialParameter
+{
+    uint  albedoTexture;
+} materialParam;
+
+#include "Header/ShaderBindlessMaterial.glsl"
 
 /*****************************************************************************************/
 
@@ -54,8 +67,9 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    //vec4 texColor = texture(samplers, fragInput.texCoord);
-    vec4 texColor = vec4(0.2f, 0.2f, 0.2f, 1.0f);
+    ExplainMaterialParameter(push.desc.materialParameterAddress);
+    
+    vec4 texColor = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
 
     if (texColor.w < 0.01f) discard;
 

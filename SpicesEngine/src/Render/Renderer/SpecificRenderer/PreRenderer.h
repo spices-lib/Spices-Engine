@@ -41,7 +41,7 @@ namespace Spices {
         /**
          * @brief Destructor Function.
          */
-        virtual ~PreRenderer() override = default;
+        virtual ~PreRenderer();
 
         /**
          * @brief The interface is inherited from Renderer.

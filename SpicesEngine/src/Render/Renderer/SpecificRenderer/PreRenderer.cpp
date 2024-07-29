@@ -24,6 +24,11 @@ namespace Spices {
 		.Build();
 	}
 
+	PreRenderer::~PreRenderer()
+	{
+		DescriptorSetManager::UnLoadForce(m_RendererName);
+	}
+
 	void PreRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
