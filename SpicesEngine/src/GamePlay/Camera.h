@@ -32,10 +32,10 @@ namespace Spices {
 	*/
 	struct PerspectiveParam
 	{
-		float fov = 45.0f;            /* @brief Use degree as well, While PerspectiveMatrix() turn it to radians for calculate. */
-		float nearPlane = 0.01f;
-		float farPlane = 1000.0f;
-		float aspectRatio = 1.777f;
+		float fov           = 45.0f;         /* @brief Use degree as well, While PerspectiveMatrix() turn it to radians for calculate. */
+		float nearPlane     = 0.01f;         /* @brief Near Plane of Camera.               */
+		float farPlane      = 1000.0f;       /* @brief Far Plane of Camera.                */
+		float aspectRatio   = 1.777f;        /* @brief Viewport Width / Height of Camera.  */
 	};
 
 	/**
@@ -43,12 +43,12 @@ namespace Spices {
 	*/
 	struct OrthographicParam
 	{
-		float left;
-		float right;
-		float top;
-		float bottom;
-		float nearPlane = 0.01f;
-		float farPlane = 1000.0f;
+		float left      = -10.0f;            /* @brief Left Plane of Camera.               */
+		float right     = 10.0f;             /* @brief Right Plane of Camera.              */
+		float top       = 10.0f;             /* @brief Top Plane of Camera.                */
+		float bottom    = -10.0f;            /* @brief Bottom Plane of Camera.             */
+		float nearPlane = 0.01f;             /* @brief Near Plane of Camera.               */
+		float farPlane  = 1000.0f;           /* @brief Far Plane of Camera.                */
 	};
 	
 	/**
@@ -77,7 +77,7 @@ namespace Spices {
 		* @param[in] farPlane FarPlane, usually infinity far.
 		* @param[in] aspectRatio AspectRatio, viewport width / viewport height.
 		*/
-		void SetPerspective(float fov, float nearPlane, float farPlane, float aspectRatio = 1.777);
+		void SetPerspective(float fov, float nearPlane, float farPlane, float aspectRatio = 1.777f);
 
 		/**
 		* @brief Set ProjectionMatrix by using perspective type with one param.

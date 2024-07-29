@@ -13,6 +13,8 @@ namespace Spices {
 
 	void Camera::SetPerspective(float fov, float nearPlane, float farPlane, float aspectRatio)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		m_ProjectionType = ProjectionType::Perspective;
 
 		m_PerspectiveParam.fov         = fov;
@@ -23,6 +25,8 @@ namespace Spices {
 
 	void Camera::SetPerspective(float aspectRatio)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		m_ProjectionType = ProjectionType::Perspective;
 		
 		SetPerspective(m_PerspectiveParam.fov, m_PerspectiveParam.nearPlane, m_PerspectiveParam.farPlane, aspectRatio);
@@ -30,6 +34,8 @@ namespace Spices {
 
 	void Camera::SetOrthographic(float left, float right, float top, float bottom, float nearPlane, float farPlane)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		m_ProjectionType = ProjectionType::Orthographic;
 
 		m_OrthographicParam.left        = left;
@@ -42,12 +48,16 @@ namespace Spices {
 
 	void Camera::ResetStableFrames()
 	{
+		SPICES_PROFILE_ZONE;
+		
 		if (FrameInfo::Get().m_RendererType == RendererType::Rasterization) return;
 		m_StableFrames = 0;
 	}
 
 	void Camera::CalculatePMatrix()
 	{
+		SPICES_PROFILE_ZONE;
+		
 		switch (m_ProjectionType)
 		{
 		case ProjectionType::Perspective:

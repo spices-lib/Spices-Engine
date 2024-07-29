@@ -101,7 +101,7 @@ namespace scl {
         size_t size() const { return object_.size(); }
 
         /**
-        * @brief Get item loction in blocks.
+        * @brief Get item location in blocks.
         * @param[in] name Item Name.
         * @return Returns item location.
         */

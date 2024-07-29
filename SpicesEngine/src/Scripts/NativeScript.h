@@ -7,17 +7,25 @@ namespace Spices {
 	class NativeScript
 	{
 	public:
-		NativeScript() {};
-		virtual ~NativeScript() {};
+		
+		/**
+		* @brief Constructor Function.
+		*/
+		NativeScript() = default;
 
 		/**
-		* @brief This interface defines the behaver on specific component tick every frame.
+		* @brief Destructor Function.
+		*/
+		virtual ~NativeScript() = default;
+
+		/**
+		* @brief This interface defines the behave on specific component tick every frame.
 		* @param[in] ts TimeStep.
 		*/
 		virtual void OnTick(TimeStep& ts) = 0;
 
 		/**
-		* @brief This interface defines the behaver on specific component event happened.
+		* @brief This interface defines the behave on specific component event happened.
 		* @param[in] e Event.
 		*/
 		virtual void OnEvent(Event& e) = 0;
@@ -30,16 +38,16 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		NativeScriptRegister() {};
+		NativeScriptRegister() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~NativeScriptRegister() {};
+		virtual ~NativeScriptRegister() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		NativeScriptRegister(const NativeScriptRegister&) = delete;
 
@@ -50,8 +58,8 @@ namespace Spices {
 		NativeScriptRegister& operator=(const NativeScriptRegister&) = delete;
 
 		/**
-		* @brief This function regist slate instance.
-		* @param[in] T Slate specific type.
+		* @brief This function registry slate instance.
+		* @tparam T Slate specific type.
 		*/
 		template<typename T, typename ... Args>
 		void Register(Args&& ... args);

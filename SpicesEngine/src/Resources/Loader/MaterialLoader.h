@@ -49,9 +49,9 @@ namespace Spices {
 		/**
 		* @brief Public called API, it is entrance.
 		* @param[in] fileName Material name.
-		* @param[in out] outMaterial Material pointer, only pass this to it.
+		* @param[in,out] outMaterial Material pointer, only pass this to it.
 		* Feel free for using row pointer here, it's very safe, for this API only called during Material.
-		* @return Returns true if load data succssfully.
+		* @return Returns true if load data successfully.
 		*/
 		static bool Load(const std::string& fileName, Material* outMaterial);
 
@@ -60,16 +60,16 @@ namespace Spices {
 		/**
 		* @brief Load data from a .material file.
 		* @param[in] filepath Material path in disk.
-		* @param[in out] outMaterial Material pointer, only pass this to it.
-		* @return Returns true if load data succssfully.
+		* @param[in,out] outMaterial Material pointer, only pass this to it.
+		* @return Returns true if load data successfully.
 		*/
 		static bool LoadFromMaterial(const std::string& filepath, Material* outMaterial);
 
 		/**
 		* @brief Load data from a .sasset file.
 		* @param[in] filepath Material path in disk.
-		* @param[in out] outMaterial Material pointer, only pass this to it.
-		* @return Returns true if load data succssfully.
+		* @param[in,out] outMaterial Material pointer, only pass this to it.
+		* @return Returns true if load data successfully.
 		* @todo Finish it.
 		*/
 		static bool LoadFromSASSET(const std::string& filepath, Material* outMaterial);
@@ -78,7 +78,7 @@ namespace Spices {
 
 		/**
 		* @brief Test function.
-		* @return Returns true if load data succssfully.
+		* @return Returns true if load data successfully.
 		* @todo Move to Test project.
 		*/
 		static bool SaveDefaultMaterial();

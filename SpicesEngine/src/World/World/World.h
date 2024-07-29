@@ -61,18 +61,18 @@ namespace Spices {
 		virtual ~World() = default;
 
 		/**
-		* @brief This interface define the specific world behaves before on actived.
+		* @brief This interface define the specific world behaves before on activated.
 		*/
 		virtual void OnPreActivate() = 0;
 
 		/**
-		* @brief This interface define the specific world behaves on actived.
+		* @brief This interface define the specific world behaves on activated.
 		* @param[in] ts TimeStep.
 		*/
 		virtual void OnActivate(TimeStep& ts) = 0;
 
 		/**
-		* @brief This interface defines the specific world behaves after on actived.
+		* @brief This interface defines the specific world behaves after on activated.
 		*/
 		virtual void OnDeactivate() = 0;
 

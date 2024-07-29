@@ -1,3 +1,9 @@
+/**
+* @file UUID.cpp.
+* @brief The UUID Class Implementation.
+* @author The Cherno.
+*/
+
 #include "Pchheader.h"
 #include "UUID.h"
 

@@ -631,7 +631,7 @@ namespace Spices {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
 
 		return *this;
@@ -671,7 +671,7 @@ namespace Spices {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, stageFlags, static_cast<uint32_t>(textureNames.size()));
 
 		return *this;
@@ -698,7 +698,7 @@ namespace Spices {
 			m_ImageInfos[set][binding].push_back(*info);
 		}
 
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags,  static_cast<uint32_t>(textureNames.size()));
 
 		return *this;
@@ -725,7 +725,7 @@ namespace Spices {
 			m_ImageInfos[set][binding].push_back(*info);
 		}
 
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, stageFlags, static_cast<uint32_t>(inputAttachmentNames.size()));
 
 		return *this;
@@ -739,7 +739,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, stageFlags, 1);
 
 		return *this;
