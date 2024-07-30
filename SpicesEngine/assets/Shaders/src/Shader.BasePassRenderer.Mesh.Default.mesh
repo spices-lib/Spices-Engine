@@ -90,8 +90,7 @@ void main()
 	[[unroll]]
     for(uint i = 0; i < meshlut.nPrimitives; i++)
     {
-        ivec3 index = indices.i[meshlut.primitiveIndex + i];
-        index -= ivec3(meshlut.primitiveIndex);
+        ivec3 index = indices.i[meshlut.primitiveIndex + i] - ivec3(meshlut.vertexIndex);
         gl_PrimitiveTriangleIndicesEXT[i] =  uvec3(index.x, index.y, index.z);
     }
     

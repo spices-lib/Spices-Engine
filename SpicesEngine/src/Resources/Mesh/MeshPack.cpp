@@ -141,7 +141,6 @@ namespace Spices {
 				VulkanRenderBackend::GetState(),
 				bufferSize,
 				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     |
-				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT                                   |
 				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
 				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -174,7 +173,6 @@ namespace Spices {
 				bufferSize, 
 				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     | 
 				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT                                    |
-				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT                                   |
 				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
 				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -207,7 +205,6 @@ namespace Spices {
 				bufferSize, 
 				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     | 
 				VK_BUFFER_USAGE_INDEX_BUFFER_BIT                                     |
-				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT                                   |
 				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
 				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -234,11 +231,12 @@ namespace Spices {
 		int primitiveIndex = 0;
 		while (!fullIndices.empty())
 		{
+			SpicesShader::Meshlut        meshlut;
+			meshlut.vertexIndex       = vertexIndex;
+			meshlut.primitiveIndex    = primitiveIndex;
+
 			scl::linked_unordered_map<uint32_t, uint32_t> localVertices;
 			std::vector<uint32_t> localIndices;
-
-			const int currentVertexIndex = vertexIndex;
-			const int currentPrimitiveIndex = primitiveIndex;
 
 			while (localVertices.size() < MESHLUTNVERTICES - 2 && localIndices.size() < MESHLUTNPRIMITIVES * 3 - 2 && !fullIndices.empty())
 			{
@@ -251,17 +249,14 @@ namespace Spices {
 				}
 			}
 
-			vertexIndex += localVertices.size();
-			primitiveIndex += localIndices.size() / 3;
-
 			assert(localVertices.size() <= MESHLUTNVERTICES);
 			assert(localIndices.size() <= MESHLUTNPRIMITIVES * 3);
 
-			SpicesShader::Meshlut        meshlut;
-			meshlut.vertexIndex        = currentVertexIndex;
-			meshlut.primitiveIndex     = currentPrimitiveIndex;
-			meshlut.nVertices          = localVertices.size();
-			meshlut.nPrimitives        = localIndices.size() / 3;
+			meshlut.nVertices   = localVertices.size();
+			meshlut.nPrimitives = localIndices.size() / 3;
+
+			vertexIndex        += meshlut.nVertices;
+			primitiveIndex     += meshlut.nPrimitives;
 
 			m_Meshluts.push_back(std::move(meshlut));
 
@@ -272,7 +267,7 @@ namespace Spices {
 
 			for (int i = 0; i < localIndices.size(); i++)
 			{
-				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + currentPrimitiveIndex * 3);
+				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + meshlut.vertexIndex);
 			}
 		}
 	}

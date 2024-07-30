@@ -206,7 +206,7 @@ namespace Spices {
 				m_DescArray->descs[index].vertexAddress             = v->GetVerticesBufferAddress();
 				m_DescArray->descs[index].indexAddress              = v->GetIndicesBufferAddress();
 				m_DescArray->descs[index].materialParameterAddress  = v->GetMaterial()->GetMaterialParamsAddress();
-				m_DescArray->descs[index].meshlutAddress            = v->GetMeshlutsBufferAddress();
+				//m_DescArray->descs[index].meshlutAddress            = v->GetMeshlutsBufferAddress();
 				m_DescArray->descs[index].verticesCount             = static_cast<unsigned int>(v->GetVertices().size());
 				m_DescArray->descs[index].indicesCount              = static_cast<unsigned int>(v->GetIndices().size()) / 3;
 				m_DescArray->descs[index].entityID                  = static_cast<unsigned int>(e);
