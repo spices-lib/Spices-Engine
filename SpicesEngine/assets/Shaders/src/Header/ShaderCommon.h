@@ -157,10 +157,15 @@ struct PointLight
 
 struct Meshlut
 {
-	uint vertexIndex;                         /* First index of Vertices this meshlut.   */
-	uint primitiveIndex;                      /* First index of primitives this meshlut. */
+	uint vertexOffset;                        /* Offset of Vertices this meshlut.        */
+	uint primitiveOffset;                     /* Offset of primitives this meshlut.      */
 	uint nVertices;                           /* Vertices Count this meshlut.( <= 64)    */
 	uint nPrimitives;                         /* Primitives Count this meshlut.( <= 126) */
+	vec3 boundCenter;                         /* Bounding Sphere Center in local world.  */
+	float boundRadius;                        /* Bounding Sphere radius.                 */
+	vec3 coneApex;
+	vec3 coneAxis;
+	float coneCutoff;
 };
 
 struct MeshDesc

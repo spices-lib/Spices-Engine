@@ -65,7 +65,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
 void main()
 {
     uint id = gl_WorkGroupID.x;
-    
+
     Vertices vertices   = Vertices(push.desc.vertexAddress);
     Indices indices     = Indices(push.desc.indexAddress);
     Meshlut meshlut     = Meshluts(push.desc.meshlutAddress).i[id];
@@ -73,10 +73,20 @@ void main()
     mat4 mvp = view.projection * view.view * push.model;
     mat3 m3model = mat3(transpose(inverse(push.model)));
 
+    {
+        vec4 origin             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        vec3 dis = meshlut.boundCenter - origin.xyz;
+        if(length(dis) > 25.0f)
+        {
+            SetMeshOutputsEXT(0, 0);
+            return;
+        }
+    }
+
     [[unroll]]
     for(uint i = 0; i < meshlut.nVertices; i++)
     {
-        Vertex vt = vertices.v[meshlut.vertexIndex + i];
+        Vertex vt = vertices.v[meshlut.vertexOffset + i];
 
         gl_MeshVerticesEXT[i].gl_Position = mvp * vec4(vt.position, 1.0f);
 
@@ -90,7 +100,7 @@ void main()
 	[[unroll]]
     for(uint i = 0; i < meshlut.nPrimitives; i++)
     {
-        ivec3 index = indices.i[meshlut.primitiveIndex + i] - ivec3(meshlut.vertexIndex);
+        ivec3 index = indices.i[meshlut.primitiveOffset + i] - ivec3(meshlut.vertexOffset);
         gl_PrimitiveTriangleIndicesEXT[i] =  uvec3(index.x, index.y, index.z);
     }
     

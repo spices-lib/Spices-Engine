@@ -232,8 +232,8 @@ namespace Spices {
 		while (!fullIndices.empty())
 		{
 			SpicesShader::Meshlut        meshlut;
-			meshlut.vertexIndex       = vertexIndex;
-			meshlut.primitiveIndex    = primitiveIndex;
+			meshlut.vertexOffset = vertexIndex;
+			meshlut.primitiveOffset = primitiveIndex;
 
 			scl::linked_unordered_map<uint32_t, uint32_t> localVertices;
 			std::vector<uint32_t> localIndices;
@@ -260,15 +260,28 @@ namespace Spices {
 
 			m_Meshluts.push_back(std::move(meshlut));
 
+			glm::vec3 center = glm::vec3(0.0f);
 			localVertices.for_each([&](const uint32_t& k, const uint32_t& v) {
 				m_Vertices.push_back(vertices[k]);
+				center += vertices[k].position;
 				return false;
 			});
+			center /= static_cast<float>(meshlut.nVertices);
 
 			for (int i = 0; i < localIndices.size(); i++)
 			{
-				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + meshlut.vertexIndex);
+				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + meshlut.vertexOffset);
 			}
+
+			float radius = 0.0f;
+			localVertices.for_each([&](const uint32_t& k, const uint32_t& v){
+				float l = glm::distance(vertices[k].position, center);
+				radius = glm::max(radius, l);
+				return false;
+			});
+
+			meshlut.boundCenter = center;
+			meshlut.boundRadius = radius;
 		}
 	}
 

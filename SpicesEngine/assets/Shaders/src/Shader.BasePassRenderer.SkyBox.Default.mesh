@@ -26,10 +26,8 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout(triangles, max_vertices = MESHLUTNVERTICES, max_primitives = MESHLUTNPRIMITIVES) out;
 
 layout(location = 0) out struct VertOut {
-    vec3 position;                                
-    vec3 normal;                                  
-    vec3 color;                                   
-    vec2 texCoord;
+    vec3 localPosition;
+    vec3 worldPosition;
 } vertOut[];
 
 layout(location = 4) out uint meshlutId[];
@@ -65,7 +63,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
 void main()
 {
     uint id = gl_WorkGroupID.x;
-    
+
     Vertices vertices   = Vertices(push.desc.vertexAddress);
     Indices indices     = Indices(push.desc.indexAddress);
     Meshlut meshlut     = Meshluts(push.desc.meshlutAddress).i[id];
@@ -76,21 +74,19 @@ void main()
     [[unroll]]
     for(uint i = 0; i < meshlut.nVertices; i++)
     {
-        Vertex vt = vertices.v[meshlut.vertexIndex + i];
+        Vertex vt = vertices.v[meshlut.vertexOffset + i];
 
         gl_MeshVerticesEXT[i].gl_Position = mvp * vec4(vt.position, 1.0f);
 
-        vertOut[i].position = vec3(push.model * vec4(vt.position, 1.0f));
-        vertOut[i].normal   = normalize(m3model * vt.normal);
-        vertOut[i].color    = vt.color;
-        vertOut[i].texCoord = vt.texCoord;
+        vertOut[i].localPosition = vt.position;
+        vertOut[i].worldPosition = vec3(push.model * vec4(vt.position, 1.0f));
         meshlutId[i]        = id;
     }
 
 	[[unroll]]
     for(uint i = 0; i < meshlut.nPrimitives; i++)
     {
-        ivec3 index = indices.i[meshlut.primitiveIndex + i] - ivec3(meshlut.vertexIndex);
+        ivec3 index = indices.i[meshlut.primitiveOffset + i] - ivec3(meshlut.vertexOffset);
         gl_PrimitiveTriangleIndicesEXT[i] =  uvec3(index.x, index.y, index.z);
     }
     
