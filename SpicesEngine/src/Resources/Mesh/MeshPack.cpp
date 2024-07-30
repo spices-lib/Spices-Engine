@@ -14,6 +14,8 @@ namespace Spices {
 	
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
 	{
+		SPICES_PROFILE_ZONE;
+
 		const VkBuffer buffers[] = { m_VertexBuffer->Get() };
 		constexpr VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
@@ -22,24 +24,31 @@ namespace Spices {
 
 	void MeshPack::OnDraw(VkCommandBuffer& commandBuffer) const
 	{
+		SPICES_PROFILE_ZONE;
+
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
 	}
 
 	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
 	{
+		SPICES_PROFILE_ZONE;
+
 		static PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(vkGetInstanceProcAddr(VulkanRenderBackend::GetState().m_Instance, "vkCmdDrawMeshTasksEXT"));
-		uint32_t groupCountX = glm::floor(m_Indices.size() / 3 / 21) + 1;
-		vkCmdDrawMeshTasksEXT(commandBuffer, groupCountX, 1, 1);
+		vkCmdDrawMeshTasksEXT(commandBuffer, m_Meshluts.size(), 1, 1);
 	}
 
 	void MeshPack::SetMaterial(const std::string& materialPath)
 	{
+		SPICES_PROFILE_ZONE;
+
 		m_Material = ResourcePool<Material>::Load<Material>(materialPath);
 		m_Material->BuildMaterial();
 	}
 
 	uint32_t MeshPack::GetHitShaderHandle() const
 	{
+		SPICES_PROFILE_ZONE;
+
 		if(!m_HitShaderHandle.has_value())
 		{
 			std::stringstream ss;
@@ -53,6 +62,8 @@ namespace Spices {
 
 	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR() const
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief BLAS builder requires raw device addresses.
 		*/
@@ -105,15 +116,51 @@ namespace Spices {
 
 	void MeshPack::CreateBuffer()
 	{
-		// vertex buffer
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Build meshlut buffer.
+		*/
+		{
+			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlut) * m_Meshluts.size();
+
+			VulkanBuffer stagingBuffer(
+				VulkanRenderBackend::GetState(),
+				bufferSize,
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
+
+			void* data;
+			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory(), 0, bufferSize, 0, &data);
+			memcpy(data, m_Meshluts.data(), (size_t)bufferSize);
+			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
+
+			m_MeshlutsBuffer = std::make_shared<VulkanBuffer>(
+				VulkanRenderBackend::GetState(),
+				bufferSize,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     |
+				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT                                   |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
+				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
+
+			m_MeshlutsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshlutsBuffer->Get(), bufferSize);
+		}
+
+		/*
+		* @brief Build vertex buffer
+		*/
 		{
 			VkDeviceSize bufferSize = sizeof(Vertex) * m_Vertices.size();
 
 			VulkanBuffer stagingBuffer(
-				VulkanRenderBackend::GetState(), 
-				bufferSize, 
+				VulkanRenderBackend::GetState(),
+				bufferSize,
 				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
@@ -136,15 +183,17 @@ namespace Spices {
 			m_VertexBuffer->CopyBuffer(stagingBuffer.Get(), m_VertexBuffer->Get(), bufferSize);
 		}
 
-		// index buffer
+		/*
+		* @brief Build index buffer.
+		*/
 		{
 			VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_Indices.size();
 
 			VulkanBuffer stagingBuffer(
-				VulkanRenderBackend::GetState(), 
-				bufferSize, 
+				VulkanRenderBackend::GetState(),
+				bufferSize,
 				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
@@ -168,8 +217,70 @@ namespace Spices {
 		}
 	}
 
+	void MeshPack::CreateMeshluts()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<Vertex> vertices = m_Vertices;
+		std::vector<uint32_t> indices = m_Indices;
+
+		std::list<uint32_t> fullIndices = std::list(indices.begin(), indices.end());
+
+		m_Vertices.clear();
+		m_Indices.clear();
+		m_Meshluts.clear();
+
+		int vertexIndex = 0;
+		int primitiveIndex = 0;
+		while (!fullIndices.empty())
+		{
+			scl::linked_unordered_map<uint32_t, uint32_t> localVertices;
+			std::vector<uint32_t> localIndices;
+
+			const int currentVertexIndex = vertexIndex;
+			const int currentPrimitiveIndex = primitiveIndex;
+
+			while (localVertices.size() < MESHLUTNVERTICES - 2 && localIndices.size() < MESHLUTNPRIMITIVES * 3 - 2 && !fullIndices.empty())
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					uint32_t index = fullIndices.front();
+					fullIndices.pop_front();
+					if(!localVertices.has_key(index)) localVertices.push_back(index, localVertices.size());
+					localIndices.push_back(index);
+				}
+			}
+
+			vertexIndex += localVertices.size();
+			primitiveIndex += localIndices.size() / 3;
+
+			assert(localVertices.size() <= MESHLUTNVERTICES);
+			assert(localIndices.size() <= MESHLUTNPRIMITIVES * 3);
+
+			SpicesShader::Meshlut        meshlut;
+			meshlut.vertexIndex        = currentVertexIndex;
+			meshlut.primitiveIndex     = currentPrimitiveIndex;
+			meshlut.nVertices          = localVertices.size();
+			meshlut.nPrimitives        = localIndices.size() / 3;
+
+			m_Meshluts.push_back(std::move(meshlut));
+
+			localVertices.for_each([&](const uint32_t& k, const uint32_t& v) {
+				m_Vertices.push_back(vertices[k]);
+				return false;
+			});
+
+			for (int i = 0; i < localIndices.size(); i++)
+			{
+				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + currentPrimitiveIndex * 3);
+			}
+		}
+	}
+
 	void MeshPack::ApplyMatrix(const glm::mat4& matrix)
 	{
+		SPICES_PROFILE_ZONE;
+
 		for (uint64_t i = 0; i < m_Vertices.size(); i++)
 		{
 			glm::vec4 newPos = matrix * glm::vec4(m_Vertices[i].position, 1.0f);
@@ -179,11 +290,15 @@ namespace Spices {
 
 	void MeshPack::CopyToVertices(std::vector<Vertex>& vertices) const
 	{
+		SPICES_PROFILE_ZONE;
+
 		ContainerLibrary::Append<Vertex>(vertices, m_Vertices);
 	}
 
 	void MeshPack::CopyToIndices(std::vector<uint32_t>& indices, uint32_t offset)
 	{
+		SPICES_PROFILE_ZONE;
+
 		for (uint64_t i = 0; i < m_Indices.size(); i++)
 		{
 			m_Indices[i] += offset;
@@ -194,6 +309,8 @@ namespace Spices {
 
 	void SquarePack::OnCreatePack(bool isCreateBuffer)
 	{
+		SPICES_PROFILE_ZONE;
+
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
 			float rowRamp = i / static_cast<float>(m_Rows - 1) - 0.5f;  // -0.5f ~ 0.5f
@@ -228,11 +345,17 @@ namespace Spices {
 			}
 		}
 		
-		if (isCreateBuffer) CreateBuffer();
+		if (isCreateBuffer)
+		{
+			CreateMeshluts();
+			CreateBuffer();
+		}
 	}
 
 	void BoxPack::OnCreatePack(bool isCreateBuffer)
 	{
+		SPICES_PROFILE_ZONE;
+
 		// Front
 		{
 			SquarePack pack(m_Rows, m_Columns);
@@ -304,17 +427,25 @@ namespace Spices {
 			
 		}
 
-		if (isCreateBuffer) CreateBuffer();
+		if (isCreateBuffer)
+		{
+			CreateMeshluts();
+			CreateBuffer();
+		}
 	}
 
 	void FilePack::OnCreatePack(bool isCreateBuffer)
 	{
+		SPICES_PROFILE_ZONE;
+
 		MeshLoader::Load(m_Path, this);
 		if(isCreateBuffer) CreateBuffer();
 	}
 	
 	void SpherePack::OnCreatePack(bool isCreateBuffer)
 	{
+		SPICES_PROFILE_ZONE;
+
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
 			const float rowRamp = i / static_cast<float>(m_Rows - 1) * 180.0f; // 0 ~ 180
@@ -349,7 +480,11 @@ namespace Spices {
 			}
 		}
 
-		if (isCreateBuffer) CreateBuffer();
+		if (isCreateBuffer)
+		{
+			CreateMeshluts();
+			CreateBuffer();
+		}
 	}
 
 }

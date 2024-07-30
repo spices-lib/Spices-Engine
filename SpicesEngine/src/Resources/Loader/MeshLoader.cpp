@@ -41,14 +41,16 @@ namespace Spices {
 
 	bool MeshLoader::Load(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		if      ( LoadFromSASSET(  defaultBinMeshPath + fileName + ".sasset", outMeshPack) ) return true;
-		else if ( LoadFromOBJ(     defaultOBJMeshPath + fileName + ".obj",    outMeshPack) ) return true;
-		else if ( LoadFromFBX(     defaultFBXMeshPath + fileName + ".fbx",    outMeshPack) ) return true;
+		if      ( LoadFromSASSET(fileName, outMeshPack)) return true;
+		else if ( LoadFromOBJ(   fileName, outMeshPack)) return true;
+		else if ( LoadFromFBX(   fileName, outMeshPack)) return true;
 		else return false;
 	}
 
-	bool MeshLoader::LoadFromOBJ(const std::string& filepath, MeshPack* outMeshPack)
+	bool MeshLoader::LoadFromOBJ(const std::string& fileName, MeshPack* outMeshPack)
 	{
+		std::string filepath = defaultOBJMeshPath + fileName + ".obj";
+
 		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) {
 			return false;
 		}
@@ -62,9 +64,6 @@ namespace Spices {
 		{
 			return false;
 		}
-
-		outMeshPack->m_Vertices.clear();
-		outMeshPack->m_Indices.clear();
 
 		std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 		for (const auto& shape : shapes)
@@ -122,19 +121,24 @@ namespace Spices {
 			}
 		}
 
-		WriteSASSET(filepath, outMeshPack);
+		outMeshPack->CreateMeshluts();
+		WriteSASSET(fileName, outMeshPack);
 
 		return true;
 	}
 
-	bool MeshLoader::LoadFromFBX(const std::string& filepath, MeshPack* outMeshPack)
+	bool MeshLoader::LoadFromFBX(const std::string& fileName, MeshPack* outMeshPack)
 	{
+		std::string filepath = defaultFBXMeshPath + fileName + ".fbx";
+
 		// TODO: 
 		return false;
 	}
 
-	bool MeshLoader::LoadFromSASSET(const std::string& filepath, MeshPack* outMeshPack)
+	bool MeshLoader::LoadFromSASSET(const std::string& fileName, MeshPack* outMeshPack)
 	{
+		std::string filepath = defaultBinMeshPath + fileName + ".sasset";
+
 		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) {
 			return false;
 		}
@@ -161,8 +165,13 @@ namespace Spices {
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &indicesCount, &readed);
 		outMeshPack->m_Indices.resize(indicesCount);
 
+		uint32_t meshlutsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshlutsCount, &readed);
+		outMeshPack->m_Meshluts.resize(meshlutsCount);
+
 		FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &readed);
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlut) * meshlutsCount, outMeshPack->m_Meshluts.data(), &readed);
 
 		char overSign[100];
 		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
@@ -178,17 +187,16 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshLoader::WriteSASSET(const std::string& filepath, MeshPack* outMeshPack)
+	bool MeshLoader::WriteSASSET(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		std::string path = filepath;
-		GetBinPath(path);
+		std::string filepath = defaultBinMeshPath + fileName + ".sasset";
 
-		if (!FileLibrary::FileLibrary_Exists(path.c_str())) {
+		if (FileLibrary::FileLibrary_Exists(filepath.c_str())) {
 			return false;
 		}
 
 		FileHandle f;
-		FileLibrary::FileLibrary_Open(path.c_str(), FILE_MODE_WRITE, true, &f);
+		FileLibrary::FileLibrary_Open(filepath.c_str(), FILE_MODE_WRITE, true, &f);
 
 		uint64_t written = 0;
 
@@ -200,8 +208,12 @@ namespace Spices {
 		uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices.size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &indicesCount, &written);
 
+		uint32_t meshlutsCount = (uint32_t)outMeshPack->m_Meshluts.size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshlutsCount, &written);
+
 		FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &written);
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlut) * meshlutsCount, outMeshPack->m_Meshluts.data(), &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignOver, &written);
 
@@ -209,13 +221,4 @@ namespace Spices {
 
 		return true;
 	}
-
-	void MeshLoader::GetBinPath(std::string& filePath)
-	{
-		std::vector<std::string> out1 = StringLibrary::SplitString(filePath, '/');
-		std::vector<std::string> out2 = StringLibrary::SplitString(out1[out1.size() - 1], '.');
-
-		filePath = defaultBinMeshPath + out2[0] + ".sasset";
-	}
-
 }

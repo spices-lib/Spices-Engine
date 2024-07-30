@@ -30,7 +30,7 @@ namespace Spices {
 			description.format                = VK_FORMAT_R32_SFLOAT;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {
-			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED; /*@attention It seams that layout transform is not work?*/
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED; /* @attention It seams that layout transform is not work? */
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.EndSubPass()
@@ -126,6 +126,7 @@ namespace Spices {
 					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
 					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
 					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+					push.desc.meshlutAddress            = meshPack->GetMeshlutsBufferAddress();
 					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
 					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
 					push.desc.entityID                  = entityId;
@@ -151,6 +152,7 @@ namespace Spices {
 					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
 					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
 					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+					push.desc.meshlutAddress            = meshPack->GetMeshlutsBufferAddress();
 					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
 					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
 					push.desc.entityID                  = entityId;

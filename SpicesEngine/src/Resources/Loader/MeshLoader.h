@@ -65,7 +65,7 @@ namespace Spices {
 		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if load data succssfully.
 		*/
-		static bool LoadFromOBJ(const std::string& filepath, MeshPack* outMeshPack);
+		static bool LoadFromOBJ(const std::string& fileName, MeshPack* outMeshPack);
 
 		/**
 		* @brief Load data from a .fbx file.
@@ -73,7 +73,7 @@ namespace Spices {
 		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if load data succssfully.
 		*/
-		static bool LoadFromFBX(const std::string& filepath, MeshPack* outMeshPack);
+		static bool LoadFromFBX(const std::string& fileName, MeshPack* outMeshPack);
 
 		/**
 		* @brief Load data from a .sasset file.
@@ -81,7 +81,7 @@ namespace Spices {
 		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if load data succssfully.
 		*/
-		static bool LoadFromSASSET(const std::string& filepath, MeshPack* outMeshPack);
+		static bool LoadFromSASSET(const std::string& fileName, MeshPack* outMeshPack);
 
 		/**
 		* @brief Write the readed data to the sasset file.
@@ -89,12 +89,6 @@ namespace Spices {
 		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if write data succssfully.
 		*/
-		static bool WriteSASSET(const std::string& filepath, MeshPack* outMeshPack);
-
-		/**
-		* @brief Get Bin Mesh Path.
-		* @param[in] filePath Mesh file path(short path).
-		*/
-		static void GetBinPath(std::string& filePath);
+		static bool WriteSASSET(const std::string& fileName, MeshPack* outMeshPack);
 	};
 }

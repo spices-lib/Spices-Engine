@@ -107,10 +107,28 @@ namespace Spices {
 		const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
 
 		/**
+		* @brief Add a Vertex to m_Vertices.
+		* @param[in] v Vertex.
+		*/
+		void AddVertex(const Vertex& v) { m_Vertices.push_back(v); };
+
+		/**
 		* @brief Get Indices array.
 		* @return Returns the Indices array.
 		*/
 		const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
+
+		/**
+		* @brief Add a Index to m_Indices.
+		* @param[in] i Index.
+		*/
+		void AddIndices(const uint32_t& i) { m_Indices.push_back(i); };
+
+		/**
+		* @brief Get Meshluts array.
+		* @return Returns the Meshluts array.
+		*/
+		const std::vector<SpicesShader::Meshlut>& GetMeshluts() const { return m_Meshluts; }
 
 		/**
 		* @brief Get Pack Type.
@@ -137,6 +155,12 @@ namespace Spices {
 		std::shared_ptr<VulkanBuffer> GetIndicesBuffer() const { return m_IndicesBuffer; }
 
 		/**
+		* @brief Get MeshlutsBuffer.
+		* @return Returns the MeshlutsBuffer.
+		*/
+		std::shared_ptr<VulkanBuffer> GetMeshlutsBuffer() const { return m_MeshlutsBuffer; }
+
+		/**
 		* @brief Get VerticesBuffer Video memory address.
 		* @return Returns the VerticesBuffer Video memory address.
 		*/
@@ -148,12 +172,23 @@ namespace Spices {
 		*/
 		VkDeviceAddress GetIndicesBufferAddress() const { return m_IndicesBuffer->GetAddress(); }
 
+		/**
+		* @brief Get MeshlutsBuffer Video memory address.
+		* @return Returns the MeshlutsBuffer Video memory address.
+		*/
+		VkDeviceAddress GetMeshlutsBufferAddress() const { return m_MeshlutsBuffer->GetAddress(); }
+
 	protected:
 
 		/**
 		* @brief Create Vertices buffer anf Inddices buffer.
 		*/
 		void CreateBuffer();
+
+		/**
+		* @brief Create Meshluts.
+		*/
+		void CreateMeshluts();
 
 	public:
 		/**
@@ -188,6 +223,11 @@ namespace Spices {
 		std::vector<uint32_t> m_Indices;
 
 		/**
+		* @brief MeshPack meshluts.
+		*/
+		std::vector<SpicesShader::Meshlut> m_Meshluts;
+
+		/**
 		* @brief Vertices buffer.
 		*/
 		std::shared_ptr<VulkanBuffer> m_VertexBuffer;
@@ -196,6 +236,11 @@ namespace Spices {
 		* @brief Indices buffer.
 		*/
 		std::shared_ptr<VulkanBuffer> m_IndicesBuffer;
+
+		/**
+		* @brief Indices buffer.
+		*/
+		std::shared_ptr<VulkanBuffer> m_MeshlutsBuffer;
 
 		/**
 		* @brief specific material poinnter.

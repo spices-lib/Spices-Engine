@@ -26,12 +26,7 @@ using uint = unsigned int;
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.                               */
 #extension GL_EXT_buffer_reference2                      : require  /* @brief Enable Shader Buffer Address access.                          */
 #extension GL_EXT_nonuniform_qualifier                   : enable   /* @brief Enable Bindless DescriptorSet.                                */
-
-#ifdef SPICES_DEBUG
-
 #extension GL_EXT_debug_printf                           : require  /* @brief Enable shader debug info. (debugPrintfEXT("Hello: %d", num);) */
-
-#endif
 
 #endif
 
@@ -43,6 +38,8 @@ using uint = unsigned int;
 #define POINTLIGHTBUFFERMAXNUM       10000
 #define PI                           3.14159265f
 #define BIAS                         0.01f
+#define MESHLUTNVERTICES             64
+#define MESHLUTNPRIMITIVES           126
 
 #define invAtan                      vec2(0.1591, 0.3183)
 
@@ -158,11 +155,20 @@ struct PointLight
 
 /*********************************RayTracing Renderer Data********************************/
 
+struct Meshlut
+{
+	uint vertexIndex;                         /* First index of Vertices this meshlut.   */
+	uint primitiveIndex;                      /* First index of primitives this meshlut. */
+	uint nVertices;                           /* Vertices Count this meshlut.( <= 64)    */
+	uint nPrimitives;                         /* Primitives Count this meshlut.( <= 126) */
+};
+
 struct MeshDesc
 {
 	uint64_t vertexAddress;                   /* Address of the Vertex buffer.                  */
 	uint64_t indexAddress;                    /* Address of the index buffer.                   */
 	uint64_t materialParameterAddress;        /* Address of the Material Parameter buffer.      */
+	uint64_t meshlutAddress;                  /* Address of the Meshlut Buffer.                 */
 	uint     verticesCount;                   /* Vertices Count.                                */
 	uint     indicesCount;                    /* Indices Count.                                 */
 	uint     entityID;                        /* @brief EntityId, cast from entt::entity.       */
