@@ -141,7 +141,7 @@ namespace Spices {
 					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath);
 					v.index = BindLessTextureManager::Registry(v.texturePath);
 
-					auto descriptorSet = DescriptorSetManager::Registy("PreRenderer", BINDLESSTEXTURESET);
+					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESSTEXTURESET);
 
 					/**
 					* @brief Instance a VkWriteDescriptorSet.

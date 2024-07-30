@@ -1153,7 +1153,7 @@ namespace Spices {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
 
 		return *this;
@@ -1194,7 +1194,7 @@ namespace Spices {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
 
 		return *this;
@@ -1222,7 +1222,7 @@ namespace Spices {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, MAXBINDLESSTEXTURECOUNT);
 
 		return *this;
@@ -1250,7 +1250,7 @@ namespace Spices {
 		/**
 		* @brief Registy descriptor and add binging to it.
 		*/
-		const auto descriptorSet = DescriptorSetManager::Registy(m_DescriptorSetId, set);
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
 		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
 
 		return *this;
