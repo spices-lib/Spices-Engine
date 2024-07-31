@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../HoudiniCore.h"
+#include <iostream>
 #include <sstream>
 
 namespace HoudiniEngine {
@@ -22,6 +23,75 @@ namespace HoudiniEngine {
         delete[] buffer;
 
         return result;
+    }
+    
+    static void PrintChildNodeInfo(HAPI_Session& session, std::vector<HAPI_NodeId>& childrenNodes)
+    {
+        std::cout << "Child Node Ids" << std::endl;
+        for (int i = 0; i < childrenNodes.size(); ++i)
+        {
+            HAPI_NodeInfo nInfo;
+            HE_CHECK(HAPI_GetNodeInfo(&session, childrenNodes[i], &nInfo))
+
+            std::cout << "    " << childrenNodes[i] << " - " << (nInfo.createdPostAssetLoad ? "NEW" : "EXISTING") << std::endl;
+        }
+    }
+
+    static void PrintCompleteNodeInfo(HAPI_Session& session, HAPI_NodeId nodeId, HAPI_AssetInfo& assetInfo)
+    {
+        HAPI_NodeInfo nodeInfo;
+        HE_CHECK(HAPI_GetNodeInfo(&session, nodeId, &nodeInfo))
+
+        int objectCount = 0;
+        HAPI_ObjectInfo* objectInfos = 0;
+
+        if (nodeInfo.type == HAPI_NODETYPE_SOP)
+        {
+            // For pure SOP asset, a parent object will be created automatically,
+            // so use parent's ID to get the object info
+            objectCount = 1;
+            objectInfos = new HAPI_ObjectInfo[objectCount];
+            HE_CHECK(HAPI_GetObjectInfo(&session, nodeInfo.parentId, &objectInfos[0]))
+        }
+        else if (nodeInfo.type == HAPI_NODETYPE_OBJ)
+        {
+            // This could have children objects or not.
+            // If has children, get child object infos.
+            // If no children, presume this node is the only object.
+
+            HE_CHECK(HAPI_ComposeObjectList(&session, nodeId, nullptr, &objectCount))
+
+            if (objectCount > 0)
+            {
+                objectInfos = new HAPI_ObjectInfo[objectCount];
+                HE_CHECK(HAPI_GetComposedObjectList(&session, nodeInfo.parentId, objectInfos, 0, objectCount))
+            }
+            else
+            {
+                objectCount = 1;
+                objectInfos = new HAPI_ObjectInfo[objectCount];
+                HE_CHECK(HAPI_GetObjectInfo(&session, nodeId, &objectInfos[0]))
+            }
+        }
+        else
+        {
+            std::cout << "Unsupported node type: " << HAPI_NODETYPE_OBJ << std::endl;
+            return;
+        }
+
+        for (int objectIndex = 0; objectIndex < objectCount; ++objectIndex)
+        {
+            HAPI_ObjectInfo& objectInfo = objectInfos[objectIndex];
+            HAPI_GeoInfo geoInfo;
+            HE_CHECK(HAPI_GetDisplayGeoInfo(&session, objectInfo.nodeId, &geoInfo))
+
+            for (int partIndex = 0; partIndex < geoInfo.partCount; ++partIndex)
+            {
+                //ProcessGeoPart(session, assetInfo, objectInfo.nodeId, geoInfo.nodeId, partIndex);
+            }
+        }
+
+        delete[] objectInfos;
     }
 
 	static void Marshalling_Geometry_Into_Houdini()
@@ -652,6 +722,8 @@ namespace HoudiniEngine {
 
     static void Materials_Sample()
     {
+        const char* hdaFile = "";
+
         HAPI_Session session;
         
         HAPI_ThriftServerOptions serverOptions{ 0 };
@@ -664,6 +736,296 @@ namespace HoudiniEngine {
         HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
 
         HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
+        HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
 
+        HAPI_AssetLibraryId assetLibId;
+        HE_CHECK(HAPI_LoadAssetLibraryFromFile(&session, hdaFile, true, &assetLibId));
+
+        int assetCount;
+        HE_CHECK(HAPI_GetAvailableAssetCount(&session, assetLibId, &assetCount))
+
+        if (assetCount > 1)
+        {
+            std::cout << "Should only be loading 1 asset here" << std::endl;
+        }
+
+        HAPI_StringHandle assetSh;
+        HE_CHECK(HAPI_GetAvailableAssets(&session, assetLibId, &assetSh, assetCount))
+
+        std::string assetName = GetString(session, assetSh);
+
+        HAPI_NodeId nodeId;
+        HE_CHECK(HAPI_CreateNode(&session, -1, assetName.c_str(), "BrandonTest", false, &nodeId))
+
+        HE_CHECK(HAPI_CookNode(&session, nodeId, &cookOptions))
+
+        int cookStatus;
+        HAPI_Result cookResult;
+
+        do
+        {
+            cookResult = HAPI_GetStatus(&session, HAPI_STATUS_COOK_STATE, &cookStatus);
+        }
+        while (cookStatus > HAPI_STATE_MAX_READY_STATE && cookResult == HAPI_RESULT_SUCCESS);
+
+        HE_CHECK(cookResult);
+        HE_CHECK_COOK(cookStatus);
+
+        HAPI_GeoInfo geoInfo;
+        HE_CHECK(HAPI_GetDisplayGeoInfo(&session, nodeId, &geoInfo))
+
+        HAPI_PartInfo partInfo;
+        HE_CHECK(HAPI_GetPartInfo(&session, geoInfo.nodeId, 0, &partInfo))
+
+        bool areAllTheSame = false;
+        std::vector<HAPI_NodeId> materialIds(partInfo.faceCount);
+        HE_CHECK(HAPI_GetMaterialNodeIdsOnFaces(&session, geoInfo.nodeId, partInfo.id, &areAllTheSame, &materialIds.front(), 0, partInfo.faceCount))
+
+        if(!areAllTheSame)
+        {
+            std::cout << "All materials should be the same." << std::endl;
+        }
+
+        for (int i = 0; i < partInfo.faceCount; ++i)
+        {
+            if (materialIds[i] != materialIds[0])
+            {
+                std::cout << "All material ids should be the same." << std::endl;
+            }
+        }
+
+        HAPI_MaterialInfo materialInfo;
+        HE_CHECK(HAPI_GetMaterialInfo(&session, materialIds[0], &materialInfo))
+
+        if (materialInfo.nodeId != materialIds[0] ||
+            materialInfo.nodeId < 0 ||
+            materialInfo.exists != true ||
+            materialInfo.hasChanged != true)
+        {
+            std::cout << "Did not successfully extract the first material" << std::endl;
+        }
+
+        HAPI_NodeInfo materialNodeInfo;
+        HE_CHECK(HAPI_GetNodeInfo(&session, materialInfo.nodeId, &materialNodeInfo))
+
+        std::cout << GetString(session, materialNodeInfo.nameSH) << std::endl;
+
+        std::vector<HAPI_ParmInfo> parmInfos(materialNodeInfo.parmCount);
+        HE_CHECK(HAPI_GetParameters(&session, materialNodeInfo.id, parmInfos.data(), 0, materialNodeInfo.parmCount))
+
+        int baseColorMapIndex = -1;
+        for (int i = 0; i < materialNodeInfo.parmCount; ++i)
+        {
+            if (GetString(session, parmInfos[i].nameSH) == "baseColorMap")
+            {
+                baseColorMapIndex = i;
+                break;
+            }
+        }
+
+        if (baseColorMapIndex < 0)
+        {
+            std::cout << "Could not find the base color map parameter" << std::endl;
+        }
+
+        HAPI_StringHandle basePath;
+        HE_CHECK(HAPI_GetParmStringValue(&session, materialNodeInfo.id, "baseColorMap", 0, true, &basePath))
+
+        std::cout << "Base Color Map Path: " << GetString(session, basePath) << std::endl;
+
+        HE_CHECK(HAPI_RenderTextureToImage(&session, materialNodeInfo.id, baseColorMapIndex))
+
+        HAPI_ImageInfo imgInfo;
+        HE_CHECK(HAPI_GetImageInfo(&session, materialNodeInfo.id, &imgInfo))
+
+        std::cout << "Image Width = " << imgInfo.xRes << std::endl
+            << "Image Height = " << imgInfo.yRes << std::endl
+            << "Image Format = " << GetString(session, imgInfo.imageFileFormatNameSH) << std::endl;
+
+        HE_CHECK(HAPI_SetImageInfo(&session, materialNodeInfo.id, &imgInfo))
+
+        int imagePlaneCount;
+        HE_CHECK(HAPI_GetImagePlaneCount(&session, materialNodeInfo.id, &imagePlaneCount))
+
+        std::vector<HAPI_StringHandle> imagePlanes(imagePlaneCount);
+        HE_CHECK(HAPI_GetImagePlanes(&session, materialNodeInfo.id, imagePlanes.data(), imagePlaneCount))
+
+        for (int j = 0; j < imagePlaneCount; ++j)
+        {
+            std::string imagePlaneName = GetString(session, imagePlanes[j]);
+            std::cout << "Image Plane [ " << j << " ] = " << imagePlaneName << std::endl;
+
+            int destinationFilePath;
+            HE_CHECK(HAPI_ExtractImageToFile(&session, materialNodeInfo.id, nullptr, imagePlaneName.c_str(), "./examples/", nullptr, &destinationFilePath))
+        }
+
+        HE_CHECK(HAPI_Cleanup(&session));
+    }
+
+    static void Node_Creation_Sample()
+    {
+        const char* hdaFile = "";
+
+        HAPI_Session session;
+
+        HAPI_ThriftServerOptions serverOptions{ 0 };
+        serverOptions.autoClose = true;
+        serverOptions.timeoutMs = 3000.0f;
+
+        HE_CHECK(HAPI_StartThriftNamedPipeServer(&serverOptions, "hapi", nullptr, nullptr))
+
+        HAPI_SessionInfo sessionInfo = HAPI_SessionInfo_Create();
+        HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
+
+        HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
+        HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
+
+        HAPI_AssetLibraryId assetLibId;
+        HE_CHECK(HAPI_LoadAssetLibraryFromFile(&session, hdaFile, true, &assetLibId))
+
+        int assetCount;
+        HE_CHECK(HAPI_GetAvailableAssetCount(&session, assetLibId, &assetCount))
+
+        if (assetCount > 1)
+        {
+            std::cout << "Should only be loading 1 asset here" << std::endl;
+        }
+
+        HAPI_StringHandle assetSh;
+        HE_CHECK(HAPI_GetAvailableAssets(&session, assetLibId, &assetSh, assetCount))
+
+        std::string assetName = GetString(session, assetSh);
+
+        HAPI_NodeId editableNetworkId;
+        HE_CHECK(HAPI_CreateNode(&session, -1, assetName.c_str(), "FourShape", false, &editableNetworkId))
+
+        HE_CHECK(HAPI_CookNode(&session, editableNetworkId, &cookOptions))
+
+        int cookStatus;
+        HAPI_Result cookResult;
+
+        do
+        {
+            cookResult = HAPI_GetStatus(&session, HAPI_STATUS_COOK_STATE, &cookStatus);
+        }
+        while(cookStatus > HAPI_STATE_MAX_READY_STATE && cookResult == HAPI_RESULT_SUCCESS);
+
+        HE_CHECK(cookResult);
+        HE_CHECK_COOK(cookStatus);
+
+        int childCount;
+        HE_CHECK(HAPI_ComposeChildNodeList(&session, editableNetworkId, HAPI_NODETYPE_ANY, HAPI_NODEFLAGS_ANY, false, &childCount))
+
+        std::cout << "Editable Node Network Child Count: " << childCount << std::endl;
+
+        std::vector<HAPI_NodeId> childNodeIds(childCount);
+        HE_CHECK(HAPI_GetComposedChildNodeList(&session, editableNetworkId, &childNodeIds.front(), childCount))
+
+        PrintChildNodeInfo(session, childNodeIds);
+
+        HAPI_NodeId anotherBoxNode;
+        HE_CHECK(HAPI_CreateNode(&session, editableNetworkId, "geo", "ProgrammaticBox", false, &anotherBoxNode))
+
+        HE_CHECK(HAPI_ConnectNodeInput(&session, anotherBoxNode, 0, childNodeIds[0], 0))
+        HE_CHECK(HAPI_CookNode(&session, anotherBoxNode, &cookOptions))
+
+        int boxCookStatus;
+        HAPI_Result boxCookResult;
+
+        do
+        {
+            boxCookResult = HAPI_GetStatus(&session, HAPI_STATUS_COOK_STATE, &boxCookStatus);
+        }
+        while (boxCookStatus > HAPI_STATE_MAX_READY_STATE && boxCookResult == HAPI_RESULT_SUCCESS);
+
+        HE_CHECK(boxCookResult)
+        HE_CHECK_COOK(boxCookStatus)
+
+        HAPI_NodeId connectedNodeId;
+        HE_CHECK(HAPI_QueryNodeInput(&session, anotherBoxNode, 0, &connectedNodeId))
+
+        if (connectedNodeId != childNodeIds[0])
+        {
+            std::cout << "The connected node id is" << connectedNodeId << " When it should be " << editableNetworkId << std::endl;
+        }
+
+        HE_CHECK(HAPI_ComposeChildNodeList(&session, editableNetworkId, HAPI_NODETYPE_ANY, HAPI_NODEFLAGS_ANY, false, &childCount))
+
+        std::vector<HAPI_NodeId> newChildNodes(childCount);
+        HE_CHECK(HAPI_GetComposedChildNodeList(&session, editableNetworkId, &newChildNodes.front(), childCount))
+
+        std::cout << "After CONNECT NODE" << std::endl;
+        PrintChildNodeInfo(session, newChildNodes);
+
+        HE_CHECK(HAPI_SaveHIPFile(&session, "", false))
+        HE_CHECK(HAPI_DisconnectNodeInput(&session, anotherBoxNode, 0))
+        HE_CHECK(HAPI_DeleteNode(&session, anotherBoxNode))
+
+        std::cout << "After DELETING NODE" << std::endl;
+
+        HE_CHECK(HAPI_ComposeChildNodeList(&session, editableNetworkId, HAPI_NODETYPE_ANY, HAPI_NODEFLAGS_ANY, false, &childCount))
+
+        std::vector<HAPI_NodeId> finalChildList(childCount);
+        HE_CHECK(HAPI_GetComposedChildNodeList(&session, editableNetworkId, &finalChildList.front(), childCount))
+        PrintChildNodeInfo(session, finalChildList);
+
+        HE_CHECK(HAPI_Cleanup(&session));
+    }
+
+    static void Parts_Sample()
+    {
+        const char* hdaFile = "";
+
+        HAPI_Session session;
+        HAPI_ThriftServerOptions serverOptions{ 0 };
+        serverOptions.autoClose = true;
+        serverOptions.timeoutMs = 3000.0f;
+
+        HE_CHECK(HAPI_StartThriftNamedPipeServer(&serverOptions, "hapi", nullptr, nullptr))
+
+        HAPI_SessionInfo sessionInfo = HAPI_SessionInfo_Create();
+        HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
+
+        HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
+        HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
+
+        HAPI_AssetLibraryId assetLibId;
+        HE_CHECK(HAPI_LoadAssetLibraryFromFile(&session, hdaFile, true, &assetLibId))
+
+        int assetCount;
+        HE_CHECK(HAPI_GetAvailableAssetCount(&session, assetLibId, &assetCount))
+
+        if (assetCount > 1)
+        {
+            std::cout << "Should only be loading 1 asset here" << std::endl;
+        }
+
+        HAPI_StringHandle assetSh;
+        HE_CHECK(HAPI_GetAvailableAssets(&session, assetLibId, &assetSh, assetCount))
+
+        std::string assetName = GetString(session, assetSh);
+
+        HAPI_NodeId nodeId;
+        HE_CHECK(HAPI_CreateNode(&session, -1, assetName.c_str(), "TestObject", false, &nodeId))
+        HE_CHECK(HAPI_CookNode(&session, nodeId, &cookOptions))
+
+        int cookStatus;
+        HAPI_Result cookResult;
+
+        do
+        {
+            cookResult = HAPI_GetStatus(&session, HAPI_STATUS_COOK_STATE, &cookStatus);
+        }
+        while(cookStatus > HAPI_STATE_MAX_READY_STATE && cookResult == HAPI_RESULT_SUCCESS);
+
+        HE_CHECK(cookResult)
+        HE_CHECK_COOK(cookStatus)
+
+        HAPI_AssetInfo assetInfo;
+        HE_CHECK(HAPI_GetAssetInfo(&session, nodeId, &assetInfo))
+
+        PrintCompleteNodeInfo(session, nodeId, assetInfo);
+
+        HE_CHECK(HAPI_Cleanup(&session));
     }
 }
