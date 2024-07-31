@@ -34,7 +34,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		static PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(vkGetInstanceProcAddr(VulkanRenderBackend::GetState().m_Instance, "vkCmdDrawMeshTasksEXT"));
-		vkCmdDrawMeshTasksEXT(commandBuffer, m_Meshluts.size(), 1, 1);
+		vkCmdDrawMeshTasksEXT(commandBuffer, static_cast<uint32_t>(m_Meshluts.size()), 1, 1);
 	}
 
 	void MeshPack::SetMaterial(const std::string& materialPath)
@@ -227,8 +227,8 @@ namespace Spices {
 		m_Indices.clear();
 		m_Meshluts.clear();
 
-		int vertexIndex = 0;
-		int primitiveIndex = 0;
+		unsigned int vertexIndex = 0;
+		unsigned int primitiveIndex = 0;
 		while (!fullIndices.empty())
 		{
 			SpicesShader::Meshlut        meshlut;
@@ -244,7 +244,7 @@ namespace Spices {
 				{
 					uint32_t index = fullIndices.front();
 					fullIndices.pop_front();
-					if(!localVertices.has_key(index)) localVertices.push_back(index, localVertices.size());
+					if(!localVertices.has_key(index)) localVertices.push_back(index, static_cast<uint32_t>(localVertices.size()));
 					localIndices.push_back(index);
 				}
 			}
@@ -252,8 +252,8 @@ namespace Spices {
 			assert(localVertices.size() <= MESHLUTNVERTICES);
 			assert(localIndices.size() <= MESHLUTNPRIMITIVES * 3);
 
-			meshlut.nVertices   = localVertices.size();
-			meshlut.nPrimitives = localIndices.size() / 3;
+			meshlut.nVertices   = static_cast<unsigned int>(localVertices.size());
+			meshlut.nPrimitives = static_cast<unsigned int>(localIndices.size() / 3);
 
 			vertexIndex        += meshlut.nVertices;
 			primitiveIndex     += meshlut.nPrimitives;

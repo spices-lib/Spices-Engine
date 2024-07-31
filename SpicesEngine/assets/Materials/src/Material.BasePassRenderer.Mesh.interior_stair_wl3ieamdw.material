@@ -4,6 +4,8 @@
 
 Material: BasePassRenderer.Mesh.interior_stair_wl3ieamdw
 Shaders:
+  - Stage: task
+    Path: BasePassRenderer.Mesh.Default
   - Stage: mesh
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag

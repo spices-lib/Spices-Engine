@@ -33,7 +33,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialPara
 */
 void ExplainMaterialParameter(in uint64_t materialParameterAddress)
 {
-    materialParam      = MaterialParameters(materialParameterAddress).i[0];
+    materialParam = MaterialParameters(materialParameterAddress).i[0];
 }
 
 /*****************************************************************************************/

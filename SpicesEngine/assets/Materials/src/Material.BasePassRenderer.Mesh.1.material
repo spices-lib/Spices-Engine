@@ -4,6 +4,8 @@
 
 Material: BasePassRenderer.Mesh.1
 Shaders:
+  - Stage: task
+    Path: BasePassRenderer.Mesh.Default
   - Stage: mesh
     Path: BasePassRenderer.Mesh.Default
   - Stage: frag

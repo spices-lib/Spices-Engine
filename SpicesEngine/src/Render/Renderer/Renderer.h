@@ -1251,7 +1251,7 @@ namespace Spices {
 		* @brief Registy descriptor and add binging to it.
 		*/
 		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, textureNames.size());
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, static_cast<uint32_t>(textureNames.size()));
 
 		return *this;
 	}

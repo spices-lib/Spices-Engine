@@ -9,7 +9,7 @@
 #ifndef SHADER_CLOSEST_HIT
 #define SHADER_CLOSEST_HIT
 
-#extension GL_EXT_ray_tracing           : require   /* @brief Enable Ray Tracing Shader.           */
+#extension GL_EXT_ray_tracing           : require   /* @brief Enable Ray Tracing Shader. */
 
 #include "ShaderCommon.h"
 #include "ShaderFunctionLibrary.glsl"
@@ -145,7 +145,7 @@ void main()
 {
     Pixel pi = UnPackPixel(attribs);                                                                   /* @brief Get interest Pixel data.           */
     uint entityID = UnPackEntityID();                                                                  /* @brief Get Entity ID.                     */
-    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
+    MeshDesc desc = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
     if(desc.materialParameterAddress != 0) ExplainMaterialParameter(desc.materialParameterAddress);    /* @brief Get material parameter data.       */
     MaterialAttributes materialAttributes = InitMaterialAttributes(pi);                                /* @brief Init material attributes.          */
     GetMaterialAttributes(pi, materialAttributes);                                                     /* @brief Get material specific attributes.  */
@@ -277,14 +277,17 @@ MaterialAttributes InitMaterialAttributes(in Pixel pi)
 
 void PostHandleWithMaterialAttributes(in out MaterialAttributes attr)
 {
-    attr.albedo = clamp(attr.albedo, vec3(0.0f), vec3(1.0f));    /* @brief Clamp to  0.0f - 1.0f */
-    attr.roughness = clamp(attr.roughness, 0.0f, 1.0f);          /* @brief Clamp to  0.0f - 1.0f */
-    attr.metallic = clamp(attr.metallic, 0.0f, 1.0f);            /* @brief Clamp to  0.0f - 1.0f */
-    if(dot(-prd.rayDirection, attr.normal) < 0.0f)               /* @brief Clamp to -1.0f - 1.0f */
+    attr.albedo    = clamp(attr.albedo, vec3(0.0f), vec3(1.0f));    /* @brief Clamp to  0.0f - 1.0f */
+    attr.roughness = clamp(attr.roughness, 0.0f, 1.0f);             /* @brief Clamp to  0.0f - 1.0f */
+    attr.metallic  = clamp(attr.metallic, 0.0f, 1.0f);              /* @brief Clamp to  0.0f - 1.0f */
+    if(dot(-prd.rayDirection, attr.normal) < 0.0f)                  /* @brief Clamp to -1.0f - 1.0f */
     {
-        attr.normal *= -1.0f;                                    /* @brief reverse normal in back face */
+        attr.normal *= -1.0f;                                       /* @brief reverse normal in back face */
     }
-    attr.normal = normalize(attr.normal);
+    attr.normal         = normalize(attr.normal);
+    attr.maxRayDepth    = max(0, attr.maxRayDepth);
+    attr.maxLightDepth  = max(0, attr.maxLightDepth);
+    attr.maxShadowDepth = max(0, attr.maxShadowDepth);
 }
 
 vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
@@ -310,8 +313,8 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
         * @brief light position
         */ 
         vec3 lpos = light.position;
-        vec3 dir = normalize(lpos - pi.position);
-        vec3 V = normalize(prd.rayOrigin - pi.position);
+        vec3 dir  = normalize(lpos - pi.position);
+        vec3 V    = normalize(prd.rayOrigin - pi.position);
             
         if(dot(attr.normal, dir) > 0)
         {
@@ -320,7 +323,7 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
             vec3  origin = pi.position;
             vec3  rayDir = dir;
             uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
-            isShadowArea   = true;
+            isShadowArea = true;
             
             traceRayEXT(topLevelAS,          /* @brief Acceleration structure.  */
                         flags,               /* @brief RayFlags.                */
@@ -369,8 +372,8 @@ vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
         * @brief light position
         */ 
         vec4 dir4 = light.rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        vec3 dir = dir4.xyz;
-        vec3 V = normalize(prd.rayOrigin - pi.position);
+        vec3 dir  = dir4.xyz;
+        vec3 V    = normalize(prd.rayOrigin - pi.position);
 
         if(dot(attr.normal, dir) > 0)
         {
@@ -379,7 +382,7 @@ vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
             vec3  origin = pi.position;
             vec3  rayDir = dir;
             uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
-            isShadowArea   = true;
+            isShadowArea = true;
             
             traceRayEXT(topLevelAS,          /* @brief Acceleration structure.  */
                         flags,               /* @brief RayFlags.                */

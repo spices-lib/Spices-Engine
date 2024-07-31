@@ -21,14 +21,7 @@
 struct MaterialParameter
 {
     uint     albedo;
-    uint64_t address;
 } materialParam;
-
-/**
-* @brief Material Constant Parameter.
-* It should be the struct of constant parameter buffer data.
-*/
-struct MaterialConstantParameter{ int empty; } materialConstParam;
 
 #include "Header/ShaderBindLessMaterial.glsl"
 
@@ -51,9 +44,9 @@ layout(location = 0) in struct FragInput {
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4 outColor;                /* @brief Fragmet Color       */
-layout(location = 1) out vec4 outPosition;             /* @brief position Attachment */
-layout(location = 2) out float outID;                  /* @brief ID Attachment       */
+layout(location = 0) out vec4  outColor;                /* @brief Fragmet Color       */
+layout(location = 1) out vec4  outPosition;             /* @brief position Attachment */
+layout(location = 2) out float outID;                   /* @brief ID Attachment       */
 
 /*****************************************************************************************/
 
@@ -85,6 +78,8 @@ vec2 SampleSphericalMap(vec3 v)
 
 void main()
 {
+    ExplainMaterialParameter(push.desc.materialParameterAddress);
+
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
     outColor = texture(BindLessTextureBuffer[materialParam.albedo], uv);
     outPosition = vec4(fragInput.worldPosition, 1.0f);

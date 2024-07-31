@@ -1,6 +1,6 @@
 /**
-* @file Shader.BasePassRenderer.Mesh.interior_stair_wl3ieamdw.frag.
-* @brief This Shader Defines BasePass Renderer Mesh SubPass interior_stair_wl3ieamdw Fragment Shader Behaver.
+* @file Shader.BasePassRenderer.Mesh.PBRConstParameter.frag.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass PBRConstParameter Fragment Shader Behaver.
 * @author Spices.
 */
 
@@ -36,15 +36,9 @@ struct MaterialParameter
 /************************************Fragment Input***************************************/
 
 /**
-* @brief Fragment Shader Input From Vertex Shader.
+* @brief Fragment Shader Input From Mesh Shader.
 */
-layout(location = 0) in struct FragInput {
-    vec3 position;                                     /* @brief World Position. */
-    vec3 normal;                                       /* @brief World Normal.   */
-    vec3 color;                                        /* @brief Fragmet Color.  */
-    vec2 texCoord;                                     /* @brief Fragmet UV.     */
-} fragInput;
-
+layout(location = 0) in Pixel pixel;                   /* @brief Pixel Data.     */
 layout(location = 4) in flat uint meshlutId;           /* @brief Meshlut ID.     */
 
 /*****************************************************************************************/
@@ -80,12 +74,12 @@ void main()
 {
     ExplainMaterialParameter(push.desc.materialParameterAddress);
 
-    outAlbedo = vec4(materialParam.albedo, 1.0f);
-    outNormal = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
+    outAlbedo    = vec4(materialParam.albedo, 1.0f);
+    outNormal    = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
     outRoughness = vec4(materialParam.roughness);
-    outMetallic = vec4(materialParam.metallic);
-    outPosition = vec4(fragInput.position, 1.0f);
-    outID = push.desc.entityID;
+    outMetallic  = vec4(materialParam.metallic);
+    outPosition  = vec4(pixel.position, 1.0f);
+    outID        = push.desc.entityID;
 }
 
 /*****************************************************************************************/

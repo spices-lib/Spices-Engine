@@ -7,9 +7,9 @@
 /************************************Pre Compile*******************************************/
 
 #version 460
-#extension GL_EXT_mesh_shader                 : require
-#extension GL_GOOGLE_include_directive        : enable    
-#extension GL_EXT_control_flow_attributes     : require
+#extension GL_EXT_mesh_shader                 : require   /* @brief Declear this as mesh shader. */
+#extension GL_GOOGLE_include_directive        : enable    /* @brief Enable include feature.      */
+#extension GL_EXT_control_flow_attributes     : require   /* @brief Enable flow butter control.  */
 
 #include "Header/ShaderPreRendererLayout.glsl"
 
@@ -19,20 +19,25 @@
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
+/**
+* @brief task padload receive from task shader.
+*/
+taskPayloadSharedEXT uint workgroupId;    /* @brief mesh shader hanled meshlut id(as workgroupid). */
+
 /*****************************************************************************************/
 
 /*************************************Mesh Output*****************************************/
 
+/**
+* @brief Output triangles meshlut per workgroup.
+*/
 layout(triangles, max_vertices = MESHLUTNVERTICES, max_primitives = MESHLUTNPRIMITIVES) out;
 
-layout(location = 0) out struct VertOut {
-    vec3 position;                                
-    vec3 normal;                                  
-    vec3 color;                                   
-    vec2 texCoord;
-} vertOut[];
-
-layout(location = 4) out uint meshlutId[];
+/**
+* @brief Mesh Shader Output to Fragment Shader.
+*/
+layout(location = 0) out Pixel pixel[];               /* @brief Pixel Data.     */
+layout(location = 4) out flat uint meshlutId[];       /* @brief Meshlut ID.     */
 
 /*****************************************************************************************/
 
@@ -42,11 +47,12 @@ layout(location = 4) out uint meshlutId[];
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	PushConstantMesh push;   
+	PushConstantMesh push;   /* @see PushConstantMesh. */
 };
 
 /*****************************************************************************************/
 
+/************************************Specific Data****************************************/
 
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices { 
     Vertex v[];           
@@ -60,11 +66,13 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
     Meshlut i[];
 };
 
+/*****************************************************************************************/
+
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
-    uint id = gl_WorkGroupID.x;
+    uint id = workgroupId;
 
     Vertices vertices   = Vertices(push.desc.vertexAddress);
     Indices indices     = Indices(push.desc.indexAddress);
@@ -73,16 +81,6 @@ void main()
     mat4 mvp = view.projection * view.view * push.model;
     mat3 m3model = mat3(transpose(inverse(push.model)));
 
-    {
-        vec4 origin             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        vec3 dis = meshlut.boundCenter - origin.xyz;
-        if(length(dis) > 25.0f)
-        {
-            SetMeshOutputsEXT(0, 0);
-            return;
-        }
-    }
-
     [[unroll]]
     for(uint i = 0; i < meshlut.nVertices; i++)
     {
@@ -90,11 +88,11 @@ void main()
 
         gl_MeshVerticesEXT[i].gl_Position = mvp * vec4(vt.position, 1.0f);
 
-        vertOut[i].position = vec3(push.model * vec4(vt.position, 1.0f));
-        vertOut[i].normal   = normalize(m3model * vt.normal);
-        vertOut[i].color    = vt.color;
-        vertOut[i].texCoord = vt.texCoord;
-        meshlutId[i]        = id;
+        pixel[i].position  = vec3(push.model * vec4(vt.position, 1.0f));
+        pixel[i].normal    = normalize(m3model * vt.normal);
+        pixel[i].color     = vt.color;
+        pixel[i].texCoord  = vt.texCoord;
+        meshlutId[i]       = id;
     }
 
 	[[unroll]]

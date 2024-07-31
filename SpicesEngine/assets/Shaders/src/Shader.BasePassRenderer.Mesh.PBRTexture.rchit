@@ -1,6 +1,6 @@
 /**
-* @file Shader.RayTracingRenderer.RayTracing.interior_stair_wl3ieamdw.rchit.
-* @brief This Shader Defines RayTracing Renderer RayTracing SubPass interior_stair_wl3ieamdw Ray Closest Hit Shader Behaver.
+* @file Shader.BasePassRenderer.Mesh.PBRTexture.rchit.
+* @brief This Shader Defines RayTracing Renderer RayTracing SubPass PBRTexture Ray Closest Hit Shader Behaver.
 * @author Spices.
 */
 
@@ -9,7 +9,6 @@
 #version 460
 
 #extension GL_GOOGLE_include_directive  : enable                    /* @brief Enable include Macro.           */
-#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader. */
 
 /**
 * @brief Material Parameter.

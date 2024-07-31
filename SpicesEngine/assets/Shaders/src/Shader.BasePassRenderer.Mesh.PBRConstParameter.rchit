@@ -1,6 +1,6 @@
 /**
-* @file Shader.RayTracingRenderer.RayTracing.Default.rchit.
-* @brief This Shader Defines RayTracing Renderer RayTracing SubPass Default Ray Closest Hit Shader Behaver.
+* @file Shader.BasePassRenderer.Mesh.PBRConstParameter.rchit.
+* @brief This Shader Defines RayTracing Renderer RayTracing SubPass PBRConstParameter Ray Closest Hit Shader Behaver.
 * @author Spices.
 */
 
@@ -9,7 +9,6 @@
 #version 460
 
 #extension GL_GOOGLE_include_directive  : enable                    /* @brief Enable include Macro.           */
-#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader. */
 
 /**
 * @brief Material Parameter.

@@ -26,11 +26,11 @@ layout(location = 0) in struct FragInput {
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4 outColor;                /* @brief diffuse Attachment  */
-layout(location = 1) out vec4 outNormal;               /* @brief normal Attachment   */
-layout(location = 2) out vec4 outSpecular;             /* @brief specular Attachment */
-layout(location = 3) out vec4 outPosition;             /* @brief position Attachment */
-layout(location = 4) out float outID;                  /* @brief ID Attachment       */
+layout(location = 0) out vec4  outColor;                /* @brief diffuse Attachment  */
+layout(location = 1) out vec4  outNormal;               /* @brief normal Attachment   */
+layout(location = 2) out vec4  outSpecular;             /* @brief specular Attachment */
+layout(location = 3) out vec4  outPosition;             /* @brief position Attachment */
+layout(location = 4) out float outID;                   /* @brief ID Attachment       */
 
 /*****************************************************************************************/
 

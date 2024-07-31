@@ -1,6 +1,6 @@
 /**
-* @file Shader.RayTracingRenderer.RayTracing.Default.rmiss.
-* @brief This Shader Defines RayTracing Renderer RayTracing SubPass Default Ray Missing Shader Behaver.
+* @file Shader.RayTracingRenderer.RayTracing.PBRTexture.rmiss.
+* @brief This Shader Defines RayTracing Renderer RayTracing SubPass PBRTexture Ray Missing Shader Behaver.
 * @author Spices.
 */
 
@@ -26,10 +26,19 @@ layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 /*****************************************************************************************/
 
-layout(set = 4, binding = 0) uniform sampler2D samplers;
+/*********************************Push Constant*******************************************/
+
 layout(push_constant) uniform Push {
     int entityID;
 } push;
+
+/*****************************************************************************************/
+
+/*********************************Specifric Data******************************************/
+
+layout(set = 4, binding = 0) uniform sampler2D samplers;
+
+/*****************************************************************************************/
 
 /**********************************Shader Entry*******************************************/
 

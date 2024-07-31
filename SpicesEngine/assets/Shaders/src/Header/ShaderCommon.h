@@ -25,27 +25,33 @@ using uint = unsigned int;
 #extension GL_EXT_scalar_block_layout                    : enable   /* @brief Enable shader vec3 type memory align.                         */
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require  /* @brief Enable uint64_t type in shader.                               */
 #extension GL_EXT_buffer_reference2                      : require  /* @brief Enable Shader Buffer Address access.                          */
-#extension GL_EXT_nonuniform_qualifier                   : enable   /* @brief Enable Bindless DescriptorSet.                                */
+#extension GL_EXT_nonuniform_qualifier                   : enable   /* @brief Enable Bindless DescriptorSet dynamic index.                  */
 #extension GL_EXT_debug_printf                           : require  /* @brief Enable shader debug info. (debugPrintfEXT("Hello: %d", num);) */
 
 #endif
 
-#define MAXBINDLESSTEXTURECOUNT      65536
-#define BINDLESSTEXTURESET           1
-#define BINDLESSTEXTUREBINDING       0
-#define MESHBUFFERMAXNUM             100000
-#define DIRECTIONALLIGHTBUFFERMAXNUM 100
-#define POINTLIGHTBUFFERMAXNUM       10000
-#define PI                           3.14159265f
-#define BIAS                         0.01f
-#define MESHLUTNVERTICES             64
-#define MESHLUTNPRIMITIVES           126
+/**
+* @brief Macros for Variable Constant.
+*/
+#define MAXBINDLESSTEXTURECOUNT      65536                     /* @brief Maximum number of Bindless Texture Array.             */
+#define BINDLESSTEXTURESET           1                         /* @brief Bindless Texture Descriptor Set.                      */
+#define BINDLESSTEXTUREBINDING       0                         /* @brief Bindless Texture Descriptor Set Binding.              */
+#define MESHBUFFERMAXNUM             100000                    /* @brief Ray Tracing Renderer Maximum mesh desc buffer count.  */
+#define DIRECTIONALLIGHTBUFFERMAXNUM 100                       /* @brief Maximum number of Directional lights.                 */
+#define POINTLIGHTBUFFERMAXNUM       10000                     /* @brief Maximum number of Point lights.                       */
+#define MESHLUTNVERTICES             64                        /* @brief Maximum number of Meshlut's nVertices.                */
+#define MESHLUTNPRIMITIVES           126                       /* @brief Maximum number of Meshlut's nPrimitives.              */
 
-#define invAtan                      vec2(0.1591, 0.3183)
-
+/**
+* @brief  Macros for Calauclate Constant.
+*/
+#define invAtan                      vec2(0.1591, 0.3183)      /* @brief inverse arctan.                                       */
+#define PI                           3.14159265f               /* @brief PI.                                                   */
+#define BIAS                         0.01f                     /* @brief small blas.                                           */
+	
 /*****************************************************************************************/
 
-	
+
 /***************************************Vertex********************************************/
 
 /**
@@ -66,6 +72,24 @@ struct Vertex
 #define Pixel Vertex
 
 /**
+* @brief Gbuffer Data per pixel, for SceneCompose Renderer Fragment Shader use.
+*/
+struct GBufferPixel
+{
+	vec3  albedo;              /* @brief Albedo.     */
+	vec3  normal;              /* @brief Normal.     */
+	float roughness;           /* @brief Roughness.  */
+	float metallic;            /* @brief Metallic.   */
+	vec3  position;            /* @brief Position.   */
+	float depth;               /* @brief Depth.      */
+};
+
+/*****************************************************************************************/
+
+
+/**************************************Materia********************************************/
+
+/**
 * @brief This Struct defines PBR Material Attribute.
 */
 struct MaterialAttributes
@@ -78,19 +102,6 @@ struct MaterialAttributes
 	int   maxRayDepth;         /* @brief Max Ray Tracing Depth, defined specific from material.         */
 	int   maxLightDepth;       /* @brief Max Ray Tracing Light Depth, defined specific from material.   */
 	int   maxShadowDepth;      /* @brief Max Ray Tracing Shadow Depth, defined specific from material.  */
-};
-
-/**
- * @brief Gbuffer Data per pixel, for Fragment Shader use.
- */
-struct GBufferPixel
-{
-	vec3  albedo;              /* @brief Albedo.     */
-	vec3  normal;              /* @brief Normal.     */
-	float roughness;           /* @brief Roughness.  */
-	float metallic;            /* @brief Metallic.   */
-	vec3  position;            /* @brief Position.   */
-	float depth;               /* @brief Depth.      */
 };
 
 /*****************************************************************************************/
@@ -117,9 +128,9 @@ struct View
 */
 struct Input
 {
-	vec4  mousePos;            /* @brief Mouse Postion and inverse position. */
-	float gameTime;            /* @brief Application Run time since start.   */
-	float frameTime;           /* @brief Duration time since last frame.     */
+	vec4  mousePos;            /* @brief Mouse Position and inverse position. */
+	float gameTime;            /* @brief Application Run time since start.    */
+	float frameTime;           /* @brief Duration time since last frame.      */
 };
 
 /*****************************************************************************************/
@@ -155,19 +166,6 @@ struct PointLight
 
 /*********************************RayTracing Renderer Data********************************/
 
-struct Meshlut
-{
-	uint vertexOffset;                        /* Offset of Vertices this meshlut.        */
-	uint primitiveOffset;                     /* Offset of primitives this meshlut.      */
-	uint nVertices;                           /* Vertices Count this meshlut.( <= 64)    */
-	uint nPrimitives;                         /* Primitives Count this meshlut.( <= 126) */
-	vec3 boundCenter;                         /* Bounding Sphere Center in local world.  */
-	float boundRadius;                        /* Bounding Sphere radius.                 */
-	vec3 coneApex;
-	vec3 coneAxis;
-	float coneCutoff;
-};
-
 struct MeshDesc
 {
 	uint64_t vertexAddress;                   /* Address of the Vertex buffer.                  */
@@ -186,15 +184,18 @@ struct HitPayLoad
 {
 	vec3 hitValue;                  /* @brief Current Hit Fragment Color.                                        */
 	uint seed;                      /* @brief Random Seed for BRDF Lambertian Light Reflection Direction Select. */
-	int  rayDepth;                  /* @brief Ray Tracing Depth for diffuse.                                     */
+	uint rayDepth;                  /* @brief Ray Tracing Depth for diffuse.                                     */
 	vec3 rayOrigin;                 /* @brief Next Ray Original World Position.                                  */
 	vec3 rayDirection;              /* @brief Next Ray Direction in World Space.                                 */
 	vec3 weight;                    /* @brief Current Fragment Color Weight.                                     */
-	int  maxRayDepth;               /* @brief Max Ray Tracing Depth, defined specific from material.             */
-	uint  entityID;                 /* @brief Entity ID from Closeest Hit to Ray Gen Shader to RayID Image.      */
+	uint maxRayDepth;               /* @brief Max Ray Tracing Depth, defined specific from material.             */
+	uint entityID;                  /* @brief Entity ID from Closest Hit to Ray Gen Shader to RayID Image.       */
 };
 
 /*****************************************************************************************/
+
+
+/*********************************************Mesh***************************************/
 
 /**
 * @brief Push constant structure for the mesh basic
@@ -204,6 +205,24 @@ struct PushConstantMesh
 	mat4     model;                        /* @brief MeshPack ModelMatrix.              */
 	MeshDesc desc;                         /* MeshDescription of MeshPack.              */
 };
+
+/**
+* @brief Meshlut Structure Data.
+*/
+struct Meshlut
+{
+	uint  vertexOffset;                        /* Offset of Vertices this meshlut.        */
+	uint  primitiveOffset;                     /* Offset of primitives this meshlut.      */
+	uint  nVertices;                           /* Vertices Count this meshlut.( <= 64)    */
+	uint  nPrimitives;                         /* Primitives Count this meshlut.( <= 126) */
+	vec3  boundCenter;                         /* Bounding Sphere Center in local world.  */
+	float boundRadius;                         /* Bounding Sphere radius.                 */
+	vec3  coneApex;
+	vec3  coneAxis;
+	float coneCutoff;
+};
+
+/*****************************************************************************************/
 
 #ifdef __cplusplus
 }

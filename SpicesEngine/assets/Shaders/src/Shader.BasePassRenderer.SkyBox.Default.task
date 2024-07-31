@@ -1,7 +1,55 @@
+/**
+* @file Shader.BasePassRenderer.SkyBox.Default.task.
+* @brief This Shader Defines BasePass Renderer SkyBox SubPass Default Task Shader Behaver.
+* @author Spices.
+*/
+
+/************************************Pre Compile*******************************************/
+
 #version 460
 #extension GL_EXT_mesh_shader : require
+#extension GL_GOOGLE_include_directive : enable
+
+#include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+
+/*****************************************************************************************/
+
+/*************************************Task Input******************************************/
+
+layout (local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+/*****************************************************************************************/
+
+/*************************************Task Output*****************************************/
+
+taskPayloadSharedEXT uint workgroupId;
+
+/*****************************************************************************************/
+
+/*********************************Push Constant*******************************************/
+
+/**
+* @brief push constant.
+*/
+layout(push_constant) uniform Push {
+	PushConstantMesh push;   
+};
+
+/*****************************************************************************************/
+
+/************************************Specific Data****************************************/
+
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
+    Meshlut i[];
+};
+
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
 
 void main()
 {
-	EmitMeshTasksEXT(3, 1, 1);
+    workgroupId = gl_WorkGroupID.x;
+	EmitMeshTasksEXT(gl_WorkGroupSize.x, 1, 1);
 }

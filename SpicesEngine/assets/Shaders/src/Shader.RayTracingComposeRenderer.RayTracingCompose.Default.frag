@@ -37,6 +37,9 @@ layout(location = 1) out float outID;      /* @brief ID Attachment.         */
 
 /********************************Specific Renderer Data***********************************/
 
+/**
+* @brief Storage Image written by RayTracing Renderer.
+*/
 layout(set = 2, binding = 0, rgba32f) uniform image2D RayImage;
 layout(set = 2, binding = 1, r32f) uniform image2D RayID;
 

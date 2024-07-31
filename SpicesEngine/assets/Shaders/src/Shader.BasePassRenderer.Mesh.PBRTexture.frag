@@ -1,6 +1,6 @@
 /**
-* @file Shader.BasePassRenderer.Mesh.Default.frag.
-* @brief This Shader Defines BasePass Renderer Mesh SubPass Default Fragment Shader Behaver.
+* @file Shader.BasePassRenderer.Mesh.PBRTexture.frag.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass PBRTexture Fragment Shader Behaver.
 * @author Spices.
 */
 
@@ -39,13 +39,7 @@ struct MaterialParameter
 /**
 * @brief Fragment Shader Input From Vertex Shader.
 */
-layout(location = 0) in struct FragInput {
-    vec3 position;                                     /* @brief World Position. */
-    vec3 normal;                                       /* @brief World Normal.   */
-    vec3 color;                                        /* @brief Fragmet Color.  */
-    vec2 texCoord;                                     /* @brief Fragmet UV.     */
-} fragInput;
-
+layout(location = 0) in Pixel pixel;                   /* @brief Pixel Data.     */
 layout(location = 4) in flat uint meshlutId;           /* @brief Meshlut ID.     */
 
 /*****************************************************************************************/
@@ -91,10 +85,10 @@ void main()
     float rand2 = rnd(seed0);
     outAlbedo = vec4(rand0, rand1, rand2, 1.0f);
     
-    outNormal     = vec4(fragInput.normal * 0.5f + vec3(0.5f), 1.0f);
-    outRoughness  = texture(BindLessTextureBuffer[materialParam.roughnessTexture], fragInput.texCoord);
-    outMetallic   = texture(BindLessTextureBuffer[materialParam.metallicTexture], fragInput.texCoord);
-    outPosition   = vec4(fragInput.position, 1.0f);
+    outNormal     = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
+    outRoughness  = texture(BindLessTextureBuffer[materialParam.roughnessTexture], pixel.texCoord);
+    outMetallic   = texture(BindLessTextureBuffer[materialParam.metallicTexture], pixel.texCoord);
+    outPosition   = vec4(pixel.position, 1.0f);
     outID         = push.desc.entityID;
 }
 

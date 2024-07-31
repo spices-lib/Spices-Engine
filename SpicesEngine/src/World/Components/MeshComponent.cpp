@@ -207,7 +207,7 @@ namespace Spices {
 								ImGui::SetColumnWidth(0, columnWidth);
 								if(ImGui::ColorButton("##", ImVec4(0.0f, 1.0f, 0.0f, 0.0f), 0, ImVec2(imageIconSize, imageIconSize)))
 								{
-									FrameInfo::Get().m_PickMaterial = i;
+									FrameInfo::Get().m_PickMaterial = static_cast<uint32_t>(i);
 								}
 								ImGui::NextColumn();
 
@@ -233,7 +233,7 @@ namespace Spices {
 									
 									char buffer1[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-									auto meshPack = *m_Mesh->GetPacks().find_value(i);
+									auto meshPack = *m_Mesh->GetPacks().find_value(static_cast<uint32_t>(i));
 									ImGui::InputTextWithHint("##_2", meshPack->GetMaterial()->GetName().c_str(), buffer1, sizeof(buffer1));
 									ImGui::PopItemWidth();
 								}

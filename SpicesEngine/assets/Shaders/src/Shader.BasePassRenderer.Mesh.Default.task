@@ -1,7 +1,70 @@
+/**
+* @file Shader.BasePassRenderer.Mesh.Default.task.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass Default Task Shader Behaver.
+* @author Spices.
+*/
+
+/************************************Pre Compile*******************************************/
+
 #version 460
 #extension GL_EXT_mesh_shader : require
+#extension GL_GOOGLE_include_directive : enable
+
+#include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+
+/*****************************************************************************************/
+
+/*************************************Task Input******************************************/
+
+layout (local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+/*****************************************************************************************/
+
+/*************************************Task Output*****************************************/
+
+taskPayloadSharedEXT uint workgroupId;
+
+/*****************************************************************************************/
+
+/*********************************Push Constant*******************************************/
+
+/**
+* @brief push constant.
+*/
+layout(push_constant) uniform Push {
+	PushConstantMesh push;   
+};
+
+/*****************************************************************************************/
+
+/************************************Specific Data****************************************/
+
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
+    Meshlut i[];
+};
+
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
 
 void main()
 {
-	EmitMeshTasksEXT(3, 1, 1);
+    Meshlut meshlut     = Meshluts(push.desc.meshlutAddress).i[gl_WorkGroupID.x];
+    
+	vec4 ro             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec4 worldCenter    = push.model * vec4(meshlut.boundCenter, 1.0f);
+    vec3 dis            = worldCenter.xyz - ro.xyz;
+
+    //if(length(dis) < 750.0f)
+    {
+        workgroupId = gl_WorkGroupID.x;
+        EmitMeshTasksEXT(1, 1, 1);
+        return;
+    }
+    //else
+    {
+	    EmitMeshTasksEXT(0, 0, 0);
+	    return;
+	}
 }

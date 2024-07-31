@@ -1,15 +1,15 @@
 /**
-* @file Shader.BasePassRenderer.Mesh.Default.mesh.
-* @brief This Shader Defines BasePass Renderer Mesh SubPass Default Mesh Shader Behaver.
+* @file Shader.BasePassRenderer.Mesh.SkyBox.mesh.
+* @brief This Shader Defines BasePass Renderer Mesh SubPass SkyBox Mesh Shader Behaver.
 * @author Spices.
 */
 
 /************************************Pre Compile*******************************************/
 
 #version 460
-#extension GL_EXT_mesh_shader                 : require
-#extension GL_GOOGLE_include_directive        : enable    
-#extension GL_EXT_control_flow_attributes     : require
+#extension GL_EXT_mesh_shader                 : require   /* @brief Declear this as mesh shader. */
+#extension GL_GOOGLE_include_directive        : enable    /* @brief Enable include feature.      */
+#extension GL_EXT_control_flow_attributes     : require   /* @brief Enable flow butter control.  */
 
 #include "Header/ShaderPreRendererLayout.glsl"
 
@@ -19,18 +19,32 @@
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
+/**
+* @brief task padload receive from task shader.
+*/
+taskPayloadSharedEXT uint workgroupId;    /* @brief mesh shader hanled meshlut id(as workgroupid). */
+
 /*****************************************************************************************/
 
 /*************************************Mesh Output*****************************************/
 
+/**
+* @brief Output triangles meshlut per workgroup.
+*/
 layout(triangles, max_vertices = MESHLUTNVERTICES, max_primitives = MESHLUTNPRIMITIVES) out;
 
-layout(location = 0) out struct VertOut {
+/**
+* @brief Output Vertex structure data to fragment shader.
+*/
+layout(location = 0) out struct MeshOut {
     vec3 localPosition;
     vec3 worldPosition;
-} vertOut[];
+} meshOut[];
 
-layout(location = 4) out uint meshlutId[];
+/**
+* @brief Output meshlutid to fragment shader.
+*/
+layout(location = 4) out flat uint meshlutId[];
 
 /*****************************************************************************************/
 
@@ -40,11 +54,12 @@ layout(location = 4) out uint meshlutId[];
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	PushConstantMesh push;   
+	PushConstantMesh push;   /* @see PushConstantMesh. */
 };
 
 /*****************************************************************************************/
 
+/************************************Specific Data****************************************/
 
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices { 
     Vertex v[];           
@@ -58,11 +73,13 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
     Meshlut i[];
 };
 
+/*****************************************************************************************/
+
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
-    uint id = gl_WorkGroupID.x;
+    uint id = workgroupId;
 
     Vertices vertices   = Vertices(push.desc.vertexAddress);
     Indices indices     = Indices(push.desc.indexAddress);
@@ -78,9 +95,9 @@ void main()
 
         gl_MeshVerticesEXT[i].gl_Position = mvp * vec4(vt.position, 1.0f);
 
-        vertOut[i].localPosition = vt.position;
-        vertOut[i].worldPosition = vec3(push.model * vec4(vt.position, 1.0f));
-        meshlutId[i]        = id;
+        meshOut[i].localPosition = vt.position;
+        meshOut[i].worldPosition = vec3(push.model * vec4(vt.position, 1.0f));
+        meshlutId[i]             = id;
     }
 
 	[[unroll]]

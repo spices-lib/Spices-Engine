@@ -93,7 +93,7 @@ namespace Spices {
 
 #ifdef SPICES_DEBUG
 
-		//m_DebugMessengerCreateInfo.pNext                    = &validationFeatures;
+		m_DebugMessengerCreateInfo.pNext                    = &validationFeatures;
 
 #endif
 
