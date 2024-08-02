@@ -37,6 +37,178 @@ namespace HoudiniEngine {
         }
     }
 
+    static void ProcessFloatAttrib(HAPI_Session& session, HAPI_AssetInfo& assetInfo, HAPI_NodeId objectNode, HAPI_NodeId geoNode, HAPI_PartId partId, HAPI_AttributeOwner owner, std::string name)
+    {
+        HAPI_AttributeInfo attribInfo;
+        HE_CHECK(HAPI_GetAttributeInfo(&session, geoNode, partId, name.c_str(), owner, &attribInfo))
+
+        std::vector<float> attribData(attribInfo.count * attribInfo.tupleSize);
+        HE_CHECK(HAPI_GetAttributeFloatData(&session, geoNode, partId, name.c_str(), &attribInfo, -1, attribData.data(), 0, attribInfo.count))
+
+        for (int elemIndex = 0; elemIndex < attribInfo.count; ++elemIndex)
+        {
+            for (int tupleIndex = 0; tupleIndex < attribInfo.count; ++tupleIndex)
+            {
+                std::cout << attribData[elemIndex * attribInfo.tupleSize + tupleIndex] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    static void ProcessGeoPart(HAPI_Session& session, HAPI_AssetInfo& assetInfo, HAPI_NodeId objectNode, HAPI_NodeId geoNode, HAPI_PartId partId)
+    {
+        std::cout << "Object" << objectNode << ", Geo" << geoNode << ", Part" << partId << std::endl;
+
+        HAPI_PartInfo partInfo;
+        HE_CHECK(HAPI_GetPartInfo(&session, geoNode, partId, &partInfo))
+
+        std::vector<HAPI_StringHandle> attributeNameSh(partInfo.attributeCounts[HAPI_ATTROWNER_POINT]);
+        HE_CHECK(HAPI_GetAttributeNames(&session, geoNode, partInfo.id, HAPI_ATTROWNER_POINT, attributeNameSh.data(), partInfo.attributeCounts[HAPI_ATTROWNER_POINT]))
+
+        for (int attribIndex = 0; attribIndex < partInfo.attributeCounts[HAPI_ATTROWNER_POINT]; ++attribIndex)
+        {
+            std::string attribName = GetString(session, attributeNameSh[attribIndex]);
+            std::cout << "    " << attribName << std::endl;
+        }
+
+        std::cout << "Point Positions: " << std::endl;
+
+        ProcessFloatAttrib(session, assetInfo, objectNode, geoNode, partId, HAPI_ATTROWNER_POINT, "P");
+
+        std::cout << "Number of Faces: " << partInfo.faceCount << std::endl;
+
+        if (partInfo.type != HAPI_PARTTYPE_CURVE)
+        {
+            std::vector<int> faceCounts(partInfo.faceCount);
+
+            HE_CHECK(HAPI_GetFaceCounts(&session, geoNode, partId, faceCounts.data(), 0, partInfo.faceCount))
+
+            for (int ii = 0; ii < partInfo.faceCount; ++ii)
+            {
+                std::cout << faceCounts[ii] << ", ";
+            }
+
+            std::cout << std::endl;
+
+            std::vector<int> vertexList(partInfo.vertexCount);
+            HE_CHECK(HAPI_GetVertexList(&session, geoNode, partId, vertexList.data(), 0, partInfo.vertexCount))
+
+            std::cout << "Vertex Indices into Points array: " << std::endl;
+            int currIndex = 0;
+            for (int ii = 0; ii < partInfo.faceCount; ii++)
+            {
+                for (int jj = 0; jj < faceCounts[ii]; jj++)
+                {
+                    std::cout << "Vertex: " << currIndex << ", belonging to face: "
+                        << ii << ", index: "
+                        << vertexList[currIndex] << "of points array\n";
+                    currIndex++;
+                }
+            }
+        }
+    }
+
+    static void PrintPartInfo(HAPI_Session& session, HAPI_NodeId nodeId, HAPI_PartId partId, std::string indent)
+    {
+        HAPI_PartInfo partInfo;
+        HE_CHECK(HAPI_GetPartInfo(&session, nodeId, partId, &partInfo))
+
+        if (partInfo.type == HAPI_PARTTYPE_MESH)
+        {
+            std::cout << indent << "Part " << partId << ":" << std::endl;
+            std::cout << indent << "    Type = Mesh" << std::endl;
+            std::cout << indent << "    Point Count = " << partInfo.pointCount << std::endl;
+        }
+        else if(partInfo.type == HAPI_PARTTYPE_CURVE)
+        {
+            std::cout << indent << "Part " << partId << ":" << std::endl;
+            std::cout << indent << "    Type = Curve" << std::endl;
+            std::cout << indent << "    Point Count = " << partInfo.pointCount << std::endl;
+        }
+        else if (partInfo.type == HAPI_PARTTYPE_INSTANCER)
+        {
+            std::cout << indent << "Part " << partId << ":" << std::endl;
+            std::cout << indent << "    Type = Instancer" << std::endl;
+            std::cout << indent << "    Point Count = " << partInfo.pointCount << std::endl;
+            std::cout << indent << "    Instance Count = " << partInfo.instanceCount << std::endl;
+            std::cout << indent << "    Instanced Part Count = " << partInfo.instancedPartCount << std::endl;
+
+            std::vector<HAPI_Transform> instanceTransforms(partInfo.instanceCount);
+            HE_CHECK(HAPI_GetInstancerPartTransforms(&session, nodeId, partId, HAPI_RSTORDER_DEFAULT, instanceTransforms.data(), 0, partInfo.instanceCount))
+
+            std::cout << indent << "    Instance Transforms: " << std::endl;
+
+            for (auto instanceTransform : instanceTransforms)
+            {
+                float* p = &instanceTransform.position[0];
+                std::cout << indent << "        " << p[0] << "." << p[1] << "." << p[2] << std::endl;
+            }
+
+            std::vector<HAPI_PartId> instancedPartIds(partInfo.instancedPartCount);
+            HE_CHECK(HAPI_GetInstancedPartIds(&session, nodeId, partId, instancedPartIds.data(), 0, partInfo.instancedPartCount))
+
+            std::cout << indent << "    Instanced Parts: " << std::endl;
+
+            for (auto instancedPartId : instancedPartIds)
+            {
+                PrintPartInfo(session, nodeId, instancedPartId, "        ->");
+            }
+        }
+    }
+
+    static void CookAndPrintNode(HAPI_Session& session, HAPI_CookOptions& co, HAPI_NodeId nodeId, HAPI_PackedPrimInstancingMode mode)
+    {
+        switch (mode)
+        {
+            case HAPI_PACKEDPRIM_INSTANCING_MODE_DISABLED:
+                std::cout << "Using: HAPI_PACKEDPRIM_INSTANCING_MODE_DISABLED" << std::endl;
+                break;
+            case HAPI_PACKEDPRIM_INSTANCING_MODE_HIERARCHY:
+                std::cout << "Using: HAPI_PACKEDPRIM_INSTANCING_MODE_HIERARCHY" << std::endl;
+                break;
+            case HAPI_PACKEDPRIM_INSTANCING_MODE_FLAT:
+                std::cout << "Using: HAPI_PACKEDPRIM_INSTANCING_MODE_FLAT" << std::endl;
+                break;
+        }
+
+        co.packedPrimInstancingMode = mode;
+
+        HE_CHECK(HAPI_CookNode(&session, nodeId, &co))
+
+        int cookStatus;
+        HAPI_Result cookResult;
+
+        do
+        {
+            cookResult = HAPI_GetStatus(&session, HAPI_STATUS_COOK_STATE, &cookStatus);
+        }
+        while(cookStatus > HAPI_STATE_MAX_READY_STATE && cookResult == HAPI_RESULT_SUCCESS);
+
+        HE_CHECK(cookResult)
+        HE_CHECK_COOK(cookStatus)
+
+        HAPI_NodeInfo nodeInfo;
+        HE_CHECK(HAPI_GetNodeInfo(&session, nodeId, &nodeInfo))
+
+        int childCount;
+        HE_CHECK(HAPI_ComposeChildNodeList(&session, nodeId, HAPI_NODETYPE_SOP, HAPI_NODEFLAGS_ANY, false, &childCount))
+
+        std::vector<HAPI_NodeId> childIds(childCount);
+        HE_CHECK(HAPI_GetComposedChildNodeList(&session, nodeId, childIds.data(), childCount))
+
+        for (int i = 0; i < childCount; ++i)
+        {
+            HAPI_GeoInfo geoInfo;
+            HE_CHECK(HAPI_GetGeoInfo(&session, childIds[i], &geoInfo))
+            std::cout << "Part count for geo node " << i << ": " << geoInfo.partCount << std::endl;
+
+            for (int j = 0; j < geoInfo.partCount; ++j)
+            {
+                PrintPartInfo(session, childIds[i], j, "");
+            }
+        }
+    }
+
     static void PrintCompleteNodeInfo(HAPI_Session& session, HAPI_NodeId nodeId, HAPI_AssetInfo& assetInfo)
     {
         HAPI_NodeInfo nodeInfo;
@@ -87,7 +259,7 @@ namespace HoudiniEngine {
 
             for (int partIndex = 0; partIndex < geoInfo.partCount; ++partIndex)
             {
-                //ProcessGeoPart(session, assetInfo, objectInfo.nodeId, geoInfo.nodeId, partIndex);
+                ProcessGeoPart(session, assetInfo, objectInfo.nodeId, geoInfo.nodeId, partIndex);
             }
         }
 
@@ -1027,5 +1199,177 @@ namespace HoudiniEngine {
         PrintCompleteNodeInfo(session, nodeId, assetInfo);
 
         HE_CHECK(HAPI_Cleanup(&session));
+    }
+
+    static void Packed_Primitives_Sample()
+    {
+        const char* hdaFile = "";
+
+        HAPI_Session session;
+        HAPI_ThriftServerOptions serverOptions{ 0 };
+        serverOptions.autoClose = true;
+        serverOptions.timeoutMs = 3000.0f;
+
+        HE_CHECK(HAPI_StartThriftNamedPipeServer(&serverOptions, "hapi", nullptr, nullptr))
+
+        HAPI_SessionInfo sessionInfo = HAPI_SessionInfo_Create();
+        HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
+
+        HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
+        HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
+
+        HAPI_AssetLibraryId assetLibId;
+        HE_CHECK(HAPI_LoadAssetLibraryFromFile(&session, hdaFile, true, &assetLibId))
+
+        int assetCount;
+        HE_CHECK(HAPI_GetAvailableAssetCount(&session, assetLibId, &assetCount))
+
+        if (assetCount > 1)
+        {
+            std::cout << "Should only be loading 1 asset here" << std::endl;
+        }
+
+        HAPI_StringHandle assetSh;
+        HE_CHECK(HAPI_GetAvailableAssets(&session, assetLibId, &assetSh, assetCount))
+
+        std::string assetName = GetString(session, assetSh);
+
+        HAPI_NodeId nodeId;
+        HE_CHECK(HAPI_CreateNode(&session, -1, assetName.c_str(), "PackedPrimitive", false, &nodeId))
+
+        CookAndPrintNode(session, cookOptions, nodeId, HAPI_PACKEDPRIM_INSTANCING_MODE_DISABLED);
+        CookAndPrintNode(session, cookOptions, nodeId, HAPI_PACKEDPRIM_INSTANCING_MODE_HIERARCHY);
+        CookAndPrintNode(session, cookOptions, nodeId, HAPI_PACKEDPRIM_INSTANCING_MODE_FLAT);
+
+        HE_CHECK(HAPI_Cleanup(&session))
+    }
+
+    static void Parameters_Sample()
+    {
+        const char* hdaFile = "";
+
+        HAPI_Session session;
+        HAPI_ThriftServerOptions serverOptions{ 0 };
+        serverOptions.autoClose = true;
+        serverOptions.timeoutMs = 3000.0f;
+
+        HE_CHECK(HAPI_StartThriftNamedPipeServer(&serverOptions, "hapi", nullptr, nullptr))
+
+        HAPI_SessionInfo sessionInfo = HAPI_SessionInfo_Create();
+        HE_CHECK(HAPI_CreateThriftNamedPipeSession(&session, "hapi", &sessionInfo))
+
+        HAPI_CookOptions cookOptions = HAPI_CookOptions_Create();
+        HE_CHECK(HAPI_Initialize(&session, &cookOptions, true, -1, nullptr, nullptr, nullptr, nullptr, nullptr))
+
+        HAPI_AssetLibraryId assetLibId;
+        HE_CHECK(HAPI_LoadAssetLibraryFromFile(&session, hdaFile, true, &assetLibId))
+
+        int assetCount;
+        HE_CHECK(HAPI_GetAvailableAssetCount(&session, assetLibId, &assetCount))
+
+        if (assetCount > 1)
+        {
+            std::cout << "Should only be loading 1 asset here" << std::endl;
+        }
+
+        HAPI_StringHandle assetSh;
+        HE_CHECK(HAPI_GetAvailableAssets(&session, assetLibId, &assetSh, assetCount))
+
+        std::string assetName = GetString(session, assetSh);
+
+        HAPI_NodeId nodeId;
+        HE_CHECK(HAPI_CreateNode(&session, -1, assetName.c_str(), "AnAsset", false, &nodeId))
+
+        HE_CHECK(HAPI_CookNode(&session, nodeId, &cookOptions))
+
+        int cookStatus;
+        HAPI_Result cookResult;
+
+        do
+        {
+            cookResult = HAPI_GetStatus(&session, HAPI_STATUS_COOK_STATE, &cookStatus);
+        }
+        while(cookStatus > HAPI_STATE_MAX_READY_STATE && cookResult == HAPI_RESULT_SUCCESS);
+
+        HE_CHECK(cookResult);
+        HE_CHECK(cookStatus);
+
+        HAPI_NodeInfo nodeInfo;
+        HE_CHECK(HAPI_GetNodeInfo(&session, nodeId, &nodeInfo))
+
+        std::vector<HAPI_ParmInfo> parmInfos(nodeInfo.parmCount);
+        HE_CHECK(HAPI_GetParameters(&session, nodeId, parmInfos.data(), 0, nodeInfo.parmCount))
+
+        std::cout << "Parameters: " << std::endl;
+        for (int i = 0; i < nodeInfo.parmCount; ++i)
+        {
+            std::cout << "===========" << std::endl;
+
+            std::cout << "    Name: "
+                << GetString(session, parmInfos[i].nameSH)
+                << std::endl;
+
+            std::cout << "    Value: (";
+
+            if (HAPI_ParmInfo_IsInt(&parmInfos[i]))
+            {
+                int parmIntCount = HAPI_ParmInfo_GetIntValueCount(&parmInfos[i]);
+
+                std::vector<int> parmIntValues(parmIntCount);
+
+                HE_CHECK(HAPI_GetParmIntValues(&session, nodeId, parmIntValues.data(), parmInfos[i].intValuesIndex, parmIntCount))
+
+                for (int v = 0; v < parmIntCount; ++v)
+                {
+                    if (v != 0)
+                    {
+                        std::cout << ", ";
+                    }
+                    std::cout << parmIntValues[v];
+                }
+            }
+            else if (HAPI_ParmInfo_IsFloat(&parmInfos[i]))
+            {
+
+                int parmFloatCount = HAPI_ParmInfo_GetFloatValueCount(&parmInfos[i]);
+
+                std::vector<float> parmFloatValues(parmFloatCount);
+
+                HE_CHECK(HAPI_GetParmFloatValues(&session, nodeId, parmFloatValues.data(), parmInfos[i].floatValuesIndex, parmFloatCount))
+
+                for (int v = 0; v < parmFloatCount; ++v)
+                {
+                    if (v != 0)
+                    {
+                        std::cout << ", ";
+                    }
+                    std::cout << parmFloatValues[v];
+                }
+            }
+            else if (HAPI_ParmInfo_IsString(&parmInfos[i]))
+            {
+                int parmStringCount = HAPI_ParmInfo_GetStringValueCount(&parmInfos[i]);
+                std::vector<HAPI_StringHandle> parmSHValues(parmStringCount);
+
+                HE_CHECK(HAPI_GetParmStringValues(&session, nodeId, true, parmSHValues.data(), parmInfos[i].stringValuesIndex, parmStringCount));
+
+                for (int v = 0; v < parmStringCount; ++v)
+                {
+                    if (v != 0)
+                    {
+                        std::cout << ", ";
+                    }
+
+                    std::cout << GetString(session, parmSHValues[v]);
+                }
+            }
+
+            HE_CHECK(HAPI_Cleanup(&session))
+        }
+    }
+
+    static void PDG_Cooking_With_Events()
+    {
+
     }
 }
