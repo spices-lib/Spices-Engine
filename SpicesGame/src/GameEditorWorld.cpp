@@ -3,13 +3,15 @@
 #include <Resources/Loader/MaterialLoader.h>
 #include <GamePlay/MeshController.h>
 #include <Resources/ResourcePool/ResourcePool.h>
-
+#include <Systems/ResourceSystem.h>
 
 namespace Spices {
 
 	void GameEditorWorld::OnPreActivate()
 	{
 		SPICES_PROFILE_ZONE;
+
+		ResourceSystem::RegistryResourceFolder(SPICES_GAME_ASSETS_PATH);
 
 		EditorWorld::OnPreActivate();
 

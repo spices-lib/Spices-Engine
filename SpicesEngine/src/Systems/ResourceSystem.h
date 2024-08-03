@@ -56,7 +56,21 @@ namespace Spices {
 		*/
 		virtual void OnEvent(Event& event) override;
 
+		/**
+		* @brief Get Resource Search Folder.
+		* @return Returns Resource Search Folder.
+		*/
+		static const std::vector<std::string>& GetSearchFolder() { return m_ResourceSearchFolder; };
+
+		/**
+		* @brief Registry Resource Search Folder.
+		* @param[in] folder Resource Search Folder.
+		*/
+		static void RegistryResourceFolder(const std::string& folder);
+
 	private:
+
+		static std::vector<std::string> m_ResourceSearchFolder;
 
 	};
 }

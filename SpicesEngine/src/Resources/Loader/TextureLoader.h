@@ -34,7 +34,7 @@ namespace Spices {
 		* Feel free for using row pointer here, it's very safe, for this API only called during Material.
 		* @return Returns true if load data succssfully.
 		*/
-		static void Load(const std::string& filePath, Texture2D* outTexture);
+		static void Load(const std::string& fileName, Texture2D* outTexture);
 
 		/**
 		* @brief Load image to a Texture2DCube object.
@@ -44,6 +44,6 @@ namespace Spices {
 		* @return Returns true if load data succssfully.
 		* @todo finish it.
 		*/
-		static void Load(const std::string& filePath, Texture2DCube* outTexture);
+		static void Load(const std::string& fileName, Texture2DCube* outTexture);
 	};
 }

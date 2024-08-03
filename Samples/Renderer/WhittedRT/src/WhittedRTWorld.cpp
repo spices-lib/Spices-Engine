@@ -4,12 +4,15 @@
 #include <GamePlay/MeshController.h>
 #include <Resources/ResourcePool/ResourcePool.h>
 #include <GamePlay/CameraController.h>
+#include <Systems/ResourceSystem.h>
 
 namespace Spices {
 
 	void WhittedRTWorld::OnPreActivate()
 	{
 		SPICES_PROFILE_ZONE;
+
+		ResourceSystem::RegistryResourceFolder(SPICES_GAME_ASSETS_PATH);
 
 		// camera
 		{

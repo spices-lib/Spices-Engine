@@ -14,6 +14,8 @@
 
 namespace Spices {
 
+	std::vector<std::string> ResourceSystem::m_ResourceSearchFolder = { SPICES_ENGINE_ASSETS_PATH };
+
 	void ResourceSystem::OnSystemInitialize()
 	{
 		/**
@@ -38,6 +40,11 @@ namespace Spices {
 
 	void ResourceSystem::OnEvent(Event& event)
 	{
+	}
+
+	void ResourceSystem::RegistryResourceFolder(const std::string& folder)
+	{
+		m_ResourceSearchFolder.push_back(folder);
 	}
 
 }

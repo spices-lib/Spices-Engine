@@ -10,23 +10,24 @@
 #include "Core/Library/StringLibrary.h"
 #include "Utils/YamlUtils.h"
 #include "Resources/Material/Material.h"
+#include "Systems/ResourceSystem.h"
 
 namespace Spices {
 
 	/**
 	* @brief Const variable: Bin Material File Path.
 	*/
-	const std::string defaultBinMaterialPath = SPICES_ENGINE_ASSETS_PATH + "Materials/bin/";
+	const std::string defaultBinMaterialPath = "Materials/bin/";
 
 	/**
 	* @brief Const variable: Original Material File Path.
 	*/
-	const std::string defaultMaterialPath = SPICES_ENGINE_ASSETS_PATH + "Materials/src/";
+	const std::string defaultMaterialPath = "Materials/src/";
 
 	/**
 	* @brief Const variable: Bin Shader File Path.
 	*/
-	const std::string defaultBinShaderPath = SPICES_ENGINE_ASSETS_PATH + "Shaders/spv/";
+	const std::string defaultBinShaderPath = "Shaders/spv/";
 
 	/**
 	* @brief Const variable: Material File Confirm header start.
@@ -67,12 +68,12 @@ namespace Spices {
 		/**
 		* @brief Load from .sasset file first.
 		*/
-		if      (LoadFromSASSET(defaultBinMaterialPath + "Material." + fileName + ".sasset", outMaterial))  return true;
+		if      (LoadFromSASSET(fileName, outMaterial))  return true;
 
 		/**
 		* @brief Load from .material file second.
 		*/
-		else if (LoadFromMaterial(defaultMaterialPath + "Material." + fileName + ".material", outMaterial)) return true;
+		else if (LoadFromMaterial(fileName, outMaterial)) return true;
 		
 		else
 		{
@@ -84,14 +85,27 @@ namespace Spices {
 		}
 	}
 
-	bool MaterialLoader::LoadFromMaterial(const std::string& filepath, Material* outMaterial)
+	bool MaterialLoader::LoadFromMaterial(const std::string& fileName, Material* outMaterial)
 	{
 		SPICES_PROFILE_ZONE;
+
+		bool isFind = false;
+		std::string filePath;
+		for (auto& it : ResourceSystem::GetSearchFolder())
+		{
+			filePath = it + defaultMaterialPath + "Material." + fileName + ".material";
+			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+			{
+				isFind = true;
+				break;
+			}
+		}
+		if (!isFind) return false;
 
 		/**
 		* @brief Read .material file as bytes.
 		*/
-		std::ifstream stream(filepath);
+		std::ifstream stream(filePath);
 		std::stringstream strStream;
 		strStream << stream.rdbuf();
 
@@ -106,7 +120,7 @@ namespace Spices {
 		if (!data["Material"])
 		{
 			std::stringstream ss;
-			ss << filepath << ":  Not find a Material Node.";
+			ss << filePath << ":  Not find a Material Node.";
 			
 			SPICES_CORE_ERROR(ss.str());
 			return false;
@@ -128,7 +142,7 @@ namespace Spices {
 		else
 		{
 			std::stringstream ss;
-			ss << filepath << ":  Not find a Shaders Node.";
+			ss << filePath << ":  Not find a Shaders Node.";
 			
 			SPICES_CORE_ERROR(ss.str());
 			return false;
@@ -161,17 +175,25 @@ namespace Spices {
 		return true;
 	}
 
-	bool MaterialLoader::LoadFromSASSET(const std::string& filepath, Material* outMaterial)
+	bool MaterialLoader::LoadFromSASSET(const std::string& fileName, Material* outMaterial)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) 
+		bool isFind = false;
+		std::string filePath;
+		for (auto& it : ResourceSystem::GetSearchFolder())
 		{
-			return false;
+			filePath = it + defaultBinMaterialPath + "Material." + fileName + ".sasset";
+			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+			{
+				isFind = true;
+				break;
+			}
 		}
+		if (!isFind) return false;
 
 		FileHandle f;
-		FileLibrary::FileLibrary_Open(filepath.c_str(), FILE_MODE_READ, true, &f);
+		FileLibrary::FileLibrary_Open(filePath.c_str(), FILE_MODE_READ, true, &f);
 
 		uint64_t readed = 0;
 

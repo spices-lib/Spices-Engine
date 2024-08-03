@@ -9,6 +9,7 @@
 #include "Resources/Mesh/MeshPack.h"
 #include "Core/Library/FileLibrary.h"
 #include "Core/Library/StringLibrary.h"
+#include "Systems/ResourceSystem.h"
 
 #include "tiny_obj_loader.h"
 
@@ -17,17 +18,17 @@ namespace Spices {
 	/**
 	* @brief Const variable: Bin Mesh File Path.
 	*/
-	const std::string defaultBinMeshPath = SPICES_ENGINE_ASSETS_PATH + "Meshes/bin/";
+	const std::string defaultBinMeshPath = "Meshes/bin/";
 
 	/**
 	* @brief Const variable: OBJ Mesh File Path.
 	*/
-	const std::string defaultOBJMeshPath = SPICES_ENGINE_ASSETS_PATH + "Meshes/src/obj/";
+	const std::string defaultOBJMeshPath = "Meshes/src/obj/";
 
 	/**
 	* @brief Const variable: FBX Mesh File Path.
 	*/
-	const std::string defaultFBXMeshPath = SPICES_ENGINE_ASSETS_PATH + "Meshes/src/fbx/";
+	const std::string defaultFBXMeshPath = "Meshes/src/fbx/";
 
 	/**
 	* @brief Const variable: Mesh File Confirm header staer.
@@ -49,9 +50,20 @@ namespace Spices {
 
 	bool MeshLoader::LoadFromOBJ(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		std::string filepath = defaultOBJMeshPath + fileName + ".obj";
+		bool isFind = false;
+		std::string filePath;
+		for (auto& it : ResourceSystem::GetSearchFolder())
+		{
+			filePath = it + defaultOBJMeshPath + fileName + ".obj";
+			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+			{
+				isFind = true;
+				break;
+			}
+		}
+		if (!isFind) return false;
 
-		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) {
+		if (!FileLibrary::FileLibrary_Exists(filePath.c_str())) {
 			return false;
 		}
 
@@ -60,7 +72,7 @@ namespace Spices {
 		std::vector<tinyobj::material_t> materials;
 		std::string warn, err;
 
-		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str()))
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filePath.c_str()))
 		{
 			return false;
 		}
@@ -129,7 +141,18 @@ namespace Spices {
 
 	bool MeshLoader::LoadFromFBX(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		std::string filepath = defaultFBXMeshPath + fileName + ".fbx";
+		bool isFind = false;
+		std::string filePath;
+		for (auto& it : ResourceSystem::GetSearchFolder())
+		{
+			filePath = it + defaultFBXMeshPath + fileName + ".fbx";
+			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+			{
+				isFind = true;
+				break;
+			}
+		}
+		if (!isFind) return false;
 
 		// TODO: 
 		return false;
@@ -137,14 +160,25 @@ namespace Spices {
 
 	bool MeshLoader::LoadFromSASSET(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		std::string filepath = defaultBinMeshPath + fileName + ".sasset";
+		bool isFind = false;
+		std::string filePath;
+		for (auto& it : ResourceSystem::GetSearchFolder())
+		{
+			filePath = it + defaultBinMeshPath + fileName + ".sasset";
+			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+			{
+				isFind = true;
+				break;
+			}
+		}
+		if (!isFind) return false;
 
-		if (!FileLibrary::FileLibrary_Exists(filepath.c_str())) {
+		if (!FileLibrary::FileLibrary_Exists(filePath.c_str())) {
 			return false;
 		}
 
 		FileHandle f;
-		FileLibrary::FileLibrary_Open(filepath.c_str(), FILE_MODE_READ, true, &f);
+		FileLibrary::FileLibrary_Open(filePath.c_str(), FILE_MODE_READ, true, &f);
 
 		uint64_t readed = 0;
 
@@ -189,14 +223,14 @@ namespace Spices {
 
 	bool MeshLoader::WriteSASSET(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		std::string filepath = defaultBinMeshPath + fileName + ".sasset";
+		std::string filePath = defaultBinMeshPath + fileName + ".sasset";
 
-		if (FileLibrary::FileLibrary_Exists(filepath.c_str())) {
+		if (FileLibrary::FileLibrary_Exists(filePath.c_str())) {
 			return false;
 		}
 
 		FileHandle f;
-		FileLibrary::FileLibrary_Open(filepath.c_str(), FILE_MODE_WRITE, true, &f);
+		FileLibrary::FileLibrary_Open(filePath.c_str(), FILE_MODE_WRITE, true, &f);
 
 		uint64_t written = 0;
 

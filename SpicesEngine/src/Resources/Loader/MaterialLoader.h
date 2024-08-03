@@ -59,20 +59,20 @@ namespace Spices {
 
 		/**
 		* @brief Load data from a .material file.
-		* @param[in] filepath Material path in disk.
+		* @param[in] fileName Material path in disk.
 		* @param[in,out] outMaterial Material pointer, only pass this to it.
 		* @return Returns true if load data successfully.
 		*/
-		static bool LoadFromMaterial(const std::string& filepath, Material* outMaterial);
+		static bool LoadFromMaterial(const std::string& fileName, Material* outMaterial);
 
 		/**
 		* @brief Load data from a .sasset file.
-		* @param[in] filepath Material path in disk.
+		* @param[in] fileName Material path in disk.
 		* @param[in,out] outMaterial Material pointer, only pass this to it.
 		* @return Returns true if load data successfully.
 		* @todo Finish it.
 		*/
-		static bool LoadFromSASSET(const std::string& filepath, Material* outMaterial);
+		static bool LoadFromSASSET(const std::string& fileName, Material* outMaterial);
 
 	public:
 

@@ -9,6 +9,7 @@
 #include "Render/Vulkan/VulkanImage.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Core/Library/FileLibrary.h"
+#include "Systems/ResourceSystem.h"
 
 #include <stb_image.h>
 
@@ -20,24 +21,27 @@ namespace Spices {
 	/**
 	* @brief Const variable: Original Image File Path.
 	*/
-	const std::string defaultTexturePath = SPICES_ENGINE_ASSETS_PATH + "Textures/src/";
+	const std::string defaultTexturePath = "Textures/src/";
 
-	void TextureLoader::Load(const std::string& filePath, Texture2D* outTexture)
+	void TextureLoader::Load(const std::string& fileName, Texture2D* outTexture)
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Get full texture path.
-		*/
-		const std::string _filePath = defaultTexturePath + filePath;
-
-		/**
-		* @brief Return if file is not find.
-		*/
-		if (!FileLibrary::FileLibrary_Exists(_filePath.c_str()))
+		bool isFind = false;
+		std::string filePath;
+		for (auto& it : ResourceSystem::GetSearchFolder())
+		{
+			filePath = it + defaultTexturePath + fileName;
+			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+			{
+				isFind = true;
+				break;
+			}
+		}
+		if (!isFind)
 		{
 			std::stringstream ss;
-			ss << "File: " << _filePath << " Not Find";
+			ss << "File: " << filePath << " Not Find";
 
 			SPICES_CORE_ERROR(ss.str());
 			return;
@@ -53,7 +57,7 @@ namespace Spices {
 		* @brief Load Texture data.
 		*/
 		int texChannels;
-		stbi_uc* pixels = stbi_load(_filePath.c_str(), &resourceptr->m_Width, &resourceptr->m_Height, &texChannels, STBI_rgb_alpha);
+		stbi_uc* pixels = stbi_load(filePath.c_str(), &resourceptr->m_Width, &resourceptr->m_Height, &texChannels, STBI_rgb_alpha);
 		if (!pixels)
 		{
 			SPICES_CORE_ERROR("Failed to load texture image!");
@@ -99,7 +103,7 @@ namespace Spices {
 		*/
 		resourceptr->CreateImage(
 			resourceptr->m_VulkanState,
-			filePath,
+			fileName,
 			VK_IMAGE_TYPE_2D,
 			resourceptr->m_Width,
 			resourceptr->m_Height,
@@ -158,7 +162,7 @@ namespace Spices {
 		resourceptr->CreateSampler();
 	}
 
-	void TextureLoader::Load(const std::string& filePath, Texture2DCube* outTexture)
+	void TextureLoader::Load(const std::string& fileName, Texture2DCube* outTexture)
 	{
 	}
 }
