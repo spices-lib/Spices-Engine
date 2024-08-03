@@ -16,9 +16,10 @@ namespace Spices {
 	struct GBufferID
 	{
 		ImTextureID SceneColorID;   // ImTextureID of SceneColor.
-		ImTextureID DiffuseID;      // ImTextureID of DiffuseID.
+		ImTextureID AlbedoID;       // ImTextureID of AlbedoID.
 		ImTextureID NormalID;       // ImTextureID of NormalID.
-		ImTextureID SpecularID;     // ImTextureID of SpecularID.
+		ImTextureID RoughnessID;    // ImTextureID of RoughnessID.
+		ImTextureID MetallicID;     // ImTextureID of MetallicID.
 		
 		ImTextureID IDID;           // ImTextureID of ID Resource   , pure red, so not show.
 		ImTextureID DepthID;        // ImTextureID of Depth Resource, pure red, so not show.
@@ -29,9 +30,10 @@ namespace Spices {
 		void Free() 
 		{
 			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SceneColorID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(DiffuseID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(AlbedoID));
 			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SpecularID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(RoughnessID));
+			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(MetallicID));
 		}
 	};
 

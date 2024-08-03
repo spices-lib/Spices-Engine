@@ -47,13 +47,13 @@ namespace Spices {
         }
 
         /**
-        * @brief Render Diffuse.
+        * @brief Render Albedo.
         */
         {
-            SPICES_PROFILE_ZONEN("Render Diffuse");
+            SPICES_PROFILE_ZONEN("Render Albedo");
 
-            ImGui::Text("Diffuse");
-            ImGui::Image(m_GBufferID.DiffuseID, size);
+            ImGui::Text("Albedo");
+            ImGui::Image(m_GBufferID.AlbedoID, size);
             ImGui::Separator();
         }
 
@@ -69,13 +69,24 @@ namespace Spices {
         }
 
         /**
-        * @brief Render Specular.
+        * @brief Render Roughness.
         */
         {
-            SPICES_PROFILE_ZONEN("Render Specular");
+            SPICES_PROFILE_ZONEN("Render Roughness");
 
-            ImGui::Text("Specular");
-            ImGui::Image(m_GBufferID.SpecularID, size);
+            ImGui::Text("Roughness");
+            ImGui::Image(m_GBufferID.RoughnessID, size);
+            ImGui::Separator();
+        }
+
+        /**
+        * @brief Render Metallic.
+        */
+        {
+            SPICES_PROFILE_ZONEN("Render Metallic");
+
+            ImGui::Text("Metallic");
+            ImGui::Image(m_GBufferID.MetallicID, size);
             ImGui::Separator();
         }
 
@@ -129,13 +140,15 @@ namespace Spices {
         SPICES_PROFILE_ZONE;
 
         VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
-        VkDescriptorImageInfo* diffuseInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Diffuse" });
-        VkDescriptorImageInfo* normalInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal" });
-        VkDescriptorImageInfo* specularInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Specular" });
+        VkDescriptorImageInfo* albedoInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Albedo"     });
+        VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal"     });
+        VkDescriptorImageInfo* roughnessInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Roughness"  });
+        VkDescriptorImageInfo* metallicInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Metallic"   });
 
         m_GBufferID.SceneColorID  = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
-        m_GBufferID.DiffuseID     = ImGui_ImplVulkan_AddTexture(diffuseInfo->sampler    , diffuseInfo->imageView   ,  diffuseInfo->imageLayout     );
+        m_GBufferID.AlbedoID      = ImGui_ImplVulkan_AddTexture(albedoInfo->sampler     , albedoInfo->imageView     , albedoInfo->imageLayout      );
         m_GBufferID.NormalID      = ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      );
-        m_GBufferID.SpecularID    = ImGui_ImplVulkan_AddTexture(specularInfo->sampler   , specularInfo->imageView   , specularInfo->imageLayout    );
+        m_GBufferID.RoughnessID   = ImGui_ImplVulkan_AddTexture(roughnessInfo->sampler  , roughnessInfo->imageView  , roughnessInfo->imageLayout   );
+        m_GBufferID.MetallicID    = ImGui_ImplVulkan_AddTexture(metallicInfo->sampler   , metallicInfo->imageView   , metallicInfo->imageLayout    );
     }
 }

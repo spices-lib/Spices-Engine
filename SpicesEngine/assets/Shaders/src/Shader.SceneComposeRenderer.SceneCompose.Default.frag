@@ -92,12 +92,11 @@ GBufferPixel GetGBufferPixel();
 void main()
 {
 	GBufferPixel gbp = GetGBufferPixel();
-	outSceneColor = vec4(gbp.albedo, 1.0f);
 	
 	vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
     vec3 V = normalize(origin.xyz - gbp.position);
     
-    vec3 col = BRDF_Diffuse_Lambert(gbp.albedo);
+    vec3 col = BRDF_Diffuse_Lambert(gbp.albedo) * PI;
     
     for(int i = 0; i < pLightBuffer.i.length(); i++)
     {

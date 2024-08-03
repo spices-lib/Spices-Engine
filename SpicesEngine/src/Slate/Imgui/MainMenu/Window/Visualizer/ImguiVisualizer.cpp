@@ -23,7 +23,7 @@ namespace Spices {
         /**
         * @brief Instance a ImguiGBufferVisualizer.
         */
-        //m_GBufferVisualizer = SlateSystem::GetRegister()->Register<ImguiGBufferVisualizer>(true, "GBuffer");
+        m_GBufferVisualizer = SlateSystem::GetRegister()->Register<ImguiGBufferVisualizer>(true, "GBuffer");
     }
 
     void ImguiVisualizer::OnRender()
@@ -40,7 +40,7 @@ namespace Spices {
             /**
             * @brief Render GBufferVisualizer.
             */
-            //if (ImGui::MenuItem("GBuffer")) m_GBufferVisualizer->SetWindowState(true);
+            if (ImGui::MenuItem("GBuffer")) m_GBufferVisualizer->SetWindowState(true);
 
             /**
             * @brief End render Visualizer.

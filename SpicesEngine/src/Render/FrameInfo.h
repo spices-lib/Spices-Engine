@@ -18,7 +18,7 @@ namespace Spices {
 	*/
 	class World;
 
-	enum RendererType
+	enum class RendererType
 	{
 		Rasterization,
 		PathTracing,

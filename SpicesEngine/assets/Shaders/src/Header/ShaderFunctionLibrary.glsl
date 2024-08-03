@@ -212,7 +212,7 @@ vec3 BRDF_Specular_CookTorrance(in vec3 L, in vec3 V, in vec3 N, in vec3 lightCo
     * @brief Use Clamp to Handle “firefly” effect.
     * @todo Bi-Directional Path Tracing.
     */
-    if(max(max(spec.x, spec.y), spec.z) > 5.0f) return vec3(0.0f);
+    //if(max(max(spec.x, spec.y), spec.z) > 5.0f) return vec3(0.0f);
 	return spec * dotNL * lightColor;
 }
 
