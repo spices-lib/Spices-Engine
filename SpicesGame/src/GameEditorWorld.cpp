@@ -9,6 +9,8 @@ namespace Spices {
 
 	void GameEditorWorld::OnPreActivate()
 	{
+		SPICES_PROFILE_ZONE;
+
 		EditorWorld::OnPreActivate();
 
 		// 3dsmax poly canton
@@ -143,12 +145,15 @@ namespace Spices {
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)
 	{
-		ZoneScoped;
+		SPICES_PROFILE_ZONE;
+
 		EditorWorld::OnActivate(ts);
 	}
 
 	void GameEditorWorld::OnDeactivate()
 	{
+		SPICES_PROFILE_ZONE;
+
 		EditorWorld::OnDeactivate();
 	}
 

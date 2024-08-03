@@ -28,7 +28,7 @@ namespace Spices {
 	/**
 	* @brief Window create parameter.
 	*/
-	const WindowInfo initInfo{ 2200, 1300, "Spices Engine", std::make_shared<WindowIcon>(SPICES_ENGINE_ASSETS_PATH + "Textures/src/Hello_Spices_Engine.png")};
+	const WindowInfo initInfo{ 2200, 1300, "Spices Engine", std::make_shared<WindowIcon>(SPICES_ENGINE_ASSETS_PATH + "Textures/src/Hello_Spices_Engine.png") };
 
 	VulkanState                           VulkanRenderBackend::m_VulkanState;
 	std::shared_ptr<VulkanDescriptorPool> VulkanRenderBackend::m_VulkanDescriptorPool;

@@ -55,13 +55,13 @@ project "SpicesEngine"
 	defines
 	{
 		-- Define Engine Assets Folder.
-		'SPICES_ENGINE_ASSETS_PATH=std::string("%{wks.location}/SpicesEngine/assets/")',
+		'SPICES_ENGINE_ASSETS_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/assets/")',
 
 		-- Define Engine Logs Folder.
-		'SPICES_lOGFILE_PATH=std::string("%{wks.location}/bin/Log/")',
+		'SPICES_lOGFILE_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/../bin/Log/")',
 
 		-- Define Engine Extent Processes Folder.
-		'SPICES_EXTENT_PROCESS_PATH=std::string("%{wks.location}/vendor/")',
+		'SPICES_EXTENT_PROCESS_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/../vendor/")',
 
 		-- Define Engine Use Vulkan API for Rendering, though we may support multipile Rendering API.
 		"RENDERAPI_VULKAN"

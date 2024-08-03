@@ -16,6 +16,14 @@ include "SpicesEngine"
 include "SpicesGame"
 include "SpicesTest"
 
+group "Samples"
+
+group "Renderer"
+	include "Samples/Renderer/WhittedRT"
+group ""
+
+group ""
+
 group "Dependencies"
 	include "SpicesEngine/vendor/GLFW/"
 	include "SpicesEngine/vendor/imgui"
