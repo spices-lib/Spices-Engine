@@ -9,6 +9,7 @@
 #include "Container/linked_unordered_map_test.h"
 #include "Container/runtime_memory_block_test.h"
 #include "Thread/ThreadPoolFixed_test.h"
+#include "Thread/ThreadPoolCached_test.h"
 #include "Library/ClassLibrary_test.h"
 #include "RenderAPI/Vulkan/VulkanImage_test.h"
 

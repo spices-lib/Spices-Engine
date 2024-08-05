@@ -13,7 +13,7 @@
 namespace Spices {
 
 	const uint32_t TASK_MAX_THRESHHOLD   = UINT32_MAX;
-	const uint32_t THREAD_MAX_THRESHHOLD = 1024;
+	const uint32_t THREAD_MAX_THRESHHOLD = 128;
 	const uint32_t THREAD_MAX_IDLE_TIME  = 60;
 	
 	/**
@@ -57,9 +57,23 @@ namespace Spices {
 		ThreadFunc m_Func;
 
 		/**
+		* @brief Thread Id Generator.
+		*/
+		static uint32_t m_GeneraterId;
+
+		/**
 		* @brief Thread Id.
 		*/
 		uint32_t m_ThreadId;
+	};
+
+	/**
+	* @brief ThrealPool Run Mode
+	*/
+	enum class PoolMode
+	{
+		MODE_FIXED,  /* @brief Fixed Thread Number.   */
+		MODE_CACHED, /* @brief Dynamic Thread Number. */
 	};
 
 	/**
@@ -69,15 +83,6 @@ namespace Spices {
 	class ThreadPool
 	{
 	public:
-
-		/**
-		* @brief ThrealPool Run Mode
-		*/
-		enum class PoolMode
-		{
-			MODE_FIXED,  /* @brief Fixed Thread Number.   */
-			MODE_CACHED, /* @brief Dynamic Thread Number. */
-		};
 
 		/**
 		* @brief Thread Function lambda Object.
@@ -274,7 +279,7 @@ namespace Spices {
 		*/
 		if (m_PoolMode == PoolMode::MODE_CACHED && m_TaskQueue.size() > m_IdleThreadSize && m_Threads.size() < THREAD_MAX_THRESHHOLD)
 		{
-			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool::threadFunc, this, std::placeholders::_1));
+			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1));
 			ptr->Start();
 			uint32_t threadId = ptr->GetId();
 			m_Threads.emplace(threadId, std::move(ptr));

@@ -9,13 +9,12 @@
 
 namespace Spices {
 
+	uint32_t Thread::m_GeneraterId = 0;
+
 	Thread::Thread(ThreadFunc func)
 		: m_Func(func)
-	{
-		SPICES_PROFILE_ZONE;
-
-		m_ThreadId = *reinterpret_cast<uint32_t*>(&std::this_thread::get_id());
-	}
+		, m_ThreadId(m_GeneraterId++)
+	{}
 
 	void Thread::Start()
 	{

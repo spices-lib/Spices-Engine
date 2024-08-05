@@ -74,7 +74,7 @@ namespace SpicesTest {
 	*/
 	TEST_F(VulkanImage_test, Initialize) {
 
-		EXPECT_NE(m_VulkanImage, nullptr);    /*@see Spices::VulkanImage*/
+		EXPECT_NE(m_VulkanImage, nullptr);    /* @see Spices::VulkanImage. */
 	}
 
 	/**
