@@ -52,6 +52,14 @@ namespace SpicesTest {
 		* @brief Testing initialized container's address.
 		*/
 		EXPECT_EQ(m0.get_addr(), nullptr);
+
+		/**
+		* @brief Testing initialized container's item_location.
+		*/
+		EXPECT_EQ(m0.item_location("1"), 0);
+		EXPECT_EQ(m0.item_location("2"), 4);
+		EXPECT_EQ(m0.item_location("3"), 12);
+		EXPECT_EQ(m0.item_location("4"), 24);
 	}
 
 	/**
@@ -79,6 +87,12 @@ namespace SpicesTest {
 		* @brief Testing initialized container's address.
 		*/
 		EXPECT_EQ(m0.get_addr(), nullptr);
+
+		/**
+		* @brief Testing initialized container's item_location.
+		*/
+		EXPECT_EQ(m0.item_location("5"), 40);
+		EXPECT_EQ(m0.item_location("6"), 44);
 	}
 
 	/**
