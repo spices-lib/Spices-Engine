@@ -10,8 +10,6 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "Resources/Loader/MeshLoader.h"
 
-#include <src/meshoptimizer.h>
-
 namespace Spices {
 	
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
@@ -245,17 +243,9 @@ namespace Spices {
 			meshopt_Bounds bounds = meshopt_computeMeshletBounds(&meshlet_vertices[m.vertex_offset],
 				&meshlet_triangles[m.triangle_offset], m.triangle_count, &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex));
 
-			SpicesShader::Meshlet       meshlet;
-			meshlet.vertexOffset      = meshlets[i].vertex_offset;
-			meshlet.nVertices         = meshlets[i].vertex_count;
-			meshlet.primitiveOffset   = nPrimitives;
-			meshlet.nPrimitives       = meshlets[i].triangle_count;
-
-			meshlet.boundCenter.x     = bounds.center[0];
-			meshlet.boundCenter.y     = bounds.center[1];
-			meshlet.boundCenter.z     = bounds.center[2];
-
-			meshlet.boundRadius       = bounds.radius;
+			Meshlet meshlet;
+			meshlet.FromMeshopt(meshlets[i], bounds);
+			meshlet.primitiveOffset = nPrimitives;
 
 			m_Meshlets.push_back(std::move(meshlet));
 

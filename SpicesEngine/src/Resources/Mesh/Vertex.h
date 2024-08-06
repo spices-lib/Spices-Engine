@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
+
 #include <vector>
 #include <iostream>
 
@@ -14,6 +15,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/glm.hpp"
 #include <glm/gtx/hash.hpp>
+
+#include <src/meshoptimizer.h>
 
 namespace Spices {
 
@@ -57,6 +60,30 @@ namespace Spices {
 		bool operator==(const Vertex& other) const {
 			return position == other.position && color == other.color && normal == other.normal && texCoord == other.texCoord;
 		};
+	};
+
+	struct Meshlet : public SpicesShader::Meshlet
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		*/
+		Meshlet() = default;
+
+		/**
+		* @brief Destructor Function.
+		* @attemtion Why Destructor causes bug here
+		* @todo fix it.
+		*/
+		//virtual ~Meshlet() = default;
+
+		/**
+		* @brief Copy data from MeshOpt Struct.
+		* @param[in] m meshopt_Meshlet.
+		* @param[in] bounds meshopt_Bounds.
+		*/
+		void FromMeshopt(const meshopt_Meshlet& m, const meshopt_Bounds& bounds);
 	};
 }
 

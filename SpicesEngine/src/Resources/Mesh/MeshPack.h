@@ -128,7 +128,7 @@ namespace Spices {
 		* @brief Get Meshlets array.
 		* @return Returns the Meshlets array.
 		*/
-		const std::vector<SpicesShader::Meshlet>& GetMeshlets() const { return m_Meshlets; }
+		const std::vector<Meshlet>& GetMeshlets() const { return m_Meshlets; }
 
 		/**
 		* @brief Get Pack Type.
@@ -225,7 +225,7 @@ namespace Spices {
 		/**
 		* @brief MeshPack meshlets.
 		*/
-		std::vector<SpicesShader::Meshlet> m_Meshlets;
+		std::vector<Meshlet> m_Meshlets;
 
 		/**
 		* @brief Vertices buffer.

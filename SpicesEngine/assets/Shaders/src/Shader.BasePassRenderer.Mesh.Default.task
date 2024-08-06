@@ -56,13 +56,13 @@ void main()
     vec4 worldCenter    = push.model * vec4(meshlet.boundCenter, 1.0f);
     vec3 dis            = worldCenter.xyz - ro.xyz;
 
-    //if(length(dis) < 750.0f)
+    if(length(dis) < 50.0f)
     {
         workgroupId = gl_WorkGroupID.x;
         EmitMeshTasksEXT(1, 1, 1);
         return;
     }
-    //else
+    else
     {
 	    EmitMeshTasksEXT(0, 0, 0);
 	    return;
