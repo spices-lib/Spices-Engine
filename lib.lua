@@ -16,6 +16,7 @@ IncludeDir["ImGuizmo"]                    = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["tracy"]                       = "%{wks.location}/SpicesEngine/vendor/tracy/public"
 IncludeDir["IconFontCppHeaders"]          = "%{wks.location}/SpicesEngine/vendor/IconFontCppHeaders"
 IncludeDir["HoudiniEngine"]               = "%{wks.location}/SpicesEngine/vendor/HoudiniEngine"
+IncludeDir["taskflow"]                    = "%{wks.location}/SpicesEngine/vendor/taskflow"
 IncludeDir["googletest"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googletest/include"
 IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googlemock/include"
 

@@ -41,6 +41,7 @@ project "SpicesTest"
 		"%{IncludeDir.NvPerfUtility}",         -- Library: NvPerfUtility Source Folder.
 		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
+		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
 	}
 
 	links

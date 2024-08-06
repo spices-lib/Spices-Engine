@@ -36,6 +36,7 @@ project "WhittedRT"
 		"%{IncludeDir.tracy}",
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
+		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
 	}
 
 	-- In Visual Studio, it only works when generated a new solution, remember update solution will not works.

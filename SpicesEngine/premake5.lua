@@ -49,6 +49,9 @@ project "SpicesEngine"
 
 		-- Library: IconFontCppHeaders Files.
 		"vendor/IconFontCppHeaders/**.h",
+
+		-- Library: taskflow Files.
+		"vendor/taskflow/taskflow/taskflow.hpp",
 	}
 
 	-- Macros Definitions
@@ -88,6 +91,7 @@ project "SpicesEngine"
 		"%{IncludeDir.tracy}",                 -- Library: tracy Source Folder.
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
+		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
 	}
 
 	-- The Solution Dependency
