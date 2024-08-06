@@ -12,6 +12,7 @@
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderFunctionLibrary.glsl"
 
 /*****************************************************************************************/
 
@@ -58,9 +59,17 @@ void main()
 
     if(length(dis) < 50.0f)
     {
-        workgroupId = gl_WorkGroupID.x;
-        EmitMeshTasksEXT(1, 1, 1);
-        return;
+        if(!IsConeBackfacing(meshlet.coneApex, meshlet.coneAxis, meshlet.coneCutoff, ro.xyz))
+        {
+            workgroupId = gl_WorkGroupID.x;
+            EmitMeshTasksEXT(1, 1, 1);
+            return;
+        }
+        else
+        {
+            EmitMeshTasksEXT(0, 0, 0);
+            return;
+        }
     }
     else
     {

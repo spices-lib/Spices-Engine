@@ -114,6 +114,19 @@ vec2 SampleSphericalMap(in vec3 v)
 }
 
 /**
+* @brief Check if the cone is backfacing.
+* @param[in] coneApex .
+* @param[in] coneAxis .
+* @param[in] coneCutoff .
+* @param[in] ro Camera Position.
+* @return Returns true if the cone is backfacing.
+*/
+bool IsConeBackfacing(in vec3 coneApex, in vec3 coneAxis, in float coneCutoff, in vec3 ro)
+{
+	return (dot(normalize(coneApex - ro), coneAxis) >= coneCutoff);
+}
+
+/**
 * @brief BRDF Diffuse part, use lambert model.
 * @param[in] albedo .
 * @return Returns diffuse.
