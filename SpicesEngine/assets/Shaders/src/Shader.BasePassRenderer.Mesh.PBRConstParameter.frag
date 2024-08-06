@@ -39,7 +39,7 @@ struct MaterialParameter
 * @brief Fragment Shader Input From Mesh Shader.
 */
 layout(location = 0) in Pixel pixel;                   /* @brief Pixel Data.     */
-layout(location = 4) in flat uint meshlutId;           /* @brief Meshlut ID.     */
+layout(location = 4) in flat uint meshletId;           /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 

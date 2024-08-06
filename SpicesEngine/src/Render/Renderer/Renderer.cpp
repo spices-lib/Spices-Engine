@@ -282,7 +282,7 @@ namespace Spices {
 		return std::make_tuple(invViewMat, projectionMat, stableFrames);
 	}
 
-	void Renderer::GetDirectionalLight(FrameInfo& frameInfo, std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM>& dLightBuffer)
+	void Renderer::GetDirectionalLight(FrameInfo& frameInfo, std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHT_BUFFER_MAXNUM>& dLightBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -356,7 +356,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<SpicesShader::PointLight, POINTLIGHTBUFFERMAXNUM>& pLightBuffer)
+	void Renderer::GetPointLight(FrameInfo& frameInfo, std::array<SpicesShader::PointLight, POINTLIGHT_BUFFER_MAXNUM>& pLightBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -756,7 +756,7 @@ namespace Spices {
 			/**
 			* @brief UpdateDescriptorSet, skip bindless texture set.
 			*/
-			if (pair.first == BINDLESSTEXTURESET)
+			if (pair.first == BINDLESS_TEXTURE_SET)
 			{
 				if (!pair.second->Get())
 				{

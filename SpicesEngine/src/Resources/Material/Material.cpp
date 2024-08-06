@@ -141,14 +141,14 @@ namespace Spices {
 					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath);
 					v.index = BindLessTextureManager::Registry(v.texturePath);
 
-					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESSTEXTURESET);
+					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
 
 					/**
 					* @brief Instance a VkWriteDescriptorSet.
 					*/
 					VkWriteDescriptorSet         write {};
 					write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					write.dstBinding           = BINDLESSTEXTUREBINDING;
+					write.dstBinding           = BINDLESS_TEXTURE_BINDING;
 					write.dstSet               = descriptorSet->Get();
 					write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 					write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();

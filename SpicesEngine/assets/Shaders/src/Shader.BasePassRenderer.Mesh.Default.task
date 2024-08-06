@@ -40,8 +40,8 @@ layout(push_constant) uniform Push {
 
 /************************************Specific Data****************************************/
 
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
-    Meshlut i[];
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets {
+    Meshlet i[];
 };
 
 /*****************************************************************************************/
@@ -50,10 +50,10 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
 
 void main()
 {
-    Meshlut meshlut     = Meshluts(push.desc.meshlutAddress).i[gl_WorkGroupID.x];
+    Meshlet meshlet     = Meshlets(push.desc.meshletAddress).i[gl_WorkGroupID.x];
     
 	vec4 ro             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec4 worldCenter    = push.model * vec4(meshlut.boundCenter, 1.0f);
+    vec4 worldCenter    = push.model * vec4(meshlet.boundCenter, 1.0f);
     vec3 dis            = worldCenter.xyz - ro.xyz;
 
     //if(length(dis) < 750.0f)

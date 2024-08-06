@@ -281,7 +281,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkDescriptorSetVariableDescriptorCountAllocateInfo.
 		*/
-		uint32_t maxBinding = MAXBINDLESSTEXTURECOUNT;
+		uint32_t maxBinding = BINDLESS_TEXTURE_MAXNUM;
 		VkDescriptorSetVariableDescriptorCountAllocateInfo     countInfo{};
 		countInfo.sType                                      = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
 		countInfo.descriptorSetCount                         = 1;

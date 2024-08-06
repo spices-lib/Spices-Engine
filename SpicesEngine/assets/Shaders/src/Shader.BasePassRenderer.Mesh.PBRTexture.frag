@@ -40,7 +40,7 @@ struct MaterialParameter
 * @brief Fragment Shader Input From Vertex Shader.
 */
 layout(location = 0) in Pixel pixel;                   /* @brief Pixel Data.     */
-layout(location = 4) in flat uint meshlutId;           /* @brief Meshlut ID.     */
+layout(location = 4) in flat uint meshletId;           /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 
@@ -79,7 +79,7 @@ void main()
 
     //outAlbedo = vec4(materialParam.albedo, 1.0f);
 
-    uint seed0 = meshlutId;
+    uint seed0  = meshletId;
     float rand0 = rnd(seed0);
     float rand1 = rnd(seed0);
     float rand2 = rnd(seed0);

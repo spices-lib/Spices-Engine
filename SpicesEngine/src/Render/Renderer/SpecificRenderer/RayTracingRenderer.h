@@ -16,17 +16,17 @@ namespace Spices {
 		
 		struct MeshDescBuffer
 		{
-			std::array<SpicesShader::MeshDesc, MESHBUFFERMAXNUM> descs;
+			std::array<SpicesShader::MeshDesc, MESH_BUFFER_MAXNUM> descs;
 		};
 		
 		struct DirectionalLightBuffer
 		{
-			std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM> lights;
+			std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHT_BUFFER_MAXNUM> lights;
 		};
 
 		struct PointLightBuffer
 		{
-			std::array<SpicesShader::PointLight, POINTLIGHTBUFFERMAXNUM> lights;
+			std::array<SpicesShader::PointLight, POINTLIGHT_BUFFER_MAXNUM> lights;
 		};
 
 		struct PushConstant

@@ -51,9 +51,9 @@ void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
     attributes.roughness       = materialParam.roughness;
     attributes.metallic        = materialParam.metallic;
     attributes.emissive        = vec3(0.0f);
-    attributes.maxRayDepth     = materialParam.maxRayDepth;
-    attributes.maxLightDepth   = materialParam.maxLightDepth;
-    attributes.maxShadowDepth  = materialParam.maxShadowDepth;
+    attributes.maxRayDepth     = max(materialParam.maxRayDepth, 0);
+    attributes.maxLightDepth   = max(materialParam.maxLightDepth, 0);
+    attributes.maxShadowDepth  = max(materialParam.maxShadowDepth, 0);
 }
 
 /*****************************************************************************************/

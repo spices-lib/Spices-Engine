@@ -31,7 +31,7 @@ namespace Spices {
 		*/
 		else
 		{
-			for (uint32_t i = 0; i < MAXBINDLESSTEXTURECOUNT; i++)
+			for (uint32_t i = 0; i < BINDLESS_TEXTURE_MAXNUM; i++)
 			{
 				if (m_TextureInfoMap.find(i) == m_TextureInfoMap.end())
 				{

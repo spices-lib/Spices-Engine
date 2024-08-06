@@ -52,6 +52,9 @@ project "SpicesEngine"
 
 		-- Library: taskflow Files.
 		"vendor/taskflow/taskflow/taskflow.hpp",
+
+		-- Library: meshoptimizer Files.
+		"vendor/meshoptimizer/src/**.h",
 	}
 
 	-- Macros Definitions
@@ -92,6 +95,7 @@ project "SpicesEngine"
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
+		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
 	}
 
 	-- The Solution Dependency

@@ -33,14 +33,14 @@ using uint = unsigned int;
 /**
 * @brief Macros for Variable Constant.
 */
-#define MAXBINDLESSTEXTURECOUNT      65536                     /* @brief Maximum number of Bindless Texture Array.             */
-#define BINDLESSTEXTURESET           1                         /* @brief Bindless Texture Descriptor Set.                      */
-#define BINDLESSTEXTUREBINDING       0                         /* @brief Bindless Texture Descriptor Set Binding.              */
-#define MESHBUFFERMAXNUM             100000                    /* @brief Ray Tracing Renderer Maximum mesh desc buffer count.  */
-#define DIRECTIONALLIGHTBUFFERMAXNUM 100                       /* @brief Maximum number of Directional lights.                 */
-#define POINTLIGHTBUFFERMAXNUM       10000                     /* @brief Maximum number of Point lights.                       */
-#define MESHLUTNVERTICES             64                        /* @brief Maximum number of Meshlut's nVertices.                */
-#define MESHLUTNPRIMITIVES           126                       /* @brief Maximum number of Meshlut's nPrimitives.              */
+#define BINDLESS_TEXTURE_MAXNUM        65536                     /* @brief Maximum number of Bindless Texture Array.             */
+#define BINDLESS_TEXTURE_SET           1                         /* @brief Bindless Texture Descriptor Set.                      */
+#define BINDLESS_TEXTURE_BINDING       0                         /* @brief Bindless Texture Descriptor Set Binding.              */
+#define MESH_BUFFER_MAXNUM             100000                    /* @brief Ray Tracing Renderer Maximum mesh desc buffer count.  */
+#define DIRECTIONALLIGHT_BUFFER_MAXNUM 100                       /* @brief Maximum number of Directional lights.                 */
+#define POINTLIGHT_BUFFER_MAXNUM       10000                     /* @brief Maximum number of Point lights.                       */
+#define MESHLET_NVERTICES              64                        /* @brief Maximum number of Meshlet's nVertices.                */
+#define MESHLET_NPRIMITIVES            126                       /* @brief Maximum number of Meshlet's nPrimitives.              */
 
 /**
 * @brief  Macros for Calauclate Constant.
@@ -99,9 +99,9 @@ struct MaterialAttributes
 	float metallic;            /* @brief Metallic, used for                                             */
 	vec3  emissive;            /* @brief Emissive, used for Direct illumination.                        */
 	vec3  normal;              /* @brief Normal, used for light effect.                                 */
-	int   maxRayDepth;         /* @brief Max Ray Tracing Depth, defined specific from material.         */
-	int   maxLightDepth;       /* @brief Max Ray Tracing Light Depth, defined specific from material.   */
-	int   maxShadowDepth;      /* @brief Max Ray Tracing Shadow Depth, defined specific from material.  */
+	uint  maxRayDepth;         /* @brief Max Ray Tracing Depth, defined specific from material.         */
+	uint  maxLightDepth;       /* @brief Max Ray Tracing Light Depth, defined specific from material.   */
+	uint  maxShadowDepth;      /* @brief Max Ray Tracing Shadow Depth, defined specific from material.  */
 };
 
 /*****************************************************************************************/
@@ -171,7 +171,7 @@ struct MeshDesc
 	uint64_t vertexAddress;                   /* Address of the Vertex buffer.                  */
 	uint64_t indexAddress;                    /* Address of the index buffer.                   */
 	uint64_t materialParameterAddress;        /* Address of the Material Parameter buffer.      */
-	uint64_t meshlutAddress;                  /* Address of the Meshlut Buffer.                 */
+	uint64_t meshletAddress;                  /* Address of the Meshlet Buffer.                 */
 	uint     verticesCount;                   /* Vertices Count.                                */
 	uint     indicesCount;                    /* Indices Count.                                 */
 	uint     entityID;                        /* @brief EntityId, cast from entt::entity.       */
@@ -202,19 +202,19 @@ struct HitPayLoad
 */
 struct PushConstantMesh
 {
-	mat4     model;                        /* @brief MeshPack ModelMatrix.              */
-	MeshDesc desc;                         /* MeshDescription of MeshPack.              */
+	mat4     model;                            /* @brief MeshPack ModelMatrix.            */
+	MeshDesc desc;                             /* MeshDescription of MeshPack.            */
 };
 
 /**
-* @brief Meshlut Structure Data.
+* @brief Meshlet Structure Data.
 */
-struct Meshlut
+struct Meshlet
 {
-	uint  vertexOffset;                        /* Offset of Vertices this meshlut.        */
-	uint  primitiveOffset;                     /* Offset of primitives this meshlut.      */
-	uint  nVertices;                           /* Vertices Count this meshlut.( <= 64)    */
-	uint  nPrimitives;                         /* Primitives Count this meshlut.( <= 126) */
+	uint  vertexOffset;                        /* Offset of Vertices this meshlet.        */
+	uint  primitiveOffset;                     /* Offset of primitives this meshlet.      */
+	uint  nVertices;                           /* Vertices Count this meshlet.( <= 64)    */
+	uint  nPrimitives;                         /* Primitives Count this meshlet.( <= 126) */
 	vec3  boundCenter;                         /* Bounding Sphere Center in local world.  */
 	float boundRadius;                         /* Bounding Sphere radius.                 */
 	vec3  coneApex;

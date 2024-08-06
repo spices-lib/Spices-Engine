@@ -31,3 +31,6 @@
 [submodule "SpicesEngine/vendor/taskflow"]
 	path = SpicesEngine/vendor/taskflow
 	url = https://github.com/taskflow/taskflow
+[submodule "SpicesEngine/vendor/meshoptimizer"]
+	path = SpicesEngine/vendor/meshoptimizer
+	url = https://github.com/zeux/meshoptimizer.git

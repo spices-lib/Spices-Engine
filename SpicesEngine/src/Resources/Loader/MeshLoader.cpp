@@ -133,7 +133,7 @@ namespace Spices {
 			}
 		}
 
-		outMeshPack->CreateMeshluts();
+		outMeshPack->CreateMeshlets();
 		WriteSASSET(fileName, outMeshPack);
 
 		return true;
@@ -199,13 +199,13 @@ namespace Spices {
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &indicesCount, &readed);
 		outMeshPack->m_Indices.resize(indicesCount);
 
-		uint32_t meshlutsCount = 0;
-		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshlutsCount, &readed);
-		outMeshPack->m_Meshluts.resize(meshlutsCount);
+		uint32_t meshletsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshletsCount, &readed);
+		outMeshPack->m_Meshlets.resize(meshletsCount);
 
 		FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &readed);
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &readed);
-		FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlut) * meshlutsCount, outMeshPack->m_Meshluts.data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets.data(), &readed);
 
 		char overSign[100];
 		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
@@ -242,12 +242,12 @@ namespace Spices {
 		uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices.size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &indicesCount, &written);
 
-		uint32_t meshlutsCount = (uint32_t)outMeshPack->m_Meshluts.size();
-		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshlutsCount, &written);
+		uint32_t meshletsCount = (uint32_t)outMeshPack->m_Meshlets.size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &written);
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &written);
-		FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlut) * meshlutsCount, outMeshPack->m_Meshluts.data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets.data(), &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignOver, &written);
 

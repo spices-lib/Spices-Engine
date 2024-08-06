@@ -40,8 +40,8 @@ layout(push_constant) uniform Push {
 
 /************************************Specific Data****************************************/
 
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
-    Meshlut i[];
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets {
+    Meshlet i[];
 };
 
 /*****************************************************************************************/

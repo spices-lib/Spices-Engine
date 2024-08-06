@@ -10,6 +10,8 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "Resources/Loader/MeshLoader.h"
 
+#include <src/meshoptimizer.h>
+
 namespace Spices {
 	
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
@@ -34,7 +36,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		static PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(vkGetInstanceProcAddr(VulkanRenderBackend::GetState().m_Instance, "vkCmdDrawMeshTasksEXT"));
-		vkCmdDrawMeshTasksEXT(commandBuffer, static_cast<uint32_t>(m_Meshluts.size()), 1, 1);
+		vkCmdDrawMeshTasksEXT(commandBuffer, static_cast<uint32_t>(m_Meshlets.size()), 1, 1);
 	}
 
 	void MeshPack::SetMaterial(const std::string& materialPath)
@@ -119,10 +121,10 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Build meshlut buffer.
+		* @brief Build meshlet buffer.
 		*/
 		{
-			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlut) * m_Meshluts.size();
+			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlet) * m_Meshlets.size();
 
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState(),
@@ -134,10 +136,10 @@ namespace Spices {
 
 			void* data;
 			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory(), 0, bufferSize, 0, &data);
-			memcpy(data, m_Meshluts.data(), (size_t)bufferSize);
+			memcpy(data, m_Meshlets.data(), (size_t)bufferSize);
 			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
 
-			m_MeshlutsBuffer = std::make_shared<VulkanBuffer>(
+			m_MeshletsBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
 				bufferSize,
 				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     |
@@ -146,7 +148,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 			);
 
-			m_MeshlutsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshlutsBuffer->Get(), bufferSize);
+			m_MeshletsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshletsBuffer->Get(), bufferSize);
 		}
 
 		/*
@@ -214,9 +216,12 @@ namespace Spices {
 		}
 	}
 
-	void MeshPack::CreateMeshluts()
+	void MeshPack::CreateMeshlets()
 	{
 		SPICES_PROFILE_ZONE;
+
+		//size_t max_meshlets = meshopt_buildMeshletsBound(m_Indices.size(), 64, 126);
+
 
 		std::vector<Vertex> vertices = m_Vertices;
 		std::vector<uint32_t> indices = m_Indices;
@@ -225,20 +230,20 @@ namespace Spices {
 
 		m_Vertices.clear();
 		m_Indices.clear();
-		m_Meshluts.clear();
+		m_Meshlets.clear();
 
 		unsigned int vertexIndex = 0;
 		unsigned int primitiveIndex = 0;
 		while (!fullIndices.empty())
 		{
-			SpicesShader::Meshlut        meshlut;
-			meshlut.vertexOffset = vertexIndex;
-			meshlut.primitiveOffset = primitiveIndex;
+			SpicesShader::Meshlet        meshlet;
+			meshlet.vertexOffset = vertexIndex;
+			meshlet.primitiveOffset = primitiveIndex;
 
 			scl::linked_unordered_map<uint32_t, uint32_t> localVertices;
 			std::vector<uint32_t> localIndices;
 
-			while (localVertices.size() < MESHLUTNVERTICES - 2 && localIndices.size() < MESHLUTNPRIMITIVES * 3 - 2 && !fullIndices.empty())
+			while (localVertices.size() < MESHLET_NVERTICES - 2 && localIndices.size() < MESHLET_NPRIMITIVES * 3 - 2 && !fullIndices.empty())
 			{
 				for (int j = 0; j < 3; j++)
 				{
@@ -249,16 +254,16 @@ namespace Spices {
 				}
 			}
 
-			assert(localVertices.size() <= MESHLUTNVERTICES);
-			assert(localIndices.size() <= MESHLUTNPRIMITIVES * 3);
+			assert(localVertices.size() <= MESHLET_NVERTICES);
+			assert(localIndices.size() <= MESHLET_NPRIMITIVES * 3);
 
-			meshlut.nVertices   = static_cast<unsigned int>(localVertices.size());
-			meshlut.nPrimitives = static_cast<unsigned int>(localIndices.size() / 3);
+			meshlet.nVertices   = static_cast<unsigned int>(localVertices.size());
+			meshlet.nPrimitives = static_cast<unsigned int>(localIndices.size() / 3);
 
-			vertexIndex        += meshlut.nVertices;
-			primitiveIndex     += meshlut.nPrimitives;
+			vertexIndex        += meshlet.nVertices;
+			primitiveIndex     += meshlet.nPrimitives;
 
-			m_Meshluts.push_back(std::move(meshlut));
+			m_Meshlets.push_back(std::move(meshlet));
 
 			glm::vec3 center = glm::vec3(0.0f);
 			localVertices.for_each([&](const uint32_t& k, const uint32_t& v) {
@@ -266,11 +271,11 @@ namespace Spices {
 				center += vertices[k].position;
 				return false;
 			});
-			center /= static_cast<float>(meshlut.nVertices);
+			center /= static_cast<float>(meshlet.nVertices);
 
 			for (int i = 0; i < localIndices.size(); i++)
 			{
-				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + meshlut.vertexOffset);
+				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + meshlet.vertexOffset);
 			}
 
 			float radius = 0.0f;
@@ -280,8 +285,8 @@ namespace Spices {
 				return false;
 			});
 
-			meshlut.boundCenter = center;
-			meshlut.boundRadius = radius;
+			meshlet.boundCenter = center;
+			meshlet.boundRadius = radius;
 		}
 	}
 
@@ -355,7 +360,7 @@ namespace Spices {
 		
 		if (isCreateBuffer)
 		{
-			CreateMeshluts();
+			CreateMeshlets();
 			CreateBuffer();
 		}
 	}
@@ -437,7 +442,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			CreateMeshluts();
+			CreateMeshlets();
 			CreateBuffer();
 		}
 	}
@@ -490,7 +495,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			CreateMeshluts();
+			CreateMeshlets();
 			CreateBuffer();
 		}
 	}

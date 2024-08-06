@@ -32,7 +32,7 @@ layout(set = 0, binding = 1) uniform ShaderInput {
 /**
 * @brief BindLess Texture Buffer.
 */
-layout (set = BINDLESSTEXTURESET, binding = BINDLESSTEXTUREBINDING) uniform sampler2D BindLessTextureBuffer[];
+layout (set = BINDLESS_TEXTURE_SET, binding = BINDLESS_TEXTURE_BINDING) uniform sampler2D BindLessTextureBuffer[];
 
 /*****************************************************************************************/
 

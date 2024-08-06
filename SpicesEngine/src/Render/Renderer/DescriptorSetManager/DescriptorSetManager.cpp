@@ -43,15 +43,15 @@ namespace Spices {
 		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
-			if (m_DescriptorSets[name].find(BINDLESSTEXTURESET) == m_DescriptorSets[name].end())
+			if (m_DescriptorSets[name].find(BINDLESS_TEXTURE_SET) == m_DescriptorSets[name].end())
 			{
 				m_DescriptorSets.erase(name);
 			}
 			else
 			{
-				auto descriptorSet = m_DescriptorSets[name][BINDLESSTEXTURESET];
+				auto descriptorSet = m_DescriptorSets[name][BINDLESS_TEXTURE_SET];
 				m_DescriptorSets.erase(name);
-				m_DescriptorSets[name][BINDLESSTEXTURESET] = descriptorSet;
+				m_DescriptorSets[name][BINDLESS_TEXTURE_SET] = descriptorSet;
 			}
 		}
 	}

@@ -222,7 +222,7 @@ namespace Spices {
 		* @param[out] dLightBuffer DirectionalLight.
 		* @todo Multiple directional light.
 		*/
-		void GetDirectionalLight(FrameInfo& frameInfo, std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHTBUFFERMAXNUM>& dLightBuffer);
+		void GetDirectionalLight(FrameInfo& frameInfo, std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHT_BUFFER_MAXNUM>& dLightBuffer);
 
 		void GetDirectionalLightMatrix(FrameInfo& frameInfo, std::array<glm::mat4, MAX_DIRECTIONALLIGHT_NUM>& directionalLight);
 
@@ -232,7 +232,7 @@ namespace Spices {
 		* @param[out] pLightBuffer PointLight Buffer.
 		* @todo infinity pointlight.
 		*/
-		void GetPointLight(FrameInfo& frameInfo, std::array<SpicesShader::PointLight, POINTLIGHTBUFFERMAXNUM>& pLightBuffer);
+		void GetPointLight(FrameInfo& frameInfo, std::array<SpicesShader::PointLight, POINTLIGHT_BUFFER_MAXNUM>& pLightBuffer);
 
 		/***************************************************************************************************/
 
@@ -1223,7 +1223,7 @@ namespace Spices {
 		* @brief Registy descriptor and add binging to it.
 		*/
 		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, MAXBINDLESSTEXTURECOUNT);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, stageFlags, BINDLESS_TEXTURE_MAXNUM);
 
 		return *this;
 	}

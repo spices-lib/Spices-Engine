@@ -42,6 +42,7 @@ project "SpicesTest"
 		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
+		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
 	}
 
 	links

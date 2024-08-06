@@ -22,22 +22,22 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 /**
 * @brief task padload receive from task shader.
 */
-taskPayloadSharedEXT uint workgroupId;    /* @brief mesh shader hanled meshlut id(as workgroupid). */
+taskPayloadSharedEXT uint workgroupId;    /* @brief mesh shader hanled meshlet id(as workgroupid). */
 
 /*****************************************************************************************/
 
 /*************************************Mesh Output*****************************************/
 
 /**
-* @brief Output triangles meshlut per workgroup.
+* @brief Output triangles meshlet per workgroup.
 */
-layout(triangles, max_vertices = MESHLUTNVERTICES, max_primitives = MESHLUTNPRIMITIVES) out;
+layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPRIMITIVES) out;
 
 /**
 * @brief Mesh Shader Output to Fragment Shader.
 */
 layout(location = 0) out Pixel pixel[];               /* @brief Pixel Data.     */
-layout(location = 4) out flat uint meshlutId[];       /* @brief Meshlut ID.     */
+layout(location = 4) out flat uint meshletId[];       /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 
@@ -62,8 +62,8 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices {
     ivec3 i[]; 
 };
 
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshluts {
-    Meshlut i[];
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets {
+    Meshlet i[];
 };
 
 /*****************************************************************************************/
@@ -76,15 +76,15 @@ void main()
 
     Vertices vertices   = Vertices(push.desc.vertexAddress);
     Indices indices     = Indices(push.desc.indexAddress);
-    Meshlut meshlut     = Meshluts(push.desc.meshlutAddress).i[id];
+    Meshlet meshlet     = Meshlets(push.desc.meshletAddress).i[id];
     
     mat4 mvp = view.projection * view.view * push.model;
     mat3 m3model = mat3(transpose(inverse(push.model)));
 
     [[unroll]]
-    for(uint i = 0; i < meshlut.nVertices; i++)
+    for(uint i = 0; i < meshlet.nVertices; i++)
     {
-        Vertex vt = vertices.v[meshlut.vertexOffset + i];
+        Vertex vt = vertices.v[meshlet.vertexOffset + i];
 
         gl_MeshVerticesEXT[i].gl_Position = mvp * vec4(vt.position, 1.0f);
 
@@ -92,17 +92,17 @@ void main()
         pixel[i].normal    = normalize(m3model * vt.normal);
         pixel[i].color     = vt.color;
         pixel[i].texCoord  = vt.texCoord;
-        meshlutId[i]       = id;
+        meshletId[i]       = id;
     }
 
 	[[unroll]]
-    for(uint i = 0; i < meshlut.nPrimitives; i++)
+    for(uint i = 0; i < meshlet.nPrimitives; i++)
     {
-        ivec3 index = indices.i[meshlut.primitiveOffset + i] - ivec3(meshlut.vertexOffset);
+        ivec3 index = indices.i[meshlet.primitiveOffset + i] - ivec3(meshlet.vertexOffset);
         gl_PrimitiveTriangleIndicesEXT[i] =  uvec3(index.x, index.y, index.z);
     }
     
-    SetMeshOutputsEXT(meshlut.nVertices, meshlut.nPrimitives);
+    SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);
 }
 
 /*****************************************************************************************/
