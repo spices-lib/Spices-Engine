@@ -37,6 +37,7 @@ namespace Spices {
 		, m_IdleThreadSize(0)
 		, m_PoolMode(PoolMode::MODE_FIXED)
 		, m_IsPoolRunning(false)
+		, m_ThreadIdleTimeOut(THREAD_MAX_IDLE_TIME)
 	{}
 
 	ThreadPool::~ThreadPool()
@@ -51,6 +52,13 @@ namespace Spices {
 		std::unique_lock<std::mutex> lock(m_Mutex);
 		m_NotEmpty.notify_all();
 		m_ExitCond.wait(lock, [&]()->bool { return m_Threads.size() == 0; });
+	}
+
+	void ThreadPool::SetThreadIdleTimeOut(int idleTime)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_ThreadIdleTimeOut = idleTime;
 	}
 
 	void ThreadPool::Start(int initThreadSize)
@@ -104,7 +112,7 @@ namespace Spices {
 							/**
 							* @brief Try recovery unused threads.
 							*/
-							if (dur.count() >= THREAD_MAX_IDLE_TIME && m_Threads.size() > m_InitThreadSize)
+							if (dur.count() >= m_ThreadIdleTimeOut && m_Threads.size() > m_InitThreadSize)
 							{
 								m_Threads.erase(threadid);
 								m_IdleThreadSize--;

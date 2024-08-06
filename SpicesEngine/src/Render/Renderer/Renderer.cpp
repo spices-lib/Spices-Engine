@@ -758,11 +758,9 @@ namespace Spices {
 			*/
 			if (pair.first == BINDLESSTEXTURESET)
 			{
-				static bool isFirstEntry = true;
-				if (isFirstEntry)
+				if (!pair.second->Get())
 				{
 					pair.second->BuildBindLessTextureDescriptorSet(m_HandledSubPass->GetName());
-					isFirstEntry = false;
 				}
 
 				pair.second->UpdateBindLessTextureDescriptorSet(m_ImageInfos[pair.first]);

@@ -53,6 +53,7 @@ namespace SpicesTest {
 		* Registy on ShutDown.
 		*/
 		virtual void TearDown() override {
+			m_VulkanImage = nullptr;
 			VulkanRenderBackend_test::TearDown();
 		}
 
@@ -85,7 +86,7 @@ namespace SpicesTest {
 		/**
 		* @brief Init with ArrayData.
 		*/
-		std::array<float, m_TextureSize* m_TextureSize * 4> dataArray;
+		std::array<float, m_TextureSize * m_TextureSize * 4> dataArray;
 		for (int i = 0; i < m_TextureSize * m_TextureSize * 4; i++)
 		{
 			dataArray[i] = i + 0.0f;
@@ -96,7 +97,7 @@ namespace SpicesTest {
 		*/
 		Spices::VulkanBuffer stagingBuffer(
 			m_RenderBackend->GetState(), 
-			m_TextureSize * m_TextureSize * 4 * 4,
+			sizeof(dataArray),
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -110,11 +111,11 @@ namespace SpicesTest {
 			m_RenderBackend->GetState().m_Device, 
 			stagingBuffer.GetMemory(), 
 			0, 
-			m_TextureSize * m_TextureSize * 4 * 4, 
+			sizeof(dataArray),
 			0, 
 			&data
 		);
-		memcpy(data, dataArray.data(), static_cast<size_t>(m_TextureSize * m_TextureSize * 4 * 4));
+		memcpy(data, dataArray.data(), sizeof(dataArray));
 		vkUnmapMemory(m_RenderBackend->GetState().m_Device, stagingBuffer.GetMemory());
 	
 		/**

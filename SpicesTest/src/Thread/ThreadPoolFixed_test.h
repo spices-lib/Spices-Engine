@@ -97,6 +97,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -179,6 +180,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		func(2); /* @brief Wait for subthread finish. */
@@ -188,6 +190,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -212,6 +215,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		func(2);  /* @brief Wait for subthread finish. */
@@ -221,6 +225,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -245,6 +250,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		func(2);  /* @brief Wait for part tasks finish. */
@@ -254,6 +260,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		func(2);  /* @brief Wait for subthread finish. */
@@ -263,6 +270,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_FIXED );
 		EXPECT_EQ(m_ThreadPool.GetTaskQueue().size() ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreads().size()   ,nThreads                     );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 

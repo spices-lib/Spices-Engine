@@ -120,6 +120,12 @@ namespace Spices {
 		void SetMode(PoolMode mode);
 
 		/**
+		* @brief Set Pool Threads idle time out.
+		* @param[in] idleTime .
+		*/
+		void SetThreadIdleTimeOut(int idleTime);
+
+		/**
 		* @brief Submit a task to task queue, and wait for a idle thread to execute it.
 		* @tparam Func Task Function.
 		* @tparam Args Task Funcion Parameter.
@@ -172,6 +178,13 @@ namespace Spices {
 		const PoolMode& GetPoolMode() const { return m_PoolMode; }
 
 		/**
+		* @brief ThreadIdleTimeOut.
+		* This function is just used for unit test, should not be used in engine.
+		* @return Returns ThreadIdleTimeOut.
+		*/
+		const int GetThreadIdleTimeOut() const { return m_ThreadIdleTimeOut; }
+
+		/**
 		* @brief GetIsPoolRunning.
 		* This function is just used for unit test, should not be used in engine.
 		* @return Returns true if pool is in use.
@@ -202,6 +215,11 @@ namespace Spices {
 		* @brief Initialized thread size.
 		*/
 		int m_InitThreadSize;
+
+		/**
+		* @brief thread idle time out.
+		*/
+		int m_ThreadIdleTimeOut;
 
 		/**
 		* @brief Idled thread size.
