@@ -220,10 +220,15 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		//size_t max_meshlets = meshopt_buildMeshletsBound(m_Indices.size(), 64, 126);
+		size_t max_meshlets = meshopt_buildMeshletsBound(m_Indices.size(), MESHLET_NVERTICES, MESHLET_NPRIMITIVES);
+		std::vector<meshopt_Meshlet> meshlets(max_meshlets);
+		std::vector<unsigned int> meshlet_vertices(max_meshlets * MESHLET_NVERTICES);
+		std::vector<unsigned char> meshlet_triangles(max_meshlets * MESHLET_NPRIMITIVES * 3);
 
+		size_t meshlet_count = meshopt_buildMeshlets(meshlets.data(), meshlet_vertices.data(), meshlet_triangles.data(), m_Indices.data(),
+			m_Indices.size(), &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, 0.0f);
 
-		std::vector<Vertex> vertices = m_Vertices;
+		/*std::vector<Vertex> vertices = m_Vertices;
 		std::vector<uint32_t> indices = m_Indices;
 
 		std::list<uint32_t> fullIndices = std::list(indices.begin(), indices.end());
@@ -287,7 +292,7 @@ namespace Spices {
 
 			meshlet.boundCenter = center;
 			meshlet.boundRadius = radius;
-		}
+		}*/
 	}
 
 	void MeshPack::ApplyMatrix(const glm::mat4& matrix)
