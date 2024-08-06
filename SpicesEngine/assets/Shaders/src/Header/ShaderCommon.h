@@ -40,7 +40,7 @@ using uint = unsigned int;
 #define DIRECTIONALLIGHT_BUFFER_MAXNUM 100                       /* @brief Maximum number of Directional lights.                 */
 #define POINTLIGHT_BUFFER_MAXNUM       10000                     /* @brief Maximum number of Point lights.                       */
 #define MESHLET_NVERTICES              64                        /* @brief Maximum number of Meshlet's nVertices.                */
-#define MESHLET_NPRIMITIVES            126                       /* @brief Maximum number of Meshlet's nPrimitives.              */
+#define MESHLET_NPRIMITIVES            124                       /* @brief Maximum number of Meshlet's nPrimitives.              */
 
 /**
 * @brief  Macros for Calauclate Constant.

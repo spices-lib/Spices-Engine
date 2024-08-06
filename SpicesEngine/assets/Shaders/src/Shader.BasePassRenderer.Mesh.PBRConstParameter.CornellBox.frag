@@ -12,6 +12,7 @@
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderFunctionLibrary.glsl"
 
 /**
 * @brief Material Parameter.
@@ -75,16 +76,23 @@ void main()
     
     if(pixel.normal.z > 0.999)
     {
-        outAlbedo = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        //outAlbedo = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     }
     else if(pixel.normal.z < -0.999)
     {
-        outAlbedo = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+        //outAlbedo = vec4(0.0f, 1.0f, 0.0f, 1.0f);
     }
     else
     {
-        outAlbedo = vec4(materialParam.albedo, 1.0f);
+        //outAlbedo = vec4(materialParam.albedo, 1.0f);
     }
+
+    uint seed0 = meshletId;
+    float rand0 = rnd(seed0);
+    float rand1 = rnd(seed0);
+    float rand2 = rnd(seed0);
+    outAlbedo = vec4(rand0, rand1, rand2, 1.0f);
+
     outNormal = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
     outRoughness = vec4(materialParam.roughness);
     outMetallic = vec4(materialParam.metallic);

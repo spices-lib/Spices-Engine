@@ -55,6 +55,7 @@ project "SpicesEngine"
 
 		-- Library: meshoptimizer Files.
 		"vendor/meshoptimizer/src/**.h",
+		"vendor/meshoptimizer/src/**.cpp",
 	}
 
 	-- Macros Definitions
@@ -124,6 +125,10 @@ project "SpicesEngine"
 	
 	-- Library: tracy is included this solution, do not use PreCompiler Header.
 	filter "files:vendor/tracy/public/**.cpp"
+	flags { "NoPCH" }
+
+	-- Library: meshoptimizer is included this solution, do not use PreCompiler Header.
+	filter "files:vendor/meshoptimizer/src/**.cpp"
 	flags { "NoPCH" }
 
 	-- Platform: Windows

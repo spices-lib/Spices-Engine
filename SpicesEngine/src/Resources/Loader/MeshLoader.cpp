@@ -52,6 +52,7 @@ namespace Spices {
 	{
 		bool isFind = false;
 		std::string filePath;
+		int index = 0;
 		for (auto& it : ResourceSystem::GetSearchFolder())
 		{
 			filePath = it + defaultOBJMeshPath + fileName + ".obj";
@@ -60,6 +61,7 @@ namespace Spices {
 				isFind = true;
 				break;
 			}
+			index++;
 		}
 		if (!isFind) return false;
 
@@ -134,7 +136,7 @@ namespace Spices {
 		}
 
 		outMeshPack->CreateMeshlets();
-		WriteSASSET(fileName, outMeshPack);
+		WriteSASSET(index, fileName, outMeshPack);
 
 		return true;
 	}
@@ -221,9 +223,9 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshLoader::WriteSASSET(const std::string& fileName, MeshPack* outMeshPack)
+	bool MeshLoader::WriteSASSET(int folderIndex, const std::string& fileName, MeshPack* outMeshPack)
 	{
-		std::string filePath = defaultBinMeshPath + fileName + ".sasset";
+		std::string filePath = ResourceSystem::GetSearchFolder()[folderIndex] + defaultBinMeshPath + fileName + ".sasset";
 
 		if (FileLibrary::FileLibrary_Exists(filePath.c_str())) {
 			return false;

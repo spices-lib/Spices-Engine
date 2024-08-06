@@ -74,7 +74,14 @@ void main()
 {
     ExplainMaterialParameter(push.desc.materialParameterAddress);
 
-    outAlbedo    = vec4(materialParam.albedo, 1.0f);
+    //outAlbedo    = vec4(materialParam.albedo, 1.0f);
+
+    uint seed0 = meshletId;
+    float rand0 = rnd(seed0);
+    float rand1 = rnd(seed0);
+    float rand2 = rnd(seed0);
+    outAlbedo = vec4(rand0, rand1, rand2, 1.0f);
+
     outNormal    = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
     outRoughness = vec4(materialParam.roughness);
     outMetallic  = vec4(materialParam.metallic);

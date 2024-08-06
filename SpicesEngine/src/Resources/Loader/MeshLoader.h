@@ -86,9 +86,10 @@ namespace Spices {
 		/**
 		* @brief Write the readed data to the sasset file.
 		* @param[in] filepath Mesh file path in disk.
+		* @param[in] folderIndex Index of Resource Folder.
 		* @param[in,out] outMeshPack meshpack pointer, only pass this to it.
 		* @return Returns true if write data succssfully.
 		*/
-		static bool WriteSASSET(const std::string& fileName, MeshPack* outMeshPack);
+		static bool WriteSASSET(int folderIndex, const std::string& fileName, MeshPack* outMeshPack);
 	};
 }

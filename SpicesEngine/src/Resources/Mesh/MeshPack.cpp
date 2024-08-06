@@ -220,79 +220,76 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		const float coneWeight = 0.5f;
+
 		size_t max_meshlets = meshopt_buildMeshletsBound(m_Indices.size(), MESHLET_NVERTICES, MESHLET_NPRIMITIVES);
 		std::vector<meshopt_Meshlet> meshlets(max_meshlets);
 		std::vector<unsigned int> meshlet_vertices(max_meshlets * MESHLET_NVERTICES);
 		std::vector<unsigned char> meshlet_triangles(max_meshlets * MESHLET_NPRIMITIVES * 3);
 
-		size_t meshlet_count = meshopt_buildMeshlets(meshlets.data(), meshlet_vertices.data(), meshlet_triangles.data(), m_Indices.data(),
-			m_Indices.size(), &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, 0.0f);
+		size_t nMeshlet = meshopt_buildMeshlets(meshlets.data(), meshlet_vertices.data(), meshlet_triangles.data(), m_Indices.data(),
+			m_Indices.size(), &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, coneWeight);
 
-		/*std::vector<Vertex> vertices = m_Vertices;
-		std::vector<uint32_t> indices = m_Indices;
+		const meshopt_Meshlet& last = meshlets[nMeshlet - 1];
+		meshlets.resize(nMeshlet);
+		meshlet_vertices.resize(last.vertex_offset + last.vertex_count);
+		meshlet_triangles.resize(last.triangle_offset + (last.triangle_count * 3 + 3) & ~3);
 
-		std::list<uint32_t> fullIndices = std::list(indices.begin(), indices.end());
-
-		m_Vertices.clear();
-		m_Indices.clear();
-		m_Meshlets.clear();
-
-		unsigned int vertexIndex = 0;
-		unsigned int primitiveIndex = 0;
-		while (!fullIndices.empty())
+		uint32_t nPrimitives = 0;
+		for (size_t i = 0; i < nMeshlet; ++i)
 		{
-			SpicesShader::Meshlet        meshlet;
-			meshlet.vertexOffset = vertexIndex;
-			meshlet.primitiveOffset = primitiveIndex;
+			meshopt_optimizeMeshlet(&meshlet_vertices[meshlets[i].vertex_offset], &meshlet_triangles[meshlets[i].triangle_offset], 
+				meshlets[i].triangle_count, meshlets[i].vertex_count);
 
-			scl::linked_unordered_map<uint32_t, uint32_t> localVertices;
-			std::vector<uint32_t> localIndices;
+			const meshopt_Meshlet& m = meshlets[i];
+			meshopt_Bounds bounds = meshopt_computeMeshletBounds(&meshlet_vertices[m.vertex_offset],
+				&meshlet_triangles[m.triangle_offset], m.triangle_count, &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex));
 
-			while (localVertices.size() < MESHLET_NVERTICES - 2 && localIndices.size() < MESHLET_NPRIMITIVES * 3 - 2 && !fullIndices.empty())
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					uint32_t index = fullIndices.front();
-					fullIndices.pop_front();
-					if(!localVertices.has_key(index)) localVertices.push_back(index, static_cast<uint32_t>(localVertices.size()));
-					localIndices.push_back(index);
-				}
-			}
+			SpicesShader::Meshlet       meshlet;
+			meshlet.vertexOffset      = meshlets[i].vertex_offset;
+			meshlet.nVertices         = meshlets[i].vertex_count;
+			meshlet.primitiveOffset   = nPrimitives;
+			meshlet.nPrimitives       = meshlets[i].triangle_count;
 
-			assert(localVertices.size() <= MESHLET_NVERTICES);
-			assert(localIndices.size() <= MESHLET_NPRIMITIVES * 3);
+			meshlet.boundCenter.x     = bounds.center[0];
+			meshlet.boundCenter.y     = bounds.center[1];
+			meshlet.boundCenter.z     = bounds.center[2];
 
-			meshlet.nVertices   = static_cast<unsigned int>(localVertices.size());
-			meshlet.nPrimitives = static_cast<unsigned int>(localIndices.size() / 3);
-
-			vertexIndex        += meshlet.nVertices;
-			primitiveIndex     += meshlet.nPrimitives;
+			meshlet.boundRadius       = bounds.radius;
 
 			m_Meshlets.push_back(std::move(meshlet));
 
-			glm::vec3 center = glm::vec3(0.0f);
-			localVertices.for_each([&](const uint32_t& k, const uint32_t& v) {
-				m_Vertices.push_back(vertices[k]);
-				center += vertices[k].position;
-				return false;
-			});
-			center /= static_cast<float>(meshlet.nVertices);
+			nPrimitives += m.triangle_count;
+		}
 
-			for (int i = 0; i < localIndices.size(); i++)
+		std::vector<Vertex> tempVertices = m_Vertices;
+		std::vector<uint32_t> tempIndices = m_Indices;
+
+		m_Vertices.clear();
+		m_Indices.clear();
+
+		m_Vertices.resize(meshlet_vertices.size());
+
+		const SpicesShader::Meshlet& lastm = m_Meshlets[m_Meshlets.size() - 1];
+		m_Indices.resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
+
+		for (uint32_t i = 0; i < meshlet_vertices.size(); i++)
+		{
+			m_Vertices[i] = std::move(tempVertices[meshlet_vertices[i]]);
+		}
+
+		for (uint32_t i = 0; i < nMeshlet; i++)
+		{
+			const meshopt_Meshlet& m = meshlets[i];
+			const SpicesShader::Meshlet& ml = m_Meshlets[i];
+
+			for (uint32_t j = 0; j < m.triangle_count; j++)
 			{
-				m_Indices.push_back(*localVertices.find_value(localIndices[i]) + meshlet.vertexOffset);
+				m_Indices[3 * ml.primitiveOffset + 3 * j + 0] = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 0] + m.vertex_offset;
+				m_Indices[3 * ml.primitiveOffset + 3 * j + 1] = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 1] + m.vertex_offset;
+				m_Indices[3 * ml.primitiveOffset + 3 * j + 2] = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 2] + m.vertex_offset;
 			}
-
-			float radius = 0.0f;
-			localVertices.for_each([&](const uint32_t& k, const uint32_t& v){
-				float l = glm::distance(vertices[k].position, center);
-				radius = glm::max(radius, l);
-				return false;
-			});
-
-			meshlet.boundCenter = center;
-			meshlet.boundRadius = radius;
-		}*/
+		}
 	}
 
 	void MeshPack::ApplyMatrix(const glm::mat4& matrix)
