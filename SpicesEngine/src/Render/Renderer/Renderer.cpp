@@ -394,6 +394,8 @@ namespace Spices {
 
 	void Renderer::RenderBehaveBuilder::SetViewPort() const
 	{
+		SPICES_PROFILE_ZONE;
+		
 		/**
 		* @brief Use Negative Viewport height filp here to handle axis difference.
 		* Remember enable device extension (VK_KHR_MAINTENANCE1)
@@ -504,32 +506,44 @@ namespace Spices {
 	)
 		: RenderBehaveBuilder(renderer, currentFrame, currentImage)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetInstanceProcAddr(renderer->m_VulkanState.m_Instance, "vkCmdTraceRaysKHR"));
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::Recording(const std::string& caption)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		VulkanDebugUtils::BeginLabel(m_CommandBuffer, caption);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::Endrecording()
 	{
+		SPICES_PROFILE_ZONE;
+		
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint bindPoint)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		RenderBehaveBuilder::BindPipeline(materialName, bindPoint);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		RenderBehaveBuilder::BindDescriptorSet(infos, bindPoint);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		RenderBehaveBuilder::BindDescriptorSet(infos, name, bindPoint);
 	}
 
@@ -540,6 +554,8 @@ namespace Spices {
 		const VkStridedDeviceAddressRegionKHR* callRegion
 	)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		const uint32_t width = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
 		const uint32_t height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
 
@@ -822,37 +838,51 @@ namespace Spices {
 	)
 		: RenderBehaveBuilder(renderer, currentFrame, currentImage)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		m_CommandBuffer = m_Renderer->m_VulkanState.m_ComputeCommandBuffer[currentFrame];
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::Recording(const std::string& caption)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		VulkanDebugUtils::BeginLabel(m_CommandBuffer, caption);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::Endrecording()
 	{
+		SPICES_PROFILE_ZONE;
+		
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint bindPoint)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		RenderBehaveBuilder::BindPipeline(materialName, bindPoint);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		RenderBehaveBuilder::BindDescriptorSet(infos, bindPoint);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		RenderBehaveBuilder::BindDescriptorSet(infos, name, bindPoint);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::Dispatch(uint32_t x, uint32_t y, uint32_t z)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		vkCmdDispatch(m_CommandBuffer, x, y, z);
 	}
 
@@ -864,6 +894,8 @@ namespace Spices {
 		VkPipelineStageFlags  dstStageMask
 	)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		VkBufferMemoryBarrier                   bufferBarrier {};
 		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		bufferBarrier.srcAccessMask           = srcAccessMask;
@@ -892,6 +924,7 @@ namespace Spices {
 		VkPipelineStageFlags  dstStageMask
 	)
 	{
+		SPICES_PROFILE_ZONE;
 		
 		VkBufferMemoryBarrier                   bufferBarrier {};
 		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
@@ -921,6 +954,8 @@ namespace Spices {
 		VkPipelineStageFlags  dstStageMask
 	)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		VkBufferMemoryBarrier                   bufferBarrier {};
 		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		bufferBarrier.srcAccessMask           = srcAccessMask;

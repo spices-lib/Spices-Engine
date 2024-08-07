@@ -127,12 +127,14 @@ bool IsConeBackfacing(in vec3 coneApex, in vec3 coneAxis, in float coneCutoff, i
 }
 
 /**
-* @brief Calculate frustumPlanes from MVP Matrix.
+* @brief Calculate view space frustumPlanes from Projection Matrix.
 * https://www8.cs.umu.se/kurser/5DV051/HT12/lab/plane_extraction.pdf .
-* @param[in] matrix MVP Matrix.
+* @param[in] Projection Matrix, 
 * @param[in,out] planes frustumPlanes.
+* @attention Input MVP matrix will cause bug, reason is still unknown.
+* @update 24.08.07 by spices.
 */
-void ExtractFrustumPlanes(in mat4 matrix, inout vec4[6] planes)
+void ExtractFrustumPlanes(in mat4 matrix, inout vec4[5] planes)
 {
     mat4 m = transpose(matrix);
     
@@ -141,19 +143,28 @@ void ExtractFrustumPlanes(in mat4 matrix, inout vec4[6] planes)
     planes[2] = m[3] - m[1];        /* @brief Top.    */
     planes[3] = m[3] + m[1];        /* @brief Bottom. */
     planes[4] = m[3] + m[2];        /* @brief Near. planes[4] = m[2] is Specific for clip space 0 - 1 Depth(D3D / Metal) */
-    planes[5] = m[3] - m[2];        /* @brief Far.    */
+  //planes[5] = m[3] - m[2];        /* @brief Far.  No need far plane here though we use infinity far plane. */
     
-    for(int i = 0; i < 6; ++i)
+    for(int i = 0; i < 5; ++i)
     {
        planes[i] /= length(planes[i].xyz);
     }
 }
 
-bool SphereIntersectsFrustum(in vec4[6] planes, in vec3 center, in float radius)
+/**
+* @brief Check if bounding is inside frustum.
+* Specific for sphere bounding.
+* https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling .
+* @param[in] planes frustumPlanes.
+* @param[in] center Sphere Bounding Center.
+* @param[in] radius Sphere Bounding Radius.
+* @return true if is inside frustum.
+*/
+bool IsInsideFrustum_Sphere(in vec4[5] planes, in vec3 center, in float radius)
 {
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < 5; i++)
     {
-        if(dot(center, planes[i].xyz) + planes[i].w < -radius)
+        if(dot(center, planes[i].xyz) - planes[i].w + radius < 0.0f)
         {
             return false;
         }

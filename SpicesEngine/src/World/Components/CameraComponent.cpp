@@ -72,25 +72,6 @@ namespace Spices {
 		}
 
 		{
-			SPICES_PROFILE_ZONEN("CameraComponent Far Plane");
-
-			ImGuiH::DrawPropertyItem("Far Plane", columeWidth, [&]() {
-				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-				if (ImGui::DragFloat("##", &m_Camera->GetPerspectiveParam().farPlane, 10.0f, 1000.0f, 100000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
-				{
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-				}
-				ImGui::PopItemWidth();
-				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Camera->GetPerspectiveParam().farPlane != 1000.0f)) 
-				{ 
-					m_Camera->GetPerspectiveParam().farPlane = 1000.0f; 
-					FrameInfo::Get().m_World->Mark(World::FrushStableFrame);
-				}
-			});
-		}
-
-		{
 			SPICES_PROFILE_ZONEN("CameraComponent AspectRatio");
 
 			ImGuiH::DrawPropertyItem("AspectRatio", columeWidth, [&]() {

@@ -58,21 +58,23 @@ void main()
     vec4 worldCenter    = push.model * vec4(meshlet.boundCenter, 1.0f);
     vec3 dis            = worldCenter.xyz - ro.xyz;
 
-    vec4 frustumPlanes[6];
-    ExtractFrustumPlanes(mvp, frustumPlanes);
-    bool frustumCulled = !SphereIntersectsFrustum(frustumPlanes, meshlet.boundCenter, meshlet.boundRadius);
+    vec4 frustumPlanes[5];
+    ExtractFrustumPlanes(view.projection, frustumPlanes);
+    vec4 viewSpaceBoundCenter = view.view * push.model * vec4(meshlet.boundCenter, 1.0f);
+    
+    bool frustumCulled = !IsInsideFrustum_Sphere(frustumPlanes, viewSpaceBoundCenter.xyz, meshlet.boundRadius);
     
     bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, meshlet.coneAxis, meshlet.coneCutoff, ro.xyz);
     
-    //if(frustumCulled)
-    //{
-    //    EmitMeshTasksEXT(0, 0, 0);
-    //    return;
-    //}
-    //else
-    //{
+    if(frustumCulled)
+    {
+        EmitMeshTasksEXT(0, 0, 0);
+        return;
+    }
+    else
+    {
         workgroupId = gl_WorkGroupID.x;
         EmitMeshTasksEXT(1, 1, 1);
-        //return;
-    //}
+        return;
+    }
 }

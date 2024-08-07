@@ -34,7 +34,6 @@ namespace Spices {
 	{
 		float fov           = 45.0f;         /* @brief Use degree as well, While PerspectiveMatrix() turn it to radians for calculate. */
 		float nearPlane     = 0.01f;         /* @brief Near Plane of Camera.               */
-		float farPlane      = 1000.0f;       /* @brief Far Plane of Camera.                */
 		float aspectRatio   = 1.777f;        /* @brief Viewport Width / Height of Camera.  */
 	};
 
@@ -74,10 +73,9 @@ namespace Spices {
 		* @brief Set ProjectionMatrix by using perspective type.
 		* @param[in] fov Field of View, usually 45.0 degree.
 		* @param[in] nearPlane NearPlane, usually 0.01.
-		* @param[in] farPlane FarPlane, usually infinity far.
 		* @param[in] aspectRatio AspectRatio, viewport width / viewport height.
 		*/
-		void SetPerspective(float fov, float nearPlane, float farPlane, float aspectRatio = 1.777f);
+		void SetPerspective(float fov, float nearPlane, float aspectRatio = 1.777f);
 
 		/**
 		* @brief Set ProjectionMatrix by using perspective type with one param.
