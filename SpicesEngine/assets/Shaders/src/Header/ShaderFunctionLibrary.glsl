@@ -127,11 +127,10 @@ bool IsConeBackfacing(in vec3 coneApex, in vec3 coneAxis, in float coneCutoff, i
 }
 
 /**
-* @brief Calculate view space frustumPlanes from Projection Matrix.
+* @brief Calculate view space frustumPlanes from combine Matrix.
 * https://www8.cs.umu.se/kurser/5DV051/HT12/lab/plane_extraction.pdf .
-* @param[in] Projection Matrix, 
+* @param[in] Any combine of MVP Matrix.
 * @param[in,out] planes frustumPlanes.
-* @attention Input MVP matrix will cause bug, reason is still unknown.
 * @update 24.08.07 by spices.
 */
 void ExtractFrustumPlanes(in mat4 matrix, inout vec4[5] planes)
@@ -154,7 +153,7 @@ void ExtractFrustumPlanes(in mat4 matrix, inout vec4[5] planes)
 /**
 * @brief Check if bounding is inside frustum.
 * Specific for sphere bounding.
-* https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling .
+* https://metalbyexample.com/mesh-shaders/ .
 * @param[in] planes frustumPlanes.
 * @param[in] center Sphere Bounding Center.
 * @param[in] radius Sphere Bounding Radius.
@@ -164,7 +163,7 @@ bool IsInsideFrustum_Sphere(in vec4[5] planes, in vec3 center, in float radius)
 {
     for(int i = 0; i < 5; i++)
     {
-        if(dot(center, planes[i].xyz) - planes[i].w + radius < 0.0f)
+        if(dot(center, planes[i].xyz) + planes[i].w < -radius)
         {
             return false;
         }

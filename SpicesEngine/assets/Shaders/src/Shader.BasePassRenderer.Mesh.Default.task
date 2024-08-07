@@ -59,14 +59,13 @@ void main()
     vec3 dis            = worldCenter.xyz - ro.xyz;
 
     vec4 frustumPlanes[5];
-    ExtractFrustumPlanes(view.projection, frustumPlanes);
-    vec4 viewSpaceBoundCenter = view.view * push.model * vec4(meshlet.boundCenter, 1.0f);
+    ExtractFrustumPlanes(mvp, frustumPlanes);
+    bool frustumCulled = !IsInsideFrustum_Sphere(frustumPlanes, meshlet.boundCenter, meshlet.boundRadius);
     
-    bool frustumCulled = !IsInsideFrustum_Sphere(frustumPlanes, viewSpaceBoundCenter.xyz, meshlet.boundRadius);
+    vec4 modelRo = inverse(view.view * push.model)[3];
+    bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, meshlet.coneAxis, meshlet.coneCutoff, modelRo.xyz);
     
-    bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, meshlet.coneAxis, meshlet.coneCutoff, ro.xyz);
-    
-    if(frustumCulled)
+    if(frustumCulled || normalConeCulled)
     {
         EmitMeshTasksEXT(0, 0, 0);
         return;
