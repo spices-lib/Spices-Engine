@@ -65,7 +65,7 @@ void main()
     vec4 modelRo = inverse(view.view * push.model)[3];
     bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, meshlet.coneAxis, meshlet.coneCutoff, modelRo.xyz);
     
-    if(frustumCulled || normalConeCulled)
+    if(frustumCulled)
     {
         EmitMeshTasksEXT(0, 0, 0);
         return;

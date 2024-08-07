@@ -133,7 +133,7 @@ namespace Spices {
 				task = m_TaskQueue.front();
 				m_TaskQueue.pop();
 
-				m_IdleThreadSize--;
+				--m_IdleThreadSize;
 				m_NotFull.notify_all();
 				if (m_TaskQueue.size() > 0) m_NotEmpty.notify_all();
 			}
@@ -143,7 +143,7 @@ namespace Spices {
 			*/
 			if (task != nullptr) task();
 
-			m_IdleThreadSize++;
+			++m_IdleThreadSize;
 
 			lastTime = std::chrono::high_resolution_clock().now();
 		}

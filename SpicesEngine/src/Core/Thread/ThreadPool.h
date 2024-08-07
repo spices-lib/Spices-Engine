@@ -252,12 +252,12 @@ namespace Spices {
 		std::condition_variable m_ExitCond;
 
 		/**
-		* @brief ThrealPool Run Mode.
+		* @brief Thread Pool Run Mode.
 		*/
 		PoolMode m_PoolMode;
 
 		/**
-		* @brief True if this threadpool is in use.
+		* @brief True if this thread pool is in use.
 		*/
 		std::atomic_bool m_IsPoolRunning;
 	};
@@ -281,9 +281,9 @@ namespace Spices {
 		{
 			SPICES_CORE_WARN("Task Submit failed");
 
-			auto task = std::make_shared<std::packaged_task<RType()>>( [](){ return RType(); });
-			(*task)();
-			return task->get_future();
+			auto emptyTask = std::make_shared<std::packaged_task<RType()>>( [](){ return RType(); });
+			(*emptyTask)();
+			return emptyTask->get_future();
 		}
 
 		/**
@@ -302,7 +302,7 @@ namespace Spices {
 			uint32_t threadId = ptr->GetId();
 			m_Threads.emplace(threadId, std::move(ptr));
 
-			m_IdleThreadSize++;
+			++m_IdleThreadSize;
 		}
 
 		return result;

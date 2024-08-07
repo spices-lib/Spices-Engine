@@ -62,7 +62,7 @@ namespace SpicesTest {
 		/**
 		* @brief Texture's width and height
 		*/
-		const int m_TextureSize = 100;
+		const static int m_TextureSize = 100;
 
 		/**
 		* @brief The unique pointer of VulkanImage.
@@ -86,7 +86,7 @@ namespace SpicesTest {
 		/**
 		* @brief Init with ArrayData.
 		*/
-		std::vector<float> dataArray(m_TextureSize * m_TextureSize * 4);
+		std::array<float, m_TextureSize* m_TextureSize * 4> dataArray;
 		for (int i = 0; i < m_TextureSize * m_TextureSize * 4; i++)
 		{
 			dataArray[i] = i + 0.0f;

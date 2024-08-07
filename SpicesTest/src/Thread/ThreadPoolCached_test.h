@@ -58,12 +58,13 @@ namespace SpicesTest {
 	* @brief Testing if submit one task successfully.
 	*/
 	TEST_F(ThreadPoolCached_test, SubmitOneTask) {
-		auto func = [](int sec)
+		auto func = [](int sec) -> bool
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(sec));
+			return true;
 		};
 
-		m_ThreadPool.SubmitTask(std::bind(func, 2));
+		std::future<bool> future = m_ThreadPool.SubmitTask(std::bind(func, 2));
 
 		func(1); /* @brief Wait for task execute. */
 
@@ -75,7 +76,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		func(2); /* @brief Wait for sub thread finish. */
+		future.get(); /* @brief Wait for sub thread finish. */
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
@@ -90,14 +91,16 @@ namespace SpicesTest {
 	* @brief Testing if submit nThreads task successfully.
 	*/
 	TEST_F(ThreadPoolCached_test, SubmitnThreadsTask) {
-		auto func = [](int sec)
+		auto func = [](int sec) -> bool
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(sec));
+			return true;
 		};
 
+		std::vector<std::future<bool>> futures(nThreads);
 		for (int i = 0; i < nThreads; i++)
 		{
-			m_ThreadPool.SubmitTask(std::bind(func, 2));
+			futures[i] = m_ThreadPool.SubmitTask(std::bind(func, 2));
 		}
 
 		func(1); /* @brief Wait for task execute. */
@@ -110,7 +113,11 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		func(2);  /* @brief Wait for sub thread finish. */
+		/* @brief Wait for sub thread finish. */
+		for (int i = 0; i < nThreads; i++)
+		{
+			futures[i].get();
+		}
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
@@ -125,14 +132,16 @@ namespace SpicesTest {
 	* @brief Testing if submit 2 nThreads task successfully.
 	*/
 	TEST_F(ThreadPoolCached_test, Submit2nThreadsTask) {
-		auto func = [](int sec)
+		auto func = [](int sec) -> bool
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(sec));
+			return true;
 		};
 
+		std::vector<std::future<bool>> futures(2 * nThreads);
 		for (int i = 0; i < 2 * nThreads; i++)
 		{
-			m_ThreadPool.SubmitTask(std::bind(func, 2));
+			futures[i] = m_ThreadPool.SubmitTask(std::bind(func, 2));
 		}
 
 		func(1); /* @brief Wait for task execute. */
@@ -145,7 +154,11 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		func(2);  /* @brief Wait for part tasks finish. */
+		/* @brief Wait for part tasks finish. */
+		for (int i = 0; i < 2 * nThreads; i++)
+		{
+			futures[i].get();
+		}
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,2 * nThreads                 );
@@ -155,7 +168,8 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		func(20);  /* @brief Wait for threads recovery finish. */
+		/* @brief Wait for threads recovery finish. */
+		func(15);
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
