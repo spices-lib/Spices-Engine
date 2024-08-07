@@ -97,11 +97,11 @@ namespace Spices {
     	
     	glm::mat4 mat = glm::mat4{ 0.0f };
     	mat[0][0] = 1.0f / (aspectRatio * tanHalfFovy);
-    	mat[1][1] = 1.0f / (tanHalfFovy);
+    	mat[1][1] = 1.0f / tanHalfFovy;
     	mat[2][2] = farPlane / (farPlane - nearPlane);
     	mat[2][3] = 1.0f;
     	mat[3][2] = -(farPlane * nearPlane) / (farPlane - nearPlane);
-
+    	
     	return mat;
     }
 
@@ -117,4 +117,18 @@ namespace Spices {
 
 		return mat;
 	}
+
+	glm::mat4 PerspectiveMatrixInverseZ(float fov, float nearPlane, float aspectRatio)
+    {
+    	const float tanHalfFovy = tan(glm::radians(fov) / 2.0f);
+
+    	glm::mat4 mat = glm::mat4{ 0.0f };
+    	mat[0][0] = 1.0f / (aspectRatio * tanHalfFovy);
+    	mat[1][1] = 1.0f / tanHalfFovy;
+    	mat[2][2] = 0.0f;
+    	mat[2][3] = 1.0f;
+    	mat[3][2] = nearPlane;
+    	
+    	return mat;
+    }
 }

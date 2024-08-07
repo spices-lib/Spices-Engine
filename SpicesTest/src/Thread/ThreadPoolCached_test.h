@@ -12,7 +12,7 @@ namespace SpicesTest {
 
 	/**
 	* @brief The interface is inherited from testing::Test.
-	* Registy on Initialize.
+	* Registry on Initialize.
 	*/
 	class ThreadPoolCached_test : public testing::Test
 	{
@@ -20,7 +20,7 @@ namespace SpicesTest {
 
 		/**
 		* @brief The interface is inherited from testing::Test.
-		* Registy on Initialize.
+		* Registry on Initialize.
 		*/
 		void SetUp() override {
 			m_ThreadPool.SetMode(Spices::PoolMode::MODE_CACHED);
@@ -75,7 +75,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		func(2); /* @brief Wait for subthread finish. */
+		func(2); /* @brief Wait for sub thread finish. */
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
@@ -110,7 +110,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		func(2);  /* @brief Wait for subthread finish. */
+		func(2);  /* @brief Wait for sub thread finish. */
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );

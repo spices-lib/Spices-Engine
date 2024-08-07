@@ -1449,9 +1449,10 @@ namespace Spices {
 
 		/**
 		* @brief Instance a VkClearValue.
+		* Though we reverse z depth, clear buffer with 0.0f here.
 		*/
 		VkClearValue                              clearValue{};
-		clearValue.depthStencil                 = { 1.0f, 0 };
+		clearValue.depthStencil                 = { 0.0f, 0 };
 
 		/**
 		* @brief Instance a RendererResourceCreateInfo.

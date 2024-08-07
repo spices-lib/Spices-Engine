@@ -1,5 +1,5 @@
 /**
-* @file main.h.
+* @file main.cpp.
 * @brief The SpicesTest::main Class Implementation.
 * @author Spices.
 */

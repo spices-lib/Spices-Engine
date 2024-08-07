@@ -41,6 +41,8 @@ namespace Spices {
 
     glm::mat4 PerspectiveMatrix(float fov, float nearPlane, float farPlane, float aspectRatio);
     glm::mat4 OtrhographicMatrix(float left, float right, float top, float bottom, float nearPlane, float farPlane);
+    
+    glm::mat4 PerspectiveMatrixInverseZ(float fov, float nearPlane, float aspectRatio);
 
 #ifdef RENDERAPI_VULKAN
 

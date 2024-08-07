@@ -11,7 +11,7 @@
 namespace SpicesTest {
 
     /**
-    * @brief Declear Empty Class.
+    * @brief Declare Empty Class.
     */
     class TestClass0 {};
     class TestClass1 {};

@@ -112,7 +112,7 @@ namespace Spices {
 		configInfo.depthStencilInfo.sType                    = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		configInfo.depthStencilInfo.depthTestEnable          = VK_TRUE;
 		configInfo.depthStencilInfo.depthWriteEnable         = VK_TRUE;
-		configInfo.depthStencilInfo.depthCompareOp           = VK_COMPARE_OP_LESS;
+		configInfo.depthStencilInfo.depthCompareOp           = VK_COMPARE_OP_GREATER;  /* @brief Though we reverse z depth, allow greater value pass. */
 		configInfo.depthStencilInfo.depthBoundsTestEnable    = VK_FALSE;
 		configInfo.depthStencilInfo.minDepthBounds           = 0.0f;
 		configInfo.depthStencilInfo.maxDepthBounds           = 1.0f;

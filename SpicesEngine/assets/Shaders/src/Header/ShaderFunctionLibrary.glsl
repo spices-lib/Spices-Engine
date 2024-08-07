@@ -127,6 +127,41 @@ bool IsConeBackfacing(in vec3 coneApex, in vec3 coneAxis, in float coneCutoff, i
 }
 
 /**
+* @brief Calculate frustumPlanes from MVP Matrix.
+* https://www8.cs.umu.se/kurser/5DV051/HT12/lab/plane_extraction.pdf .
+* @param[in] matrix MVP Matrix.
+* @param[in,out] planes frustumPlanes.
+*/
+void ExtractFrustumPlanes(in mat4 matrix, inout vec4[6] planes)
+{
+    mat4 m = transpose(matrix);
+    
+    planes[0] = m[3] + m[0];        /* @brief Left.   */
+    planes[1] = m[3] - m[0];        /* @brief Right.  */
+    planes[2] = m[3] - m[1];        /* @brief Top.    */
+    planes[3] = m[3] + m[1];        /* @brief Bottom. */
+    planes[4] = m[3] + m[2];        /* @brief Near. planes[4] = m[2] is Specific for clip space 0 - 1 Depth(D3D / Metal) */
+    planes[5] = m[3] - m[2];        /* @brief Far.    */
+    
+    for(int i = 0; i < 6; ++i)
+    {
+       planes[i] /= length(planes[i].xyz);
+    }
+}
+
+bool SphereIntersectsFrustum(in vec4[6] planes, in vec3 center, in float radius)
+{
+    for(int i = 0; i < 6; i++)
+    {
+        if(dot(center, planes[i].xyz) + planes[i].w < -radius)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
 * @brief BRDF Diffuse part, use lambert model.
 * @param[in] albedo .
 * @return Returns diffuse.

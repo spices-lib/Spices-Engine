@@ -52,28 +52,27 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets {
 void main()
 {
     Meshlet meshlet     = Meshlets(push.desc.meshletAddress).i[gl_WorkGroupID.x];
+    mat4 mvp            = view.projection * view.view * push.model;
     
 	vec4 ro             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
     vec4 worldCenter    = push.model * vec4(meshlet.boundCenter, 1.0f);
     vec3 dis            = worldCenter.xyz - ro.xyz;
 
-    if(length(dis) < 50.0f)
-    {
-        if(!IsConeBackfacing(meshlet.coneApex, meshlet.coneAxis, meshlet.coneCutoff, ro.xyz))
-        {
-            workgroupId = gl_WorkGroupID.x;
-            EmitMeshTasksEXT(1, 1, 1);
-            return;
-        }
-        else
-        {
-            EmitMeshTasksEXT(0, 0, 0);
-            return;
-        }
-    }
-    else
-    {
-	    EmitMeshTasksEXT(0, 0, 0);
-	    return;
-	}
+    vec4 frustumPlanes[6];
+    ExtractFrustumPlanes(mvp, frustumPlanes);
+    bool frustumCulled = !SphereIntersectsFrustum(frustumPlanes, meshlet.boundCenter, meshlet.boundRadius);
+    
+    bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, meshlet.coneAxis, meshlet.coneCutoff, ro.xyz);
+    
+    //if(frustumCulled)
+    //{
+    //    EmitMeshTasksEXT(0, 0, 0);
+    //    return;
+    //}
+    //else
+    //{
+        workgroupId = gl_WorkGroupID.x;
+        EmitMeshTasksEXT(1, 1, 1);
+        //return;
+    //}
 }

@@ -61,10 +61,9 @@ namespace Spices {
 		switch (m_ProjectionType)
 		{
 		case ProjectionType::Perspective:
-			m_ProjectionMatrix = PerspectiveMatrix(
+			m_ProjectionMatrix = PerspectiveMatrixInverseZ(
 				m_PerspectiveParam.fov        , 
 				m_PerspectiveParam.nearPlane  ,
-				m_PerspectiveParam.farPlane   ,
 				m_PerspectiveParam.aspectRatio
 			);
 			break;

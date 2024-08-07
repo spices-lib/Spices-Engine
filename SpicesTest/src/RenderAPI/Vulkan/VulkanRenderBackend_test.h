@@ -42,7 +42,7 @@ namespace SpicesTest {
 
 		/**
 		* @brief The interface is inherited from testing::Test.
-		* Registy on ShutDown.
+		* Registry on ShutDown.
 		*/
 		virtual void TearDown() override {
 
@@ -52,7 +52,7 @@ namespace SpicesTest {
 			Spices::ResourcePool<Spices::Texture>  ::Destroy();
 			Spices::ResourcePool<Spices::Material> ::Destroy();
 			Spices::ResourcePool<Spices::Mesh>     ::Destroy();
-		};
+		}
 
 	protected:
 

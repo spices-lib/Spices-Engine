@@ -19,7 +19,7 @@ namespace SpicesTest {
 	protected:
 
 		/**
-		* @brief Testing class initialize funtion.
+		* @brief Testing class initialize function.
 		*/
 		void SetUp() override {
 

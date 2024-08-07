@@ -19,7 +19,7 @@ namespace SpicesTest {
 
 		/**
 		* @brief The interface is inherited from testing::Test.
-		* Registy on Initialize.
+		* Registry on Initialize.
 		*/
 		void SetUp() override {
 			m0.add_element("1", "float");

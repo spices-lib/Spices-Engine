@@ -31,7 +31,7 @@ namespace Spices {
 
 		// bridge pbr model
 		{
-			Entity& meshentity = CreateEntity("DefaultMesh");
+			Entity meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 			transformComp1.SetPosition({10.0f, 2.0f, 30.0f});
@@ -107,7 +107,7 @@ namespace Spices {
 			transformComp1.SetRotation({90.0f, 0.0f, 0.0f});
 			transformComp1.SetScale({500.0f, 500.0f, 500.0f});
 
-			std::shared_ptr<SquarePack> pack1 = std::make_shared<SquarePack>(5000, 5000);
+			std::shared_ptr<SquarePack> pack1 = std::make_shared<SquarePack>();
 
 			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
@@ -116,7 +116,7 @@ namespace Spices {
 
 		// pointlight
 		{
-			Entity& plightentity = CreateEntity("PointLight");
+			Entity plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightComp.SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
 			plightComp.SetIntensity(20.0f);
@@ -125,7 +125,7 @@ namespace Spices {
 			transformComp.SetPosition({ -7.0f, 7.0f, 5.0f });
 		}
 		{
-			Entity& plightentity = CreateEntity("PointLight");
+			Entity plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightComp.SetColor(glm::vec3(1.0f, 0.0f, 1.0f));
 			plightComp.SetIntensity(20.0f);
@@ -134,7 +134,7 @@ namespace Spices {
 			transformComp.SetPosition({ -7.0f, 5.0f, 15.0f });
 		}
 		{
-			Entity& plightentity = CreateEntity("PointLight");
+			Entity plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightComp.SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
 			plightComp.SetIntensity(20.0f);

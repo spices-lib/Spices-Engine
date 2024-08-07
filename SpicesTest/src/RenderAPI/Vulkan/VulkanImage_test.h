@@ -22,7 +22,7 @@ namespace SpicesTest {
 
 		/**
 		* @brief The interface is inherited from testing::Test.
-		* Registy on Initialize.
+		* Registry on Initialize.
 		*/
 		virtual void SetUp() override {
 			VulkanRenderBackend_test::SetUp();
@@ -50,7 +50,7 @@ namespace SpicesTest {
 
 		/**
 		* @brief The interface is inherited from testing::Test.
-		* Registy on ShutDown.
+		* Registry on ShutDown.
 		*/
 		virtual void TearDown() override {
 			m_VulkanImage = nullptr;
@@ -62,7 +62,7 @@ namespace SpicesTest {
 		/**
 		* @brief Texture's width and height
 		*/
-		const static int m_TextureSize = 100;
+		const int m_TextureSize = 100;
 
 		/**
 		* @brief The unique pointer of VulkanImage.
@@ -86,7 +86,7 @@ namespace SpicesTest {
 		/**
 		* @brief Init with ArrayData.
 		*/
-		std::array<float, m_TextureSize * m_TextureSize * 4> dataArray;
+		std::vector<float> dataArray(m_TextureSize * m_TextureSize * 4);
 		for (int i = 0; i < m_TextureSize * m_TextureSize * 4; i++)
 		{
 			dataArray[i] = i + 0.0f;
