@@ -29,12 +29,6 @@ namespace Spices {
 		Log::Init();
 
 		/**
-		* @brief Init ThreadPool.
-		*/
-		ThreadPool::Get()->SetMode(PoolMode::MODE_FIXED);
-		ThreadPool::Get()->Start(MESHTASK_SUBMIT_THREAD_NUM);
-
-		/**
 		* @brief Init all Systems.
 		* @attention SystemManager Class did not Constructor, it returns Null.
 		* @todo Fixing it.

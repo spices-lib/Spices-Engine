@@ -188,5 +188,7 @@ namespace Spices {
 		* @brief VulkanSwapChain.
 		*/
 		std::unique_ptr<VulkanSwapChain> m_VulkanSwapChain;
+
+		std::unique_ptr<ThreadPool>
 	};
 }

@@ -9,6 +9,7 @@
 
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
+#include "Core/Thread/ThreadPool.h"
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingRenderer.h"
