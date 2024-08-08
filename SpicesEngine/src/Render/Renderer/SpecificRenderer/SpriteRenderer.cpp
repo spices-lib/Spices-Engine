@@ -51,7 +51,7 @@ namespace Spices {
 		const glm::vec3 camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
 
 		std::map<float, int> sortedEntity;
-		IterWorldComp<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
+		IterWorldCompWithBreak<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
 			const glm::vec3 dis = transComp.GetPosition() - camPos;
 			sortedEntity[glm::dot(dis, dis)] = entityId;
 

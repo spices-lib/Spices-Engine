@@ -35,7 +35,7 @@ namespace Spices {
 
 		std::shared_ptr<VulkanBuffer> buffer = nullptr;
 
-		IterWorldComp<TagComponent>(FrameInfo::Get(), [&](int entityID, TransformComponent& tranComp, TagComponent& tagComp) {
+		IterWorldCompWithBreak<TagComponent>(FrameInfo::Get(), [&](int entityID, TransformComponent& tranComp, TagComponent& tagComp) {
 			if (tagComp.GetTag().find("Ground") != tagComp.GetTag().end())
 			{
 				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);
@@ -102,7 +102,7 @@ namespace Spices {
 
 		std::shared_ptr<VulkanBuffer> buffer = nullptr;
 
-		IterWorldComp<TagComponent>(FrameInfo::Get(), [&](int entityID, TransformComponent& tranComp, TagComponent& tagComp) {
+		IterWorldCompWithBreak<TagComponent>(FrameInfo::Get(), [&](int entityID, TransformComponent& tranComp, TagComponent& tagComp) {
 			if (tagComp.GetTag().find("Ground") != tagComp.GetTag().end())
 			{
 				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);

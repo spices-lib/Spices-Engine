@@ -99,8 +99,8 @@ namespace Spices {
 		}
 
 		// testsphere
-		{
-			for (int i = 0; i < 100; i++)  // range in albedo
+		/*{
+			for (int i = 0; i < 5; i++)  // range in albedo
 			{
 				for (int j = 0; j < 100; j++)  // range in roughness
 				{
@@ -120,7 +120,7 @@ namespace Spices {
 					meshComp.SetMesh(mesh);
 				}
 			}
-		}
+		}*/
 
 		// ground
 		{

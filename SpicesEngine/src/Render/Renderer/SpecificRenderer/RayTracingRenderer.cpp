@@ -134,7 +134,7 @@ namespace Spices {
 		});
 
 		builder.UpdatePushConstant<RayTracingR::PushConstant>([&](auto& push) {
-			IterWorldComp<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& camComp){
+			IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& camComp){
 				push.entityID = entityId;
 				return true;
 			});

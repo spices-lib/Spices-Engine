@@ -35,7 +35,7 @@ namespace Spices {
 		/**
 		* @brief Render this frame.
 		*/
-		m_RenderFrontend->DrawTest(ts, FrameInfo::Get());
+		m_RenderFrontend->RenderFrame(ts, FrameInfo::Get());
 
 		/**
 		* @brief End Render this frame.

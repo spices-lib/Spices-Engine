@@ -13,17 +13,23 @@ namespace Spices {
 	/**
 	* @brief Defines the static SystemManager variable.
 	*/
-	std::unique_ptr<SystemManager> SystemManager::m_SystemManager;
+	std::unique_ptr<SystemManager> SystemManager::m_SystemManager = std::make_unique<SystemManager>();
 
 	/**
 	* @brief Defines the static System Map variable.
 	*/
 	scl::linked_unordered_map<std::string, std::shared_ptr<System>> SystemManager::m_Identities;
 
+	SystemManager::~SystemManager()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_SystemManager = nullptr;
+	}
+
 	SystemManager::SystemManager()
 	{
-		//m_SystemManager = std::unique_ptr<SystemManager>(this);
-		m_Identities.clear();
+		SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Set Golbal EventCallBack
@@ -33,6 +39,8 @@ namespace Spices {
 
 	SystemManager& SystemManager::Get()
 	{
+		SPICES_PROFILE_ZONE;
+
 		return *m_SystemManager;
 	}
 

@@ -16,11 +16,15 @@ namespace Spices {
 
 	Event::EventCallbackFn Event::GetEventCallbackFn()
 	{
+		SPICES_PROFILE_ZONE;
+
 		return EventCallback;
 	}
 
 	void Event::SetEventCallbackFn(const EventCallbackFn& callback)
 	{
+		SPICES_PROFILE_ZONE;
+
 		EventCallback = callback;
 	}
 }

@@ -60,8 +60,6 @@ namespace Spices {
 		*/
 		static FrameInfo& Get();
 
-		void DetermainFirstFrame();
-
 	public:
 
 		/**
@@ -75,8 +73,6 @@ namespace Spices {
 		* Used in swapchain index and framebuffer index.
 		*/
 		uint32_t m_Imageindex = 0;
-
-		bool m_IsFirstFrame = true;
 
 		/**
 		* @breif A container of mouse picked entityid.

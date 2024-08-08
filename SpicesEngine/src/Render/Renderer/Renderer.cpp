@@ -233,7 +233,7 @@ namespace Spices {
 		/**
 		* @brief Iter CameraComponent, finding a active camera.
 		*/
-		IterWorldComp<CameraComponent>(
+		IterWorldCompWithBreak<CameraComponent>(
 			frameInfo, 
 			[&](
 			int                   entityId  , 
@@ -290,7 +290,7 @@ namespace Spices {
 		* @breif Iter DirectionalLightComponent, and just use the first one.
 		*/
 		int index = 0;
-		IterWorldComp<DirectionalLightComponent>(
+		IterWorldCompWithBreak<DirectionalLightComponent>(
 			frameInfo, 
 			[&](
 			int                          entityId, 
@@ -323,7 +323,7 @@ namespace Spices {
 		TransformComponent camTranComp;
 		float ratio;
 
-		IterWorldComp<CameraComponent>(
+		IterWorldCompWithBreak<CameraComponent>(
 			frameInfo,
 			[&](
 			int                  entityId,
@@ -336,7 +336,7 @@ namespace Spices {
 		});
 
 		int index = 0;
-		IterWorldComp<DirectionalLightComponent>(
+		IterWorldCompWithBreak<DirectionalLightComponent>(
 			frameInfo,
 			[&](
 			int                          entityId    ,
@@ -364,7 +364,7 @@ namespace Spices {
 		* @brief Iter PointLightComponent.
 		*/
 		int index = 0;
-		IterWorldComp<PointLightComponent>(
+		IterWorldCompWithBreak<PointLightComponent>(
 			frameInfo, 
 			[&](
 			int                   entityId, 
@@ -385,11 +385,11 @@ namespace Spices {
 		pLightBuffer[index].intensity = -1000.0f;
 	}
 	
-	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint)
+	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint  bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->m_Pipelines[materialName]->Bind(m_CommandBuffer, bindPoint);
+		m_Renderer->m_Pipelines[materialName]->Bind(cmdBuffer ? cmdBuffer : m_CommandBuffer, bindPoint);
 	}
 
 	void Renderer::RenderBehaveBuilder::SetViewPort() const
@@ -526,25 +526,25 @@ namespace Spices {
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::BindPipeline(materialName, bindPoint);
+		RenderBehaveBuilder::BindPipeline(materialName, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::BindDescriptorSet(infos, bindPoint);
+		RenderBehaveBuilder::BindDescriptorSet(infos, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::BindDescriptorSet(infos, name, bindPoint);
+		RenderBehaveBuilder::BindDescriptorSet(infos, name, cmdBuffer, bindPoint);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::TraceRays(
@@ -575,19 +575,20 @@ namespace Spices {
 		);
 	}
 
-	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::stringstream ss;
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
 
-		BindDescriptorSet(infos, ss.str(), bindPoint);
+		BindDescriptorSet(infos, ss.str(), cmdBuffer, bindPoint);
 	}
 
 	void Renderer::RenderBehaveBuilder::BindDescriptorSet(
 		const DescriptorSetInfo& infos          , 
 		const std::string&       name           , 
+		VkCommandBuffer          cmdBuffer      ,
 		VkPipelineBindPoint      bindPoint
 	)
 	{
@@ -599,7 +600,7 @@ namespace Spices {
 		for (const auto& pair : infos)
 		{
 			vkCmdBindDescriptorSets(
-				m_CommandBuffer,
+				cmdBuffer ? cmdBuffer : m_CommandBuffer,
 				bindPoint,
 				m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
 				pair.first,
@@ -858,25 +859,25 @@ namespace Spices {
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkPipelineBindPoint bindPoint)
+	void Renderer::ComputeRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::BindPipeline(materialName, bindPoint);
+		RenderBehaveBuilder::BindPipeline(materialName, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::BindDescriptorSet(infos, bindPoint);
+		RenderBehaveBuilder::BindDescriptorSet(infos, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
+	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::BindDescriptorSet(infos, name, bindPoint);
+		RenderBehaveBuilder::BindDescriptorSet(infos, name, cmdBuffer, bindPoint);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::Dispatch(uint32_t x, uint32_t y, uint32_t z)

@@ -83,12 +83,11 @@ namespace Spices {
 		void EndFrame(FrameInfo& frameInfo);
 
 		/**
-		* @brief Test Draw something.
+		* @brief Draw World.
 		* @param[in] ts TimeStep.
 		* @param[in] frameInfo FrameInfo.
-		* @todo remove it.
 		*/
-		void DrawTest(TimeStep& ts, FrameInfo& frameInfo);
+		void RenderFrame(TimeStep& ts, FrameInfo& frameInfo);
 
 		/**
 		* @brief This function is called on global event function is called.

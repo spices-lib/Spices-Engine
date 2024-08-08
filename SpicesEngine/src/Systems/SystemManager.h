@@ -99,7 +99,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SystemManager() {};
+		virtual ~SystemManager();
 
 		/**
 		* @brief Copy Constructor Function.

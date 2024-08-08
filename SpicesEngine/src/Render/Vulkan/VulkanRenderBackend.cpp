@@ -92,7 +92,7 @@ namespace Spices {
 
 			/* @brief Rasterization Renderer */
 			.Push<BasePassRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
-			.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			//.Push<ShadowRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SceneComposeRenderer>   (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<SpriteRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
 			.Push<WorldPickRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
@@ -129,7 +129,7 @@ namespace Spices {
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
 			.Pop("SceneComposeRenderer")
-			.Pop("ShadowRenderer")
+			//.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
 			.Pop("RayTracingComposeRenderer")
 			.Pop("RayTracingRenderer")
@@ -344,7 +344,7 @@ namespace Spices {
 		}
 	}
 
-	void VulkanRenderBackend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
+	void VulkanRenderBackend::RenderFrame(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
 

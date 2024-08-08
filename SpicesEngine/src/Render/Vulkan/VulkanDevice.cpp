@@ -269,10 +269,14 @@ namespace Spices {
 		meshShaderProperties.sType                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT;
 		meshShaderProperties.pNext                  = &m_RayTracingProperties;
 		
+		VkPhysicalDeviceSubgroupProperties            subGroupProperties{};
+		subGroupProperties.sType                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
+		subGroupProperties.pNext                    = &meshShaderProperties;
+
 		VkPhysicalDeviceProperties2                   prop2 {};
 		prop2.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
 		prop2.properties                            = m_DeviceProperties;
-		prop2.pNext                                 = &meshShaderProperties;
+		prop2.pNext                                 = &subGroupProperties;
 		vkGetPhysicalDeviceProperties2(device, &prop2);
 
 		{
@@ -286,7 +290,13 @@ namespace Spices {
 			ss << "MeshShader : maxMeshOutputPrimitives = " << meshShaderProperties.maxMeshOutputPrimitives;
 			SPICES_CORE_INFO(ss.str());
 		}
-		
+
+		{
+			std::stringstream ss;
+			ss << "SubGroup : subgroupSize = " << subGroupProperties.subgroupSize;
+			SPICES_CORE_INFO(ss.str());
+		}
+
 		return true;
 	}
 
@@ -403,7 +413,7 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_EXT_MESH_SHADER_EXTENSION_NAME);                      /* @brief Enable Mesh Shader, Task Shader.     */
 		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.        */
 		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.       */
-
+		m_ExtensionProperties.push_back(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.       */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

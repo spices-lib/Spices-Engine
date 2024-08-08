@@ -11,6 +11,7 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
+#include "Core/Thread/ThreadPool.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 /***************************************************************************************************/
 
@@ -201,13 +202,22 @@ namespace Spices {
 		/******************************Renderer Help Function**********************************************/
 
 		/**
-		* @brief Iterator the specific Component in World.
+		* @brief Iterator the specific Component in World Parallel.
 		* @tparam T The specific Component class.
 		* @param[in] frameInfo The current frame data.
 		* @param[in] func The function pointer that need to execute during this function.
 		*/
 		template<typename T, typename F>
-		inline void IterWorldComp(FrameInfo& frameInfo, F func);
+		inline void IterWorldCompSubmitCmdParalll(FrameInfo& frameInfo, F func);
+
+		/**
+		* @brief Iterator the specific Component in World With break.
+		* @tparam T The specific Component class.
+		* @param[in] frameInfo The current frame data.
+		* @param[in] func The function pointer that need to execute during this function.
+		*/
+		template<typename T, typename F>
+		inline void IterWorldCompWithBreak(FrameInfo& frameInfo, F func);
 
 		/**
 		* @brief Get The activated camera entity's view matrix and projection matrix.
@@ -594,9 +604,14 @@ namespace Spices {
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			virtual void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
+			virtual void BindPipeline(
+				const std::string&   materialName , 
+				VkCommandBuffer      cmdBuffer    = VK_NULL_HANDLE,
+				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
 
 			/**
 			* @brief DynamicState Set Viewport and Scissor.
@@ -607,10 +622,12 @@ namespace Spices {
 			* @brief Binding DescriptorSet with DescriptorSetInfo.
 			* For Binding a Renderer DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			virtual void BindDescriptorSet(
-				const DescriptorSetInfo&   infos                                   , 
+				const DescriptorSetInfo&   infos                                       , 
+				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE,
 				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
 			);
 
@@ -619,11 +636,13 @@ namespace Spices {
 			* For Binding a Material DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
 			* @param[in] name The material name.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			virtual void BindDescriptorSet(
 				const DescriptorSetInfo&   infos                                       , 
 				const std::string&         name                                        , 
+				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE,
 				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
 			);
 
@@ -633,9 +652,10 @@ namespace Spices {
 			* @brief Update local push constant buffer.
 			* @tparam T Specific push constant struct Type.
 			* @param[in] func A function pointer, which defines what data inside the buffer.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
 			template<typename T, typename F>
-			void UpdatePushConstant(F func);
+			void UpdatePushConstant(F func, VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
 
 			/**
 			* @brief Update a local buffer.
@@ -663,9 +683,10 @@ namespace Spices {
 			* @brief Update local push constant buffer.
 			* @tparam T Specific push constant struct Type.
 			* @param[in] data push constant data pointer.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
 			template<typename T>
-			void UpdatePushConstant(void* data) const;
+			void UpdatePushConstant(void* data, VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief Update a local buffer.
@@ -766,19 +787,26 @@ namespace Spices {
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			virtual void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR) override;
+			virtual void BindPipeline(
+				const std::string&   materialName , 
+				VkCommandBuffer      cmdBuffer    = VK_NULL_HANDLE,
+				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+			) override;
 			
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo.
 			* For Binding a Renderer DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			virtual void BindDescriptorSet(
-				const DescriptorSetInfo&   infos                                       , 
-				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+				const DescriptorSetInfo&   infos                                             , 
+				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE                        ,
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
 			) override;
 
 			/**
@@ -786,11 +814,13 @@ namespace Spices {
 			* For Binding a Material DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
 			* @param[in] name The material name.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			virtual void BindDescriptorSet(
 				const DescriptorSetInfo&   infos                                             , 
 				const std::string&         name                                              , 
+				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE                        ,
 				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
 			) override;
 
@@ -850,19 +880,26 @@ namespace Spices {
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			virtual void BindPipeline(const std::string& materialName, VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE) override;
+			virtual void BindPipeline(
+				const std::string&   materialName                                  , 
+				VkCommandBuffer      cmdBuffer    = VK_NULL_HANDLE                 ,
+				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_COMPUTE
+			) override;
 			
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo.
 			* For Binding a Renderer DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			virtual void BindDescriptorSet(
-				const DescriptorSetInfo&   infos                                       , 
-				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE
+				const DescriptorSetInfo&   infos                                      , 
+				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE                 ,
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE
 			) override;
 
 			/**
@@ -870,12 +907,14 @@ namespace Spices {
 			* For Binding a Material DescriptorSet.
 			* @param[in] infos DescriptorSetInfo.
 			* @param[in] name The material name.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
 			virtual void BindDescriptorSet(
 				const DescriptorSetInfo&   infos                                       , 
-				const std::string&   name                                              , 
-				VkPipelineBindPoint  bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE
+				const std::string&         name                                        , 
+				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE                  ,
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE
 			) override;
 
 			/**
@@ -961,7 +1000,67 @@ namespace Spices {
 	};
 
 	template<typename T, typename F>
-	void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
+	inline void Renderer::IterWorldCompSubmitCmdParalll(FrameInfo& frameInfo, F func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkCommandBufferInheritanceInfo         inheritanceInfo {};
+		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+		inheritanceInfo.renderPass           = m_Pass->Get();
+		inheritanceInfo.framebuffer          = m_Renderer->m_Pass->GetFramebuffer(frameInfo.m_Imageindex);
+										     
+		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
+		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
+
+		/**
+		* @brief This method require all threads finish it's task.
+		*/
+		std::vector<std::future<bool>> signals;
+
+		/**
+		* @brief Iter use view, not group.
+		* @attention Group result nullptr here.
+		*/
+		auto& view = frameInfo.m_World->GetRegistry().view<T>();
+		for (auto& e : view)
+		{
+			std::future<bool> signal = ThreadPool::Get()->SubmitTask([&]() {
+
+				vkBeginCommandBuffer(cmdbuffer, &cmdBufferBeginInfo);
+
+				auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
+
+				/**
+				* @brief This function defined how we use these components.
+				* @param[in] e entityid.
+				* @param[in] transComp TransformComponent.
+				* @param[in] tComp TComponent.
+				*/
+				func(cmdbuffer, static_cast<int>(e), transComp, tComp);
+
+				return true;
+			});
+
+			signals.push_back(std::move(signal));
+		}
+
+		if (signals.empty()) return;
+
+		/**
+		* @brief Wait for all tasks finish.
+		*/
+		for (int i = 0; i < signals.size(); i++)
+		{
+			signals[i].get();
+		}
+
+		vkCmdExecuteCommands(primaryCommandBuffer, MESHTASK_SUBMIT_THREAD_NUM, commandBuffers.data());
+	}
+
+	template<typename T, typename F>
+	void Renderer::IterWorldCompWithBreak(FrameInfo& frameInfo, F func)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -986,7 +1085,7 @@ namespace Spices {
 	}
 
 	template<typename T, typename F>
-	void Renderer::RenderBehaveBuilder::UpdatePushConstant(F func)
+	void Renderer::RenderBehaveBuilder::UpdatePushConstant(F func, VkCommandBuffer cmdBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1008,7 +1107,7 @@ namespace Spices {
 		* @breif Update PushConstants
 		*/
 		vkCmdPushConstants(
-			m_CommandBuffer,
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
 			VK_SHADER_STAGE_ALL,
 			0,
@@ -1062,7 +1161,7 @@ namespace Spices {
 	}
 
 	template<typename T>
-	void Renderer::RenderBehaveBuilder::UpdatePushConstant(void* data) const
+	void Renderer::RenderBehaveBuilder::UpdatePushConstant(void* data, VkCommandBuffer cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1073,7 +1172,7 @@ namespace Spices {
 		* @breif Update PushConstants
 		*/
 		vkCmdPushConstants(
-			m_Renderer->m_VulkanState.m_CommandBuffer[m_CurrentFrame],
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
 			VK_SHADER_STAGE_ALL,
 			0,

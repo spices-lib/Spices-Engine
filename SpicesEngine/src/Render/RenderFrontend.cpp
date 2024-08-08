@@ -22,11 +22,11 @@ namespace Spices {
 		m_RenderBackend->EndFrame(frameInfo);
 	}
 
-	void RenderFrontend::DrawTest(TimeStep& ts, FrameInfo& frameInfo)
+	void RenderFrontend::RenderFrame(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_RenderBackend->DrawTest(ts, frameInfo);
+		m_RenderBackend->RenderFrame(ts, frameInfo);
 	}
 
 	void RenderFrontend::OnEvent(Event& event)

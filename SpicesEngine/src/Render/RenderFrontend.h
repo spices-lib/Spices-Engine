@@ -21,11 +21,8 @@ namespace Spices {
 		void BeginFrame(FrameInfo& frameInfo);
 		void EndFrame(FrameInfo& frameInfo);
 
-		void DrawTest(TimeStep& ts, FrameInfo& frameInfo);
+		void RenderFrame(TimeStep& ts, FrameInfo& frameInfo);
 		void OnEvent(Event& event);
-
-		// Temp:
-		VulkanState& GetState() { return VulkanRenderBackend::GetState(); }
 
 	private:
 		std::unique_ptr<VulkanRenderBackend> m_RenderBackend;

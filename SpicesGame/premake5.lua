@@ -60,7 +60,7 @@ project "SpicesGame"
 		defines
 		{
 			"SPICES_DEBUG",
-			--"TRACY_ENABLE"
+			"TRACY_ENABLE"
 		}
 		runtime "Debug"
 		symbols "On"

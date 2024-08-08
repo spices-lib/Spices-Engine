@@ -61,12 +61,6 @@ namespace Spices {
 		*/
 		virtual void OnEvent(Event& event) override;
 
-		/**
-		* @brief Get VulkanState.
-		* @return Returns the VulkanState.
-		*/
-		VulkanState& GetState() { return m_RenderFrontend->GetState(); };
-
 	private:
 
 		/**

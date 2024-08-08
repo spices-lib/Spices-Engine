@@ -13,7 +13,7 @@
 namespace Spices {
 
 	const uint32_t TASK_MAX_THRESHHOLD   = UINT32_MAX;
-	const uint32_t THREAD_MAX_THRESHHOLD = 128;
+	const uint32_t THREAD_MAX_THRESHHOLD = std::thread::hardware_concurrency();
 	const uint32_t THREAD_MAX_IDLE_TIME  = 60;
 	
 	/**
@@ -138,7 +138,13 @@ namespace Spices {
 		* @brief Start Run this thread pool.
 		* @param[in] initThreadSize Thread Size.
 		*/
-		void Start(int initThreadSize = std::thread::hardware_concurrency());
+		void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency());
+
+		/**
+		* @brief Get Instance of ThreadPool.
+		* @return Returns Instance of ThreadPool.
+		*/
+		static std::shared_ptr<ThreadPool> Get() { return  m_ThreadPool; };
 
 	public:
 
@@ -260,6 +266,11 @@ namespace Spices {
 		* @brief True if this thread pool is in use.
 		*/
 		std::atomic_bool m_IsPoolRunning;
+
+		/**
+		* @brief Instance of ThreadPool.
+		*/
+		static std::shared_ptr<ThreadPool> m_ThreadPool;
 	};
 
 	template<typename Func, typename ...Args>

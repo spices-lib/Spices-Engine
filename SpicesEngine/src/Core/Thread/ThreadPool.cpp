@@ -24,6 +24,8 @@ namespace Spices {
 		t.detach();
 	}
 
+	std::shared_ptr<ThreadPool> ThreadPool::m_ThreadPool = std::make_shared<ThreadPool>();
+
 	void ThreadPool::SetMode(PoolMode mode)
 	{
 		SPICES_PROFILE_ZONE;
@@ -52,12 +54,15 @@ namespace Spices {
 		std::unique_lock<std::mutex> lock(m_Mutex);
 		m_NotEmpty.notify_all();
 		m_ExitCond.wait(lock, [&]()->bool { return m_Threads.size() == 0; });
+
+		m_ThreadPool = nullptr;
 	}
 
 	void ThreadPool::SetThreadIdleTimeOut(int idleTime)
 	{
 		SPICES_PROFILE_ZONE;
 
+		if (CheckRunningState()) return;
 		m_ThreadIdleTimeOut = idleTime;
 	}
 

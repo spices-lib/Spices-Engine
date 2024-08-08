@@ -8,6 +8,7 @@
 #include "Application.h"
 #include "Render/FrameInfo.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Thread/ThreadPool.h"
 
 // System Header.
 #include "Systems/SystemManager.h"
@@ -26,6 +27,12 @@ namespace Spices {
 		* @brief Init Log Class.
 		*/
 		Log::Init();
+
+		/**
+		* @brief Init ThreadPool.
+		*/
+		ThreadPool::Get()->SetMode(PoolMode::MODE_FIXED);
+		ThreadPool::Get()->Start(MESHTASK_SUBMIT_THREAD_NUM);
 
 		/**
 		* @brief Init all Systems.
@@ -107,8 +114,6 @@ namespace Spices {
 			* @brief Activete Our Specific World.
 			*/
 			FrameInfo::Get().m_World->OnActivate(ts);
-
-			FrameInfo::Get().DetermainFirstFrame();
 
 			SPICES_PROFILE_FRAME;
 		}
