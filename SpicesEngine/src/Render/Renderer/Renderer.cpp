@@ -18,13 +18,15 @@ namespace Spices {
 		const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool        ,
 		const std::shared_ptr<VulkanDevice>&         device                ,
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
+		const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool         ,
 		bool isLoadDefaultMaterial
 	)
 		: m_VulkanState             (vulkanState           )
 		, m_DescriptorPool          (DescriptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
-		, m_RendererName            (rendererName        )
+		, m_CmdThreadPool           (cmdThreadPool         )
+		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 	{}
 

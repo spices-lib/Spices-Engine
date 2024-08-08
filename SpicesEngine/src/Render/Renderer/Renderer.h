@@ -11,7 +11,7 @@
 #include "Core/Library/ContainerLibrary.h"
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
-#include "Core/Thread/ThreadPool.h"
+#include "Render/Vulkan/VulkanCmdThreadPool.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 /***************************************************************************************************/
 
@@ -64,6 +64,7 @@ namespace Spices {
 		* @param[in] DescriptorPool The shared pointer of DescriptorPool, used for allocate descriptor and free descriptor.
 		* @param[in] device The shared pointer of VulkanDevice, used for render pass's formats query.
 		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for registry/access RT.
+		* @param[in] cmdThreadPool ThreadPool of submit Cmd parallel.
 		* @param[in] isLoadDefaultMaterial True if need load a default material.
 		*/
 		Renderer
@@ -73,6 +74,7 @@ namespace Spices {
 			const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool          ,
 			const std::shared_ptr<VulkanDevice>&         device                  ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
+			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
 			bool                                         isLoadDefaultMaterial = true
 		);
 
@@ -973,6 +975,11 @@ namespace Spices {
 		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 
 		/**
+		* @brief ThreadPool of Submit Commands.
+		*/
+		std::shared_ptr<VulkanCmdThreadPool> m_CmdThreadPool;
+
+		/**
 		* @brief RendererPass.
 		*/
 		std::shared_ptr<RendererPass> m_Pass;
@@ -1007,17 +1014,12 @@ namespace Spices {
 		VkCommandBufferInheritanceInfo         inheritanceInfo {};
 		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		inheritanceInfo.renderPass           = m_Pass->Get();
-		inheritanceInfo.framebuffer          = m_Renderer->m_Pass->GetFramebuffer(frameInfo.m_Imageindex);
+		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(frameInfo.m_Imageindex);
 										     
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
 		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
-
-		/**
-		* @brief This method require all threads finish it's task.
-		*/
-		std::vector<std::future<bool>> signals;
 
 		/**
 		* @brief Iter use view, not group.
@@ -1026,11 +1028,11 @@ namespace Spices {
 		auto& view = frameInfo.m_World->GetRegistry().view<T>();
 		for (auto& e : view)
 		{
-			std::future<bool> signal = ThreadPool::Get()->SubmitTask([&]() {
-
-				vkBeginCommandBuffer(cmdbuffer, &cmdBufferBeginInfo);
+			m_CmdThreadPool->SubmitTask([&](VkCommandBuffer cmdBuffer) {
 
 				auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
+
+				VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
 
 				/**
 				* @brief This function defined how we use these components.
@@ -1038,25 +1040,15 @@ namespace Spices {
 				* @param[in] transComp TransformComponent.
 				* @param[in] tComp TComponent.
 				*/
-				func(cmdbuffer, static_cast<int>(e), transComp, tComp);
+				func(cmdBuffer, static_cast<int>(e), transComp, tComp);
 
-				return true;
+				VK_CHECK(vkEndCommandBuffer(cmdBuffer));
 			});
-
-			signals.push_back(std::move(signal));
 		}
 
-		if (signals.empty()) return;
+		m_CmdThreadPool->Wait();
 
-		/**
-		* @brief Wait for all tasks finish.
-		*/
-		for (int i = 0; i < signals.size(); i++)
-		{
-			signals[i].get();
-		}
-
-		vkCmdExecuteCommands(primaryCommandBuffer, MESHTASK_SUBMIT_THREAD_NUM, commandBuffers.data());
+		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_CmdThreadPool->GetInitThreadSize(), m_CmdThreadPool->GetCommandBuffers().data());
 	}
 
 	template<typename T, typename F>

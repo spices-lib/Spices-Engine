@@ -21,6 +21,7 @@
 #include "VulkanSwapChain.h"
 #include "VulkanDescriptor.h"
 #include "VulkanDebugUtils.h"
+#include "VulkanCmdThreadPool.h"
 
 namespace Spices {
 
@@ -189,6 +190,9 @@ namespace Spices {
 		*/
 		std::unique_ptr<VulkanSwapChain> m_VulkanSwapChain;
 
-		std::unique_ptr<ThreadPool>
+		/**
+		* @brief ThreadPool of Submit Commands. 
+		*/
+		std::shared_ptr<VulkanCmdThreadPool> m_CmdThreadPool;
 	};
 }

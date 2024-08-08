@@ -33,7 +33,7 @@ namespace SpicesTest {
 		/**
 		* @brief ThreadPool.
 		*/
-		Spices::ThreadPool m_ThreadPool;
+		Spices::ThreadPool<void> m_ThreadPool;
 
 		/**
 		* @brief Number of Threads in ThreadPool.

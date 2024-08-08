@@ -26,15 +26,17 @@ namespace Spices {
 		* @param[in] descriptorPool The DescriptorPool.
 		* @param[in] device The VulkanDevice, used for format query.
 		* @param[in] rendererResourcePool The RendererResourcePool, RT Pool.
+		* @param[in] cmdThreadPool ThreadPool of submit Cmd parallel.
 		*/
 		SlateRenderer(
 			const std::string&                           rendererName          ,
 			VulkanState&                                 vulkanState           ,
 			const std::shared_ptr<VulkanDescriptorPool>& descriptorPool        ,
 			const std::shared_ptr<VulkanDevice>&         device                ,
-			const std::shared_ptr<RendererResourcePool>& rendererResourcePool
+			const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
+			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool
 		)
-			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, false) 
+			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool, false)
 		{}
 
 		/**

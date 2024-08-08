@@ -80,6 +80,7 @@ namespace Spices {
 	* @brief Thread Pool Class, 
 	* Instance it and use multithreading feature.
 	*/
+	template<typename R, typename ...Params>
 	class ThreadPool
 	{
 	public:
@@ -87,7 +88,7 @@ namespace Spices {
 		/**
 		* @brief Thread Function lambda Object.
 		*/
-		using Task = std::function<void()>;
+		using Task = std::function<R(Params...)>;
 
 	public:
 
@@ -138,13 +139,12 @@ namespace Spices {
 		* @brief Start Run this thread pool.
 		* @param[in] initThreadSize Thread Size.
 		*/
-		void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency());
+		virtual void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency());
 
 		/**
-		* @brief Get Instance of ThreadPool.
-		* @return Returns Instance of ThreadPool.
+		* @brief Wait for all tasks executed finish in taskqueue.
 		*/
-		static std::shared_ptr<ThreadPool> Get() { return  m_ThreadPool; };
+		void Wait();
 
 	public:
 
@@ -197,20 +197,20 @@ namespace Spices {
 		*/
 		const bool IsPoolRunning() const { return m_IsPoolRunning.load(); }
 
-	private:
+	protected:
 		
 		/**
 		* @brief Thread Function.
 		* @param[in] threadid Thread id from std
 		*/
-		void ThreadFunc(uint32_t threadid);
+		virtual void ThreadFunc(uint32_t threadid);
 
 		/**
 		* @brief Check whether this pool is still in running.
 		*/
 		bool CheckRunningState() const { return m_IsPoolRunning; }
 
-	private:
+	protected:
 
 		/**
 		* @brief Threads Container.
@@ -253,6 +253,11 @@ namespace Spices {
 		std::condition_variable m_NotEmpty;
 
 		/**
+		* @brief Task is finished.
+		*/
+		std::condition_variable m_TaskFinish;
+
+		/**
 		* @brief Thread pool Exit Condition.
 		*/
 		std::condition_variable m_ExitCond;
@@ -266,15 +271,11 @@ namespace Spices {
 		* @brief True if this thread pool is in use.
 		*/
 		std::atomic_bool m_IsPoolRunning;
-
-		/**
-		* @brief Instance of ThreadPool.
-		*/
-		static std::shared_ptr<ThreadPool> m_ThreadPool;
 	};
 
+	template<typename R, typename ...Params>
 	template<typename Func, typename ...Args>
-	inline auto ThreadPool::SubmitTask(Func&& func, Args && ...args) -> std::future<decltype(func(args ...))>
+	inline auto ThreadPool<R, Params...>::SubmitTask(Func&& func, Args && ...args) -> std::future<decltype(func(args ...))>
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -300,7 +301,8 @@ namespace Spices {
 		/**
 		* @brief pack task as a lambda and submit it to queue.
 		*/
-		m_TaskQueue.emplace([task]() {(*task)(); });
+		//m_TaskQueue.emplace([task]() {(*task)(); });
+		m_TaskQueue.emplace(task);
 		m_NotEmpty.notify_all();
 
 		/**
@@ -317,5 +319,150 @@ namespace Spices {
 		}
 
 		return result;
+	}
+
+	template<typename R, typename ...Params>
+	void ThreadPool<R, Params...>::SetMode(PoolMode mode)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (CheckRunningState()) return;
+		m_PoolMode = mode;
+	}
+
+	template<typename R, typename ...Params>
+	ThreadPool<R, Params...>::ThreadPool()
+		: m_InitThreadSize(0)
+		, m_IdleThreadSize(0)
+		, m_PoolMode(PoolMode::MODE_FIXED)
+		, m_IsPoolRunning(false)
+		, m_ThreadIdleTimeOut(THREAD_MAX_IDLE_TIME)
+	{}
+
+	template<typename R, typename ...Params>
+	ThreadPool<R, Params...>::~ThreadPool()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_IsPoolRunning = false;
+
+		/**
+		* @brief Wait for all threads return.
+		*/
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		m_NotEmpty.notify_all();
+		m_ExitCond.wait(lock, [&]()->bool { return m_Threads.empty(); });
+	}
+
+	template<typename R, typename ...Params>
+	void ThreadPool<R, Params...>::SetThreadIdleTimeOut(int idleTime)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (CheckRunningState()) return;
+		m_ThreadIdleTimeOut = idleTime;
+	}
+
+	template<typename R, typename ...Params>
+	void ThreadPool<R, Params...>::Start(int initThreadSize)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_IsPoolRunning = true;
+		m_InitThreadSize = initThreadSize;
+		m_IdleThreadSize = initThreadSize;
+
+		for (int i = 0; i < m_InitThreadSize; i++)
+		{
+			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1));
+			int threadId = ptr->GetId();
+			m_Threads.emplace(threadId, std::move(ptr));
+			m_Threads[threadId]->Start();
+		}
+	}
+
+	template<typename R, typename ...Params>
+	void ThreadPool<R, Params...>::Wait()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		m_TaskFinish.wait(lock, [&]() { return m_TaskQueue.empty(); });
+	}
+
+	template<typename R, typename ...Params>
+	void ThreadPool<R, Params...>::ThreadFunc(uint32_t threadid)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto lastTime = std::chrono::high_resolution_clock().now();
+
+		while (1)
+		{
+			Task task;
+			{
+				std::unique_lock<std::mutex> lock(m_Mutex);
+
+				while (m_TaskQueue.size() == 0)
+				{
+					/**
+					* @brief Exit.
+					*/
+					if (!m_IsPoolRunning)
+					{
+						m_Threads.erase(threadid);
+						m_ExitCond.notify_all();
+						return;
+					}
+
+					if (m_PoolMode == PoolMode::MODE_CACHED)
+					{
+						if (m_NotEmpty.wait_for(lock, std::chrono::seconds(1)) == std::cv_status::timeout)
+						{
+							auto now = std::chrono::high_resolution_clock().now();
+							auto dur = std::chrono::duration_cast<std::chrono::seconds>(now - lastTime);
+
+							/**
+							* @brief Try recovery unused threads.
+							*/
+							if (dur.count() >= m_ThreadIdleTimeOut && m_Threads.size() > m_InitThreadSize)
+							{
+								m_Threads.erase(threadid);
+								m_IdleThreadSize--;
+
+								return;
+							}
+						}
+					}
+					else
+					{
+						m_NotEmpty.wait(lock);
+					}
+				}
+
+				/**
+				* @brief Get a task from task queue.
+				*/
+				task = m_TaskQueue.front();
+				m_TaskQueue.pop();
+
+				--m_IdleThreadSize;
+				m_NotFull.notify_all();
+				if (m_TaskQueue.size() > 0) m_NotEmpty.notify_all();
+			}
+
+			/**
+			* @brief execute task.
+			*/
+			if (task != nullptr)
+			{
+				task();
+				m_TaskFinish.notify_all();
+			}
+
+			++m_IdleThreadSize;
+
+			lastTime = std::chrono::high_resolution_clock().now();
+		}
 	}
 }

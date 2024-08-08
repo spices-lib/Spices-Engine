@@ -21,8 +21,6 @@
 
 namespace Spices {
 
-#define MESHTASK_SUBMIT_THREAD_NUM 12
-
 /**
 * @brief Assert macro.
 * @todo better Assert System.

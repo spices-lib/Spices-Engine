@@ -140,12 +140,12 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
-		IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+		IterWorldCompSubmitCmdParalll<MeshComponent>(frameInfo, [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			meshComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
+			meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
 
-				builder.BindPipeline(meshPack->GetMaterial()->GetName());
+				builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
 					push.model                          = modelMatrix;
@@ -156,9 +156,8 @@ namespace Spices {
 					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
 					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
 					push.desc.entityID                  = entityId;
-				});
+				}, cmdBuffer);
 			});
-			return false;
 		});
 
 		builder.EndRenderPass();
