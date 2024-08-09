@@ -391,10 +391,19 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->m_Pipelines[materialName]->Bind(cmdBuffer ? cmdBuffer : m_CommandBuffer, bindPoint);
+		vkCmdBindPipeline(cmdBuffer ? cmdBuffer : m_CommandBuffer, bindPoint, m_Renderer->m_Pipelines[materialName]->GetPipeline());
 	}
 
-	void Renderer::RenderBehaveBuilder::SetViewPort() const
+	void Renderer::RenderBehaveBuilder::BindPipelineAsync(const std::string& materialName, VkPipelineBindPoint bindPoint)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+			vkCmdBindPipeline(cmdBuffer, bindPoint, m_Renderer->m_Pipelines[materialName]->GetPipeline());
+		});
+	}
+
+	void Renderer::RenderBehaveBuilder::SetViewPort(VkCommandBuffer cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -424,21 +433,71 @@ namespace Spices {
 		}
 
 		/**
-		* @brief Set VkViewport with viewport slate.
-		*/
-		vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
-
-		/**
 		* @brief Instance a VkRect2D
 		*/
-		VkRect2D                      scissor {};
-		scissor.offset            = { 0, 0 };
-		scissor.extent            = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+		VkRect2D                      scissor{};
+		scissor.offset              = { 0, 0 };
+		scissor.extent              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+			
+		/**
+		* @brief Set VkViewport with viewport slate.
+		*/
+		vkCmdSetViewport(cmdBuffer ? cmdBuffer : m_CommandBuffer, 0, 1, &viewport);
 
 		/**
 		* @brief Set VkRect2D.
 		*/
-		vkCmdSetScissor(m_CommandBuffer, 0, 1, &scissor);
+		vkCmdSetScissor(cmdBuffer ? cmdBuffer : m_CommandBuffer, 0, 1, &scissor);
+	}
+
+	void Renderer::RenderBehaveBuilder::SetViewPortAsync() const
+	{
+		SPICES_PROFILE_ZONE;
+		
+		/**
+		* @brief Use Negative Viewport height filp here to handle axis difference.
+		* Remember enable device extension (VK_KHR_MAINTENANCE1)
+		*/
+		VkViewport                   viewport {};
+		viewport.x                =  0.0f;
+		viewport.y                =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height);
+		viewport.width            =  static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width);
+		viewport.height           = -static_cast<float>(m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height);
+		viewport.minDepth         =  0.0f;
+		viewport.maxDepth         =  1.0f;
+
+		/**
+		* @brief Though we draw world to viewport but not surface,
+		* Set Correct viewport here is necessary.
+		*/
+		if (SlateSystem::GetRegister())
+		{
+			const ImVec2 viewPortSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
+
+			viewport.y            =  viewPortSize.y;
+			viewport.width        =  viewPortSize.x;
+			viewport.height       = -viewPortSize.y;
+		}
+
+		/**
+		* @brief Instance a VkRect2D
+		*/
+		VkRect2D                      scissor{};
+		scissor.offset              = { 0, 0 };
+		scissor.extent              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+			
+			/**
+			* @brief Set VkViewport with viewport slate.
+			*/
+			vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+			/**
+			* @brief Set VkRect2D.
+			*/
+			vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+		});
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginNextSubPass(const std::string& subpassName)
@@ -612,6 +671,45 @@ namespace Spices {
 				nullptr
 			);
 		}
+	}
+
+	void Renderer::RenderBehaveBuilder::BindDescriptorSetAsync(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::stringstream ss;
+		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
+
+		BindDescriptorSetAsync(infos, ss.str(), bindPoint);
+	}
+
+	void Renderer::RenderBehaveBuilder::BindDescriptorSetAsync(
+		const DescriptorSetInfo& infos    , 
+		const std::string&       name     , 
+		VkPipelineBindPoint      bindPoint
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& secCmdBuffer) {
+
+			/**
+			* @brief Iter all desctiptorsets.
+			*/
+			for (const auto& pair : infos)
+			{
+				vkCmdBindDescriptorSets(
+					secCmdBuffer,
+					bindPoint,
+					m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
+					pair.first,
+					1,
+					&pair.second->Get(),
+					0,
+					nullptr
+				);
+			}
+		});
 	}
 
 	Renderer::DescriptorSetBuilder::DescriptorSetBuilder(

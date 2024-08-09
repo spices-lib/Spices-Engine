@@ -108,18 +108,18 @@ namespace Spices {
 		
 		builder.BeginRenderPass();
 
-		builder.SetViewPort();
+		builder.SetViewPortAsync();
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+		builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName("PreRenderer"));
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
+		builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
 
-		IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
+		IterWorldCompSubmitCmdParalll<SkyBoxComponent>(frameInfo, [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
+			skyboxComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
 
-				builder.BindPipeline(meshPack->GetMaterial()->GetName());
+				builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
 					push.model                          = modelMatrix;
@@ -130,10 +130,8 @@ namespace Spices {
 					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
 					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
 					push.desc.entityID                  = entityId;
-				});
+				}, cmdBuffer);
 			});
-
-			return false;
 		});
 
 		builder.BeginNextSubPass("Mesh");

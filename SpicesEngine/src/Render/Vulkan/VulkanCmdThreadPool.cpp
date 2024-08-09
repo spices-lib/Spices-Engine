@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "VulkanCmdThreadPool.h"
+#include "Render/FrameInfo.h"
 
 namespace Spices {
 
@@ -18,7 +19,10 @@ namespace Spices {
 		SetMode(PoolMode::MODE_FIXED);
 		Start(nCmdThreads);
 
-		m_CmdBuffers.resize(nCmdThreads);
+		for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			m_CmdBuffers[i].resize(nCmdThreads);
+		}
 
 		VkCommandBufferAllocateInfo       allocInfo{};
 		allocInfo.sType                 = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -26,11 +30,14 @@ namespace Spices {
 		allocInfo.level                 = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
 		allocInfo.commandBufferCount    = nCmdThreads;
 
-		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, m_CmdBuffers.data()));
-
-		for (int i = 0; i < nCmdThreads; i++)
+		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, m_CmdBuffers[i], vulkanState.m_Device, "ParallelCommandBuffer");
+			VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, m_CmdBuffers[i].data()));
+
+			for (int j = 0; j < nCmdThreads; j++)
+			{
+				VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, m_CmdBuffers[i][j], vulkanState.m_Device, "ParallelCommandBuffer");
+			}
 		}
 	}
 
@@ -116,7 +123,7 @@ namespace Spices {
 			*/
 			if (task != nullptr)
 			{
-				task(m_CmdBuffers[threadid]);
+				task(m_CmdBuffers[FrameInfo::Get().m_FrameIndex][threadid]);
 				m_TaskFinish.notify_all();
 			}
 

@@ -9,6 +9,7 @@
 #include "VulkanUtils.h"
 #include "Core/Thread/ThreadPool.h"
 #include "VulkanCommandBuffer.h"
+#include "Render/FrameInfo.h"
 
 namespace Spices {
 
@@ -41,16 +42,17 @@ namespace Spices {
 
 		/**
 		* @brief GetCommandBuffers.
+		* @param[in] FrameIndex in FrameInfo
 		* @return Return all CommandBuffers.
 		*/
-		std::vector<VkCommandBuffer>& GetCommandBuffers() { return m_CmdBuffers; }
+		std::vector<VkCommandBuffer>& GetCommandBuffers(int frameIndex) { return m_CmdBuffers[frameIndex]; }
 
 		/**
-		* @brief Submit a task to task queue, and wait for a idle thread to execute it.
+		* @brief Submit a part commands task to task queue, and wait for a idle thread to execute it.
 		* @tparam func Task Function.
 		*/
-		template<typename RType>
-		auto SubmitTask(std::function<RType(VkCommandBuffer cmdBuffer)> func) -> std::future<RType>;
+		template<typename RType, typename Func, typename ...Args>
+		auto SubmitTask(Func&& func, Args && ...args) -> std::future<RType>;
 
 	protected:
 
@@ -65,23 +67,23 @@ namespace Spices {
 		/**
 		* @brief Parallel Secondary CommandBuffers.
 		*/
-		std::vector<VkCommandBuffer> m_CmdBuffers;
+		std::array<std::vector<VkCommandBuffer>, MaxFrameInFlight> m_CmdBuffers;
 	};
 
-	template<typename RType>
-	inline auto VulkanCmdThreadPool::SubmitTask(std::function<RType(VkCommandBuffer cmdBuffer)> func) -> std::future<RType>
+	template<typename RType, typename Func, typename ...Args>
+	inline auto VulkanCmdThreadPool::SubmitTask(Func&& func, Args && ...args) -> std::future<RType>
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto task = std::make_shared<std::packaged_task<RType(VkCommandBuffer)>>(func);
+		auto task = std::make_shared<std::packaged_task<RType(VkCommandBuffer)>>(std::bind(std::forward<Func>(func), std::placeholders::_1, std::forward<Args>(args)...));
 		std::future<RType> result = task->get_future();
 
 		std::unique_lock<std::mutex> lock(m_Mutex);
-
+		
 		if (!m_NotFull.wait_for(lock, std::chrono::seconds(1), [&]() { return m_TaskQueue.size() < (size_t)TASK_MAX_THRESHHOLD; }))
 		{
 			SPICES_CORE_WARN("Task Submit failed");
-		
+
 			auto emptyTask = std::make_shared<std::packaged_task<RType()>>([]() { return RType(); });
 			(*emptyTask)();
 			return emptyTask->get_future();
@@ -90,7 +92,8 @@ namespace Spices {
 		/**
 		* @brief pack task as a lambda and submit it to queue.
 		*/
-		m_TaskQueue.emplace([task](VkCommandBuffer cmdBuffer) {(*task)(cmdBuffer); });
+		m_TaskQueue.emplace([task](VkCommandBuffer cmdBuffer) { (*task)(cmdBuffer); });
+
 		m_NotEmpty.notify_all();
 
 		/**
@@ -102,7 +105,7 @@ namespace Spices {
 			ptr->Start();
 			uint32_t threadId = ptr->GetId();
 			m_Threads.emplace(threadId, std::move(ptr));
-		
+
 			++m_IdleThreadSize;
 		}
 

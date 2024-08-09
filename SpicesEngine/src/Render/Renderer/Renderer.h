@@ -204,6 +204,14 @@ namespace Spices {
 		/******************************Renderer Help Function**********************************************/
 
 		/**
+		* @brief Submit a group of commands to secondary command buffer, and execute all of them.
+		* @param[in] primaryCmdBuffer The main Command Buffer.
+		* @param func Specific Commands.
+		*/
+		template<typename F>
+		void SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, F&& func);
+
+		/**
 		* @brief Iterator the specific Component in World Parallel.
 		* @tparam T The specific Component class.
 		* @param[in] frameInfo The current frame data.
@@ -616,9 +624,26 @@ namespace Spices {
 			);
 
 			/**
-			* @brief DynamicState Set Viewport and Scissor.
+			* @brief Bind the pipeline created by CreatePipeline() Async.
+			* Called on RenderBehaveBuilder instanced.
+			* @param[in] materialName also pipelineName.
+			* @param[in] bindPoint VkPipelineBindPoint.
 			*/
-			void SetViewPort() const;
+			virtual void BindPipelineAsync(
+				const std::string&   materialName , 
+				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
+
+			/**
+			* @brief DynamicState Set Viewport and Scissor.
+			* @param[in] cmdBuffer VkCommandBuffer
+			*/
+			void SetViewPort(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
+
+			/**
+			* @brief DynamicState Set Viewport and Scissor Async.
+			*/
+			void SetViewPortAsync() const;
 
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo.
@@ -645,6 +670,30 @@ namespace Spices {
 				const DescriptorSetInfo&   infos                                       , 
 				const std::string&         name                                        , 
 				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE,
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
+
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo Async.
+			* For Binding a Renderer DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSetAsync(
+				const DescriptorSetInfo&   infos                                       , 
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
+
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo and name Async.
+			* For Binding a Material DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] name The material name.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSetAsync(
+				const DescriptorSetInfo&   infos                                       , 
+				const std::string&         name                                        , 
 				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
 			);
 
@@ -1006,6 +1055,36 @@ namespace Spices {
 		friend class RendererPassBuilder;
 	};
 
+	template<typename F>
+	inline void Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, F&& func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkCommandBufferInheritanceInfo         inheritanceInfo {};
+		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+		inheritanceInfo.renderPass           = m_Pass->Get();
+		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::FrameInfo().m_Imageindex);
+					     
+		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
+		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
+
+		std::future<VkCommandBuffer> cmdBuffer = m_CmdThreadPool->SubmitTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
+
+			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
+
+			func(cmdBuffer);
+
+			VK_CHECK(vkEndCommandBuffer(cmdBuffer));
+
+			return cmdBuffer;
+		});
+
+		VkCommandBuffer buffer = cmdBuffer.get();
+		vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
+	}
+
 	template<typename T, typename F>
 	inline void Renderer::IterWorldCompSubmitCmdParalll(FrameInfo& frameInfo, F func)
 	{
@@ -1047,8 +1126,7 @@ namespace Spices {
 		}
 
 		m_CmdThreadPool->Wait();
-
-		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_CmdThreadPool->GetInitThreadSize(), m_CmdThreadPool->GetCommandBuffers().data());
+		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_CmdThreadPool->GetInitThreadSize(), m_CmdThreadPool->GetCommandBuffers(frameInfo.m_FrameIndex).data());
 	}
 
 	template<typename T, typename F>
@@ -1098,14 +1176,23 @@ namespace Spices {
 		/**
 		* @breif Update PushConstants
 		*/
-		vkCmdPushConstants(
-			cmdBuffer ? cmdBuffer : m_CommandBuffer,
-			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
-			VK_SHADER_STAGE_ALL,
-			0,
-			sizeof(T),
-			&push
-		);
+		if (cmdBuffer)
+		{
+			vkCmdPushConstants(
+				cmdBuffer ? cmdBuffer : m_CommandBuffer,
+				m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
+				VK_SHADER_STAGE_ALL,
+				0,
+				sizeof(T),
+				&push
+			);
+		}
+		else
+		{
+			m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+
+			});
+		}
 	}
 
 	template<typename T, typename F>
