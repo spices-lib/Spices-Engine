@@ -127,21 +127,6 @@ namespace Spices {
 		void SetThreadIdleTimeOut(int idleTime);
 
 		/**
-		* @brief Submit a task to task queue, and wait for a idle thread to execute it.
-		* @tparam Func Task Function.
-		* @tparam Args Task Funcion Parameter.
-		* @return Returns task function return value as a future.
-		*/
-		template<typename Func, typename... Args>
-		auto SubmitTask(Func&& func, Args&&... args) -> std::future<decltype(func(std::forward<Args>(args)...))>;
-
-		/**
-		* @brief Start Run this thread pool.
-		* @param[in] initThreadSize Thread Size.
-		*/
-		virtual void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency());
-
-		/**
 		* @brief Wait for all tasks executed finish in taskqueue.
 		*/
 		void Wait();
@@ -198,12 +183,6 @@ namespace Spices {
 		const bool IsPoolRunning() const { return m_IsPoolRunning.load(); }
 
 	protected:
-		
-		/**
-		* @brief Thread Function.
-		* @param[in] threadid Thread id from std
-		*/
-		virtual void ThreadFunc(uint32_t threadid) = 0;
 
 		/**
 		* @brief Check whether this pool is still in running.
@@ -274,53 +253,6 @@ namespace Spices {
 	};
 
 	template<typename ...Params>
-	template<typename Func, typename... Args>
-	inline auto ThreadPool_Basic<Params...>::SubmitTask(Func&& func, Args&&... args) -> std::future<decltype(func(std::forward<Args>(args)...))>
-	{
-		SPICES_PROFILE_ZONE;
-
-		using RType = decltype(func(args...));
-
-		/**
-		* @brief pack function pointer with packaged_task and get future.
-		*/
-		auto task = std::make_shared<std::packaged_task<RType(Params...)>>(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
-		std::future<RType> result = task->get_future();
-
-		std::unique_lock<std::mutex> lock(m_Mutex);
-
-		if (!m_NotFull.wait_for(lock, std::chrono::seconds(1), [&]() { return m_TaskQueue.size() < (size_t)TASK_MAX_THRESHHOLD; }))
-		{
-			SPICES_CORE_WARN("Task Submit failed");
-
-			auto emptyTask = std::make_shared<std::packaged_task<RType()>>([]() { return RType(); });
-			(*emptyTask)();
-			return emptyTask->get_future();
-		}
-
-		/**
-		* @brief pack task as a lambda and submit it to queue.
-		*/
-		m_TaskQueue.emplace([task](Params... params) {(*task)(std::forward<Params>(params)...); });
-		m_NotEmpty.notify_all();
-
-		/**
-		* @brief Expand threads container if in MODE_CACHED.
-		*/
-		if (m_PoolMode == PoolMode::MODE_CACHED && m_TaskQueue.size() > m_IdleThreadSize && m_Threads.size() < THREAD_MAX_THRESHHOLD)
-		{
-			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool_Basic::ThreadFunc, this, std::placeholders::_1));
-			ptr->Start();
-			uint32_t threadId = ptr->GetId();
-			m_Threads.emplace(threadId, std::move(ptr));
-
-			++m_IdleThreadSize;
-		}
-
-		return result;
-	}
-
-	template<typename ...Params>
 	void ThreadPool_Basic<Params...>::SetMode(PoolMode mode)
 	{
 		SPICES_PROFILE_ZONE;
@@ -363,30 +295,12 @@ namespace Spices {
 	}
 
 	template<typename ...Params>
-	void ThreadPool_Basic<Params...>::Start(int initThreadSize)
-	{
-		SPICES_PROFILE_ZONE;
-
-		m_IsPoolRunning = true;
-		m_InitThreadSize = initThreadSize;
-		m_IdleThreadSize = initThreadSize;
-
-		for (int i = 0; i < m_InitThreadSize; i++)
-		{
-			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool_Basic::ThreadFunc, this, std::placeholders::_1));
-			int threadId = ptr->GetId();
-			m_Threads.emplace(threadId, std::move(ptr));
-			m_Threads[threadId]->Start();
-		}
-	}
-
-	template<typename ...Params>
 	void ThreadPool_Basic<Params...>::Wait()
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::unique_lock<std::mutex> lock(m_Mutex);
-		m_TaskFinish.wait(lock, [&]() { return m_TaskQueue.empty(); });
+		m_TaskFinish.wait(lock, [&]() { return m_IdleThreadSize == m_Threads.size(); });
 	}
 
 	class ThreadPool : public ThreadPool_Basic<>
@@ -396,18 +310,78 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		ThreadPool() : ThreadPool_Basic() {}
+		ThreadPool() : ThreadPool_Basic<>() {}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ThreadPool() = default;
+		virtual ~ThreadPool() override {};
 
-	protected:
+		/**
+		* @brief Start Run this thread pool.
+		* @param[in] initThreadSize Thread Size.
+		*/
+		void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency());
 
-		virtual void ThreadPool::ThreadFunc(uint32_t threadid) override;
+		/**
+		* @brief Submit a task to task queue, and wait for a idle thread to execute it.
+		* @tparam Func Task Function.
+		* @tparam Args Task Funcion Parameter.
+		* @return Returns task function return value as a future.
+		*/
+		template<typename Func, typename... Args>
+		auto SubmitTask(Func&& func, Args&&... args) -> std::future<decltype(func(std::forward<Args>(args)...))>;
 
-	private:
-
+		/**
+		* @brief Thread Function.
+		* @param[in] threadid Thread id from std
+		*/
+		void ThreadPool::ThreadFunc(uint32_t threadid);
 	};
+
+	template<typename Func, typename ...Args>
+	inline auto ThreadPool::SubmitTask(Func&& func, Args && ...args) -> std::future<decltype(func(std::forward<Args>(args)...))>
+	{
+		SPICES_PROFILE_ZONE;
+
+		using RType = decltype(func(args...));
+
+		/**
+		* @brief pack function pointer with packaged_task and get future.
+		*/
+		auto task = std::make_shared<std::packaged_task<RType()>>(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
+		std::future<RType> result = task->get_future();
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		if (!m_NotFull.wait_for(lock, std::chrono::seconds(1), [&]() { return m_TaskQueue.size() < (size_t)TASK_MAX_THRESHHOLD; }))
+		{
+			SPICES_CORE_WARN("Task Submit failed");
+
+			auto emptyTask = std::make_shared<std::packaged_task<RType()>>([]() { return RType(); });
+			(*emptyTask)();
+			return emptyTask->get_future();
+		}
+
+		/**
+		* @brief pack task as a lambda and submit it to queue.
+		*/
+		m_TaskQueue.emplace([task]() {(*task)(); });
+		m_NotEmpty.notify_all();
+
+		/**
+		* @brief Expand threads container if in MODE_CACHED.
+		*/
+		if (m_PoolMode == PoolMode::MODE_CACHED && m_TaskQueue.size() > m_IdleThreadSize && m_Threads.size() < THREAD_MAX_THRESHHOLD)
+		{
+			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1));
+			ptr->Start();
+			uint32_t threadId = ptr->GetId();
+			m_Threads.emplace(threadId, std::move(ptr));
+
+			++m_IdleThreadSize;
+		}
+
+		return result;
+	}
 }

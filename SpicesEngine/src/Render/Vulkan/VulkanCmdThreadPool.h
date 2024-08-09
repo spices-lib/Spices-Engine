@@ -37,7 +37,7 @@ namespace Spices {
 		* @brief Start Run this thread pool.
 		* @param[in] initThreadSize Thread Size.
 		*/
-		virtual void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency()) override;
+		void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency());
 
 		/**
 		* @brief GetCommandBuffers.
@@ -58,7 +58,7 @@ namespace Spices {
 		* @brief Thread Function.
 		* @param[in] threadid Thread id from std
 		*/
-		virtual void ThreadFunc(uint32_t threadid) override;
+		void ThreadFunc(uint32_t threadid);
 
 	private:
 

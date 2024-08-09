@@ -199,7 +199,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		m_ThreadPool.Wait();; /* @brief Wait for sub thread finish. */
+		m_ThreadPool.Wait(); /* @brief Wait for sub thread finish. */
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );

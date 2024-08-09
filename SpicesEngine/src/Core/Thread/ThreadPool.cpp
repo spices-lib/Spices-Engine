@@ -24,6 +24,23 @@ namespace Spices {
 		t.detach();
 	}
 
+	void ThreadPool::Start(int initThreadSize)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_IsPoolRunning = true;
+		m_InitThreadSize = initThreadSize;
+		m_IdleThreadSize = initThreadSize;
+
+		for (int i = 0; i < m_InitThreadSize; i++)
+		{
+			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1));
+			int threadId = ptr->GetId();
+			m_Threads.emplace(threadId, std::move(ptr));
+			m_Threads[threadId]->Start();
+		}
+	}
+
 	void ThreadPool::ThreadFunc(uint32_t threadid)
 	{
 		SPICES_PROFILE_ZONE;
@@ -44,6 +61,7 @@ namespace Spices {
 					if (!m_IsPoolRunning)
 					{
 						m_Threads.erase(threadid);
+						m_IdleThreadSize--;
 						m_ExitCond.notify_all();
 						return;
 					}
@@ -90,11 +108,14 @@ namespace Spices {
 			if (task != nullptr)
 			{
 				task();
+				++m_IdleThreadSize;
 				m_TaskFinish.notify_all();
 			}
-
-			++m_IdleThreadSize;
-
+			else
+			{
+				++m_IdleThreadSize;
+			}
+			
 			lastTime = std::chrono::high_resolution_clock().now();
 		}
 	}
