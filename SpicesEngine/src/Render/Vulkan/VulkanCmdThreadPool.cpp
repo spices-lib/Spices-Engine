@@ -13,7 +13,7 @@ namespace Spices {
 
 	VulkanCmdThreadPool::VulkanCmdThreadPool(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
-		, ThreadPool()
+		, ThreadPool_Basic()
 	{
 		SetMode(PoolMode::MODE_FIXED);
 		Start(nCmdThreads);
@@ -49,40 +49,6 @@ namespace Spices {
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
-	}
-
-	void VulkanCmdThreadPool::SubmitTask(std::function<void(VkCommandBuffer cmdBuffer)> func)
-	{
-		SPICES_PROFILE_ZONE;
-
-		std::unique_lock<std::mutex> lock(m_Mutex);
-
-		if (!m_NotFull.wait_for(lock, std::chrono::seconds(1), [&]() { return m_TaskQueue.size() < (size_t)TASK_MAX_THRESHHOLD; }))
-		{
-			SPICES_CORE_WARN("Task Submit failed");
-			return;
-		}
-
-		/**
-		* @brief pack task as a lambda and submit it to queue.
-		*/
-		m_TaskQueue.emplace(func);
-		m_NotEmpty.notify_all();
-
-		/**
-		* @brief Expand threads container if in MODE_CACHED.
-		*/
-		if (m_PoolMode == PoolMode::MODE_CACHED && m_TaskQueue.size() > m_IdleThreadSize && m_Threads.size() < THREAD_MAX_THRESHHOLD)
-		{
-			auto ptr = std::make_unique<Thread>(std::bind(&VulkanCmdThreadPool::ThreadFunc, this, std::placeholders::_1));
-			ptr->Start();
-			uint32_t threadId = ptr->GetId();
-			m_Threads.emplace(threadId, std::move(ptr));
-
-			++m_IdleThreadSize;
-		}
-
-		return;
 	}
 
 	void VulkanCmdThreadPool::ThreadFunc(uint32_t threadid)

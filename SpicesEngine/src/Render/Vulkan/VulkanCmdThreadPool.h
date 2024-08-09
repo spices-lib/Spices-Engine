@@ -17,7 +17,7 @@ namespace Spices {
 	* This class defines the VulkanCmdThreadPool behaves.
 	* Is use for submit commands parallel.
 	*/
-	class VulkanCmdThreadPool : public VulkanObject, public ThreadPool<void, VkCommandBuffer>
+	class VulkanCmdThreadPool : public VulkanObject, public ThreadPool_Basic<VkCommandBuffer>
 	{
 	public:
 
@@ -40,16 +40,17 @@ namespace Spices {
 		virtual void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency()) override;
 
 		/**
-		* @brief Submit a task to task queue, and wait for a idle thread to execute it.
-		* @tparam func Task Function.
-		*/
-		void SubmitTask(std::function<void(VkCommandBuffer cmdBuffer)> func);
-
-		/**
 		* @brief GetCommandBuffers.
 		* @return Return all CommandBuffers.
 		*/
 		std::vector<VkCommandBuffer>& GetCommandBuffers() { return m_CmdBuffers; }
+
+		/**
+		* @brief Submit a task to task queue, and wait for a idle thread to execute it.
+		* @tparam func Task Function.
+		*/
+		template<typename RType>
+		auto SubmitTask(std::function<RType(VkCommandBuffer cmdBuffer)> func) -> std::future<RType>;
 
 	protected:
 
@@ -66,4 +67,45 @@ namespace Spices {
 		*/
 		std::vector<VkCommandBuffer> m_CmdBuffers;
 	};
+
+	template<typename RType>
+	inline auto VulkanCmdThreadPool::SubmitTask(std::function<RType(VkCommandBuffer cmdBuffer)> func) -> std::future<RType>
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto task = std::make_shared<std::packaged_task<RType(VkCommandBuffer)>>(func);
+		std::future<RType> result = task->get_future();
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		if (!m_NotFull.wait_for(lock, std::chrono::seconds(1), [&]() { return m_TaskQueue.size() < (size_t)TASK_MAX_THRESHHOLD; }))
+		{
+			SPICES_CORE_WARN("Task Submit failed");
+		
+			auto emptyTask = std::make_shared<std::packaged_task<RType()>>([]() { return RType(); });
+			(*emptyTask)();
+			return emptyTask->get_future();
+		}
+
+		/**
+		* @brief pack task as a lambda and submit it to queue.
+		*/
+		m_TaskQueue.emplace([task](VkCommandBuffer cmdBuffer) {(*task)(cmdBuffer); });
+		m_NotEmpty.notify_all();
+
+		/**
+		* @brief Expand threads container if in MODE_CACHED.
+		*/
+		if (m_PoolMode == PoolMode::MODE_CACHED && m_TaskQueue.size() > m_IdleThreadSize && m_Threads.size() < THREAD_MAX_THRESHHOLD)
+		{
+			auto ptr = std::make_unique<Thread>(std::bind(&VulkanCmdThreadPool::ThreadFunc, this, std::placeholders::_1));
+			ptr->Start();
+			uint32_t threadId = ptr->GetId();
+			m_Threads.emplace(threadId, std::move(ptr));
+		
+			++m_IdleThreadSize;
+		}
+
+		return result;
+	}
 }

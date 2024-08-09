@@ -78,7 +78,7 @@ namespace SpicesTest {
 		/**
 		* @brief ThreadPool.
 		*/
-		Spices::ThreadPool<void> m_ThreadPool;
+		Spices::ThreadPool m_ThreadPool;
 
 		/**
 		* @brief Number of Threads in ThreadPool.
@@ -199,7 +199,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		future.get(); /* @brief Wait for sub thread finish. */
+		m_ThreadPool.Wait();; /* @brief Wait for sub thread finish. */
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
@@ -237,10 +237,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		/* @brief Wait for sub thread finish. */
-		for (int i = 0; i < nThreads; i++)
-		{
-			futures[i].get();
-		}
+		m_ThreadPool.Wait();
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
@@ -288,10 +285,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		/* @brief Wait for subthread finish. */
-		for (int i = 0; i < 2 * nThreads; i++)
-		{
-			futures[i].get();
-		}
+		m_ThreadPool.Wait();
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
@@ -319,10 +313,7 @@ namespace SpicesTest {
 		}
 
 		/* @brief Wait for subthread finish. */
-		for (int i = 0; i < 10000; i++)
-		{
-			futures[i].get();
-		}
+		m_ThreadPool.Wait();
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );

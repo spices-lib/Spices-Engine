@@ -1028,7 +1028,7 @@ namespace Spices {
 		auto& view = frameInfo.m_World->GetRegistry().view<T>();
 		for (auto& e : view)
 		{
-			m_CmdThreadPool->SubmitTask([&](VkCommandBuffer cmdBuffer) {
+			m_CmdThreadPool->SubmitTask<void>([&](VkCommandBuffer cmdBuffer) {
 
 				auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
 
