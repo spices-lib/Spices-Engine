@@ -611,6 +611,28 @@ namespace Spices {
 			virtual ~RenderBehaveBuilder() = default;
 
 			/**
+			* @brief Recording all this behaver does.
+			* @param[in] caption Recording Name
+			*/
+			void Recording(const std::string& caption);
+
+			/**
+			* @brief Endrecording all this behaver does.
+			*/
+			void Endrecording();
+
+			/**
+			* @brief Recording all this behaver does Async.
+			* @param[in] caption Recording Name
+			*/
+			void RecordingAsync(const std::string& caption);
+
+			/**
+			* @brief Endrecording all this behaver does Async.
+			*/
+			void EndrecordingAsync();
+
+			/**
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
@@ -709,6 +731,14 @@ namespace Spices {
 			void UpdatePushConstant(F func, VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
 
 			/**
+			* @brief Update local push constant buffer Async.
+			* @tparam T Specific push constant struct Type.
+			* @param[in] func A function pointer, which defines what data inside the buffer.
+			*/
+			template<typename T, typename F>
+			void UpdatePushConstantAsync(F func);
+
+			/**
 			* @brief Update a local buffer.
 			* @tparam T Specific buffer struct Type.
 			* @param[in] func A function pointer, which defines what data inside the buffer.
@@ -740,6 +770,14 @@ namespace Spices {
 			void UpdatePushConstant(void* data, VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
+			* @brief Update local push constant buffer Async.
+			* @tparam T Specific push constant struct Type.
+			* @param[in] data push constant data pointer.
+			*/
+			template<typename T>
+			void UpdatePushConstantAsync(void* data) const;
+
+			/**
 			* @brief Update a local buffer.
 			* @param[in] set Which set the descriptor will use.
 			* @param[in] binding Which binding the descriptor will use.
@@ -762,14 +800,30 @@ namespace Spices {
 			void BeginNextSubPass(const std::string& subpassName);
 
 			/**
+			* @brief End a preview sub pass and stat next sub pass.
+			* @param[in] subpassName The name of next sub pass.
+			*/
+			void BeginNextSubPassAsync(const std::string& subpassName);
+
+			/**
 			* @brief Begin this Renderer's RenderPass.
 			*/
 			void BeginRenderPass();
 
 			/**
+			* @brief Begin this Renderer's RenderPass Async.
+			*/
+			void BeginRenderPassAsync();
+
+			/**
 			* @brief End this Renderer's RenderPass.
 			*/
 			void EndRenderPass() const;
+
+			/**
+			* @brief End this Renderer's RenderPass Async.
+			*/
+			void EndRenderPassAsync() const;
 
 		protected:
 
@@ -829,10 +883,7 @@ namespace Spices {
 			/**
 			* @brief Destructor Function.
 			*/
-			virtual ~RayTracingRenderBehaveBuilder() override = default;
-
-			void Recording(const std::string& caption);
-			void Endrecording();
+			virtual ~RayTracingRenderBehaveBuilder() override;
 			
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
@@ -846,6 +897,17 @@ namespace Spices {
 				VkCommandBuffer      cmdBuffer    = VK_NULL_HANDLE,
 				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
 			) override;
+
+			/**
+			* @brief Bind the pipeline created by CreatePipeline() Async.
+			* Called on RenderBehaveBuilder instanced.
+			* @param[in] materialName also pipelineName.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindPipelineAsync(
+				const std::string&   materialName , 
+				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+			) override;
 			
 			/**
 			* @brief Binding DescriptorSet with DescriptorSetInfo.
@@ -857,6 +919,17 @@ namespace Spices {
 			virtual void BindDescriptorSet(
 				const DescriptorSetInfo&   infos                                             , 
 				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE                        ,
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+			) override;
+
+			/**
+			* @brief Binding DescriptorSet with DescriptorSetInfo Async.
+			* For Binding a Renderer DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSetAsync(
+				const DescriptorSetInfo&   infos,
 				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
 			) override;
 
@@ -876,7 +949,20 @@ namespace Spices {
 			) override;
 
 			/**
-			* @brief Call  vkCmdTraceRaysKHR here.
+			* @brief Binding DescriptorSet with DescriptorSetInfo and name Async.
+			* For Binding a Material DescriptorSet.
+			* @param[in] infos DescriptorSetInfo.
+			* @param[in] name The material name.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindDescriptorSetAsync(
+				const DescriptorSetInfo&   infos                                             , 
+				const std::string&         name                                              , 
+				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+			) override;
+
+			/**
+			* @brief Call vkCmdTraceRaysKHR here.
 			* @param[in] rgenRegion RayGen Shader Group.
 			* @param[in] missRegion Miss Shader Group.
 			* @param[in] hitRegion Hit Shader Group.
@@ -889,12 +975,26 @@ namespace Spices {
 				const VkStridedDeviceAddressRegionKHR* callRegion
 			);
 
+			/**
+			* @brief Call vkCmdTraceRaysKHR here Async.
+			* @param[in] rgenRegion RayGen Shader Group.
+			* @param[in] missRegion Miss Shader Group.
+			* @param[in] hitRegion Hit Shader Group.
+			* @param[in] callRegion Callable Shader Group.
+			*/
+			void TraceRaysAsync(
+				const VkStridedDeviceAddressRegionKHR* rgenRegion,
+				const VkStridedDeviceAddressRegionKHR* missRegion,
+				const VkStridedDeviceAddressRegionKHR* hitRegion,
+				const VkStridedDeviceAddressRegionKHR* callRegion
+			);
+
 		private:
 			
 			/**
 			* @brief Function Pointer of vkCmdTraceRaysKHR.
 			*/
-			PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
+			static PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
 		};
 		
 		/**
@@ -924,9 +1024,6 @@ namespace Spices {
 			*/
 			virtual ~ComputeRenderBehaveBuilder() override = default;
 
-			void Recording(const std::string& caption);
-			void Endrecording();
-			
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaveBuilder instanced.
@@ -1176,23 +1273,48 @@ namespace Spices {
 		/**
 		* @breif Update PushConstants
 		*/
-		if (cmdBuffer)
-		{
+		vkCmdPushConstants(
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
+			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
+			VK_SHADER_STAGE_ALL,
+			0,
+			sizeof(T),
+			&push
+		);
+	}
+
+	template<typename T, typename F>
+	inline void Renderer::RenderBehaveBuilder::UpdatePushConstantAsync(F func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @breif Create pushconstant object.
+		*/
+		T push{};
+
+		/**
+		* @breif Write in data
+		* @param[in] push pushconstant object.
+		*/
+		func(push);
+
+		std::stringstream ss;
+		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
+
+		/**
+		* @breif Update PushConstants
+		*/
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
 			vkCmdPushConstants(
-				cmdBuffer ? cmdBuffer : m_CommandBuffer,
+				cmdBuffer,
 				m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
 				VK_SHADER_STAGE_ALL,
 				0,
 				sizeof(T),
 				&push
 			);
-		}
-		else
-		{
-			m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
-
-			});
-		}
+		});
 	}
 
 	template<typename T, typename F>
@@ -1258,6 +1380,29 @@ namespace Spices {
 			sizeof(T),
 			data
 		);
+	}
+
+	template<typename T>
+	inline void Renderer::RenderBehaveBuilder::UpdatePushConstantAsync(void* data) const
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::stringstream ss;
+		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default";
+
+		/**
+		* @breif Update PushConstants
+		*/
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+			vkCmdPushConstants(
+				cmdBuffer,
+				m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
+				VK_SHADER_STAGE_ALL,
+				0,
+				sizeof(T),
+				data
+			);
+			});
 	}
 
 	inline void Renderer::RenderBehaveBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data) const

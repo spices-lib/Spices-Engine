@@ -136,7 +136,7 @@ namespace Spices {
 
 		builder.BeginNextSubPass("Mesh");
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
+		builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
 		IterWorldCompSubmitCmdParalll<MeshComponent>(frameInfo, [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();

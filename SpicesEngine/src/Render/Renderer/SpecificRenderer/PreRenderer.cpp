@@ -68,7 +68,7 @@ namespace Spices {
 			ubo.stableFrames = stableFrames;
 		});
 
-		builder.UpdateUniformBuffer<SpicesShader::Input>(0, 1, [&](auto& ubo) {
+		builder.UpdateUniformBufferAsync<SpicesShader::Input>(0, 1, [&](auto& ubo) {
 			auto [x, y] = SlateSystem::GetRegister()->GetViewPort()->GetMousePosInViewport();
 
 			ubo.gameTime  = ts.gt();
