@@ -23,7 +23,7 @@ namespace Spices {
 		poolInfo.queueFamilyIndex = vulkanState.m_GraphicQueueFamily;
 
 		/**
-		* @brief  Create commandpool and set it global. 
+		* @brief Create commandpool and set it global. 
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_CommandPool));
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, vulkanState.m_CommandPool, vulkanState.m_Device, "SpicesEngineCommandPool");

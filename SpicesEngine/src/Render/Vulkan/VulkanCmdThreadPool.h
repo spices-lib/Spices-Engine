@@ -41,6 +41,12 @@ namespace Spices {
 		void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency());
 
 		/**
+		* @brief GetCommandPools.
+		* @return Return all CommandPools.
+		*/
+		std::vector<VkCommandPool>& GetCommandPools() { return m_CmdPools; }
+
+		/**
 		* @brief GetCommandBuffers.
 		* @param[in] FrameIndex in FrameInfo
 		* @return Return all CommandBuffers.
@@ -63,6 +69,11 @@ namespace Spices {
 		void ThreadFunc(uint32_t threadid);
 
 	private:
+
+		/**
+		* @brief Parallel CommandPools.
+		*/
+		std::vector<VkCommandPool> m_CmdPools;
 
 		/**
 		* @brief Parallel Secondary CommandBuffers.

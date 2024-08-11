@@ -99,5 +99,11 @@ namespace Spices {
 		* @param[in] index CommandBuffer index.
 		*/
 		void EndImguiFrame(uint32_t index);
+
+		/**
+		* @brief End Imgui frame.
+		* @param[in] index CommandBuffer index.
+		*/
+		void EndImguiFrameAsync(uint32_t index);
 	};
 }

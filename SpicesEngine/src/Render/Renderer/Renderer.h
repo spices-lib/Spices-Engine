@@ -206,19 +206,21 @@ namespace Spices {
 		/**
 		* @brief Submit a group of commands to secondary command buffer, and execute all of them.
 		* @param[in] primaryCmdBuffer The main Command Buffer.
+		* @param[in] subpass subpass index.
 		* @param func Specific Commands.
 		*/
 		template<typename F>
-		void SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, F&& func);
+		void SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subpass, F&& func);
 
 		/**
 		* @brief Iterator the specific Component in World Parallel.
 		* @tparam T The specific Component class.
 		* @param[in] frameInfo The current frame data.
+		* @param[in] subpass subpass index.
 		* @param[in] func The function pointer that need to execute during this function.
 		*/
 		template<typename T, typename F>
-		inline void IterWorldCompSubmitCmdParalll(FrameInfo& frameInfo, F func);
+		inline void IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subpass, F func);
 
 		/**
 		* @brief Iterator the specific Component in World With break.
@@ -825,6 +827,10 @@ namespace Spices {
 			*/
 			void EndRenderPassAsync() const;
 
+		public:
+
+			uint32_t GetSubpassIndex() const { return m_SubpassIndex; }
+
 		protected:
 
 			/**
@@ -846,6 +852,11 @@ namespace Spices {
 			* @see FrameInfo.
 			*/
 			uint32_t m_CurrentImage;
+
+			/**
+			* @brief Current subpass Index.
+			*/
+			uint32_t m_SubpassIndex = 0;
 
 			/**
 			* @brief Current CommandBuffer.
@@ -883,7 +894,7 @@ namespace Spices {
 			/**
 			* @brief Destructor Function.
 			*/
-			virtual ~RayTracingRenderBehaveBuilder() override;
+			virtual ~RayTracingRenderBehaveBuilder() override = default;
 			
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
@@ -1153,15 +1164,16 @@ namespace Spices {
 	};
 
 	template<typename F>
-	inline void Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, F&& func)
+	inline void Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subpass, F&& func)
 	{
 		SPICES_PROFILE_ZONE;
 
 		VkCommandBufferInheritanceInfo         inheritanceInfo {};
 		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		inheritanceInfo.renderPass           = m_Pass->Get();
-		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::FrameInfo().m_Imageindex);
-					     
+		inheritanceInfo.subpass              = subpass;
+		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::Get().m_Imageindex);
+     
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
 		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
@@ -1178,18 +1190,20 @@ namespace Spices {
 			return cmdBuffer;
 		});
 
+		m_CmdThreadPool->Wait();
 		VkCommandBuffer buffer = cmdBuffer.get();
-		vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
+		//vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
 	}
 
 	template<typename T, typename F>
-	inline void Renderer::IterWorldCompSubmitCmdParalll(FrameInfo& frameInfo, F func)
+	inline void Renderer::IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subpass, F func)
 	{
 		SPICES_PROFILE_ZONE;
 
 		VkCommandBufferInheritanceInfo         inheritanceInfo {};
 		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		inheritanceInfo.renderPass           = m_Pass->Get();
+		inheritanceInfo.subpass              = subpass;
 		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(frameInfo.m_Imageindex);
 										     
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
@@ -1201,10 +1215,13 @@ namespace Spices {
 		* @brief Iter use view, not group.
 		* @attention Group result nullptr here.
 		*/
+		std::set<VkCommandBuffer> executedCmdBuffers;
+		std::vector<std::future<VkCommandBuffer>> futureExecutedCmdBuffers;
+
 		auto& view = frameInfo.m_World->GetRegistry().view<T>();
 		for (auto& e : view)
 		{
-			m_CmdThreadPool->SubmitTask<void>([&](VkCommandBuffer cmdBuffer) {
+			futureExecutedCmdBuffers.push_back(m_CmdThreadPool->SubmitTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
 
 				auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
 
@@ -1219,11 +1236,19 @@ namespace Spices {
 				func(cmdBuffer, static_cast<int>(e), transComp, tComp);
 
 				VK_CHECK(vkEndCommandBuffer(cmdBuffer));
-			});
+
+				return cmdBuffer;
+			}));
 		}
 
-		m_CmdThreadPool->Wait();
-		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_CmdThreadPool->GetInitThreadSize(), m_CmdThreadPool->GetCommandBuffers(frameInfo.m_FrameIndex).data());
+		//m_CmdThreadPool->Wait();
+		for (int i = 0; i < futureExecutedCmdBuffers.size(); i++)
+		{
+			executedCmdBuffers.insert(futureExecutedCmdBuffers[i].get());
+		}
+
+		std::vector<VkCommandBuffer> buffers(executedCmdBuffers.begin(), executedCmdBuffers.end());
+		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], buffers.size(), buffers.data());
 	}
 
 	template<typename T, typename F>
@@ -1305,7 +1330,7 @@ namespace Spices {
 		/**
 		* @breif Update PushConstants
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
 			vkCmdPushConstants(
 				cmdBuffer,
 				m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),

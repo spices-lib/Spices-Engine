@@ -405,18 +405,18 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
 			VulkanDebugUtils::BeginLabel(cmdBuffer, caption);
-			});
+		});*/
 	}
 
 	void Renderer::RenderBehaveBuilder::EndrecordingAsync()
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
 			VulkanDebugUtils::EndLabel(cmdBuffer);
-			});
+		});*/
 	}
 
 	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint  bindPoint)
@@ -430,7 +430,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
 			vkCmdBindPipeline(cmdBuffer, bindPoint, m_Renderer->m_Pipelines[materialName]->GetPipeline());
 		});
 	}
@@ -518,7 +518,7 @@ namespace Spices {
 		scissor.offset              = { 0, 0 };
 		scissor.extent              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
 			
 			/**
 			* @brief Set VkViewport with viewport slate.
@@ -549,13 +549,14 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
+		++m_SubpassIndex;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
 			VulkanDebugUtils::EndLabel(cmdBuffer);
 			VulkanDebugUtils::BeginLabel(cmdBuffer, m_HandledSubPass->GetName());
+		});*/
 
-			vkCmdNextSubpass(cmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
-		});
+		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginRenderPass()
@@ -590,8 +591,8 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
+		//VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
+		//VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
 
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -601,42 +602,43 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_SubpassIndex = 0;
 
 		/**
 		* @brief Instance a VkRenderPassBeginInfo.
 		*/
 		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_Renderer->m_Pass->Get();
-		renderPassInfo.framebuffer = m_Renderer->m_Pass->GetFramebuffer(m_CurrentImage);
-		renderPassInfo.renderArea.offset = { 0, 0 };
+		renderPassInfo.sType                    = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass               = m_Renderer->m_Pass->Get();
+		renderPassInfo.framebuffer              = m_Renderer->m_Pass->GetFramebuffer(m_CurrentImage);
+		renderPassInfo.renderArea.offset        = { 0, 0 };
 
 		/**
 		* @brief In the first frame, we use window size rather than viewport size.
 		*/
 		if (m_Renderer->m_Pass->IsUseSwapChain() || !SlateSystem::GetRegister())
 		{
-			renderPassInfo.renderArea.extent = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
+			renderPassInfo.renderArea.extent    = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 		}
 		else
 		{
 			const ImVec2 size = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 			const VkExtent2D extent = { static_cast<uint32_t>(size.x) , static_cast<uint32_t>(size.y) };
-			renderPassInfo.renderArea.extent = extent;
+			renderPassInfo.renderArea.extent    = extent;
 		}
 
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
-		renderPassInfo.pClearValues = m_Renderer->m_Pass->GetClearValues().data();
-
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
-			VulkanDebugUtils::BeginLabel(cmdBuffer, m_Renderer->m_Pass->GetName());
-			VulkanDebugUtils::BeginLabel(cmdBuffer, m_HandledSubPass->GetName());
-		});
+		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
+		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
 		/**
 		* @brief This command not allow async.
 		*/
-		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+
+		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+			VulkanDebugUtils::BeginLabel(cmdBuffer, m_Renderer->m_Pass->GetName());
+			VulkanDebugUtils::BeginLabel(cmdBuffer, m_HandledSubPass->GetName());
+		});*/
 	}
 
 	void Renderer::RenderBehaveBuilder::EndRenderPass() const
@@ -645,23 +647,23 @@ namespace Spices {
 
 		vkCmdEndRenderPass(m_CommandBuffer);
 
-		VulkanDebugUtils::EndLabel(m_CommandBuffer);
-		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		//VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		//VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 
 	void Renderer::RenderBehaveBuilder::EndRenderPassAsync() const
 	{
 		SPICES_PROFILE_ZONE;
 
+		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+			VulkanDebugUtils::EndLabel(cmdBuffer);
+			VulkanDebugUtils::EndLabel(cmdBuffer);
+		});*/
+
 		/**
 		* @brief This command not allow async.
 		*/
 		vkCmdEndRenderPass(m_CommandBuffer);
-
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
-			VulkanDebugUtils::EndLabel(cmdBuffer);
-			VulkanDebugUtils::EndLabel(cmdBuffer);
-		});
 	}
 	
 	PFN_vkCmdTraceRaysKHR Renderer::RayTracingRenderBehaveBuilder::vkCmdTraceRaysKHR;
@@ -677,15 +679,6 @@ namespace Spices {
 		
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetInstanceProcAddr(renderer->m_VulkanState.m_Instance, "vkCmdTraceRaysKHR"));
-
-		RecordingAsync("RayTracing");
-	}
-
-	Renderer::RayTracingRenderBehaveBuilder::~RayTracingRenderBehaveBuilder()
-	{
-		SPICES_PROFILE_ZONE;
-
-		EndrecordingAsync();
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
@@ -774,7 +767,7 @@ namespace Spices {
 		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
 			vkCmdTraceRaysKHR(
 				cmdBuffer,
 				rgenRegion,
@@ -843,7 +836,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& secCmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& secCmdBuffer) {
 
 			/**
 			* @brief Iter all desctiptorsets.

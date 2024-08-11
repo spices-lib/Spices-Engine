@@ -93,19 +93,19 @@ namespace Spices {
 		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
-
+		
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SceneCompose" }));
 
 		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 0, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
 		});
-		
+
 		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(3, 1, [&](auto& ssbo) {
 			GetPointLight(frameInfo, ssbo.lights);
 		});
 
 		builder.BindPipeline("SceneComposeRenderer.SceneCompose.Default");
-		
+
 		m_Square->OnBind(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
 		m_Square->OnDraw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
 

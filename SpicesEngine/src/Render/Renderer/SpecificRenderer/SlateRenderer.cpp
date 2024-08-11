@@ -173,6 +173,25 @@ namespace Spices {
 		}
 	}
 
+	void SlateRenderer::EndImguiFrameAsync(uint32_t index)
+	{
+		SPICES_PROFILE_ZONE;
+
+		const ImGuiIO& io = ImGui::GetIO();
+
+		ImGui::Render();
+
+		SubmitCmdsParallel(m_VulkanState.m_GraphicCommandBuffer[index], 0, [&](VkCommandBuffer cmdBuffer) {
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmdBuffer);
+		});
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+	}
+
 	void SlateRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;

@@ -99,13 +99,13 @@ namespace Spices {
 
 			/* @brief Rasterization Renderer */
 			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		  //.Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    .Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<WorldPickStage2Renderer>  (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    .Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    .Push<WorldPickStage2Renderer>  (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		  //.Push<ParticleRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<TestRenderer>             (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    .Push<TestRenderer>             (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SlateRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool);
 		}
 	}
@@ -136,7 +136,7 @@ namespace Spices {
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
 			.Pop("SceneComposeRenderer")
-			//.Pop("ShadowRenderer")
+			.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
 			.Pop("RayTracingComposeRenderer")
 			.Pop("RayTracingRenderer")
@@ -227,7 +227,7 @@ namespace Spices {
 			*/
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags            = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			beginInfo.flags            = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 			beginInfo.pInheritanceInfo = nullptr;
 
 			/**

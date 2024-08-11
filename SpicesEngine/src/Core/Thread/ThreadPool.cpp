@@ -47,7 +47,7 @@ namespace Spices {
 
 		auto lastTime = std::chrono::high_resolution_clock().now();
 
-		while (1)
+		for(;;)
 		{
 			Task task;
 			{

@@ -108,18 +108,18 @@ namespace Spices {
 		
 		builder.BeginRenderPass();
 
-		builder.SetViewPortAsync();
+		builder.SetViewPort();
 
-		builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName("PreRenderer"));
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
-		builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
 
-		IterWorldCompSubmitCmdParalll<SkyBoxComponent>(frameInfo, [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
+		IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			skyboxComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
+			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
 
-				builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
+				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 
 				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
 					push.model                          = modelMatrix;
@@ -130,17 +130,21 @@ namespace Spices {
 					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
 					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
 					push.desc.entityID                  = entityId;
-				}, cmdBuffer);
+				});
 			});
+
+			return true;
 		});
 
-		builder.BeginNextSubPass("Mesh");
+		builder.BeginNextSubPassAsync("Mesh");
 
-		builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
+		//builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
-		IterWorldCompSubmitCmdParalll<MeshComponent>(frameInfo, [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+ 		IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
-
+			builder.SetViewPort(cmdBuffer);
+			builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
+			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
 			meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
 
 				builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
@@ -158,6 +162,6 @@ namespace Spices {
 			});
 		});
 
-		builder.EndRenderPass();
+		builder.EndRenderPassAsync();
 	}
 }
