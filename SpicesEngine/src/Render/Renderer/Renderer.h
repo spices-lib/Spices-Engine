@@ -1205,10 +1205,10 @@ namespace Spices {
 		inheritanceInfo.renderPass           = m_Pass->Get();
 		inheritanceInfo.subpass              = subpass;
 		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(frameInfo.m_Imageindex);
-										     
+						     
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
 		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
 		/**
@@ -1241,7 +1241,7 @@ namespace Spices {
 			}));
 		}
 
-		//m_CmdThreadPool->Wait();
+		m_CmdThreadPool->Wait();
 		for (int i = 0; i < futureExecutedCmdBuffers.size(); i++)
 		{
 			executedCmdBuffers.insert(futureExecutedCmdBuffers[i].get());

@@ -109,7 +109,6 @@ namespace Spices {
 			{
 				task();
 				++m_IdleThreadSize;
-				m_TaskFinish.notify_all();
 			}
 			else
 			{

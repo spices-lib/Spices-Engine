@@ -15,7 +15,7 @@ namespace Spices {
 /**
 * @brief Max In Flight Frame.
 */
-#define MaxFrameInFlight 2
+#define MaxFrameInFlight 3
 
 	/**
 	* @brief This struct contains all Vulkan object in used golbal.

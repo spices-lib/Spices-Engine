@@ -232,11 +232,6 @@ namespace Spices {
 		std::condition_variable m_NotEmpty;
 
 		/**
-		* @brief Task is finished.
-		*/
-		std::condition_variable m_TaskFinish;
-
-		/**
 		* @brief Thread pool Exit Condition.
 		*/
 		std::condition_variable m_ExitCond;
@@ -298,9 +293,9 @@ namespace Spices {
 	void ThreadPool_Basic<Params...>::Wait()
 	{
 		SPICES_PROFILE_ZONE;
-
 		std::unique_lock<std::mutex> lock(m_Mutex);
-		m_TaskFinish.wait(lock, [&]() { return m_IdleThreadSize == m_Threads.size(); });
+
+		while (m_IdleThreadSize.load() != m_Threads.size()) {}
 	}
 
 	class ThreadPool : public ThreadPool_Basic<>
