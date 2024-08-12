@@ -19,14 +19,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Init ThreadPool.
-		*/
-		{
-			SetMode(PoolMode::MODE_FIXED);
-			Start(nCmdThreads);
-		}
-
-		/**
 		* @brief Create Parallel CommandPool.
 		*/
 		{
@@ -75,6 +67,14 @@ namespace Spices {
 				}
 			}
 		}
+
+		/**
+		* @brief Init ThreadPool.
+		*/
+		{
+			SetMode(PoolMode::MODE_FIXED);
+			Start(nCmdThreads);
+		}
 	}
 
 	void VulkanCmdThreadPool::Start(int initThreadSize)
@@ -84,17 +84,18 @@ namespace Spices {
 		m_IsPoolRunning = true;
 		m_InitThreadSize = initThreadSize;
 		m_IdleThreadSize = initThreadSize;
+		m_NThreads = initThreadSize;
 
-		for (int i = 0; i < m_InitThreadSize; i++)
+		for (uint32_t i = 0; i < m_InitThreadSize; i++)
 		{
-			auto ptr = std::make_unique<Thread>(std::bind(&VulkanCmdThreadPool::ThreadFunc, this, std::placeholders::_1));
+			auto ptr = std::make_unique<Thread<VkCommandBuffer>>(std::bind(&VulkanCmdThreadPool::ThreadFunc, this, std::placeholders::_1), i);
 			int threadId = ptr->GetId();
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
 	}
 
-	void VulkanCmdThreadPool::ThreadFunc(uint32_t threadid)
+	void VulkanCmdThreadPool::ThreadFunc(Thread<VkCommandBuffer>* thread)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -103,19 +104,19 @@ namespace Spices {
 		for (;;)
 		{
 			Task task;
-			VkCommandBuffer cmdBuffer = VK_NULL_HANDLE;
+			VkCommandBuffer& cmdBuffer = m_CmdBuffers[FrameInfo::Get().m_FrameIndex][thread->GetId()];
 			{
 				std::unique_lock<std::mutex> lock(m_Mutex);
 
-				while (m_TaskQueue.size() == 0)
+				while (m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0)
 				{
 					/**
 					* @brief Exit.
 					*/
 					if (!m_IsPoolRunning)
 					{
-						m_Threads.erase(threadid);
-						m_IdleThreadSize--;
+						m_Threads.erase(thread->GetId());
+						--m_IdleThreadSize;
 						m_ExitCond.notify_all();
 						return;
 					}
@@ -132,9 +133,9 @@ namespace Spices {
 							*/
 							if (dur.count() >= m_ThreadIdleTimeOut && m_Threads.size() > m_InitThreadSize)
 							{
-								m_Threads.erase(threadid);
-								m_IdleThreadSize--;
-
+								m_Threads.erase(thread->GetId());
+								--m_IdleThreadSize;
+								--m_NThreads;
 								return;
 							}
 						}
@@ -146,27 +147,41 @@ namespace Spices {
 				}
 
 				/**
-				* @brief Get a task from task queue.
+				* @brief Rink First, Thread Tasks.
 				*/
-				task = m_TaskQueue.front();
-				m_TaskQueue.pop();
-				cmdBuffer = m_CmdBuffers[FrameInfo::Get().m_FrameIndex][threadid];
+				task = thread->RequireTask();
+
+				/**
+				* @brief Rink Second, Pool Tasks.
+				*/
+				if (!task)
+				{
+					task = m_TaskQueue.front();
+					m_TaskQueue.pop();
+					thread->SetThreadInTask(true);
+					--m_Tasks;
+				}
 
 				--m_IdleThreadSize;
-				m_NotFull.notify_all();
-				if (m_TaskQueue.size() > 0) m_NotEmpty.notify_all();
+			}
+
+			if (m_Tasks > 0)
+			{
+				m_NotEmpty.notify_all();
 			}
 
 			/**
 			* @brief execute task.
 			*/
-			if (task != nullptr && cmdBuffer != VK_NULL_HANDLE)
+			if (task != nullptr)
 			{
 				task(cmdBuffer);
+				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;
 			}
 			else
 			{
+				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;
 			}
 

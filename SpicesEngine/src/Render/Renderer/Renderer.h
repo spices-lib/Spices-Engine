@@ -1179,7 +1179,7 @@ namespace Spices {
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
-		std::future<VkCommandBuffer> cmdBuffer = m_CmdThreadPool->SubmitTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
+		std::future<VkCommandBuffer> cmdBuffer = m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
 
 			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
 
@@ -1211,44 +1211,43 @@ namespace Spices {
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
+		m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
+			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
+		});
+		m_CmdThreadPool->Wait();
+
 		/**
 		* @brief Iter use view, not group.
 		* @attention Group result nullptr here.
 		*/
-		std::set<VkCommandBuffer> executedCmdBuffers;
-		std::vector<std::future<VkCommandBuffer>> futureExecutedCmdBuffers;
+		//auto& view = frameInfo.m_World->GetRegistry().view<T>();
+		//for (auto& e : view)
+		//{
+		//	m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
 
-		auto& view = frameInfo.m_World->GetRegistry().view<T>();
-		for (auto& e : view)
-		{
-			futureExecutedCmdBuffers.push_back(m_CmdThreadPool->SubmitTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
+		//		auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
 
-				auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
+		//		/**
+		//		* @brief This function defined how we use these components.
+		//		* @param[in] e entityid.
+		//		* @param[in] transComp TransformComponent.
+		//		* @param[in] tComp TComponent.
+		//		*/
+		//		func(cmdBuffer, static_cast<int>(e), transComp, tComp);
 
-				VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
+		//		VK_CHECK(vkEndCommandBuffer(cmdBuffer));
 
-				/**
-				* @brief This function defined how we use these components.
-				* @param[in] e entityid.
-				* @param[in] transComp TransformComponent.
-				* @param[in] tComp TComponent.
-				*/
-				func(cmdBuffer, static_cast<int>(e), transComp, tComp);
+		//		return cmdBuffer;
+		//	});
+		//}
+		//m_CmdThreadPool->Wait();
 
-				VK_CHECK(vkEndCommandBuffer(cmdBuffer));
-
-				return cmdBuffer;
-			}));
-		}
-
+		m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
+			VK_CHECK(vkEndCommandBuffer(cmdBuffer));
+		});
 		m_CmdThreadPool->Wait();
-		for (int i = 0; i < futureExecutedCmdBuffers.size(); i++)
-		{
-			executedCmdBuffers.insert(futureExecutedCmdBuffers[i].get());
-		}
 
-		std::vector<VkCommandBuffer> buffers(executedCmdBuffers.begin(), executedCmdBuffers.end());
-		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], buffers.size(), buffers.data());
+		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_CmdThreadPool->GetThreadsCount(), m_CmdThreadPool->GetCommandBuffers(frameInfo.m_FrameIndex).data());
 	}
 
 	template<typename T, typename F>

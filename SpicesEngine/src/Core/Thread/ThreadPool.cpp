@@ -9,21 +9,6 @@
 
 namespace Spices {
 
-	uint32_t Thread::m_GeneraterId = 0;
-
-	Thread::Thread(ThreadFunc func)
-		: m_Func(func)
-		, m_ThreadId(m_GeneraterId++)
-	{}
-
-	void Thread::Start()
-	{
-		SPICES_PROFILE_ZONE;
-
-		std::thread t(m_Func, m_ThreadId);
-		t.detach();
-	}
-
 	void ThreadPool::Start(int initThreadSize)
 	{
 		SPICES_PROFILE_ZONE;
@@ -31,17 +16,18 @@ namespace Spices {
 		m_IsPoolRunning = true;
 		m_InitThreadSize = initThreadSize;
 		m_IdleThreadSize = initThreadSize;
+		m_NThreads = initThreadSize;
 
-		for (int i = 0; i < m_InitThreadSize; i++)
+		for (uint32_t i = 0; i < m_InitThreadSize; i++)
 		{
-			auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1));
+			auto ptr = std::make_unique<Thread<>>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1), i);
 			int threadId = ptr->GetId();
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
 	}
 
-	void ThreadPool::ThreadFunc(uint32_t threadid)
+	void ThreadPool::ThreadFunc(Thread<>* thread)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -53,15 +39,15 @@ namespace Spices {
 			{
 				std::unique_lock<std::mutex> lock(m_Mutex);
 
-				while (m_TaskQueue.size() == 0)
+				while (m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0)
 				{
 					/**
 					* @brief Exit.
 					*/
 					if (!m_IsPoolRunning)
 					{
-						m_Threads.erase(threadid);
-						m_IdleThreadSize--;
+						m_Threads.erase(thread->GetId());
+						--m_IdleThreadSize;
 						m_ExitCond.notify_all();
 						return;
 					}
@@ -78,8 +64,9 @@ namespace Spices {
 							*/
 							if (dur.count() >= m_ThreadIdleTimeOut && m_Threads.size() > m_InitThreadSize)
 							{
-								m_Threads.erase(threadid);
-								m_IdleThreadSize--;
+								m_Threads.erase(thread->GetId());
+								--m_IdleThreadSize;
+								--m_NThreads;
 
 								return;
 							}
@@ -92,14 +79,27 @@ namespace Spices {
 				}
 
 				/**
-				* @brief Get a task from task queue.
+				* @brief Rink First, Thread Tasks.
 				*/
-				task = m_TaskQueue.front();
-				m_TaskQueue.pop();
+				task = thread->RequireTask();
+
+				/**
+				* @brief Rink Second, Pool Tasks.
+				*/
+				if (!task)
+				{
+					task = m_TaskQueue.front();
+					m_TaskQueue.pop();
+					thread->SetThreadInTask(true);
+					--m_Tasks;
+				}
 
 				--m_IdleThreadSize;
-				m_NotFull.notify_all();
-				if (m_TaskQueue.size() > 0) m_NotEmpty.notify_all();
+			}
+
+			if (m_Tasks > 0)
+			{
+				m_NotEmpty.notify_all();
 			}
 
 			/**
@@ -108,10 +108,12 @@ namespace Spices {
 			if (task != nullptr)
 			{
 				task();
+				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;
 			}
 			else
 			{
+				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;
 			}
 			
