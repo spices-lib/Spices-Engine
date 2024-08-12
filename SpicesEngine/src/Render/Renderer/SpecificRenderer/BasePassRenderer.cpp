@@ -166,6 +166,6 @@ namespace Spices {
 			});
 		});
 
-		builder.EndRenderPassAsync();
+		builder.EndRenderPass();
 	}
 }

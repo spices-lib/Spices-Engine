@@ -77,6 +77,19 @@ namespace Spices {
 		}
 	}
 
+	VulkanCmdThreadPool::~VulkanCmdThreadPool()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Destroy the Vulkan CommandPool Object.
+		*/
+		for (int i = 0; i < m_NThreads.load(); i++)
+		{
+			vkDestroyCommandPool(m_VulkanState.m_Device, m_CmdPools[i], nullptr);
+		}
+	}
+
 	void VulkanCmdThreadPool::Start(int initThreadSize)
 	{
 		SPICES_PROFILE_ZONE;
@@ -104,7 +117,6 @@ namespace Spices {
 		for (;;)
 		{
 			Task task;
-			VkCommandBuffer& cmdBuffer = m_CmdBuffers[FrameInfo::Get().m_FrameIndex][thread->GetId()];
 			{
 				std::unique_lock<std::mutex> lock(m_Mutex);
 
@@ -175,6 +187,7 @@ namespace Spices {
 			*/
 			if (task != nullptr)
 			{
+				VkCommandBuffer& cmdBuffer = m_CmdBuffers[FrameInfo::Get().m_FrameIndex][thread->GetId()];
 				task(cmdBuffer);
 				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;

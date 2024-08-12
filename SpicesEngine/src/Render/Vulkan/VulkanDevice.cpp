@@ -295,6 +295,8 @@ namespace Spices {
 			std::stringstream ss;
 			ss << "SubGroup : subgroupSize = " << subGroupProperties.subgroupSize;
 			SPICES_CORE_INFO(ss.str());
+			assert(subGroupProperties.supportedStages & VK_SHADER_STAGE_TASK_BIT_EXT);
+			assert(subGroupProperties.supportedStages & VK_SHADER_STAGE_MESH_BIT_EXT);
 		}
 
 		return true;

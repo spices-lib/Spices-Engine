@@ -822,13 +822,12 @@ namespace Spices {
 			*/
 			void EndRenderPass() const;
 
-			/**
-			* @brief End this Renderer's RenderPass Async.
-			*/
-			void EndRenderPassAsync() const;
-
 		public:
 
+			/**
+			* @brief Get current subpass index in renderpass.
+			* @return Returns index of subpass.
+			*/
 			uint32_t GetSubpassIndex() const { return m_SubpassIndex; }
 
 		protected:
@@ -1192,7 +1191,7 @@ namespace Spices {
 
 		m_CmdThreadPool->Wait();
 		VkCommandBuffer buffer = cmdBuffer.get();
-		//vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
+		vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
 	}
 
 	template<typename T, typename F>
@@ -1211,41 +1210,51 @@ namespace Spices {
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
-		m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
-			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
-		});
-		m_CmdThreadPool->Wait();
+		/**
+		* @brief Begin all Command Buffer.
+		*/
+		{
+			m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
+				VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
+			});
+			m_CmdThreadPool->Wait();
+		}
 
 		/**
 		* @brief Iter use view, not group.
 		* @attention Group result nullptr here.
 		*/
-		//auto& view = frameInfo.m_World->GetRegistry().view<T>();
-		//for (auto& e : view)
-		//{
-		//	m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
+		{
+			auto& view = frameInfo.m_World->GetRegistry().view<T>();
+			for (auto& e : view)
+			{
+				m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
 
-		//		auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
+					auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
 
-		//		/**
-		//		* @brief This function defined how we use these components.
-		//		* @param[in] e entityid.
-		//		* @param[in] transComp TransformComponent.
-		//		* @param[in] tComp TComponent.
-		//		*/
-		//		func(cmdBuffer, static_cast<int>(e), transComp, tComp);
+					/**
+					* @brief This function defined how we use these components.
+					* @param[in] e entityid.
+					* @param[in] transComp TransformComponent.
+					* @param[in] tComp TComponent.
+					*/
+					func(cmdBuffer, static_cast<int>(e), transComp, tComp);
 
-		//		VK_CHECK(vkEndCommandBuffer(cmdBuffer));
+					return cmdBuffer;
+				});
+			}
+			m_CmdThreadPool->Wait();
+		}
 
-		//		return cmdBuffer;
-		//	});
-		//}
-		//m_CmdThreadPool->Wait();
-
-		m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
-			VK_CHECK(vkEndCommandBuffer(cmdBuffer));
-		});
-		m_CmdThreadPool->Wait();
+		/**
+		* @brief End all Command Buffer.
+		*/
+		{
+			m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
+				VK_CHECK(vkEndCommandBuffer(cmdBuffer));
+			});
+			m_CmdThreadPool->Wait();
+		}
 
 		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_CmdThreadPool->GetThreadsCount(), m_CmdThreadPool->GetCommandBuffers(frameInfo.m_FrameIndex).data());
 	}
@@ -1426,7 +1435,7 @@ namespace Spices {
 				sizeof(T),
 				data
 			);
-			});
+		});
 	}
 
 	inline void Renderer::RenderBehaveBuilder::UpdateUniformBuffer(uint32_t set, uint32_t binding, void* data) const

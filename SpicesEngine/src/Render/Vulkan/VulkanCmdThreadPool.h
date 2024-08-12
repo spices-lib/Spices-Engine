@@ -27,7 +27,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanCmdThreadPool() override = default;
+		virtual ~VulkanCmdThreadPool() override;
 
 		/******************************************Must Implementation************************************************/
 

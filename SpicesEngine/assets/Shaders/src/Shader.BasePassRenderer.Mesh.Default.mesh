@@ -17,7 +17,10 @@
 
 /*************************************Mesh Input******************************************/
 
-layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+/**
+* @brief 8 * 8 * 2 = 128(Local Work Groups Count) ~ 126(Nvidia Recommended Meshlet Primitives) ~ 124(MeshOptimizer Required Meshlet Primitives)
+*/
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 2) in;
 
 /**
 * @brief task padload receive from task shader.
@@ -77,29 +80,36 @@ void main()
     Vertices vertices   = Vertices(push.desc.vertexAddress);
     Indices indices     = Indices(push.desc.indexAddress);
     Meshlet meshlet     = Meshlets(push.desc.meshletAddress).i[id];
-    
+
+    if(gl_LocalInvocationIndex >= meshlet.nPrimitives) return;
+
     mat4 mvp = view.projection * view.view * push.model;
     mat3 m3model = mat3(transpose(inverse(push.model)));
+    
+    ivec3 index = indices.i[meshlet.primitiveOffset + gl_LocalInvocationIndex];
+
+    Vertex vts[3] = { vertices.v[index.x], vertices.v[index.y], vertices.v[index.z] };
+    
+    index -= ivec3(meshlet.vertexOffset);
+    uint arrayIndices[3] = { index.x, index.y, index.z };
+    
+    gl_PrimitiveTriangleIndicesEXT[gl_LocalInvocationIndex] =  uvec3(index.x, index.y, index.z);
+    
+    gl_MeshVerticesEXT[index.y].gl_Position = mvp * vec4(vts[1].position, 1.0f);
+    gl_MeshVerticesEXT[index.z].gl_Position = mvp * vec4(vts[2].position, 1.0f);
 
     [[unroll]]
-    for(uint i = 0; i < meshlet.nVertices; i++)
+    for(int i = 0; i < 3; i++)
     {
-        Vertex vt = vertices.v[meshlet.vertexOffset + i];
+        Vertex vt = vts[i];
 
-        gl_MeshVerticesEXT[i].gl_Position = mvp * vec4(vt.position, 1.0f);
-
-        pixel[i].position  = vec3(push.model * vec4(vt.position, 1.0f));
-        pixel[i].normal    = normalize(m3model * vt.normal);
-        pixel[i].color     = vt.color;
-        pixel[i].texCoord  = vt.texCoord;
-        meshletId[i]       = id;
-    }
-
-	[[unroll]]
-    for(uint i = 0; i < meshlet.nPrimitives; i++)
-    {
-        ivec3 index = indices.i[meshlet.primitiveOffset + i] - ivec3(meshlet.vertexOffset);
-        gl_PrimitiveTriangleIndicesEXT[i] =  uvec3(index.x, index.y, index.z);
+        gl_MeshVerticesEXT[arrayIndices[i]].gl_Position = mvp * vec4(vt.position, 1.0f);
+        
+        pixel[arrayIndices[i]].position  = vec3(push.model * vec4(vt.position, 1.0f));
+        pixel[arrayIndices[i]].normal    = normalize(m3model * vt.normal);
+        pixel[arrayIndices[i]].color     = vt.color;
+        pixel[arrayIndices[i]].texCoord  = vt.texCoord;
+        meshletId[arrayIndices[i]]       = id;
     }
     
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);

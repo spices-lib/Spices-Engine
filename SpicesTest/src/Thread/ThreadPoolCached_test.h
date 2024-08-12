@@ -24,7 +24,7 @@ namespace SpicesTest {
 		*/
 		void SetUp() override {
 			m_ThreadPool.SetMode(Spices::PoolMode::MODE_CACHED);
-			m_ThreadPool.SetThreadIdleTimeOut(5);
+			m_ThreadPool.SetThreadIdleTimeOut(10);
 			m_ThreadPool.Start(nThreads);
 		}
 
@@ -50,7 +50,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -73,7 +73,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		future.get(); /* @brief Wait for sub thread finish. */
@@ -83,7 +83,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -110,7 +110,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		/* @brief Wait for sub thread finish. */
@@ -124,7 +124,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -151,7 +151,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,2 * nThreads                 );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		/* @brief Wait for part tasks finish. */
@@ -165,18 +165,18 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,2 * nThreads                 );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		/* @brief Wait for threads recovery finish. */
-		func(15);
+		func(25);
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetIdleThreadSize()   ,nThreads                     );
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -211,7 +211,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,Spices::THREAD_MAX_THRESHHOLD);
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		/* @brief Wait for all threads recovery. */
@@ -229,7 +229,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 
@@ -252,7 +252,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		for (auto& pair : m_ThreadPool.GetThreads())
@@ -280,7 +280,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		for (auto& pair : m_ThreadPool.GetThreads())
@@ -309,7 +309,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		for (auto& pair : m_ThreadPool.GetThreads())
@@ -340,7 +340,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		for (auto& pair : m_ThreadPool.GetThreads())
@@ -380,7 +380,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,Spices::THREAD_MAX_THRESHHOLD);
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
 		for (auto& pair : m_ThreadPool.GetThreads())
@@ -399,7 +399,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetPoolMode()         ,Spices::PoolMode::MODE_CACHED);
 		EXPECT_EQ(m_ThreadPool.GetTasks()            ,0                            );
 		EXPECT_EQ(m_ThreadPool.GetThreadsCount()     ,nThreads                     );
-		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),5                            );
+		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),10                           );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 	}
 }

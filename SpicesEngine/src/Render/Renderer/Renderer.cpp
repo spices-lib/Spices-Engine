@@ -537,6 +537,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
+		++m_SubpassIndex;
 
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
@@ -551,10 +552,8 @@ namespace Spices {
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
 		++m_SubpassIndex;
 
-		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
-			VulkanDebugUtils::EndLabel(cmdBuffer);
-			VulkanDebugUtils::BeginLabel(cmdBuffer, m_HandledSubPass->GetName());
-		});*/
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
 
 		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 	}
@@ -591,8 +590,8 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
-		//VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
-		//VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
 
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -630,15 +629,13 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
+		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
+
 		/**
 		* @brief This command not allow async.
 		*/
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
-
-		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
-			VulkanDebugUtils::BeginLabel(cmdBuffer, m_Renderer->m_Pass->GetName());
-			VulkanDebugUtils::BeginLabel(cmdBuffer, m_HandledSubPass->GetName());
-		});*/
 	}
 
 	void Renderer::RenderBehaveBuilder::EndRenderPass() const
@@ -647,23 +644,8 @@ namespace Spices {
 
 		vkCmdEndRenderPass(m_CommandBuffer);
 
-		//VulkanDebugUtils::EndLabel(m_CommandBuffer);
-		//VulkanDebugUtils::EndLabel(m_CommandBuffer);
-	}
-
-	void Renderer::RenderBehaveBuilder::EndRenderPassAsync() const
-	{
-		SPICES_PROFILE_ZONE;
-
-		/*m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
-			VulkanDebugUtils::EndLabel(cmdBuffer);
-			VulkanDebugUtils::EndLabel(cmdBuffer);
-		});*/
-
-		/**
-		* @brief This command not allow async.
-		*/
-		vkCmdEndRenderPass(m_CommandBuffer);
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 	
 	PFN_vkCmdTraceRaysKHR Renderer::RayTracingRenderBehaveBuilder::vkCmdTraceRaysKHR;

@@ -460,9 +460,12 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		{
+			std::unique_lock<std::mutex> lock(m_Mutex);
 
-		m_Threads[threadId]->ReceiveThreadTask(func);
+			m_Threads[threadId]->ReceiveThreadTask(func);
+		}
+
 		m_NotEmpty.notify_all();
 	}
 
@@ -471,12 +474,15 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
-
-		for (auto& pair : m_Threads)
 		{
-			pair.second->ReceiveThreadTask(func);
+			std::unique_lock<std::mutex> lock(m_Mutex);
+
+			for (auto& pair : m_Threads)
+			{
+				pair.second->ReceiveThreadTask(func);
+			}
 		}
+
 		m_NotEmpty.notify_all();
 	}
 }
