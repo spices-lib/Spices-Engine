@@ -14,8 +14,20 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		RendererPassBuilder{ "BassPass", this }
-		.AddSubPass("SkyBox")
+		.AddSubPass("Mesh")
 		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		})
+		.AddColorAttachment("Normal", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		})
+		.AddColorAttachment("Roughness", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		})
+		.AddColorAttachment("Metallic", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
@@ -30,24 +42,12 @@ namespace Spices {
 			description.format                = VK_FORMAT_R32_SFLOAT;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {
-			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED; /* @attention It seams that layout transform is not work? */
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;   /* @attention It seams that layout transform is not work? */
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.EndSubPass()
-		.AddSubPass("Mesh")
+		.AddSubPass("SkyBox")
 		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
-		.AddColorAttachment("Normal", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		})
-		.AddColorAttachment("Roughness", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		})
-		.AddColorAttachment("Metallic", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
-			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format                = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
@@ -63,11 +63,11 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		DescriptorSetBuilder{ "SkyBox", this }
+		DescriptorSetBuilder{ "Mesh", this }
 		.AddPushConstant<SpicesShader::PushConstantMesh>()
 		.Build();
 
-		DescriptorSetBuilder{ "Mesh", this }
+		DescriptorSetBuilder{ "SkyBox", this }
 		.AddPushConstant<SpicesShader::PushConstantMesh>()
 		.Build();
 	}
@@ -106,42 +106,15 @@ namespace Spices {
 		
 		RenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 		
-		builder.BeginRenderPass();
+		builder.BeginRenderPassAsync();
 
 		builder.SetViewPort();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+		
+		//builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
-
-		IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
-			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
-
-			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
-
-				builder.BindPipeline(meshPack->GetMaterial()->GetName());
-
-				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model                          = modelMatrix;
-					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
-					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
-					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-					push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
-					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
-					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
-					push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
-					push.desc.entityID                  = entityId;
-				});
-			});
-
-			return true;
-		});
-
-		builder.BeginNextSubPassAsync("Mesh");
-
-		//builder.BindDescriptorSetAsync(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
-
- 		IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+		IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 			builder.SetViewPort(cmdBuffer);
@@ -166,6 +139,33 @@ namespace Spices {
 					push.desc.entityID                  = entityId;
 				}, cmdBuffer);
 			});
+		});
+
+		builder.BeginNextSubPass("SkyBox");
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
+
+		IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
+			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
+
+			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
+
+				builder.BindPipeline(meshPack->GetMaterial()->GetName());
+
+				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
+					push.model                          = modelMatrix;
+					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
+					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
+					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+					push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
+					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
+					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
+					push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
+					push.desc.entityID                  = entityId;
+				});
+			});
+
+			return true;
 		});
 
 		builder.EndRenderPass();

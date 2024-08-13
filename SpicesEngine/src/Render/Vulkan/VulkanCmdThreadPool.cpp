@@ -10,7 +10,7 @@
 
 namespace Spices {
 
-	const int nCmdThreads = 24;
+	const int nCmdThreads = glm::min(4, static_cast<int>(0.5 * std::thread::hardware_concurrency()));
 
 	VulkanCmdThreadPool::VulkanCmdThreadPool(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)

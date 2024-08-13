@@ -9,7 +9,7 @@
 #version 460
 #extension GL_EXT_mesh_shader                        : require  /* @brief Declear this as task shader. */
 #extension GL_GOOGLE_include_directive               : enable   /* @brief Enable include feature.      */
-#extension GL_KHR_shader_subgroup_arithmetic         : enable   /* @brief Enable subgroup feature.     */
+#extension GL_KHR_shader_subgroup_ballot             : enable   /* @brief Enable subgroup feature.     */
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
@@ -77,14 +77,17 @@ void main()
     */
     bool cull = meshletIndex >= push.desc.meshletsCount;
 
-    uint passedMeshletIndex = subgroupExclusiveAdd(cull ? 0 : 1);
+    /**
+    * @brief subgroup operation.
+    */
+    uvec4 ballot = subgroupBallot(!cull);
+    uint passedMeshletIndex = subgroupBallotExclusiveBitCount(ballot);
+    uint passedMeshletCount = subgroupBallotBitCount(ballot);
    
     if(!cull)
     {
         task.meshletIndex[passedMeshletIndex] = meshletIndex;
     }
-
-    uint passedMeshletCount = subgroupMax(passedMeshletIndex);
     
     EmitMeshTasksEXT(passedMeshletCount, 1, 1);
 }
