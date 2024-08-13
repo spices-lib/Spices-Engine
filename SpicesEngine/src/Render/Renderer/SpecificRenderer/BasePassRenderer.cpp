@@ -108,10 +108,6 @@ namespace Spices {
 		
 		builder.BeginRenderPassAsync();
 
-		builder.SetViewPort();
-
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
-		
 		//builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
 		IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
@@ -142,6 +138,10 @@ namespace Spices {
 		});
 
 		builder.BeginNextSubPass("SkyBox");
+
+		builder.SetViewPort();
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
 
