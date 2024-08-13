@@ -9,6 +9,15 @@
 
 namespace Spices {
 
+	std::shared_ptr<ThreadPool> ThreadPool::m_ThreadPool = std::make_shared<ThreadPool>();
+
+	ThreadPool::~ThreadPool()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_ThreadPool = nullptr;
+	}
+
 	void ThreadPool::Start(int initThreadSize)
 	{
 		SPICES_PROFILE_ZONE;

@@ -129,6 +129,7 @@ namespace Spices {
 					push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
 					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
 					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
+					push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
 					push.desc.entityID                  = entityId;
 				});
 			});
@@ -159,8 +160,9 @@ namespace Spices {
 					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
 					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
 					push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
-					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
-					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
+					push.desc.verticesCount             = static_cast<uint32_t>(meshPack->GetVertices().size());
+					push.desc.indicesCount              = static_cast<uint32_t>(meshPack->GetIndices().size()) / 3;
+					push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
 					push.desc.entityID                  = entityId;
 				}, cmdBuffer);
 			});

@@ -30,12 +30,14 @@ struct MaterialParameter
 /************************************Fragment Input***************************************/
 
 /**
-* @brief Fragment Shader Input From Vertex Shader.
+* @brief Fragment Shader Input From Mesh Shader.
 */
 layout(location = 0) in struct FragInput {
     vec3 localPosition;
     vec3 worldPosition;
 } fragInput;
+
+layout(location = 2) in flat uint meshletId;           /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 

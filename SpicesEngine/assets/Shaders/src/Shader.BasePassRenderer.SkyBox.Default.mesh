@@ -17,12 +17,19 @@
 
 /*************************************Mesh Input******************************************/
 
-layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+/**
+* @brief 8 * 8 * 2 = 128(Local Work Groups Count) ~ 126(Nvidia Recommended Meshlet Primitives) ~ 124(MeshOptimizer Required Meshlet Primitives)
+* But subgroup size only support 32 in nvidia / 64 in amd.
+* Thereforce use iter to reach all primitives in meshlet.
+*/
+layout(local_size_x = 4, local_size_y = 4, local_size_z = 2) in;
 
 /**
 * @brief task padload receive from task shader.
 */
-taskPayloadSharedEXT uint workgroupId;    /* @brief mesh shader hanled meshlet id(as workgroupid). */
+taskPayloadSharedEXT struct Task {
+    uint meshletIndex[SUBGROUP_SIZE];    /* @brief mesh shader hanled meshlet id. */
+} task;    
 
 /*****************************************************************************************/
 
@@ -34,17 +41,14 @@ taskPayloadSharedEXT uint workgroupId;    /* @brief mesh shader hanled meshlet i
 layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPRIMITIVES) out;
 
 /**
-* @brief Output Vertex structure data to fragment shader.
+* @brief Output data to fragment shader.
 */
 layout(location = 0) out struct MeshOut {
     vec3 localPosition;
     vec3 worldPosition;
 } meshOut[];
 
-/**
-* @brief Output meshletid to fragment shader.
-*/
-layout(location = 4) out flat uint meshletId[];
+layout(location = 2) out flat uint meshletId[];       /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 
@@ -79,32 +83,44 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets {
 
 void main()
 {
-    uint id = workgroupId;
+    uint id = task.meshletIndex[gl_WorkGroupID.x];
 
     Vertices vertices   = Vertices(push.desc.vertexAddress);
     Indices indices     = Indices(push.desc.indexAddress);
     Meshlet meshlet     = Meshlets(push.desc.meshletAddress).i[id];
-    
+
     mat4 mvp = view.projection * view.view * push.model;
     mat3 m3model = mat3(transpose(inverse(push.model)));
 
+    const uint iter = meshlet.nPrimitives / SUBGROUP_SIZE + 1;
+    
     [[unroll]]
-    for(uint i = 0; i < meshlet.nVertices; i++)
+    for(uint i = 0; i < iter; i++)
     {
-        Vertex vt = vertices.v[meshlet.vertexOffset + i];
-
-        gl_MeshVerticesEXT[i].gl_Position = mvp * vec4(vt.position, 1.0f);
-
-        meshOut[i].localPosition = vt.position;
-        meshOut[i].worldPosition = vec3(push.model * vec4(vt.position, 1.0f));
-        meshletId[i]             = id;
-    }
-
-	[[unroll]]
-    for(uint i = 0; i < meshlet.nPrimitives; i++)
-    {
-        ivec3 index = indices.i[meshlet.primitiveOffset + i] - ivec3(meshlet.vertexOffset);
-        gl_PrimitiveTriangleIndicesEXT[i] =  uvec3(index.x, index.y, index.z);
+        const uint localId = gl_LocalInvocationIndex + i * SUBGROUP_SIZE;
+        
+        if(localId >= meshlet.nPrimitives) break;
+    
+        ivec3 index = indices.i[meshlet.primitiveOffset + localId];
+    
+        Vertex vts[3] = { vertices.v[index.x], vertices.v[index.y], vertices.v[index.z] };
+        
+        index -= ivec3(meshlet.vertexOffset);
+        uint arrayIndices[3] = { index.x, index.y, index.z };
+        
+        gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(index.x, index.y, index.z);
+    
+        [[unroll]]
+        for(int j = 0; j < 3; j++)
+        {
+            Vertex vt = vts[j];
+    
+            gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
+            
+            meshOut[arrayIndices[j]].localPosition = vt.position;
+            meshOut[arrayIndices[j]].worldPosition = vec3(push.model * vec4(vt.position, 1.0f));
+            meshletId[arrayIndices[j]]             = id;
+        }
     }
     
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);

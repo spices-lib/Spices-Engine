@@ -16,6 +16,7 @@
 #include "Systems/NativeScriptSystem.h"
 #include "Systems/ResourceSystem.h"
 #include "Systems/SlateSystem.h"
+#include "Core/Thread/ThreadPool.h"
 
 namespace Spices {
 
@@ -27,6 +28,12 @@ namespace Spices {
 		* @brief Init Log Class.
 		*/
 		Log::Init();
+
+		/**
+		* @brief Init General ThreadPool.
+		*/
+		ThreadPool::Get()->SetMode(PoolMode::MODE_FIXED);
+		ThreadPool::Get()->Start(std::thread::hardware_concurrency());
 
 		/**
 		* @brief Init all Systems.

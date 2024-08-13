@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "SlateRegister.h"
+#include "Core/Thread/ThreadPool.h"
 
 namespace Spices {
 

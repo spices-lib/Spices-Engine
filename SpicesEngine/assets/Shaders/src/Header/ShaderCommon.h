@@ -42,6 +42,11 @@ using uint = unsigned int;
 #define MESHLET_NVERTICES              64                        /* @brief Maximum number of Meshlet's nVertices.                */
 #define MESHLET_NPRIMITIVES            124                       /* @brief Maximum number of Meshlet's nPrimitives.              */
 
+#define NV_SUBGROUP_SIZE               32                        /* @brief Nvidia Hardware only support 32 subgroup size.        */
+#define AMD_SUBGROUP_SIZE              64                        /* @brief AMD    Hardware only support 64 subgroup size.        */
+
+#define SUBGROUP_SIZE                  NV_SUBGROUP_SIZE          /* @brief Use Nvidia Hardware.                                  */
+
 /**
 * @brief  Macros for Calauclate Constant.
 */
@@ -174,6 +179,7 @@ struct MeshDesc
 	uint64_t meshletAddress;                  /* Address of the Meshlet Buffer.                 */
 	uint     verticesCount;                   /* Vertices Count.                                */
 	uint     indicesCount;                    /* Indices Count.                                 */
+	uint     meshletsCount;                   /* Meshlets Count.                                */
 	uint     entityID;                        /* @brief EntityId, cast from entt::entity.       */
 };
 

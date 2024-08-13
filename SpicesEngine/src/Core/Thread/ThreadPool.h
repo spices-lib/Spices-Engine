@@ -21,7 +21,13 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ThreadPool() override {};
+		virtual ~ThreadPool() override;
+
+		/**
+		* @brief Get ThreadPool Single Instance.
+		* @return Returns ThreadPool Single Instance.
+		*/
+		static std::shared_ptr<ThreadPool>& Get() { return m_ThreadPool; }
 
 		/******************************************Must Implementation************************************************/
 
@@ -47,6 +53,13 @@ namespace Spices {
 		void ThreadPool::ThreadFunc(Thread<>* thread);
 
 		/*************************************************************************************************************/
+
+	private:
+
+		/**
+		* @brief ThreadPool Single Instance.
+		*/
+		static std::shared_ptr<ThreadPool> m_ThreadPool;
 	};
 
 	template<typename Func, typename ...Args>

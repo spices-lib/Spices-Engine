@@ -34,7 +34,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		static PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(vkGetInstanceProcAddr(VulkanRenderBackend::GetState().m_Instance, "vkCmdDrawMeshTasksEXT"));
-		vkCmdDrawMeshTasksEXT(commandBuffer, static_cast<uint32_t>(m_Meshlets.size()), 1, 1);
+		vkCmdDrawMeshTasksEXT(commandBuffer, m_NTasks, 1, 1);
 	}
 
 	void MeshPack::SetMaterial(const std::string& materialPath)
@@ -227,7 +227,8 @@ namespace Spices {
 
 		size_t nMeshlet = meshopt_buildMeshlets(meshlets.data(), meshlet_vertices.data(), meshlet_triangles.data(), m_Indices.data(),
 			m_Indices.size(), &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, coneWeight);
-
+		m_NTasks = nMeshlet / SUBGROUP_SIZE + 1;
+		
 		const meshopt_Meshlet& last = meshlets[nMeshlet - 1];
 		meshlets.resize(nMeshlet);
 		meshlet_vertices.resize(last.vertex_offset + last.vertex_count);

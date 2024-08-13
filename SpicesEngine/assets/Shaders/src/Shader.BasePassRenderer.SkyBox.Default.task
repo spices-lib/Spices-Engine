@@ -7,23 +7,33 @@
 /************************************Pre Compile*******************************************/
 
 #version 460
-#extension GL_EXT_mesh_shader : require
-#extension GL_GOOGLE_include_directive : enable
+#extension GL_EXT_mesh_shader                        : require  /* @brief Declear this as task shader. */
+#extension GL_GOOGLE_include_directive               : enable   /* @brief Enable include feature.      */
+#extension GL_KHR_shader_subgroup_arithmetic         : enable   /* @brief Enable subgroup feature.     */
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderFunctionLibrary.glsl"
 
 /*****************************************************************************************/
 
 /*************************************Task Input******************************************/
 
-layout (local_size_x=1, local_size_y=1, local_size_z=1) in;
+/**
+* Subgroup size only support 32 in nvidia / 64 in amd.
+*/
+layout (local_size_x = 4, local_size_y = 4, local_size_z = 2 ) in;
 
 /*****************************************************************************************/
 
 /*************************************Task Output*****************************************/
 
-taskPayloadSharedEXT uint workgroupId;
+/**
+* @brief task padload send to mesh shader.
+*/
+taskPayloadSharedEXT struct Task {
+    uint meshletIndex[SUBGROUP_SIZE];        /* @brief mesh shader hanled meshlet id. */
+} task;
 
 /*****************************************************************************************/
 
@@ -33,7 +43,7 @@ taskPayloadSharedEXT uint workgroupId;
 * @brief push constant.
 */
 layout(push_constant) uniform Push {
-	PushConstantMesh push;   
+	PushConstantMesh push;                 /* @see PushConstantMesh. */
 };
 
 /*****************************************************************************************/
@@ -46,10 +56,46 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets {
 
 /*****************************************************************************************/
 
+/******************************************Functions**************************************/
+
+/**
+* @brief Get Shader Global linear invocate Index.
+* @return Returns the Shader Global linear invocate Index.
+*/
+uint glGlobalInvocationIndex();
+
+/*****************************************************************************************/
+
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
-    workgroupId = gl_WorkGroupID.x;
-	EmitMeshTasksEXT(gl_WorkGroupSize.x, 1, 1);
+    uint meshletIndex = glGlobalInvocationIndex();
+
+    /**
+    * @brief cull if reach meshlets count.
+    */
+    bool cull = meshletIndex >= push.desc.meshletsCount;
+
+    uint passedMeshletIndex = subgroupExclusiveAdd(cull ? 0 : 1);
+   
+    if(!cull)
+    {
+        task.meshletIndex[passedMeshletIndex] = meshletIndex;
+    }
+
+    uint passedMeshletCount = subgroupMax(passedMeshletIndex);
+    
+    EmitMeshTasksEXT(passedMeshletCount, 1, 1);
+}
+
+/*****************************************************************************************/
+
+uint glGlobalInvocationIndex()
+{
+	uint linear = gl_WorkGroupID.z * gl_NumWorkGroups.x * gl_NumWorkGroups.y +
+	gl_WorkGroupID.y * gl_NumWorkGroups.x +
+	gl_WorkGroupID.x;
+
+	return gl_LocalInvocationIndex + linear * (gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z);
 }

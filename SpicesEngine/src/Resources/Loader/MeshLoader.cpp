@@ -220,6 +220,7 @@ namespace Spices {
 
 		FileLibrary::FileLibrary_Close(&f);
 
+		outMeshPack->m_NTasks = outMeshPack->m_Meshlets.size() / SUBGROUP_SIZE + 1;
 		return true;
 	}
 

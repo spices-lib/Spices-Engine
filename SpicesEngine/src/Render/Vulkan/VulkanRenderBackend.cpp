@@ -99,7 +99,7 @@ namespace Spices {
 
 			/* @brief Rasterization Renderer */
 			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    //.Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    .Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
@@ -136,7 +136,7 @@ namespace Spices {
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
 			.Pop("SceneComposeRenderer")
-			//.Pop("ShadowRenderer")
+			.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
 			.Pop("RayTracingComposeRenderer")
 			.Pop("RayTracingRenderer")

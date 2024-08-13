@@ -256,6 +256,11 @@ namespace Spices {
 		* @brief specific meshpack type.
 		*/
 		std::string m_PackType;
+
+		/**
+		* @brief Task Sahder Work Group Size.
+		*/
+		uint32_t m_NTasks;
 		
 		/**
 		* @brief Allow MeshLoader access all data.
