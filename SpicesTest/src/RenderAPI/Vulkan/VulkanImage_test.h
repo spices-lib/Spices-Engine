@@ -106,18 +106,8 @@ namespace SpicesTest {
 		/**
 		* @brief Copy the data from array to staginBuffer. 
 		*/
-		void* data;
-		vkMapMemory(
-			m_RenderBackend->GetState().m_Device, 
-			stagingBuffer.GetMemory(), 
-			0, 
-			sizeof(dataArray),
-			0, 
-			&data
-		);
-		memcpy(data, dataArray.data(), sizeof(dataArray));
-		vkUnmapMemory(m_RenderBackend->GetState().m_Device, stagingBuffer.GetMemory());
-	
+		stagingBuffer.WriteToBuffer(dataArray.data());
+
 		/**
 		* @brief Transform Image Layout from origin to Transfer_dst.
 		*/

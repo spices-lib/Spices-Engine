@@ -61,12 +61,6 @@ namespace Spices {
 		);
 
 		/**
-		* @brief Get VkDeviceMemory.
-		* @return Returns the VkDeviceMemory.
-		*/
-		inline VkDeviceMemory& GetMemory() { return m_BufferMemory; }
-
-		/**
 		* @brief Get VkBuffer Address.
 		* @return Returns the VkDeviceAddress.
 		*/
@@ -77,16 +71,6 @@ namespace Spices {
 		* @return Returns the VkBuffer.
 		*/
 		inline VkBuffer& Get() { return m_Buffer; }
-
-		/**
-		* @brief Map buffer video memory to a local memory.
-		* @param[in] size The buffer size.
-		* @param[in] offset The buffer video memory offset.
-		*/
-		void Map(
-			VkDeviceSize size   = VK_WHOLE_SIZE , 
-			VkDeviceSize offset = 0
-		);
 
 		/**
 		* @brief Get VkDescriptorBufferInfo.
@@ -109,7 +93,19 @@ namespace Spices {
 			const void*        data, 
 			VkDeviceSize size   = VK_WHOLE_SIZE , 
 			VkDeviceSize offset = 0
-		) const;
+		);
+
+		/**
+		* @brief Write data from buffer.
+		* @param[in] data The data copy to.
+		* @param[in] size The buffer size.
+		* @param[in] offset The buffer video memory offset.
+		*/
+		void WriteFromBuffer(
+			void* data,
+			VkDeviceSize size = VK_WHOLE_SIZE,
+			VkDeviceSize offset = 0
+		);
 
 		/**
 		* @brief Flush the buffer's video memory data.
@@ -137,6 +133,16 @@ namespace Spices {
 			VkMemoryPropertyFlags properties
 		);
 
+		/**
+		* @brief Map buffer video memory to a local memory.
+		* @param[in] size The buffer size.
+		* @param[in] offset The buffer video memory offset.
+		*/
+		void Map(
+			VkDeviceSize size   = VK_WHOLE_SIZE , 
+			VkDeviceSize offset = 0
+		);
+
 	private:
 
 		/**
@@ -160,19 +166,30 @@ namespace Spices {
 		VkBuffer m_Buffer {};
 
 		/**
+		* @brief The buffer gpu address.
+		*/
+		VkDeviceAddress m_BufferAddress{};
+
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief VMA allocation.
+		*/
+		VmaAllocation m_Alloc{};
+
+#else
+
+		/**
 		* @brief The buffer video memory.
 		*/
 		VkDeviceMemory m_BufferMemory{};
 
 		/**
-		* @brief The buffer gpu address.
-		*/
-		VkDeviceAddress m_BufferAddress{};
-
-		/**
 		* @brief The mapped buffer local memory.
 		*/
 		void* m_LocalMemory = nullptr;
+
+#endif
 
 		/**
 		* @brief VkDescriptorBufferInfo.

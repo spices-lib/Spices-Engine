@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanDebugUtils.h"
+#include "vk_mem_alloc.h"
 
 #include <vector>
 
@@ -16,6 +17,11 @@ namespace Spices {
 * @brief Max In Flight Frame.
 */
 #define MaxFrameInFlight 3
+
+/**
+* @brief Use VMA for memory allocate.
+*/
+#define VMA_ALLOCATOR
 
 	/**
 	* @brief This struct contains all Vulkan object in used golbal.
@@ -44,6 +50,8 @@ namespace Spices {
 		VkSurfaceKHR                                     m_Surface;                    /* @brief From VulkanInstance.                                            */
 		VkPhysicalDevice                                 m_PhysicalDevice;             /* @brief From VulkanDevice.                                              */
 		VkDevice                                         m_Device;                     /* @brief From VulkanDevice.                                              */
+		VmaAllocator                                     m_VmaAllocator;               /* @brief From VulkanMemoryAllocator.                                     */
+		VmaVulkanFunctions                               m_VkFunc;                     /* @brief From VulkanMemoryAllocator.                                     */
 		VkQueue                                          m_GraphicQueue;               /* @brief From VulkanDevice, Queue for graphic compute.                   */
 		uint32_t                                         m_GraphicQueueFamily;         /* @brief From VulkanDevice, ID for graphic queue.                        */
 		VkQueue                                          m_PresentQueue;               /* @brief From VulkanDevice, Queue for present windows.                   */
@@ -54,15 +62,16 @@ namespace Spices {
 		std::array<VkImage,           MaxFrameInFlight>  m_SwapChainImages;            /* @brief The SwapChain's image, used for present.                        */
 		std::array<VkImageView,       MaxFrameInFlight>  m_SwapChainImageViews;        /* @brief The SwapChain's imageView.                                      */
 		std::array<VkSampler,         MaxFrameInFlight>  m_SwapChainImageSamplers;     /* @brief The SwapChain's imageSampler.                                   */
-		VkCommandPool                                    m_CommandPool;                /* @brief From VulkanCommandBuffer                                        */
-									  
+								  
 		// Used for Graphic Queue	  
+		VkCommandPool                                    m_GraphicCommandPool;         /* @brief From VulkanCommandBuffer                                        */
 		std::array<VkCommandBuffer,   MaxFrameInFlight>  m_GraphicCommandBuffer;       /* @brief From VulkanCommandBuffer, Array num equals to MaxFrameInFlight. */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_GraphicImageSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_GraphicQueueSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 		std::array<VkFence,           MaxFrameInFlight>  m_GraphicFence;               /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 									  
 		// Use for Compute Queue.	  
+		VkCommandPool                                    m_ComputeCommandPool;         /* @brief From VulkanCommandBuffer                                        */
 		std::array<VkCommandBuffer,   MaxFrameInFlight>  m_ComputeCommandBuffer;       /* @brief From VulkanCommandBuffer, Array num equals to MaxFrameInFlight. */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_ComputeImageSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */     /* @note not in use. */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_ComputeQueueSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */

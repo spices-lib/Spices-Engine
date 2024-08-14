@@ -33,11 +33,28 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief Destroy Vkbuffer.
+		*/
+		vmaDestroyBuffer(m_VulkanState.m_VmaAllocator, m_Buffer, m_Alloc);
+
+#else
+
+		if (m_LocalMemory)
+		{
+			vkUnmapMemory(m_VulkanState.m_Device, m_BufferMemory);
+		}
+
 		/**
 		* @brief Destroy Vkbuffer.
 		*/
 		vkDestroyBuffer(m_VulkanState.m_Device, m_Buffer, nullptr);
 		vkFreeMemory(m_VulkanState.m_Device, m_BufferMemory, nullptr);
+
+#endif
+
 	}
 
 	void VulkanBuffer::CopyBuffer(
@@ -51,7 +68,7 @@ namespace Spices {
 		/**
 		* @brief Use CustomCmd.
 		*/
-		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](auto& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](auto& commandBuffer) {
 
 			/**
 			* @brief Instance a VkBufferCopy.
@@ -82,26 +99,53 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+#ifdef VMA_ALLOCATOR
+
+		SPICES_CORE_ERROR("VMA cannot enter this function.");
+
+#else
+
 		/**
 		* @brief Map buffer's video memory to local memory.
 		*/
 		VK_CHECK(vkMapMemory(m_VulkanState.m_Device, m_BufferMemory, offset, size, 0, &m_LocalMemory));
+
+#endif
+
 	}
 
 	VkDescriptorBufferInfo* VulkanBuffer::GetBufferInfo(VkDeviceSize size, VkDeviceSize offset)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_BufferInfo.buffer = m_Buffer;
-		m_BufferInfo.offset = offset;
-		m_BufferInfo.range = size;
+		m_BufferInfo.buffer   = m_Buffer;
+		m_BufferInfo.offset   = offset;
+		m_BufferInfo.range    = size;
 
 		return &m_BufferInfo;
 	}
 
-	void VulkanBuffer::WriteToBuffer(const void* data, VkDeviceSize size, VkDeviceSize offset) const
+	void VulkanBuffer::WriteToBuffer(const void* data, VkDeviceSize size, VkDeviceSize offset)
 	{
 		SPICES_PROFILE_ZONE;
+
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief Maped memory inside.
+		*/
+		if (size == VK_WHOLE_SIZE)
+		{
+			VK_CHECK(vmaCopyMemoryToAllocation(m_VulkanState.m_VmaAllocator, data, m_Alloc, offset, m_DeviceSize))
+		}
+		else
+		{
+			VK_CHECK(vmaCopyMemoryToAllocation(m_VulkanState.m_VmaAllocator, data, m_Alloc, offset, size))
+		}
+
+#else
+
+		if (!m_LocalMemory){ Map(); }
 
 		/**
 		* @brief Use memcpy copy data.
@@ -110,17 +154,69 @@ namespace Spices {
 		{
 			memcpy(m_LocalMemory, data, m_DeviceSize);
 		}
-		else {
+		else 
+		{
 			char* memOffset = static_cast<char*>(m_LocalMemory);
 			memOffset += offset;
 			memcpy(memOffset, data, size);
 		}
+
+#endif
+
+	}
+
+	void VulkanBuffer::WriteFromBuffer(void* data, VkDeviceSize size, VkDeviceSize offset)
+	{
+		SPICES_PROFILE_ZONE;
+
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief Maped memory inside.
+		*/
+		if (size == VK_WHOLE_SIZE)
+		{
+			VK_CHECK(vmaCopyAllocationToMemory(m_VulkanState.m_VmaAllocator, m_Alloc, offset, data, m_DeviceSize))
+		}
+		else
+		{
+			VK_CHECK(vmaCopyAllocationToMemory(m_VulkanState.m_VmaAllocator, m_Alloc, offset, data, size))
+		}
+
+#else
+
+		if (!m_LocalMemory) { Map(); }
+
+		/**
+		* @brief Use memcpy copy data.
+		*/
+		if (size == VK_WHOLE_SIZE)
+		{
+			memcpy(data, m_LocalMemory, m_DeviceSize);
+		}
+		else {
+			char* memOffset = static_cast<char*>(m_LocalMemory);
+			memOffset += offset;
+			memcpy(data, memOffset, size);
+		}
+
+#endif
+
 	}
 
 	void VulkanBuffer::Flush(VkDeviceSize size, VkDeviceSize offset) const
 	{
 		SPICES_PROFILE_ZONE;
 		
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief Flush memory to update buffer's data.
+		*/
+		VK_CHECK(vmaFlushAllocation(m_VulkanState.m_VmaAllocator, m_Alloc, offset, size))
+
+#else
+
 		/**
 		* @brief VkMappedMemoryRange.
 		*/
@@ -133,7 +229,10 @@ namespace Spices {
 		/**
 		* @brief Flush memory to update buffer's data.
 		*/
-		VK_CHECK(vkFlushMappedMemoryRanges(m_VulkanState.m_Device, 1, &mappedRange));
+		VK_CHECK(vkFlushMappedMemoryRanges(m_VulkanState.m_Device, 1, &mappedRange))
+
+#endif
+		
 	}
 
 	void VulkanBuffer::CreateBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
@@ -152,6 +251,42 @@ namespace Spices {
 		bufferInfo.size                                   = size;
 		bufferInfo.usage                                  = usage;
 		bufferInfo.sharingMode                            = VK_SHARING_MODE_EXCLUSIVE;
+
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief Instance a VmaAllocationCreateInfo.
+		*/
+		VmaAllocationCreateInfo                             allocInfo{};
+		allocInfo.usage                                   = VMA_MEMORY_USAGE_AUTO;
+
+		if (properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
+		{
+			allocInfo.flags                              = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+		}
+
+		/**
+		* @brief Create a Buffer.
+		*/
+		VK_CHECK(vmaCreateBuffer(vulkanState.m_VmaAllocator, &bufferInfo, &allocInfo, &m_Buffer, &m_Alloc, nullptr))
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, m_Buffer, vulkanState.m_Device, "Buffer");
+
+		if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+		{
+			/**
+			* @brief Instance a VkBufferDeviceAddressInfo.
+			*/
+			VkBufferDeviceAddressInfo           info {};
+			info.sType                        = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+			info.buffer                       = m_Buffer;
+
+			/**
+			* @brief Get Address and return it.
+			*/
+			m_BufferAddress = vkGetBufferDeviceAddress(m_VulkanState.m_Device, &info);
+		}
+
+#else
 
 		/**
 		* @brief Create a Buffer.
@@ -232,5 +367,8 @@ namespace Spices {
 			*/
 			m_BufferAddress = vkGetBufferDeviceAddress(m_VulkanState.m_Device, &info);
 		}
+
+#endif
+
 	}
 }

@@ -132,10 +132,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			void* data;
-			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory(), 0, bufferSize, 0, &data);
-			memcpy(data, m_Meshlets.data(), (size_t)bufferSize);
-			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
+			stagingBuffer.WriteToBuffer(m_Meshlets.data());
 
 			m_MeshletsBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
@@ -163,10 +160,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			void* data;
-			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory(), 0, bufferSize, 0, &data);
-			memcpy(data, m_Vertices.data(), (size_t)bufferSize);
-			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
+			stagingBuffer.WriteToBuffer(m_Vertices.data());
 
 			m_VertexBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
@@ -195,10 +189,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			void* data;
-			vkMapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory(), 0, bufferSize, 0, &data);
-			memcpy(data, m_Indices.data(), (size_t)bufferSize);
-			vkUnmapMemory(VulkanRenderBackend::GetState().m_Device, stagingBuffer.GetMemory());
+			stagingBuffer.WriteToBuffer(m_Indices.data());
 
 			m_IndicesBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(), 

@@ -16,6 +16,7 @@
 #include "VulkanWindows.h"
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
+#include "VulkanMemoryAllocator.h"
 #include "VulkanCommandBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanSwapChain.h"
@@ -174,6 +175,11 @@ namespace Spices {
 		* @brief VulkanDevice.
 		*/
 		std::shared_ptr<VulkanDevice> m_VulkanDevice;
+
+		/**
+		* @brief VulkanMemoryAllocator.
+		*/
+		std::shared_ptr<VulkanMemoryAllocator> m_VmaAllocator;
 
 		/**
 		* @brief VulkanCommandPool.

@@ -72,8 +72,24 @@ namespace Spices {
 		*/
 		vkDestroySampler(m_VulkanState.m_Device, m_TextureSampler, nullptr);
 		vkDestroyImageView(m_VulkanState.m_Device, m_ImageView, nullptr);
+
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief Destroy VkImage.
+		*/
+		vmaDestroyImage(m_VulkanState.m_VmaAllocator, m_Image, m_Alloc);
+
+#else
+
+		/**
+		* @brief Destroy VkImage.
+		*/
 		vkDestroyImage(m_VulkanState.m_Device, m_Image, nullptr);
 		vkFreeMemory(m_VulkanState.m_Device, m_ImageMemory, nullptr);
+
+#endif
+
 	}
 
 	VkDescriptorImageInfo* VulkanImage::GetImageInfo(VkImageLayout imageLayout)
@@ -227,7 +243,7 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](auto& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](auto& commandBuffer) {
 			vkCmdPipelineBarrier(
 				commandBuffer,
 				sourceStage, 
@@ -271,7 +287,7 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
 			vkCmdCopyBufferToImage(
 				commandBuffer, 
 				buffer, 
@@ -346,7 +362,7 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
 			vkCmdCopyImageToBuffer(commandBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, stagingbuffer.Get(), 1, &region);
 		});
 
@@ -362,14 +378,10 @@ namespace Spices {
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		);
 
-		void* data;
-
 		/**
-		* @brief Use memcpy get date from buffer.
+		* @brief Write data to stagingbuffer.
 		*/
-		vkMapMemory(m_VulkanState.m_Device, stagingbuffer.GetMemory(), 0, channelize, 0, &data);
-		memcpy(out_rgba, data, static_cast<size_t>(channelize));
-		vkUnmapMemory(m_VulkanState.m_Device, stagingbuffer.GetMemory());
+		stagingbuffer.WriteFromBuffer(out_rgba);
 	}
 
 	void VulkanImage::GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight) const
@@ -409,7 +421,7 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
 
 			/**
 			* @brief Iter all mips.
@@ -581,21 +593,37 @@ namespace Spices {
 		/**
 		* @brief Instance a VkImageCreateInfo.
 		*/
-		VkImageCreateInfo imageInfo{};
-		imageInfo.sType          = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageInfo.imageType      = type;
-		imageInfo.extent.width   = width;
-		imageInfo.extent.height  = height;
-		imageInfo.extent.depth   = 1;
-		imageInfo.mipLevels      = mipLevels;
-		imageInfo.arrayLayers    = layers;
-		imageInfo.format         = format;
-		imageInfo.tiling         = tiling;
-		imageInfo.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
-		imageInfo.usage          = usage;
-		imageInfo.sharingMode    = VK_SHARING_MODE_EXCLUSIVE;
-		imageInfo.samples        = numSamples;
-		imageInfo.flags          = flags;
+		VkImageCreateInfo                            imageInfo{};
+		imageInfo.sType                            = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		imageInfo.imageType                        = type;
+		imageInfo.extent.width                     = width;
+		imageInfo.extent.height                    = height;
+		imageInfo.extent.depth                     = 1;
+		imageInfo.mipLevels                        = mipLevels;
+		imageInfo.arrayLayers                      = layers;
+		imageInfo.format                           = format;
+		imageInfo.tiling                           = tiling;
+		imageInfo.initialLayout                    = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageInfo.usage                            = usage;
+		imageInfo.sharingMode                      = VK_SHARING_MODE_EXCLUSIVE;
+		imageInfo.samples                          = numSamples;
+		imageInfo.flags                            = flags;
+
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief Instance a VmaAllocationCreateInfo.
+		*/
+		VmaAllocationCreateInfo        createInfo{};
+		createInfo.usage             = VMA_MEMORY_USAGE_AUTO;
+
+		/**
+		* @brief Create Image.
+		*/
+		VK_CHECK(vmaCreateImage(vulkanState.m_VmaAllocator, &imageInfo, &createInfo, &m_Image, &m_Alloc, nullptr))
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, m_Image, m_VulkanState.m_Device, name);
+
+#else
 
 		/**
 		* @brief Create Image.
@@ -643,6 +671,9 @@ namespace Spices {
 		* @brief Bind video memory.
 		*/
 		vkBindImageMemory(vulkanState.m_Device, m_Image, m_ImageMemory, 0);
+
+#endif
+
 	}
 
 	void VulkanImage::CreateDescriptorSet(uint32_t binding)

@@ -60,11 +60,11 @@ namespace Spices {
 		* @param[in] vulkanState The global VulkanState.
 		*/
 		template<typename T>
-		static void CustomCmd(VulkanState& vulkanState, T func);
+		static void CustomGraphicCmd(VulkanState& vulkanState, T func);
 	};
 	
 	template<typename T>
-	inline void VulkanCommandBuffer::CustomCmd(VulkanState& vulkanState, T func)
+	inline void VulkanCommandBuffer::CustomGraphicCmd(VulkanState& vulkanState, T func)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -74,7 +74,7 @@ namespace Spices {
 		VkCommandBufferAllocateInfo     allocInfo{};
 		allocInfo.sType               = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level               = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool         = vulkanState.m_CommandPool;
+		allocInfo.commandPool         = vulkanState.m_GraphicCommandPool;
 		allocInfo.commandBufferCount  = 1;
 
 		/**
@@ -127,6 +127,6 @@ namespace Spices {
 		/**
 		* @brief Free the CommandBuffer that created.
 		*/
-		vkFreeCommandBuffers(vulkanState.m_Device, vulkanState.m_CommandPool, 1, &commandBuffer);
+		vkFreeCommandBuffers(vulkanState.m_Device, vulkanState.m_GraphicCommandPool, 1, &commandBuffer);
 	}
 }

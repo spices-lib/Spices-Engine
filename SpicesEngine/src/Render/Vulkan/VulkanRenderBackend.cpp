@@ -52,10 +52,11 @@ namespace Spices {
 				VulkanDebugUtils::Init(m_VulkanState.m_Instance);
 			}
 
-			m_VulkanDevice        = std::make_shared<VulkanDevice>       (m_VulkanState);
-			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>  (m_VulkanState);
-			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>(m_VulkanState);
-			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>    (m_VulkanState, m_VulkanDevice);
+			m_VulkanDevice        = std::make_shared<VulkanDevice>         (m_VulkanState);
+			m_VmaAllocator        = std::make_shared<VulkanMemoryAllocator>(m_VulkanState);
+			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>    (m_VulkanState);
+			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>  (m_VulkanState);
+			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>      (m_VulkanState, m_VulkanDevice);
 		}
 
 		/**

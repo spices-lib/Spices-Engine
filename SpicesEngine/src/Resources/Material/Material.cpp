@@ -119,8 +119,6 @@ namespace Spices {
 				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
 			);
-
-			m_MaterialParameterBuffer->Map();
 		}
 
 		/**

@@ -194,10 +194,7 @@ namespace Spices {
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
-		void* data;
-		vkMapMemory(m_VulkanState.m_Device, stagingBuffer.GetMemory(), 0, sizeof(T) * instances.size(), 0, &data);
-		memcpy(data, instances.data(), sizeof(T) * instances.size());
-		vkUnmapMemory(m_VulkanState.m_Device, stagingBuffer.GetMemory());
+		stagingBuffer.WriteToBuffer(instances.data());
 
 		instancesBuffer.CopyBuffer(stagingBuffer.Get(), instancesBuffer.Get(), sizeof(T) * instances.size());
 
@@ -207,7 +204,7 @@ namespace Spices {
 		* @brief Command buffer to create the TLAS.
 		*/
 		std::unique_ptr<VulkanBuffer> scratchBuffer = nullptr;
-		VulkanCommandBuffer::CustomCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
 
 			/**
 			* @brief Make sure the copy of the instance buffer are copied before triggering the acceleration structure build.

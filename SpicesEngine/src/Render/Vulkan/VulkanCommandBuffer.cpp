@@ -25,8 +25,16 @@ namespace Spices {
 		/**
 		* @brief Create commandpool and set it global. 
 		*/
-		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_CommandPool));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, vulkanState.m_CommandPool, vulkanState.m_Device, "SpicesEngineCommandPool");
+		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, vulkanState.m_GraphicCommandPool, vulkanState.m_Device, "GraphicCommandPool");
+
+		poolInfo.queueFamilyIndex = vulkanState.m_ComputeQueueFamily;
+
+		/**
+		* @brief Create commandpool and set it global.
+		*/
+		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_ComputeCommandPool));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, vulkanState.m_ComputeCommandPool, vulkanState.m_Device, "ComputeCommandPool");
 	}
 
 	VulkanCommandPool::~VulkanCommandPool()
@@ -36,7 +44,8 @@ namespace Spices {
 		/**
 		* @brief Destroy the Vulkan CommandPool Object.
 		*/
-		vkDestroyCommandPool(m_VulkanState.m_Device, m_VulkanState.m_CommandPool, nullptr);
+		vkDestroyCommandPool(m_VulkanState.m_Device, m_VulkanState.m_ComputeCommandPool, nullptr);
+		vkDestroyCommandPool(m_VulkanState.m_Device, m_VulkanState.m_GraphicCommandPool, nullptr);
 	}
 
 	VulkanCommandBuffer::VulkanCommandBuffer(VulkanState& vulkanState)
@@ -49,7 +58,7 @@ namespace Spices {
 		*/
 		VkCommandBufferAllocateInfo       allocInfo{};
 		allocInfo.sType                 = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool           = vulkanState.m_CommandPool;
+		allocInfo.commandPool           = vulkanState.m_GraphicCommandPool;
 		allocInfo.level                 = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandBufferCount    = MaxFrameInFlight;
 
@@ -57,6 +66,8 @@ namespace Spices {
 		* @brief  Create commandbuffer and set it global.
 		*/
 		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_GraphicCommandBuffer.data()));
+
+		allocInfo.commandPool = vulkanState.m_ComputeCommandPool;
 		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_ComputeCommandBuffer.data()));
 
 		for (int i = 0; i < MaxFrameInFlight; i++)

@@ -256,10 +256,21 @@ namespace Spices {
 		*/
 		VkImage m_Image{};
 
+#ifdef VMA_ALLOCATOR
+
+		/**
+		* @brief VMA allocation.
+		*/
+		VmaAllocation m_Alloc{};
+
+#else
+
 		/**
 		* @brief The image video memory.
 		*/
 		VkDeviceMemory m_ImageMemory{};
+
+#endif
 
 		/**
 		* @brief The image view.

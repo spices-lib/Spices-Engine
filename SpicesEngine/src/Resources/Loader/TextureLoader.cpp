@@ -88,10 +88,7 @@ namespace Spices {
 		/**
 		* @brief Copy the data from texture bytes to staginBuffer.
 		*/
-		void* data;
-		vkMapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMemory(), 0, imageSize, 0, &data);
-		memcpy(data, pixels, static_cast<size_t>(imageSize));
-		vkUnmapMemory(resourceptr->m_VulkanState.m_Device, stagingBuffer.GetMemory());
+		stagingBuffer.WriteToBuffer(pixels);
 
 		/**
 		* @brief Release texture bytes.

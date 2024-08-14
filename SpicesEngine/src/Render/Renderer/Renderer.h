@@ -1497,11 +1497,6 @@ namespace Spices {
 		);
 
 		/**
-		* @brief Map with host memory and video memory.
-		*/
-		m_HandledSubPass->GetBuffers(id)->Map();
-
-		/**
 		* @brief fill in bufferInfos.
 		*/
 		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
@@ -1536,11 +1531,6 @@ namespace Spices {
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
 		);
-
-		/**
-		* @brief Map with host memory and video memory.
-		*/
-		m_HandledSubPass->GetBuffers(id)->Map();
 
 		/**
 		* @brief fill in bufferInfos.

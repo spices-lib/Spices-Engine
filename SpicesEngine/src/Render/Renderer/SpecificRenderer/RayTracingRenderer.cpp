@@ -243,13 +243,13 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const auto rayTracingMaterial                 = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default");
+		const auto rayTracingMaterial           = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default");
 
 		const uint32_t rayGenCount              = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rgen").size());
 		const uint32_t missCount                = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rmiss").size());
 		const uint32_t hitCount                 = static_cast<uint32_t>(m_HitGroups.size());
 
-		const auto handleCount          = rayGenCount + missCount + hitCount;
+		const auto handleCount                  = rayGenCount + missCount + hitCount;
 		uint32_t handleSize                     = m_Device->GetRTPipelineProperties().shaderGroupHandleSize;
 
 		/**
@@ -281,10 +281,10 @@ namespace Spices {
 		m_RTSBTBuffer = std::make_unique<VulkanBuffer>(
 			m_VulkanState, 
 			sbtSize, 
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT | 
-			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 
-			VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR, 
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT             | 
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT    | 
+			VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR , 
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT          | 
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
@@ -299,46 +299,42 @@ namespace Spices {
 		*/ 
 		auto getHandle = [&](int i) { return handles.data() + i * handleSize; };
 
-		void* data;
-		vkMapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMemory(), 0, sbtSize, 0, &data);
+		//void* data;
+		//vkMapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMemory(), 0, sbtSize, 0, &data);
 
 		/**
 		* @brief Map the SBT buffer and write in the handles.
 		*/
-		uint8_t* pSBTBuffer                     = reinterpret_cast<uint8_t*>(data);
-		uint8_t* pData                          = nullptr;
+		uint64_t offset                         = 0;
 		uint32_t handleIdx                      = 0 ;
 
 		/**
 		* @brief Ray Generation.
 		*/ 
-		pData = pSBTBuffer;
 		for (uint32_t c = 0; c < rayGenCount; c++)
 		{
-			memcpy(pData, getHandle(handleIdx++), handleSize);
+			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
 			m_RgenRegion.stride;
 		}
 
 		/**
 		* @brief Miss.
 		*/ 
-		pData = pSBTBuffer + m_RgenRegion.size;
+		offset = m_RgenRegion.size;
 		for (uint32_t c = 0; c < missCount; c++)
 		{
-			memcpy(pData, getHandle(handleIdx++), handleSize);
-			pData += m_MissRegion.stride;
+			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
+			offset += m_MissRegion.stride;
 		}
 
 		/**
 		* @brief Closest Hit.
 		*/ 
-		pData = pSBTBuffer + m_RgenRegion.size + m_MissRegion.size;
+		offset = m_RgenRegion.size + m_MissRegion.size;
 		for (uint32_t c = 0; c < hitCount; c++)
 		{
-			memcpy(pData, getHandle(handleIdx++), handleSize);
-			pData += m_HitRegion.stride;
+			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
+			offset += m_HitRegion.stride;
 		}
-
-		vkUnmapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMemory());
 	}
 }
