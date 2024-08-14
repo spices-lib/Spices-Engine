@@ -22,7 +22,7 @@
 * But subgroup size only support 32 in nvidia / 64 in amd.
 * Thereforce use iter to reach all primitives in meshlet.
 */
-layout(local_size_x = 4, local_size_y = 4, local_size_z = 2) in;
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 2) in;
 
 /**
 * @brief task padload receive from task shader.
@@ -88,37 +88,31 @@ void main()
     mat4 mvp = view.projection * view.view * push.model;
     mat3 m3model = mat3(transpose(inverse(push.model)));
 
-    const uint iter = meshlet.nPrimitives / SUBGROUP_SIZE + 1;
+    const uint localId = gl_LocalInvocationIndex;
+        
+    if(localId >= meshlet.nPrimitives) return;
+    
+    ivec3 index = indices.i[meshlet.primitiveOffset + localId];
+    
+    Vertex vts[3] = { vertices.v[index.x], vertices.v[index.y], vertices.v[index.z] };
+        
+    index -= ivec3(meshlet.vertexOffset);
+    uint arrayIndices[3] = { index.x, index.y, index.z };
+        
+    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(index.x, index.y, index.z);
     
     [[unroll]]
-    for(uint i = 0; i < iter; i++)
+    for(int j = 0; j < 3; j++)
     {
-        const uint localId = gl_LocalInvocationIndex + i * SUBGROUP_SIZE;
-        
-        if(localId >= meshlet.nPrimitives) break;
+        Vertex vt = vts[j];
     
-        ivec3 index = indices.i[meshlet.primitiveOffset + localId];
-    
-        Vertex vts[3] = { vertices.v[index.x], vertices.v[index.y], vertices.v[index.z] };
-        
-        index -= ivec3(meshlet.vertexOffset);
-        uint arrayIndices[3] = { index.x, index.y, index.z };
-        
-        gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(index.x, index.y, index.z);
-    
-        [[unroll]]
-        for(int j = 0; j < 3; j++)
-        {
-            Vertex vt = vts[j];
-    
-            gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
+        gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
             
-            pixel[arrayIndices[j]].position  = vec3(push.model * vec4(vt.position, 1.0f));
-            pixel[arrayIndices[j]].normal    = normalize(m3model * vt.normal);
-            pixel[arrayIndices[j]].color     = vt.color;
-            pixel[arrayIndices[j]].texCoord  = vt.texCoord;
-            meshletId[arrayIndices[j]]       = id;
-        }
+        pixel[arrayIndices[j]].position  = vec3(push.model * vec4(vt.position, 1.0f));
+        pixel[arrayIndices[j]].normal    = normalize(m3model * vt.normal);
+        pixel[arrayIndices[j]].color     = vt.color;
+        pixel[arrayIndices[j]].texCoord  = vt.texCoord;
+        meshletId[arrayIndices[j]]       = id;
     }
     
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);
