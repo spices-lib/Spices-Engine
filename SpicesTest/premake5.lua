@@ -43,6 +43,7 @@ project "SpicesTest"
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
 		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
+		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
 	}
 
 	links

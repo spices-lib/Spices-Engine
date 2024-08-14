@@ -34,3 +34,6 @@
 [submodule "SpicesEngine/vendor/meshoptimizer"]
 	path = SpicesEngine/vendor/meshoptimizer
 	url = https://github.com/zeux/meshoptimizer.git
+[submodule "SpicesEngine/vendor/VulkanMemoryAllocator"]
+	path = SpicesEngine/vendor/VulkanMemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git

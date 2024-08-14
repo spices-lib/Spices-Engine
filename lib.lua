@@ -18,6 +18,7 @@ IncludeDir["IconFontCppHeaders"]          = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["HoudiniEngine"]               = "%{wks.location}/SpicesEngine/vendor/HoudiniEngine"
 IncludeDir["taskflow"]                    = "%{wks.location}/SpicesEngine/vendor/taskflow"
 IncludeDir["meshoptimizer"]               = "%{wks.location}/SpicesEngine/vendor/meshoptimizer"
+IncludeDir["VulkanMemoryAllocator"]       = "%{wks.location}/SpicesEngine/vendor/VulkanMemoryAllocator/include"
 IncludeDir["googletest"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googletest/include"
 IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googlemock/include"
 
