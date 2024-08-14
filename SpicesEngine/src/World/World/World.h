@@ -109,6 +109,13 @@ namespace Spices {
 		Entity QueryEntitybyID(uint32_t id);
 
 		/**
+		* @brief Registry a meshpack to BaseMeshMap.
+		* @param[in] materialName meshpack's material name.
+		* @param[in] uuid meshpack's uuid.
+		*/
+		void RegistryBaseMesh(const std::string& materialName, UUID uuid);
+
+		/**
 		* @brief Get WorldMarkFlags this frame.
 		* @return Returns the WorldMarkFlags this frame.
 		*/
@@ -154,6 +161,11 @@ namespace Spices {
 		* @todo use it.
 		*/
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
+
+		/**
+		* @brief Container of Material - [ MeshPack UUID - Any ]
+		*/
+		std::unordered_map<std::string, std::unordered_map<UUID, int>> m_BaseMeshMap;
 
 		/**
 		* Allow Entity access all data.

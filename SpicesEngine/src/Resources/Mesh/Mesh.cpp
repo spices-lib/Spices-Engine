@@ -15,6 +15,8 @@ namespace Spices {
 
 	std::vector<VulkanRayTracing::BlasInput> Mesh::CreateMeshPackASInput()
 	{
+		SPICES_PROFILE_ZONE;
+
 		std::vector<VulkanRayTracing::BlasInput> allBlas;
 		allBlas.reserve(m_Pack.size());
 
@@ -31,6 +33,8 @@ namespace Spices {
 
 	void Mesh::AddMaterialToHitGroup(std::unordered_map<std::string, uint32_t>& hitGroup)
 	{
+		SPICES_PROFILE_ZONE;
+
 		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 
 			auto& stages = v->GetMaterial()->GetShaderPath("rchit");
@@ -59,6 +63,8 @@ namespace Spices {
 
 	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)
 	{
+		SPICES_PROFILE_ZONE;
+
 		meshPack->OnCreatePack();
 
 		m_Pack.push_back(m_PackNums, meshPack);
@@ -68,6 +74,8 @@ namespace Spices {
 
 	std::shared_ptr<Mesh> Mesh::Builder::Build() const
 	{
+		SPICES_PROFILE_ZONE;
+
 		return std::make_shared<Mesh>(m_Pack);
 	}
 

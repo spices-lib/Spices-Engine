@@ -357,8 +357,8 @@ namespace Spices {
 		* @brief Get all Features that supported.
 		*/
 		VkPhysicalDeviceFeatures2 deviceFeatures {};
-		deviceFeatures.sType                          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-		deviceFeatures.pNext                          = &bufferDeviceAddressFeatures;
+		deviceFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		deviceFeatures.pNext                                = &bufferDeviceAddressFeatures;
 
 		/**
 		* @Fetch all features.

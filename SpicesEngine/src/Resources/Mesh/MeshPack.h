@@ -33,7 +33,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		MeshPack() = default;
+		MeshPack();
 
 		/**
 		* @brief Destructor Function.
@@ -82,6 +82,11 @@ namespace Spices {
 		*/
 		uint32_t GetHitShaderHandle() const;
 		
+		/**
+		* @brief Get meshpack UUID.
+		*/
+		UUID GetUUID() const { return m_UUID; }
+
 		/**
 		* @brief Bind VBO and EBO.
 		* @param[in] commandBuffer Which command buffer we will submit commands.
@@ -191,6 +196,7 @@ namespace Spices {
 		void CreateMeshlets();
 
 	public:
+
 		/**
 		* @brief Transform Vertices Position before CreateBuffer
 		* @param[in] matrix Which matrix we want apply.
@@ -261,6 +267,16 @@ namespace Spices {
 		* @brief Task Sahder Work Group Size.
 		*/
 		uint32_t m_NTasks;
+
+		/**
+		* @brief UUID for meshpack.
+		*/
+		UUID m_UUID;
+
+		/**
+		* @brief Draw Command.
+		*/
+		VkDrawMeshTasksIndirectCommandEXT m_MeshTaskIndirectDrawCommand;
 		
 		/**
 		* @brief Allow MeshLoader access all data.

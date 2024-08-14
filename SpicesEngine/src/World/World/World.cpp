@@ -12,11 +12,15 @@ namespace Spices {
 
 	Entity World::CreateEntity(const std::string& name)
 	{
+		SPICES_PROFILE_ZONE;
+
 		return CreateEntityWithUUID(UUID(), name);
 	}
 
 	Entity World::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
+		SPICES_PROFILE_ZONE;
+
 		Entity entity(m_Registry.create(), this);
 
 		/**
@@ -40,17 +44,30 @@ namespace Spices {
 
 	void World::DestroyEntity(Entity& entity)
 	{
+		SPICES_PROFILE_ZONE;
+
 		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	Entity World::QueryEntitybyID(uint32_t id)
 	{
+		SPICES_PROFILE_ZONE;
+
 		return id == -1 ? Entity() : Entity((entt::entity)id, this);
+	}
+
+	void World::RegistryBaseMesh(const std::string& materialName, UUID uuid)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_BaseMeshMap[materialName][uuid] = 0;
 	}
 
 	void World::ClearMarkerWithBits(WorldMarkFlags flags)
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (m_Marker & flags)
 		{
 			m_Marker ^= flags;

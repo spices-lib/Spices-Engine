@@ -284,13 +284,13 @@ namespace Spices {
 		* @brief Mark World with MeshAddedToWorld bits.
 		*/
 		FrameInfo::Get().m_World->Mark(World::WorldMarkBits::MeshAddedToWorld);
-	}
 
-	void MeshComponent::DrawMaterialPanel(std::shared_ptr<Material> material)
-	{
-		ImGui::Begin("Material Panel");
-
-		ImGui::Text("Hello World");
-		ImGui::End();
+		/**
+		* @brief Registry this mesh to world.
+		*/
+		mesh->GetPacks().for_each([](auto& k, auto& v) {
+			FrameInfo::Get().m_World->RegistryBaseMesh(v->GetMaterial()->GetName(), v->GetUUID());
+			return false;
+		});
 	}
 }

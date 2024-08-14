@@ -59,10 +59,6 @@ namespace Spices {
 		* @return Returns the Mesh variable.
 		*/
 		std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
-
-	protected:
-
-		void DrawMaterialPanel(std::shared_ptr<Material> material);
 		
 	protected:
 		

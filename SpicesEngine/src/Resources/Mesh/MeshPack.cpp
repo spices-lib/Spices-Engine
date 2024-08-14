@@ -12,6 +12,10 @@
 
 namespace Spices {
 	
+	MeshPack::MeshPack()
+		: m_UUID(UUID())
+	{}
+
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
@@ -220,6 +224,10 @@ namespace Spices {
 			m_Indices.size(), &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, coneWeight);
 		m_NTasks = nMeshlet / SUBGROUP_SIZE + 1;
 		
+		m_MeshTaskIndirectDrawCommand.groupCountX = m_NTasks;
+		m_MeshTaskIndirectDrawCommand.groupCountY = 1;
+		m_MeshTaskIndirectDrawCommand.groupCountZ = 1;
+
 		const meshopt_Meshlet& last = meshlets[nMeshlet - 1];
 		meshlets.resize(nMeshlet);
 		meshlet_vertices.resize(last.vertex_offset + last.vertex_count);

@@ -76,6 +76,10 @@ namespace Spices {
 		*/
 		void Deserialize();
 
+		/**
+		* @brief Get Material Path.
+		* @return Return Material Path.
+		*/
 		const std::string& GetName() { return m_MaterialPath; }
 
 		/**
