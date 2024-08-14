@@ -53,7 +53,32 @@ namespace Spices {
 		m_StableFrames = 0;
 	}
 
-	void Camera::CalculatePMatrix()
+	const glm::mat4 Camera::GetPMatrix()
+	{
+		SPICES_PROFILE_ZONE;
+		
+		switch (m_ProjectionType)
+		{
+		case ProjectionType::Perspective:
+			return PerspectiveMatrix(
+				m_PerspectiveParam.fov        , 
+				m_PerspectiveParam.nearPlane  ,
+				100000000,
+				m_PerspectiveParam.aspectRatio
+			);
+		case ProjectionType::Orthographic:
+			return OtrhographicMatrix(
+				m_OrthographicParam.left      ,
+				m_OrthographicParam.right     ,
+				m_OrthographicParam.top       ,
+				m_OrthographicParam.bottom    ,
+				m_OrthographicParam.nearPlane ,
+				m_OrthographicParam.farPlane
+			);
+		}
+	}
+
+	void Camera::CalculatePMatrixReverseZ()
 	{
 		SPICES_PROFILE_ZONE;
 		

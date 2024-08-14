@@ -249,7 +249,7 @@ namespace Spices {
 				* @brief Viewmaterix is the inverse of camera's modelmatrix. 
 				*/
 				invViewMat    = transComp.GetModelMatrix();
-				projectionMat = camComp.GetCamera()->GetPMatrix();
+				projectionMat = camComp.GetCamera()->GetPMatrixReverseZ();
 				stableFrames  = camComp.GetCamera()->GetStableFrames();
 
 				/**

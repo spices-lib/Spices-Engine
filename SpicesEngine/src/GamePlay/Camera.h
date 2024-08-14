@@ -103,18 +103,20 @@ namespace Spices {
 		* @brief InCreate 1 to m_StableFrames per frame.
 		*/
 		void IncreaseStableFrames() { m_StableFrames++; }
-
-		/**
-		* @brief Calculate Projection Matrix by parameter.
-		*/
-		void CalculatePMatrix();
 		
+		/**
+		* @brief Get camera reversez projection matrix.
+		* @return Returns the camera projection matrix.
+		*/
+		const glm::mat4& GetPMatrixReverseZ() { CalculatePMatrixReverseZ(); return m_ProjectionMatrix; }
+
 		/**
 		* @brief Get camera projection matrix.
 		* @return Returns the camera projection matrix.
+		* @note only use in ImguiGizmos.
 		*/
-		glm::mat4 GetPMatrix() { CalculatePMatrix(); return m_ProjectionMatrix; }
-		
+		const glm::mat4 GetPMatrix();
+
 		/**
 		* @brief Get camera projection type.
 		* @return Returns the camera projection type.
@@ -144,6 +146,13 @@ namespace Spices {
 		* @return Returns the OrthographicParam.
 		*/
 		OrthographicParam& GetOrthographicParam() { return m_OrthographicParam; }
+
+	private:
+
+		/**
+		* @brief Calculate Projection Matrix by parameter.
+		*/
+		void CalculatePMatrixReverseZ();
 
 	private:
 

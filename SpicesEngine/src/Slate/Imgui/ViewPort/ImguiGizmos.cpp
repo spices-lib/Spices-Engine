@@ -230,6 +230,10 @@ namespace Spices {
 
         switch (e.GetKeyCode())
         {
+        case Key::Q:
+            bEnableGizmo = true;
+            m_GizmoType = ImGuizmo::OPERATION::UNIVERSAL;
+            break;
         case Key::W:
             bEnableGizmo = true;
             m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
