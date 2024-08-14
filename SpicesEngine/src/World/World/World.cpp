@@ -57,11 +57,11 @@ namespace Spices {
 		return id == -1 ? Entity() : Entity((entt::entity)id, this);
 	}
 
-	void World::RegistryBaseMesh(const std::string& materialName, UUID uuid)
+	void World::RegistryBaseMesh(std::shared_ptr<MeshPack> meshPack)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_BaseMeshMap[materialName][uuid] = 0;
+		m_BaseMeshMap[meshPack->GetMaterial()->GetName()][meshPack->GetUUID()] = meshPack.get();
 	}
 
 	void World::ClearMarkerWithBits(WorldMarkFlags flags)

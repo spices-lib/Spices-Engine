@@ -66,6 +66,11 @@ namespace Spices {
 		virtual void CreateDescriptorSet() override;
 
 		/**
+		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
+		*/
+		virtual void OnMeshAddedWorld() override;
+
+		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
 		* @todo Complete it by renderer.
@@ -75,6 +80,11 @@ namespace Spices {
 			VkPipelineLayout&                layout    ,
 			std::shared_ptr<RendererSubPass> subPass
 		) override;
+
+	private:
+
+		std::unordered_map<std::string, std::unique_ptr<VulkanBuffer>> m_BaseMeshDrawCommandsBuffer;
+
 	};
 
 }

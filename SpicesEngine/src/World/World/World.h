@@ -110,10 +110,15 @@ namespace Spices {
 
 		/**
 		* @brief Registry a meshpack to BaseMeshMap.
-		* @param[in] materialName meshpack's material name.
-		* @param[in] uuid meshpack's uuid.
+		* @param[in] meshPack .
 		*/
-		void RegistryBaseMesh(const std::string& materialName, UUID uuid);
+		void RegistryBaseMesh(std::shared_ptr<MeshPack> meshPack);
+
+		/**
+		* @brief Get BaseMesh Map.
+		* @return Returns the BaseMesh Map.
+		*/
+		const std::unordered_map<std::string, std::unordered_map<UUID, MeshPack*>>& GetBaseMeshMap() const { return m_BaseMeshMap; }
 
 		/**
 		* @brief Get WorldMarkFlags this frame.
@@ -163,9 +168,9 @@ namespace Spices {
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		/**
-		* @brief Container of Material - [ MeshPack UUID - Any ]
+		* @brief Container of Material - [ MeshPack UUID - MeshPack ]
 		*/
-		std::unordered_map<std::string, std::unordered_map<UUID, int>> m_BaseMeshMap;
+		std::unordered_map<std::string, std::unordered_map<UUID, MeshPack*>> m_BaseMeshMap;
 
 		/**
 		* Allow Entity access all data.

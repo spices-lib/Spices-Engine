@@ -136,6 +136,12 @@ namespace Spices {
 		const std::vector<Meshlet>& GetMeshlets() const { return m_Meshlets; }
 
 		/**
+		* @brief Get Draw Command.
+		* @return Returns Draw Command.
+		*/
+		const VkDrawMeshTasksIndirectCommandEXT& GetDrawCommand() const { return m_MeshTaskIndirectDrawCommand; }
+
+		/**
 		* @brief Get Pack Type.
 		* @return Returns the Pack Type.
 		*/

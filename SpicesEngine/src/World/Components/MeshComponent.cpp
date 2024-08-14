@@ -281,16 +281,16 @@ namespace Spices {
 		m_Mesh = mesh;
 
 		/**
-		* @brief Mark World with MeshAddedToWorld bits.
-		*/
-		FrameInfo::Get().m_World->Mark(World::WorldMarkBits::MeshAddedToWorld);
-
-		/**
 		* @brief Registry this mesh to world.
 		*/
 		mesh->GetPacks().for_each([](auto& k, auto& v) {
-			FrameInfo::Get().m_World->RegistryBaseMesh(v->GetMaterial()->GetName(), v->GetUUID());
+			FrameInfo::Get().m_World->RegistryBaseMesh(v);
 			return false;
 		});
+
+		/**
+		* @brief Mark World with MeshAddedToWorld bits.
+		*/
+		FrameInfo::Get().m_World->Mark(World::WorldMarkBits::MeshAddedToWorld);
 	}
 }
