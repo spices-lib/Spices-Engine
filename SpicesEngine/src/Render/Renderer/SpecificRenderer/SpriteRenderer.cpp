@@ -31,7 +31,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Sprite", this }
-		.AddPushConstant<SpicesShader::PushConstantMesh>()
+		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
 		.Build();
 	}
 

@@ -10,6 +10,14 @@
 
 namespace Spices {
 
+	namespace BasePassR {
+
+		struct MeshDescBuffer
+		{
+			std::vector<SpicesShader::MeshDesc> descs;
+		};
+	}
+
 	/**
 	* @brief BasePassRenderer Class.
 	* This class defines the base pass render behaves.
@@ -84,7 +92,9 @@ namespace Spices {
 	private:
 
 		std::unordered_map<std::string, std::unique_ptr<VulkanBuffer>> m_BaseMeshDrawCommandsBuffer;
+		std::unordered_map<std::string, uint32_t> m_BaseMeshDrawCommandsBufferCount;
 
+		std::unordered_map<std::string, BasePassR::MeshDescBuffer> m_DescsMap;
 	};
 
 }

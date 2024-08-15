@@ -851,6 +851,93 @@ namespace Spices {
 		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant(uint64_t size)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Call RendererSubPass::SetPushConstant().
+		*/
+		m_HandledSubPass->SetPushConstant([&](auto& range) {
+			range.stageFlags = VK_SHADER_STAGE_ALL;
+			range.offset     = 0;
+			range.size       = size;
+		});
+
+		return *this;
+	}
+
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddUniformBuffer(
+		uint32_t           set       , 
+		uint32_t           binding   , 
+		uint64_t           size      , 
+		VkShaderStageFlags stageFlags
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		const UInt2 id(set, binding);
+
+		/**
+		* @brief Creating VulkanBuffer.
+		*/
+		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
+			m_Renderer->m_VulkanState,
+			size,
+			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+		);
+
+		/**
+		* @brief fill in bufferInfos.
+		*/
+		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
+
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
+
+		return *this;
+	}
+
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageBuffer(
+		uint32_t           set        , 
+		uint32_t           binding    ,
+		uint64_t           size       , 
+		VkShaderStageFlags stageFlags
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		const UInt2 id(set, binding);
+
+		/**
+		* @brief Creating VulkanBuffer.
+		*/
+		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
+			m_Renderer->m_VulkanState,
+			size,
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+		);
+
+		/**
+		* @brief fill in bufferInfos.
+		*/
+		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
+
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
+
+		return *this;
+	}
+
 	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageBuffer(
 		uint32_t                      set        , 
 		uint32_t                      binding    , 

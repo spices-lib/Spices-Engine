@@ -64,11 +64,11 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Mesh", this }
-		.AddPushConstant<SpicesShader::PushConstantMesh>()
+		.AddStorageBuffer(2, 0, sizeof(SpicesShader::MeshDesc) * MESH_BUFFER_MAXNUM, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT)
 		.Build();
 
 		DescriptorSetBuilder{ "SkyBox", this }
-		.AddPushConstant<SpicesShader::PushConstantMesh>()
+		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
 		.Build();
 	}
 
@@ -78,19 +78,39 @@ namespace Spices {
 
 		m_BaseMeshDrawCommandsBuffer.clear();
 
-		auto& map = FrameInfo::Get().m_World->GetBaseMeshMap();
-		for (auto& nameMap : map)
+		std::unordered_map<std::string, std::vector<VkDrawMeshTasksIndirectCommandEXT>> commandsMap;
+
+		auto& view = FrameInfo::Get().m_World->GetRegistry().view<MeshComponent>();
+		for (auto& e : view)
 		{
-			std::vector<VkDrawMeshTasksIndirectCommandEXT> commands(nameMap.second.size());
+			MeshComponent meshComp;
+			TransformComponent tranComp;
 
-			int i = 0;
-			for (auto& uuidMap : nameMap.second)
-			{
-				commands[i] = uuidMap.second->GetDrawCommand();
-				i++;
-			}
+			std::tie(meshComp, tranComp) = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent, TransformComponent>(e);
 
-			uint64_t bufferSize = i * sizeof(VkDrawMeshTasksIndirectCommandEXT);
+			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+				commandsMap[v->GetMaterial()->GetName()].push_back(v->GetDrawCommand());
+
+				SpicesShader::MeshDesc            desc;
+				desc.modelAddredd               = tranComp.GetModelBufferAddress();
+				desc.vertexAddress              = v->GetVerticesBufferAddress();
+				desc.indexAddress               = v->GetIndicesBufferAddress();
+				desc.materialParameterAddress   = v->GetMaterial()->GetMaterialParamsAddress();
+				desc.meshletAddress             = v->GetMeshletsBufferAddress();
+				desc.verticesCount              = static_cast<unsigned int>(v->GetVertices().size());
+				desc.indicesCount               = static_cast<unsigned int>(v->GetIndices().size()) / 3;
+				desc.meshletsCount              = static_cast<uint32_t>(v->GetMeshlets().size());
+				desc.entityID                   = static_cast<unsigned int>(e);
+
+				m_DescsMap[v->GetMaterial()->GetName()].descs.push_back(std::move(desc));
+
+				return false;
+			});
+		}
+
+		for (auto& pair : commandsMap)
+		{
+			uint64_t bufferSize = pair.second.size() * sizeof(VkDrawMeshTasksIndirectCommandEXT);
 
 			VulkanBuffer stagingBuffer(
 				m_VulkanState                        , 
@@ -100,7 +120,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			stagingBuffer.WriteToBuffer(commands.data());
+			stagingBuffer.WriteToBuffer(pair.second.data());
 
 			std::unique_ptr<VulkanBuffer> commandBuffer = std::make_unique<VulkanBuffer>(
 				m_VulkanState                             ,
@@ -113,7 +133,8 @@ namespace Spices {
 
 			commandBuffer->CopyBuffer(stagingBuffer.Get(), commandBuffer->Get(), bufferSize);
 
-			m_BaseMeshDrawCommandsBuffer[nameMap.first] = std::move(commandBuffer);
+			m_BaseMeshDrawCommandsBuffer[pair.first] = std::move(commandBuffer);
+			m_BaseMeshDrawCommandsBufferCount[pair.first] = pair.second.size();
 		}
 	}
 
@@ -151,36 +172,55 @@ namespace Spices {
 		
 		RenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 		
-		builder.BeginRenderPassAsync();
+		//builder.BeginRenderPassAsync();
 
-		//builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
+		////builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
-		IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
+		//IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+		//	const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
-			builder.SetViewPort(cmdBuffer);
+		//	builder.SetViewPort(cmdBuffer);
 
-			builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
+		//	builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
 
-			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
+		//	builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
 
-			meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
+		//	meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
 
-				builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
+		//		builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
 
-				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model                          = modelMatrix;
-					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
-					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
-					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-					push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
-					push.desc.verticesCount             = static_cast<uint32_t>(meshPack->GetVertices().size());
-					push.desc.indicesCount              = static_cast<uint32_t>(meshPack->GetIndices().size()) / 3;
-					push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
-					push.desc.entityID                  = entityId;
-				}, cmdBuffer);
-			});
-		});
+		//		builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
+		//			push.model                          = modelMatrix;
+		//			push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
+		//			push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
+		//			push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+		//			push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
+		//			push.desc.verticesCount             = static_cast<uint32_t>(meshPack->GetVertices().size());
+		//			push.desc.indicesCount              = static_cast<uint32_t>(meshPack->GetIndices().size()) / 3;
+		//			push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
+		//			push.desc.entityID                  = entityId;
+		//		}, cmdBuffer);
+		//	});
+		//});
+
+		builder.BeginRenderPass();
+
+		builder.SetViewPort();
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
+
+		for (auto& pair : m_BaseMeshDrawCommandsBuffer)
+		{
+			//builder.UpdateStorageBuffer(2, 0, m_DescsMap[pair.first].descs.data(), m_DescsMap[pair.first].descs.size());
+
+			//builder.BindPipeline(pair.first);
+
+			uint32_t count = m_BaseMeshDrawCommandsBufferCount[pair.first];
+			uint32_t stride = sizeof(VkDrawMeshTasksIndirectCommandEXT);
+			//vkCmdDrawMeshTasksIndirectEXT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], pair.second->Get(), 0, count, stride);
+		}
 
 		builder.BeginNextSubPass("SkyBox");
 

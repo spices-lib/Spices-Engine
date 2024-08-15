@@ -397,39 +397,39 @@ namespace Spices {
 
 			/**
 			* @brief Set VkPushConstantRange by a specific push constant struct.
-			* @tparam T Specific push constant struct.
+			* @param[in] size pushconstant size.
 			* @return Returns this reference.
 			*/
-			template<typename T>
-			inline DescriptorSetBuilder& AddPushConstant();
+			DescriptorSetBuilder& AddPushConstant(uint64_t size);
 
 			/**
 			* @brief Create local buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
 			* @tparam T Buffer struct.
 			* @param[in] set Which set this buffer wil use.
 			* @param[in] binding Which binding this buffer will use.
+			* @param[in] size ubo size.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
 			* @return Returns this reference.
 			*/
-			template<typename T>
-			inline DescriptorSetBuilder& AddUniformBuffer(
+			DescriptorSetBuilder& AddUniformBuffer(
 				uint32_t            set      ,
 				uint32_t            binding  ,
+				uint64_t            size     ,
 				VkShaderStageFlags  stageFlags
 			);
 
 			/**
 			* @brief Create local buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
-			* @tparam T Buffer struct.
 			* @param[in] set Which set this buffer wil use.
 			* @param[in] binding Which binding this buffer will use.
+			* @param[in] size size of ssbo.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
 			* @return Returns this reference.
 			*/
-			template<typename T>
-			inline DescriptorSetBuilder& AddStorageBuffer(
+			DescriptorSetBuilder& AddStorageBuffer(
 				uint32_t            set      ,
 				uint32_t            binding  ,
+				uint64_t            size     ,
 				VkShaderStageFlags  stageFlags
 			);
 
@@ -792,8 +792,16 @@ namespace Spices {
 			* @param[in] set Which set the descriptor will use.
 			* @param[in] binding Which binding the descriptor will use.
 			* @param[in] data ssbo data pointer.
+			* @param[in] size data size.
+			* @param[in] offset data size.
 			*/
-			void UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data) const;
+			void UpdateStorageBuffer(
+				uint32_t set                    , 
+				uint32_t binding                , 
+				void*    data                   , 
+				uint64_t size   = VK_WHOLE_SIZE ,
+				uint64_t offset = 0
+			) const;
 
 			/**
 			* @brief End a preview sub pass and stat next sub pass.
@@ -1448,102 +1456,20 @@ namespace Spices {
 		m_HandledSubPass->SetBuffer({ set, binding }, data);
 	}
 
-	inline void Renderer::RenderBehaveBuilder::UpdateStorageBuffer(uint32_t set, uint32_t binding, void* data) const
+	inline void Renderer::RenderBehaveBuilder::UpdateStorageBuffer(
+		uint32_t set     , 
+		uint32_t binding , 
+		void*    data    , 
+		uint64_t size    , 
+		uint64_t offset
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
 		* @breif Update uniform buffer.
 		*/
-		m_HandledSubPass->SetBuffer({ set, binding }, data);
-	}
-
-	template<typename T>
-	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant()
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Call RendererSubPass::SetPushConstant().
-		*/
-		m_HandledSubPass->SetPushConstant([&](auto& range) {
-			range.stageFlags   = VK_SHADER_STAGE_ALL;
-			range.offset       = 0;
-			range.size         = sizeof(T);
-		});
-
-		return *this;
-	}
-
-	template<typename T>
-	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddUniformBuffer(
-		uint32_t           set        , 
-		uint32_t           binding    , 
-		VkShaderStageFlags stageFlags
-	)
-	{
-		SPICES_PROFILE_ZONE;
-
-		const UInt2 id(set, binding);
-
-		/**
-		* @brief Creating VulkanBuffer.
-		*/
-		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
-			m_Renderer->m_VulkanState,
-			sizeof(T),
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-		);
-
-		/**
-		* @brief fill in bufferInfos.
-		*/
-		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
-
-		/**
-		* @brief Registy descriptor and add binging to it.
-		*/
-		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlags, 1);
-
-		return *this;
-	}
-
-	template<typename T>
-	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageBuffer(
-		uint32_t           set        , 
-		uint32_t           binding    , 
-		VkShaderStageFlags stageFlags
-	)
-	{
-		SPICES_PROFILE_ZONE;
-
-		const UInt2 id(set, binding);
-
-		/**
-		* @brief Creating VulkanBuffer.
-		*/
-		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
-			m_Renderer->m_VulkanState,
-			sizeof(T),
-			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
-			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-		);
-
-		/**
-		* @brief fill in bufferInfos.
-		*/
-		m_BufferInfos[set][binding] = *m_HandledSubPass->GetBuffers(id)->GetBufferInfo();
-
-		/**
-		* @brief Registy descriptor and add binging to it.
-		*/
-		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
-		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlags, 1);
-
-		return *this;
+		m_HandledSubPass->SetBuffer({ set, binding }, data, size, offset);
 	}
 
 	template<typename T>

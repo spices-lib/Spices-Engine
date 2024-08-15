@@ -77,8 +77,8 @@ namespace Spices {
 
 		DescriptorSetBuilder{ "SceneCompose", this }
 		.AddInput(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Albedo", "Normal", "Roughness", "Metallic", "Position", "Depth" })
-		.AddStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 0, VK_SHADER_STAGE_FRAGMENT_BIT)                        /* @brief World Directional Light Buffer. */
-		.AddStorageBuffer<RayTracingR::PointLightBuffer>(3, 1, VK_SHADER_STAGE_FRAGMENT_BIT)                              /* @brief World PointLight Buffer.        */
+		.AddStorageBuffer(3, 0, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                        /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer(3, 1, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                              /* @brief World PointLight Buffer.        */
 		.Build();
 	}
 

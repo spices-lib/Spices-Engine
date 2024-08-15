@@ -7,8 +7,12 @@
 #include "Pchheader.h"
 #include "TransformComponent.h"
 
+#include "Render/Vulkan/VulkanBuffer.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <imgui_internal.h>
 
@@ -16,6 +20,20 @@
 #include "World/World/World.h"
 
 namespace Spices {
+
+	TransformComponent::TransformComponent()
+		: Component()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_ModelBuffer = std::make_shared<VulkanBuffer>(
+			VulkanRenderBackend::GetState(),
+			sizeof(glm::mat4),
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT ,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT   |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
+	}
 
 	void TransformComponent::OnSerialize()
 	{
@@ -455,6 +473,8 @@ namespace Spices {
 
 	glm::mat4 TransformComponent::GetRotateMatrix() const
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Use raidans
 		*/
@@ -463,16 +483,28 @@ namespace Spices {
 
 	void TransformComponent::ClearMarkerWithBits(TransformComponentFlags flags)
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (m_Marker & flags)
 		{
 			m_Marker ^= flags;
 		}
 	}
 
+	uint64_t TransformComponent::GetModelBufferAddress() const
+	{
+		SPICES_PROFILE_ZONE;
+
+		return m_ModelBuffer->GetAddress();
+	}
+
 	void TransformComponent::CalMatrix()
 	{
+		SPICES_PROFILE_ZONE;
+
 		const glm::mat4 rotation = GetRotateMatrix();
 		m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Position) * rotation * glm::scale(glm::mat4(1.0f), m_Scale);
+
+		m_ModelBuffer->WriteToBuffer(glm::value_ptr(m_ModelMatrix));
 	}
-	
 }

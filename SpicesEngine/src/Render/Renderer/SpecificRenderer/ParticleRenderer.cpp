@@ -27,7 +27,7 @@ namespace Spices {
 		{
 			DescriptorSetBuilder{ "Particle", this }
 			.AddStorageTexture(2, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-			.AddStorageBuffer<SpicesShader::Vertex>(2, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.AddStorageBuffer(2, 1, sizeof(SpicesShader::Vertex), VK_SHADER_STAGE_COMPUTE_BIT)
 			.Build();
 
 			return;
@@ -50,7 +50,7 @@ namespace Spices {
 		{
 			DescriptorSetBuilder{ "Particle", this }
 			.AddStorageTexture(2, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "Particle" }, VK_FORMAT_R32G32B32A32_SFLOAT)
-			.AddStorageBuffer<SpicesShader::Vertex>(2, 1, VK_SHADER_STAGE_COMPUTE_BIT)
+			.AddStorageBuffer(2, 1, sizeof(SpicesShader::Vertex), VK_SHADER_STAGE_COMPUTE_BIT)
 			.Build();
 
 			return;

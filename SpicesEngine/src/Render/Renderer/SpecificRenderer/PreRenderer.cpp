@@ -18,8 +18,8 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
  		DescriptorSetBuilder{ "PreRenderer", this }
-		.AddUniformBuffer<SpicesShader::View>(0, 0, VK_SHADER_STAGE_ALL)
-		.AddUniformBuffer<SpicesShader::Input>(0, 1, VK_SHADER_STAGE_ALL)
+		.AddUniformBuffer(0, 0, sizeof(SpicesShader::View), VK_SHADER_STAGE_ALL)
+		.AddUniformBuffer(0, 1, sizeof(SpicesShader::Input), VK_SHADER_STAGE_ALL)
 		.AddBindLessTexture<Texture2D>(BINDLESS_TEXTURE_SET, BINDLESS_TEXTURE_BINDING, VK_SHADER_STAGE_ALL, { "default.jpg" })
 		.Build();
 	}

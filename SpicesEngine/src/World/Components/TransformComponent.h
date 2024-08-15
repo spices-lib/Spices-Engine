@@ -9,10 +9,13 @@
 #include "Component.h"
 
 #define GLM_FORCE_RADIANS
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Spices {
+
+	class VulkanBuffer;
 
 	/**
 	* @brief TransformComponent Class.
@@ -36,7 +39,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		TransformComponent() = default;
+		TransformComponent();
 
 		/**
 		* @brief Destructor Function.
@@ -150,6 +153,12 @@ namespace Spices {
 		*/
 		void ClearMarkerWithBits(TransformComponentFlags flags);
 
+		/**
+		* @brief Get Model Buffer Address.
+		* @return Returns the Model Buffer Address.
+		*/
+		uint64_t GetModelBufferAddress() const;
+
 	private:
 
 		/**
@@ -183,5 +192,10 @@ namespace Spices {
 		* @brief World State this frame.
 		*/
 		TransformComponentFlags m_Marker = TransformComponentBits::Clean;
+
+		/**
+		* @brief Model Buffer.
+		*/
+		std::shared_ptr<VulkanBuffer> m_ModelBuffer;
 	};
 }

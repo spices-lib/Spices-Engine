@@ -48,8 +48,8 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "DirectionalLightShadow", this }
-		.AddPushConstant<SpicesShader::PushConstantMesh>()
-		.AddStorageBuffer<ShadowR::DirectionalLightMatrixs>(2, 0, VK_SHADER_STAGE_GEOMETRY_BIT)
+		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
+		.AddStorageBuffer(2, 0, sizeof(ShadowR::DirectionalLightMatrixs), VK_SHADER_STAGE_GEOMETRY_BIT)
 		.Build();
 	}
 
