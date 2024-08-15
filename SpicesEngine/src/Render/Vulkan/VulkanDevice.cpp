@@ -58,9 +58,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceDeviceGeneratedCommandsFeaturesNV         dgcFeatures{};
+		dgcFeatures.sType                                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV;
+		dgcFeatures.pNext                                       = nullptr;
+														       
 		VkPhysicalDeviceVulkan13Features                          vk13Frature{};
 		vk13Frature.sType                                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-		vk13Frature.pNext                                       = nullptr;
+		vk13Frature.pNext                                       = &dgcFeatures;
 														       
 		VkPhysicalDeviceFragmentShadingRateFeaturesKHR            fragShadingRateFeature {};
 		fragShadingRateFeature.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
@@ -309,9 +313,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceDeviceGeneratedCommandsFeaturesNV     dgcFeatures{};
+		dgcFeatures.sType                                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV;
+		dgcFeatures.pNext                                   = nullptr;
+
 		VkPhysicalDeviceVulkan13Features                      vk13Frature{};
 		vk13Frature.sType                                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
-		vk13Frature.pNext                                   = nullptr;
+		vk13Frature.pNext                                   = &dgcFeatures;
 
 		VkPhysicalDeviceFragmentShadingRateFeaturesKHR        fragShadingRateFeature {};
 		fragShadingRateFeature.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
@@ -397,6 +405,8 @@ namespace Spices {
 		ASSERT(fragShadingRateFeature.pipelineFragmentShadingRate)                            /* @brief Enable pipelineFragmentShadingRate Feature.                       */
 		ASSERT(vk13Frature.maintenance4)                                                      /* @brief Enable maintenance4 Feature.                                      */
 
+		ASSERT(dgcFeatures.deviceGeneratedCommands)                                            /* @brief Enable Nvidia GPU Generate Commands Feature.                     */
+
 		return true;
 	}
 
@@ -416,6 +426,7 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.        */
 		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.       */
 		m_ExtensionProperties.push_back(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME);            /* @brief Enable Nested Command Buffer.        */
+		m_ExtensionProperties.push_back(VK_NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Generate Commands. */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

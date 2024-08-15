@@ -65,6 +65,7 @@ namespace Spices {
 
 		DescriptorSetBuilder{ "Mesh", this }
 		.AddStorageBuffer(2, 0, sizeof(SpicesShader::MeshDesc) * MESH_BUFFER_MAXNUM, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT)
+		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
 		.Build();
 
 		DescriptorSetBuilder{ "SkyBox", this }
@@ -216,7 +217,6 @@ namespace Spices {
 			//builder.UpdateStorageBuffer(2, 0, m_DescsMap[pair.first].descs.data(), m_DescsMap[pair.first].descs.size());
 
 			//builder.BindPipeline(pair.first);
-
 			uint32_t count = m_BaseMeshDrawCommandsBufferCount[pair.first];
 			uint32_t stride = sizeof(VkDrawMeshTasksIndirectCommandEXT);
 			//vkCmdDrawMeshTasksIndirectEXT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], pair.second->Get(), 0, count, stride);
