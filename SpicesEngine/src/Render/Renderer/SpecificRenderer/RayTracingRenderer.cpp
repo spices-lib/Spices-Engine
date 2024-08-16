@@ -198,7 +198,7 @@ namespace Spices {
 				rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(index);
 				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
 				rayInst.mask                                                = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
-				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                                      // We will use the same hit group for all objects
+				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                                    // We will use the same hit group for all objects
 
 				tlas.push_back(rayInst);
 

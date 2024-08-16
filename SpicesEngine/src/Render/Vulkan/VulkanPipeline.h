@@ -58,10 +58,19 @@ namespace Spices {
 	public:
 
 		/**
+		* @brief Using ShaderMap to samplify std::unordered_map<std::string, std::vector<std::string>>.
+		*/
+		using ShaderMap = std::unordered_map<std::string, std::vector<std::string>>;
+
+	public:
+
+		/**
 		* @brief Constructor Function.
 		* @param[in] vulkanState The global VulkanState.
 		*/
-		VulkanPipeline(VulkanState& vulkanState) : VulkanObject(vulkanState) {}
+		VulkanPipeline(VulkanState& vulkanState) 
+			: VulkanObject(vulkanState) 
+		{}
 
 		/**
 		* @brief Constructor Function.
@@ -72,10 +81,10 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanPipeline(
-			VulkanState&                                                      vulkanState   ,
-			const std::string&                                                pipelineName  ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
-			const PipelineConfigInfo&                                         config
+			VulkanState&               vulkanState   ,
+			const std::string&         pipelineName  ,
+			const ShaderMap&           shaders       ,
+			const PipelineConfigInfo&  config
 		);
 
 		/**
@@ -110,9 +119,9 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		virtual void CreateGraphicsPipeline(
-			const std::string&                                                pipelineName   ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders        ,
-			const PipelineConfigInfo&                                         config
+			const std::string&         pipelineName   ,
+			const ShaderMap&           shaders        ,
+			const PipelineConfigInfo&  config
 		);
 
 	protected:
@@ -145,10 +154,10 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanRayTracingPipeline(
-			VulkanState&                                                      vulkanState   ,
-			const std::string&                                                pipelineName  ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       , 
-			const PipelineConfigInfo&                                         config
+			VulkanState&               vulkanState   ,
+			const std::string&         pipelineName  ,
+			const ShaderMap&           shaders       ,
+			const PipelineConfigInfo&  config
 		);
 
 		/**
@@ -165,9 +174,9 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		virtual void CreateGraphicsPipeline(
-			const std::string&                                                pipelineName  ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
-			const PipelineConfigInfo&                                         config
+			const std::string&         pipelineName  ,
+			const ShaderMap&           shaders       ,
+			const PipelineConfigInfo&  config
 		) override;
 	};
 
@@ -187,10 +196,10 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanComputePipeline(
-			VulkanState&                                                      vulkanState    ,
-			const std::string&                                                pipelineName   ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders        ,
-			const PipelineConfigInfo&                                         config
+			VulkanState&               vulkanState    ,
+			const std::string&         pipelineName   ,
+			const ShaderMap&           shaders        ,
+			const PipelineConfigInfo&  config
 		);
 
 		/**
@@ -207,14 +216,14 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		virtual void CreateGraphicsPipeline(
-			const std::string&                                                pipelineName ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders      ,
-			const PipelineConfigInfo&                                         config
+			const std::string&         pipelineName ,
+			const ShaderMap&           shaders      ,
+			const PipelineConfigInfo&  config
 		) override;
 	};
 
 	/**
-	* @brief This class is a wrapper of Compute Pipeline.
+	* @brief This class is a wrapper of Mesh Pipeline.
 	*/
 	class VulkanMeshPipeline : public VulkanPipeline
 	{
@@ -229,10 +238,10 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanMeshPipeline(
-			VulkanState&                                                      vulkanState    ,
-			const std::string&                                                pipelineName   ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders        ,
-			const PipelineConfigInfo&                                         config
+			VulkanState&               vulkanState    ,
+			const std::string&         pipelineName   ,
+			const ShaderMap&           shaders        ,
+			const PipelineConfigInfo&  config
 		);
 
 		/**
@@ -249,9 +258,51 @@ namespace Spices {
 		* @param[in] config PipelineConfigInfo.
 		*/
 		virtual void CreateGraphicsPipeline(
-			const std::string&                                                pipelineName ,
-			const std::unordered_map<std::string, std::vector<std::string>>&  shaders      ,
-			const PipelineConfigInfo&                                         config
+			const std::string&        pipelineName ,
+			const ShaderMap&          shaders      ,
+			const PipelineConfigInfo& config
+		) override;
+	};
+
+	/**
+	* @brief This class is a wrapper of Indirect Mesh Pipeline.
+	*/
+	class VulkanIndirectMeshPipelineNV : public VulkanPipeline
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		* Create VkPipeline.
+		* @param[in] vulkanState The global VulkanState.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		VulkanIndirectMeshPipelineNV(
+			VulkanState&               vulkanState   ,
+			const std::string&         pipelineName  ,
+			const ShaderMap&           shaders       ,
+			const PipelineConfigInfo&  config
+		);
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~VulkanIndirectMeshPipelineNV() override = default;
+
+	private:
+
+		/**
+		* @brief Create the VkPipeline.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] shaders The Shader stage name and path.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		virtual void CreateGraphicsPipeline(
+			const std::string&         pipelineName  ,
+			const ShaderMap&           shaders       ,
+			const PipelineConfigInfo&  config
 		) override;
 	};
 }

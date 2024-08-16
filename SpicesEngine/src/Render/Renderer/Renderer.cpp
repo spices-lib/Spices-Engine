@@ -49,7 +49,7 @@ namespace Spices {
 		*/
 		CreateDefaultMaterial();
 	}
-
+	 
 	void Renderer::OnSlateResize()
 	{
 		SPICES_PROFILE_ZONE;

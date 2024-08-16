@@ -11,10 +11,10 @@
 namespace Spices {
 
 	VulkanPipeline::VulkanPipeline(
-		VulkanState&                                                      vulkanState    , 
-		const std::string&                                                pipelineName   ,
-		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
-		const PipelineConfigInfo&                                         config
+		VulkanState&               vulkanState    , 
+		const std::string&         pipelineName   ,
+		const ShaderMap&           shaders       ,
+		const PipelineConfigInfo&  config
 	)
 		: VulkanObject(vulkanState)
 	{
@@ -141,9 +141,9 @@ namespace Spices {
 	}
 
 	void VulkanPipeline::CreateGraphicsPipeline(
-		const std::string&                                                pipelineName  ,
-		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
-		const PipelineConfigInfo&                                         config
+		const std::string&         pipelineName  ,
+		const ShaderMap&           shaders       ,
+		const PipelineConfigInfo&  config
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -192,7 +192,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkGraphicsPipelineCreateInfo.
 		*/
-		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
 		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
 		pipelineInfo.pStages                            = shaderStages.data();
@@ -220,10 +220,10 @@ namespace Spices {
 	}
 
 	VulkanRayTracingPipeline::VulkanRayTracingPipeline(
-		VulkanState&                                                      vulkanState  ,
-		const std::string&                                                pipelineName ,
-		const std::unordered_map<std::string, std::vector<std::string>>&  shaders      ,
-		const PipelineConfigInfo&                                         config
+		VulkanState&               vulkanState  ,
+		const std::string&         pipelineName ,
+		const ShaderMap&           shaders      ,
+		const PipelineConfigInfo&  config
 	)
 		: VulkanPipeline(vulkanState)
 	{
@@ -236,9 +236,9 @@ namespace Spices {
 	}
 
 	void VulkanRayTracingPipeline::CreateGraphicsPipeline(
-		const std::string &                                               pipelineName , 
-		const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
-		const PipelineConfigInfo &                                        config
+		const std::string&         pipelineName , 
+		const ShaderMap&           shaders      ,
+		const PipelineConfigInfo&  config
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -272,7 +272,7 @@ namespace Spices {
 		/**
 		* @brief Shader groups.
 		*/
-		VkRayTracingShaderGroupCreateInfoKHR group{};
+		VkRayTracingShaderGroupCreateInfoKHR  group{};
 		group.sType                         = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
 		group.anyHitShader                  = VK_SHADER_UNUSED_KHR;
 		group.closestHitShader              = VK_SHADER_UNUSED_KHR;
@@ -351,10 +351,10 @@ namespace Spices {
 	}
 
 	VulkanComputePipeline::VulkanComputePipeline(
-		VulkanState&                                                     vulkanState   , 
-		const std::string&                                               pipelineName  , 
-		const std::unordered_map<std::string, std::vector<std::string>>& shaders       ,
-		const PipelineConfigInfo&                                        config
+		VulkanState&               vulkanState   , 
+		const std::string&         pipelineName  , 
+		const ShaderMap&           shaders       ,
+		const PipelineConfigInfo&  config
 	)
 		:VulkanPipeline(vulkanState)
 	{
@@ -364,9 +364,9 @@ namespace Spices {
 	}
 
 	void VulkanComputePipeline::CreateGraphicsPipeline(
-		const std::string&                                               pipelineName  , 
-		const std::unordered_map<std::string, std::vector<std::string>>& shaders       , 
-		const PipelineConfigInfo&                                        config
+		const std::string&         pipelineName  , 
+		const ShaderMap&           shaders       ,
+		const PipelineConfigInfo&  config
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -415,10 +415,10 @@ namespace Spices {
 	}
 
 	VulkanMeshPipeline::VulkanMeshPipeline(
-		VulkanState&                                                     vulkanState   ,
-		const std::string&                                               pipelineName  ,
-		const std::unordered_map<std::string, std::vector<std::string>>& shaders,
-		const PipelineConfigInfo&                                        config
+		VulkanState&               vulkanState   ,
+		const std::string&         pipelineName  ,
+		const ShaderMap&           shaders,
+		const PipelineConfigInfo&  config
 	)
 		:VulkanPipeline(vulkanState)
 	{
@@ -428,9 +428,9 @@ namespace Spices {
 	}
 
 	void VulkanMeshPipeline::CreateGraphicsPipeline(
-		const std::string&                                               pipelineName  ,
-		const std::unordered_map<std::string, std::vector<std::string>>& shaders       ,
-		const PipelineConfigInfo&                                        config
+		const std::string&         pipelineName  ,
+		const ShaderMap&           shaders       ,
+		const PipelineConfigInfo&  config
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -466,7 +466,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkGraphicsPipelineCreateInfo.
 		*/
-		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
 		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
 		pipelineInfo.pStages                            = shaderStages.data();
@@ -485,6 +485,97 @@ namespace Spices {
 
 		pipelineInfo.basePipelineIndex                  = -1;
 		pipelineInfo.basePipelineHandle                 = VK_NULL_HANDLE;
+
+		/**
+		* @brief Create Pipeline.
+		*/
+		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
+	}
+
+	VulkanIndirectMeshPipelineNV::VulkanIndirectMeshPipelineNV(
+		VulkanState&               vulkanState  , 
+		const std::string&         pipelineName ,
+		const ShaderMap&           shaders      ,
+		const PipelineConfigInfo&  config
+	)
+		:VulkanPipeline(vulkanState)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VulkanIndirectMeshPipelineNV::CreateGraphicsPipeline(pipelineName, shaders, config);
+	}
+
+	void VulkanIndirectMeshPipelineNV::CreateGraphicsPipeline(
+		const std::string&         pipelineName , 
+		const ShaderMap&           shaders      ,
+		const PipelineConfigInfo&  config
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Receive PipelineLayout from parameter.
+		*/
+		m_PipelineLayout = config.pipelineLayout;
+
+		/**
+		* @brief Create the VulkanShaderModule.
+		*/
+		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		for (auto& pair : shaders)
+		{
+			for(size_t i = 0; i < pair.second.size(); i++)
+			{
+				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+			}
+		}
+
+		/**
+		* @brief Instance VkPipelineShaderStageCreateInfo.
+		*/
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (size_t i = 0; i < shaderModules.size(); i++)
+		{
+			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
+		}
+
+		/**
+		* @brief Shader groups.
+		*/
+		VkGraphicsPipelineShaderGroupsCreateInfoNV group{};
+		group.sType                         = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV;
+		
+		std::vector<VkGraphicsShaderGroupCreateInfoNV> m_ShaderGroups;
+		
+		group.groupCount                    = m_ShaderGroups.size();
+		group.pGroups                       = m_ShaderGroups.data();
+
+		/**
+		* @brief Instance a VkGraphicsPipelineCreateInfo.
+		*/
+		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
+		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
+		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
+		pipelineInfo.pStages                            = shaderStages.data();
+		pipelineInfo.pVertexInputState                  = nullptr;
+		pipelineInfo.pInputAssemblyState                = nullptr;
+		pipelineInfo.pViewportState                     = &config.viewportInfo;
+		pipelineInfo.pRasterizationState                = &config.rasterizationInfo;
+		pipelineInfo.pMultisampleState                  = &config.multisampleInfo;
+		pipelineInfo.pColorBlendState                   = &config.colorBlendInfo;
+		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
+		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
+
+		pipelineInfo.layout                             = m_PipelineLayout;
+		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.subpass                            = config.subpass;
+
+		pipelineInfo.basePipelineIndex                  = -1;
+		pipelineInfo.basePipelineHandle                 = VK_NULL_HANDLE;
+
+		pipelineInfo.pNext                              = &group;
 
 		/**
 		* @brief Create Pipeline.
