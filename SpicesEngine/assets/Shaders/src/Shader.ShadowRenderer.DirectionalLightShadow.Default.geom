@@ -22,7 +22,8 @@ layout(triangles, invocations = MAX_DIRECTIONALLIGHT_NUM) in;
 /**
 * @brief SSBO of DirectioaalLight Matrixs.
 */
-layout(set = 2, binding = 0) readonly buffer DirectionalLightMatrixs {
+layout(set = 2, binding = 0) readonly buffer DirectionalLightMatrixs 
+{
 	mat4 Matrixs[];
 };
 

@@ -18,14 +18,16 @@
 /**
 * @brief Global View Struct.
 */
-layout(set = 0, binding = 0) uniform ShaderView {
+layout(set = 0, binding = 0) uniform ShaderView 
+{
     View view;                        /* @see View */
 };
 
 /**
 * @brief Application Inout Struct.
 */
-layout(set = 0, binding = 1) uniform ShaderInput {
+layout(set = 0, binding = 1) uniform ShaderInput 
+{
     Input spiecsInput;          /* @see SpiecsInput */
 };
 

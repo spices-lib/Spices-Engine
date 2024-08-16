@@ -6,58 +6,9 @@
 
 #include "Pchheader.h"
 #include "VulkanDebugUtils.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spices {
-
-	PFN_vkCmdBeginDebugUtilsLabelEXT     VulkanDebugUtils::vkCmdBeginDebugUtilsLabelEXT;
-	PFN_vkCmdEndDebugUtilsLabelEXT       VulkanDebugUtils::vkCmdEndDebugUtilsLabelEXT;
-	PFN_vkCmdInsertDebugUtilsLabelEXT    VulkanDebugUtils::vkCmdInsertDebugUtilsLabelEXT;
-
-	PFN_vkQueueBeginDebugUtilsLabelEXT   VulkanDebugUtils::vkQueueBeginDebugUtilsLabelEXT;
-	PFN_vkQueueEndDebugUtilsLabelEXT     VulkanDebugUtils::vkQueueEndDebugUtilsLabelEXT;
-	PFN_vkQueueInsertDebugUtilsLabelEXT  VulkanDebugUtils::vkQueueInsertDebugUtilsLabelEXT;
-
-	PFN_vkSetDebugUtilsObjectNameEXT     VulkanDebugUtils::vkSetDebugUtilsObjectNameEXT;
-	PFN_vkSetDebugUtilsObjectTagEXT      VulkanDebugUtils::vkSetDebugUtilsObjectTagEXT;
-
-	void VulkanDebugUtils::Init(VkInstance instance)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_DEBUG
-
-		vkCmdBeginDebugUtilsLabelEXT    = reinterpret_cast<PFN_vkCmdBeginDebugUtilsLabelEXT>   (vkGetInstanceProcAddr(instance, "vkCmdBeginDebugUtilsLabelEXT"));
-		vkCmdEndDebugUtilsLabelEXT      = reinterpret_cast<PFN_vkCmdEndDebugUtilsLabelEXT>     (vkGetInstanceProcAddr(instance, "vkCmdEndDebugUtilsLabelEXT"));
-		vkCmdInsertDebugUtilsLabelEXT   = reinterpret_cast<PFN_vkCmdInsertDebugUtilsLabelEXT>  (vkGetInstanceProcAddr(instance, "vkCmdInsertDebugUtilsLabelEXT"));
-
-		vkQueueBeginDebugUtilsLabelEXT  = reinterpret_cast<PFN_vkQueueBeginDebugUtilsLabelEXT> (vkGetInstanceProcAddr(instance, "vkQueueBeginDebugUtilsLabelEXT"));
-		vkQueueEndDebugUtilsLabelEXT    = reinterpret_cast<PFN_vkQueueEndDebugUtilsLabelEXT>   (vkGetInstanceProcAddr(instance, "vkQueueEndDebugUtilsLabelEXT"));
-		vkQueueInsertDebugUtilsLabelEXT = reinterpret_cast<PFN_vkQueueInsertDebugUtilsLabelEXT>(vkGetInstanceProcAddr(instance, "vkQueueInsertDebugUtilsLabelEXT"));
-
-		vkSetDebugUtilsObjectNameEXT    = reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>   (vkGetInstanceProcAddr(instance, "vkSetDebugUtilsObjectNameEXT"));
-		vkSetDebugUtilsObjectTagEXT     = reinterpret_cast<PFN_vkSetDebugUtilsObjectTagEXT>    (vkGetInstanceProcAddr(instance, "vkSetDebugUtilsObjectTagEXT"));
-
-#endif // SPICES_DEBUG
-
-#ifdef SPICES_RELEASE
-
-		vkCmdBeginDebugUtilsLabelEXT    = nullptr;
-		vkCmdEndDebugUtilsLabelEXT      = nullptr;
-		vkCmdInsertDebugUtilsLabelEXT   = nullptr;
-
-		vkQueueBeginDebugUtilsLabelEXT  = nullptr;
-		vkQueueEndDebugUtilsLabelEXT    = nullptr;
-		vkQueueInsertDebugUtilsLabelEXT = nullptr;
-
-		vkSetDebugUtilsObjectNameEXT    = nullptr;
-		vkSetDebugUtilsObjectTagEXT     = nullptr;
-
-#endif // SPICES_RELEASE
-
-	}
 
 	void VulkanDebugUtils::BeginLabel(
 		VkCommandBuffer    cmdbuffer , 
@@ -71,34 +22,24 @@ namespace Spices {
 		* @brief Only Show Debug info with Debug Mode.
 		*/
 #ifdef SPICES_RELEASE
+
 		return;
+
 #endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkCmdBeginDebugUtilsLabelEXT) 
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkCmdBeginDebugUtilsLabelEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
 
 		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
 		*/
-		VkDebugUtilsLabelEXT labelInfo{};
-		labelInfo.sType       = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-		labelInfo.pLabelName  = caption.c_str();
+		VkDebugUtilsLabelEXT             labelInfo{};
+		labelInfo.sType                = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+		labelInfo.pLabelName           = caption.c_str();
+
 		memcpy(labelInfo.color, &color[0], sizeof(float) * 4);
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		vkCmdBeginDebugUtilsLabelEXT(cmdbuffer, &labelInfo);
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdBeginDebugUtilsLabelEXT(cmdbuffer, &labelInfo);
 	}
 
 	void VulkanDebugUtils::InsertLabel(
@@ -113,34 +54,24 @@ namespace Spices {
 		* @brief Only Show Debug info with Debug Mode.
 		*/
 #ifdef SPICES_RELEASE
+
 		return;
+
 #endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkCmdInsertDebugUtilsLabelEXT)
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkCmdInsertDebugUtilsLabelEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
 
 		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
 		*/
-		VkDebugUtilsLabelEXT labelInfo{};
-		labelInfo.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-		labelInfo.pLabelName = caption.c_str();
+		VkDebugUtilsLabelEXT         labelInfo{};
+		labelInfo.sType            = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+		labelInfo.pLabelName       = caption.c_str();
+
 		memcpy(labelInfo.color, &color[0], sizeof(float) * 4);
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		vkCmdInsertDebugUtilsLabelEXT(cmdbuffer, &labelInfo);
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdInsertDebugUtilsLabelEXT(cmdbuffer, &labelInfo);
 	}
 
 	void VulkanDebugUtils::EndLabel(VkCommandBuffer cmdbuffer)
@@ -151,26 +82,15 @@ namespace Spices {
 		* @brief Only Show Debug info with Debug Mode.
 		*/
 #ifdef SPICES_RELEASE
+
 		return;
+
 #endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkCmdEndDebugUtilsLabelEXT) 
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkCmdEndDebugUtilsLabelEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		vkCmdEndDebugUtilsLabelEXT(cmdbuffer);
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdEndDebugUtilsLabelEXT(cmdbuffer);
 	}
 
 	void VulkanDebugUtils::BeginQueueLabel(
@@ -185,34 +105,24 @@ namespace Spices {
 		* @brief Only Show Debug info with Debug Mode.
 		*/
 #ifdef SPICES_RELEASE
+
 		return;
+
 #endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkQueueBeginDebugUtilsLabelEXT)
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkQueueBeginDebugUtilsLabelEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
 
 		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
 		*/
-		VkDebugUtilsLabelEXT labelInfo{};
-		labelInfo.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-		labelInfo.pLabelName = caption.c_str();
+		VkDebugUtilsLabelEXT        labelInfo{};
+		labelInfo.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+		labelInfo.pLabelName      = caption.c_str();
+
 		memcpy(labelInfo.color, &color[0], sizeof(float) * 4);
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		vkQueueBeginDebugUtilsLabelEXT(queue, &labelInfo);
+		VulkanRenderBackend::GetState().m_VkFunc.vkQueueBeginDebugUtilsLabelEXT(queue, &labelInfo);
 	}
 
 	void VulkanDebugUtils::EndQueueLabel(VkQueue queue)
@@ -223,26 +133,15 @@ namespace Spices {
 		* @brief Only Show Debug info with Debug Mode.
 		*/
 #ifdef SPICES_RELEAS
+
 		return;
+
 #endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkQueueEndDebugUtilsLabelEXT)
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkQueueEndDebugUtilsLabelEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		vkQueueEndDebugUtilsLabelEXT(queue);
+		VulkanRenderBackend::GetState().m_VkFunc.vkQueueEndDebugUtilsLabelEXT(queue);
 	}
 
 	void VulkanDebugUtils::InsertQueueLabel(VkQueue queue, const std::string& caption, glm::vec4 color)
@@ -253,33 +152,91 @@ namespace Spices {
 		* @brief Only Show Debug info with Debug Mode.
 		*/
 #ifdef SPICES_RELEASE
+
 		return;
+
 #endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkQueueInsertDebugUtilsLabelEXT)
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkQueueInsertDebugUtilsLabelEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
 
 		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
 		*/
-		VkDebugUtilsLabelEXT labelInfo{};
-		labelInfo.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-		labelInfo.pLabelName = caption.c_str();
+		VkDebugUtilsLabelEXT        labelInfo{};
+		labelInfo.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+		labelInfo.pLabelName      = caption.c_str();
+
 		memcpy(labelInfo.color, &color[0], sizeof(float) * 4);
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		vkQueueInsertDebugUtilsLabelEXT(queue, &labelInfo);
+		VulkanRenderBackend::GetState().m_VkFunc.vkQueueInsertDebugUtilsLabelEXT(queue, &labelInfo);
+	}
+
+	void VulkanDebugUtils::SetObjectName(
+		VkObjectType       type    , 
+		uint64_t           handle  , 
+		VkDevice&          device  , 
+		const std::string& caption
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Only Show Debug info with Debug Mode.
+		*/
+#ifdef SPICES_RELEASE
+
+		return;
+
+#endif
+
+		/**
+		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
+		*/
+		VkDebugUtilsObjectNameInfoEXT       name_info{};
+		name_info.sType                   = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+		name_info.objectType              = type;
+		name_info.objectHandle            = handle;
+		name_info.pObjectName             = caption.c_str();
+
+		/**
+		* @brief Execute the function pointer.
+		*/
+		VulkanRenderBackend::GetState().m_VkFunc.vkSetDebugUtilsObjectNameEXT(device, &name_info);
+	}
+
+	void VulkanDebugUtils::SetObjectTag(
+		VkObjectType       type      , 
+		uint64_t           handle    , 
+		VkDevice&          device    , 
+		std::vector<char*> captions
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Only Show Debug info with Debug Mode.
+		*/
+#ifdef SPICES_RELEASE
+
+		return;
+
+#endif
+
+		/**
+		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
+		*/
+		VkDebugUtilsObjectTagInfoEXT    tag_info{};
+		tag_info.sType                = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
+		tag_info.objectType           = type;
+		tag_info.objectHandle         = handle;
+		tag_info.tagName              = 0;
+		tag_info.tagSize              = captions.size();
+		tag_info.pTag                 = captions.data();
+
+		/**
+		* @brief Execute the function pointer.
+		*/
+		VulkanRenderBackend::GetState().m_VkFunc.vkSetDebugUtilsObjectTagEXT(device, &tag_info);
 	}
 }

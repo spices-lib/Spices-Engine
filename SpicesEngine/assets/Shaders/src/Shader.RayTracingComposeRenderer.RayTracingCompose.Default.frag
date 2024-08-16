@@ -19,9 +19,11 @@
 /**
 * @brief Fragment Shader Input From Vertex Shader.
 */
-layout(location = 0) in struct FragInput {
+layout(location = 0) in struct FragInput 
+{
 	vec2 texCoord;                         /*Fragmet UV*/
-} fragInput;
+} 
+fragInput;
 
 /*****************************************************************************************/
 

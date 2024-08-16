@@ -216,7 +216,7 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 
 	VulkanRayTracingPipeline::VulkanRayTracingPipeline(
@@ -228,11 +228,6 @@ namespace Spices {
 		: VulkanPipeline(vulkanState)
 	{
 		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Get needed KHR function pointer.
-		*/
-		vkCreateRayTracingPipelinesKHR = reinterpret_cast<PFN_vkCreateRayTracingPipelinesKHR>(vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCreateRayTracingPipelinesKHR"));
 
 		/**
 		* @brief Create RT Pipeline.
@@ -339,7 +334,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkGraphicsPipelineCreateInfo.
 		*/
-		VkRayTracingPipelineCreateInfoKHR rayPipelineInfo{};
+		VkRayTracingPipelineCreateInfoKHR                            rayPipelineInfo{};
 		rayPipelineInfo.sType                                      = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR;
 		rayPipelineInfo.stageCount                                 = static_cast<uint32_t>(shaderStages.size());
 		rayPipelineInfo.pStages                                    = shaderStages.data();
@@ -351,8 +346,8 @@ namespace Spices {
 		/**
 		* @brief Create Pipeline.
 		*/
-		VK_CHECK(vkCreateRayTracingPipelinesKHR(m_VulkanState.m_Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_Pipeline))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
+		VK_CHECK(m_VulkanState.m_VkFunc.vkCreateRayTracingPipelinesKHR(m_VulkanState.m_Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_Pipeline))
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 
 	VulkanComputePipeline::VulkanComputePipeline(
@@ -416,7 +411,7 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(vkCreateComputePipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 
 	VulkanMeshPipeline::VulkanMeshPipeline(
@@ -495,6 +490,6 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, m_Pipeline, m_VulkanState.m_Device, pipelineName);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 }

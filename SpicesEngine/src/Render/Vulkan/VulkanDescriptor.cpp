@@ -72,7 +72,7 @@ namespace Spices {
 		* @brief Create a VkDescriptorPool.
 		*/
 		VK_CHECK(vkCreateDescriptorPool(vulkanState.m_Device, &descriptorPoolInfo, nullptr, &m_DescriptorPool));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_POOL, m_DescriptorPool, vulkanState.m_Device, "SpicesEngineDescriptorPool");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_POOL, (uint64_t)m_DescriptorPool, vulkanState.m_Device, "SpicesEngineDescriptorPool");
 	}
 
 	VulkanDescriptorPool::~VulkanDescriptorPool()
@@ -156,7 +156,7 @@ namespace Spices {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption);
 	}
 
 	void VulkanDescriptorSetLayout::BuildBindLessTextureDescriptorSetLayout(
@@ -210,7 +210,7 @@ namespace Spices {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption);
 	}
 
 	VulkanDescriptorSet::~VulkanDescriptorSet()
@@ -266,7 +266,7 @@ namespace Spices {
 		* @brief Allocate DescriptorSet.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName);
 	}
 
 	void VulkanDescriptorSet::BuildBindLessTextureDescriptorSet(const std::string& createrName)
@@ -301,7 +301,7 @@ namespace Spices {
 		* @brief Allocate DescriptorSet.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName);
 	}
 
 	void VulkanDescriptorSet::UpdateDescriptorSet(

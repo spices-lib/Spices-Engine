@@ -1006,13 +1006,6 @@ namespace Spices {
 				const VkStridedDeviceAddressRegionKHR* hitRegion,
 				const VkStridedDeviceAddressRegionKHR* callRegion
 			);
-
-		private:
-			
-			/**
-			* @brief Function Pointer of vkCmdTraceRaysKHR.
-			*/
-			static PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
 		};
 		
 		/**

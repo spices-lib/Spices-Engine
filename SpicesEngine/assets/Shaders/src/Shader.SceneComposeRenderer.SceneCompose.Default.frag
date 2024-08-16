@@ -21,9 +21,11 @@
 /**
 * @brief Fragment Shader Input From Vertex Shader.
 */
-layout(location = 0) in struct FragInput {
+layout(location = 0) in struct FragInput 
+{
 	vec2 texCoord;                         /*Fragmet UV*/
-} fragInput;
+} 
+fragInput;
 
 /*****************************************************************************************/
 
@@ -63,16 +65,20 @@ layout(input_attachment_index = 0, set = 2, binding = 0) uniform subpassInput GB
 /**
 * @brief DirectionalLight Buffer in World.
 */
-layout(set = 3, binding = 0, scalar) readonly buffer DLightBuffer {
+layout(set = 3, binding = 0, scalar) readonly buffer DLightBuffer 
+{
 	DirectionalLight i[];   /* @see DirectionalLight. */
-} dLightBuffer;
+} 
+dLightBuffer;
 
 /**
 * @brief PointLight Buffer in World.
 */
-layout(set = 3, binding = 1, scalar) readonly buffer PLightBuffer {
+layout(set = 3, binding = 1, scalar) readonly buffer PLightBuffer 
+{
 	PointLight i[];         /* @see PointLight. */
-} pLightBuffer;
+} 
+pLightBuffer;
 
 /*****************************************************************************************/
 

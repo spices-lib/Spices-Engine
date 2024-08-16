@@ -82,7 +82,7 @@ namespace Spices {
 		*/
 		VkCommandBuffer commandBuffer;
 		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &commandBuffer));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, commandBuffer, vulkanState.m_Device, "CustomCmd Command Buffer");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)commandBuffer, vulkanState.m_Device, "CustomCmd Command Buffer");
 
 		/**
 		* @brief Instanced a VkCommandBufferBeginInfo with default value.

@@ -24,10 +24,12 @@ layout (triangles) in;
 /**
 * @brief Geometry Shader Input From Vertex Shader.
 */
-layout(location = 0) in struct GeomInput {
+layout(location = 0) in struct GeomInput 
+{
     vec3 position;                         /* @brief World Postion */
     vec3 normal;                           /* @brief World Normal  */
-} geomInput[];
+} 
+geomInput[];
 
 /*****************************************************************************************/
 
@@ -42,9 +44,11 @@ layout (line_strip, max_vertices = 2) out;
 /**
 * @brief Geometry Shader Output to Fragment Shader.
 */
-layout(location = 0) out struct GeomOut {
+layout(location = 0) out struct GeomOut 
+{
     vec3 color;                            /* @brief Fragment Color */
-} geomOut;
+} 
+geomOut;
 
 /*****************************************************************************************/
 

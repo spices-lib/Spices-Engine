@@ -5,21 +5,7 @@ namespace Spices {
 
 	VulkanRayTracing::VulkanRayTracing(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Get all needed KHR Functions pointer.
-		*/
-		vkCreateAccelerationStructureKHR                 = reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>                (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCreateAccelerationStructureKHR"));
-		vkDestroyAccelerationStructureKHR                = reinterpret_cast<PFN_vkDestroyAccelerationStructureKHR>               (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkDestroyAccelerationStructureKHR"));
-		vkCmdBuildAccelerationStructuresKHR              = reinterpret_cast<PFN_vkCmdBuildAccelerationStructuresKHR>             (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCmdBuildAccelerationStructuresKHR"));
-		vkCopyAccelerationStructureKHR                   = reinterpret_cast<PFN_vkCopyAccelerationStructureKHR>                  (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCopyAccelerationStructureKHR"));
-		vkGetAccelerationStructureDeviceAddressKHR       = reinterpret_cast<PFN_vkGetAccelerationStructureDeviceAddressKHR>      (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkGetAccelerationStructureDeviceAddressKHR"));
-		vkCmdWriteAccelerationStructuresPropertiesKHR    = reinterpret_cast<PFN_vkCmdWriteAccelerationStructuresPropertiesKHR>   (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCmdWriteAccelerationStructuresPropertiesKHR"));
-		vkGetAccelerationStructureBuildSizesKHR          = reinterpret_cast<PFN_vkGetAccelerationStructureBuildSizesKHR>         (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkGetAccelerationStructureBuildSizesKHR"));
-		vkCmdCopyAccelerationStructureKHR                = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureKHR>               (vkGetInstanceProcAddr(vulkanState.m_Instance, "vkCmdCopyAccelerationStructureKHR"));
-	}
+	{}
 
 	VulkanRayTracing::~VulkanRayTracing()
 	{
@@ -40,7 +26,7 @@ namespace Spices {
 			it.FreeBuffer();
 			if (it.accel != VK_NULL_HANDLE)
 			{
-				vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
+				m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
 			}
 		}
 
@@ -49,7 +35,7 @@ namespace Spices {
 		*/
 		if (m_tlas.accel != VK_NULL_HANDLE)
 		{
-			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
+			m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
 		}
 
 		m_blas.clear();
@@ -66,7 +52,7 @@ namespace Spices {
 		addressInfo.sType                             = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
 		addressInfo.accelerationStructure             = m_blas[blasId].accel;
 
-		return vkGetAccelerationStructureDeviceAddressKHR(m_VulkanState.m_Device, &addressInfo);
+		return m_VulkanState.m_VkFunc.vkGetAccelerationStructureDeviceAddressKHR(m_VulkanState.m_Device, &addressInfo);
 	}
 
 	void VulkanRayTracing::BuildBLAS(
@@ -110,7 +96,7 @@ namespace Spices {
 			/**
 			* @brief Get ASBuildSize.
 			*/
-			vkGetAccelerationStructureBuildSizesKHR(
+			m_VulkanState.m_VkFunc.vkGetAccelerationStructureBuildSizesKHR(
 				m_VulkanState.m_Device, 
 				VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
 				&buildAs[idx].buildInfo, 
@@ -244,7 +230,7 @@ namespace Spices {
 		VkAccelerationStructureBuildSizesInfoKHR sizeInfo{};
 		sizeInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
 
-		vkGetAccelerationStructureBuildSizesKHR(
+		m_VulkanState.m_VkFunc.vkGetAccelerationStructureBuildSizesKHR(
 			m_VulkanState.m_Device, 
 			VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR, 
 			&buildInfos,
@@ -270,7 +256,7 @@ namespace Spices {
 		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
 			// Update the acceleration structure. Note the VK_TRUE parameter to trigger the update,
 			// and the existing BLAS being passed and updated in place
-			vkCmdBuildAccelerationStructuresKHR(commandBuffer, 1, &buildInfos, pBuildOffset.data());
+			m_VulkanState.m_VkFunc.vkCmdBuildAccelerationStructuresKHR(commandBuffer, 1, &buildInfos, pBuildOffset.data());
 		});
 	}
 
@@ -329,7 +315,7 @@ namespace Spices {
 		VkAccelerationStructureBuildSizesInfoKHR sizeInfo{};
 		sizeInfo.sType                             = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
 
-		vkGetAccelerationStructureBuildSizesKHR(
+		m_VulkanState.m_VkFunc.vkGetAccelerationStructureBuildSizesKHR(
 			m_VulkanState.m_Device, 
 			VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR, 
 			&buildInfo,
@@ -402,7 +388,7 @@ namespace Spices {
 		/**
 		* @brief Build the TLAS.
 		*/
-		vkCmdBuildAccelerationStructuresKHR(cmdBuf, 1, &buildInfo, &pBuildOffsetInfo);
+		m_VulkanState.m_VkFunc.vkCmdBuildAccelerationStructuresKHR(cmdBuf, 1, &buildInfo, &pBuildOffsetInfo);
 	}
 
 	void VulkanRayTracing::CmdCreateBLAS(
@@ -454,7 +440,7 @@ namespace Spices {
 			/**
 			* @brief Building the bottom - level - acceleration - structure.
 			*/ 
-			vkCmdBuildAccelerationStructuresKHR(cmdBuf, 1, &buildAs[idx].buildInfo, &buildAs[idx].rangeInfo);
+			m_VulkanState.m_VkFunc.vkCmdBuildAccelerationStructuresKHR(cmdBuf, 1, &buildAs[idx].buildInfo, &buildAs[idx].rangeInfo);
 
 			/**
 			* @brief Since the scratch buffer is reused across builds, we need a barrier to ensure one build
@@ -486,7 +472,7 @@ namespace Spices {
 				/**
 				* @brief Add a query to find the 'real' amount of memory needed, use for compaction.
 				*/ 
-				vkCmdWriteAccelerationStructuresPropertiesKHR(
+				m_VulkanState.m_VkFunc.vkCmdWriteAccelerationStructuresPropertiesKHR(
 					cmdBuf, 
 					1,
 					&buildAs[idx].buildInfo.dstAccelerationStructure,
@@ -548,7 +534,7 @@ namespace Spices {
 			copyInfo.dst                                    = buildAs[idx].as.accel;
 			copyInfo.mode                                   = VK_COPY_ACCELERATION_STRUCTURE_MODE_COMPACT_KHR;
 
-			vkCmdCopyAccelerationStructureKHR(cmdBuf, &copyInfo);
+			m_VulkanState.m_VkFunc.vkCmdCopyAccelerationStructureKHR(cmdBuf, &copyInfo);
 		}
 	}
 
@@ -561,7 +547,7 @@ namespace Spices {
 
 		for (auto& i : indices)
 		{
-			vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, buildAs[i].cleanupAS.accel, nullptr);
+			m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, buildAs[i].cleanupAS.accel, nullptr);
 			buildAs[i].cleanupAS.buffer = nullptr;
 		}
 	}
@@ -591,7 +577,7 @@ namespace Spices {
 		/**
 		* @brief Create the acceleration structure.
 		*/ 
-		vkCreateAccelerationStructureKHR(
+		m_VulkanState.m_VkFunc.vkCreateAccelerationStructureKHR(
 			m_VulkanState.m_Device, 
 			&accel, 
 			nullptr, 

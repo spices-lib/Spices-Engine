@@ -20,7 +20,8 @@
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
 	PushConstantMesh push;
 };
 

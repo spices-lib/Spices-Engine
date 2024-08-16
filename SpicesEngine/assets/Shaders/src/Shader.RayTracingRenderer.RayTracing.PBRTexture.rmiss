@@ -28,9 +28,11 @@ layout(location = 0) rayPayloadInEXT HitPayLoad prd;
 
 /*********************************Push Constant*******************************************/
 
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
     int entityID;
-} push;
+} 
+push;
 
 /*****************************************************************************************/
 

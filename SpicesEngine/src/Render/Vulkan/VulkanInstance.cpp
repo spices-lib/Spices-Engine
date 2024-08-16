@@ -105,6 +105,11 @@ namespace Spices {
 		VK_CHECK(vkCreateInstance(&createInfo, nullptr, &vulkanState.m_Instance))
 
 		/**
+		* @brief Init Vulkan Functions.
+		*/
+		vulkanState.m_VkFunc.Init(vulkanState.m_Instance);
+
+		/**
 		* @brief Set Vulkan's debug message callback function pointer.
 		*/
 		SetVulkanDebugCallbackFuncPointer();
@@ -130,12 +135,10 @@ namespace Spices {
 		*/
 #ifdef SPICES_DEBUG
 
-		const auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(
-			m_VulkanState.m_Instance, "vkDestroyDebugUtilsMessengerEXT"));
-		
-		if (func != nullptr) {
-			func(m_VulkanState.m_Instance, m_DebugMessenger, nullptr);
-		}
+		/**
+		* @brief Destroy Debug Utils Messenger.
+		*/
+		m_VulkanState.m_VkFunc.vkDestroyDebugUtilsMessengerEXT(m_VulkanState.m_Instance, m_DebugMessenger, nullptr);
 
 #endif
 
@@ -279,18 +282,13 @@ namespace Spices {
 
 #ifdef SPICES_DEBUG
 
-		const auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(
-			m_VulkanState.m_Instance, "vkCreateDebugUtilsMessengerEXT"));
-		
-		if (func != nullptr) 
-		{
-			func(m_VulkanState.m_Instance, &m_DebugMessengerCreateInfo, nullptr, &m_DebugMessenger);
-		}
-		else
-		{
-			__debugbreak();
-		}
+		/**
+		* @brief Create DebugUtilsMessenger.
+		*/
+		m_VulkanState.m_VkFunc.vkCreateDebugUtilsMessengerEXT(m_VulkanState.m_Instance, &m_DebugMessengerCreateInfo, nullptr, &m_DebugMessenger);
+
 #endif
+
 	}
 
 	void VulkanInstance::CreateVulkanSurface() const

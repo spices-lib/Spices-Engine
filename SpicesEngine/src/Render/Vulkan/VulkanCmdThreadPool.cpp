@@ -39,7 +39,7 @@ namespace Spices {
 			for (int i = 0; i < nCmdThreads; i++)
 			{
 				VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &m_CmdPools[i]));
-				VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, m_CmdPools[i], vulkanState.m_Device, "ParallelGraphicCommandPool");
+				VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)m_CmdPools[i], vulkanState.m_Device, "ParallelGraphicCommandPool");
 			}
 		}
 
@@ -63,7 +63,7 @@ namespace Spices {
 				for (int j = 0; j < MaxFrameInFlight; j++)
 				{
 					VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &m_CmdBuffers[j][i]));
-					VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, m_CmdBuffers[j][i], vulkanState.m_Device, "ParallelGraphicCommandBuffer");
+					VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)m_CmdBuffers[j][i], vulkanState.m_Device, "ParallelGraphicCommandBuffer");
 				}
 			}
 		}

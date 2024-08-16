@@ -19,7 +19,8 @@
 * @brief Buffer of all Material Parameters in World.
 * Only Access index 0, unless you want access other material parameter.
 */
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialParameters { 
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialParameters 
+{ 
     MaterialParameter i[]; 
 };
 

@@ -42,16 +42,8 @@ namespace Spices {
 		* @brief Create basic Vulkan Objects.
 		*/
 		{
-			m_VulkanWindows       = std::make_unique<VulkanWindows>      (m_VulkanState, initInfo);
-			m_VulkanInstance      = std::make_unique<VulkanInstance>     (m_VulkanState, "app", "engine");
-
-			/**
-			* @brief Init Vulkan Debug Functions.
-			*/
-			{
-				VulkanDebugUtils::Init(m_VulkanState.m_Instance);
-			}
-
+			m_VulkanWindows       = std::make_unique<VulkanWindows>        (m_VulkanState, initInfo);
+			m_VulkanInstance      = std::make_unique<VulkanInstance>       (m_VulkanState, "app", "engine");
 			m_VulkanDevice        = std::make_shared<VulkanDevice>         (m_VulkanState);
 			m_VmaAllocator        = std::make_shared<VulkanMemoryAllocator>(m_VulkanState);
 			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>    (m_VulkanState);

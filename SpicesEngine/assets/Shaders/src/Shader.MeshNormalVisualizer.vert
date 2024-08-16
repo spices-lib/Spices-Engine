@@ -20,10 +20,12 @@
 /**
 * @brief Vertex Shader Output to Geometry Shader.
 */
-layout(location = 0) out struct VertOut {
+layout(location = 0) out struct VertOut 
+{
     vec3 position;                                 /* @brief World Position */
     vec3 normal;                                   /* @brief World Normal   */
-} vertOut;
+} 
+vertOut;
 
 /*****************************************************************************************/
 
@@ -32,7 +34,8 @@ layout(location = 0) out struct VertOut {
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
 	PushConstantMesh push;                         /* @see PushConstantMesh. */
 };
 

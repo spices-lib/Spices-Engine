@@ -27,9 +27,11 @@ layout(local_size_x = 8, local_size_y = 8, local_size_z = 2) in;
 /**
 * @brief task padload receive from task shader.
 */
-taskPayloadSharedEXT struct Task {
+taskPayloadSharedEXT struct Task 
+{
     uint meshletIndex[SUBGROUP_SIZE];    /* @brief mesh shader hanled meshlet id. */
-} task;    
+} 
+task;    
 
 /*****************************************************************************************/
 
@@ -43,10 +45,12 @@ layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPR
 /**
 * @brief Output data to fragment shader.
 */
-layout(location = 0) out struct MeshOut {
+layout(location = 0) out struct MeshOut 
+{
     vec3 localPosition;
     vec3 worldPosition;
-} meshOut[];
+} 
+meshOut[];
 
 layout(location = 2) out flat uint meshletId[];       /* @brief Meshlet ID.     */
 
@@ -57,7 +61,8 @@ layout(location = 2) out flat uint meshletId[];       /* @brief Meshlet ID.     
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
 	PushConstantMesh push;   /* @see PushConstantMesh. */
 };
 
@@ -65,15 +70,18 @@ layout(push_constant) uniform Push {
 
 /************************************Specific Data****************************************/
 
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices { 
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices 
+{ 
     Vertex v[];           
 };
 
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices { 
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices 
+{ 
     ivec3 i[]; 
 };
 
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets {
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets 
+{
     Meshlet i[];
 };
 

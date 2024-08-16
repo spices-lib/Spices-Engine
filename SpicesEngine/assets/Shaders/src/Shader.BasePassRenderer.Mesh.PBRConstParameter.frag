@@ -27,7 +27,8 @@ struct MaterialParameter
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
-} materialParam;
+} 
+materialParam;
 
 #include "Header/ShaderBindLessMaterial.glsl"
 

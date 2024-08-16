@@ -169,13 +169,6 @@ namespace Spices {
 			const std::unordered_map<std::string, std::vector<std::string>>&  shaders       ,
 			const PipelineConfigInfo&                                         config
 		) override;
-
-	private:
-
-		/**
-		* @brief Function Pointer of Create RayTracing Pipeline.
-		*/
-		PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR;
 	};
 
 	/**

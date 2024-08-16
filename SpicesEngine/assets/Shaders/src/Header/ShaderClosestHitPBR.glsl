@@ -46,14 +46,16 @@ layout(location = 1) rayPayloadEXT bool isShadowArea;
 /**
 * @brief Buffer of all Vertices in World.
 */
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices { 
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices 
+{ 
     Vertex v[];             /* @see Vertex. */
 };
 
 /**
 * @brief Buffer of all Indices in World.
 */
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices { 
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices 
+{ 
     ivec3 i[]; 
 };
 
@@ -65,23 +67,29 @@ layout(set = 2, binding = 0) uniform accelerationStructureEXT topLevelAS;
 /**
 * @brief MeshDescription Buffer of all Mesh in World.
 */
-layout(set = 3, binding = 0, scalar) readonly buffer MeshDescBuffer { 
+layout(set = 3, binding = 0, scalar) readonly buffer MeshDescBuffer 
+{ 
     MeshDesc i[];           /* @see MeshDesc. */
-} meshDescBuffer;
+} 
+meshDescBuffer;
 
 /**
 * @brief DirectionalLight Buffer in World.
 */
-layout(set = 3, binding = 1, scalar) readonly buffer DLightBuffer   { 
+layout(set = 3, binding = 1, scalar) readonly buffer DLightBuffer   
+{ 
     DirectionalLight i[];   /* @see DirectionalLight. */
-} dLightBuffer;
+} 
+dLightBuffer;
 
 /**
 * @brief PointLight Buffer in World.
 */
-layout(set = 3, binding = 2, scalar) readonly buffer PLightBuffer   { 
+layout(set = 3, binding = 2, scalar) readonly buffer PLightBuffer   
+{ 
     PointLight i[];         /* @see PointLight. */
-} pLightBuffer;
+} 
+pLightBuffer;
 
 /*****************************************************************************************/
 

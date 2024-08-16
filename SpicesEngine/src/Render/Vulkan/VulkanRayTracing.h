@@ -148,16 +148,6 @@ namespace Spices {
 
 		std::vector<AccelKHR> m_blas;  // Bottom-level acceleration structure
 		AccelKHR              m_tlas;  // Top-level acceleration structure
-
-
-		PFN_vkCreateAccelerationStructureKHR                   vkCreateAccelerationStructureKHR;
-		PFN_vkDestroyAccelerationStructureKHR                  vkDestroyAccelerationStructureKHR;
-		PFN_vkCmdBuildAccelerationStructuresKHR                vkCmdBuildAccelerationStructuresKHR;
-		PFN_vkCopyAccelerationStructureKHR                     vkCopyAccelerationStructureKHR;
-		PFN_vkGetAccelerationStructureDeviceAddressKHR         vkGetAccelerationStructureDeviceAddressKHR;
-		PFN_vkCmdWriteAccelerationStructuresPropertiesKHR      vkCmdWriteAccelerationStructuresPropertiesKHR;
-		PFN_vkGetAccelerationStructureBuildSizesKHR            vkGetAccelerationStructureBuildSizesKHR;
-		PFN_vkCmdCopyAccelerationStructureKHR                  vkCmdCopyAccelerationStructureKHR;
 	};
 
 	template<class T>

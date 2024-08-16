@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanDebugUtils.h"
+#include "VulkanFunctions.h"
 #include "vk_mem_alloc.h"
 
 #include <vector>
@@ -51,7 +52,7 @@ namespace Spices {
 		VkPhysicalDevice                                 m_PhysicalDevice;             /* @brief From VulkanDevice.                                              */
 		VkDevice                                         m_Device;                     /* @brief From VulkanDevice.                                              */
 		VmaAllocator                                     m_VmaAllocator;               /* @brief From VulkanMemoryAllocator.                                     */
-		VmaVulkanFunctions                               m_VkFunc;                     /* @brief From VulkanMemoryAllocator.                                     */
+		VulkanFunctions                                  m_VkFunc;                     /* @brief From VulkanFunctions.                                           */
 		VkQueue                                          m_GraphicQueue;               /* @brief From VulkanDevice, Queue for graphic compute.                   */
 		uint32_t                                         m_GraphicQueueFamily;         /* @brief From VulkanDevice, ID for graphic queue.                        */
 		VkQueue                                          m_PresentQueue;               /* @brief From VulkanDevice, Queue for present windows.                   */
@@ -62,7 +63,7 @@ namespace Spices {
 		std::array<VkImage,           MaxFrameInFlight>  m_SwapChainImages;            /* @brief The SwapChain's image, used for present.                        */
 		std::array<VkImageView,       MaxFrameInFlight>  m_SwapChainImageViews;        /* @brief The SwapChain's imageView.                                      */
 		std::array<VkSampler,         MaxFrameInFlight>  m_SwapChainImageSamplers;     /* @brief The SwapChain's imageSampler.                                   */
-								  
+	  
 		// Used for Graphic Queue	  
 		VkCommandPool                                    m_GraphicCommandPool;         /* @brief From VulkanCommandBuffer                                        */
 		std::array<VkCommandBuffer,   MaxFrameInFlight>  m_GraphicCommandBuffer;       /* @brief From VulkanCommandBuffer, Array num equals to MaxFrameInFlight. */

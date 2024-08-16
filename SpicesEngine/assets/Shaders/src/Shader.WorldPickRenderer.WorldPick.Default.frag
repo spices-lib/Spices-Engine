@@ -19,9 +19,11 @@
 /**
 * @brief Fragment Shader Input From Geometry Shader.
 */
-layout(location = 0) in struct FragInput {
+layout(location = 0) in struct FragInput 
+{
     vec2 texCoord;
-} fragInput;
+} 
+fragInput;
 
 /*****************************************************************************************/
 
@@ -39,7 +41,8 @@ layout(location = 0) out float outPick;
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
 	PushConstantMesh push;
 };
 

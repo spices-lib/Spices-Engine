@@ -17,12 +17,6 @@ namespace Spices {
 	public:
 
 		/**
-		* @brief Init all vulkan debug function pointer.
-		* @param[in] instance VkInstance.
-		*/
-		static void Init(VkInstance instance);
-
-		/**
 		* @brief Start Record Commands with a Label.
 		* @param[in] cmdbuffer The VkCommandBuffer in use this frame.
 		* @param[in] caption The label be captured.
@@ -89,10 +83,9 @@ namespace Spices {
 		* @param[in] device VkDevice.
 		* @param[in] caption The Vulkan Object name.
 		*/
-		template<typename T>
 		static void SetObjectName(
 			VkObjectType       type    , 
-			T&                 handle  , 
+			uint64_t           handle  , 
 			VkDevice&          device  , 
 			const std::string& caption
 		);
@@ -104,141 +97,11 @@ namespace Spices {
 		* @param[in] device VkDevice.
 		* @param[in] captions The Vulkan Object tags.
 		*/
-		template<typename T>
 		static void SetObjectTag(
 			VkObjectType       type     , 
-			T&                 handle   , 
+			uint64_t           handle   , 
 			VkDevice&          device   , 
 			std::vector<char*> captions
 		);
-
-	private:
-
-		/**
-		* @brief The function pointer of vkCmdBeginDebugUtilsLabelEXT.
-		*/
-		static PFN_vkCmdBeginDebugUtilsLabelEXT     vkCmdBeginDebugUtilsLabelEXT;
-
-		/**
-		* @brief The function pointer of vkCmdEndDebugUtilsLabelEXT.
-		*/
-		static PFN_vkCmdEndDebugUtilsLabelEXT       vkCmdEndDebugUtilsLabelEXT;
-
-		/**
-		* @brief The function pointer of vkCmdInsertDebugUtilsLabelEXT.
-		*/
-		static PFN_vkCmdInsertDebugUtilsLabelEXT    vkCmdInsertDebugUtilsLabelEXT;
-
-		/**
-		* @brief The function pointer of vkQueueBeginDebugUtilsLabelEXT.
-		*/
-		static PFN_vkQueueBeginDebugUtilsLabelEXT   vkQueueBeginDebugUtilsLabelEXT;
-
-		/**
-		* @brief The function pointer of vkQueueEndDebugUtilsLabelEXT.
-		*/
-		static PFN_vkQueueEndDebugUtilsLabelEXT     vkQueueEndDebugUtilsLabelEXT;
-
-		/**
-		* @brief The function pointer of vkQueueInsertDebugUtilsLabelEXT.
-		*/
-		static PFN_vkQueueInsertDebugUtilsLabelEXT  vkQueueInsertDebugUtilsLabelEXT;
-
-		/**
-		* @brief The function pointer of vkSetDebugUtilsObjectNameEXT.
-		*/
-		static PFN_vkSetDebugUtilsObjectNameEXT     vkSetDebugUtilsObjectNameEXT;
-
-		/**
-		* @brief The function pointer of vkSetDebugUtilsObjectTagEXT.
-		*/
-		static PFN_vkSetDebugUtilsObjectTagEXT      vkSetDebugUtilsObjectTagEXT;
 	};
-
-	template<typename T>
-	inline void VulkanDebugUtils::SetObjectName(
-		VkObjectType       type    , 
-		T&                 handle  , 
-		VkDevice&          device  , 
-		const std::string& caption
-	)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-		return;
-#endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkSetDebugUtilsObjectNameEXT)
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkSetDebugUtilsObjectNameEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
-
-		/**
-		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
-		*/
-		VkDebugUtilsObjectNameInfoEXT name_info{};
-		name_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-		name_info.objectType   = type;
-		name_info.objectHandle = (uint64_t)handle;
-		name_info.pObjectName  = caption.c_str();
-
-		/**
-		* @brief Execute the function pointer.
-		*/
-		vkSetDebugUtilsObjectNameEXT(device, &name_info);
-	}
-
-	template<typename T>
-	inline void VulkanDebugUtils::SetObjectTag(VkObjectType type, T& handle, VkDevice& device, std::vector<char*> captions)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-		return;
-#endif
-
-		/**
-		* @brief Return with a warn info if not find function pointer.
-		*/
-		if (!vkSetDebugUtilsObjectTagEXT)
-		{
-			std::stringstream ss;
-			ss << "VulkanDebugUtils:: Function vkSetDebugUtilsObjectTagEXT address was not found.";
-
-			SPICES_CORE_WARN(ss.str());
-
-			return;
-		}
-
-		/**
-		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
-		*/
-		VkDebugUtilsObjectTagInfoEXT tag_info{};
-		tag_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
-		tag_info.objectType   = type;
-		tag_info.objectHandle = static_cast<uint64_t>(handle);
-		tag_info.tagName      = 0;
-		tag_info.tagSize      = captions.size();
-		tag_info.pTag         = captions.data();
-
-		/**
-		* @brief Execute the function pointer.
-		*/
-		vkSetDebugUtilsObjectTagEXT(device, &tag_info);
-	}
 }

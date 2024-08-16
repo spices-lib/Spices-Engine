@@ -37,8 +37,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		static PFN_vkCmdDrawMeshTasksEXT vkCmdDrawMeshTasksEXT = reinterpret_cast<PFN_vkCmdDrawMeshTasksEXT>(vkGetInstanceProcAddr(VulkanRenderBackend::GetState().m_Instance, "vkCmdDrawMeshTasksEXT"));
-		vkCmdDrawMeshTasksEXT(commandBuffer, m_NTasks, 1, 1);
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdDrawMeshTasksEXT(commandBuffer, m_NTasks, 1, 1);
 	}
 
 	void MeshPack::SetMaterial(const std::string& materialPath)

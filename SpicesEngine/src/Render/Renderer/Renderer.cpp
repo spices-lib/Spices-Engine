@@ -180,7 +180,7 @@ namespace Spices {
 		*/
 		VkPipelineLayout pipelineLayout;
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE_LAYOUT, pipelineLayout, m_VulkanState.m_Device, "PipelineLayout");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE_LAYOUT, (uint64_t)pipelineLayout, m_VulkanState.m_Device, "PipelineLayout");
 
 		return pipelineLayout;
 	}
@@ -647,8 +647,6 @@ namespace Spices {
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
-	
-	PFN_vkCmdTraceRaysKHR Renderer::RayTracingRenderBehaveBuilder::vkCmdTraceRaysKHR;
 
 	Renderer::RayTracingRenderBehaveBuilder::RayTracingRenderBehaveBuilder(
 		Renderer* renderer     ,
@@ -660,7 +658,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 		
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
-		vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(vkGetInstanceProcAddr(renderer->m_VulkanState.m_Instance, "vkCmdTraceRaysKHR"));
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
@@ -721,7 +718,7 @@ namespace Spices {
 		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
-		vkCmdTraceRaysKHR(
+		m_Renderer->m_VulkanState.m_VkFunc.vkCmdTraceRaysKHR(
 			m_CommandBuffer,
 			rgenRegion,
 			missRegion,
@@ -750,7 +747,7 @@ namespace Spices {
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
-			vkCmdTraceRaysKHR(
+			m_Renderer->m_VulkanState.m_VkFunc.vkCmdTraceRaysKHR(
 				cmdBuffer,
 				rgenRegion,
 				missRegion,

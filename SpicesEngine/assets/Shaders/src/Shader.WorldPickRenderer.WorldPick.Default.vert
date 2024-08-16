@@ -20,9 +20,11 @@
 /**
 * @brief Vertex Shader Output to Fragment Shader.
 */
-layout(location = 0) out struct FragInput {
+layout(location = 0) out struct FragInput 
+{
     vec2 texCoord;
-} vertOut;
+} 
+vertOut;
 
 /*****************************************************************************************/
 
@@ -31,7 +33,8 @@ layout(location = 0) out struct FragInput {
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
 	PushConstantMesh push;
 };
 

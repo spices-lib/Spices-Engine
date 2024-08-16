@@ -23,7 +23,8 @@ struct MaterialParameter
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
-} materialParam;
+} 
+materialParam;
 
 /**
 * @brief Closest Hit Shader Entry Point.

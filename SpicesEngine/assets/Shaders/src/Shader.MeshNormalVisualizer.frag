@@ -15,7 +15,8 @@
 /**
 * @brief Fragment Shader Input From Geometry Shader.
 */
-layout(location = 0) in struct FragInput {
+layout(location = 0) in struct FragInput 
+{
     vec3 color;                                        /* @brief Fragmet Color */
 } fragInput;
 

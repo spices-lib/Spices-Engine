@@ -25,8 +25,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_VulkanRayTracing = std::make_unique<VulkanRayTracing>(m_VulkanState);
-
-		vkGetRayTracingShaderGroupHandlesKHR  = reinterpret_cast<PFN_vkGetRayTracingShaderGroupHandlesKHR>(vkGetInstanceProcAddr(vulkanState.m_Instance, "vkGetRayTracingShaderGroupHandlesKHR"));
 	}
 
 	void RayTracingRenderer::CreateRendererPass()
@@ -255,7 +253,7 @@ namespace Spices {
 		/**
 		* @brief The SBT(buffer) need to have starting groups to be aligned and handles in the group to be aligned.
 		*/
-		const uint32_t handleSizeAligned              = MemoryLibrary::align_up(handleSize, m_Device->GetRTPipelineProperties().shaderGroupHandleAlignment);
+		const uint32_t handleSizeAligned        = MemoryLibrary::align_up(handleSize, m_Device->GetRTPipelineProperties().shaderGroupHandleAlignment);
 
 		m_RgenRegion.stride                     = MemoryLibrary::align_up(handleSizeAligned, m_Device->GetRTPipelineProperties().shaderGroupBaseAlignment);
 		m_RgenRegion.size                       = m_RgenRegion.stride;  // The size member of pRayGenShaderBindingTable must be equal to its stride member
@@ -271,7 +269,7 @@ namespace Spices {
 		*/
 		const uint32_t dataSize                 = handleCount * handleSize;
 		std::vector<uint8_t> handles(dataSize);
-		VK_CHECK(vkGetRayTracingShaderGroupHandlesKHR(m_VulkanState.m_Device, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline(), 0, handleCount, dataSize, handles.data()))
+		VK_CHECK(m_VulkanState.m_VkFunc.vkGetRayTracingShaderGroupHandlesKHR(m_VulkanState.m_Device, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline(), 0, handleCount, dataSize, handles.data()))
 
 		/**
 		* @brief Allocate a buffer for storing the SBT.
@@ -288,7 +286,7 @@ namespace Spices {
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, m_RTSBTBuffer->Get(), m_VulkanState.m_Device, "SBT Buffer");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_RTSBTBuffer->Get(), m_VulkanState.m_Device, "SBT Buffer");
 
 		m_RgenRegion.deviceAddress              = m_RTSBTBuffer->GetAddress();
 		m_MissRegion.deviceAddress              = m_RTSBTBuffer->GetAddress() + m_RgenRegion.size;

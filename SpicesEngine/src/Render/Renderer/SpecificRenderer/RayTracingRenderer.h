@@ -149,8 +149,6 @@ namespace Spices {
 		VkStridedDeviceAddressRegionKHR m_HitRegion{};
 		VkStridedDeviceAddressRegionKHR m_CallRegion{};
 
-		PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
-
 		std::unique_ptr<RayTracingR::MeshDescBuffer> m_DescArray;
 	};
 }

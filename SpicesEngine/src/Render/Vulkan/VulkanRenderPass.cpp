@@ -28,7 +28,7 @@ namespace Spices {
 		* @brief CreateRenderPass.
 		*/
 		VK_CHECK(vkCreateRenderPass(m_VulkanState.m_Device, &createInfo, nullptr, &m_RenderPass));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_RENDER_PASS, m_RenderPass, m_VulkanState.m_Device, passName);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_RENDER_PASS, (uint64_t)m_RenderPass, m_VulkanState.m_Device, passName);
 
 		for (size_t i = 0; i < MaxFrameInFlight; i++)
 		{
@@ -74,7 +74,7 @@ namespace Spices {
 			* @brief CreateFrameBuffer.
 			*/
 			VK_CHECK(vkCreateFramebuffer(m_VulkanState.m_Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]));
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FRAMEBUFFER, m_SwapChainFramebuffers[i], m_VulkanState.m_Device, passName);
+			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FRAMEBUFFER, (uint64_t)m_SwapChainFramebuffers[i], m_VulkanState.m_Device, passName);
 		}
 	}
 

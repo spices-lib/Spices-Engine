@@ -21,7 +21,8 @@
 struct MaterialParameter
 {
     uint     albedo;
-} materialParam;
+} 
+materialParam;
 
 #include "Header/ShaderBindLessMaterial.glsl"
 
@@ -32,7 +33,8 @@ struct MaterialParameter
 /**
 * @brief Fragment Shader Input From Mesh Shader.
 */
-layout(location = 0) in struct FragInput {
+layout(location = 0) in struct FragInput 
+{
     vec3 localPosition;
     vec3 worldPosition;
 } fragInput;
@@ -57,7 +59,8 @@ layout(location = 2) out float outID;                   /* @brief ID Attachment 
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
 	PushConstantMesh push;                             /* @see PushConstantMesh. */
 };
 

@@ -27,7 +27,8 @@ struct MaterialParameter
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
-} materialParam;
+} 
+materialParam;
 
 #include "Header/ShaderBindLessMaterial.glsl"
 
@@ -62,7 +63,8 @@ layout(location = 5) out float outID;                   /* @brief ID Attachment.
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
+layout(push_constant) uniform Push 
+{
     PushConstantMesh push;                              /* @see PushConstantMesh. */
 };
 
