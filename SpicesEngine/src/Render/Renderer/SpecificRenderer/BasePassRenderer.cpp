@@ -200,17 +200,17 @@ namespace Spices {
 		//});
 
 		builder.BeginRenderPass();
-
+	
 		builder.SetViewPort();
-
+	
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
-
+	
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
-
+	
 		for (auto& pair : m_BaseMeshDrawCommandsBuffer)
 		{
 			//builder.UpdateStorageBuffer(2, 0, m_DescsMap[pair.first].descs.data(), m_DescsMap[pair.first].descs.size());
-
+	
 			//builder.BindPipeline(pair.first);
 			uint32_t count = m_BaseMeshDrawCommandsBufferCount[pair.first];
 			uint32_t stride = sizeof(VkDrawMeshTasksIndirectCommandEXT);

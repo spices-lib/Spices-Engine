@@ -18,11 +18,11 @@
 /*************************************Mesh Input******************************************/
 
 /**
-* @brief 8 * 8 * 2 = 128(Local Work Groups Count) ~ 126(Nvidia Recommended Meshlet Primitives) ~ 124(MeshOptimizer Required Meshlet Primitives)
+* @brief 128(Local Work Groups Count) ~ 126(Nvidia Recommended Meshlet Primitives) ~ 124(MeshOptimizer Required Meshlet Primitives)
 * But subgroup size only support 32 in nvidia / 64 in amd.
 * Thereforce use iter to reach all primitives in meshlet.
 */
-layout(local_size_x = 8, local_size_y = 8, local_size_z = 2) in;
+layout(local_size_x = 128, local_size_y = 1, local_size_z = 1) in;
 
 /**
 * @brief task padload receive from task shader.
