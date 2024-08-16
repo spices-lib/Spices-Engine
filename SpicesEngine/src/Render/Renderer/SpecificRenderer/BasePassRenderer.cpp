@@ -65,11 +65,11 @@ namespace Spices {
 
 		DescriptorSetBuilder{ "Mesh", this }
 		.AddStorageBuffer(2, 0, sizeof(SpicesShader::MeshDesc) * MESH_BUFFER_MAXNUM, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
+		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
 		.Build();
 
 		DescriptorSetBuilder{ "SkyBox", this }
-		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
+		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
 		.Build();
 	}
 
@@ -98,9 +98,7 @@ namespace Spices {
 				desc.indexAddress               = v->GetIndicesBufferAddress();
 				desc.materialParameterAddress   = v->GetMaterial()->GetMaterialParamsAddress();
 				desc.meshletAddress             = v->GetMeshletsBufferAddress();
-				desc.verticesCount              = static_cast<unsigned int>(v->GetVertices().size());
-				desc.indicesCount               = static_cast<unsigned int>(v->GetIndices().size()) / 3;
-				desc.meshletsCount              = static_cast<uint32_t>(v->GetMeshlets().size());
+				desc.nMeshlets                  = static_cast<uint32_t>(v->GetMeshlets().size());
 				desc.entityID                   = static_cast<unsigned int>(e);
 
 				m_DescsMap[v->GetMaterial()->GetName()].descs.push_back(std::move(desc));
@@ -178,7 +176,6 @@ namespace Spices {
 		////builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
 		//IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-		//	const glm::mat4& modelMatrix = transComp.GetModelMatrix();
 
 		//	builder.SetViewPort(cmdBuffer);
 
@@ -190,16 +187,14 @@ namespace Spices {
 
 		//		builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
 
-		//		builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-		//			push.model                          = modelMatrix;
-		//			push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
-		//			push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
-		//			push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-		//			push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
-		//			push.desc.verticesCount             = static_cast<uint32_t>(meshPack->GetVertices().size());
-		//			push.desc.indicesCount              = static_cast<uint32_t>(meshPack->GetIndices().size()) / 3;
-		//			push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
-		//			push.desc.entityID                  = entityId;
+		//		builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
+		//			push.modelAddredd              = transComp.GetModelBufferAddress();
+		//			push.vertexAddress             = meshPack->GetVerticesBufferAddress();
+		//			push.indexAddress              = meshPack->GetIndicesBufferAddress();
+		//			push.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+		//			push.meshletAddress            = meshPack->GetMeshletsBufferAddress();
+		//			push.nMeshlets                 = static_cast<uint32_t>(meshPack->GetMeshlets().size());
+		//			push.entityID                  = entityId;
 		//		}, cmdBuffer);
 		//	});
 		//});
@@ -237,16 +232,14 @@ namespace Spices {
 
 				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 
-				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model                          = modelMatrix;
-					push.desc.vertexAddress             = meshPack->GetVerticesBufferAddress();
-					push.desc.indexAddress              = meshPack->GetIndicesBufferAddress();
-					push.desc.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-					push.desc.meshletAddress            = meshPack->GetMeshletsBufferAddress();
-					push.desc.verticesCount             = static_cast<unsigned int>(meshPack->GetVertices().size());
-					push.desc.indicesCount              = static_cast<unsigned int>(meshPack->GetIndices().size()) / 3;
-					push.desc.meshletsCount             = static_cast<uint32_t>(meshPack->GetMeshlets().size());
-					push.desc.entityID                  = entityId;
+				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
+					push.modelAddredd              = transComp.GetModelBufferAddress();
+					push.vertexAddress             = meshPack->GetVerticesBufferAddress();
+					push.indexAddress              = meshPack->GetIndicesBufferAddress();
+					push.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
+					push.meshletAddress            = meshPack->GetMeshletsBufferAddress();
+					push.nMeshlets                 = static_cast<uint32_t>(meshPack->GetMeshlets().size());
+					push.entityID                  = entityId;
 				});
 			});
 

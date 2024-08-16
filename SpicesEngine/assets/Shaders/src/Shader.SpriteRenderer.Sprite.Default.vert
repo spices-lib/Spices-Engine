@@ -35,7 +35,16 @@ vertOut;
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;
+    MeshDesc desc;                           /* @see MeshDesc. */
+};
+
+/*****************************************************************************************/
+
+/************************************Specific Data****************************************/
+
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
+{
+    mat4 i[];
 };
 
 /*****************************************************************************************/
@@ -44,10 +53,11 @@ layout(push_constant) uniform Push
 
 void main()
 {
+    mat4 model  = Model(desc.modelAddredd).i[0];
     vec3 pos = mat3(view.inView) * position;
 
     vertOut.texCoord = texCoord;
-    gl_Position = view.projection * view.view  * push.model * vec4(pos, 1.0);
+    gl_Position = view.projection * view.view  * model * vec4(pos, 1.0);
 }
 
 /*****************************************************************************************/

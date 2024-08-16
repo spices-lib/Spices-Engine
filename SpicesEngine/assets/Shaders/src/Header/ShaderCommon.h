@@ -181,9 +181,7 @@ struct MeshDesc
 	uint64_t indexAddress;                    /* Address of the index buffer.                   */
 	uint64_t materialParameterAddress;        /* Address of the Material Parameter buffer.      */
 	uint64_t meshletAddress;                  /* Address of the Meshlet Buffer.                 */
-	uint     verticesCount;                   /* Vertices Count.                                */
-	uint     indicesCount;                    /* Indices Count.                                 */
-	uint     meshletsCount;                   /* Meshlets Count.                                */
+	uint     nMeshlets;                       /* Meshlets Count.                                */
 	uint     entityID;                        /* @brief EntityId, cast from entt::entity.       */
 };
 
@@ -208,28 +206,19 @@ struct HitPayLoad
 /*********************************************Mesh***************************************/
 
 /**
-* @brief Push constant structure for the mesh basic
-*/
-struct PushConstantMesh
-{
-	mat4     model;                            /* @brief MeshPack ModelMatrix.            */
-	MeshDesc desc;                             /* MeshDescription of MeshPack.            */
-};
-
-/**
 * @brief Meshlet Structure Data.
 */
 struct Meshlet
 {
-	uint  vertexOffset;                        /* Offset of Vertices this meshlet.        */
-	uint  primitiveOffset;                     /* Offset of primitives this meshlet.      */
-	uint  nVertices;                           /* Vertices Count this meshlet.( <= 64)    */
-	uint  nPrimitives;                         /* Primitives Count this meshlet.( <= 126) */
-	vec3  boundCenter;                         /* Bounding Sphere Center in local world.  */
-	float boundRadius;                         /* Bounding Sphere radius.                 */
-	vec3  coneApex;
-	vec3  coneAxis;
-	float coneCutoff;
+	uint  vertexOffset;                        /*  @brief Offset of Vertices this meshlet.        */
+	uint  primitiveOffset;                     /*  @brief Offset of primitives this meshlet.      */
+	uint  nVertices;                           /*  @brief Vertices Count this meshlet.( <= 64)    */
+	uint  nPrimitives;                         /*  @brief Primitives Count this meshlet.( <= 126) */
+	vec3  boundCenter;                         /*  @brief Bounding Sphere Center in local world.  */
+	float boundRadius;                         /*  @brief Bounding Sphere radius.                 */
+	vec3  coneApex;                            /*  @brief Normal Cone center.                     */
+	vec3  coneAxis;                            /*  @brief Normal Cone axis.                       */
+	float coneCutoff;                          /*  @brief Normal Cone cutoff rate.                */
 };
 
 /*****************************************************************************************/

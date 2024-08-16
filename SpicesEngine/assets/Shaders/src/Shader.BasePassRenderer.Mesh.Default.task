@@ -46,12 +46,17 @@ task;
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;                 /* @see PushConstantMesh. */
+    MeshDesc desc;                           /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
 
 /************************************Specific Data****************************************/
+
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
+{
+    mat4 i[];
+};
 
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets 
 {
@@ -79,15 +84,16 @@ void main()
     /**
     * @brief cull if reach meshlets count.
     */
-    bool cull = meshletIndex >= push.desc.meshletsCount;
+    bool cull = meshletIndex >= desc.nMeshlets;
 
     if(!cull)
     {
-        Meshlet meshlet     = Meshlets(push.desc.meshletAddress).i[meshletIndex];
-        mat4 mvp            = view.projection * view.view * push.model;
+        Meshlet meshlet     = Meshlets(desc.meshletAddress).i[meshletIndex];
+        mat4 model          = Model(desc.modelAddredd).i[0];
+        mat4 mvp            = view.projection * view.view * model;
         
         vec4 ro             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        vec4 worldCenter    = push.model * vec4(meshlet.boundCenter, 1.0f);
+        vec4 worldCenter    = model * vec4(meshlet.boundCenter, 1.0f);
         vec3 dis            = worldCenter.xyz - ro.xyz;
 
         /**
@@ -100,7 +106,7 @@ void main()
         /**
         * @brief cull by cone normal.
         */
-        vec4 modelRo = inverse(view.view * push.model)[3];
+        vec4 modelRo = inverse(view.view * model)[3];
         bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, -meshlet.coneAxis, meshlet.coneCutoff, modelRo.xyz);
 
         if(frustumCulled || normalConeCulled) cull = true;

@@ -64,8 +64,9 @@ layout(location = 5) out float outID;                   /* @brief ID Attachment.
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
-	PushConstantMesh push;                              /* @see PushConstantMesh. */
+layout(push_constant) uniform Push 
+{
+    MeshDesc desc;                           /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
@@ -74,7 +75,7 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    ExplainMaterialParameter(push.desc.materialParameterAddress);
+    ExplainMaterialParameter(desc.materialParameterAddress);
     
     //outAlbedo     = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
 
@@ -90,7 +91,7 @@ void main()
     outRoughness  = texture(BindLessTextureBuffer[materialParam.roughnessTexture], pixel.texCoord);
     outMetallic   = texture(BindLessTextureBuffer[materialParam.metallicTexture], pixel.texCoord);
     outPosition   = vec4(pixel.position, 1.0f);
-    outID         = push.desc.entityID;
+    outID         = desc.entityID;
 }
 
 /*****************************************************************************************/

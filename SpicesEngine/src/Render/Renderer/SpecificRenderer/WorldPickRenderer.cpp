@@ -30,7 +30,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "WorldPick", this }
-		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
+		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
 		.Build();
 	}
 
@@ -49,15 +49,13 @@ namespace Spices {
 		IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
 
-			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
-
 			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model = modelMatrix;
-					push.desc.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.desc.entityID = entityId;
+				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
+					push.modelAddredd = transComp.GetModelBufferAddress();
+					push.materialParameterAddress = material->GetMaterialParamsAddress();
+					push.entityID = entityId;
 				});
 			});
 
@@ -67,15 +65,13 @@ namespace Spices {
 		IterWorldCompWithBreak<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
 			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
 
-			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
-
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model = modelMatrix;
-					push.desc.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.desc.entityID = entityId;
+				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
+					push.modelAddredd = transComp.GetModelBufferAddress();
+					push.materialParameterAddress = material->GetMaterialParamsAddress();
+					push.entityID = entityId;
 				});
 			});
 

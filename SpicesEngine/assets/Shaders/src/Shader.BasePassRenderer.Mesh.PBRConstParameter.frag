@@ -63,8 +63,9 @@ layout(location = 5) out float outID;                   /* @brief ID Attachment.
 /**
 * @brief push constant.
 */
-layout(push_constant) uniform Push {
-    PushConstantMesh push;                              /* @see PushConstantMesh. */
+layout(push_constant) uniform Push 
+{
+    MeshDesc desc;                           /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
@@ -73,7 +74,7 @@ layout(push_constant) uniform Push {
 
 void main()
 {
-    ExplainMaterialParameter(push.desc.materialParameterAddress);
+    ExplainMaterialParameter(desc.materialParameterAddress);
 
     //outAlbedo    = vec4(materialParam.albedo, 1.0f);
 
@@ -87,7 +88,7 @@ void main()
     outRoughness = vec4(materialParam.roughness);
     outMetallic  = vec4(materialParam.metallic);
     outPosition  = vec4(pixel.position, 1.0f);
-    outID        = push.desc.entityID;
+    outID        = desc.entityID;
 }
 
 /*****************************************************************************************/

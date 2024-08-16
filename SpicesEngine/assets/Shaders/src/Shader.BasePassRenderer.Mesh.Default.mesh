@@ -57,12 +57,17 @@ layout(location = 4) out flat uint meshletId[];       /* @brief Meshlet ID.     
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;   /* @see PushConstantMesh. */
+	MeshDesc desc;                   /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
 
 /************************************Specific Data****************************************/
+
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
+{
+    mat4 i[];
+};
 
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices 
 { 
@@ -87,12 +92,13 @@ void main()
 {
     uint id = task.meshletIndex[gl_WorkGroupID.x];
 
-    Vertices vertices   = Vertices(push.desc.vertexAddress);
-    Indices indices     = Indices(push.desc.indexAddress);
-    Meshlet meshlet     = Meshlets(push.desc.meshletAddress).i[id];
-
-    mat4 mvp = view.projection * view.view * push.model;
-    mat3 m3model = mat3(transpose(inverse(push.model)));
+    Vertices vertices   = Vertices(desc.vertexAddress);
+    Indices indices     = Indices(desc.indexAddress);
+    Meshlet meshlet     = Meshlets(desc.meshletAddress).i[id];
+    mat4 model          = Model(desc.modelAddredd).i[0];
+    
+    mat4 mvp = view.projection * view.view * model;
+    mat3 m3model = mat3(transpose(inverse(model)));
 
     const uint localId = gl_LocalInvocationIndex;
         
@@ -114,7 +120,7 @@ void main()
     
         gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
             
-        pixel[arrayIndices[j]].position  = vec3(push.model * vec4(vt.position, 1.0f));
+        pixel[arrayIndices[j]].position  = vec3(model * vec4(vt.position, 1.0f));
         pixel[arrayIndices[j]].normal    = normalize(m3model * vt.normal);
         pixel[arrayIndices[j]].color     = vt.color;
         pixel[arrayIndices[j]].texCoord  = vt.texCoord;

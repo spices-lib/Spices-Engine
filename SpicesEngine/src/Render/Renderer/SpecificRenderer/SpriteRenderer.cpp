@@ -31,7 +31,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Sprite", this }
-		.AddPushConstant(sizeof(SpicesShader::PushConstantMesh))
+		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
 		.Build();
 	}
 
@@ -62,15 +62,13 @@ namespace Spices {
 		{
 			auto [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>(static_cast<entt::entity>(it->second));
 
-			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
-
 			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
 				builder.BindPipeline(material->GetName());
 
-				builder.UpdatePushConstant<SpicesShader::PushConstantMesh>([&](auto& push) {
-					push.model = modelMatrix;
-					push.desc.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.desc.entityID = it->second;
+				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
+					push.modelAddredd = transComp.GetModelBufferAddress();
+					push.materialParameterAddress = material->GetMaterialParamsAddress();
+					push.entityID = it->second;
 				});
 			});
 		}

@@ -46,7 +46,7 @@ task;
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;                 /* @see PushConstantMesh. */
+	MeshDesc desc;                   /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
@@ -79,7 +79,7 @@ void main()
     /**
     * @brief cull if reach meshlets count.
     */
-    bool cull = meshletIndex >= push.desc.meshletsCount;
+    bool cull = meshletIndex >= desc.nMeshlets;
 
     /**
     * @brief subgroup operation.

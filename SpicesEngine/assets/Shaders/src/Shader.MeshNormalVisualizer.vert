@@ -36,7 +36,16 @@ vertOut;
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;                         /* @see PushConstantMesh. */
+    MeshDesc desc;                           /* @see MeshDesc. */
+};
+
+/*****************************************************************************************/
+
+/************************************Specific Data****************************************/
+
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
+{
+    mat4 i[];
 };
 
 /*****************************************************************************************/
@@ -45,10 +54,11 @@ layout(push_constant) uniform Push
 
 void main()
 {
-    mat3 m3model = mat3(transpose(inverse(push.model)));
-    vec3 normal = normalize(m3model * normal);
+    mat4 model          = Model(desc.modelAddredd).i[0];
+    mat3 m3model        = mat3(transpose(inverse(model)));
+    vec3 normal         = normalize(m3model * normal);
 
-    vec4 pos = push.model * vec4(position, 1.0f);
+    vec4 pos = model * vec4(position, 1.0f);
 
     vertOut.position = pos.xyz;
     vertOut.normal = normal;

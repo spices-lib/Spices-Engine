@@ -22,7 +22,16 @@
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;
+    MeshDesc desc;                           /* @see MeshDesc. */
+};
+
+/*****************************************************************************************/
+
+/************************************Specific Data****************************************/
+
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
+{
+    mat4 i[];
 };
 
 /*****************************************************************************************/
@@ -31,7 +40,8 @@ layout(push_constant) uniform Push
 
 void main() 
 {
-	gl_Position = push.model * vec4(position, 1.0f);
+	mat4 model  = Model(desc.modelAddredd).i[0];
+	gl_Position = model * vec4(position, 1.0f);
 }
 
 /*****************************************************************************************/

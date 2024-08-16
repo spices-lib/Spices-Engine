@@ -58,7 +58,7 @@ layout(location = 1) out float outID;
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;
+    MeshDesc desc;                           /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
@@ -67,14 +67,14 @@ layout(push_constant) uniform Push
 
 void main()
 {
-    ExplainMaterialParameter(push.desc.materialParameterAddress);
+    ExplainMaterialParameter(desc.materialParameterAddress);
     
     vec4 texColor = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
 
     if (texColor.w < 0.01f) discard;
 
     outSceneColor = texColor;
-    outID = push.desc.entityID;
+    outID = desc.entityID;
 }
 
 /*****************************************************************************************/

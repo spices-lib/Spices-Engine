@@ -43,7 +43,7 @@ layout(location = 0) out float outPick;
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;
+    MeshDesc desc;                           /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
@@ -52,7 +52,7 @@ layout(push_constant) uniform Push
 
 void main()
 {
-    outPick = push.desc.entityID;
+    outPick = desc.entityID;
 
     /*float alpha = texture(samplers, fragInput.texCoord).w;
     if (alpha < 0.01f) discard;

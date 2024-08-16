@@ -61,7 +61,7 @@ layout(location = 2) out float outID;                   /* @brief ID Attachment 
 */
 layout(push_constant) uniform Push 
 {
-	PushConstantMesh push;                             /* @see PushConstantMesh. */
+    MeshDesc desc;                           /* @see MeshDesc. */
 };
 
 /*****************************************************************************************/
@@ -83,12 +83,12 @@ vec2 SampleSphericalMap(vec3 v)
 
 void main()
 {
-    ExplainMaterialParameter(push.desc.materialParameterAddress);
+    ExplainMaterialParameter(desc.materialParameterAddress);
 
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
     outColor = texture(BindLessTextureBuffer[materialParam.albedo], uv);
     outPosition = vec4(fragInput.worldPosition, 1.0f);
-    outID = push.desc.entityID;
+    outID = desc.entityID;
 }
 
 /*****************************************************************************************/
