@@ -21,9 +21,74 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
+		* @brief Receive PipelineLayout from parameter.
+		*/
+		m_PipelineLayout = config.pipelineLayout;
+
+		/**
+		* @brief Create the VulkanShaderModule.
+		*/
+		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		for (auto& pair : shaders)
+		{
+			if (pair.first == "rchit") continue;
+
+			for (size_t i = 0; i < pair.second.size(); i++)
+			{
+				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+			}
+		}
+
+		/**
+		* @brief Instance VkPipelineShaderStageCreateInfo.
+		*/
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (size_t i = 0; i < shaderModules.size(); i++)
+		{
+			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
+		}
+		
+		auto& bindingDescriptions    = config.bindingDescriptions;
+		auto& attributeDescriptions = config.attributeDescriptions;
+
+		/**
+		* @brief Instance a VkPipelineVertexInputStateCreateInfo.
+		*/
+		VkPipelineVertexInputStateCreateInfo              vertexInputInfo{};
+		vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		vertexInputInfo.vertexBindingDescriptionCount   = static_cast<uint32_t>(bindingDescriptions.size());
+		vertexInputInfo.pVertexAttributeDescriptions    = attributeDescriptions.data();
+		vertexInputInfo.pVertexBindingDescriptions      = bindingDescriptions.data();
+
+		/**
+		* @brief Instance a VkGraphicsPipelineCreateInfo.
+		*/
+		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
+		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
+		pipelineInfo.pStages                            = shaderStages.data();
+		pipelineInfo.pVertexInputState                  = &vertexInputInfo;
+		pipelineInfo.pInputAssemblyState                = &config.inputAssemblyInfo;
+		pipelineInfo.pViewportState                     = &config.viewportInfo;
+		pipelineInfo.pRasterizationState                = &config.rasterizationInfo;
+		pipelineInfo.pMultisampleState                  = &config.multisampleInfo;
+		pipelineInfo.pColorBlendState                   = &config.colorBlendInfo;
+		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
+		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
+
+		pipelineInfo.layout                             = m_PipelineLayout;
+		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.subpass                            = config.subpass;
+
+		pipelineInfo.basePipelineIndex                  = -1;
+		pipelineInfo.basePipelineHandle                 = VK_NULL_HANDLE;
+
+		/**
 		* @brief Create Pipeline.
 		*/
-		VulkanPipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
+		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 
 	VulkanPipeline::~VulkanPipeline()
@@ -140,85 +205,6 @@ namespace Spices {
 		configInfo.attributeDescriptions                     = Vertex::GetAttributeDescriptions();
 	}
 
-	void VulkanPipeline::CreateGraphicsPipeline(
-		const std::string&         pipelineName  ,
-		const ShaderMap&           shaders       ,
-		const PipelineConfigInfo&  config
-	)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Receive PipelineLayout from parameter.
-		*/
-		m_PipelineLayout = config.pipelineLayout;
-
-		/**
-		* @brief Create the VulkanShaderModule.
-		*/
-		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
-		for (auto& pair : shaders)
-		{
-			if (pair.first == "rchit") continue;
-
-			for (size_t i = 0; i < pair.second.size(); i++)
-			{
-				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
-			}
-		}
-
-		/**
-		* @brief Instance VkPipelineShaderStageCreateInfo.
-		*/
-		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-		for (size_t i = 0; i < shaderModules.size(); i++)
-		{
-			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
-		}
-		
-		auto& bindingDescriptions    = config.bindingDescriptions;
-		auto& attributeDescriptions = config.attributeDescriptions;
-
-		/**
-		* @brief Instance a VkPipelineVertexInputStateCreateInfo.
-		*/
-		VkPipelineVertexInputStateCreateInfo              vertexInputInfo{};
-		vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-		vertexInputInfo.vertexBindingDescriptionCount   = static_cast<uint32_t>(bindingDescriptions.size());
-		vertexInputInfo.pVertexAttributeDescriptions    = attributeDescriptions.data();
-		vertexInputInfo.pVertexBindingDescriptions      = bindingDescriptions.data();
-
-		/**
-		* @brief Instance a VkGraphicsPipelineCreateInfo.
-		*/
-		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
-		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
-		pipelineInfo.pStages                            = shaderStages.data();
-		pipelineInfo.pVertexInputState                  = &vertexInputInfo;
-		pipelineInfo.pInputAssemblyState                = &config.inputAssemblyInfo;
-		pipelineInfo.pViewportState                     = &config.viewportInfo;
-		pipelineInfo.pRasterizationState                = &config.rasterizationInfo;
-		pipelineInfo.pMultisampleState                  = &config.multisampleInfo;
-		pipelineInfo.pColorBlendState                   = &config.colorBlendInfo;
-		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
-		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
-
-		pipelineInfo.layout                             = m_PipelineLayout;
-		pipelineInfo.renderPass                         = config.renderPass;
-		pipelineInfo.subpass                            = config.subpass;
-
-		pipelineInfo.basePipelineIndex                  = -1;
-		pipelineInfo.basePipelineHandle                 = VK_NULL_HANDLE;
-
-		/**
-		* @brief Create Pipeline.
-		*/
-		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
-	}
-
 	VulkanRayTracingPipeline::VulkanRayTracingPipeline(
 		VulkanState&               vulkanState  ,
 		const std::string&         pipelineName ,
@@ -226,20 +212,6 @@ namespace Spices {
 		const PipelineConfigInfo&  config
 	)
 		: VulkanPipeline(vulkanState)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Create RT Pipeline.
-		*/
-		VulkanRayTracingPipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
-	}
-
-	void VulkanRayTracingPipeline::CreateGraphicsPipeline(
-		const std::string&         pipelineName , 
-		const ShaderMap&           shaders      ,
-		const PipelineConfigInfo&  config
-	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -360,17 +332,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		VulkanComputePipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
-	}
-
-	void VulkanComputePipeline::CreateGraphicsPipeline(
-		const std::string&         pipelineName  , 
-		const ShaderMap&           shaders       ,
-		const PipelineConfigInfo&  config
-	)
-	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Receive PipelineLayout from parameter.
 		*/
@@ -421,17 +382,6 @@ namespace Spices {
 		const PipelineConfigInfo&  config
 	)
 		:VulkanPipeline(vulkanState)
-	{
-		SPICES_PROFILE_ZONE;
-
-		VulkanMeshPipeline::CreateGraphicsPipeline(pipelineName, shaders, config);
-	}
-
-	void VulkanMeshPipeline::CreateGraphicsPipeline(
-		const std::string&         pipelineName  ,
-		const ShaderMap&           shaders       ,
-		const PipelineConfigInfo&  config
-	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -500,17 +450,6 @@ namespace Spices {
 		const PipelineConfigInfo&  config
 	)
 		:VulkanPipeline(vulkanState)
-	{
-		SPICES_PROFILE_ZONE;
-
-		VulkanIndirectMeshPipelineNV::CreateGraphicsPipeline(pipelineName, shaders, config);
-	}
-
-	void VulkanIndirectMeshPipelineNV::CreateGraphicsPipeline(
-		const std::string&         pipelineName , 
-		const ShaderMap&           shaders      ,
-		const PipelineConfigInfo&  config
-	)
 	{
 		SPICES_PROFILE_ZONE;
 

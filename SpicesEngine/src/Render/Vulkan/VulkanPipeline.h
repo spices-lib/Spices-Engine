@@ -110,20 +110,6 @@ namespace Spices {
 		*/
 		VkPipeline& GetPipeline() { return m_Pipeline; }
 
-	private:
-
-		/**
-		* @brief Create the VkPipeline.
-		* @param[in] pipelineName The Pipeline name.
-		* @param[in] shaders The Shader stage name and path.
-		* @param[in] config PipelineConfigInfo.
-		*/
-		virtual void CreateGraphicsPipeline(
-			const std::string&         pipelineName   ,
-			const ShaderMap&           shaders        ,
-			const PipelineConfigInfo&  config
-		);
-
 	protected:
 
 		/**
@@ -164,20 +150,6 @@ namespace Spices {
 		* @brief Destructor Function.
 		*/
 		virtual ~VulkanRayTracingPipeline() override = default;
-
-	private:
-
-		/**
-		* @brief Create the VkPipeline.
-		* @param[in] pipelineName The Pipeline name.
-		* @param[in] shaders The Shader stage name and path.
-		* @param[in] config PipelineConfigInfo.
-		*/
-		virtual void CreateGraphicsPipeline(
-			const std::string&         pipelineName  ,
-			const ShaderMap&           shaders       ,
-			const PipelineConfigInfo&  config
-		) override;
 	};
 
 	/**
@@ -206,20 +178,6 @@ namespace Spices {
 		* @brief Destructor Function.
 		*/
 		virtual ~VulkanComputePipeline() override = default;
-
-	private:
-
-		/**
-		* @brief Create the VkPipeline.
-		* @param[in] pipelineName The Pipeline name.
-		* @param[in] shaders The Shader stage name and path.
-		* @param[in] config PipelineConfigInfo.
-		*/
-		virtual void CreateGraphicsPipeline(
-			const std::string&         pipelineName ,
-			const ShaderMap&           shaders      ,
-			const PipelineConfigInfo&  config
-		) override;
 	};
 
 	/**
@@ -248,20 +206,6 @@ namespace Spices {
 		* @brief Destructor Function.
 		*/
 		virtual ~VulkanMeshPipeline() override = default;
-
-	private:
-
-		/**
-		* @brief Create the VkPipeline.
-		* @param[in] pipelineName The Pipeline name.
-		* @param[in] shaders The Shader stage name and path.
-		* @param[in] config PipelineConfigInfo.
-		*/
-		virtual void CreateGraphicsPipeline(
-			const std::string&        pipelineName ,
-			const ShaderMap&          shaders      ,
-			const PipelineConfigInfo& config
-		) override;
 	};
 
 	/**
@@ -290,19 +234,5 @@ namespace Spices {
 		* @brief Destructor Function.
 		*/
 		virtual ~VulkanIndirectMeshPipelineNV() override = default;
-
-	private:
-
-		/**
-		* @brief Create the VkPipeline.
-		* @param[in] pipelineName The Pipeline name.
-		* @param[in] shaders The Shader stage name and path.
-		* @param[in] config PipelineConfigInfo.
-		*/
-		virtual void CreateGraphicsPipeline(
-			const std::string&         pipelineName  ,
-			const ShaderMap&           shaders       ,
-			const PipelineConfigInfo&  config
-		) override;
 	};
 }

@@ -88,13 +88,6 @@ namespace Spices {
 			VkPipelineLayout&                layout    ,
 			std::shared_ptr<RendererSubPass> subPass
 		) override;
-
-	private:
-
-		std::unordered_map<std::string, std::unique_ptr<VulkanBuffer>> m_BaseMeshDrawCommandsBuffer;
-		std::unordered_map<std::string, uint32_t> m_BaseMeshDrawCommandsBufferCount;
-
-		std::unordered_map<std::string, BasePassR::MeshDescBuffer> m_DescsMap;
 	};
 
 }
