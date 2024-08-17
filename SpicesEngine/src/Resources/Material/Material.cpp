@@ -13,12 +13,15 @@
 #include "Core/Library/StringLibrary.h"
 #include "Render/Renderer/Renderer.h"
 #include "Render/Renderer/DescriptorSetManager/BindLessTextureManager.h"
+#include "Render/Renderer/ShaderManager/ShaderManager.h"
 
 namespace Spices {
 
 	Material::Material(const std::string& materialPath)
 		: m_MaterialPath(materialPath)
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @breif Call Dserialize() while in Constructor.
 		*/
@@ -26,10 +29,26 @@ namespace Spices {
 	}
 
 	Material::~Material()
-	{}
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief UnLoad ShaderModule.
+		*/
+		for (auto& pair : m_Shaders)
+		{
+			for (int i = 0; i < pair.second.size(); i++)
+			{
+				ShaderManager::UnLoad(pair.second[i], pair.first);
+			}
+		}
+
+	}
 
 	void Material::Serialize()
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (m_MaterialPath.empty())
 		{
 			SPICES_CORE_INFO("Please do not do that!");
@@ -38,6 +57,8 @@ namespace Spices {
 
 	void Material::Deserialize()
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (m_MaterialPath.empty())
 		{
 			SPICES_CORE_WARN("Material::m_MaterialPath is empty.");
@@ -49,6 +70,8 @@ namespace Spices {
 
 	const std::vector<std::string>& Material::GetShaderPath(const std::string& stage)
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (m_Shaders.find(stage) == m_Shaders.end())
 		{
 			std::stringstream ss;
@@ -62,12 +85,31 @@ namespace Spices {
 
 	uint64_t Material::GetMaterialParamsAddress() const
 	{
+		SPICES_PROFILE_ZONE;
+
 		if(m_MaterialParameterBuffer == nullptr) return 0;
 		else return m_MaterialParameterBuffer->GetAddress();
 	}
 
 	void Material::BuildMaterial()
 	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Registry ShaderModule.
+		*/
+		{
+			SPICES_PROFILE_ZONEN("BuildMaterial::Registry ShaderModule");
+
+			for (auto& pair : m_Shaders)
+			{
+				for (int i = 0; i < pair.second.size(); i++)
+				{
+					ShaderManager::Registry(pair.second[i], pair.first);
+				}
+			}
+		}
+
 		/**
 		* @brief If ReBuild, need clear old descripotrset first.
 		*/

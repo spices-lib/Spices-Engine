@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanPipeline.h"
 #include "Resources/Mesh/Mesh.h"
+#include "Render/Renderer/ShaderManager/ShaderManager.h"
 
 namespace Spices {
 
@@ -28,14 +29,14 @@ namespace Spices {
 		/**
 		* @brief Create the VulkanShaderModule.
 		*/
-		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		std::vector<std::shared_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
 			if (pair.first == "rchit") continue;
 
 			for (size_t i = 0; i < pair.second.size(); i++)
 			{
-				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+				shaderModules.push_back(ShaderManager::Registry(pair.second[i], pair.first));
 			}
 		}
 
@@ -223,12 +224,12 @@ namespace Spices {
 		/**
 		* @brief Create the VulkanShaderModule.
 		*/
-		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		std::vector<std::shared_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
 			for(size_t i = 0; i < pair.second.size(); i++)
 			{
-				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+				shaderModules.push_back(ShaderManager::Registry(pair.second[i], pair.first));
 			}
 		}
 
@@ -340,12 +341,12 @@ namespace Spices {
 		/**
 		* @brief Create the VulkanShaderModule.
 		*/
-		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		std::vector<std::shared_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
 			if (pair.first == "comp")
 			{
-				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[0], pair.first));
+				shaderModules.push_back(ShaderManager::Registry(pair.second[0], pair.first));
 				break;
 			}
 		}
@@ -393,14 +394,14 @@ namespace Spices {
 		/**
 		* @brief Create the VulkanShaderModule.
 		*/
-		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
+		std::vector<std::shared_ptr<VulkanShaderModule>> shaderModules;
 		for (auto& pair : shaders)
 		{
 			if (pair.first == "rchit") continue;
 
 			for (size_t i = 0; i < pair.second.size(); i++)
 			{
-				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
+				shaderModules.push_back(ShaderManager::Registry(pair.second[i], pair.first));
 			}
 		}
 

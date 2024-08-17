@@ -12,7 +12,7 @@ namespace Spices {
 
 	ShaderManagerContainer ShaderManager::m_Shaders;
 
-	std::shared_ptr<VulkanShaderModule>& ShaderManager::Registry(const std::string& name, const std::string& stage)
+	std::shared_ptr<VulkanShaderModule> ShaderManager::Registry(const std::string& name, const std::string& stage)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -26,5 +26,17 @@ namespace Spices {
 		m_Shaders[s2] = std::make_shared<VulkanShaderModule>(VulkanRenderBackend::GetState(), name, stage);
 
 		return m_Shaders[s2];
+	}
+
+	void ShaderManager::UnLoad(const std::string& name, const std::string& stage)
+	{
+		SPICES_PROFILE_ZONE;
+
+		String2 s2{ name , stage };
+
+		if (m_Shaders.find(s2) != m_Shaders.end())
+		{
+			m_Shaders.erase(s2);
+		}
 	}
 }

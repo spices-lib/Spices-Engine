@@ -151,9 +151,6 @@ namespace Spices {
 
 		/**
 		* @brief Shader path
-		* 0 - vertex shader
-		* 1 - fragment shader
-		* ... other shader
 		* Key: shader usage, Value: shader file name.
 		*/
 		std::unordered_map<std::string, std::vector<std::string>> m_Shaders;

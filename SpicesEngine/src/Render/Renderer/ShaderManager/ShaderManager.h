@@ -35,7 +35,14 @@ namespace Spices {
 		* @param stage The shader's stage.
 		* @return The shared pointer reference of VulkanShaderModule.
 		*/
-		static std::shared_ptr<VulkanShaderModule>& Registry(const std::string& name, const std::string& stage);
+		static std::shared_ptr<VulkanShaderModule> Registry(const std::string& name, const std::string& stage);
+
+		/**
+		* @brief UnLoad a VulkanShaderModule.
+		* @param name Tname The shader's name.
+		* @param stage The shader's stage.
+		*/
+		static void UnLoad(const std::string& name, const std::string& stage);
 
 	private:
 
