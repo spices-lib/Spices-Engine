@@ -38,5 +38,8 @@ namespace Spices {
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdCopyAccelerationStructureKHR               )
 
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdDrawMeshTasksEXT                           )
+
+		EXPLAIN_VK_FUNCTION_POINTER(vkCreateIndirectCommandsLayoutNV                )
+		EXPLAIN_VK_FUNCTION_POINTER(vkCmdExecuteGeneratedCommandsNV                 )
 	}
 }

@@ -77,10 +77,22 @@ namespace Spices {
 		void SetHitShaderHandle(uint32_t handle) { m_HitShaderHandle = handle; }
 
 		/**
+		* @brief Set hit shader Handle.
+		* @param[in] handle the material handle.
+		*/
+		void SetShaderGroupHandle(uint32_t handle) { m_ShaderGroupHandle = handle; }
+
+		/**
 		* @brief Get Hit Shader Handle, which accessed by ray gen shader.
 		* @return Returns the material handle.
 		*/
 		uint32_t GetHitShaderHandle() const;
+
+		/**
+		* @brief Get ShaderGroup Handle, which accessed by gdc buffer.
+		* @return Returns the material handle.
+		*/
+		uint32_t GetShaderGroupHandle() const;
 		
 		/**
 		* @brief Get meshpack UUID.
@@ -134,6 +146,12 @@ namespace Spices {
 		* @return Returns the Meshlets array.
 		*/
 		const std::vector<Meshlet>& GetMeshlets() const { return m_Meshlets; }
+
+		/**
+		* @brief Get NTasks.
+		* @return Returns the NTasks.
+		*/
+		uint32_t GetNTasks() const { return m_NTasks; }
 
 		/**
 		* @brief Get Draw Command.
@@ -261,8 +279,15 @@ namespace Spices {
 
 		/**
 		* @brief specific hit shader handle.
+		* Used in RayTracing Pipeline.
 		*/
 		std::optional<uint32_t> m_HitShaderHandle;
+
+		/**
+		* @brief specific shader group handle.
+		* Used in IndirectDGCPipeline.
+		*/
+		std::optional<uint32_t> m_ShaderGroupHandle;
 
 		/**
 		* @brief specific meshpack type.

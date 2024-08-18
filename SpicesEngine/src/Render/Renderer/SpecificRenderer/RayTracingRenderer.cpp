@@ -20,7 +20,7 @@ namespace Spices {
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
 		const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool
 	)
-		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool)
+		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool, true, false)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -296,9 +296,6 @@ namespace Spices {
 		* @brief Helper to retrieve the handle data.
 		*/ 
 		auto getHandle = [&](int i) { return handles.data() + i * handleSize; };
-
-		//void* data;
-		//vkMapMemory(m_VulkanState.m_Device, m_RTSBTBuffer->GetMemory(), 0, sbtSize, 0, &data);
 
 		/**
 		* @brief Map the SBT buffer and write in the handles.

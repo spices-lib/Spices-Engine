@@ -66,6 +66,7 @@ namespace Spices {
 		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for registry/access RT.
 		* @param[in] cmdThreadPool ThreadPool of submit Cmd parallel.
 		* @param[in] isLoadDefaultMaterial True if need load a default material.
+		* @param[in] isRegistryDGCPipeline True if need registry dgc pipeline.
 		*/
 		Renderer
 		(
@@ -75,7 +76,8 @@ namespace Spices {
 			const std::shared_ptr<VulkanDevice>&         device                  ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
 			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
-			bool                                         isLoadDefaultMaterial = true
+			bool                                         isLoadDefaultMaterial = true ,
+			bool                                         isRegistryDGCPipeline = false
 		);
 
 		/**
@@ -139,12 +141,22 @@ namespace Spices {
 		virtual void OnMeshAddedWorld() {}
 
 		/**
-		* @brief Register material to Specific Renderer.
+		* @brief Registry material to Specific Renderer.
 		* @param[in] materialName Material Name.
 		* @param[in] subpassName SubPass Name.
 		*/
 		void RegistryMaterial(
 			const std::string& materialName , 
+			const std::string& subpassName
+		);
+
+		/**
+		* @brief Registry dgc pipeline to Specific Renderer.
+		* @param[in] materialName Material Name.
+		* @param[in] subpassName SubPass Name.
+		*/
+		void RegistryDGCPipeline(
+			const std::string& materialName,
 			const std::string& subpassName
 		);
 
@@ -159,7 +171,6 @@ namespace Spices {
 		/**
 		* @brief The interface is called during OnSystemInitialize().
 		* Create specific render pass.
-		* @todo Implemented specific render pass
 		*/
 		virtual void CreateRendererPass() = 0;
 
@@ -170,9 +181,15 @@ namespace Spices {
 		virtual void CreateDescriptorSet() = 0;
 
 		/**
+		* @brief This interface is called during OnSystemInitialize().
+		* Create indirect Commands Layout for dgc.
+		*/
+		virtual void CreateIndirectCommandsLayout();
+
+		/**
 		* @brief Create Specific Renderer Default Material. 
 		*/
-		void CreateDefaultMaterial() const;
+		void CreateDefaultMaterial();
 
 		/**
 		* @brief Create Pipeline Layout with material's descriptorset and renderer's descriptor set.
@@ -183,6 +200,20 @@ namespace Spices {
 			const std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
 			std::shared_ptr<RendererSubPass>          subPass
 		) const;
+
+		/**
+		* @brief Create device generated command Pipeline.
+		* @param[in] pipelineName Pipeline's name.
+		* @param[in] materialName Material's name.
+		* @param[in] layout PipelineLayout.
+		* @param[in] subPass RendererSubPass.
+		*/
+		virtual std::shared_ptr<VulkanPipeline> CreateDGCPipeline(
+			const std::string&               pipelineName ,
+			const std::string&               materialName ,
+			VkPipelineLayout&                layout       ,
+			std::shared_ptr<RendererSubPass> subPass
+		);
 
 		/**
 		* @brief Create Specific Material Pipeline.
@@ -1109,6 +1140,21 @@ namespace Spices {
 			);
 		};
 
+	public:
+
+		struct IndirectDrawData
+		{
+			IndirectDrawData() = default;
+
+			virtual ~IndirectDrawData() {}
+
+			std::vector<VkIndirectCommandsStreamNV> inputs;
+			std::vector<uint32_t>                   inputStrides;
+			VkIndirectCommandsLayoutNV indirectCmdsLayout;
+			std::shared_ptr<VulkanBuffer> inputBuffer;
+			uint32_t strides;
+		};
+
 	protected:
 		
 		/**
@@ -1152,9 +1198,24 @@ namespace Spices {
 		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 		
 		/**
+		* @brief Pipelines Reference in DGC Pipeline.
+		*/
+		std::unordered_map<std::string, std::vector<VkPipeline>> m_PipelinesRef;
+
+		/**
 		* @brief Whether should load a default renderer material.
 		*/
 		bool m_IsLoadDefaultMaterial;
+
+		/**
+		* @brief Whether should registry dgc pipeline.
+		*/
+		bool m_IsRegistryDGCPipeline;
+
+		/**
+		* @brief Data of dgc Indirect Draw.
+		*/
+		IndirectDrawData m_IndirectData;
 
 		/**
 		* @brief Allow this class access all data.

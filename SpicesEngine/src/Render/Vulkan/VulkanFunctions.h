@@ -72,5 +72,11 @@ namespace Spices {
 		* @brief Mesh Shader Function.
 		*/
 		VK_FUNCTION_POINTER(vkCmdDrawMeshTasksEXT                           )
+
+		/**
+		* @brief DGC Function.
+		*/
+		VK_FUNCTION_POINTER(vkCreateIndirectCommandsLayoutNV                )
+		VK_FUNCTION_POINTER(vkCmdExecuteGeneratedCommandsNV                 )
 	};
 }

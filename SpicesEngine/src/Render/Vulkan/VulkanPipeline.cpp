@@ -49,8 +49,8 @@ namespace Spices {
 			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
 		}
 		
-		auto& bindingDescriptions    = config.bindingDescriptions;
-		auto& attributeDescriptions = config.attributeDescriptions;
+		auto& bindingDescriptions                       = config.bindingDescriptions;
+		auto& attributeDescriptions                     = config.attributeDescriptions;
 
 		/**
 		* @brief Instance a VkPipelineVertexInputStateCreateInfo.
@@ -444,13 +444,14 @@ namespace Spices {
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
 	}
 
-	VulkanIndirectMeshPipelineNV::VulkanIndirectMeshPipelineNV(
-		VulkanState&               vulkanState  , 
-		const std::string&         pipelineName ,
-		const ShaderMap&           shaders      ,
-		const PipelineConfigInfo&  config
+	VulkanIndirectPipelineNV::VulkanIndirectPipelineNV(
+		VulkanState&                    vulkanState  , 
+		const std::string&              pipelineName ,
+		const std::string&              materialName ,
+		const std::vector<VkPipeline>&  pipelineRef  ,
+		const PipelineConfigInfo&       config
 	)
-		:VulkanPipeline(vulkanState)
+		: VulkanPipeline(vulkanState)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -460,45 +461,124 @@ namespace Spices {
 		m_PipelineLayout = config.pipelineLayout;
 
 		/**
-		* @brief Create the VulkanShaderModule.
-		*/
-		std::vector<std::unique_ptr<VulkanShaderModule>> shaderModules;
-		for (auto& pair : shaders)
-		{
-			for(size_t i = 0; i < pair.second.size(); i++)
-			{
-				shaderModules.push_back(std::make_unique<VulkanShaderModule>(m_VulkanState, pair.second[i], pair.first));
-			}
-		}
-
-		/**
-		* @brief Instance VkPipelineShaderStageCreateInfo.
-		*/
-		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-		for (size_t i = 0; i < shaderModules.size(); i++)
-		{
-			shaderStages.push_back(shaderModules[i]->GetShaderStageCreateInfo());
-		}
-
-		/**
 		* @brief Shader groups.
+		* We use pipeline reference here, so not need create shader group.
+		* Pass any group to create info will be fine.
 		*/
-		VkGraphicsPipelineShaderGroupsCreateInfoNV group{};
-		group.sType                         = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV;
-		
-		std::vector<VkGraphicsShaderGroupCreateInfoNV> m_ShaderGroups;
-		
-		group.groupCount                    = m_ShaderGroups.size();
-		group.pGroups                       = m_ShaderGroups.data();
+		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+
+		VkPipelineShaderStageCreateInfo stage = ShaderManager::Registry(material->GetShaderPath("vert")[0], "vert")->GetShaderStageCreateInfo();
+
+		VkGraphicsShaderGroupCreateInfoNV group{};
+		group.sType                                     = VK_STRUCTURE_TYPE_GRAPHICS_SHADER_GROUP_CREATE_INFO_NV;
+		group.stageCount                                = 1;
+		group.pStages                                   = &stage;
+
+		/**
+		* @brief Instance a VkGraphicsPipelineShaderGroupsCreateInfoNV.
+		*/
+		VkGraphicsPipelineShaderGroupsCreateInfoNV        groupsCreateInfo{};
+		groupsCreateInfo.sType                          = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV;
+		groupsCreateInfo.pipelineCount                  = static_cast<uint32_t>(pipelineRef.size());
+		groupsCreateInfo.pPipelines                     = pipelineRef.data();
+		groupsCreateInfo.groupCount                     = 1;
+		groupsCreateInfo.pGroups                        = &group;
+
+		auto& bindingDescriptions                       = config.bindingDescriptions;
+		auto& attributeDescriptions                     = config.attributeDescriptions;
+
+		/**
+		* @brief Instance a VkPipelineVertexInputStateCreateInfo.
+		*/
+		VkPipelineVertexInputStateCreateInfo              vertexInputInfo{};
+		vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		vertexInputInfo.vertexBindingDescriptionCount   = static_cast<uint32_t>(bindingDescriptions.size());
+		vertexInputInfo.pVertexAttributeDescriptions    = attributeDescriptions.data();
+		vertexInputInfo.pVertexBindingDescriptions      = bindingDescriptions.data();
 
 		/**
 		* @brief Instance a VkGraphicsPipelineCreateInfo.
+		* Only pRasterizationState must be setted in pipeline reference.
 		*/
 		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
 		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
-		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
-		pipelineInfo.pStages                            = shaderStages.data();
+		pipelineInfo.stageCount                         = 1;
+		pipelineInfo.pStages                            = &stage;
+		pipelineInfo.pVertexInputState                  = &vertexInputInfo;
+		pipelineInfo.pInputAssemblyState                = &config.inputAssemblyInfo;
+		pipelineInfo.pViewportState                     = &config.viewportInfo;
+		pipelineInfo.pRasterizationState                = &config.rasterizationInfo;
+		pipelineInfo.pMultisampleState                  = &config.multisampleInfo;
+		pipelineInfo.pColorBlendState                   = &config.colorBlendInfo;
+		pipelineInfo.pDepthStencilState                 = &config.depthStencilInfo;
+		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
+
+		pipelineInfo.layout                             = m_PipelineLayout;
+		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.subpass                            = config.subpass;
+
+		pipelineInfo.basePipelineIndex                  = -1;
+		pipelineInfo.basePipelineHandle                 = VK_NULL_HANDLE;
+		pipelineInfo.pNext                              = &groupsCreateInfo;
+
+		/**
+		* @brief Create Pipeline.
+		*/
+		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName);
+	}
+
+	VulkanIndirectMeshPipelineNV::VulkanIndirectMeshPipelineNV(
+		VulkanState&                    vulkanState  , 
+		const std::string&              pipelineName ,
+		const std::string&              materialName ,
+		const std::vector<VkPipeline>&  pipelineRef  ,
+		const PipelineConfigInfo&       config
+	)
+		: VulkanPipeline(vulkanState)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Receive PipelineLayout from parameter.
+		*/
+		m_PipelineLayout = config.pipelineLayout;
+
+		/**
+		* @brief Shader groups.
+		* We use pipeline reference here, so not need create shader group.
+		* Pass any group to create info will be fine.
+		*/
+		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+
+		VkPipelineShaderStageCreateInfo stage = ShaderManager::Registry(material->GetShaderPath("mesh")[0], "mesh")->GetShaderStageCreateInfo();
+
+		VkGraphicsShaderGroupCreateInfoNV group{};
+		group.sType                                     = VK_STRUCTURE_TYPE_GRAPHICS_SHADER_GROUP_CREATE_INFO_NV;
+		group.stageCount                                = 1;
+		group.pStages                                   = &stage;
+
+		/**
+		* @brief Instance a VkGraphicsPipelineShaderGroupsCreateInfoNV.
+		*/
+		VkGraphicsPipelineShaderGroupsCreateInfoNV        groupsCreateInfo{};
+		groupsCreateInfo.sType                          = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV;
+		groupsCreateInfo.pipelineCount                  = static_cast<uint32_t>(pipelineRef.size());
+		groupsCreateInfo.pPipelines                     = pipelineRef.data();
+		groupsCreateInfo.groupCount                     = 1;
+		groupsCreateInfo.pGroups                        = &group;
+
+		/**
+		* @brief Instance a VkGraphicsPipelineCreateInfo.
+		* Only pRasterizationState must be setted in pipeline reference.
+		*/
+		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
+		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
+		pipelineInfo.stageCount                         = 1;
+		pipelineInfo.pStages                            = &stage;
 		pipelineInfo.pVertexInputState                  = nullptr;
 		pipelineInfo.pInputAssemblyState                = nullptr;
 		pipelineInfo.pViewportState                     = &config.viewportInfo;
@@ -514,8 +594,7 @@ namespace Spices {
 
 		pipelineInfo.basePipelineIndex                  = -1;
 		pipelineInfo.basePipelineHandle                 = VK_NULL_HANDLE;
-
-		pipelineInfo.pNext                              = &group;
+		pipelineInfo.pNext                              = &groupsCreateInfo;
 
 		/**
 		* @brief Create Pipeline.

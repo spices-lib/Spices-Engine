@@ -128,9 +128,10 @@ namespace Spices {
 		/**
 		* @brief This interface need to be overwritten by specific material.
 		* It defines how we build texture and descriptor set.
+		* @param[in] isAutoRegistry True if this material need registry to renderer automatically.
 		* @todo empty texture.
 		*/
-		void BuildMaterial();
+		void BuildMaterial(bool isAutoRegistry = true);
 
 		/**
 		* @brief Allow MaterialLoader access all data.

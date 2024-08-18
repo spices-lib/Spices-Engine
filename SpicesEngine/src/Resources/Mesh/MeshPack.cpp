@@ -63,6 +63,21 @@ namespace Spices {
 		return m_HitShaderHandle.value();
 	}
 
+	uint32_t MeshPack::GetShaderGroupHandle() const
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!m_ShaderGroupHandle.has_value())
+		{
+			std::stringstream ss;
+			ss << "MeshPack do not has a vaild material handle.";
+
+			SPICES_CORE_ERROR(ss.str());
+		}
+
+		return m_ShaderGroupHandle.value();
+	}
+
 	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR() const
 	{
 		SPICES_PROFILE_ZONE;

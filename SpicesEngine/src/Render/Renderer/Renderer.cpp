@@ -19,7 +19,8 @@ namespace Spices {
 		const std::shared_ptr<VulkanDevice>&         device                ,
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
 		const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool         ,
-		bool isLoadDefaultMaterial
+		bool                                         isLoadDefaultMaterial ,
+		bool                                         isRegistryDGCPipeline
 	)
 		: m_VulkanState             (vulkanState           )
 		, m_DescriptorPool          (DescriptorPool        )
@@ -28,6 +29,7 @@ namespace Spices {
 		, m_CmdThreadPool           (cmdThreadPool         )
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
+		, m_IsRegistryDGCPipeline   (isRegistryDGCPipeline)
 	{}
 
 	void Renderer::OnSystemInitialize()
@@ -48,8 +50,16 @@ namespace Spices {
 		* @brief Create specific renderer default material.
 		*/
 		CreateDefaultMaterial();
+
+		/**
+		* @brief Create Indirect Commands Layout.
+		*/
+		if (m_IsRegistryDGCPipeline)
+		{
+			CreateIndirectCommandsLayout();
+		}
 	}
-	 
+	
 	void Renderer::OnSlateResize()
 	{
 		SPICES_PROFILE_ZONE;
@@ -98,11 +108,6 @@ namespace Spices {
 		* @note remove for material use bindless descriptorset.
 		*/
 		const auto material = ResourcePool<Material>::Load<Material>(materialName);
-		/*const auto materialSetInfo = material->GetMaterialDescriptorSet();
-		for (auto& pair : materialSetInfo)
-		{
-			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
-		}*/
 
 		/**
 		* @brief Instance a temp empty vector for VkDescriptorSetLayout.
@@ -127,7 +132,68 @@ namespace Spices {
 		m_Pipelines[materialName] = pipeline;
 	}
 
-	void Renderer::CreateDefaultMaterial() const
+	void Renderer::RegistryDGCPipeline(const std::string& materialName, const std::string& subpassName)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a temp empty map for VkDescriptorSetLayout.
+		* Before turn it to a continus container, sorted is required.
+		*/
+		std::map<uint32_t, VkDescriptorSetLayout> sortedRowSetLayouts;
+
+		/**
+		* @brief PreRenderer's DescriptorSetInfo.
+		*/
+		const auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
+		for (auto& pair : preRendererSetInfo)
+		{
+			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
+		}
+
+		/**
+		* @brief SpecificRenderer's DescriptorSetInfo.
+		*/
+		const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subpassName});
+		for (auto& pair : specificRendererSetInfo)
+		{
+			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
+		}
+
+		/**
+		* @brief Material's DescriptorSetInfo.
+		* @note remove for material use bindless descriptorset.
+		*/
+		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+
+		/**
+		* @brief Instance a temp empty vector for VkDescriptorSetLayout.
+		*/
+		std::vector<VkDescriptorSetLayout> rowSetLayouts;
+
+		for (auto& pair : sortedRowSetLayouts)
+		{
+			rowSetLayouts.push_back(pair.second);
+		}
+
+		/**
+		* @breif Create PipelineLayout.
+		*/
+		const auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
+		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts, subPass);
+
+		/**
+		* @brief Create Pipeline.
+		*/
+		std::stringstream ss;
+		ss << materialName << ".DGC";
+		m_Pipelines[ss.str()] = CreateDGCPipeline(ss.str(), materialName, pipelinelayout, subPass);
+	}
+
+	void Renderer::CreateIndirectCommandsLayout()
+	{}
+
+	void Renderer::CreateDefaultMaterial()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -138,11 +204,23 @@ namespace Spices {
 		{
 			m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
 
+				/**
+				* @brief Real Material.
+				*/
 				std::stringstream ss;
 				ss << m_RendererName << "." << K << ".Default";
-
-				const auto material = ResourcePool<Material>::Load<Material>(ss.str());
-				material->BuildMaterial();
+				{
+					const auto material = ResourcePool<Material>::Load<Material>(ss.str());
+					material->BuildMaterial();
+				}
+				
+				/**
+				* @brief Abstract Indirect Material.
+				*/
+				if (m_IsRegistryDGCPipeline)
+				{
+					RegistryDGCPipeline(ss.str(), K);
+				}
 
 				/**
 				* @brief Not break loop.
@@ -183,6 +261,44 @@ namespace Spices {
 		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE_LAYOUT, (uint64_t)pipelineLayout, m_VulkanState.m_Device, "PipelineLayout");
 
 		return pipelineLayout;
+	}
+
+	std::shared_ptr<VulkanPipeline> Renderer::CreateDGCPipeline(
+		const std::string&               pipelineName ,
+		const std::string&               materialName ,
+		VkPipelineLayout&                layout       ,
+		std::shared_ptr<RendererSubPass> subPass
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Get Dafault PipelineConfigInfo.
+		*/
+		PipelineConfigInfo pipelineConfig{};
+		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
+
+		/**
+		* @brief Fill in with configurable data.
+		*/
+		pipelineConfig.renderPass                     = m_Pass->Get();
+		pipelineConfig.subpass                        = subPass->GetIndex();
+		pipelineConfig.pipelineLayout                 = layout;
+		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
+		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
+
+		/**
+		* @brief Create VulkanPipeline.
+		*/
+		return std::make_shared<VulkanIndirectPipelineNV>(
+			m_VulkanState,
+			pipelineName,
+			materialName,
+			m_PipelinesRef[subPass->GetName()],
+			pipelineConfig
+		);
+
+		m_PipelinesRef.clear();
 	}
 	
 	std::shared_ptr<VulkanPipeline> Renderer::CreatePipeline(

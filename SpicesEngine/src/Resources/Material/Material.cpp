@@ -91,7 +91,7 @@ namespace Spices {
 		else return m_MaterialParameterBuffer->GetAddress();
 	}
 
-	void Material::BuildMaterial()
+	void Material::BuildMaterial(bool isAutoRegistry)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -272,8 +272,11 @@ namespace Spices {
 		/**
 		* @brief Create PipelineLayout.
 		*/
-		std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
-		auto renderer = RendererManager::GetRenderer(sv[0]);
-		renderer->RegistryMaterial(m_MaterialPath, sv[1]);
+		if (isAutoRegistry)
+		{
+			std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
+			auto renderer = RendererManager::GetRenderer(sv[0]);
+			renderer->RegistryMaterial(m_MaterialPath, sv[1]);
+		}
 	}
 }

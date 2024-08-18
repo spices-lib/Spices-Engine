@@ -44,7 +44,7 @@ namespace Spices {
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool,
 			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool
 		)
-			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool)
+			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool, true, true)
 		{}
 
 		/**
@@ -74,6 +74,12 @@ namespace Spices {
 		virtual void CreateDescriptorSet() override;
 
 		/**
+		* @brief This interface is called during OnSystemInitialize().
+		* Create indirect Commands Layout for dgc.
+		*/
+		virtual void CreateIndirectCommandsLayout() override;
+
+		/**
 		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
 		*/
 		virtual void OnMeshAddedWorld() override;
@@ -86,6 +92,20 @@ namespace Spices {
 		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
 			std::shared_ptr<Material>        material  ,
 			VkPipelineLayout&                layout    ,
+			std::shared_ptr<RendererSubPass> subPass
+		) override;
+
+		/**
+		* @brief Create device generated command Pipeline.
+		* @param[in] pipelineName Pipeline's name.
+		* @param[in] materialName Material's name.
+		* @param[in] layout PipelineLayout.
+		* @param[in] subPass RendererSubPass.
+		*/
+		virtual std::shared_ptr<VulkanPipeline> CreateDGCPipeline(
+			const std::string&               pipelineName ,
+			const std::string&               materialName ,
+			VkPipelineLayout&                layout       ,
 			std::shared_ptr<RendererSubPass> subPass
 		) override;
 	};

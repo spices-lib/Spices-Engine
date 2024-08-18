@@ -209,6 +209,36 @@ namespace Spices {
 	};
 
 	/**
+	* @brief This class is a wrapper of Indirect Pipeline.
+	*/
+	class VulkanIndirectPipelineNV : public VulkanPipeline
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		* Create VkPipeline.
+		* @param[in] vulkanState The global VulkanState.
+		* @param[in] pipelineName The Pipeline name.
+		* @param[in] materialName The Reference Material name.
+		* @param[in] pipelineRef The pipeline Reference.
+		* @param[in] config PipelineConfigInfo.
+		*/
+		VulkanIndirectPipelineNV(
+			VulkanState&                    vulkanState   ,
+			const std::string&              pipelineName  ,
+			const std::string&              materialName  ,
+			const std::vector<VkPipeline>&  pipelineRef   ,
+			const PipelineConfigInfo&       config
+		);
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~VulkanIndirectPipelineNV() override = default;
+	};
+
+	/**
 	* @brief This class is a wrapper of Indirect Mesh Pipeline.
 	*/
 	class VulkanIndirectMeshPipelineNV : public VulkanPipeline
@@ -220,14 +250,16 @@ namespace Spices {
 		* Create VkPipeline.
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] pipelineName The Pipeline name.
-		* @param[in] shaders The Shader stage name and path.
+		* @param[in] materialName The Reference Material name.
+		* @param[in] pipelineRef The pipeline Reference.
 		* @param[in] config PipelineConfigInfo.
 		*/
 		VulkanIndirectMeshPipelineNV(
-			VulkanState&               vulkanState   ,
-			const std::string&         pipelineName  ,
-			const ShaderMap&           shaders       ,
-			const PipelineConfigInfo&  config
+			VulkanState&                    vulkanState   ,
+			const std::string&              pipelineName  ,
+			const std::string&              materialName  ,
+			const std::vector<VkPipeline>&  pipelineRef   ,
+			const PipelineConfigInfo&       config
 		);
 
 		/**
