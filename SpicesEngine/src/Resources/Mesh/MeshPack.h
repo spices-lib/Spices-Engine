@@ -22,6 +22,44 @@
 namespace Spices {
 	
 	/**
+	* @brief Add Construction Functions to SpicesShader::MeshDesc.
+	*/
+	struct MeshDesc : public SpicesShader::MeshDesc
+	{
+
+#define Update_F(item)                                                            \
+		void Update##item(uint64_t p)                                             \
+	{                                                                             \
+		item = static_cast<decltype(item)>(p);                                    \
+		m_Buffer->WriteToBuffer(&item, sizeof(item), offsetof(MeshDesc, item));   \
+	}
+
+		/**
+		* @brief Constructor Function.
+		*/
+		MeshDesc();
+
+		/**
+		* @brief Get m_Buffer's Address.
+		* @return Returns the m_Buffer's Address.
+		*/
+		uint64_t GetBufferAddress() { return m_Buffer->GetAddress(); }
+
+		Update_F(modelAddress             )
+		Update_F(vertexAddress            )
+		Update_F(indexAddress             )
+		Update_F(materialParameterAddress )
+		Update_F(meshletAddress           )
+		Update_F(nMeshlets                )
+		Update_F(entityID                 )
+
+		/**
+		* @brief Buffer of this.
+		*/
+		std::shared_ptr<VulkanBuffer> m_Buffer;
+	};
+
+	/**
 	* @brief MeshPack Class.
 	* This class defines some basic behaves and variables.
 	* This class need to be inherited while use.
@@ -154,6 +192,12 @@ namespace Spices {
 		uint32_t GetNTasks() const { return m_NTasks; }
 
 		/**
+		* @brief Get Mesh Desciption.
+		* @return Returns the Mesh Desciption.
+		*/
+		MeshDesc& GetMeshDesc() { return m_Desc; }
+
+		/**
 		* @brief Get Draw Command.
 		* @return Returns Draw Command.
 		*/
@@ -258,6 +302,11 @@ namespace Spices {
 		std::vector<Meshlet> m_Meshlets;
 
 		/**
+		* @brief Task Sahder Work Group Size.
+		*/
+		uint32_t m_NTasks;
+
+		/**
 		* @brief Vertices buffer.
 		*/
 		std::shared_ptr<VulkanBuffer> m_VertexBuffer;
@@ -290,14 +339,14 @@ namespace Spices {
 		std::optional<uint32_t> m_ShaderGroupHandle;
 
 		/**
+		* @brief Mesh Desciption.
+		*/
+		MeshDesc m_Desc;
+
+		/**
 		* @brief specific meshpack type.
 		*/
 		std::string m_PackType;
-
-		/**
-		* @brief Task Sahder Work Group Size.
-		*/
-		uint32_t m_NTasks;
 
 		/**
 		* @brief UUID for meshpack.

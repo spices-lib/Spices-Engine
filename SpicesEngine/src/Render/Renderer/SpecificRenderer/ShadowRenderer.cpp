@@ -48,7 +48,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "DirectionalLightShadow", this }
-		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
+		.AddPushConstant(sizeof(uint64_t))
 		.AddStorageBuffer(2, 0, sizeof(ShadowR::DirectionalLightMatrixs), VK_SHADER_STAGE_GEOMETRY_BIT)
 		.Build();
 	}
@@ -73,12 +73,10 @@ namespace Spices {
 
 		IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
 
-				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
-					push.modelAddredd = transComp.GetModelBufferAddress();
-					push.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.entityID = entityId;
+				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+					push = meshPack->GetMeshDesc().GetBufferAddress();
 				});
 			});
 

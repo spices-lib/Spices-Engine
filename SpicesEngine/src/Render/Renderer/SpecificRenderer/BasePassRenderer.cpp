@@ -64,12 +64,11 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Mesh", this }
-		.AddStorageBuffer(2, 0, sizeof(SpicesShader::MeshDesc) * MESH_BUFFER_MAXNUM, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT)
-		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
+		.AddPushConstant(sizeof(uint64_t))
 		.Build();
 
 		DescriptorSetBuilder{ "SkyBox", this }
-		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
+		.AddPushConstant(sizeof(uint64_t))
 		.Build();
 	}
 	
@@ -303,14 +302,8 @@ namespace Spices {
 
 				builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
 
-				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
-					push.modelAddredd              = transComp.GetModelBufferAddress();
-					push.vertexAddress             = meshPack->GetVerticesBufferAddress();
-					push.indexAddress              = meshPack->GetIndicesBufferAddress();
-					push.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-					push.meshletAddress            = meshPack->GetMeshletsBufferAddress();
-					push.nMeshlets                 = static_cast<uint32_t>(meshPack->GetMeshlets().size());
-					push.entityID                  = entityId;
+				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+					push = meshPack->GetMeshDesc().GetBufferAddress();
 				}, cmdBuffer);
 			});
 		});
@@ -332,25 +325,18 @@ namespace Spices {
 
 		builder.SetViewPort();
 
-		/*builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
 
-		IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
-			const glm::mat4& modelMatrix = transComp.GetModelMatrix();
+		/*IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 
 			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
 
 				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 
-				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
-					push.modelAddredd              = transComp.GetModelBufferAddress();
-					push.vertexAddress             = meshPack->GetVerticesBufferAddress();
-					push.indexAddress              = meshPack->GetIndicesBufferAddress();
-					push.materialParameterAddress  = meshPack->GetMaterial()->GetMaterialParamsAddress();
-					push.meshletAddress            = meshPack->GetMeshletsBufferAddress();
-					push.nMeshlets                 = static_cast<uint32_t>(meshPack->GetMeshlets().size());
-					push.entityID                  = entityId;
+				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+					push = meshPack->GetMeshDesc().GetBufferAddress();
 				});
 			});
 

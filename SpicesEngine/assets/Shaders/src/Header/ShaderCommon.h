@@ -176,7 +176,7 @@ struct PointLight
 */
 struct MeshDesc
 {
-	uint64_t modelAddredd;                    /* Address of the Model Matrix.                   */
+	uint64_t modelAddress;                    /* Address of the Model Matrix.                   */
 	uint64_t vertexAddress;                   /* Address of the Vertex buffer.                  */
 	uint64_t indexAddress;                    /* Address of the index buffer.                   */
 	uint64_t materialParameterAddress;        /* Address of the Material Parameter buffer.      */

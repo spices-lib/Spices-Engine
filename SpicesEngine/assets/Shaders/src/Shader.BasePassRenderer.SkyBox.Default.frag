@@ -21,10 +21,10 @@
 struct MaterialParameter
 {
     uint     albedo;
-} 
-materialParam;
+};
 
 #include "Header/ShaderBindLessMaterial.glsl"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -37,7 +37,8 @@ layout(location = 0) in struct FragInput
 {
     vec3 localPosition;
     vec3 worldPosition;
-} fragInput;
+} 
+fragInput;
 
 layout(location = 2) in flat uint meshletId;           /* @brief Meshlet ID.     */
 
@@ -61,8 +62,9 @@ layout(location = 2) out float outID;                   /* @brief ID Attachment 
 */
 layout(push_constant) uniform Push 
 {
-    MeshDesc desc;                           /* @see MeshDesc. */
-};
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -83,7 +85,7 @@ vec2 SampleSphericalMap(vec3 v)
 
 void main()
 {
-    ExplainMaterialParameter(desc.materialParameterAddress);
+    ExplainMeshDesciption(push.descAddress);
 
     vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
     outColor = texture(BindLessTextureBuffer[materialParam.albedo], uv);

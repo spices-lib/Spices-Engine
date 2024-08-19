@@ -28,10 +28,10 @@ struct MaterialParameter
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
-} 
-materialParam;
+};
 
 #include "Header/ShaderBindLessMaterial.glsl"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -66,8 +66,9 @@ layout(location = 5) out float outID;                   /* @brief ID Attachment.
 */
 layout(push_constant) uniform Push 
 {
-    MeshDesc desc;                           /* @see MeshDesc. */
-};
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -75,7 +76,7 @@ layout(push_constant) uniform Push
 
 void main()
 {
-    ExplainMaterialParameter(desc.materialParameterAddress);
+    ExplainMeshDesciption(push.descAddress);
     
     //outAlbedo     = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
 

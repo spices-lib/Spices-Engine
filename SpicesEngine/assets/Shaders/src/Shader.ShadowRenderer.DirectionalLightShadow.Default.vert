@@ -12,6 +12,7 @@
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderVertexInput.glsl"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -22,8 +23,9 @@
 */
 layout(push_constant) uniform Push 
 {
-    MeshDesc desc;                           /* @see MeshDesc. */
-};
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -40,7 +42,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
 
 void main() 
 {
-	mat4 model  = Model(desc.modelAddredd).i[0];
+    ExplainMeshDesciption(push.descAddress);
 	gl_Position = model * vec4(position, 1.0f);
 }
 

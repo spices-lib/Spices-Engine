@@ -12,6 +12,7 @@
 #extension GL_EXT_control_flow_attributes     : require   /* @brief Enable flow butter control.  */
 
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -57,32 +58,9 @@ layout(location = 4) out flat uint meshletId[];       /* @brief Meshlet ID.     
 */
 layout(push_constant) uniform Push 
 {
-	MeshDesc desc;                   /* @see MeshDesc. */
-};
-
-/*****************************************************************************************/
-
-/************************************Specific Data****************************************/
-
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
-{
-    mat4 i[];
-};
-
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices 
-{ 
-    Vertex v[];           
-};
-
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices 
-{ 
-    ivec3 i[]; 
-};
-
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets 
-{
-    Meshlet i[];
-};
+    uint64_t descAddress;   
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -91,11 +69,9 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets
 void main()
 {
     uint id = task.meshletIndex[gl_WorkGroupID.x];
-
-    Vertices vertices   = Vertices(desc.vertexAddress);
-    Indices indices     = Indices(desc.indexAddress);
-    Meshlet meshlet     = Meshlets(desc.meshletAddress).i[id];
-    mat4 model          = Model(desc.modelAddredd).i[0];
+    ExplainMeshDesciption(push.descAddress);
+    
+    Meshlet meshlet     = meshlets.i[id];
     
     mat4 mvp = view.projection * view.view * model;
     mat3 m3model = mat3(transpose(inverse(model)));

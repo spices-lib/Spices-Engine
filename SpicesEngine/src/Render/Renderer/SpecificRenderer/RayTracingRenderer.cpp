@@ -44,12 +44,12 @@ namespace Spices {
 		DescriptorSetBuilder{ "RayTracing", this }
 		.AddPushConstant(sizeof(RayTracingR::PushConstant))
 		.AddAccelerationStructure(2, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                    /* @brief Acceleration Structure.         */
-		.AddStorageTexture(2, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayImage" }, VK_FORMAT_R32G32B32A32_SFLOAT)             /* @brief Ray Tracing Output Image.       */
-		.AddStorageTexture(2, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayID" }, VK_FORMAT_R32_SFLOAT)                          /* @brief Ray Tracing Output Image.       */
-		.AddStorageBuffer(3, 0, sizeof(RayTracingR::MeshDescBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                                /* @brief World Mesh Buffer.              */
-		.AddStorageBuffer(3, 1, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                        /* @brief World Directional Light Buffer. */
-		.AddStorageBuffer(3, 2, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                              /* @brief World PointLight Buffer.        */
-		.AddTexture<Texture2D>(4, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})  /* @brief temp */
+		.AddStorageTexture(2, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayImage" }, VK_FORMAT_R32G32B32A32_SFLOAT)                  /* @brief Ray Tracing Output Image.       */
+		.AddStorageTexture(2, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayID" }, VK_FORMAT_R32_SFLOAT)                              /* @brief Ray Tracing Output Image.       */
+		.AddStorageBuffer(3, 0, sizeof(RayTracingR::MeshDescBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                        /* @brief World Mesh Buffer.              */
+		.AddStorageBuffer(3, 1, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                /* @brief World Directional Light Buffer. */
+		.AddStorageBuffer(3, 2, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                      /* @brief World PointLight Buffer.        */
+		.AddTexture<Texture2D>(4, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})       /* @brief temp.                           */
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
 
@@ -202,14 +202,8 @@ namespace Spices {
 
 				tlas.push_back(rayInst);
 
-				m_DescArray->descs[index].modelAddredd              = tranComp.GetModelBufferAddress();
-				m_DescArray->descs[index].vertexAddress             = v->GetVerticesBufferAddress();
-				m_DescArray->descs[index].indexAddress              = v->GetIndicesBufferAddress();
-				m_DescArray->descs[index].materialParameterAddress  = v->GetMaterial()->GetMaterialParamsAddress();
-				m_DescArray->descs[index].meshletAddress            = v->GetMeshletsBufferAddress();
-				m_DescArray->descs[index].nMeshlets                 = static_cast<uint32_t>(v->GetMeshlets().size());
-				m_DescArray->descs[index].entityID                  = static_cast<unsigned int>(e);
-				
+				m_DescArray->descs[index] = v->GetMeshDesc().GetBufferAddress();
+
 				index += 1;
 				return false;
 			});

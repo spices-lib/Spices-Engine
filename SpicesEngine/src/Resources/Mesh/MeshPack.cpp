@@ -12,6 +12,29 @@
 
 namespace Spices {
 	
+	MeshDesc::MeshDesc()
+	{
+		SPICES_PROFILE_ZONE;
+
+		modelAddress             = 0;
+		vertexAddress            = 0;
+		indexAddress             = 0;
+		materialParameterAddress = 0;
+		meshletAddress           = 0;
+		nMeshlets                = 0;
+		entityID                 = 0;
+
+		m_Buffer = std::make_shared<VulkanBuffer>(
+			VulkanRenderBackend::GetState(),
+			sizeof(MeshDesc),
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT      |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
+
+		m_Buffer->WriteToBuffer(this);
+	}
+
 	MeshPack::MeshPack()
 		: m_UUID(UUID())
 	{}
@@ -46,6 +69,8 @@ namespace Spices {
 
 		m_Material = ResourcePool<Material>::Load<Material>(materialPath);
 		m_Material->BuildMaterial();
+
+		m_Desc.UpdatematerialParameterAddress(m_Material->GetMaterialParamsAddress());
 	}
 
 	uint32_t MeshPack::GetHitShaderHandle() const
@@ -107,7 +132,7 @@ namespace Spices {
 		/**
 		* @brief wrapper around the above with the geometry type enum (triangles in this case) plus flags for the AS builder.
 		*/
-		VkAccelerationStructureGeometryKHR asGeom {};
+		VkAccelerationStructureGeometryKHR             asGeom {};
 		asGeom.sType                                 = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
 		asGeom.geometryType                          = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
 		asGeom.flags                                 = VK_GEOMETRY_OPAQUE_BIT_KHR;
@@ -116,7 +141,7 @@ namespace Spices {
 		/**
 		* @brief the indices within the vertex arrays to source input geometry for the BLAS.
 		*/
-		VkAccelerationStructureBuildRangeInfoKHR offset {};
+		VkAccelerationStructureBuildRangeInfoKHR       offset {};
 		offset.firstVertex                           = 0;
 		offset.primitiveCount                        = maxPrimitiveCount;
 		offset.primitiveOffset                       = 0;
@@ -162,6 +187,9 @@ namespace Spices {
 			);
 
 			m_MeshletsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshletsBuffer->Get(), bufferSize);
+
+			m_Desc.UpdatenMeshlets(m_Meshlets.size());
+			m_Desc.UpdatemeshletAddress(m_MeshletsBuffer->GetAddress());
 		}
 
 		/*
@@ -191,6 +219,8 @@ namespace Spices {
 			);
 
 			m_VertexBuffer->CopyBuffer(stagingBuffer.Get(), m_VertexBuffer->Get(), bufferSize);
+
+			m_Desc.UpdatevertexAddress(m_VertexBuffer->GetAddress());
 		}
 
 		/*
@@ -220,6 +250,8 @@ namespace Spices {
 			);
 
 			m_IndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_IndicesBuffer->Get(), bufferSize);
+
+			m_Desc.UpdateindexAddress(m_IndicesBuffer->GetAddress());
 		}
 	}
 

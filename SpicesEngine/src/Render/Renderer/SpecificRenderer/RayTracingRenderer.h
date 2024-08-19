@@ -16,7 +16,7 @@ namespace Spices {
 		
 		struct MeshDescBuffer
 		{
-			std::array<SpicesShader::MeshDesc, MESH_BUFFER_MAXNUM> descs;
+			std::array<uint64_t, MESH_BUFFER_MAXNUM> descs;
 		};
 		
 		struct DirectionalLightBuffer

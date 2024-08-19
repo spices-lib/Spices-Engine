@@ -129,9 +129,9 @@ namespace Spices {
 			/**
 			* @brief This function is used for bind material parameters.
 			* @param[in] meshpackId MeshPack index of array.
-			* @param[in] material MeshPack's material.
+			* @param[in] meshPack MeshPack.
 			*/
-			func(k, v->GetMaterial());
+			func(k, v);
 
 			v->OnBind(commandBuffer);
 			v->OnDraw(commandBuffer);

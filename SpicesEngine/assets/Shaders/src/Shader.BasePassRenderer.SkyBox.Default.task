@@ -14,6 +14,7 @@
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
 #include "Header/ShaderFunctionLibrary.glsl"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -46,17 +47,9 @@ task;
 */
 layout(push_constant) uniform Push 
 {
-	MeshDesc desc;                   /* @see MeshDesc. */
-};
-
-/*****************************************************************************************/
-
-/************************************Specific Data****************************************/
-
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Meshlets 
-{
-    Meshlet i[];
-};
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -75,6 +68,7 @@ uint glGlobalInvocationIndex();
 void main()
 {
     uint meshletIndex = glGlobalInvocationIndex();
+    ExplainMeshDesciption(push.descAddress);
 
     /**
     * @brief cull if reach meshlets count.

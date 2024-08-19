@@ -54,7 +54,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
 
 void main()
 {
-    mat4 model          = Model(desc.modelAddredd).i[0];
+    mat4 model          = Model(desc.modelAddress).i[0];
     mat3 m3model        = mat3(transpose(inverse(model)));
     vec3 normal         = normalize(m3model * normal);
 

@@ -11,6 +11,7 @@
 #extension GL_GOOGLE_include_directive : enable   /* @brief Enable include Macro. */
 
 #include "Header/ShaderCommon.h"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -43,8 +44,9 @@ layout(location = 0) out float outPick;
 */
 layout(push_constant) uniform Push 
 {
-    MeshDesc desc;                           /* @see MeshDesc. */
-};
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -52,6 +54,7 @@ layout(push_constant) uniform Push
 
 void main()
 {
+    ExplainMeshDesciption(push.descAddress);
     outPick = desc.entityID;
 
     /*float alpha = texture(samplers, fragInput.texCoord).w;

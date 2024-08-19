@@ -10,6 +10,7 @@
 #include "imgui_internal.h"
 #include "Render/FrameInfo.h"
 #include "World/World/World.h"
+#include "World/Entity.h"
 
 namespace Spices {
 
@@ -275,6 +276,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		auto& e = FrameInfo::Get().m_World->QueryEntitybyID((uint32_t)m_Owner);
+
 		/**
 		* @brief Set m_Mesh.
 		*/
@@ -283,8 +286,10 @@ namespace Spices {
 		/**
 		* @brief Registry this mesh to world.
 		*/
-		mesh->GetPacks().for_each([](auto& k, auto& v) {
+		mesh->GetPacks().for_each([&](auto& k, auto& v) {
 			FrameInfo::Get().m_World->RegistryBaseMesh(v);
+			v->GetMeshDesc().UpdatemodelAddress(e.GetComponent<TransformComponent>().GetModelBufferAddress());
+			v->GetMeshDesc().UpdateentityID((uint32_t)m_Owner);
 			return false;
 		});
 

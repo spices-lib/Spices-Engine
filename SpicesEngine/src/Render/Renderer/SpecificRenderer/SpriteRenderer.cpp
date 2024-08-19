@@ -17,6 +17,7 @@ namespace Spices {
 		.AddSubPass("Sprite")
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			isEnableBlend                            = true;
+			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
 		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format                       = VK_FORMAT_R32_SFLOAT;
@@ -31,7 +32,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "Sprite", this }
-		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
+		.AddPushConstant(sizeof(uint64_t))
 		.Build();
 	}
 
@@ -62,13 +63,11 @@ namespace Spices {
 		{
 			auto [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>(static_cast<entt::entity>(it->second));
 
-			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
-				builder.BindPipeline(material->GetName());
+			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
+				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 
-				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
-					push.modelAddredd = transComp.GetModelBufferAddress();
-					push.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.entityID = it->second;
+				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+					push = meshPack->GetMeshDesc().GetBufferAddress();
 				});
 			});
 		}

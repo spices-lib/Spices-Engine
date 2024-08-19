@@ -87,18 +87,18 @@ namespace Spices {
 			.Push<PreRenderer>              (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 
 			/* @brief Ray Tracing Renderer */
-			.Push<RayTracingRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+			//.Push<RayTracingRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+			//.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 
 			/* @brief Rasterization Renderer */
 			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    .Push<WorldPickStage2Renderer>  (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		   // .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    //.Push<WorldPickStage2Renderer>  (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		  //.Push<ParticleRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    .Push<TestRenderer>             (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		    //.Push<TestRenderer>             (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SlateRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool);
 		}
 	}
@@ -123,16 +123,16 @@ namespace Spices {
 		{
 			RendererManager::Get()
 			.Pop("SlateRenderer")
-			.Pop("TestRenderer")
+			//.Pop("TestRenderer")
 			//.Pop("ParticleRenderer")
-			.Pop("WorldPickStage2Renderer")
-			.Pop("WorldPickRenderer")
+			//.Pop("WorldPickStage2Renderer")
+			//.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
 			.Pop("SceneComposeRenderer")
 			.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
-			.Pop("RayTracingComposeRenderer")
-			.Pop("RayTracingRenderer")
+		//	.Pop("RayTracingComposeRenderer")
+			//.Pop("RayTracingRenderer")
 			.Pop("PreRenderer");
 		}
 	}

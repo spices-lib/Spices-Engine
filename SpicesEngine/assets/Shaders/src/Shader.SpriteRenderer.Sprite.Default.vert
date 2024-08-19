@@ -12,6 +12,7 @@
 
 #include "Header/ShaderVertexInput.glsl"
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -35,8 +36,9 @@ vertOut;
 */
 layout(push_constant) uniform Push 
 {
-    MeshDesc desc;                           /* @see MeshDesc. */
-};
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -53,7 +55,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
 
 void main()
 {
-    mat4 model  = Model(desc.modelAddredd).i[0];
+    ExplainMeshDesciption(push.descAddress);
     vec3 pos = mat3(view.inView) * position;
 
     vertOut.texCoord = texCoord;

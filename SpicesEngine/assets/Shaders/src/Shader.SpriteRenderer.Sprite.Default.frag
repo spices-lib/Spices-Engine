@@ -21,10 +21,10 @@
 struct MaterialParameter
 {
     uint  albedoTexture;
-} 
-materialParam;
+};
 
 #include "Header/ShaderBindlessMaterial.glsl"
+#include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -58,8 +58,9 @@ layout(location = 1) out float outID;
 */
 layout(push_constant) uniform Push 
 {
-    MeshDesc desc;                           /* @see MeshDesc. */
-};
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
@@ -67,7 +68,7 @@ layout(push_constant) uniform Push
 
 void main()
 {
-    ExplainMaterialParameter(desc.materialParameterAddress);
+    ExplainMeshDesciption(push.descAddress);
     
     vec4 texColor = texture(BindLessTextureBuffer[materialParam.albedoTexture], fragInput.texCoord);
 

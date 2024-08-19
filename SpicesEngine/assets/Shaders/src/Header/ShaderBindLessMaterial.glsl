@@ -13,7 +13,7 @@
 
 /*****************************************************************************************/
 
-/************************************Vertex Input*****************************************/
+/****************************************Buffer Data**************************************/
 
 /**
 * @brief Buffer of all Material Parameters in World.
@@ -23,6 +23,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer MaterialPara
 { 
     MaterialParameter i[]; 
 };
+MaterialParameter materialParam;
 
 /*****************************************************************************************/
 

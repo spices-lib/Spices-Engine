@@ -30,7 +30,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "WorldPick", this }
-		.AddPushConstant(sizeof(SpicesShader::MeshDesc))
+		.AddPushConstant(sizeof(uint64_t))
 		.Build();
 	}
 
@@ -49,13 +49,11 @@ namespace Spices {
 		IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
-					push.modelAddredd = transComp.GetModelBufferAddress();
-					push.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.entityID = entityId;
+				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+					push = meshPack->GetMeshDesc().GetBufferAddress();
 				});
 			});
 
@@ -65,13 +63,11 @@ namespace Spices {
 		IterWorldCompWithBreak<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
 			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
 
-			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto material) {
+			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
 				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-				builder.UpdatePushConstant<SpicesShader::MeshDesc>([&](auto& push) {
-					push.modelAddredd = transComp.GetModelBufferAddress();
-					push.materialParameterAddress = material->GetMaterialParamsAddress();
-					push.entityID = entityId;
+				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+					push = meshPack->GetMeshDesc().GetBufferAddress();
 				});
 			});
 

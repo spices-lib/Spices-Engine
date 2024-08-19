@@ -15,6 +15,7 @@
 #include "ShaderFunctionLibrary.glsl"
 #include "ShaderPreRendererLayout.glsl"
 #include "ShaderBindLessMaterial.glsl"
+#include "ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
 
@@ -44,22 +45,6 @@ layout(location = 1) rayPayloadEXT bool isShadowArea;
 /********************************Specific Renderer Data***********************************/
 
 /**
-* @brief Buffer of all Vertices in World.
-*/
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices 
-{ 
-    Vertex v[];             /* @see Vertex. */
-};
-
-/**
-* @brief Buffer of all Indices in World.
-*/
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices 
-{ 
-    ivec3 i[]; 
-};
-
-/**
 * @brief Acceleration Structure.
 */
 layout(set = 2, binding = 0) uniform accelerationStructureEXT topLevelAS;
@@ -69,8 +54,8 @@ layout(set = 2, binding = 0) uniform accelerationStructureEXT topLevelAS;
 */
 layout(set = 3, binding = 0, scalar) readonly buffer MeshDescBuffer 
 { 
-    MeshDesc i[];           /* @see MeshDesc. */
-} 
+    uint64_t i[];
+}
 meshDescBuffer;
 
 /**
@@ -102,12 +87,6 @@ pLightBuffer;
 * @see Pixel.
 */
 Pixel UnPackPixel(in vec3 weight);
-
-/**
-* @brief Unpack Entity ID from MeshDescBuffer.
-* @return Returns the Entity ID.
-*/
-uint UnPackEntityID();
         
 /**
 * @brief Init Material Attributes.
@@ -152,9 +131,6 @@ void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes);
 void main()
 {
     Pixel pi = UnPackPixel(attribs);                                                                   /* @brief Get interest Pixel data.           */
-    uint entityID = UnPackEntityID();                                                                  /* @brief Get Entity ID.                     */
-    MeshDesc desc = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
-    if(desc.materialParameterAddress != 0) ExplainMaterialParameter(desc.materialParameterAddress);    /* @brief Get material parameter data.       */
     MaterialAttributes materialAttributes = InitMaterialAttributes(pi);                                /* @brief Init material attributes.          */
     GetMaterialAttributes(pi, materialAttributes);                                                     /* @brief Get material specific attributes.  */
     PostHandleWithMaterialAttributes(materialAttributes);                                              /* @brief Post handle materialAttributes.    */
@@ -195,7 +171,7 @@ void main()
     prd.hitValue       = materialAttributes.emissive;
     prd.weight         = BRDF * cos_theta / p;
     prd.maxRayDepth    = materialAttributes.maxRayDepth;
-    prd.entityID       = entityID;
+    prd.entityID       = desc.entityID;
 }
 
 /*****************************************************************************************/
@@ -205,9 +181,7 @@ Pixel UnPackPixel(in vec3 weight)
     /**
     * @brief Access Buffer by GPU address.
     */
-    MeshDesc desc       = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
-    Vertices vertices   = Vertices(desc.vertexAddress);
-    Indices  indices    = Indices(desc.indexAddress);
+    ExplainMeshDesciption(meshDescBuffer.i[gl_InstanceCustomIndexEXT]);
     
     /**
     * @brief Get Indices of the triangle.
@@ -256,15 +230,6 @@ Pixel UnPackPixel(in vec3 weight)
     pi.texCoord   = uv;
     
     return pi;
-}
-
-uint UnPackEntityID()
-{
-    /**
-    * @brief Access Buffer by GPU address.
-    */
-    MeshDesc desc = meshDescBuffer.i[gl_InstanceCustomIndexEXT];
-    return desc.entityID;
 }
 
 MaterialAttributes InitMaterialAttributes(in Pixel pi)
