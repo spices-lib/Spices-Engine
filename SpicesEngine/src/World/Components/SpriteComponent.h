@@ -22,7 +22,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		SpriteComponent() {};
+		SpriteComponent() = default;
 		
 		/**
 		* @brief Constructor Function.

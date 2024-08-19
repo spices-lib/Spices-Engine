@@ -9,7 +9,6 @@
 
 #include "imgui_internal.h"
 #include "Render/FrameInfo.h"
-#include "World/World/World.h"
 #include "World/Entity.h"
 
 namespace Spices {
