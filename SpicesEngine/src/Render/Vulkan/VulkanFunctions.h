@@ -77,6 +77,7 @@ namespace Spices {
 		* @brief DGC Function.
 		*/
 		VK_FUNCTION_POINTER(vkCreateIndirectCommandsLayoutNV                )
+		VK_FUNCTION_POINTER(vkDestroyIndirectCommandsLayoutNV               )
 		VK_FUNCTION_POINTER(vkCmdExecuteGeneratedCommandsNV                 )
 	};
 }

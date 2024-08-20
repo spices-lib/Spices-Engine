@@ -33,9 +33,9 @@ namespace Spices {
 				{
 					camComp.GetCamera()->ResetStableFrames();
 				}
-
-				FrameInfo::Get().m_World->ClearMarkerWithBits(World::FrushStableFrame);
 			}
+
+			FrameInfo::Get().m_World->ClearMarkerWithBits(World::FrushStableFrame);
 		}
 
 		if (mark & World::ReBuildMaterial)

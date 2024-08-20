@@ -40,6 +40,7 @@ namespace Spices {
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdDrawMeshTasksEXT                           )
 
 		EXPLAIN_VK_FUNCTION_POINTER(vkCreateIndirectCommandsLayoutNV                )
+		EXPLAIN_VK_FUNCTION_POINTER(vkDestroyIndirectCommandsLayoutNV               )
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdExecuteGeneratedCommandsNV                 )
 	}
 }

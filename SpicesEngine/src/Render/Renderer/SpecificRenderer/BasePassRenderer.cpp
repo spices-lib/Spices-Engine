@@ -133,6 +133,7 @@ namespace Spices {
 		genInfo.pStreamStrides  = m_IndirectData.inputStrides.data();
 
 		m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_VulkanState.m_Device, &genInfo, NULL, &m_IndirectData.indirectCmdsLayout);
+		m_VulkanState.m_VkFunc.vkDestroyIndirectCommandsLayoutNV(m_VulkanState.m_Device, m_IndirectData.indirectCmdsLayout, nullptr);
 	}
 
 	void BasePassRenderer::OnMeshAddedWorld()
@@ -329,7 +330,7 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "SkyBox" }));
 
-		/*IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
+		IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 
 			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
 
@@ -341,7 +342,7 @@ namespace Spices {
 			});
 
 			return true;
-		});*/
+		});
 
 		builder.EndRenderPass();
 	}

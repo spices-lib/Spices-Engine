@@ -22,15 +22,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		SpriteComponent() = default;
-		
-		/**
-		* @brief Constructor Function.
-		* Init class variable.
-		* Usually call it.
-		* @param[in] path The SkyBoxMaterial file path.
-		*/
-		SpriteComponent(const std::string& path);
+		SpriteComponent();
 
 		/**
 		* @brief Destructor Function.
@@ -48,6 +40,12 @@ namespace Spices {
 		* @todo Finish it.
 		*/
 		virtual void OnDeSerialize() override {};
+
+		/**
+		* @brief Set Sprite Material.
+		* @param[in] material Sprite Material Path.
+		*/
+		void SetMaterial(const std::string& materialPath);
 
 		/**
 		* @brief Get the Mesh variable.
