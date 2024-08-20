@@ -203,8 +203,8 @@ namespace Spices {
                                 if(ImGui::DragFloat("##", &f, 0.01f, 0.0f, 0.0f, "%.2f"))
                                 {
                                     v.paramValue = f;
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::ReBuildMaterial | World::FrushStableFrame);
-                                    FrameInfo::Get().m_MaterialBuildEventQueue.push_back(material);
+                                    material->UpdateMaterial();
+                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
                                 }
                                 ImGui::PopItemWidth();
                             }
@@ -216,8 +216,8 @@ namespace Spices {
                                 if(ImGui::DragFloat2("##", f, 0.01f, 0.0f, 0.0f, "%.2f"))
                                 {
                                     v.paramValue = glm::vec2(f[0], f[1]);
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::ReBuildMaterial | World::FrushStableFrame);
-                                    FrameInfo::Get().m_MaterialBuildEventQueue.push_back(material);
+                                    material->UpdateMaterial();
+                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
                                 }
                                 ImGui::PopItemWidth();
                             }
@@ -229,8 +229,8 @@ namespace Spices {
                                 if(ImGui::DragFloat3("##", f, 0.01f, 0.0f, 0.0f, "%.2f"))
                                 {
                                     v.paramValue = glm::vec3(f[0], f[1], f[2]);
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::ReBuildMaterial | World::FrushStableFrame);
-                                    FrameInfo::Get().m_MaterialBuildEventQueue.push_back(material);
+                                    material->UpdateMaterial();
+                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
                                 }
                                 ImGui::PopItemWidth();
                             }
@@ -242,8 +242,8 @@ namespace Spices {
                                 if(ImGui::DragFloat4("##", f, 0.01f, 0.0f, 0.0f, "%.2f"))
                                 {
                                     v.paramValue = glm::vec4(f[0], f[1], f[2], f[3]);
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::ReBuildMaterial | World::FrushStableFrame);
-                                    FrameInfo::Get().m_MaterialBuildEventQueue.push_back(material);
+                                    material->UpdateMaterial();
+                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
                                 }
                                 ImGui::PopItemWidth();
                             }
@@ -254,8 +254,8 @@ namespace Spices {
                                 if(ImGui::DragInt("##", &value, 0.2f))
                                 {
                                     v.paramValue = value;
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::ReBuildMaterial | World::FrushStableFrame);
-                                    FrameInfo::Get().m_MaterialBuildEventQueue.push_back(material);
+                                    material->UpdateMaterial();
+                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
                                 }
                                 ImGui::PopItemWidth();
                             }

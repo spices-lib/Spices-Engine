@@ -89,13 +89,6 @@ namespace Spices {
 		uint32_t m_PickMaterial = 0;
 
 		/**
-		* @brief Holds all material build event, does it in world query.
-		* For Temperial use.
-		* @todo Event Queuue & Message Queue design.
-		*/
-		std::vector<std::shared_ptr<Material>> m_MaterialBuildEventQueue;
-
-		/**
 		* @brief The shared pointer of specific world.
 		*/
 		std::shared_ptr<World> m_World;

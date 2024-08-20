@@ -42,7 +42,6 @@ namespace Spices {
 			MeshAddedToWorld = 0x00000002,
 			FrushStableFrame = 0x00000004,
 			NeedUpdateTLAS   = 0x00000008,
-			ReBuildMaterial  = 0x00000010,
 			MAX              = 0x7FFFFFFF
 		};
 

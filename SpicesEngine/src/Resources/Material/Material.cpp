@@ -116,7 +116,6 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("BuildMaterial::Clean Up old descripotrset");
 
-			DescriptorSetManager::UnLoad(m_MaterialPath);
 			m_MaterialParameterBuffer  = nullptr;
 			m_Buffermemoryblocks       = scl::runtime_memory_block();
 		}
@@ -277,6 +276,131 @@ namespace Spices {
 			std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
 			auto renderer = RendererManager::GetRenderer(sv[0]);
 			renderer->RegistryMaterial(m_MaterialPath, sv[1]);
+		}
+	}
+
+	void Material::UpdateMaterial()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Iter the constantParams and fill it's data to memoryblock.
+		*/
+		{
+			SPICES_PROFILE_ZONEN("BuildMaterial::Build Local ConstantParameter Block");
+
+			m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
+				m_Buffermemoryblocks.add_element(k, v.paramType);
+				return false;
+			});
+
+			m_Buffermemoryblocks.build();
+		}
+
+		/**
+		* @brief Registry texture to both ResourcePool, BindLessTextureManager, DescriptorSetManager and MaterialParameterBuffer.
+		*/
+		{
+			SPICES_PROFILE_ZONEN("BuildMaterial::Registry texture");
+
+			int tindex = 0;
+			m_TextureParams.for_each([&](const std::string& k, TextureParam& v) {
+
+				/**
+				* @brief Only work with Texture2D now.
+				* @todo more type support, reflection.
+				*/
+				if (v.textureType == "Texture2D")
+				{
+					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath);
+					v.index = BindLessTextureManager::Registry(v.texturePath);
+
+					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
+
+					/**
+					* @brief Instance a VkWriteDescriptorSet.
+					*/
+					VkWriteDescriptorSet         write {};
+					write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					write.dstBinding           = BINDLESS_TEXTURE_BINDING;
+					write.dstSet               = descriptorSet->Get();
+					write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
+					write.descriptorCount      = 1;
+					write.dstArrayElement      = v.index;
+
+					/**
+					* @brief Update DescriptorSet.
+					*/
+					vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
+
+					m_MaterialParameterBuffer->WriteToBuffer(&v.index, sizeof(unsigned int), tindex * sizeof(unsigned int));
+					m_MaterialParameterBuffer->Flush();
+				}
+
+				/**
+				* @brief Not supported format.
+				*/
+				else
+				{
+					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid textureType.");
+				}
+
+				tindex++;
+				return false;
+			});
+		}
+
+		/**
+		* @brief Create ConstantParameter Buffer .
+		*/
+		{
+			SPICES_PROFILE_ZONEN("BuildMaterial::Add ConstantParameter Buffer");
+
+			m_Buffermemoryblocks.for_each([&](const std::string& name, void* pt) {
+				ConstantParam& ref = *m_ConstantParams.find_value(name);
+				size_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.item_location(name);
+				
+				/**
+				* @brief Fill in data to memory block.
+				*/
+				if      (ref.paramType == "float4")
+				{
+					*static_cast<glm::vec4*>(pt)     = std::any_cast<glm::vec4>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(glm::vec4), size);
+					m_MaterialParameterBuffer->Flush();
+				}
+				else if (ref.paramType == "float3")
+				{
+					*static_cast<glm::vec3*>(pt)     = std::any_cast<glm::vec3>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(glm::vec3), size);
+					m_MaterialParameterBuffer->Flush();
+				}
+				else if (ref.paramType == "float2")
+				{
+					*static_cast<glm::vec2*>(pt)     = std::any_cast<glm::vec2>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(glm::vec2), size);
+					m_MaterialParameterBuffer->Flush();
+				}
+				else if (ref.paramType == "float")
+				{
+					*static_cast<float*>(pt)         = std::any_cast<float>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(float), size);
+					m_MaterialParameterBuffer->Flush();
+				}
+				else if (ref.paramType == "int")
+				{
+					*static_cast<int*>(pt)           = std::any_cast<int>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(int), size);
+					m_MaterialParameterBuffer->Flush();
+				}
+				else
+				{
+					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.");
+				}
+	
+				return false;
+			});
 		}
 	}
 }

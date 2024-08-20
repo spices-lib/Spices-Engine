@@ -134,6 +134,11 @@ namespace Spices {
 		void BuildMaterial(bool isAutoRegistry = true);
 
 		/**
+		* @brief Update material data to buffer.
+		*/
+		void UpdateMaterial();
+
+		/**
 		* @brief Allow MaterialLoader access all data.
 		*/
 		friend class MaterialLoader;
