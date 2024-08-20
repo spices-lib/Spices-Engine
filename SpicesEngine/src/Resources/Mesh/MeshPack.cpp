@@ -188,6 +188,11 @@ namespace Spices {
 
 			m_MeshletsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshletsBuffer->Get(), bufferSize);
 
+			m_NTasks = m_Meshlets.size() / SUBGROUP_SIZE + 1;
+
+			m_MeshTaskIndirectDrawCommand.firstTask = 0;
+			m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
+
 			m_Desc.UpdatenMeshlets(m_Meshlets.size());
 			m_Desc.UpdatemeshletAddress(m_MeshletsBuffer->GetAddress());
 		}
@@ -268,11 +273,6 @@ namespace Spices {
 
 		size_t nMeshlet = meshopt_buildMeshlets(meshlets.data(), meshlet_vertices.data(), meshlet_triangles.data(), m_Indices.data(),
 			m_Indices.size(), &m_Vertices[0].position.x, m_Vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, coneWeight);
-		m_NTasks = nMeshlet / SUBGROUP_SIZE + 1;
-		
-		m_MeshTaskIndirectDrawCommand.groupCountX = m_NTasks;
-		m_MeshTaskIndirectDrawCommand.groupCountY = 1;
-		m_MeshTaskIndirectDrawCommand.groupCountZ = 1;
 
 		const meshopt_Meshlet& last = meshlets[nMeshlet - 1];
 		meshlets.resize(nMeshlet);

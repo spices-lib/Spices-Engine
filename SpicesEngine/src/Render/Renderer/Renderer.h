@@ -1150,9 +1150,13 @@ namespace Spices {
 
 			std::vector<VkIndirectCommandsStreamNV> inputs;
 			std::vector<uint32_t>                   inputStrides;
-			VkIndirectCommandsLayoutNV indirectCmdsLayout;
-			std::shared_ptr<VulkanBuffer> inputBuffer;
-			uint32_t strides;
+			VkIndirectCommandsLayoutNV              indirectCmdsLayout;
+			std::unique_ptr<VulkanBuffer>           inputBuffer;
+			uint32_t                                strides;
+			uint32_t                                nMeshPack;
+			std::unique_ptr<VulkanBuffer>           preprocessBuffer;
+			uint32_t                                preprocessSize;
+			uint64_t                                temp;
 		};
 
 	protected:

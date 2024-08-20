@@ -61,7 +61,7 @@ project "SpicesTest"
 		defines
 		{
 			"SPICES_DEBUG",
-			--"TRACY_ENABLE"
+			"TRACY_ENABLE"
 		}
 		runtime "Debug"
 		symbols "On"
@@ -71,6 +71,7 @@ project "SpicesTest"
 		defines
 		{
 			"SPICES_RELEASE",
+			"TRACY_ENABLE"                   -- tracy Feature Enable.
 		}
 		runtime "Release"
 		optimize "On"

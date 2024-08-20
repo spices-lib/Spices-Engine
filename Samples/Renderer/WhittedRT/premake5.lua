@@ -61,7 +61,7 @@ project "WhittedRT"
 		defines
 		{
 			"SPICES_DEBUG",
-			--"TRACY_ENABLE"
+			"TRACY_ENABLE"
 		}
 		runtime "Debug"
 		symbols "On"
@@ -70,6 +70,7 @@ project "WhittedRT"
 		defines
 		{
 			"SPICES_RELEASE",
+			"TRACY_ENABLE"                   -- tracy Feature Enable.
 		}
 		runtime "Release"
 		optimize "On"

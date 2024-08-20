@@ -81,22 +81,22 @@ namespace Spices {
 		uint32_t numInputs = 0;
 
 		{
-			VkIndirectCommandsLayoutTokenNV input{};
-			input.sType     = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
-			input.tokenType = VK_INDIRECT_COMMANDS_TOKEN_TYPE_SHADER_GROUP_NV;
-			
-			input.stream =  numInputs;
-			input.offset =  0;
+			VkIndirectCommandsLayoutTokenNV      input{};
+			input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
+			input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_SHADER_GROUP_NV;
+											   
+			input.stream                       =  numInputs;
+			input.offset                       =  0;
 			inputInfos.push_back(input);
 			m_IndirectData.inputStrides.push_back(sizeof(VkBindShaderGroupIndirectCommandNV));
-			numInputs++;
 			m_IndirectData.strides += sizeof(VkBindShaderGroupIndirectCommandNV);
+			numInputs++;
 		}
 
 		{
-			VkIndirectCommandsLayoutTokenNV input{}; 
-			input.sType     = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
-			input.tokenType = VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV;
+			VkIndirectCommandsLayoutTokenNV      input{}; 
+			input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
+			input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV;
 
 			input.pushconstantPipelineLayout   = m_Pipelines["BasePassRenderer.Mesh.Default"]->GetPipelineLayout();
 			input.pushconstantShaderStageFlags = VK_SHADER_STAGE_ALL;
@@ -107,42 +107,41 @@ namespace Spices {
 			input.offset                       = 0;
 			inputInfos.push_back(input);
 			m_IndirectData.inputStrides.push_back(sizeof(VkDeviceAddress));
-			numInputs++;
 			m_IndirectData.strides += sizeof(VkDeviceAddress);
+			numInputs++;
 		}
 
 		{
-			VkIndirectCommandsLayoutTokenNV input{};
-			input.sType     = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV; 
-			input.tokenType = VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_TASKS_NV;
-			
-			input.stream = numInputs;
-			input.offset = 0;
+			VkIndirectCommandsLayoutTokenNV      input{};
+			input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV; 
+			input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_TASKS_NV;
+							                   
+			input.stream                       = numInputs;
+			input.offset                       = 0;
 			inputInfos.push_back(input);
-			m_IndirectData.inputStrides.push_back(sizeof(VkDrawMeshTasksIndirectCommandEXT));
+			m_IndirectData.inputStrides.push_back(sizeof(VkDrawMeshTasksIndirectCommandNV));
+			m_IndirectData.strides += sizeof(VkDrawMeshTasksIndirectCommandNV);
 			numInputs++;
-			m_IndirectData.strides += sizeof(VkDrawMeshTasksIndirectCommandEXT);
 		}
 
-		VkIndirectCommandsLayoutCreateInfoNV genInfo{};
-		genInfo.sType           = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV;
-		genInfo.flags           = VK_INDIRECT_COMMANDS_LAYOUT_USAGE_EXPLICIT_PREPROCESS_BIT_NV;
-		genInfo.tokenCount      = (uint32_t)inputInfos.size();
-		genInfo.pTokens         = inputInfos.data();
-		genInfo.streamCount     = numInputs;
-		genInfo.pStreamStrides  = m_IndirectData.inputStrides.data();
+		VkIndirectCommandsLayoutCreateInfoNV     genInfo{};
+		genInfo.sType                          = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV;
+		genInfo.flags                          = VK_INDIRECT_COMMANDS_LAYOUT_USAGE_UNORDERED_SEQUENCES_BIT_NV;
+		genInfo.tokenCount                     = (uint32_t)inputInfos.size();
+		genInfo.pTokens                        = inputInfos.data();
+		genInfo.streamCount                    = numInputs;
+		genInfo.pStreamStrides                 = m_IndirectData.inputStrides.data();
 
 		m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_VulkanState.m_Device, &genInfo, NULL, &m_IndirectData.indirectCmdsLayout);
-		m_VulkanState.m_VkFunc.vkDestroyIndirectCommandsLayoutNV(m_VulkanState.m_Device, m_IndirectData.indirectCmdsLayout, nullptr);
 	}
 
 	void BasePassRenderer::OnMeshAddedWorld()
 	{
 		SPICES_PROFILE_ZONE;
-		return;
+
 		std::unordered_map<std::string, uint32_t> pipelineMap;
 
-		int i = 0;
+		m_IndirectData.nMeshPack = 0;
 		auto view = FrameInfo::Get().m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
@@ -154,8 +153,8 @@ namespace Spices {
 					pipelineMap[v->GetMaterial()->GetName()] = pipelineMap.size();
 				}
 				v->SetShaderGroupHandle(pipelineMap[v->GetMaterial()->GetName()]);
-				i++;
-
+				m_IndirectData.nMeshPack++;
+				m_IndirectData.temp = v->GetMeshDesc().GetBufferAddress();
 				return false;
 			});
 		}
@@ -167,50 +166,99 @@ namespace Spices {
 			m_PipelinesRef["Mesh"][pair.second] = m_Pipelines[pair.first]->GetPipeline();
 		}
 
+		VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV genProps{};
+		genProps.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_NV;
+
+		VkPhysicalDeviceProperties2 phyProps{};
+		phyProps.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+		phyProps.pNext = &genProps;
+		
+		vkGetPhysicalDeviceProperties2(m_VulkanState.m_PhysicalDevice, &phyProps);
+
+		size_t alignSeqIndexMask = genProps.minSequencesIndexBufferOffsetAlignment - 1;
+		size_t alignMask = genProps.minIndirectCommandsBufferOffsetAlignment - 1;
+
+		size_t totalSize = 0;
+		size_t pipeOffset = totalSize;
+		totalSize = totalSize + ((sizeof(VkBindShaderGroupIndirectCommandNV) * m_IndirectData.nMeshPack + alignMask) & (~alignMask));
+		size_t pushOffset = totalSize;
+		totalSize = totalSize + ((sizeof(VkDeviceAddress) * m_IndirectData.nMeshPack + alignMask) & (~alignMask));
+		size_t drawOffset = totalSize;
+		totalSize = totalSize + ((sizeof(VkDrawMeshTasksIndirectCommandNV) * m_IndirectData.nMeshPack + alignMask) & (~alignMask));
+
+
 		VulkanBuffer stagingBuffer(
 			m_VulkanState,
-			i * m_IndirectData.strides,
-			0,
-			0
+			totalSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
+		int i = 0;
 		for (auto& e : view)
 		{
 			auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>(e);
 
 			meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
+				VkBindShaderGroupIndirectCommandNV shader{ v->GetShaderGroupHandle() + 1 };
+				stagingBuffer.WriteToBuffer(&shader, sizeof(VkBindShaderGroupIndirectCommandNV), i * m_IndirectData.inputStrides[0] + pipeOffset);
 
-				VkBindShaderGroupIndirectCommandNV shader;
-				shader.groupIndex = v->GetShaderGroupHandle();
-				stagingBuffer.WriteToBuffer(&shader, sizeof(VkBindShaderGroupIndirectCommandNV), i * m_IndirectData.inputStrides[0]);
+				VkDeviceAddress push{ v->GetMeshDesc().GetBufferAddress() };
+				stagingBuffer.WriteToBuffer(&push, sizeof(VkDeviceAddress),                      i * m_IndirectData.inputStrides[1] + pushOffset);
 
-				//stagingBuffer.WriteToBuffer(&address, sizeof(VkDeviceAddress), i * inputStrides[1] + nMeshPack * strides);
+				VkDrawMeshTasksIndirectCommandNV drawCmd{ v->GetDrawCommand() };
+				stagingBuffer.WriteToBuffer(&drawCmd, sizeof(VkDrawMeshTasksIndirectCommandNV), i * m_IndirectData.inputStrides[2] + drawOffset);
 
-				VkDrawMeshTasksIndirectCommandEXT drawCommand{};
-				drawCommand.groupCountX = v->GetNTasks();
-				drawCommand.groupCountY = 1;
-				drawCommand.groupCountZ = 1;
-				stagingBuffer.WriteToBuffer(&drawCommand, sizeof(VkDrawMeshTasksIndirectCommandEXT), i * m_IndirectData.inputStrides[2] + 2 * i * m_IndirectData.strides);
-
+				i++;
 				return false;
 			});
 		}
+
+		m_IndirectData.inputBuffer = std::make_unique<VulkanBuffer>(
+			m_VulkanState,
+			totalSize,
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT    ,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+		);
+
+		m_IndirectData.inputBuffer->CopyBuffer(stagingBuffer.Get(), m_IndirectData.inputBuffer->Get(), totalSize);
 
 		VkIndirectCommandsStreamNV input;
 		input.buffer = m_IndirectData.inputBuffer->Get();
 		
 		{
-			input.offset = 0;
+			input.offset = pipeOffset;
 			m_IndirectData.inputs.push_back(input);
 		}
 		{
-			input.offset = i * m_IndirectData.strides;
+			input.offset = pushOffset;
 			m_IndirectData.inputs.push_back(input);
 		}
 		{
-			input.offset = 2 * i * m_IndirectData.strides;
+			input.offset = drawOffset;
 			m_IndirectData.inputs.push_back(input);
 		}
+
+		VkGeneratedCommandsMemoryRequirementsInfoNV memInfo{};
+		memInfo.sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
+		memInfo.maxSequencesCount = m_IndirectData.nMeshPack;
+		memInfo.indirectCommandsLayout = m_IndirectData.indirectCmdsLayout;
+		memInfo.pipeline = m_Pipelines["BasePassRenderer.Mesh.Default.DGC"]->GetPipeline();
+		memInfo.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+
+		VkMemoryRequirements2 memReqs{};
+		memReqs.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+		m_VulkanState.m_VkFunc.vkGetGeneratedCommandsMemoryRequirementsNV(m_VulkanState.m_Device, &memInfo, &memReqs);
+
+		m_IndirectData.preprocessSize = memReqs.memoryRequirements.size;
+		m_IndirectData.preprocessBuffer = std::make_unique<VulkanBuffer>(
+			m_VulkanState,
+			m_IndirectData.preprocessSize,
+			VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT  |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
 
 		Renderer::OnSystemInitialize();
 	}
@@ -279,6 +327,13 @@ namespace Spices {
 		m_PipelinesRef.clear();
 	}
 
+	BasePassRenderer::~BasePassRenderer()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_VulkanState.m_VkFunc.vkDestroyIndirectCommandsLayoutNV(m_VulkanState.m_Device, m_IndirectData.indirectCmdsLayout, nullptr);
+	}
+
 	void BasePassRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
@@ -287,11 +342,11 @@ namespace Spices {
 		
 		RenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 		
-		builder.BeginRenderPassAsync();
+		builder.BeginRenderPass();
 
 		//builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
-		IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+		/*IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 
 			builder.SetViewPort(cmdBuffer);
 
@@ -307,20 +362,24 @@ namespace Spices {
 					push = meshPack->GetMeshDesc().GetBufferAddress();
 				}, cmdBuffer);
 			});
-		});
+		});*/
 		
 		VkGeneratedCommandsInfoNV            info{};
 		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
 		info.pipeline                      = m_Pipelines["BasePassRenderer.Mesh.Default.DGC"]->GetPipeline();
 		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		info.indirectCommandsLayout        = m_IndirectData.indirectCmdsLayout;
-		//info.sequencesCount                = m_IndirectData.sequencesCount;
+		info.sequencesCount                = m_IndirectData.nMeshPack;
 		info.streamCount                   = (uint32_t)m_IndirectData.inputs.size();
 		info.pStreams                      = m_IndirectData.inputs.data();
-		//info.preprocessBuffer              = m_IndirectData.preprocessBuffer;
-		//info.preprocessSize                = m_IndirectData.preprocessSize;
+		info.preprocessBuffer              = m_IndirectData.preprocessBuffer->Get(); 
+		info.preprocessSize                = m_IndirectData.preprocessSize;
 
-		//m_VulkanState.m_VkFunc.vkCmdExecuteGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], false, &info);
+		builder.SetViewPort();
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
+		//m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], &info);
+		m_VulkanState.m_VkFunc.vkCmdExecuteGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], false, &info);
 
 		builder.BeginNextSubPass("SkyBox");
 

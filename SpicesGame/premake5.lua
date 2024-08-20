@@ -70,6 +70,7 @@ project "SpicesGame"
 		defines
 		{
 			"SPICES_RELEASE",
+			"TRACY_ENABLE"                   -- tracy Feature Enable.
 		}
 		runtime "Release"
 		optimize "On"

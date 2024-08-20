@@ -67,6 +67,7 @@ namespace Spices {
 		*/
 		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
 		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
 		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
 		pipelineInfo.pStages                            = shaderStages.data();
 		pipelineInfo.pVertexInputState                  = &vertexInputInfo;
@@ -364,10 +365,11 @@ namespace Spices {
 		* @brief Instance VkComputePipelineCreateInfo.
 		* @note one shader stage per compute pipeline.
 		*/
-		VkComputePipelineCreateInfo     pipelineInfo {};
-		pipelineInfo.sType            = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-		pipelineInfo.layout           = m_PipelineLayout;
-		pipelineInfo.stage            = shaderStages[0];
+		VkComputePipelineCreateInfo                       pipelineInfo {};
+		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+		pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
+		pipelineInfo.layout                             = m_PipelineLayout;
+		pipelineInfo.stage                              = shaderStages[0];
 
 		/**
 		* @brief Create Pipeline.
@@ -419,6 +421,7 @@ namespace Spices {
 		*/
 		VkGraphicsPipelineCreateInfo                      pipelineInfo{};
 		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
 		pipelineInfo.stageCount                         = static_cast<uint32_t>(shaderStages.size());
 		pipelineInfo.pStages                            = shaderStages.data();
 		pipelineInfo.pVertexInputState                  = nullptr;

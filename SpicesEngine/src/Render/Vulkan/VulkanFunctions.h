@@ -79,5 +79,7 @@ namespace Spices {
 		VK_FUNCTION_POINTER(vkCreateIndirectCommandsLayoutNV                )
 		VK_FUNCTION_POINTER(vkDestroyIndirectCommandsLayoutNV               )
 		VK_FUNCTION_POINTER(vkCmdExecuteGeneratedCommandsNV                 )
+		VK_FUNCTION_POINTER(vkGetGeneratedCommandsMemoryRequirementsNV      )
+		VK_FUNCTION_POINTER(vkCmdPreprocessGeneratedCommandsNV              )
 	};
 }

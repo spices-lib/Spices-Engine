@@ -50,7 +50,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~BasePassRenderer() override = default;
+		virtual ~BasePassRenderer() override;
 
 		/**
 		* @brief The interface is inherited from Renderer.

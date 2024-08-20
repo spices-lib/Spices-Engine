@@ -201,7 +201,7 @@ namespace Spices {
 		* @brief Get Draw Command.
 		* @return Returns Draw Command.
 		*/
-		const VkDrawMeshTasksIndirectCommandEXT& GetDrawCommand() const { return m_MeshTaskIndirectDrawCommand; }
+		const VkDrawMeshTasksIndirectCommandNV& GetDrawCommand() const { return m_MeshTaskIndirectDrawCommand; }
 
 		/**
 		* @brief Get Pack Type.
@@ -356,8 +356,8 @@ namespace Spices {
 		/**
 		* @brief Draw Command.
 		*/
-		VkDrawMeshTasksIndirectCommandEXT m_MeshTaskIndirectDrawCommand;
-		
+		VkDrawMeshTasksIndirectCommandNV m_MeshTaskIndirectDrawCommand;
+
 		/**
 		* @brief Allow MeshLoader access all data.
 		*/

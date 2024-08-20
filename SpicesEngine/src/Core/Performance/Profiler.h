@@ -3,7 +3,7 @@
 #include "tracy/Tracy.hpp"
 #include "tracy/TracyC.h"
 
-#ifdef SPICES_DEBUG
+#ifdef TRACY_ENABLE
 
 // Profile macros
 #define SPICES_PROFILE_FRAME             FrameMark
@@ -12,9 +12,7 @@
 #define SPICES_PROFILE_ALLOC(ptr, size)  TracyAllocS(ptr, size, 20)
 #define SPICES_PROFILE_FREE(ptr)         TracyFreeS(ptr, 20)
 
-#endif // SPICES_DEBUG
-
-#ifdef SPICES_RELEASE
+#else
 
 // Profile macros
 #define SPICES_PROFILE_FRAME

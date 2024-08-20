@@ -170,6 +170,7 @@ project "SpicesEngine"
 		defines 
 		{
 			"SPICES_RELEASE",               -- Release Symbol.
+			"TRACY_ENABLE"                   -- tracy Feature Enable.
 		}
 
 		runtime "Release"
