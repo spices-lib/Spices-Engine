@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "Systems/SlateSystem.h"
 #include "Resources/ResourcePool/ResourcePool.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spices {
 
@@ -1388,6 +1389,47 @@ namespace Spices {
 			1, &bufferBarrier,
 			0, nullptr
 		);
+	}
+
+	Renderer::IndirectDrawData::IndirectDrawData()
+		: indirectCmdsLayout(VK_NULL_HANDLE)
+		, inputBuffer(nullptr)
+		, preprocessBuffer(nullptr)
+		, nMeshPack(0)
+	{}
+
+	Renderer::IndirectDrawData::~IndirectDrawData()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (indirectCmdsLayout)
+		{
+			VulkanRenderBackend::GetState().m_VkFunc.vkDestroyIndirectCommandsLayoutNV(VulkanRenderBackend::GetState().m_Device, indirectCmdsLayout, nullptr);
+		}
+	}
+
+	void Renderer::IndirectDrawData::ResetCommandsLayout()
+	{
+		SPICES_PROFILE_ZONE;
+
+		inputStrides.clear();
+		strides            = 0;
+		if (indirectCmdsLayout)
+		{
+			VulkanRenderBackend::GetState().m_VkFunc.vkDestroyIndirectCommandsLayoutNV(VulkanRenderBackend::GetState().m_Device, indirectCmdsLayout, nullptr);
+			indirectCmdsLayout = nullptr;
+		}
+	}
+
+	void Renderer::IndirectDrawData::ResetInput()
+	{
+		SPICES_PROFILE_ZONE;
+
+		nMeshPack          = 0;
+		inputBuffer        = nullptr;
+		inputs.clear();	   
+		preprocessBuffer   = nullptr;
+		preprocessSize     = 0;
 	}
 
 }

@@ -76,6 +76,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		m_IndirectData.ResetCommandsLayout();
+
 		std::vector<VkIndirectCommandsLayoutTokenNV> inputInfos;
 		
 		uint32_t numInputs = 0;
@@ -139,9 +141,10 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		m_IndirectData.ResetInput();
+
 		std::unordered_map<std::string, uint32_t> pipelineMap;
 
-		m_IndirectData.nMeshPack = 0;
 		auto view = FrameInfo::Get().m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
@@ -154,7 +157,6 @@ namespace Spices {
 				}
 				v->SetShaderGroupHandle(pipelineMap[v->GetMaterial()->GetName()]);
 				m_IndirectData.nMeshPack++;
-				m_IndirectData.temp = v->GetMeshDesc().GetBufferAddress();
 				return false;
 			});
 		}
@@ -202,8 +204,9 @@ namespace Spices {
 
 			meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
 				VkBindShaderGroupIndirectCommandNV shader{ v->GetShaderGroupHandle() + 1 };
+				std::cout << shader.groupIndex << std::endl;
 				stagingBuffer.WriteToBuffer(&shader, sizeof(VkBindShaderGroupIndirectCommandNV), i * m_IndirectData.inputStrides[0] + pipeOffset);
-
+				
 				VkDeviceAddress push{ v->GetMeshDesc().GetBufferAddress() };
 				stagingBuffer.WriteToBuffer(&push, sizeof(VkDeviceAddress),                      i * m_IndirectData.inputStrides[1] + pushOffset);
 
@@ -214,6 +217,7 @@ namespace Spices {
 				return false;
 			});
 		}
+		stagingBuffer.Flush();
 
 		m_IndirectData.inputBuffer = std::make_unique<VulkanBuffer>(
 			m_VulkanState,
@@ -327,13 +331,6 @@ namespace Spices {
 		m_PipelinesRef.clear();
 	}
 
-	BasePassRenderer::~BasePassRenderer()
-	{
-		SPICES_PROFILE_ZONE;
-
-		m_VulkanState.m_VkFunc.vkDestroyIndirectCommandsLayoutNV(m_VulkanState.m_Device, m_IndirectData.indirectCmdsLayout, nullptr);
-	}
-
 	void BasePassRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
@@ -378,8 +375,43 @@ namespace Spices {
 		builder.SetViewPort();
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
-		//m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], &info);
+		/*m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], &info);
+
+		{
+			VkMemoryBarrier                      barrier{};
+			barrier.sType                      = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+			barrier.srcAccessMask              = VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV;
+			barrier.dstAccessMask              = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+			vkCmdPipelineBarrier(
+				m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], 
+				VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV, 
+				VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
+				VK_DEPENDENCY_BY_REGION_BIT,
+				1, 
+				&barrier, 
+				0, NULL, 
+				0, NULL
+			);
+		}*/
+
 		m_VulkanState.m_VkFunc.vkCmdExecuteGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], false, &info);
+
+		{
+			VkMemoryBarrier                      barrier{};
+			barrier.sType                      = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+			barrier.srcAccessMask              = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+			barrier.dstAccessMask              = VK_ACCESS_NONE;
+			vkCmdPipelineBarrier(
+				m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], 
+				VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
+				VK_ACCESS_NONE,
+				VK_DEPENDENCY_BY_REGION_BIT,
+				1, 
+				&barrier, 
+				0, NULL, 
+				0, NULL
+			);
+		}
 
 		builder.BeginNextSubPass("SkyBox");
 

@@ -104,7 +104,7 @@ namespace Spices
 		* @brief Get a VkSubpassDependency.
 		* @return Returns the VkSubpassDependency.
 		*/
-		inline VkSubpassDependency& GetDependency() { return m_SubPassDependency; }
+		inline std::vector<VkSubpassDependency>& GetDependency() { return m_SubPassDependency; }
 
 		/**
 		* @brief Get sub pass name.
@@ -176,7 +176,7 @@ namespace Spices
 		/**
 		* @brief VkSubpassDependency.
 		*/
-		VkSubpassDependency m_SubPassDependency{};
+		std::vector<VkSubpassDependency> m_SubPassDependency{};
 
 		/**
 		* @brief Subpass used color attachment.

@@ -1142,21 +1142,52 @@ namespace Spices {
 
 	public:
 
+		/**
+		* @brief This structure holds all date used in GDC.
+		*/
 		struct IndirectDrawData
 		{
-			IndirectDrawData() = default;
+			/**
+			* @brief Constructor Function.
+			*/
+			IndirectDrawData();
 
-			virtual ~IndirectDrawData() {}
+			/**
+			* @brief Destructor Function.
+			*/
+			virtual ~IndirectDrawData();
 
-			std::vector<VkIndirectCommandsStreamNV> inputs;
+			/**
+			* @brief Copy Constructor Function.
+			* @note This Class not allowed copy behaves.
+			*/
+			IndirectDrawData(const IndirectDrawData&) = delete;
+
+			/**
+			* @brief Copy Assignment Operation.
+			* @note This Class not allowed copy behaves.
+			*/
+			IndirectDrawData& operator=(const IndirectDrawData&) = delete;
+
+			/**
+			* @brief Reset this CommandsLayout.
+			*/
+			void ResetCommandsLayout();
+
+			/**
+			* @brief Reset this Input.
+			*/
+			void ResetInput();
+
 			std::vector<uint32_t>                   inputStrides;
-			VkIndirectCommandsLayoutNV              indirectCmdsLayout;
-			std::unique_ptr<VulkanBuffer>           inputBuffer;
 			uint32_t                                strides;
+			VkIndirectCommandsLayoutNV              indirectCmdsLayout;
+			
 			uint32_t                                nMeshPack;
+			std::unique_ptr<VulkanBuffer>           inputBuffer;
+			std::vector<VkIndirectCommandsStreamNV> inputs;
 			std::unique_ptr<VulkanBuffer>           preprocessBuffer;
 			uint32_t                                preprocessSize;
-			uint64_t                                temp;
 		};
 
 	protected:

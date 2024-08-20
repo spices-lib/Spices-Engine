@@ -116,7 +116,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		std::vector<VkAttachmentDescription> attachmentDescription;
+		std::vector<VkAttachmentDescription> attachmentDescription;	
 		m_AttachmentDescriptions.for_each([&](const std::string& name, const VkAttachmentDescription& description) {
 			attachmentDescription.push_back(description);
 			return false;
@@ -131,7 +131,7 @@ namespace Spices {
 		std::vector<VkSubpassDependency> subPassDependency;
 		(*m_SubPasses.first())->BuildFirstSubPassDependency();
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
-			subPassDependency.push_back(subpass->GetDependency());
+			subPassDependency.insert(subPassDependency.end(), subpass->GetDependency().begin(), subpass->GetDependency().end());
 			return false;
 		});
 
