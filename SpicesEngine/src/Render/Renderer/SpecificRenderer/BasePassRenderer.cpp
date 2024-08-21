@@ -72,69 +72,15 @@ namespace Spices {
 		.Build();
 	}
 	
-	void BasePassRenderer::CreateIndirectCommandsLayout()
+	void BasePassRenderer::CreateDeviceGeneratedCommandsLayout()
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_IndirectData.ResetCommandsLayout();
-
-		std::vector<VkIndirectCommandsLayoutTokenNV> inputInfos;
-		
-		uint32_t numInputs = 0;
-
-		{
-			VkIndirectCommandsLayoutTokenNV      input{};
-			input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
-			input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_SHADER_GROUP_NV;
-											   
-			input.stream                       =  numInputs;
-			input.offset                       =  0;
-			inputInfos.push_back(input);
-			m_IndirectData.inputStrides.push_back(sizeof(VkBindShaderGroupIndirectCommandNV));
-			m_IndirectData.strides += sizeof(VkBindShaderGroupIndirectCommandNV);
-			numInputs++;
-		}
-
-		{
-			VkIndirectCommandsLayoutTokenNV      input{}; 
-			input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
-			input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV;
-
-			input.pushconstantPipelineLayout   = m_Pipelines["BasePassRenderer.Mesh.Default"]->GetPipelineLayout();
-			input.pushconstantShaderStageFlags = VK_SHADER_STAGE_ALL;
-			input.pushconstantOffset           = 0;
-			input.pushconstantSize             = sizeof(VkDeviceAddress);
-
-			input.stream                       = numInputs;
-			input.offset                       = 0;
-			inputInfos.push_back(input);
-			m_IndirectData.inputStrides.push_back(sizeof(VkDeviceAddress));
-			m_IndirectData.strides += sizeof(VkDeviceAddress);
-			numInputs++;
-		}
-
-		{
-			VkIndirectCommandsLayoutTokenNV      input{};
-			input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV; 
-			input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_TASKS_NV;
-							                   
-			input.stream                       = numInputs;
-			input.offset                       = 0;
-			inputInfos.push_back(input);
-			m_IndirectData.inputStrides.push_back(sizeof(VkDrawMeshTasksIndirectCommandNV));
-			m_IndirectData.strides += sizeof(VkDrawMeshTasksIndirectCommandNV);
-			numInputs++;
-		}
-
-		VkIndirectCommandsLayoutCreateInfoNV     genInfo{};
-		genInfo.sType                          = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV;
-		genInfo.flags                          = VK_INDIRECT_COMMANDS_LAYOUT_USAGE_UNORDERED_SEQUENCES_BIT_NV;
-		genInfo.tokenCount                     = (uint32_t)inputInfos.size();
-		genInfo.pTokens                        = inputInfos.data();
-		genInfo.streamCount                    = numInputs;
-		genInfo.pStreamStrides                 = m_IndirectData.inputStrides.data();
-
-		m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_VulkanState.m_Device, &genInfo, NULL, &m_IndirectData.indirectCmdsLayout);
+		DGCLayoutBuilder{ "Mesh", this }
+		.AddShaderGroupInput()
+		.AddPushConstantInput()
+		.AddDrawMeshTaskInput()
+		.Build();
 	}
 
 	void BasePassRenderer::OnMeshAddedWorld()
@@ -244,6 +190,8 @@ namespace Spices {
 			m_IndirectData.inputs.push_back(input);
 		}
 
+		Renderer::OnSystemInitialize();
+
 		VkGeneratedCommandsMemoryRequirementsInfoNV memInfo{};
 		memInfo.sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
 		memInfo.maxSequencesCount = m_IndirectData.nMeshPack;
@@ -264,7 +212,7 @@ namespace Spices {
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
-		Renderer::OnSystemInitialize();
+		
 	}
 
 	std::shared_ptr<VulkanPipeline> BasePassRenderer::CreatePipeline(
@@ -341,77 +289,22 @@ namespace Spices {
 		
 		builder.BeginRenderPass();
 
-		//builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
-
-		/*IterWorldCompSubmitCmdParallel<MeshComponent>(frameInfo, builder.GetSubpassIndex(), [&](VkCommandBuffer& cmdBuffer, int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-
-			builder.SetViewPort(cmdBuffer);
-
-			builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
-
-			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
-
-			meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
-
-				builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
-
-				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
-					push = meshPack->GetMeshDesc().GetBufferAddress();
-				}, cmdBuffer);
-			});
-		});*/
-		
-		VkGeneratedCommandsInfoNV            info{};
-		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
-		info.pipeline                      = m_Pipelines["BasePassRenderer.Mesh.Default.DGC"]->GetPipeline();
-		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		info.indirectCommandsLayout        = m_IndirectData.indirectCmdsLayout;
-		info.sequencesCount                = m_IndirectData.nMeshPack;
-		info.streamCount                   = (uint32_t)m_IndirectData.inputs.size();
-		info.pStreams                      = m_IndirectData.inputs.data();
-		info.preprocessBuffer              = m_IndirectData.preprocessBuffer->Get(); 
-		info.preprocessSize                = m_IndirectData.preprocessSize;
-
 		builder.SetViewPort();
+
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
-		/*m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], &info);
 
-		{
-			VkMemoryBarrier                      barrier{};
-			barrier.sType                      = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-			barrier.srcAccessMask              = VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV;
-			barrier.dstAccessMask              = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-			vkCmdPipelineBarrier(
-				m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], 
-				VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV, 
-				VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
-				VK_DEPENDENCY_BY_REGION_BIT,
-				1, 
-				&barrier, 
-				0, NULL, 
-				0, NULL
-			);
-		}*/
+		builder.PreprocessDGC_NV();
 
-		m_VulkanState.m_VkFunc.vkCmdExecuteGeneratedCommandsNV(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], false, &info);
+		builder.PipelineMemoryBarrier(
+			VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV   , 
+			VK_ACCESS_INDIRECT_COMMAND_READ_BIT         , 
+			VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV , 
+			VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT
+		);
 
-		{
-			VkMemoryBarrier                      barrier{};
-			barrier.sType                      = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-			barrier.srcAccessMask              = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-			barrier.dstAccessMask              = VK_ACCESS_NONE;
-			vkCmdPipelineBarrier(
-				m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], 
-				VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
-				VK_ACCESS_NONE,
-				VK_DEPENDENCY_BY_REGION_BIT,
-				1, 
-				&barrier, 
-				0, NULL, 
-				0, NULL
-			);
-		}
+		builder.ExecuteDGC_NV();
 
 		builder.BeginNextSubPass("SkyBox");
 

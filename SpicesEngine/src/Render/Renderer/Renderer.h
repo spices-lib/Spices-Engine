@@ -23,6 +23,7 @@
 #include "Render/Vulkan/VulkanImage.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "Render/Vulkan/VulkanRenderPass.h"
+#include "Render/Vulkan/VulkanIndirectDrawNV.h"
 /***************************************************************************************************/
 
 /******************************World Component Header***********************************************/
@@ -182,9 +183,9 @@ namespace Spices {
 
 		/**
 		* @brief This interface is called during OnSystemInitialize().
-		* Create indirect Commands Layout for dgc.
+		* Create Device Generated Commands Layout.
 		*/
-		virtual void CreateIndirectCommandsLayout();
+		virtual void CreateDeviceGeneratedCommandsLayout() {};
 
 		/**
 		* @brief Create Specific Renderer Default Material. 
@@ -612,6 +613,77 @@ namespace Spices {
 		};
 
 		/**
+		* @brief This Class is a helper for Building GDC Layout.
+		* Only instanced during CreateDeviceGeneratedCommandsLayout().
+		*/
+		class DGCLayoutBuilder
+		{
+		public:
+
+			/**
+			* @brief Constructor Function.
+			* @param[in] subPassName Sub pass name.
+			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			*/
+			DGCLayoutBuilder(
+				const std::string&  subPassName ,
+				Renderer*           renderer
+			);
+
+			/**
+			* @brief Destructor Function.
+			*/
+			virtual ~DGCLayoutBuilder() = default;
+
+			/**
+			* @brief Add Binding Shader Group Command to Input.
+			* @return Returns this reference.
+			*/
+			DGCLayoutBuilder& AddShaderGroupInput();
+
+			/**
+			* @brief Add Binding PushConstant Command to Input.
+			* @return Returns this reference.
+			*/
+			DGCLayoutBuilder& AddPushConstantInput();
+
+			/**
+			* @brief Add Draw Mesh Task Command to Input.
+			* @return Returns this reference.
+			*/
+			DGCLayoutBuilder& AddDrawMeshTaskInput();
+
+			/**
+			* @brief Create GDC Layout.
+			*/
+			void Build();
+
+		private:
+
+			/**
+			* @brief Specific Renderer pointer.
+			* Passed while this class instanced.
+			*/
+			Renderer* m_Renderer;
+
+			/**
+			* @brief Specific Subpass Name.
+			* Passed while this class instanced.
+			*/
+			std::string m_SubpassName;
+
+			/**
+			* @brief Stores command inputs.
+			*/
+			std::vector<VkIndirectCommandsLayoutTokenNV> m_InputInfos;
+
+			/**
+			* @brief Current Subpass IndirectData.
+			*/
+			std::shared_ptr<VulkanIndirectDrawNV> m_HandledIndirectData;
+		};
+
+		/**
 		* @brief This class helps to bind pipeline and bind buffer.
 		* Only instanced during Render().
 		*/
@@ -635,6 +707,8 @@ namespace Spices {
 				, m_CurrentFrame(currentFrame)
 				, m_CurrentImage(currentImage)
 			{
+				SPICES_PROFILE_ZONE;
+
 				m_CommandBuffer = m_Renderer->m_VulkanState.m_GraphicCommandBuffer[currentFrame];
 			}
 
@@ -653,17 +727,6 @@ namespace Spices {
 			* @brief Endrecording all this behaver does.
 			*/
 			void Endrecording();
-
-			/**
-			* @brief Recording all this behaver does Async.
-			* @param[in] caption Recording Name
-			*/
-			void RecordingAsync(const std::string& caption);
-
-			/**
-			* @brief Endrecording all this behaver does Async.
-			*/
-			void EndrecordingAsync();
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
@@ -724,7 +787,7 @@ namespace Spices {
 			virtual void BindDescriptorSet(
 				const DescriptorSetInfo&   infos                                       , 
 				const std::string&         name                                        , 
-				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE,
+				VkCommandBuffer            cmdBuffer = VK_NULL_HANDLE                  ,
 				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
 			);
 
@@ -750,6 +813,60 @@ namespace Spices {
 				const DescriptorSetInfo&   infos                                       , 
 				const std::string&         name                                        , 
 				VkPipelineBindPoint        bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
+
+			/**
+			* @brief Preprocess Device Generated CommandsBuffer.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void PreprocessDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+
+			/**
+			* @brief Preprocess Device Generated CommandsBuffer Async.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void PreprocessDGCAsync_NV();
+
+			/**
+			* @brief Execute Device Generated CommandsBuffer.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void ExecuteDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+
+			/**
+			* @brief Execute Device Generated CommandsBuffer Async.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void ExecuteDGCAsync_NV();
+
+			/**
+			* @brief Add a memory Barrier.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			void PipelineMemoryBarrier(
+				VkAccessFlags          srcAccessMask ,
+				VkAccessFlags          dstAccessMask ,
+				VkPipelineStageFlags   srcStageMask  ,
+				VkPipelineStageFlags   dstStageMask  ,
+				VkCommandBuffer        cmdBuffer = VK_NULL_HANDLE
+			);
+
+			/**
+			* @brief Add a memory Barrier.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			*/
+			void PipelineMemoryBarrierAsync(
+				VkAccessFlags          srcAccessMask ,
+				VkAccessFlags          dstAccessMask ,
+				VkPipelineStageFlags   srcStageMask  ,
+				VkPipelineStageFlags   dstStageMask
 			);
 
 			/******************************Update By Value**********************************************************/
@@ -905,6 +1022,11 @@ namespace Spices {
 			* @brief Handled Sub pass.
 			*/
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
+
+			/**
+			* @brief Current Subpass IndirectData.
+			*/
+			std::shared_ptr<VulkanIndirectDrawNV> m_HandledIndirectData;
 		};
 
 		/**
@@ -1115,7 +1237,7 @@ namespace Spices {
 			*/
 			void Dispatch(uint32_t x, uint32_t y, uint32_t z);
 
-			void AddBarriers(
+			/*void AddBarriers(
 				VkBuffer              buffer         , 
 				VkAccessFlags         srcAccessMask  , 
 				VkAccessFlags         dstAccessMask  , 
@@ -1137,57 +1259,7 @@ namespace Spices {
 				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
 				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
 				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
-			);
-		};
-
-	public:
-
-		/**
-		* @brief This structure holds all date used in GDC.
-		*/
-		struct IndirectDrawData
-		{
-			/**
-			* @brief Constructor Function.
-			*/
-			IndirectDrawData();
-
-			/**
-			* @brief Destructor Function.
-			*/
-			virtual ~IndirectDrawData();
-
-			/**
-			* @brief Copy Constructor Function.
-			* @note This Class not allowed copy behaves.
-			*/
-			IndirectDrawData(const IndirectDrawData&) = delete;
-
-			/**
-			* @brief Copy Assignment Operation.
-			* @note This Class not allowed copy behaves.
-			*/
-			IndirectDrawData& operator=(const IndirectDrawData&) = delete;
-
-			/**
-			* @brief Reset this CommandsLayout.
-			*/
-			void ResetCommandsLayout();
-
-			/**
-			* @brief Reset this Input.
-			*/
-			void ResetInput();
-
-			std::vector<uint32_t>                   inputStrides;
-			uint32_t                                strides;
-			VkIndirectCommandsLayoutNV              indirectCmdsLayout;
-			
-			uint32_t                                nMeshPack;
-			std::unique_ptr<VulkanBuffer>           inputBuffer;
-			std::vector<VkIndirectCommandsStreamNV> inputs;
-			std::unique_ptr<VulkanBuffer>           preprocessBuffer;
-			uint32_t                                preprocessSize;
+			);*/
 		};
 
 	protected:
@@ -1250,13 +1322,14 @@ namespace Spices {
 		/**
 		* @brief Data of dgc Indirect Draw.
 		*/
-		IndirectDrawData m_IndirectData;
+		std::unordered_map<std::string, std::shared_ptr<VulkanIndirectDrawNV>> m_IndirectData;
 
 		/**
 		* @brief Allow this class access all data.
 		*/
 		friend class DescriptorSetBuilder;
 		friend class RendererPassBuilder;
+		friend class DGCLayoutBuilder;
 	};
 
 	template<typename F>

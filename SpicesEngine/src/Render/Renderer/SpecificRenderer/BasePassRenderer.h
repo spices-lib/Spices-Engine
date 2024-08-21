@@ -75,9 +75,9 @@ namespace Spices {
 
 		/**
 		* @brief This interface is called during OnSystemInitialize().
-		* Create indirect Commands Layout for dgc.
+		* Create Device Generated Commands Layout.
 		*/
-		virtual void CreateIndirectCommandsLayout() override;
+		virtual void CreateDeviceGeneratedCommandsLayout() override;
 
 		/**
 		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
