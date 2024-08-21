@@ -13,26 +13,34 @@ namespace Spices {
 
 	bool FileLibrary::FileLibrary_Exists(const char* path)
 	{
+		SPICES_PROFILE_ZONE;
+
 		struct _stat buffer {};
 		return _stat (path, &buffer) == 0;
 	}
 
 	bool FileLibrary::FileLibrary_Open(const char* path, FileModes mode, bool binary, FileHandle* out_handle)
 	{
+		SPICES_PROFILE_ZONE;
+
 		out_handle->is_valid = false;
 		out_handle->handle   = nullptr;
 		const char* mode_str;
 
-		if ((mode & FILE_MODE_READ) != 0 && (mode & FILE_MODE_WRITE) != 0) {
+		if ((mode & FILE_MODE_READ) != 0 && (mode & FILE_MODE_WRITE) != 0) 
+		{
 			mode_str = binary ? "w+b" : "w+";
 		}
-		else if ((mode & FILE_MODE_READ) != 0 && (mode & FILE_MODE_WRITE) == 0) {
+		else if ((mode & FILE_MODE_READ) != 0 && (mode & FILE_MODE_WRITE) == 0) 
+		{
 			mode_str = binary ? "rb" : "r";
 		}
-		else if ((mode & FILE_MODE_READ) == 0 && (mode & FILE_MODE_WRITE) != 0) {
+		else if ((mode & FILE_MODE_READ) == 0 && (mode & FILE_MODE_WRITE) != 0) 
+		{
 			mode_str = binary ? "wb" : "w";
 		}
-		else {
+		else 
+		{
 			SPICES_CORE_INFO("Invalid mode passed while trying to open file");
 			return false;
 		}
@@ -40,9 +48,11 @@ namespace Spices {
 		FILE* file;
 		auto state = fopen_s(&file, path, mode_str);
 
-		if (!file) {
+		if (!file) 
+		{
 			std::stringstream ss;
 			ss << "Error opening file: " << path;
+
 			SPICES_CORE_WARN(ss.str().c_str());
 			return false;
 		}
@@ -55,7 +65,10 @@ namespace Spices {
 
 	void FileLibrary::FileLibrary_Close(FileHandle* handle)
 	{
-		if (handle->handle) {
+		SPICES_PROFILE_ZONE;
+
+		if (handle->handle) 
+		{
 			auto state = fclose(static_cast<FILE*>(handle->handle));
 			handle->handle = nullptr;
 			handle->is_valid = false;
@@ -64,7 +77,10 @@ namespace Spices {
 
 	bool FileLibrary::FileLibrary_Size(const FileHandle* handle, uint64_t* out_size)
 	{
-		if (handle->handle) {
+		SPICES_PROFILE_ZONE;
+
+		if (handle->handle) 
+		{
 			auto state = fseek(static_cast<FILE*>(handle->handle), 0, SEEK_END);
 			*out_size = ftell(static_cast<FILE*>(handle->handle));
 			rewind(static_cast<FILE*>(handle->handle));	
@@ -75,9 +91,13 @@ namespace Spices {
 
 	bool FileLibrary::FileLibrary_Read(const FileHandle* handle, uint64_t data_size, void* out_data, uint64_t* out_bytes_read)
 	{
-		if (handle->handle && out_data) {
+		SPICES_PROFILE_ZONE;
+
+		if (handle->handle && out_data) 
+		{
 			*out_bytes_read = fread(out_data, 1, data_size, static_cast<FILE*>(handle->handle));
-			if (*out_bytes_read != data_size) {
+			if (*out_bytes_read != data_size) 
+			{
 				return false;
 			}
 			return true;
@@ -87,9 +107,13 @@ namespace Spices {
 
 	bool FileLibrary::FileLibrary_Read_Line(const FileHandle* handle, uint64_t max_length, char** line_buf, uint64_t* out_line_length)
 	{
-		if (handle->handle && line_buf && out_line_length && max_length > 0) {
+		SPICES_PROFILE_ZONE;
+
+		if (handle->handle && line_buf && out_line_length && max_length > 0) 
+		{
 			char* buf = *line_buf;
-			if (fgets(buf, static_cast<int>(max_length), static_cast<FILE*>(handle->handle)) != nullptr) {
+			if (fgets(buf, static_cast<int>(max_length), static_cast<FILE*>(handle->handle)) != nullptr) 
+			{
 				*out_line_length = strlen(*line_buf);
 				return true;
 			}
@@ -99,9 +123,13 @@ namespace Spices {
 
 	bool FileLibrary::FileLibrary_Read_all_bytes(const FileHandle* handle, char* out_bytes, uint64_t* out_bytes_read)
 	{
-		if (handle->handle && out_bytes && out_bytes_read) {
+		SPICES_PROFILE_ZONE;
+
+		if (handle->handle && out_bytes && out_bytes_read) 
+		{
 			uint64_t size = 0;
-			if (!FileLibrary_Size(handle, &size)) {
+			if (!FileLibrary_Size(handle, &size))
+			{
 				return false;
 			}
 
@@ -113,9 +141,13 @@ namespace Spices {
 
 	bool FileLibrary::FileLibrary_Write(const FileHandle* handle, uint64_t data_size, const void* data, uint64_t* out_bytes_written)
 	{
-		if (handle->handle) {
+		SPICES_PROFILE_ZONE;
+
+		if (handle->handle) 
+		{
 			*out_bytes_written = fwrite(data, 1, data_size, static_cast<FILE*>(handle->handle));
-			if (*out_bytes_written != data_size) {
+			if (*out_bytes_written != data_size) 
+			{
 				return false;
 			}
 			auto state = fflush(static_cast<FILE*>(handle->handle));
@@ -126,9 +158,13 @@ namespace Spices {
 
 	bool FileLibrary::FileLibrary_Write_Line(const FileHandle* handle, const char* text)
 	{
-		if (handle->handle) {
+		SPICES_PROFILE_ZONE;
+
+		if (handle->handle) 
+		{
 			int result = fputs(text, static_cast<FILE*>(handle->handle));
-			if (result != EOF) {
+			if (result != EOF) 
+			{
 				result = fputc('\n', static_cast<FILE*>(handle->handle));
 			}
 
@@ -142,8 +178,10 @@ namespace Spices {
 
 	std::string FileLibrary::FileLibrary_OpenInExplore(const char* filter, HWND hwnd)
 	{
-		OPENFILENAMEA ofn;    // common dialog box structure
-		CHAR szFile[260] = { 0 };   // if using TCHAR macros
+		SPICES_PROFILE_ZONE;
+
+		OPENFILENAMEA ofn;           // common dialog box structure
+		CHAR szFile[260] = { 0 };    // if using TCHAR macros
 		// Initialize OPEN FILENAME
 		ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
 		ofn.lStructSize = sizeof(OPENFILENAMEA);

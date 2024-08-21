@@ -105,12 +105,14 @@ namespace scl {
         * @param[in] name Item Name.
         * @return Returns item location.
         */
-        size_t item_location(const std::string& name) { return object_[name]; }
+        size_t item_location(const std::string& name);
     };
 
     template <typename T>
     void runtime_memory_block::explain_element(const std::string& name, const T& value)
     {
+        SPICES_PROFILE_ZONE;
+
         /**
         * @brief Only allow explain the memory block with parameter that already added.
         */
@@ -136,6 +138,8 @@ namespace scl {
     template <typename T>
     T& runtime_memory_block::get_value(const std::string& name)
     {
+        SPICES_PROFILE_ZONE;
+
         /**
         * @brief Only allow get value the memory block with parameter that already added.
         */

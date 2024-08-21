@@ -12,6 +12,8 @@ namespace Spices {
 
 	std::string ClassLibrary::GetClassString(ClassType t)
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Split Class Name to Namespcae and Class.
 		*/

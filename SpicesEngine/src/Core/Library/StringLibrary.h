@@ -36,7 +36,18 @@ namespace Spices {
 		*/
 		static bool StringsEqual(const char* str0, const char* str1);
 
+		/**
+		* @brief Transform char to widechar.
+		* @param[in] c inchar.
+		* @return Returns widechar.
+		*/
 		static std::wstring CharToWChar(const char* c);
+
+		/**
+		* @brief Transform widechar to char.
+		* @param[in] c inwidechar.
+		* @return Returns char.
+		*/
 		static std::string WCharToChar(const wchar_t* wc);
 	};
 }

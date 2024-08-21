@@ -29,6 +29,8 @@ namespace Spices {
 	template<typename T>
 	void ContainerLibrary::Append(std::vector<T>& dst, const std::vector<T>& src)
 	{
+		SPICES_PROFILE_ZONE;
+
 		for (int i = 0; i < src.size(); i++)
 		{
 			dst.push_back(src[i]);

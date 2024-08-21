@@ -1,3 +1,9 @@
+/**
+* @file ProcessLibrary.cpp
+* @brief The ProcessLibrary Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "ProcessLibrary.h"
 #include "StringLibrary.h"
@@ -9,6 +15,8 @@ namespace Spices {
 
 	bool ProcessLibrary::OpenProcess(const char* processPath, const char* commandLine)
 	{
+		SPICES_PROFILE_ZONE;
+
 		STARTUPINFO StartInfo;
 		PROCESS_INFORMATION info;
 
@@ -44,6 +52,8 @@ namespace Spices {
 
 	bool ProcessLibrary::CloseProcess(const char* processName)
 	{
+		SPICES_PROFILE_ZONE;
+
 		const std::string temp = std::string("TASKKILL /F /IM ") + processName;
 		system(temp.c_str());
 
@@ -52,6 +62,8 @@ namespace Spices {
 
 	float ProcessLibrary::ProcessMemoryInUsed()
 	{
+		SPICES_PROFILE_ZONE;
+
 		PROCESS_MEMORY_COUNTERS pmc;
 		if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc)))
 		{

@@ -36,11 +36,14 @@ namespace SpicesTest {
 			c2.push_back(3.0f, "3.0");
 		}
 
-		// void TearDown() override {}
+		/**
+		* @brief Testing class TearDown function.
+		*/
+		void TearDown() override {}
 
-		scl::linked_unordered_map<std::string, std::string> c0;
-		scl::linked_unordered_map<int, std::string> c1;
-		scl::linked_unordered_map<float, std::string> c2;
+		scl::linked_unordered_map<std::string, std::string> c0;    /* @brief Test Item. */
+		scl::linked_unordered_map<int, std::string> c1;            /* @brief Test Item. */
+		scl::linked_unordered_map<float, std::string> c2;          /* @brief Test Item. */
 	};
 
 	/**

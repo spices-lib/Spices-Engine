@@ -28,9 +28,12 @@ namespace SpicesTest {
 			m0.add_element("4", "float4");
 		}
 
-		// void TearDown() override {}
+		/**
+		* @brief Testing class TearDown function.
+		*/
+		void TearDown() override {}
 
-		scl::runtime_memory_block m0;
+		scl::runtime_memory_block m0;        /* @brief Test Item. */
 	};
 
 	/**
@@ -190,5 +193,27 @@ namespace SpicesTest {
 
 		delete m1;
 		EXPECT_NE(addr, nullptr);
+	}
+
+	/**
+	* @brief Testing if ItemLocation test successfully.
+	*/
+	TEST_F(runtime_memory_block_test, ItemLocation) {
+
+		/**
+		* @brief item location in valid item.
+		*/
+		EXPECT_NE(m0.item_location("1"), 4 );
+		EXPECT_NE(m0.item_location("2"), 8 );
+		EXPECT_NE(m0.item_location("3"), 12);
+		EXPECT_NE(m0.item_location("4"), 16);
+
+		/**
+		* @brief item location in unvalid item.
+		*/
+		EXPECT_NE(m0.item_location("5"), UINT32_MAX);
+		EXPECT_NE(m0.item_location("6"), UINT32_MAX);
+		EXPECT_NE(m0.item_location("7"), UINT32_MAX);
+		EXPECT_NE(m0.item_location("8"), UINT32_MAX);
 	}
 }

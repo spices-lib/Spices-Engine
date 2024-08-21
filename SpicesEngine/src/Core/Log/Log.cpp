@@ -1,3 +1,9 @@
+/**
+* @file Log.cpp.
+* @brief The Log Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "Log.h"
 #include "Console.h"
@@ -15,6 +21,8 @@ namespace Spices {
 
 	void Log::Init()
 	{
+		SPICES_PROFILE_ZONE;
+
 		spdlog::set_pattern("[%Y-%m-%d %H:%M:%S] [%n] [%l] %v");
 		spdlog::flush_every(std::chrono::seconds(5));
 
@@ -50,7 +58,7 @@ namespace Spices {
 		const auto ide_console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 		ide_console_sink->set_level(spdlog::level::trace);
 
-		const auto console_sink = Console::Register("Console", ss.str());
+		const auto console_sink = Console::Registry("Console", ss.str());
 
 		/**
 		* @brief console slate log.
@@ -69,6 +77,8 @@ namespace Spices {
 
 	void Log::ShutDown()
 	{
+		SPICES_PROFILE_ZONE;
+
 		s_CoreLogger.reset();
 		s_ClientLogger.reset();
 		spdlog::drop_all();

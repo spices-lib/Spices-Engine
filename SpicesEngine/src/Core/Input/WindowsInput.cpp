@@ -19,6 +19,8 @@ namespace Spices {
 
 	bool WindowsInput::IsKeyPressedImpl(const int& keycode)
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Get GLFW Window Pointer.
 		*/
@@ -34,6 +36,8 @@ namespace Spices {
 
 	bool WindowsInput::IsMouseButtonPressedImpl(const int& button)
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Get GLFW Window Pointer.
 		*/
@@ -49,6 +53,8 @@ namespace Spices {
 
 	std::pair<float, float> WindowsInput::GetMousePositionImpl()
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Get GLFW Window Pointer.
 		*/
@@ -65,12 +71,16 @@ namespace Spices {
 
 	float WindowsInput::GetMouseXImpl()
 	{
+		SPICES_PROFILE_ZONE;
+
 		auto [x, y] = GetMousePositionImpl();
 		return x;
 	}
 
 	float WindowsInput::GetMouseYImpl()
 	{
+		SPICES_PROFILE_ZONE;
+
 		auto [x, y] = GetMousePositionImpl();
 		return y;
 	}

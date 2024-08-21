@@ -1,3 +1,9 @@
+/**
+* @file Log.h
+* @brief The Log Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -12,30 +18,68 @@
 
 namespace Spices {
 
+	/**
+	* brief Log Class defines log behaver.
+	*/
 	class Log
 	{
 	public:
+
+		/**
+		* @brief Init Log.
+		*/
 		static void Init();
+
+		/**
+		* @brief Shutdown Log.
+		*/
 		static void ShutDown();
 
+		/**
+		* @brief Get Engine Stage Logger.
+		* @return Returns Engine Stage Logger.
+		*/
 		static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+
+		/**
+		* @brief Get Game Stage Logger.
+		* @return Returns Game Stage Logger.
+		*/
 		static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
 	public:
+
+		/**
+		* @brief using format_string_t instand of fmt::format_string<Args...>;
+		*/
 		template <typename... Args>
 		using format_string_t = fmt::format_string<Args...>;
 
+		/**
+		* @brief Post handle with log message.
+		* @param[in] fmt format string.
+		* @param[in] args any param.
+		*/
 		template <typename... Args>
 		static void PostHandle(format_string_t<Args...> fmt, Args &&...args);
 
 	private:
+
+		/**
+		* @brief Engine Stage Logger.
+		*/
 		static std::shared_ptr<spdlog::logger> s_CoreLogger;
+
+		/**
+		* @brief Game Stage Logger.
+		*/
 		static std::shared_ptr<spdlog::logger> s_ClientLogger;
 	};
 
 	template<typename ...Args>
 	inline void Log::PostHandle(format_string_t<Args...> fmt, Args && ...args)
 	{
+		SPICES_PROFILE_ZONE;
 	}
 }
 

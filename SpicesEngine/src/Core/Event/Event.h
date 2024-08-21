@@ -58,14 +58,14 @@ namespace Spices {
 	*/
 	enum EventCategory
 	{
-		None                      =  0,           /* @brief None */
-		EventCategoryApplication  =  (1 << 0),    /* @brief Application */
-		EventCategorySlate        =  (1 << 1),    /* @brief Slate */
-		EventCategoryInput        =  (1 << 2),    /* @brief Input */
-		EventCategoryKeyboard     =  (1 << 3),    /* @brief Keyboard */
-		EventCategoryMouse        =  (1 << 4),    /* @brief Mouse */
-		EventCategoryMouseButton  =  (1 << 5),    /* @brief MouseButton */
-		EventCategoryWorld         = (1 << 6),    /* @brief World */
+		None                      =  0,           /* @brief None         */
+		EventCategoryApplication  =  (1 << 0),    /* @brief Application  */
+		EventCategorySlate        =  (1 << 1),    /* @brief Slate        */
+		EventCategoryInput        =  (1 << 2),    /* @brief Input        */
+		EventCategoryKeyboard     =  (1 << 3),    /* @brief Keyboard     */
+		EventCategoryMouse        =  (1 << 4),    /* @brief Mouse        */
+		EventCategoryMouseButton  =  (1 << 5),    /* @brief MouseButton  */
+		EventCategoryWorld         = (1 << 6),    /* @brief World        */
 	};
 
 /**
@@ -181,6 +181,7 @@ namespace Spices {
 		template<typename T>
 		bool Dispatch(EventFn<T> func)
 		{
+			SPICES_PROFILE_ZONE;
 
 			/**
 			* @brief If Specific Event handle function takes the same type with Stored Event type,
