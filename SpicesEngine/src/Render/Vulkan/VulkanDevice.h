@@ -132,6 +132,7 @@ namespace Spices {
 
 		/**
 		* @brief Get SwapChain Utils.
+		* @return Returns SwapChain Utils.
 		*/
 		inline const SwapChainSupportDetails& GetSwapChainSupport() { return m_SwapChainSupportDetails; }
 
@@ -143,18 +144,27 @@ namespace Spices {
 
 		/**
 		* @brief Get QueueHelper variable.
+		* @return Returns QueueHelper variable.
 		*/
 		inline const QueueHelper& GetQueueHelper() const { return m_QueueHelper; }
 
 		/**
 		* @brief Get device's maxusablesamplecount.
+		* @return Returns device's maxusablesamplecount.
 		*/
 		VkSampleCountFlagBits GetMaxUsableSampleCount() const;
 
 		/**
 		* @brief Get RayTracingPipelineProperties.
+		* @return Returns RayTracingPipelineProperties.
 		*/
 		inline VkPhysicalDeviceRayTracingPipelinePropertiesKHR& GetRTPipelineProperties() { return m_RayTracingProperties; }
+
+		/**
+		* @brief Get DeviceGeneratedCommandsPropertiesNV.
+		* @return Returns DeviceGeneratedCommandsPropertiesNV.
+		*/
+		inline VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV& GetDGCProperties() { return m_DGCProperties; };
 
 	private:
 
@@ -236,7 +246,12 @@ namespace Spices {
 		/**
 		* @brief Device RayTracing Properties.
 		*/
-		VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_RayTracingProperties{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR };
+		VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_RayTracingProperties{};
+
+		/**
+		* @brief Device DGC Properties.
+		*/
+		VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV m_DGCProperties{};
 
 		/**
 		* @brief QueueHelper.

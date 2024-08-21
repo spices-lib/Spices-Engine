@@ -269,6 +269,12 @@ namespace Spices {
 		/**
 		* @brief Get all RayTracing Properties supported.
 		*/
+		m_DGCProperties.sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_NV;
+		m_DGCProperties.pNext                       = nullptr;
+
+		m_RayTracingProperties.sType                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
+		m_RayTracingProperties.pNext                = &m_DGCProperties;
+
 		VkPhysicalDeviceMeshShaderPropertiesEXT       meshShaderProperties{};
 		meshShaderProperties.sType                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT;
 		meshShaderProperties.pNext                  = &m_RayTracingProperties;

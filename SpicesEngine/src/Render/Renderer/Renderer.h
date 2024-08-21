@@ -162,6 +162,14 @@ namespace Spices {
 		);
 
 		/**
+		* @brief Fill in World Renderable data to IndirectBuffer.
+		* @tparam T Specific Component.
+		* @param[in] subpassName .
+		*/
+		template<typename T>
+		void FillIndirectRenderData(const std::string& subpassName);
+
+		/**
 		* @brief Get RendererPass.
 		* @return Returns the RendererPass.
 		*/
@@ -1331,6 +1339,175 @@ namespace Spices {
 		friend class RendererPassBuilder;
 		friend class DGCLayoutBuilder;
 	};
+
+	template<typename T>
+	inline void Renderer::FillIndirectRenderData(const std::string& subpassName)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto indirectPtr = m_IndirectData[subpassName];
+		indirectPtr->ResetInput();
+
+		/**
+		* @brief Prepare ShaderGroup
+		*/
+		uint32_t nSequences = 0;
+		auto view = FrameInfo::Get().m_World->GetRegistry().view<T>();
+		{
+			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Prepare ShaderGroup");
+
+			std::unordered_map<std::string, uint32_t> pipelineMap;
+
+			for (auto& e : view)
+			{
+				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(e);
+
+				meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
+
+					if (pipelineMap.find(v->GetMaterial()->GetName()) == pipelineMap.end())
+					{
+						pipelineMap[v->GetMaterial()->GetName()] = pipelineMap.size();
+					}
+
+					v->SetShaderGroupHandle(pipelineMap[v->GetMaterial()->GetName()]);
+					nSequences++;
+
+					return false;
+				});
+			}
+			indirectPtr->SetSequenceCount(nSequences);
+
+			m_PipelinesRef[subpassName].resize(pipelineMap.size());
+
+			for (auto& pair : pipelineMap)
+			{
+				m_PipelinesRef[subpassName][pair.second] = m_Pipelines[pair.first]->GetPipeline();
+			}
+		}
+
+		/**
+		* @brief Fill in Input Buffer
+		*/
+		std::vector<size_t> offset;
+		size_t totalSize = 0;
+		std::shared_ptr<VulkanBuffer> inputBuffer = nullptr;
+		{
+			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Fill in Input Buffer");
+
+			size_t alignSeqIndexMask = m_Device->GetDGCProperties().minSequencesIndexBufferOffsetAlignment - 1;
+			size_t alignMask        = m_Device->GetDGCProperties().minIndirectCommandsBufferOffsetAlignment - 1;
+
+			auto& inputStrides      = indirectPtr->GetInputStrides();
+			
+			for (int i = 0; i < inputStrides.size(); i++)
+			{
+				offset.push_back(totalSize);
+				totalSize += ((inputStrides[i] * nSequences + alignMask) & (~alignMask));
+			}
+
+			VulkanBuffer stagingBuffer(
+				m_VulkanState,
+				totalSize,
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
+
+			auto& layoutTokens = indirectPtr->GetLayoutTokens();
+
+			int index = 0;
+			for (auto& e : view)
+			{
+				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(e);
+
+				meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
+
+					for (int i = 0; i < layoutTokens.size(); i++)
+					{
+						VkBindShaderGroupIndirectCommandNV shader;
+						VkDeviceAddress                    push;
+						VkDrawMeshTasksIndirectCommandNV   drawCmd;
+
+						switch (layoutTokens[i].tokenType)
+						{
+						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_SHADER_GROUP_NV:
+							shader.groupIndex = v->GetShaderGroupHandle() + 1;
+							stagingBuffer.WriteToBuffer(&shader, inputStrides[i], index * inputStrides[i] + offset[i]);
+							break;
+
+						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV:
+							push = v->GetMeshDesc().GetBufferAddress();
+							stagingBuffer.WriteToBuffer(&push, inputStrides[i], index * inputStrides[i] + offset[i]);
+							break;
+
+						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_TASKS_NV:
+							drawCmd = v->GetDrawCommand();
+							stagingBuffer.WriteToBuffer(&drawCmd, inputStrides[i], index * inputStrides[i] + offset[i]);
+							break;
+
+						default:
+							SPICES_CORE_ERROR("Not Supported Token Type.");
+							break;
+						}
+					}
+
+					index++;
+					return false;
+				});
+			}
+			stagingBuffer.Flush();
+
+			inputBuffer = indirectPtr->CreateInputBuffer(totalSize);
+			inputBuffer->CopyBuffer(stagingBuffer.Get(), inputBuffer->Get(), totalSize);
+		}
+
+		/**
+		* @brief Fill in Streams
+		*/
+		{
+			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Fill in Streams");
+
+			std::vector<VkIndirectCommandsStreamNV> inputs;
+			inputs.resize(offset.size());
+			for (int i = 0; i < offset.size(); i++)
+			{
+				inputs[i].buffer = inputBuffer->Get();
+				inputs[i].offset = offset[i];
+			}
+			indirectPtr->SetInputStreams(inputs);
+		}
+
+		/**
+		* @brief Regenerate dgc pipeline
+		*/
+		{
+			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Regenerate dgc pipeline");
+
+			CreateDefaultMaterial();
+		}
+
+		/**
+		* @brief Create ProcessBuffer.
+		*/
+		{
+			SPICES_PROFILE_ZONEN("FillIndirectRenderData:: Create ProcessBuffer");
+
+			VkGeneratedCommandsMemoryRequirementsInfoNV     memInfo{};
+			memInfo.sType                                 = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
+			memInfo.maxSequencesCount                     = nSequences;
+			memInfo.indirectCommandsLayout                = indirectPtr->GetCommandLayout();
+			memInfo.pipeline                              = m_Pipelines["BasePassRenderer.Mesh.Default.DGC"]->GetPipeline();
+			memInfo.pipelineBindPoint                     = VK_PIPELINE_BIND_POINT_GRAPHICS;
+
+			VkMemoryRequirements2                           memReqs{};
+			memReqs.sType                                 = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+
+			m_VulkanState.m_VkFunc.vkGetGeneratedCommandsMemoryRequirementsNV(m_VulkanState.m_Device, &memInfo, &memReqs);
+
+			indirectPtr->SetPreprocessSize(memReqs.memoryRequirements.size);
+			indirectPtr->CreatePreprocessBuffer(memReqs.memoryRequirements.size);
+		}
+	}
 
 	template<typename F>
 	inline void Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subpass, F&& func)

@@ -634,6 +634,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
 		++m_SubpassIndex;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
 
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
@@ -647,6 +648,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
 		++m_SubpassIndex;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
 
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
@@ -660,11 +662,12 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		m_SubpassIndex = 0;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
 
 		/**
 		* @brief Instance a VkRenderPassBeginInfo.
 		*/
-		VkRenderPassBeginInfo renderPassInfo{};
+		VkRenderPassBeginInfo                     renderPassInfo{};
 		renderPassInfo.sType                    = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass               = m_Renderer->m_Pass->Get();
 		renderPassInfo.framebuffer              = m_Renderer->m_Pass->GetFramebuffer(m_CurrentImage);
@@ -699,11 +702,12 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		m_SubpassIndex = 0;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
 
 		/**
 		* @brief Instance a VkRenderPassBeginInfo.
 		*/
-		VkRenderPassBeginInfo renderPassInfo{};
+		VkRenderPassBeginInfo                     renderPassInfo{};
 		renderPassInfo.sType                    = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass               = m_Renderer->m_Pass->Get();
 		renderPassInfo.framebuffer              = m_Renderer->m_Pass->GetFramebuffer(m_CurrentImage);
@@ -941,23 +945,9 @@ namespace Spices {
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
 
 		/**
-		* @brief Instance a VkGeneratedCommandsInfoNV.
-		*/
-		VkGeneratedCommandsInfoNV            info{};
-		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
-		info.pipeline                      = m_Renderer->m_Pipelines[ss.str()]->GetPipeline();
-		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		info.indirectCommandsLayout        = m_Renderer->m_IndirectData.indirectCmdsLayout;
-		info.sequencesCount                = m_Renderer->m_IndirectData.nMeshPack;
-		info.streamCount                   = static_cast<uint32_t>(m_Renderer->m_IndirectData.inputs.size());
-		info.pStreams                      = m_Renderer->m_IndirectData.inputs.data();
-		info.preprocessBuffer              = m_Renderer->m_IndirectData.preprocessBuffer->Get();
-		info.preprocessSize                = m_Renderer->m_IndirectData.preprocessSize;
-
-		/**
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
-		m_Renderer->m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(cmdBuffer ? cmdBuffer : m_CommandBuffer, &info);
+		m_HandledIndirectData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 	}
 
 	void Renderer::RenderBehaveBuilder::PreprocessDGCAsync_NV()
@@ -968,24 +958,10 @@ namespace Spices {
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
 
 		/**
-		* @brief Instance a VkGeneratedCommandsInfoNV.
-		*/
-		VkGeneratedCommandsInfoNV            info{};
-		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
-		info.pipeline                      = m_Renderer->m_Pipelines["BasePassRenderer.Mesh.Default.DGC"]->GetPipeline();
-		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		info.indirectCommandsLayout        = m_Renderer->m_IndirectData.indirectCmdsLayout;
-		info.sequencesCount                = m_Renderer->m_IndirectData.nMeshPack;
-		info.streamCount                   = static_cast<uint32_t>(m_Renderer->m_IndirectData.inputs.size());
-		info.pStreams                      = m_Renderer->m_IndirectData.inputs.data();
-		info.preprocessBuffer              = m_Renderer->m_IndirectData.preprocessBuffer->Get();
-		info.preprocessSize                = m_Renderer->m_IndirectData.preprocessSize;
-
-		/**
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
-			m_Renderer->m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(cmdBuffer, &info);
+			m_HandledIndirectData->PreprocessDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 		});
 	}
 
@@ -997,23 +973,9 @@ namespace Spices {
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
 
 		/**
-		* @brief Instance a VkGeneratedCommandsInfoNV.
-		*/
-		VkGeneratedCommandsInfoNV            info{};
-		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
-		info.pipeline                      = m_Renderer->m_Pipelines[ss.str()]->GetPipeline();
-		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		info.indirectCommandsLayout        = m_Renderer->m_IndirectData.indirectCmdsLayout;
-		info.sequencesCount                = m_Renderer->m_IndirectData.nMeshPack;
-		info.streamCount                   = static_cast<uint32_t>(m_Renderer->m_IndirectData.inputs.size());
-		info.pStreams                      = m_Renderer->m_IndirectData.inputs.data();
-		info.preprocessBuffer              = m_Renderer->m_IndirectData.preprocessBuffer->Get();
-		info.preprocessSize                = m_Renderer->m_IndirectData.preprocessSize;
-
-		/**
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
-		m_Renderer->m_VulkanState.m_VkFunc.vkCmdExecuteGeneratedCommandsNV(cmdBuffer ? cmdBuffer : m_CommandBuffer, true, &info);
+		m_HandledIndirectData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 	}
 
 	void Renderer::RenderBehaveBuilder::ExecuteDGCAsync_NV()
@@ -1024,24 +986,10 @@ namespace Spices {
 		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
 
 		/**
-		* @brief Instance a VkGeneratedCommandsInfoNV.
-		*/
-		VkGeneratedCommandsInfoNV            info{};
-		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
-		info.pipeline                      = m_Renderer->m_Pipelines[ss.str()]->GetPipeline();
-		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		info.indirectCommandsLayout        = m_Renderer->m_IndirectData.indirectCmdsLayout;
-		info.sequencesCount                = m_Renderer->m_IndirectData.nMeshPack;
-		info.streamCount                   = static_cast<uint32_t>(m_Renderer->m_IndirectData.inputs.size());
-		info.pStreams                      = m_Renderer->m_IndirectData.inputs.data();
-		info.preprocessBuffer              = m_Renderer->m_IndirectData.preprocessBuffer->Get();
-		info.preprocessSize                = m_Renderer->m_IndirectData.preprocessSize;
-
-		/**
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
-			m_Renderer->m_VulkanState.m_VkFunc.vkCmdExecuteGeneratedCommandsNV(cmdBuffer, true, &info);
+			m_HandledIndirectData->ExecuteDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 		});
 	}
 
@@ -1558,6 +1506,11 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_InputInfos.clear();
+		if (!m_Renderer->m_IndirectData[subPassName])
+		{
+			m_Renderer->m_IndirectData[subPassName] = std::make_shared<VulkanIndirectDrawNV>(m_Renderer->m_VulkanState);
+		}
+
 		m_Renderer->m_IndirectData[subPassName]->ResetCommandsLayout();
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
 	}
@@ -1580,8 +1533,9 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->inputStrides.push_back(sizeof(VkBindShaderGroupIndirectCommandNV));
-		m_HandledIndirectData->strides += sizeof(VkBindShaderGroupIndirectCommandNV);
+		m_HandledIndirectData->AddInputStride(sizeof(VkBindShaderGroupIndirectCommandNV));
+
+		return *this;
 	}
 
 	Renderer::DGCLayoutBuilder& Renderer::DGCLayoutBuilder::AddPushConstantInput()
@@ -1610,8 +1564,9 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->inputStrides.push_back(sizeof(VkDeviceAddress));
-		m_HandledIndirectData->strides += sizeof(VkDeviceAddress);
+		m_HandledIndirectData->AddInputStride(sizeof(VkDeviceAddress));
+
+		return *this;
 	}
 
 	Renderer::DGCLayoutBuilder& Renderer::DGCLayoutBuilder::AddDrawMeshTaskInput()
@@ -1632,8 +1587,9 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->inputStrides.push_back(sizeof(VkDrawMeshTasksIndirectCommandNV));
-		m_HandledIndirectData->strides += sizeof(VkDrawMeshTasksIndirectCommandNV);
+		m_HandledIndirectData->AddInputStride(sizeof(VkDrawMeshTasksIndirectCommandNV));
+
+		return *this;
 	}
 
 	void Renderer::DGCLayoutBuilder::Build()
@@ -1641,19 +1597,8 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Instance a VkIndirectCommandsLayoutCreateInfoNV.
-		*/
-		VkIndirectCommandsLayoutCreateInfoNV     genInfo{};
-		genInfo.sType                          = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV;
-		genInfo.flags                          = VK_INDIRECT_COMMANDS_LAYOUT_USAGE_UNORDERED_SEQUENCES_BIT_NV;
-		genInfo.tokenCount                     = static_cast<uint32_t>(m_InputInfos.size());
-		genInfo.pTokens                        = m_InputInfos.data();
-		genInfo.streamCount                    = static_cast<uint32_t>(m_HandledIndirectData->inputStrides.size());
-		genInfo.pStreamStrides                 = m_HandledIndirectData->inputStrides.data();
-
-		/**
 		* @brief Create IndirectCommandsLayout.
 		*/
-		m_Renderer->m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_Renderer->m_VulkanState.m_Device, &genInfo, NULL, &m_HandledIndirectData->indirectCmdsLayout);
+		m_HandledIndirectData->BuildCommandLayout(m_InputInfos);
 	}
 }
