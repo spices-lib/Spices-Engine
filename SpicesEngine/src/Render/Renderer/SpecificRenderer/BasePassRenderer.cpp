@@ -170,16 +170,7 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
 
-		builder.PreprocessDGC_NV();
-
-		builder.PipelineMemoryBarrier(
-			VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV   , 
-			VK_ACCESS_INDIRECT_COMMAND_READ_BIT         , 
-			VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV , 
-			VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT
-		);
-
-		builder.ExecuteDGC_NV();
+		builder.RunDGC();
 
 		builder.BeginNextSubPass("SkyBox");
 

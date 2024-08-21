@@ -62,5 +62,16 @@ namespace Spices {
 		* Create specific descriptor set for sub pass.
 		*/
 		virtual void CreateDescriptorSet() override;
+
+		/**
+		* @brief This interface is called during OnSystemInitialize().
+		* Create Device Generated Commands Layout.
+		*/
+		virtual void CreateDeviceGeneratedCommandsLayout() override;
+
+		/**
+		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
+		*/
+		virtual void OnMeshAddedWorld() override;
 	};
 }

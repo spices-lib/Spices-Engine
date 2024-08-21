@@ -78,7 +78,7 @@ namespace Spices {
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
 			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
 			bool                                         isLoadDefaultMaterial = true ,
-			bool                                         isRegistryDGCPipeline = false
+			bool                                         isRegistryDGCPipeline = true
 		);
 
 		/**
@@ -650,10 +650,28 @@ namespace Spices {
 			DGCLayoutBuilder& AddShaderGroupInput();
 
 			/**
+			* @brief Add Binding Vertex Buffer to Input.
+			* @return Returns this reference.
+			*/
+			DGCLayoutBuilder& AddVertexBufferInput();
+
+			/**
+			* @brief Add Binding Index Buffer to Input.
+			* @return Returns this reference.
+			*/
+			DGCLayoutBuilder& AddIndexBufferInput();
+
+			/**
 			* @brief Add Binding PushConstant Command to Input.
 			* @return Returns this reference.
 			*/
 			DGCLayoutBuilder& AddPushConstantInput();
+
+			/**
+			* @brief Add Draw Indexed Command to Input.
+			* @return Returns this reference.
+			*/
+			DGCLayoutBuilder& AddDrawIndexedInput();
 
 			/**
 			* @brief Add Draw Mesh Task Command to Input.
@@ -824,28 +842,40 @@ namespace Spices {
 			);
 
 			/**
+			* @brief Run DGC Buffer.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			void RunDGC(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+
+			/**
+			* @brief Run DGC Buffer Async.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			void RunDGCAsync();
+
+			/**
 			* @brief Preprocess Device Generated CommandsBuffer.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			virtual void PreprocessDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+			void PreprocessDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
 
 			/**
 			* @brief Preprocess Device Generated CommandsBuffer Async.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			virtual void PreprocessDGCAsync_NV();
+			void PreprocessDGCAsync_NV();
 
 			/**
 			* @brief Execute Device Generated CommandsBuffer.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			virtual void ExecuteDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+			void ExecuteDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
 
 			/**
 			* @brief Execute Device Generated CommandsBuffer Async.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			virtual void ExecuteDGCAsync_NV();
+			void ExecuteDGCAsync_NV();
 
 			/**
 			* @brief Add a memory Barrier.
@@ -1424,9 +1454,12 @@ namespace Spices {
 
 					for (int i = 0; i < layoutTokens.size(); i++)
 					{
-						VkBindShaderGroupIndirectCommandNV shader;
-						VkDeviceAddress                    push;
-						VkDrawMeshTasksIndirectCommandNV   drawCmd;
+						VkBindShaderGroupIndirectCommandNV  shader;
+						VkBindVertexBufferIndirectCommandNV vbo;
+						VkBindIndexBufferIndirectCommandNV  ibo;
+						VkDeviceAddress                     push;
+						VkDrawIndexedIndirectCommand        drawIndexed;
+						VkDrawMeshTasksIndirectCommandNV    drawMesh;
 
 						switch (layoutTokens[i].tokenType)
 						{
@@ -1435,14 +1468,38 @@ namespace Spices {
 							stagingBuffer.WriteToBuffer(&shader, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
 
+						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_VERTEX_BUFFER_NV:
+							vbo.bufferAddress = v->GetVerticesBufferAddress();
+							vbo.size          = v->GetVertices().size() * sizeof(Vertex);
+							vbo.stride        = sizeof(Vertex);
+							stagingBuffer.WriteToBuffer(&vbo, inputStrides[i], index * inputStrides[i] + offset[i]);
+							break;
+
+						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NV:
+							ibo.bufferAddress = v->GetIndicesBufferAddress();
+							ibo.size = v->GetIndices().size() * sizeof(uint32_t);
+							ibo.indexType = VK_INDEX_TYPE_UINT32;
+							stagingBuffer.WriteToBuffer(&ibo, inputStrides[i], index * inputStrides[i] + offset[i]);
+							break;
+
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV:
 							push = v->GetMeshDesc().GetBufferAddress();
 							stagingBuffer.WriteToBuffer(&push, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
 
+
+						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NV:
+							drawIndexed.firstIndex     = 0;
+							drawIndexed.firstInstance  = 0;
+							drawIndexed.indexCount     = v->GetIndices().size();
+							drawIndexed.instanceCount  = 1;
+							drawIndexed.vertexOffset   = 0;
+							stagingBuffer.WriteToBuffer(&drawIndexed, inputStrides[i], index* inputStrides[i] + offset[i]);
+							break;
+
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_TASKS_NV:
-							drawCmd = v->GetDrawCommand();
-							stagingBuffer.WriteToBuffer(&drawCmd, inputStrides[i], index * inputStrides[i] + offset[i]);
+							drawMesh = v->GetDrawCommand();
+							stagingBuffer.WriteToBuffer(&drawMesh, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
 
 						default:

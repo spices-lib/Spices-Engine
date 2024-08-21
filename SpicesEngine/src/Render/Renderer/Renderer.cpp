@@ -937,6 +937,42 @@ namespace Spices {
 		});
 	}
 
+	void Renderer::RenderBehaveBuilder::RunDGC(VkCommandBuffer cmdBuffer)
+	{
+		SPICES_PROFILE_ZONE;
+
+		PreprocessDGC_NV(cmdBuffer);
+
+		PipelineMemoryBarrier(
+			VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV   ,
+			VK_ACCESS_INDIRECT_COMMAND_READ_BIT         ,
+			VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV ,
+			VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT         ,
+			cmdBuffer
+		);
+
+		ExecuteDGC_NV(cmdBuffer);
+	}
+
+	void Renderer::RenderBehaveBuilder::RunDGCAsync()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+			PreprocessDGC_NV(cmdBuffer);
+
+			PipelineMemoryBarrier(
+				VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV   ,
+				VK_ACCESS_INDIRECT_COMMAND_READ_BIT         ,
+				VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV ,
+				VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT         ,
+				cmdBuffer
+			);
+
+			ExecuteDGC_NV(cmdBuffer);
+		});
+	}
+
 	void Renderer::RenderBehaveBuilder::PreprocessDGC_NV(VkCommandBuffer cmdBuffer)
 	{
 		SPICES_PROFILE_ZONE;
@@ -1538,6 +1574,55 @@ namespace Spices {
 		return *this;
 	}
 
+	Renderer::DGCLayoutBuilder& Renderer::DGCLayoutBuilder::AddVertexBufferInput()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkIndirectCommandsLayoutTokenNV.
+		*/
+		VkIndirectCommandsLayoutTokenNV      input{};
+		input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
+		input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_VERTEX_BUFFER_NV;
+		
+		input.vertexBindingUnit            = 0;
+		input.vertexDynamicStride          = VK_FALSE;
+
+		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
+		input.offset                       = 0;
+
+		/**
+		* @brief Store Input.
+		*/
+		m_InputInfos.push_back(input);
+		m_HandledIndirectData->AddInputStride(sizeof(VkBindVertexBufferIndirectCommandNV));
+
+		return *this;
+	}
+
+	Renderer::DGCLayoutBuilder& Renderer::DGCLayoutBuilder::AddIndexBufferInput()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkIndirectCommandsLayoutTokenNV.
+		*/
+		VkIndirectCommandsLayoutTokenNV      input{};
+		input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
+		input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NV;
+
+		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
+		input.offset                       = 0;
+
+		/**
+		* @brief Store Input.
+		*/
+		m_InputInfos.push_back(input);
+		m_HandledIndirectData->AddInputStride(sizeof(VkBindIndexBufferIndirectCommandNV));
+
+		return *this;
+	}
+
 	Renderer::DGCLayoutBuilder& Renderer::DGCLayoutBuilder::AddPushConstantInput()
 	{
 		SPICES_PROFILE_ZONE;
@@ -1565,6 +1650,29 @@ namespace Spices {
 		*/
 		m_InputInfos.push_back(input);
 		m_HandledIndirectData->AddInputStride(sizeof(VkDeviceAddress));
+
+		return *this;
+	}
+
+	Renderer::DGCLayoutBuilder& Renderer::DGCLayoutBuilder::AddDrawIndexedInput()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkIndirectCommandsLayoutTokenNV.
+		*/
+		VkIndirectCommandsLayoutTokenNV      input{};
+		input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
+		input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NV;
+
+		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
+		input.offset                       = 0;
+
+		/**
+		* @brief Store Input.
+		*/
+		m_InputInfos.push_back(input);
+		m_HandledIndirectData->AddInputStride(sizeof(VkDrawIndexedIndirectCommand));
 
 		return *this;
 	}

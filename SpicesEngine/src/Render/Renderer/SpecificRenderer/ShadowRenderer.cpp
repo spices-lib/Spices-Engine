@@ -53,6 +53,26 @@ namespace Spices {
 		.Build();
 	}
 
+	void ShadowRenderer::CreateDeviceGeneratedCommandsLayout()
+	{
+		SPICES_PROFILE_ZONE;
+
+		DGCLayoutBuilder{ "DirectionalLightShadow", this }
+		.AddShaderGroupInput()
+		.AddVertexBufferInput()
+		.AddIndexBufferInput()
+		.AddPushConstantInput()
+		.AddDrawIndexedInput()
+		.Build();
+	}
+
+	void ShadowRenderer::OnMeshAddedWorld()
+	{
+		SPICES_PROFILE_ZONE;
+
+		FillIndirectRenderData<MeshComponent>("DirectionalLightShadow");
+	}
+
 	void ShadowRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
