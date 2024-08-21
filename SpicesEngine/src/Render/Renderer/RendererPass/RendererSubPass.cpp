@@ -8,7 +8,6 @@
 #include "RendererSubPass.h"
 
 #include "Render/Renderer/DescriptorSetManager/DescriptorSetManager.h"
-#include "Core/Library/ContainerLibrary.h"
 
 namespace Spices {
 

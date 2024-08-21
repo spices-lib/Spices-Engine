@@ -7,7 +7,6 @@
 #include "Pchheader.h"
 #include "MeshPack.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
-#include "Core/Library/ContainerLibrary.h"
 #include "Resources/Loader/MeshLoader.h"
 
 namespace Spices {
@@ -343,7 +342,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		ContainerLibrary::Append<Vertex>(vertices, m_Vertices);
+		vertices.insert(vertices.end(), m_Vertices.begin(), m_Vertices.end());
 	}
 
 	void MeshPack::CopyToIndices(std::vector<uint32_t>& indices, uint32_t offset)
@@ -355,7 +354,7 @@ namespace Spices {
 			m_Indices[i] += offset;
 		}
 
-		ContainerLibrary::Append<uint32_t>(indices, m_Indices);
+		indices.insert(indices.end(), m_Indices.begin(), m_Indices.end());
 	}
 
 	void SquarePack::OnCreatePack(bool isCreateBuffer)

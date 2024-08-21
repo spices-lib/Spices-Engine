@@ -163,7 +163,7 @@ namespace Spices {
 			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);
 
 			auto blas = meshComp.GetMesh()->CreateMeshPackASInput();
-			ContainerLibrary::Append<VulkanRayTracing::BlasInput>(allBlas, blas);
+			allBlas.insert(allBlas.end(), blas.begin(), blas.end());
 
 			meshComp.GetMesh()->AddMaterialToHitGroup(m_HitGroups);
 		}
