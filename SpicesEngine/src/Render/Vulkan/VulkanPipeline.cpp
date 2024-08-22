@@ -468,7 +468,7 @@ namespace Spices {
 		* We use pipeline reference here, so not need create shader group.
 		* Pass any group to create info will be fine.
 		*/
-		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+		const auto material = ResourcePool<Material>::Load<Material>(materialName, materialName);
 
 		VkPipelineShaderStageCreateInfo stage = ShaderManager::Registry(material->GetShaderPath("vert")[0], "vert")->GetShaderStageCreateInfo();
 
@@ -554,7 +554,7 @@ namespace Spices {
 		* We use pipeline reference here, so not need create shader group.
 		* Pass any group to create info will be fine.
 		*/
-		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+		const auto material = ResourcePool<Material>::Load<Material>(materialName, materialName);
 
 		VkPipelineShaderStageCreateInfo stage = ShaderManager::Registry(material->GetShaderPath("mesh")[0], "mesh")->GetShaderStageCreateInfo();
 

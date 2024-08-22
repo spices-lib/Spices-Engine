@@ -108,7 +108,7 @@ namespace Spices {
 		* @brief Material's DescriptorSetInfo.
 		* @note remove for material use bindless descriptorset.
 		*/
-		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+		const auto material = ResourcePool<Material>::Load<Material>(materialName, materialName);
 
 		/**
 		* @brief Instance a temp empty vector for VkDescriptorSetLayout.
@@ -165,7 +165,7 @@ namespace Spices {
 		* @brief Material's DescriptorSetInfo.
 		* @note remove for material use bindless descriptorset.
 		*/
-		const auto material = ResourcePool<Material>::Load<Material>(materialName);
+		const auto material = ResourcePool<Material>::Load<Material>(materialName, materialName);
 
 		/**
 		* @brief Instance a temp empty vector for VkDescriptorSetLayout.
@@ -208,7 +208,7 @@ namespace Spices {
 				std::stringstream ss;
 				ss << m_RendererName << "." << K << ".Default";
 				{
-					const auto material = ResourcePool<Material>::Load<Material>(ss.str());
+					const auto material = ResourcePool<Material>::Load<Material>(ss.str(), ss.str());
 					material->BuildMaterial();
 				}
 				

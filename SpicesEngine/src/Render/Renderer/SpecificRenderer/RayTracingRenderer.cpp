@@ -235,7 +235,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const auto rayTracingMaterial           = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default");
+		const auto rayTracingMaterial           = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default", "RayTracingRenderer.RayTracing.Default");
 
 		const uint32_t rayGenCount              = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rgen").size());
 		const uint32_t missCount                = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rmiss").size());

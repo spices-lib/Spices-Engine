@@ -63,7 +63,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        auto rowPtr = ResourcePool<Texture>::Load<Texture2D>(iconFile);
+        auto rowPtr = ResourcePool<Texture>::Load<Texture2D>(iconFile, iconFile);
         auto info = rowPtr->GetResource<VulkanImage>()->GetImageInfo();
 
         id = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);

@@ -18,20 +18,28 @@ namespace Spices {
 
 	void ResourceSystem::OnSystemInitialize()
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Create Default Resource in different ResourccePool.
 		*/
-		ResourcePool<Texture>::Load<Texture2D>("default.jpg");
+		ResourcePool<Texture>::Load<Texture2D>("default.jpg", "default.jpg");
+
+		//ResourcePool<MeshPack>::Load<SpherePack>("Sphere")->OnCreatePack();
+		ResourcePool<MeshPack>::Load<SquarePack>("Square")->OnCreatePack();
+		ResourcePool<MeshPack>::Load<BoxPack>("Box")->OnCreatePack();
 	}
 
 	void ResourceSystem::OnSystemShutDown()
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Release all Resources
 		*/
 		ResourcePool<Texture>  ::Destroy();
 		ResourcePool<Material> ::Destroy();
-		ResourcePool<Mesh>     ::Destroy();
+		ResourcePool<MeshPack> ::Destroy();
 	}
 
 	void ResourceSystem::OnSystemUpdate(TimeStep& ts)

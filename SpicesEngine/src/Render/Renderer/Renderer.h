@@ -1896,7 +1896,7 @@ namespace Spices {
 		*/
 		for (int i = 0; i < textureNames.size(); i++)
 		{
-			const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i]);
+			const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i], textureNames[i]);
 			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
 		}
 
@@ -1924,7 +1924,7 @@ namespace Spices {
 		*/
 		for (int i = 0; i < textureNames.size(); i++)
 		{
-			const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i]);
+			const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<T>(textureNames[i], textureNames[i]);
 			m_ImageInfos[set][binding].push_back(*texture->GetResource<VulkanImage>()->GetImageInfo());
 		}
 

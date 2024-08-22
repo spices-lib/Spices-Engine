@@ -177,7 +177,7 @@ namespace Spices {
 				*/
 				if (v.textureType == "Texture2D")
 				{
-					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath);
+					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
 					v.index = BindLessTextureManager::Registry(v.texturePath);
 
 					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
@@ -312,7 +312,7 @@ namespace Spices {
 				*/
 				if (v.textureType == "Texture2D")
 				{
-					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath);
+					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
 					v.index = BindLessTextureManager::Registry(v.texturePath);
 
 					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);

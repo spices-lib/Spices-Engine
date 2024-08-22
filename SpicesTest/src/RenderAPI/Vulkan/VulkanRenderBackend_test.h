@@ -51,7 +51,7 @@ namespace SpicesTest {
 			*/
 			Spices::ResourcePool<Spices::Texture>  ::Destroy();
 			Spices::ResourcePool<Spices::Material> ::Destroy();
-			Spices::ResourcePool<Spices::Mesh>     ::Destroy();
+			Spices::ResourcePool<Spices::MeshPack> ::Destroy();
 		}
 
 	protected:
