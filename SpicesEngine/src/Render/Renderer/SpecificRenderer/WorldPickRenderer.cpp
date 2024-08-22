@@ -46,31 +46,35 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "WorldPick" }));
 
-		IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
+		frameInfo.m_PickEntityID.for_each([&](const auto& k, const auto& v) {
+			Entity e = frameInfo.m_World->QueryEntitybyID(k);
 
-			meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
-				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
+			if (e.HasComponent<MeshComponent>())
+			{
+				MeshComponent& meshComp = e.GetComponent<MeshComponent>();
 
-				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
-					push = meshPack->GetMeshDesc().GetBufferAddress();
+				meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
+					builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
+
+					builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+						push = meshPack->GetMeshDesc().GetBufferAddress();
+					});
 				});
-			});
+			}
 
-			return false;
-		});
+			if (e.HasComponent<SpriteComponent>())
+			{
+				SpriteComponent& meshComp = e.GetComponent<SpriteComponent>();
 
-		IterWorldCompWithBreak<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
-			if (!frameInfo.m_PickEntityID.has_key(entityId)) return false;
+				meshComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
+					builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
 
-			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
-				builder.BindPipeline("WorldPickRenderer.WorldPick.Default");
-
-				builder.UpdatePushConstant<uint64_t>([&](auto& push) {
-					push = meshPack->GetMeshDesc().GetBufferAddress();
+					builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+						push = meshPack->GetMeshDesc().GetBufferAddress();
+					});
 				});
-			});
-
+			}
+			
 			return false;
 		});
 

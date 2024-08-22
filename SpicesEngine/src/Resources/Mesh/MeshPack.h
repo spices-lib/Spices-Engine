@@ -170,6 +170,12 @@ namespace Spices {
 		const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
 
 		/**
+		* @brief Get Vertices Count.
+		* @return Returns Vertices Count.
+		*/
+		uint32_t GetNVertices() const { return m_NVertices; }
+
+		/**
 		* @brief Add a Vertex to m_Vertices.
 		* @param[in] v Vertex.
 		*/
@@ -182,6 +188,12 @@ namespace Spices {
 		const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
 
 		/**
+		* @brief Get Indices Count.
+		* @return Returns Indices Count.
+		*/
+		uint32_t GetNIndices() const { return m_NIndices; }
+
+		/**
 		* @brief Add a Index to m_Indices.
 		* @param[in] i Index.
 		*/
@@ -192,6 +204,12 @@ namespace Spices {
 		* @return Returns the Meshlets array.
 		*/
 		const std::vector<Meshlet>& GetMeshlets() const { return m_Meshlets; }
+
+		/**
+		* @brief Get Meshlets Count.
+		* @return Returns Meshlets Count.
+		*/
+		uint32_t GetNMeshlets() const { return m_NMeshlets; }
 
 		/**
 		* @brief Get NTasks.
@@ -310,14 +328,29 @@ namespace Spices {
 		std::vector<Vertex> m_Vertices;
 
 		/**
+		* @brief Vertices Count.
+		*/
+		uint32_t m_NVertices;
+
+		/**
 		* @brief Indices array.
 		*/
 		std::vector<uint32_t> m_Indices;
 
 		/**
+		* @brief Indices Count.
+		*/
+		uint32_t m_NIndices;
+
+		/**
 		* @brief MeshPack meshlets.
 		*/
 		std::vector<Meshlet> m_Meshlets;
+
+		/**
+		* @brief Meshlets Count;
+		*/
+		uint32_t m_NMeshlets;
 
 		/**
 		* @brief Task Sahder Work Group Size.

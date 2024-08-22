@@ -79,21 +79,27 @@ namespace Spices {
 	bool MeshPack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
-
-		auto ptr = ResourcePool<MeshPack>::Load(m_MeshPackName);
-		if (m_Instanced || !ptr)
-		{
-			ResourcePool<MeshPack>::Registry(m_MeshPackName, std::shared_ptr<MeshPack>(this));
-			return false;
-		}
 		
+		auto ptr = ResourcePool<MeshPack>::Load(m_MeshPackName);
+
+		if (m_Instanced || !ptr) return false;
+
 		/**
 		* @brief Copy Data from ResourcePool.
 		*/
-		m_Desc                        = ptr->m_Desc;
-		m_VertexBuffer                = ptr->m_VertexBuffer;
-		m_IndicesBuffer               = ptr->m_IndicesBuffer;
-		m_MeshTaskIndirectDrawCommand = ptr->m_MeshTaskIndirectDrawCommand;
+		m_Desc                              = ptr->m_Desc.Copy();
+		m_VertexBuffer                      = ptr->m_VertexBuffer;
+		m_IndicesBuffer                     = ptr->m_IndicesBuffer;
+		m_MeshletsBuffer                    = ptr->m_MeshletsBuffer;
+		m_MeshTaskIndirectDrawCommand       = ptr->m_MeshTaskIndirectDrawCommand;
+		m_NIndices                          = ptr->m_NIndices;
+		m_NVertices                         = ptr->m_NVertices;
+		m_NMeshlets                         = ptr->m_NMeshlets;
+
+		if (m_Material)
+		{
+			m_Desc.UpdatematerialParameterAddress(m_Material->GetMaterialParamsAddress());
+		}
 
 		return true;
 	}
@@ -148,7 +154,7 @@ namespace Spices {
 		const VkDeviceAddress vertexAddress          =  m_VertexBuffer->GetAddress();
 		const VkDeviceAddress indicesAddress         =  m_IndicesBuffer->GetAddress();
 
-		const uint32_t maxPrimitiveCount             = static_cast<uint32_t>(m_Indices.size() / 3);
+		const uint32_t maxPrimitiveCount             = static_cast<uint32_t>(m_NIndices / 3);
 
 		/**
 		* @brief device pointer to the buffers holding triangle vertex/index data, 
@@ -162,7 +168,7 @@ namespace Spices {
 		triangles.indexType                          = VK_INDEX_TYPE_UINT32;
 		triangles.indexData.deviceAddress            = indicesAddress;
 	  //triangles.transformData = {};
-		triangles.maxVertex                          = static_cast<uint32_t>(m_Vertices.size() - 1);
+		triangles.maxVertex                          = static_cast<uint32_t>(m_NIndices - 1);
 
 		/**
 		* @brief wrapper around the above with the geometry type enum (triangles in this case) plus flags for the AS builder.
@@ -200,7 +206,9 @@ namespace Spices {
 		* @brief Build meshlet buffer.
 		*/
 		{
-			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlet) * m_Meshlets.size();
+			m_NMeshlets = m_Meshlets.size();
+
+			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlet) * m_NMeshlets;
 
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState(),
@@ -223,12 +231,12 @@ namespace Spices {
 
 			m_MeshletsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshletsBuffer->Get(), bufferSize);
 
-			m_NTasks = m_Meshlets.size() / SUBGROUP_SIZE + 1;
+			m_NTasks = m_NMeshlets / SUBGROUP_SIZE + 1;
 
 			m_MeshTaskIndirectDrawCommand.firstTask = 0;
 			m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
 
-			m_Desc.UpdatenMeshlets(m_Meshlets.size());
+			m_Desc.UpdatenMeshlets(m_NMeshlets);
 			m_Desc.UpdatemeshletAddress(m_MeshletsBuffer->GetAddress());
 		}
 
@@ -236,7 +244,9 @@ namespace Spices {
 		* @brief Build vertex buffer
 		*/
 		{
-			VkDeviceSize bufferSize = sizeof(Vertex) * m_Vertices.size();
+			m_NVertices = m_Vertices.size();
+			
+			VkDeviceSize bufferSize = sizeof(Vertex) * m_NVertices;
 
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState(),
@@ -267,7 +277,9 @@ namespace Spices {
 		* @brief Build index buffer.
 		*/
 		{
-			VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_Indices.size();
+			m_NIndices = m_Indices.size();
+
+			VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_NIndices;
 
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState(),
@@ -413,7 +425,7 @@ namespace Spices {
 				vt.color = glm::vec3{ 1.0f };
 				vt.texCoord = { colRamp + 0.5, 0.5 - rowRamp };
 
-				m_Vertices.push_back(std::move(vt));
+				m_Vertices.push_back(vt);
 			}
 		}
 
@@ -563,7 +575,7 @@ namespace Spices {
 				m_Vertices.push_back(std::move(vt));
 			}
 		}
-
+		
 		for (uint32_t i = 0; i < m_Rows - 1; i++)
 		{
 			for (uint32_t j = 0; j < m_Columns - 1; j++)

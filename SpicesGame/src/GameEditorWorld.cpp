@@ -87,7 +87,7 @@ namespace Spices {
 					TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 					transformComp1.SetPosition({3.0f * i, 0.0f, 3.0f * j});
 
-					std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100, false);
+					std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
 
 					std::stringstream mss;
 					mss << "BasePassRenderer.Mesh." << 10 * i + j;
@@ -114,7 +114,7 @@ namespace Spices {
 		//				TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 		//				transformComp1.SetPosition({ 3.0f * i, 3.0f * k, 3.0f * j });
 
-		//				std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
+		//				std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(15, 24, false);
 
 		//				std::stringstream mss;
 		//				mss << "BasePassRenderer.Mesh.0";

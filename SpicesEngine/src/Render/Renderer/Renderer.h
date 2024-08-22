@@ -1483,14 +1483,14 @@ namespace Spices {
 
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_VERTEX_BUFFER_NV:
 							vbo.bufferAddress = v->GetVerticesBufferAddress();
-							vbo.size          = v->GetVertices().size() * sizeof(Vertex);
+							vbo.size          = v->GetNVertices() * sizeof(Vertex);
 							vbo.stride        = sizeof(Vertex);
 							stagingBuffer.WriteToBuffer(&vbo, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
 
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NV:
 							ibo.bufferAddress = v->GetIndicesBufferAddress();
-							ibo.size = v->GetIndices().size() * sizeof(uint32_t);
+							ibo.size = v->GetNIndices() * sizeof(uint32_t);
 							ibo.indexType = VK_INDEX_TYPE_UINT32;
 							stagingBuffer.WriteToBuffer(&ibo, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
@@ -1504,7 +1504,7 @@ namespace Spices {
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NV:
 							drawIndexed.firstIndex     = 0;
 							drawIndexed.firstInstance  = 0;
-							drawIndexed.indexCount     = v->GetIndices().size();
+							drawIndexed.indexCount     = v->GetNIndices();
 							drawIndexed.instanceCount  = 1;
 							drawIndexed.vertexOffset   = 0;
 							stagingBuffer.WriteToBuffer(&drawIndexed, inputStrides[i], index* inputStrides[i] + offset[i]);
