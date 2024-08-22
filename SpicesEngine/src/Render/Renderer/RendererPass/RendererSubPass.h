@@ -77,15 +77,33 @@ namespace Spices
 		void BuildSubPassDescription();
 		
 		/**
-		* @brief Build First VkSubpassDependency.
+		* @brief Add First VkSubpassDependency.
 		*/
-		void BuildFirstSubPassDependency();
+		void AddFirstSubPassDependency();
 
 		/**
 		* @brief Build VkSubpassDependency.
 		* @param[in] index The index of sub pass of pass.
 		*/
 		void BuildSubPassDependency(uint32_t index);
+
+		/**
+		* @brief Add VkSubpassDependency.
+		* @param[in] srcsubpass The index of src sub pass of pass.
+		* @param[in] dstsubpass The index of dst sub pass of pass.
+		* @param[in] srcAccessMask VkAccessFlags
+		* @param[in] dstAccessMask VkAccessFlags
+		* @param[in] srcStageMask VkPipelineStageFlags
+		* @param[in] dstStageMask VkPipelineStageFlags
+		*/
+		void AddSubPassDependency(
+			uint32_t               srcsubpass    , 
+			uint32_t               dstsubpass    ,
+			VkAccessFlags          srcAccessMask ,
+			VkAccessFlags          dstAccessMask ,
+			VkPipelineStageFlags   srcStageMask  ,
+			VkPipelineStageFlags   dstStageMask
+		);
 
 		/**
 		* @brief Set Pipeline PushConstant.

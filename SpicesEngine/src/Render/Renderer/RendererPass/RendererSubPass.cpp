@@ -52,48 +52,59 @@ namespace Spices {
 		m_SubPassDescriptions.pInputAttachments         = m_InputAttachmentReference.data();
 	}
 
-	void RendererSubPass::BuildFirstSubPassDependency()
+	void RendererSubPass::AddFirstSubPassDependency()
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_SubPassDependency[0].srcSubpass      = VK_SUBPASS_EXTERNAL;
-		m_SubPassDependency[0].dstSubpass      = 0;
-		m_SubPassDependency[0].srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-		m_SubPassDependency[0].dstStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-		m_SubPassDependency[0].srcAccessMask   = 0;
-		m_SubPassDependency[0].dstAccessMask   = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-		m_SubPassDependency[0].dependencyFlags = 0;
+		VkSubpassDependency                   dependency{};
+		dependency.srcSubpass               = VK_SUBPASS_EXTERNAL;
+		dependency.dstSubpass               = 0;
+		dependency.srcStageMask             = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+		dependency.dstStageMask             = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+		dependency.srcAccessMask            = 0;
+		dependency.dstAccessMask            = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		dependency.dependencyFlags          = 0;
+
+		m_SubPassDependency.push_back(std::move(dependency));
 	}
 
 	void RendererSubPass::BuildSubPassDependency(uint32_t index)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_SubPassDependency.resize(3);
+		VkSubpassDependency                   dependency{};
+		dependency.srcSubpass               = index - 1;
+		dependency.dstSubpass               = index;
+		dependency.srcStageMask             = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.dstStageMask             = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		dependency.srcAccessMask            = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependency.dstAccessMask            = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+		dependency.dependencyFlags          = VK_DEPENDENCY_BY_REGION_BIT;
 
-		m_SubPassDependency[0].srcSubpass      = index - 1;
-		m_SubPassDependency[0].dstSubpass      = index;
-		m_SubPassDependency[0].srcStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		m_SubPassDependency[0].dstStageMask    = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		m_SubPassDependency[0].srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		m_SubPassDependency[0].dstAccessMask   = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
-		m_SubPassDependency[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+		m_SubPassDependency.push_back(std::move(dependency));
+	}
 
-		m_SubPassDependency[1].srcSubpass      = index;
-		m_SubPassDependency[1].dstSubpass      = index;
-		m_SubPassDependency[1].srcStageMask    = VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV;
-		m_SubPassDependency[1].dstStageMask    = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
-		m_SubPassDependency[1].srcAccessMask   = VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV;
-		m_SubPassDependency[1].dstAccessMask   = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		m_SubPassDependency[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+	void RendererSubPass::AddSubPassDependency(
+		uint32_t               srcsubpass    ,
+		uint32_t               dstsubpass    ,
+		VkAccessFlags          srcAccessMask ,
+		VkAccessFlags          dstAccessMask ,
+		VkPipelineStageFlags   srcStageMask  ,
+		VkPipelineStageFlags   dstStageMask
+	)
+	{
+		SPICES_PROFILE_ZONE;
 
-		m_SubPassDependency[2].srcSubpass      = index;
-		m_SubPassDependency[2].dstSubpass      = index;
-		m_SubPassDependency[2].srcStageMask    = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
-		m_SubPassDependency[2].dstStageMask    = VK_PIPELINE_STAGE_NONE;
-		m_SubPassDependency[2].srcAccessMask   = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		m_SubPassDependency[2].dstAccessMask   = VK_ACCESS_NONE;
-		m_SubPassDependency[2].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+		VkSubpassDependency                   dependency{};
+		dependency.srcSubpass               = srcsubpass;
+		dependency.dstSubpass               = dstsubpass;
+		dependency.srcStageMask             = srcStageMask;
+		dependency.dstStageMask             = dstStageMask;
+		dependency.srcAccessMask            = srcAccessMask;
+		dependency.dstAccessMask            = dstAccessMask;
+		dependency.dependencyFlags          = VK_DEPENDENCY_BY_REGION_BIT;
+
+		m_SubPassDependency.push_back(std::move(dependency));
 	}
 
 	void RendererSubPass::SetBuffer(const UInt2& i2, void* data, uint64_t size, uint64_t offset)

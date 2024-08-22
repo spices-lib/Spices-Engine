@@ -382,6 +382,20 @@ namespace Spices {
 			);
 
 			/**
+			* @brief Add subpass Self Dependency.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			*/
+			RendererPassBuilder& AddSelfDependency(
+				VkAccessFlags          srcAccessMask ,
+				VkAccessFlags          dstAccessMask ,
+				VkPipelineStageFlags   srcStageMask  ,
+				VkPipelineStageFlags   dstStageMask
+			);
+
+			/**
 			* @brief End recording a sub pass.
 			* @return Returns the RendererPassBuilder.
 			*/

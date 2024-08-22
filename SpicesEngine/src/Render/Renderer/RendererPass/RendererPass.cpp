@@ -129,7 +129,7 @@ namespace Spices {
 		});
 
 		std::vector<VkSubpassDependency> subPassDependency;
-		(*m_SubPasses.first())->BuildFirstSubPassDependency();
+		(*m_SubPasses.first())->AddFirstSubPassDependency();
 		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			subPassDependency.insert(subPassDependency.end(), subpass->GetDependency().begin(), subpass->GetDependency().end());
 			return false;

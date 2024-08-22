@@ -1380,6 +1380,22 @@ namespace Spices {
 
 		const size_t size = m_Renderer->m_Pass->GetSubPasses().size();
 		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, static_cast<uint32_t>(size));
+
+		return *this;
+	}
+
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSelfDependency(
+		VkAccessFlags        srcAccessMask , 
+		VkAccessFlags        dstAccessMask , 
+		VkPipelineStageFlags srcStageMask  , 
+		VkPipelineStageFlags dstStageMask
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		uint32_t index = m_HandledRendererSubPass->GetIndex();
+		m_HandledRendererSubPass->AddSubPassDependency(index, index, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask);
+
 		return *this;
 	}
 
@@ -1391,6 +1407,7 @@ namespace Spices {
 
 		const size_t index = m_Renderer->m_Pass->GetSubPasses().size() - 1;
 		m_HandledRendererSubPass->BuildSubPassDependency(static_cast<uint32_t>(index));
+
 		return *this;
 	}
 
