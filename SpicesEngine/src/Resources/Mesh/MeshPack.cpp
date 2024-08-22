@@ -25,7 +25,9 @@ namespace Spices {
 
 		m_Buffer = std::make_shared<VulkanBuffer>(
 			VulkanRenderBackend::GetState(),
-			sizeof(MeshDesc),
+			sizeof(SpicesShader::MeshDesc),
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT         |
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT         |
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT      |
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -34,8 +36,20 @@ namespace Spices {
 		m_Buffer->WriteToBuffer(this);
 	}
 
-	MeshPack::MeshPack()
+	MeshDesc MeshDesc::Copy()
+	{
+		SPICES_PROFILE_ZONE;
+
+		MeshDesc desc;
+		desc.m_Buffer->CopyBuffer(m_Buffer->Get(), desc.m_Buffer->Get(), sizeof(SpicesShader::MeshDesc));
+
+		return desc;
+	}
+
+	MeshPack::MeshPack(const std::string& name, bool instanced)
 		: m_UUID(UUID())
+		, m_MeshPackName(name)
+		, m_Instanced(instanced)
 	{}
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
@@ -62,11 +76,33 @@ namespace Spices {
 		VulkanRenderBackend::GetState().m_VkFunc.vkCmdDrawMeshTasksEXT(commandBuffer, m_NTasks, 1, 1);
 	}
 
+	bool MeshPack::OnCreatePack(bool isCreateBuffer)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto ptr = ResourcePool<MeshPack>::Load(m_MeshPackName);
+		if (m_Instanced || !ptr)
+		{
+			ResourcePool<MeshPack>::Registry(m_MeshPackName, std::shared_ptr<MeshPack>(this));
+			return false;
+		}
+		
+		/**
+		* @brief Copy Data from ResourcePool.
+		*/
+		m_Desc                        = ptr->m_Desc;
+		m_VertexBuffer                = ptr->m_VertexBuffer;
+		m_IndicesBuffer               = ptr->m_IndicesBuffer;
+		m_MeshTaskIndirectDrawCommand = ptr->m_MeshTaskIndirectDrawCommand;
+
+		return true;
+	}
+
 	void MeshPack::SetMaterial(const std::string& materialPath)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Material = ResourcePool<Material>::Load<Material>(materialPath);
+		m_Material = ResourcePool<Material>::Load<Material>(materialPath, materialPath);
 		m_Material->BuildMaterial();
 
 		m_Desc.UpdatematerialParameterAddress(m_Material->GetMaterialParamsAddress());
@@ -357,9 +393,11 @@ namespace Spices {
 		indices.insert(indices.end(), m_Indices.begin(), m_Indices.end());
 	}
 
-	void SquarePack::OnCreatePack(bool isCreateBuffer)
+	bool SquarePack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
@@ -400,11 +438,15 @@ namespace Spices {
 			CreateMeshlets();
 			CreateBuffer();
 		}
+
+		return true;
 	}
 
-	void BoxPack::OnCreatePack(bool isCreateBuffer)
+	bool BoxPack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 
 		// Front
 		{
@@ -482,19 +524,27 @@ namespace Spices {
 			CreateMeshlets();
 			CreateBuffer();
 		}
+
+		return true;
 	}
 
-	void FilePack::OnCreatePack(bool isCreateBuffer)
+	bool FilePack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 
 		MeshLoader::Load(m_Path, this);
 		if(isCreateBuffer) CreateBuffer();
+
+		return true;
 	}
 	
-	void SpherePack::OnCreatePack(bool isCreateBuffer)
+	bool SpherePack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 
 		for (uint32_t i = 0; i < m_Rows; i++)
 		{
@@ -535,6 +585,8 @@ namespace Spices {
 			CreateMeshlets();
 			CreateBuffer();
 		}
+
+		return true;
 	}
 
 }

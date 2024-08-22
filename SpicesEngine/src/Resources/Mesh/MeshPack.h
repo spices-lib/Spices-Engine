@@ -40,6 +40,11 @@ namespace Spices {
 		MeshDesc();
 
 		/**
+		* @brief Copy a MeshDesc from this.
+		*/
+		MeshDesc Copy();
+
+		/**
 		* @brief Get m_Buffer's Address.
 		* @return Returns the m_Buffer's Address.
 		*/
@@ -70,8 +75,10 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
+		* @param[in] name MeshPack Name.
+		* @param[in] instanced Is this maeshpack instanced.
 		*/
-		MeshPack();
+		MeshPack(const std::string& name, bool instanced);
 
 		/**
 		* @brief Destructor Function.
@@ -93,8 +100,9 @@ namespace Spices {
 		/**
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
+		* @return Returns true if copy resource from Pool.
 		*/
-		virtual void OnCreatePack(bool isCreateBuffer = true) {}
+		virtual bool OnCreatePack(bool isCreateBuffer = true);
 
 		/**
 		* @brief Set specific material for this class.
@@ -287,6 +295,16 @@ namespace Spices {
 	protected:
 
 		/**
+		* @brief MeshPack Name.
+		*/
+		std::string m_MeshPackName;
+
+		/**
+		* @brief If this meshpack needs instanced.
+		*/
+		bool m_Instanced;
+
+		/**
 		* @brief Vertices array.
 		*/
 		std::vector<Vertex> m_Vertices;
@@ -377,9 +395,12 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] rows The rows number.
 		* @param[in] columns The columns number.
+		* @param[in] instanced Is this maeshpack instanced.
 		*/
-		SquarePack(uint32_t rows = 2, uint32_t columns = 2)
-			: MeshPack(), m_Rows(rows), m_Columns(columns)
+		SquarePack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
+			: MeshPack("Square", instanced)
+			, m_Rows(rows)
+			, m_Columns(columns)
 		{
 			m_PackType = "SquarePack";
 		}
@@ -387,8 +408,9 @@ namespace Spices {
 		/**
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
+		* @return Returns true if Create Pack successfully.
 		*/
-		virtual void OnCreatePack(bool isCreateBuffer = true) override;
+		virtual bool OnCreatePack(bool isCreateBuffer = true) override;
 
 	private:
 
@@ -417,9 +439,12 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] rows The rows number.
 		* @param[in] columns The columns number.
+		* @param[in] instanced Is this maeshpack instanced.
 		*/
-		BoxPack(uint32_t rows = 2, uint32_t columns = 2)
-			: MeshPack(), m_Rows(rows), m_Columns(columns)
+		BoxPack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
+			: MeshPack("Box", instanced)
+			, m_Rows(rows)
+			, m_Columns(columns)
 		{
 			m_PackType = "BoxPack";
 		}
@@ -427,8 +452,9 @@ namespace Spices {
 		/**
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
+		* @return Returns true if Create Pack successfully.
 		*/
-		virtual void OnCreatePack(bool isCreateBuffer = true) override;
+		virtual bool OnCreatePack(bool isCreateBuffer = true) override;
 
 	private:
 
@@ -456,9 +482,12 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] rows The rows number.
 		* @param[in] columns The columns number.
+		* @param[in] instanced Is this maeshpack instanced.
 		*/
-		SpherePack(uint32_t rows = 15, uint32_t columns = 24)
-			: MeshPack(), m_Rows(rows), m_Columns(columns)
+		SpherePack(uint32_t rows = 15, uint32_t columns = 24, bool instanced = true)
+			: MeshPack("Sphere", instanced)
+			, m_Rows(rows)
+			, m_Columns(columns)
 		{
 			m_PackType = "SpherePack";
 		}
@@ -466,8 +495,9 @@ namespace Spices {
 		/**
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
+		* @return Returns true if Create Pack successfully.
 		*/
-		virtual void OnCreatePack(bool isCreateBuffer = true) override;
+		virtual bool OnCreatePack(bool isCreateBuffer = true) override;
 
 	private:
 
@@ -494,9 +524,10 @@ namespace Spices {
 		* @brief Constructor Function.
 		* Init member variables.
 		* @param[in] filePath The mesh file path in disk.
+		* @param[in] instanced Is this maeshpack instanced.
 		*/
-		FilePack(const std::string& filePath)
-			: MeshPack()
+		FilePack(const std::string& filePath, bool instanced = true)
+			: MeshPack(filePath, instanced)
 			, m_Path(filePath)
 		{
 			m_PackType = "FilePack";
@@ -505,8 +536,9 @@ namespace Spices {
 		/**
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
+		* @return Returns true if Create Pack successfully.
 		*/
-		virtual void OnCreatePack(bool isCreateBuffer = true) override;
+		virtual bool OnCreatePack(bool isCreateBuffer = true) override;
 
 	private:
 

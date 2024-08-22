@@ -75,6 +75,13 @@ namespace Spices {
 		static bool Has(const std::string& name);
 
 		/**
+		* @brief Registry a resource to this Pool.
+		* @param[in] name Resource Name.
+		* @param[in] resource Resource.
+		*/
+		static void Registry(const std::string& name, std::shared_ptr<T> resource);
+
+		/**
 		* @brief Destroy this resource pool.
 		* Release all Resource Pointer, which means resource can be destructed after called this API.
 		*/
@@ -125,6 +132,15 @@ namespace Spices {
 
 		if (m_Resources.find(name) != m_Resources.end()) return true;
 		return false;
+	}
+
+	template<typename T>
+	inline void ResourcePool<T>::Registry(const std::string& name, std::shared_ptr<T> resource)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_Resources.find(name) != m_Resources.end()) return;
+		m_Resources[name] = resource;
 	}
 
 	template<typename T>
