@@ -33,7 +33,7 @@ namespace Spices {
 		* @brief Init General ThreadPool.
 		*/
 		ThreadPool::Get()->SetMode(PoolMode::MODE_FIXED);
-		ThreadPool::Get()->Start(std::thread::hardware_concurrency());
+		ThreadPool::Get()->Start(4);
 
 		/**
 		* @brief Init all Systems.

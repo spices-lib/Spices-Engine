@@ -27,7 +27,7 @@ namespace Spices {
 
 		ResourcePool<MeshPack>::Load<SpherePack>("Sphere")->OnCreatePack();
 		ResourcePool<MeshPack>::Load<SquarePack>("Square")->OnCreatePack();
-		ResourcePool<MeshPack>::Load<BoxPack>("Box")->OnCreatePack();
+		ResourcePool<MeshPack>::Load<CubePack>("Cube")->OnCreatePack();
 	}
 
 	void ResourceSystem::OnSystemShutDown()

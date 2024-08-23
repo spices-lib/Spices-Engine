@@ -460,10 +460,10 @@ namespace Spices {
 
 
 	/**
-	* @brief BoxPack Class.
+	* @brief CubePack Class.
 	* This class defines box type meshpack.
 	*/
-	class BoxPack : public MeshPack
+	class CubePack : public MeshPack
 	{
 	public:
 
@@ -474,12 +474,12 @@ namespace Spices {
 		* @param[in] columns The columns number.
 		* @param[in] instanced Is this maeshpack instanced.
 		*/
-		BoxPack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
-			: MeshPack("Box", instanced)
+		CubePack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
+			: MeshPack("Cube", instanced)
 			, m_Rows(rows)
 			, m_Columns(columns)
 		{
-			m_PackType = "BoxPack";
+			m_PackType = "CubePack";
 		}
 
 		/**

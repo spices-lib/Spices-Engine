@@ -142,6 +142,8 @@ namespace Spices {
 			meshComp.SetMesh(mesh);
 		}
 
+		WorldFunctions::CreateCubeEntity(this);
+
 		// pointlight
 		{
 			Entity plightentity = CreateEntity("PointLight");

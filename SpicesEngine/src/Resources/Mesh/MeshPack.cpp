@@ -454,7 +454,7 @@ namespace Spices {
 		return true;
 	}
 
-	bool BoxPack::OnCreatePack(bool isCreateBuffer)
+	bool CubePack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 

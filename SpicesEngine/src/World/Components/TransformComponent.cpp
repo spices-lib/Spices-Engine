@@ -123,16 +123,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##X", &m_Position.x, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##X", &m_Transform.position.x, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Position.x != 0.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.position.x != 0.0f))
 				{ 
-					m_Position.x = 0.0f; 
+					m_Transform.position.x = 0.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -151,16 +151,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##Y", &m_Position.y, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##Y", &m_Transform.position.y, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Position.y != 0.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.position.y != 0.0f))
 				{
-					m_Position.y = 0.0f; 
+					m_Transform.position.y = 0.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -179,16 +179,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##Z", &m_Position.z, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##Z", &m_Transform.position.z, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Position.z != 0.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.position.z != 0.0f))
 				{ 
-					m_Position.z = 0.0f; 
+					m_Transform.position.z = 0.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -270,16 +270,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##X", &m_Rotation.x, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##X", &m_Transform.rotation.x, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Rotation.x != 0.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.rotation.x != 0.0f))
 				{ 
-					m_Rotation.x = 0.0f; 
+					m_Transform.rotation.x = 0.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -298,16 +298,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##Y", &m_Rotation.y, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##Y", &m_Transform.rotation.y, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Rotation.y != 0.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.rotation.y != 0.0f))
 				{ 
-					m_Rotation.y = 0.0f; 
+					m_Transform.rotation.y = 0.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				};
@@ -326,16 +326,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##Z", &m_Rotation.z, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##Z", &m_Transform.rotation.z, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Rotation.z != 0.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.rotation.z != 0.0f))
 				{ 
-					m_Rotation.z = 0.0f;
+					m_Transform.rotation.z = 0.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -409,16 +409,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##X", &m_Scale.x, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##X", &m_Transform.scale.x, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Scale.x != 1.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.scale.x != 1.0f))
 				{ 
-					m_Scale.x = 1.0f;
+					m_Transform.scale.x = 1.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -437,16 +437,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##Y", &m_Scale.y, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##Y", &m_Transform.scale.y, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Scale.y != 1.0f)) 
+				if (ImGuiH::DrawResetIcon(m_Transform.scale.y != 1.0f))
 				{ 
-					m_Scale.y = 1.0f; 
+					m_Transform.scale.y = 1.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -465,16 +465,16 @@ namespace Spices {
 				ImGui::PopStyleColor(3);
 				ImGui::SameLine();
 				ImGui::PushItemWidth(itemWidth);
-				if(ImGui::DragFloat("##Z", &m_Scale.z, 0.1f, 0.0f, 0.0f, "%.2f"))
+				if(ImGui::DragFloat("##Z", &m_Transform.scale.z, 0.1f, 0.0f, 0.0f, "%.2f"))
 				{
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGuiH::DrawResetIcon(m_Scale.z != 1.0f))
+				if (ImGuiH::DrawResetIcon(m_Transform.scale.z != 1.0f))
 				{ 
-					m_Scale.z = 1.0f; 
+					m_Transform.scale.z = 1.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
 				}
@@ -496,7 +496,7 @@ namespace Spices {
 		/**
 		* @brief Use raidans
 		*/
-		return glm::toMat4(glm::quat({glm::radians(m_Rotation.x), glm::radians(m_Rotation.y), glm::radians(m_Rotation.z)}));
+		return glm::toMat4(glm::quat({glm::radians(m_Transform.rotation.x), glm::radians(m_Transform.rotation.y), glm::radians(m_Transform.rotation.z)}));
 	}
 
 	void TransformComponent::ClearMarkerWithBits(TransformComponentFlags flags)
@@ -521,7 +521,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		const glm::mat4 rotation = GetRotateMatrix();
-		m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Position) * rotation * glm::scale(glm::mat4(1.0f), m_Scale);
+		m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Transform.position) * rotation * glm::scale(glm::mat4(1.0f), m_Transform.scale);
 
 		m_ModelBuffer->WriteToBuffer(glm::value_ptr(m_ModelMatrix));
 	}

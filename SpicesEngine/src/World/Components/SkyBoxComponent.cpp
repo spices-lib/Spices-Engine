@@ -18,7 +18,7 @@ namespace Spices {
 		/**
 		* @brief Use SpherePack Instead
 		*/
-		std::shared_ptr<BoxPack> pack = std::make_shared<BoxPack>(2, 2);
+		std::shared_ptr<CubePack> pack = std::make_shared<CubePack>(2, 2);
 		//pack->SetMaterial(path);
 
 		m_Mesh = Mesh::Builder().AddPack(pack).Build();

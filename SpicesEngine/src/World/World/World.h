@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "Core/UUID.h"
 #include "entt.hpp"
+#include "World/WorldFunctions/WorldFunctions.h"
 
 #include "World/Components/CameraComponent.h"
 #include "World/Components/TransformComponent.h"
@@ -108,18 +109,6 @@ namespace Spices {
 		Entity QueryEntitybyID(uint32_t id);
 
 		/**
-		* @brief Registry a meshpack to BaseMeshMap.
-		* @param[in] meshPack .
-		*/
-		void RegistryBaseMesh(std::shared_ptr<MeshPack> meshPack);
-
-		/**
-		* @brief Get BaseMesh Map.
-		* @return Returns the BaseMesh Map.
-		*/
-		const std::unordered_map<std::string, std::unordered_map<UUID, MeshPack*>>& GetBaseMeshMap() const { return m_BaseMeshMap; }
-
-		/**
 		* @brief Get WorldMarkFlags this frame.
 		* @return Returns the WorldMarkFlags this frame.
 		*/
@@ -155,6 +144,11 @@ namespace Spices {
 	protected:
 
 		/**
+		* @brief Mutex for world.
+		*/
+		std::mutex m_Mutex;
+
+		/**
 		* @brief This variable handles all entity.
 		*/
 		entt::registry m_Registry;
@@ -167,14 +161,11 @@ namespace Spices {
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		/**
-		* @brief Container of Material - [ MeshPack UUID - MeshPack ]
-		*/
-		std::unordered_map<std::string, std::unordered_map<UUID, MeshPack*>> m_BaseMeshMap;
-
-		/**
 		* Allow Entity access all data.
 		*/
 		friend class Entity;
+
+		friend class WorldFunctions;
 
 		/**
 		* @brief World State this frame.

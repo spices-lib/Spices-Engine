@@ -17,6 +17,13 @@ namespace Spices {
 
 	class VulkanBuffer;
 
+	struct Transform
+	{
+		glm::vec3 position{ 0.0f };
+		glm::vec3 rotation{ 0.0f };
+		glm::vec3 scale{ 1.0f };
+	};
+
 	/**
 	* @brief TransformComponent Class.
 	* This class defines the specific behaves of TransformComponent.
@@ -68,42 +75,42 @@ namespace Spices {
 		* Call CalMatrix() during this API.
 		* @param[in] position The entity's world position.
 		*/
-		void SetPosition(const glm::vec3& position) { m_Position = position; CalMatrix(); }
+		void SetPosition(const glm::vec3& position) { m_Transform.position = position; CalMatrix(); }
 
 		/**
 		* @brief Set the rotation this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] rotation The entity's world rotation.
 		*/
-		void SetRotation(const glm::vec3& rotation) { m_Rotation = rotation; CalMatrix(); }
+		void SetRotation(const glm::vec3& rotation) { m_Transform.rotation = rotation; CalMatrix(); }
 
 		/**
 		* @brief Set the scale this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] scale The entity's world scale.
 		*/
-		void SetScale(const glm::vec3& scale) { m_Scale = scale; CalMatrix(); }
+		void SetScale(const glm::vec3& scale) { m_Transform.scale = scale; CalMatrix(); }
 
 		/**
 		* @brief Add the position to this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] position The entity's world position.
 		*/
-		void AddPosition(const glm::vec3& position) { m_Position += position; CalMatrix(); }
+		void AddPosition(const glm::vec3& position) { m_Transform.position += position; CalMatrix(); }
 
 		/**
 		* @brief Add the rotation to this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] rotation The entity's world rotation.
 		*/
-		void AddRotation(const glm::vec3& rotation) { m_Rotation += rotation; CalMatrix(); }
+		void AddRotation(const glm::vec3& rotation) { m_Transform.rotation += rotation; CalMatrix(); }
 
 		/**
 		* @brief Add the scale to this component handled.
 		* Call CalMatrix() during this API.
 		* @param[in] scale The entity's world scale.
 		*/
-		void AddScale(const glm::vec3& scale) { m_Scale += scale; CalMatrix(); }
+		void AddScale(const glm::vec3& scale) { m_Transform.scale += scale; CalMatrix(); }
 
 		/**
 		* @brief Get the modelMatrix variable.
@@ -121,19 +128,19 @@ namespace Spices {
 		* @brief Get the position variable.
 		* @return Returns the position variable.
 		*/
-		const glm::vec3& GetPosition() const { return m_Position; }
+		const glm::vec3& GetPosition() const { return m_Transform.scale; }
 
 		/**
 		* @brief Get the rotation variable.
 		* @return Returns the rotation variable.
 		*/
-		const glm::vec3& GetRotation() const { return m_Rotation; }
+		const glm::vec3& GetRotation() const { return m_Transform.rotation; }
 
 		/**
 		* @brief Get the scale variable.
 		* @return Returns the scale variable.
 		*/
-		const glm::vec3& GetScale() const { return m_Scale; }
+		const glm::vec3& GetScale() const { return m_Transform.scale; }
 
 		/**
 		* @brief Get WorldMarkFlags this frame.
@@ -174,19 +181,9 @@ namespace Spices {
 		glm::mat4 m_ModelMatrix = glm::mat4(1.0f);
 
 		/**
-		* @brief The position this component handled.
+		* @brief The transform this component handled.
 		*/
-		glm::vec3 m_Position { 0.0f, 0.0f, 0.0f };
-
-		/**
-		* @brief The rotation this component handled.
-		*/
-		glm::vec3 m_Rotation { 0.0f, 0.0f, 0.0f };
-
-		/**
-		* @brief The scale this component handled.
-		*/
-		glm::vec3 m_Scale { 1.0f, 1.0f, 1.0f };
+		Transform m_Transform;
 
 		/**
 		* @brief World State this frame.
