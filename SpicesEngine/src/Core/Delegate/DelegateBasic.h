@@ -84,7 +84,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Agents.has_key(func))
+		uint64_t* addr = reinterpret_cast<uint64_t*>(&func);
+		if (m_Agents.has_key(*addr))
 		{
 			SPICES_CORE_WARN("Agent Function binding repeatly.");
 			return false;
@@ -93,7 +94,7 @@ namespace Spices {
 		/**
 		* @brief pack task as a lambda and to map.
 		*/
-		m_Agents.push_back(func, func);
+		m_Agents.push_back(*addr, func);
 		return true;
 	}
 
@@ -102,7 +103,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (!m_Agents.has_key(func))
+		uint64_t* addr = reinterpret_cast<uint64_t*>(&func);
+		if (!m_Agents.has_key(*addr))
 		{
 			SPICES_CORE_WARN("Agent Function not binded yet.");
 			return false;
@@ -111,7 +113,7 @@ namespace Spices {
 		/**
 		* @brief Erase from map.
 		*/
-		m_Agents.erase(func);
+		m_Agents.erase(*addr);
 	}
 
 	template<typename ...Args>

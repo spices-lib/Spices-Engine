@@ -21,6 +21,9 @@
 #include "Core/Library/ProcessLibrary_test.h"
 #include "Core/Library/StringLibrary_test.h"
 
+/* Delegate */
+#include "Core/Delegate/Delegate_test.h"
+
 /* Vulkan */
 #include "RenderAPI/Vulkan/VulkanImage_test.h"
 

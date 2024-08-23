@@ -51,7 +51,7 @@ namespace SpicesTest {
 	* @tparam Args any type.
 	*/
 	template<typename RType, typename ...Args>
-	RType TestT(Args&& ...args)
+	RType ThreadPoolTestT(Args&& ...args)
 	{
 		return RType();
 	}
@@ -111,13 +111,13 @@ namespace SpicesTest {
 		std::future<std::string>  future1  = m_ThreadPool.SubmitPoolTask(std::bind((std::string(ThreadPoolFuncTest::*)(std::string))&ThreadPoolFuncTest::Test, &funcTestClass, "Hello")); /* @brief Override Class Function. */
 		std::future<int>          future2  = m_ThreadPool.SubmitPoolTask(std::bind(&ThreadPoolFuncTest::Test0, &funcTestClass, 1, 2));                                                    /* @brief Class Function.          */
 		std::future<bool>         future3  = m_ThreadPool.SubmitPoolTask(std::bind(&ThreadPoolFuncTest::Test1));                                                                          /* @brief Static Class Function.   */
-		std::future<float>        future4  = m_ThreadPool.SubmitPoolTask(std::bind(&TestT<float, int&, std::string&&>, 2, ""));                                                           /* @brief Template Function.       */
+		std::future<float>        future4  = m_ThreadPool.SubmitPoolTask(std::bind(&ThreadPoolTestT<float, int&, std::string&&>, 2, ""));                                                 /* @brief Template Function.       */
 
 		std::future<bool>         future5  = m_ThreadPool.SubmitPoolTask([&]() { return funcTestClass.Test(); });                                                                         /* @brief Lambda Override Class Function. */
 		std::future<std::string>  future6  = m_ThreadPool.SubmitPoolTask([&]() { return funcTestClass.Test("Hello"); });																  /* @brief Lambda Override Class Function. */
 		std::future<int>          future7  = m_ThreadPool.SubmitPoolTask([&]() { return funcTestClass.Test0(1, 2); });																	  /* @brief Lambda Class Function.          */
 		std::future<bool>         future8  = m_ThreadPool.SubmitPoolTask([&]() { return ThreadPoolFuncTest::Test1(); });																  /* @brief Lambda Static Class Function.   */
-		std::future<float>        future9  = m_ThreadPool.SubmitPoolTask([&]() { return TestT<float, int, std::string>(2, ""); });														  /* @brief Lambda Template Function.       */
+		std::future<float>        future9  = m_ThreadPool.SubmitPoolTask([&]() { return ThreadPoolTestT<float, int, std::string>(2, ""); });										      /* @brief Lambda Template Function.       */
 
 		std::future<bool>         future10 = m_ThreadPool.SubmitPoolTask([](bool val) { return val; }, true);                                                                             /* @brief Lambda Function.         */
 
