@@ -102,7 +102,7 @@ namespace Spices {
 		//{
 		//	for (int i = 0; i < 1; i++)  // range in albedo
 		//	{
-		//		for (int j = 0; j < 100; j++)  // range in roughness
+		//		for (int j = 0; j < 10; j++)  // range in roughness
 		//		{
 		//			for (int k = 0; k < 100; k++)
 		//			{

@@ -66,7 +66,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_Indices.size()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_NIndices), 1, 0, 0, 0);
 	}
 
 	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
@@ -168,7 +168,7 @@ namespace Spices {
 		triangles.indexType                          = VK_INDEX_TYPE_UINT32;
 		triangles.indexData.deviceAddress            = indicesAddress;
 	  //triangles.transformData = {};
-		triangles.maxVertex                          = static_cast<uint32_t>(m_NIndices - 1);
+		triangles.maxVertex                          = static_cast<uint32_t>(m_NVertices - 1);
 
 		/**
 		* @brief wrapper around the above with the geometry type enum (triangles in this case) plus flags for the AS builder.
