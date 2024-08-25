@@ -515,6 +515,18 @@ namespace Spices {
 		VulkanDebugUtils::EndLabel(m_CommandBuffer);
 	}
 
+	void Renderer::RenderBehaveBuilder::Async(std::function<void(VkCommandBuffer& cmdBuffer)> func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Submit Cmds to Thread Pool.
+		*/
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+			func(cmdBuffer);
+		});
+	}
+
 	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint  bindPoint)
 	{
 		SPICES_PROFILE_ZONE;

@@ -123,6 +123,7 @@ namespace Spices {
 
 		m_Agents.for_each([&](const auto& k, const auto& v) {
 			v(std::forward<Args>(args)...);
+			return false;
 		});
 	}
 

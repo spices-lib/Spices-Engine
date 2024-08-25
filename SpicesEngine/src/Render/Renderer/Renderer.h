@@ -768,6 +768,12 @@ namespace Spices {
 			void Endrecording();
 
 			/**
+			* @brief Async Commands.
+			* @param[in] func In Function Pointer
+			*/
+			void Async(std::function<void(VkCommandBuffer& cmdBuffer)> func);
+
+			/**
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
@@ -1606,7 +1612,6 @@ namespace Spices {
 			return cmdBuffer;
 		});
 
-		m_CmdThreadPool->Wait();
 		VkCommandBuffer buffer = cmdBuffer.get();
 		vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
 	}

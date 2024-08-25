@@ -163,15 +163,18 @@ namespace Spices {
 		
 		RenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 		
-		builder.BeginRenderPass();
+		builder.BeginRenderPassAsync();
 
-		builder.SetViewPort();
+		builder.Async([&](VkCommandBuffer& cmdBuffer) {
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+			builder.SetViewPort(cmdBuffer);
 
-		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }));
+			builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
 
-		builder.RunDGC();
+			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
+
+			builder.RunDGC(cmdBuffer);
+		});
 
 		builder.BeginNextSubPass("SkyBox");
 
