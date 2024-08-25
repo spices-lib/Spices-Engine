@@ -1,39 +1,53 @@
-project "WhittedRT"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "On"
+-- @file WhittedRT Premake.
+-- @brief Defines details of the WhittedRT Solution Building.
+-- @author The Cherno & Spices.
 
+project "WhittedRT"
+	kind "ConsoleApp"           -- Use exe.
+	language "C++"			    -- Use C++.
+	cppdialect "C++17"		    -- Use C++17.
+	staticruntime "On"		    -- Use Runtime Linrary: MTD.
+
+	-- Building Output Folder.
 	targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+
+	-- Building Object Folder.
 	objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
+	-- The Solution Files.
 	files
 	{
+		-- Game Source Files.
 		"src/**.h",
 		"src/**.cpp",
 	}
 
+	-- Macros Definitions
 	defines
 	{
+		-- Define Game Assets Folder.
 		'SPICES_GAME_ASSETS_PATH=std::string("%{wks.location}/Samples/Renderer/WhittedRT/assets/")',
+
+		-- Define Engine Use Vulkan API for Rendering, though we may support multipile Rendering API.
 		"RENDERAPI_VULKAN",
 	}
 
+	-- The Solution Additional Include Folder.
 	includedirs
 	{
-		"%{wks.location}/SpicesEngine/src",
-		"src",
-		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.entt}",
-		"%{IncludeDir.tinyobjloader}",
-		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.ImGuizmo}",
+		"%{wks.location}/SpicesEngine/src",    -- Engine Source Folder.
+		"src",								   -- WhittedRT Source Folder.
+		"%{IncludeDir.GLFW}",				   -- Library: GLFW Source Folder.
+		"%{IncludeDir.VulkanSDK}",			   -- Library: VulkanSDK Source Folder.
+		"%{IncludeDir.stb_image}",			   -- Library: stb_image Source Folder.
+		"%{IncludeDir.glm}",				   -- Library: glm Source Folder.
+		"%{IncludeDir.ImGui}",				   -- Library: ImGui Source Folder.
+		"%{IncludeDir.entt}",				   -- Library: entt Source Folder.
+		"%{IncludeDir.tinyobjloader}",		   -- Library: tinyobjloader Source Folder.
+		"%{IncludeDir.spdlog}",				   -- Library: spdlog Source Folder.
+		"%{IncludeDir.ImGuizmo}",			   -- Library: ImGuizmo Source Folder.
 		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
-		"%{IncludeDir.tracy}",
+		"%{IncludeDir.tracy}",				   -- Library: tracy Source Folder.
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
@@ -45,32 +59,42 @@ project "WhittedRT"
     -- In Rider, it will not work, needs to add environment variables manually in project configurations setting.
 	debugenvs 
 	{
-		"PATH=%{LibraryDir.HoudiniEnginedll}",
+		"PATH=%{LibraryDir.HoudiniEnginedll}", -- Houdini dll Path.
 	}
 
+	-- The Solution Dependency
 	links
 	{
-		"SpicesEngine",
+		"SpicesEngine",                        -- Dependency: SpicesEngine
 	}
 
+	-- Platform: Windows
 	filter "system:windows"
-		systemversion "latest"
-		editAndContinue "Off"
+		systemversion "latest"                 -- Use Lastest WindowSDK
+		editAndContinue "Off"				   -- Use DebugInfoFormat: Zi (Program Database).
 
+	-- Configuration: Debug
 	filter "configurations:Debug"
+
+		-- Debug Specific Solution Macro Definitions.
 		defines
 		{
-			"SPICES_DEBUG",
-			"TRACY_ENABLE"
+			"SPICES_DEBUG",                    -- Debug Symbol.
+			"TRACY_ENABLE"				       -- tracy Feature Enable.
 		}
+
 		runtime "Debug"
 		symbols "On"
 
+	-- Configuration: Release.
 	filter "configurations:Release"
+
+		-- Release Specific Solution Macro Definitions.
 		defines
 		{
-			"SPICES_RELEASE",
+			"SPICES_RELEASE",                -- Release Symbol.
 			"TRACY_ENABLE"                   -- tracy Feature Enable.
 		}
+
 		runtime "Release"
 		optimize "On"

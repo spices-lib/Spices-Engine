@@ -1,38 +1,50 @@
-project "SpicesTest"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "On"
+-- @file SpicesTest Premake.
+-- @brief Defines details of the UintTest Solution Building.
+-- @author The Cherno & Spices.
 
+project "SpicesTest"
+	kind "ConsoleApp"           -- Use exe.
+	language "C++"			    -- Use C++.
+	cppdialect "C++17"		    -- Use C++17.
+	staticruntime "On"		    -- Use Runtime Linrary: MTD.
+
+	-- Building Output Folder.
 	targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+
+	-- Building Object Folder.
 	objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
+	-- The Solution Files.
 	files
 	{
+		-- Game Source Files.
 		"src/**.h",
 		"src/**.cpp",
 	}
 
+	-- Macros Definitions
 	defines
 	{
+		-- Define Engine Use Vulkan API for Rendering, though we may support multipile Rendering API.
 		"RENDERAPI_VULKAN"
 	}
 
+	-- The Solution Additional Include Folder.
 	includedirs
 	{
-		"src",
-		"%{wks.location}/SpicesEngine/src",
-		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.entt}",
-		"%{IncludeDir.tinyobjloader}",
-		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.googletest}",
-		"%{IncludeDir.googlemock}",
-		"%{IncludeDir.tracy}",
+		"%{wks.location}/SpicesEngine/src",    -- Engine Source Folder.
+		"src",								   -- UnitTest Source Folder.
+		"%{IncludeDir.GLFW}",				   -- Library: GLFW Source Folder.
+		"%{IncludeDir.VulkanSDK}",			   -- Library: VulkanSDK Source Folder.
+		"%{IncludeDir.stb_image}",			   -- Library: stb_image Source Folder.
+		"%{IncludeDir.glm}",				   -- Library: glm Source Folder.
+		"%{IncludeDir.ImGui}",				   -- Library: ImGui Source Folder.
+		"%{IncludeDir.entt}",				   -- Library: entt Source Folder.
+		"%{IncludeDir.tinyobjloader}",		   -- Library: tinyobjloader Source Folder.
+		"%{IncludeDir.spdlog}",				   -- Library: spdlog Source Folder.
+		"%{IncludeDir.googletest}",			   -- Library: googletest Source Folder.
+		"%{IncludeDir.googlemock}",			   -- Library: googlemock Source Folder.
+		"%{IncludeDir.tracy}",				   -- Library: tracy Source Folder.
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 		"%{IncludeDir.yaml_cpp}",              -- Library: yaml_cpp Source Folder.
 		"%{IncludeDir.rapidyaml}",             -- Library: rapidyaml Source Folder.
@@ -46,33 +58,41 @@ project "SpicesTest"
 		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
 	}
 
+	-- The Solution Dependency
 	links
 	{
-		"SpicesEngine",
-		"googlemock",
+		"SpicesEngine",                        -- Dependency: SpicesEngine
+		"googlemock",                          -- Dependency: googlemock
 	}
 
+	-- Platform: Windows
 	filter "system:windows"
-		systemversion "latest"
-		editAndContinue "Off"
+		systemversion "latest"                 -- Use Lastest WindowSDK
+		editAndContinue "Off"				   -- Use DebugInfoFormat: Zi (Program Database).
 		
-
+	-- Configuration: Debug
 	filter "configurations:Debug"
+
+		-- Debug Specific Solution Macro Definitions.
 		defines
 		{
-			"SPICES_DEBUG",
-			"TRACY_ENABLE"
+			"SPICES_DEBUG",                    -- Debug Symbol.
+			"TRACY_ENABLE"				       -- tracy Feature Enable.
 		}
+
 		runtime "Debug"
 		symbols "On"
 		
-
+	-- Configuration: Release.
 	filter "configurations:Release"
+
+		-- Release Specific Solution Macro Definitions.
 		defines
 		{
-			"SPICES_RELEASE",
-			"TRACY_ENABLE"                   -- tracy Feature Enable.
+			"SPICES_RELEASE",                  -- Release Symbol.
+			"TRACY_ENABLE"                     -- tracy Feature Enable.
 		}
+
 		runtime "Release"
 		optimize "On"
 		

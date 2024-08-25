@@ -80,7 +80,7 @@ project "SpicesEngine"
 		"src",                                 -- Engine Source Folder.
 		"%{IncludeDir.GLFW}",                  -- Library: GLFW Source Folder.
 		"%{IncludeDir.VulkanSDK}",             -- Library: VulkanSDK Source Folder.
-		"%{IncludeDir.stb_image}",             -- Library: VulkanSDK Source Folder.
+		"%{IncludeDir.stb_image}",             -- Library: stb_image Source Folder.
 		"%{IncludeDir.glm}",                   -- Library: glm Source Folder.
 		"%{IncludeDir.ImGui}",                 -- Library: ImGui Source Folder.
 		"%{IncludeDir.entt}",                  -- Library: entt Source Folder.
@@ -165,11 +165,13 @@ project "SpicesEngine"
 		runtime "Debug"
 		symbols "On"
 
-	-- Release Specific Solution Macro Definitions.
+	-- Configuration: Release.
 	filter "configurations:Release"
+
+		-- Release Specific Solution Macro Definitions.
 		defines 
 		{
-			"SPICES_RELEASE",               -- Release Symbol.
+			"SPICES_RELEASE",                -- Release Symbol.
 			"TRACY_ENABLE"                   -- tracy Feature Enable.
 		}
 
