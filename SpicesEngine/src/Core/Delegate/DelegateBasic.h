@@ -67,6 +67,12 @@ namespace Spices {
 		bool UnBind(std::function<void(Args...)> func);
 
 		/**
+		* @brief Get size of Agents.
+		* @return Returns the size of Agents.
+		*/
+		uint32_t size() { return m_Agents.size(); }
+
+		/**
 		* @brief Execute all function pointer. 
 		*/
 		void Broadcast(Args... args);

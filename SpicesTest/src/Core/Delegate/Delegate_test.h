@@ -21,25 +21,37 @@ namespace SpicesTest {
 		* @brief Basic Override Class Function.
 		* @return Returns true.
 		*/
-		void Test() {}
+		void Test() 
+		{
+			std::cout << "Hello  DelegateFuncTest::Test" << std::endl;
+		}
 
 		/**
 		* @brief Basic Override Class Function.
 		* @param[in] f In float.
 		*/
-		void Test(float f) {}
+		void Test(float f) 
+		{
+			std::cout << "Hello  DelegateFuncTest::Test(float)" << std::endl;
+		}
 
 		/**
 		* @brief Basic Class Function.
 		* @param[in] a In a.
 		* @param[in] b In b.
 		*/
-		void Test0(int a, int b) {}
+		void Test0(int a, int b) 
+		{
+			std::cout << "Hello  DelegateFuncTest::Test0(int, int)" << " " << a << " " << b << std::endl;
+		}
 
 		/**
 		* @brief Static Class Function.
 		*/
-		static void Test1() {}
+		static void Test1() 
+		{
+			std::cout << "Hello  DelegateFuncTest::Test1" << std::endl;
+		}
 	};
 
 	/**
@@ -48,7 +60,10 @@ namespace SpicesTest {
 	* @tparam Args any type.
 	*/
 	template<typename ...Args>
-	void DelegateTestT(Args ...args) {}
+	void DelegateTestT(Args ...args) 
+	{
+		std::cout << "Hello  DelegateTestT(args...)" << std::endl;
+	}
 
     /**
     * @brief Instance Delegate Class.
@@ -75,12 +90,16 @@ namespace SpicesTest {
 		* @brief The interface is inherited from testing::Test.
 		* Registry on Initialize.
 		*/
-		void SetUp() override {}
+		void SetUp() override {
+			Spices::Log::Init();
+		}
 
 		/**
 		* @brief Testing class TearDown function.
 		*/
-		void TearDown() override {}
+		void TearDown() override {
+			Spices::Log::ShutDown();
+		}
 
 		DelegateTest0 test0;
 		DelegateTest1 test1;
@@ -105,7 +124,6 @@ namespace SpicesTest {
 		test2.Bind(std::bind(&DelegateFuncTest::Test0, &funcTestClass, std::placeholders::_1, std::placeholders::_2));              /* @brief Class Function.          */
 		test0.Bind(std::bind(&DelegateFuncTest::Test1));                                                                            /* @brief Static Class Function.   */
 
-
 		test0.Bind([&]() { return funcTestClass.Test(); });                                                                         /* @brief Lambda Override Class Function. */
 		test1.Bind([&](float f) { return funcTestClass.Test(f); });																    /* @brief Lambda Override Class Function. */
 		test2.Bind([&](int a, int b) { return funcTestClass.Test0(a, b); });														/* @brief Lambda Class Function.          */
@@ -113,6 +131,36 @@ namespace SpicesTest {
 		test0.Bind([&]() { return DelegateTestT(); });										                                        /* @brief Lambda Template Function.       */
 
 		test1.Bind([](bool val) { return val; });                                                                                   /* @brief Lambda Function.         */
+
+		/**
+		* @brief Test Size is correct.
+		*/
+		EXPECT_EQ(test0.size(), 5);
+		EXPECT_EQ(test1.size(), 3);
+		EXPECT_EQ(test2.size(), 2);
+	}
+
+	/**
+	* @brief Testing if unbind successfully.
+	*/
+	TEST_F(Delegate_test, UnBind) {
+		DelegateFuncTest funcTestClass;
+
+		test0.Bind(std::bind((void(DelegateFuncTest::*)())&DelegateFuncTest::Test, &funcTestClass));               
+		test0.Bind(std::bind(&DelegateFuncTest::Test1));                                                           
+		test0.Bind([&]() { return funcTestClass.Test(); });                                                        
+		test0.Bind([&]() { return DelegateFuncTest::Test1(); });												
+		test0.Bind([&]() { return DelegateTestT(); });										                                           
+
+		EXPECT_EQ(test0.size(), 5);
+
+		test0.UnBind(std::bind((void(DelegateFuncTest::*)()) & DelegateFuncTest::Test, &funcTestClass));
+		test0.UnBind(std::bind(&DelegateFuncTest::Test1));
+		test0.UnBind([&]() { return funcTestClass.Test(); });
+		test0.UnBind([&]() { return DelegateFuncTest::Test1(); });
+		test0.UnBind([&]() { return DelegateTestT(); });
+
+		EXPECT_EQ(test0.size(), 3);
 	}
 
 	/**
@@ -121,7 +169,9 @@ namespace SpicesTest {
 	TEST_F(Delegate_test, Broadcast) {
 		DelegateFuncTest funcTestClass;
 
-		test0.Bind(std::bind((void(DelegateFuncTest::*)()) & DelegateFuncTest::Test, &funcTestClass));
-		test0.Broadcast();
+		test2.Bind(std::bind(&DelegateFuncTest::Test0, &funcTestClass, std::placeholders::_1, std::placeholders::_2));
+		test2.Broadcast(1, 10);
+
+		EXPECT_EQ(test2.size(), 1);
 	}
 }

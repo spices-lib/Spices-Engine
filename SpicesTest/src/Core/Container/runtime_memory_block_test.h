@@ -203,17 +203,17 @@ namespace SpicesTest {
 		/**
 		* @brief item location in valid item.
 		*/
-		EXPECT_NE(m0.item_location("1"), 4 );
-		EXPECT_NE(m0.item_location("2"), 8 );
-		EXPECT_NE(m0.item_location("3"), 12);
-		EXPECT_NE(m0.item_location("4"), 16);
+		EXPECT_EQ(m0.item_location("1"), 0 );
+		EXPECT_EQ(m0.item_location("2"), 4 );
+		EXPECT_EQ(m0.item_location("3"), 12);
+		EXPECT_EQ(m0.item_location("4"), 24);
 
 		/**
 		* @brief item location in unvalid item.
 		*/
-		EXPECT_NE(m0.item_location("5"), UINT32_MAX);
-		EXPECT_NE(m0.item_location("6"), UINT32_MAX);
-		EXPECT_NE(m0.item_location("7"), UINT32_MAX);
-		EXPECT_NE(m0.item_location("8"), UINT32_MAX);
+		EXPECT_EQ(m0.item_location("5"), UINT32_MAX);
+		EXPECT_EQ(m0.item_location("6"), UINT32_MAX);
+		EXPECT_EQ(m0.item_location("7"), UINT32_MAX);
+		EXPECT_EQ(m0.item_location("8"), UINT32_MAX);
 	}
 }
