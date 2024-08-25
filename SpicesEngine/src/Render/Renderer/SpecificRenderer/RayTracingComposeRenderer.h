@@ -66,8 +66,8 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief Full Screen Square for rendering.
+		* @brief Full Screen Plane for rendering.
 		*/
-		std::unique_ptr<SquarePack> m_Square;
+		std::unique_ptr<PlanePack> m_Plane;
 	};
 }

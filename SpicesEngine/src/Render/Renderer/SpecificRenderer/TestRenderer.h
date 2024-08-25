@@ -27,7 +27,7 @@ namespace Spices {
 
 	private:
 
-		std::unique_ptr<SquarePack> m_Square;
+		std::unique_ptr<PlanePack> m_Plane;
 	};
 
 }

@@ -405,7 +405,7 @@ namespace Spices {
 		indices.insert(indices.end(), m_Indices.begin(), m_Indices.end());
 	}
 
-	bool SquarePack::OnCreatePack(bool isCreateBuffer)
+	bool PlanePack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -462,7 +462,7 @@ namespace Spices {
 
 		// Front
 		{
-			SquarePack pack(m_Rows, m_Columns);
+			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
 			pack.ApplyMatrix(tran);
@@ -473,7 +473,7 @@ namespace Spices {
 
 		// Back
 		{
-			SquarePack pack(m_Rows, m_Columns);
+			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
 			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
@@ -485,7 +485,7 @@ namespace Spices {
 
 		// Left
 		{
-			SquarePack pack(m_Rows, m_Columns);
+			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
@@ -497,7 +497,7 @@ namespace Spices {
 
 		// Right
 		{
-			SquarePack pack(m_Rows, m_Columns);
+			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
@@ -509,7 +509,7 @@ namespace Spices {
 
 		// Top
 		{
-			SquarePack pack(m_Rows, m_Columns);
+			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
@@ -521,7 +521,7 @@ namespace Spices {
 
 		// Button
 		{
-			SquarePack pack(m_Rows, m_Columns);
+			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));

@@ -15,7 +15,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>(2, 2);
+		std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>(2, 2);
 		//pack->SetMaterial(path);
 
 		// spritecomponent only take one meshpack

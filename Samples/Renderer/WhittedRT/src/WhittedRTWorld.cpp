@@ -34,7 +34,7 @@ namespace Spices {
 			transformComp.SetPosition({ 0.0f, 0.0f, 0.5f });
 			transformComp.SetRotation({ 0.0f, 0.0f, 0.0f });
 
-			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>();
 
 			pack->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
@@ -48,7 +48,7 @@ namespace Spices {
 			transformComp.SetPosition({ 0.0f, 0.0f, -0.5f });
 			transformComp.SetRotation({ -180.0f, 0.0f, -180.0f });
 
-			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>();
 
 			pack->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
@@ -62,7 +62,7 @@ namespace Spices {
 			transformComp.SetPosition({ -0.5f, 0.0f, 0.0f });
 			transformComp.SetRotation({ -180.0f, -90.0f, -180.0f });
 
-			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>();
 
 			pack->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
@@ -76,7 +76,7 @@ namespace Spices {
 			transformComp.SetPosition({ 0.0f, 0.5f, 0.0f });
 			transformComp.SetRotation({ 90.0f, -90.0f, 180.0f });
 
-			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>();
 
 			pack->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
@@ -90,7 +90,7 @@ namespace Spices {
 			transformComp.SetPosition({ 0.0f, -0.5f, 0.0f });
 			transformComp.SetRotation({ -90.0f, -90.0f, 180.0f });
 
-			std::shared_ptr<SquarePack> pack = std::make_shared<SquarePack>();
+			std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>();
 
 			pack->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();

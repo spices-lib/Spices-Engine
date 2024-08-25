@@ -416,10 +416,10 @@ namespace Spices {
 	};
 
 	/**
-	* @brief SquarePack Class.
-	* This class defines square type meshpack.
+	* @brief PlanePack Class.
+	* This class defines plane type meshpack.
 	*/
-	class SquarePack : public MeshPack
+	class PlanePack : public MeshPack
 	{
 	public:
 
@@ -430,12 +430,12 @@ namespace Spices {
 		* @param[in] columns The columns number.
 		* @param[in] instanced Is this maeshpack instanced.
 		*/
-		SquarePack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
-			: MeshPack("Square", instanced)
+		PlanePack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
+			: MeshPack("Plane", instanced)
 			, m_Rows(rows)
 			, m_Columns(columns)
 		{
-			m_PackType = "SquarePack";
+			m_PackType = "PlanePack";
 		}
 
 		/**

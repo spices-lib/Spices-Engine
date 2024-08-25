@@ -17,8 +17,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Square = std::make_unique<SquarePack>();
-		m_Square->OnCreatePack();
+		m_Plane = std::make_unique<PlanePack>();
+		m_Plane->OnCreatePack();
 	}
 
 	void TestRenderer::CreateRendererPass()
@@ -54,8 +54,8 @@ namespace Spices {
 
 		builder.BindPipeline("TestRenderer.Test.Default");
 
-		m_Square->OnBind(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
-		m_Square->OnDraw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
+		m_Plane->OnBind(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
+		m_Plane->OnDraw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex]);
 
 		builder.EndRenderPass();
 	}
