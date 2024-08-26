@@ -9,6 +9,7 @@
 /* Container */
 #include "Core/Container/linked_unordered_map_test.h"
 #include "Core/Container/runtime_memory_block_test.h"
+#include "Core/Container/directed_acyclic_graph_test.h"
 
 /* Thread */
 #include "Core/Thread/ThreadPoolFixed_test.h"
