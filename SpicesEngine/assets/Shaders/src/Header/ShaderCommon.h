@@ -71,6 +71,15 @@ struct Vertex
 };
 
 /**
+* @brief This Struct defines Per Edge Struct of Mesh.
+*/
+struct Edge
+{
+	uint first;               /* @brief Edge first Vertex index.        */
+	uint second;              /* @brief Edge secone Vertex index.       */
+};
+
+/**
 * @brief Using Pixel rather than Vertex in shader mey be easier to understand.
 * It defines pixel data, not be original vertex data.
 */

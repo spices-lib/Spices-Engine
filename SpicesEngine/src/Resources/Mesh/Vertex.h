@@ -31,7 +31,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		Vertex() {};
+		Vertex() = default;
 
 		/**
 		* @brief Destructor Function.
@@ -62,6 +62,10 @@ namespace Spices {
 		};
 	};
 
+	/**
+	* @brief Meshlet Class.
+	* This class defines what Meshlet data.
+	*/
 	struct Meshlet : public SpicesShader::Meshlet
 	{
 	public:
@@ -85,6 +89,35 @@ namespace Spices {
 		*/
 		void FromMeshopt(const meshopt_Meshlet& m, const meshopt_Bounds& bounds);
 	};
+
+	/**
+	* @brief Edge Class.
+	* This class defines what Edge data.
+	*/
+	struct Edge : public SpicesShader::Edge
+	{
+	public:
+		/**
+		* @brief Constructor Function.
+		*/
+		Edge() = default;
+
+		/**
+		* @brief Destructor Function.
+		* @attemtion Why Destructor causes bug here
+		* @todo fix it.
+		*/
+		//virtual ~Edge() = default;
+
+		/**
+		* @brief Assignment Operation.
+		* @param[in] other Another Vertex.
+		* @return Returns true if equal.
+		*/
+		bool operator==(const Edge& other) const {
+			return first == other.first && second == other.second;
+		};
+	};
 }
 
 namespace std {
@@ -98,6 +131,16 @@ namespace std {
 					(hash<glm::vec3>()(vertex.normal) << 1)) >> 1) ^
 					(hash<glm::vec3>()(vertex.color) << 1) >> 1 ^
 					(hash<glm::vec2>()(vertex.texCoord) << 1);
+		}
+	};
+
+	/**
+	* @brief Hash function used for unordered_map.
+	*/
+	template<> struct hash<Spices::Edge> {
+		size_t operator()(Spices::Edge const& edge) const {
+			return ((hash<uint32_t>()(edge.first) ^
+				(hash<uint32_t>()(edge.second) << 1)) >> 1);
 		}
 	};
 }
