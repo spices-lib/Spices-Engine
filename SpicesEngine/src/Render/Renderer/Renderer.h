@@ -1444,9 +1444,9 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Fill in Input Buffer");
 
 			size_t alignSeqIndexMask = m_Device->GetDGCProperties().minSequencesIndexBufferOffsetAlignment - 1;
-			size_t alignMask        = m_Device->GetDGCProperties().minIndirectCommandsBufferOffsetAlignment - 1;
+			size_t alignMask         = m_Device->GetDGCProperties().minIndirectCommandsBufferOffsetAlignment - 1;
 
-			auto& inputStrides      = indirectPtr->GetInputStrides();
+			auto& inputStrides       = indirectPtr->GetInputStrides();
 			
 			for (int i = 0; i < inputStrides.size(); i++)
 			{
@@ -1505,7 +1505,6 @@ namespace Spices {
 							push = v->GetMeshDesc().GetBufferAddress();
 							stagingBuffer.WriteToBuffer(&push, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
-
 
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NV:
 							drawIndexed.firstIndex     = 0;

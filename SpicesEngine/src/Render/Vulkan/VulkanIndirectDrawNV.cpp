@@ -119,6 +119,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		if (m_NSequence == 0) return;
+
 		/**
 		* @brief Instance a VkGeneratedCommandsInfoNV.
 		*/
@@ -142,6 +144,8 @@ namespace Spices {
 	void VulkanIndirectDrawNV::ExecuteDGC(VkCommandBuffer cmdBuffer, VkPipeline pipeline)
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (m_NSequence == 0) return;
 
 		/**
 		* @brief Instance a VkGeneratedCommandsInfoNV.

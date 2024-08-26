@@ -176,13 +176,13 @@ struct PointLight
 */
 struct MeshDesc
 {
-	uint64_t modelAddress;                    /* Address of the Model Matrix.                   */
-	uint64_t vertexAddress;                   /* Address of the Vertex buffer.                  */
-	uint64_t indexAddress;                    /* Address of the index buffer.                   */
-	uint64_t materialParameterAddress;        /* Address of the Material Parameter buffer.      */
-	uint64_t meshletAddress;                  /* Address of the Meshlet Buffer.                 */
-	uint     nMeshlets;                       /* Meshlets Count.                                */
-	uint     entityID;                        /* @brief EntityId, cast from entt::entity.       */
+	uint64_t modelAddress;                    /* @brief Address of the Model Matrix.                   */
+	uint64_t vertexAddress;                   /* @brief Address of the Vertex buffer.                  */
+	uint64_t indexAddress;                    /* @brief Address of the index buffer.                   */
+	uint64_t materialParameterAddress;        /* @brief Address of the Material Parameter buffer.      */
+	uint64_t meshletAddress;                  /* @brief Address of the Meshlet Buffer.                 */
+	uint     nMeshlets;                       /* @brief Meshlets Count.                                */
+	uint     entityID;                        /* @brief EntityId, cast from entt::entity.              */
 };
 
 /**
@@ -210,15 +210,15 @@ struct HitPayLoad
 */
 struct Meshlet
 {
-	uint  vertexOffset;                        /*  @brief Offset of Vertices this meshlet.        */
-	uint  primitiveOffset;                     /*  @brief Offset of primitives this meshlet.      */
-	uint  nVertices;                           /*  @brief Vertices Count this meshlet.( <= 64)    */
-	uint  nPrimitives;                         /*  @brief Primitives Count this meshlet.( <= 126) */
-	vec3  boundCenter;                         /*  @brief Bounding Sphere Center in local world.  */
-	float boundRadius;                         /*  @brief Bounding Sphere radius.                 */
-	vec3  coneApex;                            /*  @brief Normal Cone center.                     */
-	vec3  coneAxis;                            /*  @brief Normal Cone axis.                       */
-	float coneCutoff;                          /*  @brief Normal Cone cutoff rate.                */
+	uint  vertexOffset;                        /* @brief Offset of Vertices this meshlet.        */
+	uint  primitiveOffset;                     /* @brief Offset of primitives this meshlet.      */
+	uint  nVertices;                           /* @brief Vertices Count this meshlet.( <= 64)    */
+	uint  nPrimitives;                         /* @brief Primitives Count this meshlet.( <= 126) */
+	vec3  boundCenter;                         /* @brief Bounding Sphere Center in local world.  */
+	float boundRadius;                         /* @brief Bounding Sphere radius.                 */
+	vec3  coneApex;                            /* @brief Normal Cone center.                     */
+	vec3  coneAxis;                            /* @brief Normal Cone axis.                       */
+	float coneCutoff;                          /* @brief Normal Cone cutoff rate.                */
 };
 
 /*****************************************************************************************/

@@ -165,6 +165,9 @@ namespace Spices {
 		*/
 		friend class Entity;
 
+		/**
+		* Allow WorldFunctions access all data.
+		*/
 		friend class WorldFunctions;
 
 		/**

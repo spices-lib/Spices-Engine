@@ -27,6 +27,7 @@ namespace Spices {
 			if (it.accel != VK_NULL_HANDLE)
 			{
 				m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
+				it.accel = VK_NULL_HANDLE;
 			}
 		}
 
@@ -36,6 +37,7 @@ namespace Spices {
 		if (m_tlas.accel != VK_NULL_HANDLE)
 		{
 			m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
+			m_tlas.accel = VK_NULL_HANDLE;
 		}
 
 		m_blas.clear();

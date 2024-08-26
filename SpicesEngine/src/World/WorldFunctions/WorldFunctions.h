@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Core/Thread/ThreadPool.h"
+#include "Resources/Mesh/MeshPack.h"
 
 namespace Spices {
 
@@ -149,6 +150,10 @@ namespace Spices {
 		static void CreateTorusEntityAsync(World* world, Args... args);
 
 		/****************************************************************************************/
+
+	private:
+
+		static Entity CreateMeshEntity(World* world, const std::string& name, std::shared_ptr<MeshPack> pack);
 	};
 
 	template<typename ...Args>
@@ -167,16 +172,10 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		Entity entity = world->CreateEntity("Cube");
-		MeshComponent& meshComp = entity.AddComponent<MeshComponent>();
-
 		std::shared_ptr<CubePack> pack = std::make_shared<CubePack>(std::forward<Args>(args)...);
-
 		pack->SetMaterial("BasePassRenderer.Mesh.ground");
-		std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
-		meshComp.SetMesh(mesh);
 
-		return entity;
+		return CreateMeshEntity(world, "Cube", pack);
 	}
 
 	template<typename ...Args>
@@ -209,7 +208,12 @@ namespace Spices {
 	template<typename ...Args>
 	inline Entity WorldFunctions::CreatePlaneEntity(World* world, Args ...args)
 	{
-		return Entity();
+		SPICES_PROFILE_ZONE;
+
+		std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>(std::forward<Args>(args)...);
+		pack->SetMaterial("BasePassRenderer.Mesh.ground");
+
+		return CreateMeshEntity(world, "Plane", pack);
 	}
 
 	template<typename ...Args>
@@ -220,7 +224,12 @@ namespace Spices {
 	template<typename ...Args>
 	inline Entity WorldFunctions::CreateSphereEntity(World* world, Args ...args)
 	{
-		return Entity();
+		SPICES_PROFILE_ZONE;
+
+		std::shared_ptr<SpherePack> pack = std::make_shared<SpherePack>(std::forward<Args>(args)...);
+		pack->SetMaterial("BasePassRenderer.Mesh.ground");
+
+		return CreateMeshEntity(world, "Sphere", pack);
 	}
 
 	template<typename ...Args>

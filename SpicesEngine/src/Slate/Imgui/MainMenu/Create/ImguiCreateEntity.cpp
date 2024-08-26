@@ -38,11 +38,20 @@ namespace Spices {
                 if (ImGui::BeginMenu(ICON_TEXT(ICON_MD_POLYMER, Mesh)))
                 {
                     if (ImGui::MenuItem("Cone")) {}
-                    if (ImGui::MenuItem("Cube")) {}
+                    if (ImGui::MenuItem("Cube")) 
+                    {
+                        WorldFunctions::CreateCubeEntity(FrameInfo::Get().m_World.get());
+                    }
                     if (ImGui::MenuItem("Cylinder")) {}
                     if (ImGui::MenuItem("Disk")) {}
-                    if (ImGui::MenuItem("Plane")) {}
-                    if (ImGui::MenuItem("Sphere")) {}
+                    if (ImGui::MenuItem("Plane")) 
+                    {
+                        WorldFunctions::CreatePlaneEntity(FrameInfo::Get().m_World.get());
+                    }
+                    if (ImGui::MenuItem("Sphere")) 
+                    {
+                        WorldFunctions::CreateSphereEntity(FrameInfo::Get().m_World.get());
+                    }
                     if (ImGui::MenuItem("Torus")) {}
                     ImGui::Separator();
                     if (ImGui::MenuItem("Settings")) {}
