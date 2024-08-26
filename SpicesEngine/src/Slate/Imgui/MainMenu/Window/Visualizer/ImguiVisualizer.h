@@ -14,6 +14,7 @@ namespace Spices {
 	* @brief Forward Declear.
 	*/
 	class ImguiGBufferVisualizer;
+	class ImguiVirtualGeometryVisualizer;
 
 	/**
 	* @brief The ImguiVisualizer Class.
@@ -60,5 +61,10 @@ namespace Spices {
 		* @brief The shared pointer of ImguiGBufferVisualizer.
 		*/
 		std::shared_ptr<ImguiGBufferVisualizer> m_GBufferVisualizer;
+
+		/**
+		* @brief The shared pointer of ImguiVirtualGeometryVisualizer.
+		*/
+		std::shared_ptr<ImguiVirtualGeometryVisualizer> m_VirtualGeometryVisualizer;
 	};
 }

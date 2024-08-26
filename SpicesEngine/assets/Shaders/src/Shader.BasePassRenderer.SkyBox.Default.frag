@@ -12,6 +12,7 @@
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderFunctionLibrary.glsl"
 
 /**
 * @brief Material Parameter.
@@ -40,7 +41,8 @@ layout(location = 0) in struct FragInput
 } 
 fragInput;
 
-layout(location = 2) in flat uint meshletId;           /* @brief Meshlet ID.     */
+layout(location = 2) in flat uint triangleId;          /* @brief Triangle ID.    */
+layout(location = 3) in flat uint meshletId;           /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 
@@ -52,6 +54,8 @@ layout(location = 2) in flat uint meshletId;           /* @brief Meshlet ID.    
 layout(location = 0) out vec4  outColor;                /* @brief Fragmet Color       */
 layout(location = 1) out vec4  outPosition;             /* @brief position Attachment */
 layout(location = 2) out float outID;                   /* @brief ID Attachment       */
+layout(location = 3) out vec4  outTriangleID;           /* @brief ID Attachment.       */
+layout(location = 4) out vec4  outMeshletID;            /* @brief ID Attachment.       */
 
 /*****************************************************************************************/
 
@@ -68,29 +72,28 @@ push;
 
 /*****************************************************************************************/
 
-/***************************************Functions*****************************************/
-
-vec2 SampleSphericalMap(vec3 v)
-{
-    vec2 uv = vec2(atan(-v.z, v.x), asin(-v.y));
-    uv *= invAtan;
-    uv += 0.5;
-
-    return uv;
-}
-
-/*****************************************************************************************/
-
 /**********************************Shader Entry*******************************************/
 
 void main()
 {
     ExplainMeshDesciption(push.descAddress);
 
-    vec2 uv = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
-    outColor = texture(BindLessTextureBuffer[materialParam.albedo], uv);
-    outPosition = vec4(fragInput.worldPosition, 1.0f);
-    outID = desc.entityID;
+    uint  triangleSeed  = triangleId;
+    float trianglerand0 = rnd(triangleSeed);
+    float trianglerand1 = rnd(triangleSeed);
+    float trianglerand2 = rnd(triangleSeed);
+
+    uint  meshletSeed  = meshletId;
+    float meshletrand0 = rnd(meshletSeed);
+    float meshletrand1 = rnd(meshletSeed);
+    float meshletrand2 = rnd(meshletSeed);
+
+    vec2 uv       = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
+    outColor      = texture(BindLessTextureBuffer[materialParam.albedo], uv);
+    outPosition   = vec4(fragInput.worldPosition, 1.0f);
+    outID         = desc.entityID;
+    outTriangleID = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
+    outMeshletID  = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
 }
 
 /*****************************************************************************************/

@@ -47,7 +47,8 @@ layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPR
 * @brief Mesh Shader Output to Fragment Shader.
 */
 layout(location = 0) out Pixel pixel[];               /* @brief Pixel Data.     */
-layout(location = 4) out flat uint meshletId[];       /* @brief Meshlet ID.     */
+layout(location = 4) out flat uint triangleId[];      /* @brief Triangle ID.    */
+layout(location = 5) out flat uint meshletId[];       /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 
@@ -100,6 +101,7 @@ void main()
         pixel[arrayIndices[j]].normal    = normalize(m3model * vt.normal);
         pixel[arrayIndices[j]].color     = vt.color;
         pixel[arrayIndices[j]].texCoord  = vt.texCoord;
+        triangleId[arrayIndices[j]]      = localId + meshlet.primitiveOffset;
         meshletId[arrayIndices[j]]       = id;
     }
     
