@@ -56,6 +56,9 @@ project "SpicesEngine"
 		-- Library: meshoptimizer Files.
 		"vendor/meshoptimizer/src/**.h",
 		"vendor/meshoptimizer/src/**.cpp",
+
+		-- Library: METIS Files.
+		"vendor/METIS/include/**.h",
 	}
 
 	-- Macros Definitions

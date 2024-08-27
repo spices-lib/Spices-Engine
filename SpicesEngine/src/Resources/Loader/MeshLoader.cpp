@@ -10,6 +10,7 @@
 #include "Core/Library/FileLibrary.h"
 #include "Core/Library/StringLibrary.h"
 #include "Systems/ResourceSystem.h"
+#include "Resources/Mesh/MeshProcesser.h"
 
 #include "tiny_obj_loader.h"
 
@@ -135,7 +136,7 @@ namespace Spices {
 			}
 		}
 
-		outMeshPack->CreateMeshlets();
+		MeshProcesser::CreateMeshlets(outMeshPack->m_Vertices, outMeshPack->m_Indices, outMeshPack->m_Meshlets);
 		WriteSASSET(index, fileName, outMeshPack);
 
 		return true;

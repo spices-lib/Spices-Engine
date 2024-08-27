@@ -379,7 +379,7 @@ namespace Spices {
 		
 		if (isCreateBuffer)
 		{
-			CreateMeshlets();
+			MeshProcesser::CreateMeshlets(m_Vertices, m_Indices, m_Meshlets);
 			CreateBuffer();
 		}
 
@@ -465,7 +465,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			CreateMeshlets();
+			MeshProcesser::CreateMeshlets(m_Vertices, m_Indices, m_Meshlets);
 			CreateBuffer();
 		}
 
@@ -526,7 +526,8 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			CreateMeshlets();
+			MeshProcesser::CreateMeshlets(m_Vertices, m_Indices, m_Meshlets);
+			MeshProcesser::GroupMeshlets(m_Indices, m_Meshlets);
 			CreateBuffer();
 		}
 

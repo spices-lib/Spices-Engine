@@ -16,21 +16,36 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		/**
+		* @brief normal cone weight set 0.5f;
+		*/
 		const float coneWeight = 0.5f;
 
+		/**
+		* @brief Init meshopt variable.
+		*/
 		size_t max_meshlets = meshopt_buildMeshletsBound(indices.size(), MESHLET_NVERTICES, MESHLET_NPRIMITIVES);
 		std::vector<meshopt_Meshlet> meshoptlets(max_meshlets);
 		std::vector<unsigned int> meshlet_vertices(max_meshlets * MESHLET_NVERTICES);
 		std::vector<unsigned char> meshlet_triangles(max_meshlets * MESHLET_NPRIMITIVES * 3);
 
+		/**
+		* @brief Build Meshlets.
+		*/
 		size_t nMeshlet = meshopt_buildMeshlets(meshoptlets.data(), meshlet_vertices.data(), meshlet_triangles.data(), indices.data(),
 			indices.size(), &vertices[0].position.x, vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, coneWeight);
 
+		/**
+		* @brief Adjust meshopt variable.
+		*/
 		const meshopt_Meshlet& last = meshoptlets[nMeshlet - 1];
 		meshoptlets.resize(nMeshlet);
 		meshlet_vertices.resize(last.vertex_offset + last.vertex_count);
 		meshlet_triangles.resize(last.triangle_offset + (last.triangle_count * 3 + 3) & ~3);
 
+		/**
+		* @brief Optimize meshlets and compute meshlet bound and cone.
+		*/
 		uint32_t nPrimitives = 0;
 		for (size_t i = 0; i < nMeshlet; ++i)
 		{
@@ -50,6 +65,9 @@ namespace Spices {
 			nPrimitives += m.triangle_count;
 		}
 
+		/**
+		* @brief Fill in data back to meshpack variable.
+		*/
 		std::vector<Vertex> tempVertices = vertices;
 		std::vector<uint32_t> tempIndices = indices;
 
@@ -58,7 +76,7 @@ namespace Spices {
 
 		vertices.resize(meshlet_vertices.size());
 
-		const SpicesShader::Meshlet& lastm = meshlets[meshlets.size() - 1];
+		const Meshlet& lastm = meshlets[meshlets.size() - 1];
 		indices.resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
 
 		for (uint32_t i = 0; i < meshlet_vertices.size(); i++)

@@ -30,7 +30,7 @@ namespace Spices {
 		, m_CmdThreadPool           (cmdThreadPool         )
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
-		, m_IsRegistryDGCPipeline   (isRegistryDGCPipeline)
+		, m_IsRegistryDGCPipeline   (isRegistryDGCPipeline )
 	{}
 
 	void Renderer::OnSystemInitialize()
