@@ -16,8 +16,6 @@
 #include "glm/glm.hpp"
 #include <glm/gtx/hash.hpp>
 
-#include <src/meshoptimizer.h>
-
 namespace Spices {
 
 	/**

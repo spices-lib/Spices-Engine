@@ -11,6 +11,8 @@ namespace Spices {
 
 	std::vector<VkVertexInputBindingDescription> Vertex::GetBindingDescriptions()
 	{
+		SPICES_PROFILE_ZONE;
+
 		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
 		bindingDescriptions[0].binding    = 0;
 		bindingDescriptions[0].stride     = sizeof(Vertex);
@@ -21,6 +23,8 @@ namespace Spices {
 
 	std::vector<VkVertexInputAttributeDescription> Vertex::GetAttributeDescriptions()
 	{
+		SPICES_PROFILE_ZONE;
+
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
 		attributeDescriptions.push_back({ 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position) });
@@ -33,6 +37,8 @@ namespace Spices {
 
 	void Meshlet::FromMeshopt(const meshopt_Meshlet& m, const meshopt_Bounds& bounds)
 	{
+		SPICES_PROFILE_ZONE;
+
 		vertexOffset    = m.vertex_offset;
 		nVertices       = m.vertex_count;
 		primitiveOffset = 0;                   /* @brief Need more work here. */

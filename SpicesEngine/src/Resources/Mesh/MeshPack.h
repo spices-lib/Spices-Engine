@@ -284,11 +284,6 @@ namespace Spices {
 		*/
 		void CreateBuffer();
 
-		/**
-		* @brief Create Meshlets.
-		*/
-		void CreateMeshlets();
-
 	public:
 
 		/**
