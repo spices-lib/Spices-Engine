@@ -56,6 +56,7 @@ project "SpicesTest"
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
 		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
 		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
+		"%{IncludeDir.METIS}",                 -- Library: METIS Header Folder.
 	}
 
 	-- The Solution Dependency

@@ -98,6 +98,7 @@ project "SpicesEngine"
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
 		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
 		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
+		"%{IncludeDir.METIS}",                 -- Library: METIS Header Folder.
 	}
 
 	-- The Solution Dependency
@@ -110,6 +111,7 @@ project "SpicesEngine"
 		"implot",                             -- Dependency: implot
 		"%{Library.NvPerfUtility}",           -- Dependency: NvPerfUtility
 		"%{Library.HoudiniEnginelib}",        -- Dependency: HoudiniEngine
+		"%{Library.METIS}",                   -- Dependency: METIS
 	}
 
 	-- Library: std_image is included this solution, do not use PreCompiler Header.

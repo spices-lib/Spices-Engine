@@ -24,6 +24,7 @@ IncludeDir["HoudiniEngine"]               = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["taskflow"]                    = "%{wks.location}/SpicesEngine/vendor/taskflow"                                    -- Include: taskflow
 IncludeDir["meshoptimizer"]               = "%{wks.location}/SpicesEngine/vendor/meshoptimizer"                               -- Include: meshoptimizer
 IncludeDir["VulkanMemoryAllocator"]       = "%{wks.location}/SpicesEngine/vendor/VulkanMemoryAllocator/include"               -- Include: VulkanMemoryAllocator
+IncludeDir["METIS"]                       = "%{wks.location}/SpicesEngine/vendor/METIS/include"                               -- Include: METIS
 IncludeDir["googletest"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googletest/include"                 -- Include: googletest
 IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googlemock/include"                 -- Include: googlemock
 
@@ -33,9 +34,11 @@ LibraryDir["VulkanSDK"]                   = "C:/VulkanSDK/1.3.275.0/Lib"        
 LibraryDir["NvPerfUtility"]               = "%{wks.location}/SpicesEngine/vendor/NvPerfUtility/lib"                           -- Library Directries: NvPerfUtility Folder
 LibraryDir["HoudiniEnginedll"]            = "C:/Program Files/Side Effects Software/Houdini 20.5.278/bin"                     -- Library Directries: HoudiniEnginedll Folder
 LibraryDir["HoudiniEnginelib"]            = "C:/Program Files/Side Effects Software/Houdini 20.5.278/custom/houdini/dsolib"   -- Library Directries: HoudiniEnginelib Folder
+LibraryDir["METIS"]                       = "%{wks.location}/SpicesEngine/vendor/METIS/lib"                                   -- Library Directries: METIS Folder
 
 -- Library Directries
 Library                                   = {}
 Library["VulkanSDK"]                      = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"                                            -- Library Directries: VulkanSDK
 Library["NvPerfUtility"]                  = "%{LibraryDir.NvPerfUtility}/nvperf_grfx_host.dll"                                -- Library Directries: NvPerfUtility
 Library["HoudiniEnginelib"]               = "%{LibraryDir.HoudiniEnginelib}/libHAPIL.lib"                                     -- Library Directries: HoudiniEnginelib
+Library["METIS"]                          = "%{LibraryDir.METIS}/metis.lib"                                                   -- Library Directries: METIS
