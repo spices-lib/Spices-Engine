@@ -53,7 +53,7 @@ project "SpicesGame"
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
 		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
 		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
-		"%{IncludeDir.METIS}",                 -- Library: METIS Header Folder.
+		"%{IncludeDir.METIS}/include",         -- Library: METIS Header Folder.
 	}
 
 	-- In Visual Studio, it only works when generated a new solution, remember update solution will not works.
