@@ -45,6 +45,6 @@ group "Dependencies"
 	include "SpicesEngine/vendor/yaml-cpp"     -- Dependency yaml-cpp.
 	include "SpicesEngine/vendor/implot"       -- Dependency implot.
 	include "SpicesEngine/vendor/GKlib"        -- Dependency GKlib.
-	include "SpicesEngine/vendor/METLS"        -- Dependency METLS.
+	include "SpicesEngine/vendor/METIS"        -- Dependency METIS.
 	include "SpicesTest/vendor/googletest"     -- Dependency googletest.
 group ""
