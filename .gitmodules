@@ -40,3 +40,6 @@
 [submodule "SpicesEngine/vendor/GKlib"]
 	path = SpicesEngine/vendor/GKlib
 	url = https://github.com/spices-lib/GKlib.git
+[submodule "SpicesEngine/vendor/METIS"]
+	path = SpicesEngine/vendor/METIS
+	url = https://github.com/spices-lib/METIS.git
