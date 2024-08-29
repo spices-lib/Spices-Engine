@@ -87,8 +87,8 @@ void main()
         
     index -= ivec3(meshlet.vertexOffset);
     uint arrayIndices[3] = { index.x, index.y, index.z };
-        
-    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(index.x, index.y, index.z);
+    
+    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(3 * localId + 0, 3 * localId + 1, 3 * localId + 2);
     
     [[unroll]]
     for(int j = 0; j < 3; j++)

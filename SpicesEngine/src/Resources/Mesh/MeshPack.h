@@ -52,13 +52,13 @@ namespace Spices {
 		uint64_t GetBufferAddress() { return m_Buffer->GetAddress(); }
 
 		Update_F(modelAddress             )
-		Update_F(vertexAddress            )
-		Update_F(indexAddress             )
+		Update_F(verticesAddress          )
+		Update_F(indicesAddress           )
 		Update_F(materialParameterAddress )
 		Update_F(meshletAddress           )
 		Update_F(nMeshlets                )
 		Update_F(entityID                 )
-
+			 
 		/**
 		* @brief Buffer of this.
 		*/
@@ -246,7 +246,7 @@ namespace Spices {
 		* @brief Get VerticesBuffer.
 		* @return Returns the VerticesBuffer.
 		*/
-		std::shared_ptr<VulkanBuffer> GetVerticesBuffer() const { return m_VertexBuffer; }
+		std::shared_ptr<VulkanBuffer> GetVerticesBuffer() const { return m_VerticesBuffer; }
 
 		/**
 		* @brief Get IndicesBuffer.
@@ -264,7 +264,7 @@ namespace Spices {
 		* @brief Get VerticesBuffer Video memory address.
 		* @return Returns the VerticesBuffer Video memory address.
 		*/
-		VkDeviceAddress GetVerticesBufferAddress() const { return m_VertexBuffer->GetAddress(); }
+		VkDeviceAddress GetVerticesBufferAddress() const { return m_VerticesBuffer->GetAddress(); }
 
 		/**
 		* @brief Get IndicesBuffer Video memory address.
@@ -318,6 +318,8 @@ namespace Spices {
 		*/
 		bool m_Instanced;
 
+		/*********************************************************************/
+
 		/**
 		* @brief Vertices array.
 		*/
@@ -327,6 +329,15 @@ namespace Spices {
 		* @brief Vertices Count.
 		*/
 		uint32_t m_NVertices;
+
+		/**
+		* @brief Vertices buffer.
+		*/
+		std::shared_ptr<VulkanBuffer> m_VerticesBuffer;
+
+		/*********************************************************************/
+
+		/*********************************************************************/
 
 		/**
 		* @brief Indices array.
@@ -339,6 +350,15 @@ namespace Spices {
 		uint32_t m_NIndices;
 
 		/**
+		* @brief Indices buffer.
+		*/
+		std::shared_ptr<VulkanBuffer> m_IndicesBuffer;
+
+		/*********************************************************************/
+
+		/*********************************************************************/
+
+		/**
 		* @brief MeshPack meshlets.
 		*/
 		std::vector<Meshlet> m_Meshlets;
@@ -349,24 +369,16 @@ namespace Spices {
 		uint32_t m_NMeshlets;
 
 		/**
-		* @brief Task Sahder Work Group Size.
-		*/
-		uint32_t m_NTasks;
-
-		/**
-		* @brief Vertices buffer.
-		*/
-		std::shared_ptr<VulkanBuffer> m_VertexBuffer;
-
-		/**
-		* @brief Indices buffer.
-		*/
-		std::shared_ptr<VulkanBuffer> m_IndicesBuffer;
-
-		/**
 		* @brief Indices buffer.
 		*/
 		std::shared_ptr<VulkanBuffer> m_MeshletsBuffer;
+
+		/*********************************************************************/
+
+		/**
+		* @brief Task Sahder Work Group Size.
+		*/
+		uint32_t m_NTasks;
 
 		/**
 		* @brief specific material poinnter.
@@ -403,12 +415,13 @@ namespace Spices {
 		/**
 		* @brief Draw Command.
 		*/
-		VkDrawMeshTasksIndirectCommandNV m_MeshTaskIndirectDrawCommand;
+		VkDrawMeshTasksIndirectCommandNV m_MeshTaskIndirectDrawCommand{};
 
 		/**
 		* @brief Allow MeshLoader access all data.
 		*/
 		friend class MeshLoader;
+		friend class MeshProcesser;
 	};
 
 	/**

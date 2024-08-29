@@ -186,8 +186,8 @@ struct PointLight
 struct MeshDesc
 {
 	uint64_t modelAddress;                    /* @brief Address of the Model Matrix.                   */
-	uint64_t vertexAddress;                   /* @brief Address of the Vertex buffer.                  */
-	uint64_t indexAddress;                    /* @brief Address of the index buffer.                   */
+	uint64_t verticesAddress;                 /* @brief Address of the Vertices buffer.                */
+	uint64_t indicesAddress;                  /* @brief Address of the indices buffer.                 */
 	uint64_t materialParameterAddress;        /* @brief Address of the Material Parameter buffer.      */
 	uint64_t meshletAddress;                  /* @brief Address of the Meshlet Buffer.                 */
 	uint     nMeshlets;                       /* @brief Meshlets Count.                                */
@@ -223,6 +223,8 @@ struct Meshlet
 	uint  primitiveOffset;                     /* @brief Offset of primitives this meshlet.      */
 	uint  nVertices;                           /* @brief Vertices Count this meshlet.( <= 64)    */
 	uint  nPrimitives;                         /* @brief Primitives Count this meshlet.( <= 126) */
+	uint  lod;                                 /* @brief Current meshlet lod level.              */
+	uint  clusterMeshletIndex;                 /* @brief current cluster meshlet index.          */
 	vec3  boundCenter;                         /* @brief Bounding Sphere Center in local world.  */
 	float boundRadius;                         /* @brief Bounding Sphere radius.                 */
 	vec3  coneApex;                            /* @brief Normal Cone center.                     */

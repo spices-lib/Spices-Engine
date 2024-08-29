@@ -69,8 +69,6 @@ namespace Spices {
 		/**
 		* @brief Fill in data back to meshpack variable.
 		*/
-		//meshPack->m_VertexIndices = std::move(meshlet_vertices);
-
 		const Meshlet& lastm = meshPack->m_Meshlets[nMeshlet - 1];
 		meshPack->m_Indices.resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
 
@@ -81,9 +79,13 @@ namespace Spices {
 
 			for (uint32_t j = 0; j < m.triangle_count; j++)
 			{
-				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 0] = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 0] + m.vertex_offset;
-				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 1] = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 1] + m.vertex_offset;
-				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 2] = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 2] + m.vertex_offset;
+				uint32_t a = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 0] + m.vertex_offset;
+				uint32_t b = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 1] + m.vertex_offset;
+				uint32_t c = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 2] + m.vertex_offset;
+
+				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 0] = meshlet_vertices[a];
+				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 1] = meshlet_vertices[b];
+				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 2] = meshlet_vertices[c];
 			}
 		}
 	}

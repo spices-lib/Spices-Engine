@@ -72,8 +72,8 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
 {
     desc       = MeshDescs(meshDescAddress).i[0];
     model      = Models(desc.modelAddress).i[0];
-    vertices   = Vertices(desc.vertexAddress);
-    indices    = Indices(desc.indexAddress);
+    vertices   = Vertices(desc.verticesAddress);
+    indices    = Indices(desc.indicesAddress);
     meshlets   = Meshlets(desc.meshletAddress);
     
 #ifdef SHADER_BINDLESS_MATERIAL

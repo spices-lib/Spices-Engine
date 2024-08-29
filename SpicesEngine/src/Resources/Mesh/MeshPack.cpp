@@ -16,8 +16,8 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		modelAddress             = 0;
-		vertexAddress            = 0;
-		indexAddress             = 0;
+		verticesAddress          = 0;
+		indicesAddress           = 0;
 		materialParameterAddress = 0;
 		meshletAddress           = 0;
 		nMeshlets                = 0;
@@ -50,13 +50,20 @@ namespace Spices {
 		: m_UUID(UUID())
 		, m_MeshPackName(name)
 		, m_Instanced(instanced)
+		, m_Vertices{}
+		, m_NVertices(0)
+		, m_Indices{}
+		, m_NIndices(0)
+		, m_Meshlets{}
+		, m_NMeshlets(0)
+		, m_NTasks(0)
 	{}
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		const VkBuffer buffers[] = { m_VertexBuffer->Get() };
+		const VkBuffer buffers[] = { m_VerticesBuffer->Get() };
 		constexpr VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, m_IndicesBuffer->Get(), 0, VK_INDEX_TYPE_UINT32);
@@ -88,7 +95,7 @@ namespace Spices {
 		* @brief Copy Data from ResourcePool.
 		*/
 		m_Desc                              = ptr->m_Desc.Copy();
-		m_VertexBuffer                      = ptr->m_VertexBuffer;
+		m_VerticesBuffer                    = ptr->m_VerticesBuffer;
 		m_IndicesBuffer                     = ptr->m_IndicesBuffer;
 		m_MeshletsBuffer                    = ptr->m_MeshletsBuffer;
 		m_MeshTaskIndirectDrawCommand       = ptr->m_MeshTaskIndirectDrawCommand;
@@ -151,8 +158,8 @@ namespace Spices {
 		/**
 		* @brief BLAS builder requires raw device addresses.
 		*/
-		const VkDeviceAddress vertexAddress          =  m_VertexBuffer->GetAddress();
-		const VkDeviceAddress indicesAddress         =  m_IndicesBuffer->GetAddress();
+		const VkDeviceAddress vertexAddress          = m_VerticesBuffer->GetAddress();
+		const VkDeviceAddress indicesAddress         = m_IndicesBuffer->GetAddress();
 
 		const uint32_t maxPrimitiveCount             = static_cast<uint32_t>(m_NIndices / 3);
 
@@ -202,44 +209,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Build meshlet buffer.
-		*/
-		{
-			m_NMeshlets = m_Meshlets.size();
-
-			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlet) * m_NMeshlets;
-
-			VulkanBuffer stagingBuffer(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-			);
-
-			stagingBuffer.WriteToBuffer(m_Meshlets.data());
-
-			m_MeshletsBuffer = std::make_shared<VulkanBuffer>(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     |
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
-				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-			);
-
-			m_MeshletsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshletsBuffer->Get(), bufferSize);
-
-			m_NTasks = m_NMeshlets / SUBGROUP_SIZE + 1;
-
-			m_MeshTaskIndirectDrawCommand.firstTask = 0;
-			m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
-
-			m_Desc.UpdatenMeshlets(m_NMeshlets);
-			m_Desc.UpdatemeshletAddress(m_MeshletsBuffer->GetAddress());
-		}
-
 		/*
 		* @brief Build vertex buffer
 		*/
@@ -258,7 +227,7 @@ namespace Spices {
 
 			stagingBuffer.WriteToBuffer(m_Vertices.data());
 
-			m_VertexBuffer = std::make_shared<VulkanBuffer>(
+			m_VerticesBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
 				bufferSize, 
 				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     | 
@@ -268,9 +237,9 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 			);
 
-			m_VertexBuffer->CopyBuffer(stagingBuffer.Get(), m_VertexBuffer->Get(), bufferSize);
+			m_VerticesBuffer->CopyBuffer(stagingBuffer.Get(), m_VerticesBuffer->Get(), bufferSize);
 
-			m_Desc.UpdatevertexAddress(m_VertexBuffer->GetAddress());
+			m_Desc.UpdateverticesAddress(m_VerticesBuffer->GetAddress());
 		}
 
 		/*
@@ -303,7 +272,45 @@ namespace Spices {
 
 			m_IndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_IndicesBuffer->Get(), bufferSize);
 
-			m_Desc.UpdateindexAddress(m_IndicesBuffer->GetAddress());
+			m_Desc.UpdateindicesAddress(m_IndicesBuffer->GetAddress());
+		}
+
+		/**
+		* @brief Build meshlet buffer.
+		*/
+		{
+			m_NMeshlets = m_Meshlets.size();
+
+			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlet) * m_NMeshlets;
+
+			VulkanBuffer stagingBuffer(
+				VulkanRenderBackend::GetState(),
+				bufferSize,
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
+
+			stagingBuffer.WriteToBuffer(m_Meshlets.data());
+
+			m_MeshletsBuffer = std::make_shared<VulkanBuffer>(
+				VulkanRenderBackend::GetState(),
+				bufferSize,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
+
+			m_MeshletsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshletsBuffer->Get(), bufferSize);
+
+			m_NTasks = m_NMeshlets / SUBGROUP_SIZE + 1;
+
+			m_MeshTaskIndirectDrawCommand.firstTask = 0;
+			m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
+
+			m_Desc.UpdatenMeshlets(m_NMeshlets);
+			m_Desc.UpdatemeshletAddress(m_MeshletsBuffer->GetAddress());
 		}
 	}
 
@@ -379,7 +386,7 @@ namespace Spices {
 		
 		if (isCreateBuffer)
 		{
-			MeshProcesser::CreateMeshlets(m_Vertices, m_Indices, m_Meshlets);
+			MeshProcesser::CreateMeshlets(this);
 			CreateBuffer();
 		}
 
@@ -465,7 +472,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			MeshProcesser::CreateMeshlets(m_Vertices, m_Indices, m_Meshlets);
+			MeshProcesser::CreateMeshlets(this);
 			CreateBuffer();
 		}
 
@@ -526,7 +533,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			MeshProcesser::CreateMeshlets(m_Vertices, m_Indices, m_Meshlets);
+			MeshProcesser::CreateMeshlets(this);
 			MeshProcesser::GroupMeshlets(m_Indices, m_Meshlets);
 			CreateBuffer();
 		}
