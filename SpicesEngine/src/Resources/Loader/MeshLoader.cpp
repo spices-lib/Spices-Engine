@@ -136,7 +136,7 @@ namespace Spices {
 			}
 		}
 
-		MeshProcesser::CreateMeshlets(outMeshPack->m_Vertices, outMeshPack->m_Indices, outMeshPack->m_Meshlets);
+		MeshProcesser::CreateMeshlets(outMeshPack);
 		WriteSASSET(index, fileName, outMeshPack);
 
 		return true;

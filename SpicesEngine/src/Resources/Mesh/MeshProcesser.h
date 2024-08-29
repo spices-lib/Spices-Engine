@@ -15,6 +15,8 @@ namespace Spices {
 		std::vector<size_t> meshlets;
 	};
 
+	class MeshPack;
+
 	/**
 	* @brief Class for provide functions of process Meshpack.
 	*/
@@ -24,11 +26,8 @@ namespace Spices {
 
 		/**
 		* @brief Create Meshlets from MeshPack vertices and indices.
-		* @param[in] vertices MeshPack vertices.
-		* @param[in] indices MeshPack indices.
-		* @param[in] meshlets MeshPack meshlets.
 		*/
-		static void CreateMeshlets(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<Meshlet>& meshlets);
+		static void CreateMeshlets(MeshPack* meshPack);
 
 		/**
 		* @brief Split Meshlets to Groups.
@@ -37,5 +36,11 @@ namespace Spices {
 		* @return Returns Groups.
 		*/
 		static std::vector<MeshletGroup> GroupMeshlets(const std::vector<uint32_t>& indices, const std::vector<Meshlet>& meshlets);
+
+		static void Samplify(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<MeshletGroup>& groups, std::vector<Meshlet>& meshlets);
+
+		static void GenerateMeshLodClusterHierarchy(MeshPack* meshPack);
+
+		static void AppendMeshlets(MeshPack* meshPack, const std::vector<uint32_t> indexBuffer);
 	};
 }
