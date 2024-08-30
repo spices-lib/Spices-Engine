@@ -8,11 +8,6 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable     /* @brief Enable include Macro. */
-
-#include "Header/ShaderVertexInput.glsl"
-#include "Header/ShaderPreRendererLayout.glsl"
-
 /*****************************************************************************************/
 
 /************************************Vertex Output****************************************/
@@ -32,8 +27,8 @@ vertOut;
 
 void main()
 {
-	vertOut.texCoord = texCoord;
-	gl_Position = vec4(position * 2.0f, 1.0f);
+	vertOut.texCoord = vec2((gl_VertexIndex << 1) & 2, gl_VertexIndex & 2);
+	gl_Position = vec4(vertOut.texCoord * 2.0f - 1.0f, 0.0f, 1.0f);
 }
 
 /*****************************************************************************************/

@@ -59,8 +59,8 @@ namespace Spices {
 		vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 		vertexInputInfo.vertexBindingDescriptionCount   = static_cast<uint32_t>(bindingDescriptions.size());
-		vertexInputInfo.pVertexAttributeDescriptions    = attributeDescriptions.data();
-		vertexInputInfo.pVertexBindingDescriptions      = bindingDescriptions.data();
+		vertexInputInfo.pVertexAttributeDescriptions    = vertexInputInfo.vertexAttributeDescriptionCount > 0 ? attributeDescriptions.data() : nullptr;
+		vertexInputInfo.pVertexBindingDescriptions      = vertexInputInfo.vertexBindingDescriptionCount > 0 ? bindingDescriptions.data() : nullptr;
 
 		/**
 		* @brief Instance a VkGraphicsPipelineCreateInfo.

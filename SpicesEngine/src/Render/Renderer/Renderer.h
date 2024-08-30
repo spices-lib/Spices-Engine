@@ -897,6 +897,17 @@ namespace Spices {
 			void ExecuteDGCAsync_NV();
 
 			/**
+			* @brief Draw a Triangle full screen.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			void DrawFullScreenTriangle(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+
+			/**
+			* @brief Draw a Triangle full screen Async.
+			*/
+			void DrawFullScreenTriangleAsync();
+
+			/**
 			* @brief Add a memory Barrier.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.

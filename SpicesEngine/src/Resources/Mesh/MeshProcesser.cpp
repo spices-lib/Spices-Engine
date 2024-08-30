@@ -20,7 +20,7 @@ namespace Spices {
 		size_t previousMeshletsStart = 0;
 		AppendMeshlets(meshPack, meshPack->m_Indices);
 
-		const int maxLod = 25;
+		const int maxLod = 0;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
 			float tLod = lod / (float)maxLod;

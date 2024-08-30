@@ -1041,6 +1041,28 @@ namespace Spices {
 		});
 	}
 
+	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangle(VkCommandBuffer cmdBuffer)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Call vkCmdDraw.
+		*/
+		vkCmdDraw(cmdBuffer ? cmdBuffer : m_CommandBuffer, 3, 1, 0, 0);
+	}
+
+	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangleAsync()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Call vkCmdDraw.
+		*/
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+			vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+		});
+	}
+
 	void Renderer::RenderBehaveBuilder::PipelineMemoryBarrier(
 		VkAccessFlags          srcAccessMask , 
 		VkAccessFlags          dstAccessMask , 

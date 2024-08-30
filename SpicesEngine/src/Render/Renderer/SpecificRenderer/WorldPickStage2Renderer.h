@@ -63,12 +63,16 @@ namespace Spices {
 		*/
 		virtual void CreateDescriptorSet() override;
 
-	private:
-
 		/**
-		* @brief Full Screen Plane for rendering.
+		* @brief The interface is inherited from Renderer.
+		* Create Material Specific Pipeline.
+		* @todo Complete it by renderer.
 		*/
-		std::unique_ptr<PlanePack> m_Plane;
+		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
+			std::shared_ptr<Material>        material  ,
+			VkPipelineLayout&                layout    ,
+			std::shared_ptr<RendererSubPass> subPass
+		) override;
 	};
 
 }
