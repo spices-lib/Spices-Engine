@@ -77,7 +77,7 @@ namespace Spices {
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
 			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
 			bool                                         isLoadDefaultMaterial = true ,
-			bool                                         isRegistryDGCPipeline = true
+			bool                                         isRegistryDGCPipeline = false
 		);
 
 		/**

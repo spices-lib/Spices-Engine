@@ -20,7 +20,7 @@ namespace Spices {
 		size_t previousMeshletsStart = 0;
 		AppendMeshlets(meshPack, meshPack->m_Indices);
 
-		const int maxLod = 0;
+		/*const int maxLod = 0;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
 			float tLod = lod / (float)maxLod;
@@ -68,7 +68,7 @@ namespace Spices {
 				AppendMeshlets(meshPack, simplifiedIndexBuffer);
 				previousMeshletsStart = newMeshletStart;
 			}
-		}
+		}*/
 	}
 
 	void MeshProcesser::AppendMeshlets(MeshPack* meshPack, const std::vector<uint32_t> indices)
