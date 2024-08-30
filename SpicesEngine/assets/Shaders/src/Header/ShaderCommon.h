@@ -187,7 +187,8 @@ struct MeshDesc
 {
 	uint64_t modelAddress;                    /* @brief Address of the Model Matrix.                   */
 	uint64_t verticesAddress;                 /* @brief Address of the Vertices buffer.                */
-	uint64_t indicesAddress;                  /* @brief Address of the indices buffer.                 */
+	uint64_t vertexIndicesAddress;            /* @brief Address of the Vertex Indices buffer.          */
+	uint64_t indicesAddress;                  /* @brief Address of the Indices buffer.                 */
 	uint64_t materialParameterAddress;        /* @brief Address of the Material Parameter buffer.      */
 	uint64_t meshletAddress;                  /* @brief Address of the Meshlet Buffer.                 */
 	uint     nMeshlets;                       /* @brief Meshlets Count.                                */

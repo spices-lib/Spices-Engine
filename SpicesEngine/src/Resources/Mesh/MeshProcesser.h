@@ -25,22 +25,26 @@ namespace Spices {
 	public:
 
 		/**
-		* @brief Create Meshlets from MeshPack vertices and indices.
+		* @brief Generate Mesh Lod Resources.
+		* @param[in] meshPack MeshPack.
 		*/
-		static void CreateMeshlets(MeshPack* meshPack);
+		static void GenerateMeshLodClusterHierarchy(MeshPack* meshPack);
+
+	private:
+
+		/**
+		* @brief Create and Append Meshlets to MeshPack use given indices.
+		* @param[in] meshPack MeshPack.
+		* @param[in] indices Indices Buffer.
+		*/
+		static void AppendMeshlets(MeshPack* meshPack, const std::vector<uint32_t> indices);
 
 		/**
 		* @brief Split Meshlets to Groups.
-		* @param[in] indices MeshPack Indices.
+		* @param[in] meshPack MeshPack.
 		* @param[in] meshlets MeshPack Meshlets.
 		* @return Returns Groups.
 		*/
-		static std::vector<MeshletGroup> GroupMeshlets(const std::vector<uint32_t>& indices, const std::vector<Meshlet>& meshlets);
-
-		static void Samplify(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<MeshletGroup>& groups, std::vector<Meshlet>& meshlets);
-
-		static void GenerateMeshLodClusterHierarchy(MeshPack* meshPack);
-
-		static void AppendMeshlets(MeshPack* meshPack, const std::vector<uint32_t> indexBuffer);
+		static std::vector<MeshletGroup> GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets);
 	};
 }

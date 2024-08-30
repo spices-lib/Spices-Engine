@@ -51,13 +51,14 @@ namespace Spices {
 		*/
 		uint64_t GetBufferAddress() { return m_Buffer->GetAddress(); }
 
-		Update_F(modelAddress             )
-		Update_F(verticesAddress          )
-		Update_F(indicesAddress           )
-		Update_F(materialParameterAddress )
-		Update_F(meshletAddress           )
-		Update_F(nMeshlets                )
-		Update_F(entityID                 )
+		Update_F(modelAddress               )
+		Update_F(verticesAddress            )
+		Update_F(vertexIndicesAddress       )
+		Update_F(indicesAddress             )
+		Update_F(materialParameterAddress   )
+		Update_F(meshletAddress             )
+		Update_F(nMeshlets                  )
+		Update_F(entityID                   )
 			 
 		/**
 		* @brief Buffer of this.
@@ -340,17 +341,36 @@ namespace Spices {
 		/*********************************************************************/
 
 		/**
-		* @brief Indices array.
+		* @brief Meshlet Vertex Indices array.
+		*/
+		std::vector<uint32_t> m_VertexIndices;
+
+		/**
+		* @brief Meshlet Vertex Indices Count.
+		*/
+		uint32_t m_NVertexIndices;
+
+		/**
+		* @brief Meshlet Vertex Indices buffer.
+		*/
+		std::shared_ptr<VulkanBuffer> m_VertexIndicesBuffer;
+
+		/*********************************************************************/
+
+		/*********************************************************************/
+
+		/**
+		* @brief Meshlet Indices array.
 		*/
 		std::vector<uint32_t> m_Indices;
 
 		/**
-		* @brief Indices Count.
+		* @brief Meshlet Indices Count.
 		*/
 		uint32_t m_NIndices;
 
 		/**
-		* @brief Indices buffer.
+		* @brief Meshlet Indices buffer.
 		*/
 		std::shared_ptr<VulkanBuffer> m_IndicesBuffer;
 

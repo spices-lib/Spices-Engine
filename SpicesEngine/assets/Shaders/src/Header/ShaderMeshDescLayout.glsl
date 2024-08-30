@@ -43,6 +43,15 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices
 Vertices vertices;
 
 /**
+* @brief Mesh Vertex Indices Buffer.
+*/
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer VertexIndices
+{
+    ivec3 i[];
+};
+VertexIndices vertexIndices;
+
+/**
 * @brief Mesh Indices Buffer.
 */
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Indices 
@@ -70,11 +79,12 @@ Meshlets meshlets;
 */
 void ExplainMeshDesciption(in uint64_t meshDescAddress)
 {
-    desc       = MeshDescs(meshDescAddress).i[0];
-    model      = Models(desc.modelAddress).i[0];
-    vertices   = Vertices(desc.verticesAddress);
-    indices    = Indices(desc.indicesAddress);
-    meshlets   = Meshlets(desc.meshletAddress);
+    desc           = MeshDescs(meshDescAddress).i[0];
+    model          = Models(desc.modelAddress).i[0];
+    vertices       = Vertices(desc.verticesAddress);
+    vertexIndices  = VertexIndices(desc.vertexIndicesAddress);
+    indices        = Indices(desc.indicesAddress);
+    meshlets       = Meshlets(desc.meshletAddress);
     
 #ifdef SHADER_BINDLESS_MATERIAL
 

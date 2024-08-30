@@ -15,13 +15,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		modelAddress             = 0;
-		verticesAddress          = 0;
-		indicesAddress           = 0;
-		materialParameterAddress = 0;
-		meshletAddress           = 0;
-		nMeshlets                = 0;
-		entityID                 = 0;
+		modelAddress                = 0;
+		verticesAddress             = 0;
+		vertexIndicesAddress        = 0;
+		indicesAddress              = 0;
+		materialParameterAddress    = 0;
+		meshletAddress              = 0;
+		nMeshlets                   = 0;
+		entityID                    = 0;
 
 		m_Buffer = std::make_shared<VulkanBuffer>(
 			VulkanRenderBackend::GetState(),
@@ -52,6 +53,8 @@ namespace Spices {
 		, m_Instanced(instanced)
 		, m_Vertices{}
 		, m_NVertices(0)
+		, m_VertexIndices{}
+		, m_NVertexIndices(0)
 		, m_Indices{}
 		, m_NIndices(0)
 		, m_Meshlets{}
@@ -96,9 +99,11 @@ namespace Spices {
 		*/
 		m_Desc                              = ptr->m_Desc.Copy();
 		m_VerticesBuffer                    = ptr->m_VerticesBuffer;
+		m_VertexIndicesBuffer               = ptr->m_VertexIndicesBuffer;
 		m_IndicesBuffer                     = ptr->m_IndicesBuffer;
 		m_MeshletsBuffer                    = ptr->m_MeshletsBuffer;
 		m_MeshTaskIndirectDrawCommand       = ptr->m_MeshTaskIndirectDrawCommand;
+		m_NVertexIndices                    = ptr->m_NVertexIndices;
 		m_NIndices                          = ptr->m_NIndices;
 		m_NVertices                         = ptr->m_NVertices;
 		m_NMeshlets                         = ptr->m_NMeshlets;
@@ -243,7 +248,38 @@ namespace Spices {
 		}
 
 		/*
-		* @brief Build index buffer.
+		* @brief Build meshlet vertex index buffer.
+		*/
+		{
+			m_NVertexIndices = m_VertexIndices.size();
+
+			VkDeviceSize bufferSize = sizeof(m_VertexIndices[0]) * m_NVertexIndices;
+
+			VulkanBuffer stagingBuffer(
+				VulkanRenderBackend::GetState(),
+				bufferSize,
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT    ,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
+
+			stagingBuffer.WriteToBuffer(m_VertexIndices.data());
+
+			m_VertexIndicesBuffer = std::make_shared<VulkanBuffer>(
+				VulkanRenderBackend::GetState(),
+				bufferSize,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT          |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT ,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
+
+			m_VertexIndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_VertexIndicesBuffer->Get(), bufferSize);
+
+			m_Desc.UpdatevertexIndicesAddress(m_VertexIndicesBuffer->GetAddress());
+		}
+
+		/*
+		* @brief Build meshlet index buffer.
 		*/
 		{
 			m_NIndices = m_Indices.size();
@@ -386,7 +422,7 @@ namespace Spices {
 		
 		if (isCreateBuffer)
 		{
-			MeshProcesser::CreateMeshlets(this);
+			MeshProcesser::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 
@@ -472,7 +508,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			MeshProcesser::CreateMeshlets(this);
+			MeshProcesser::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 
@@ -533,8 +569,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			MeshProcesser::CreateMeshlets(this);
-			MeshProcesser::GroupMeshlets(m_Indices, m_Meshlets);
+			MeshProcesser::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 
