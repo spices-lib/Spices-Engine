@@ -10,6 +10,7 @@
 
 #include <src/meshoptimizer.h>
 #include <metis.h>
+#include <glm/gtx/norm.hpp>
 
 namespace Spices {
 
@@ -22,7 +23,9 @@ namespace Spices {
 		meshPack->m_Indices = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 
-		const int maxLod = 1;
+		//auto map = MergeByDistance(meshPack, 0.1f, 0.01f);
+
+		const int maxLod = 25;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
 			float tLod = lod / (float)maxLod;
@@ -126,7 +129,7 @@ namespace Spices {
 			meshlet.primitiveOffset  = nPrimitives;
 
 			meshlet.vertexOffset    += vertexIndicesOffset;
-			meshlet.primitiveOffset += indicesOffset;
+			meshlet.primitiveOffset += indicesOffset / 3;
 			meshlet.lod              = lod;
 
 			meshPack->m_Meshlets->push_back(std::move(meshlet));
@@ -189,7 +192,7 @@ namespace Spices {
 		}
 
 		std::unordered_map<Edge, std::set<size_t>> edges2Meshlets;
-		std::unordered_map<size_t, std::set<Edge>> meshlets2Edges;
+		std::unordered_map<size_t, std::vector<Edge>> meshlets2Edges;
 
 		for (size_t meshletIndex = 0; meshletIndex < meshlets.size(); meshletIndex++)
 		{
@@ -210,7 +213,7 @@ namespace Spices {
 					edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
 
 					edges2Meshlets[edge].insert(meshletIndex);
-					meshlets2Edges[meshletIndex].insert(edge);
+					meshlets2Edges[meshletIndex].push_back(edge);
 				}
 			}
 		}
@@ -350,5 +353,50 @@ namespace Spices {
 		}
 
 		return groups;
+	}
+
+	std::vector<uint64_t> MeshProcesser::MergeByDistance(MeshPack* meshPack, float maxDistance, float maxUVDistance)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<uint64_t> vertexRemap;
+
+		const size_t vertexCount = meshPack->m_Vertices->size();
+		vertexRemap.resize(vertexCount, -1);
+
+		for (uint64_t v = 0; v < vertexCount; v++)
+		{
+			float maxDistanceSq = maxDistance * maxDistance;
+			float maxUVDistanceSq = maxUVDistance * maxUVDistance;
+
+			const Vertex& vertex = (*meshPack->m_Vertices)[v];
+			uint64_t replacement = -1;
+
+			for (uint64_t potentialReplacement = 0; potentialReplacement < v; potentialReplacement++)
+			{
+				const Vertex& otherVertex = (*meshPack->m_Vertices)[vertexRemap[potentialReplacement]];
+				const float vertexDistanceSq = glm::distance2(vertex.position, otherVertex.position);
+				if (vertexDistanceSq <= maxDistanceSq)
+				{
+					const float uvDistanceSq = glm::distance2(vertex.texCoord, otherVertex.texCoord);
+					if (uvDistanceSq <= maxUVDistanceSq)
+					{
+						replacement = potentialReplacement;
+						maxDistanceSq = vertexDistanceSq;
+						maxUVDistanceSq = uvDistanceSq;
+					}
+				}
+			}
+
+			if (replacement == -1)
+			{
+				vertexRemap[v] = v;
+			}
+			else
+			{
+				vertexRemap[v] = replacement;
+			}
+		}
+		return vertexRemap;
 	}
 }
