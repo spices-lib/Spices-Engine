@@ -18,14 +18,16 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		size_t previousMeshletsStart = 0;
-		AppendMeshlets(meshPack, meshPack->m_Indices);
+		auto initIndices = meshPack->m_Indices;
+		meshPack->m_Indices = std::make_shared<std::vector<uint32_t>>();
+		AppendMeshlets(meshPack, 0, *initIndices);
 
-		/*const int maxLod = 0;
+		const int maxLod = 1;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
 			float tLod = lod / (float)maxLod;
 
-			std::vector<Meshlet> meshlets = std::vector<Meshlet>(meshPack->m_Meshlets.begin() + previousMeshletsStart, meshPack->m_Meshlets.end());
+			std::vector<Meshlet> meshlets = std::vector<Meshlet>(meshPack->m_Meshlets->begin() + previousMeshletsStart, meshPack->m_Meshlets->end());
 			if (meshlets.size() <= 1)
 			{
 				return;
@@ -33,7 +35,7 @@ namespace Spices {
 
 			std::vector<MeshletGroup> groups = GroupMeshlets(meshPack, meshlets);
 
-			const size_t newMeshletStart = meshPack->m_Meshlets.size();
+			const size_t newMeshletStart = meshPack->m_Meshlets->size();
 			for (const auto& group : groups)
 			{
 				std::vector<uint32_t> groupVertexIndices;
@@ -45,7 +47,7 @@ namespace Spices {
 					groupVertexIndices.resize(start + meshlet.nPrimitives * 3);
 					for (size_t j = 0; j < meshlet.nPrimitives * 3; j++)
 					{
-						groupVertexIndices[j + start] = meshPack->m_Indices[meshlet.primitiveOffset * 3 + j];
+						groupVertexIndices[j + start] = (*meshPack->m_Indices)[meshlet.primitiveOffset * 3 + j];
 					}
 				}
 
@@ -60,18 +62,18 @@ namespace Spices {
 
 				size_t simplifiedIndexCount = meshopt_simplify(simplifiedIndexBuffer.data(),
 					groupVertexIndices.data(), groupVertexIndices.size(),
-					&meshPack->m_Vertices[0].position.x, meshPack->m_Vertices.size(), sizeof(Vertex),
+					&(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex),
 					targetIndexCount, targetError, options, &simplificationError
 				);
 				simplifiedIndexBuffer.resize(simplifiedIndexCount);
 
-				AppendMeshlets(meshPack, simplifiedIndexBuffer);
+				AppendMeshlets(meshPack, lod + 1, simplifiedIndexBuffer);
 				previousMeshletsStart = newMeshletStart;
 			}
-		}*/
+		}
 	}
 
-	void MeshProcesser::AppendMeshlets(MeshPack* meshPack, const std::vector<uint32_t> indices)
+	void MeshProcesser::AppendMeshlets(MeshPack* meshPack, uint32_t lod, const std::vector<uint32_t> indices)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -80,10 +82,9 @@ namespace Spices {
 		* Get Const variable.
 		*/
 		const float coneWeight              = 0.5f;
-		const uint32_t vertexIndicesOffset  = meshPack->m_VertexIndices.size();
-		const uint32_t indicesOffset        = meshPack->m_Indices.size();
-		const uint32_t meshletsOffset       = meshPack->m_Meshlets.size();
-		const uint32_t lod                  = meshletsOffset == 0 ? 0 : meshPack->m_Meshlets[meshletsOffset - 1].lod + 1;
+		const uint32_t vertexIndicesOffset  = meshPack->m_VertexIndices->size();
+		const uint32_t indicesOffset        = meshPack->m_Indices->size();
+		const uint32_t meshletsOffset       = meshPack->m_Meshlets->size();
 
 		/** 
 		* @brief Init meshopt variable.
@@ -97,7 +98,7 @@ namespace Spices {
 		* @brief Build Meshlets.
 		*/
 		size_t nMeshlet = meshopt_buildMeshlets(meshoptlets.data(), meshlet_vertices.data(), meshlet_triangles.data(), indices.data(),
-			indices.size(), &meshPack->m_Vertices[0].position.x, meshPack->m_Vertices.size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, coneWeight);
+			indices.size(), &(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex), MESHLET_NVERTICES, MESHLET_NPRIMITIVES, coneWeight);
 
 		/**
 		* @brief Adjust meshopt variable.
@@ -118,7 +119,7 @@ namespace Spices {
 
 			const meshopt_Meshlet& m = meshoptlets[i];
 			meshopt_Bounds bounds = meshopt_computeMeshletBounds(&meshlet_vertices[m.vertex_offset],
-				&meshlet_triangles[m.triangle_offset], m.triangle_count, &meshPack->m_Vertices[0].position.x, meshPack->m_Vertices.size(), sizeof(Vertex));
+				&meshlet_triangles[m.triangle_offset], m.triangle_count, &(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex));
 
 			Meshlet meshlet;
 			meshlet.FromMeshopt(meshoptlets[i], bounds);
@@ -128,7 +129,7 @@ namespace Spices {
 			meshlet.primitiveOffset += indicesOffset;
 			meshlet.lod              = lod;
 
-			meshPack->m_Meshlets.push_back(std::move(meshlet));
+			meshPack->m_Meshlets->push_back(std::move(meshlet));
 
 			nPrimitives += m.triangle_count;
 		}
@@ -136,14 +137,14 @@ namespace Spices {
 		/**
 		* @brief Fill in data back to meshpack variable.
 		*/
-		const Meshlet& lastm = meshPack->m_Meshlets[meshletsOffset + nMeshlet - 1];
-		meshPack->m_VertexIndices.resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
-		meshPack->m_Indices.resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
+		const Meshlet& lastm = (*meshPack->m_Meshlets)[meshletsOffset + nMeshlet - 1];
+		meshPack->m_Indices->resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
+		meshPack->m_VertexIndices->resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
 
 		for (uint32_t i = 0; i < nMeshlet; i++)
 		{
 			const meshopt_Meshlet& m = meshoptlets[i];
-			const Meshlet& ml = meshPack->m_Meshlets[meshletsOffset + i];
+			const Meshlet& ml = (*meshPack->m_Meshlets)[meshletsOffset + i];
 
 			for (uint32_t j = 0; j < m.triangle_count; j++)
 			{
@@ -151,13 +152,13 @@ namespace Spices {
 				uint32_t b = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 1] + m.vertex_offset;
 				uint32_t c = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 2] + m.vertex_offset;
 
-				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 0] = meshlet_vertices[a];
-				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 1] = meshlet_vertices[b];
-				meshPack->m_Indices[3 * ml.primitiveOffset + 3 * j + 2] = meshlet_vertices[c];
+				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 0] = meshlet_vertices[a];
+				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 1] = meshlet_vertices[b];
+				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 2] = meshlet_vertices[c];
 
-				meshPack->m_VertexIndices[3 * ml.primitiveOffset + 3 * j + 0] = a + vertexIndicesOffset;
-				meshPack->m_VertexIndices[3 * ml.primitiveOffset + 3 * j + 1] = b + vertexIndicesOffset;
-				meshPack->m_VertexIndices[3 * ml.primitiveOffset + 3 * j + 2] = c + vertexIndicesOffset;
+				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 0] = a + vertexIndicesOffset;
+				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 1] = b + vertexIndicesOffset;
+				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 2] = c + vertexIndicesOffset;
 			}
 		}
 	}
@@ -187,15 +188,15 @@ namespace Spices {
 			return groupWithMeshlets();
 		}
 
-		std::unordered_map<Edge, std::vector<size_t>> edges2Meshlets;
-		std::unordered_map<size_t, std::vector<Edge>> meshlets2Edges;
+		std::unordered_map<Edge, std::set<size_t>> edges2Meshlets;
+		std::unordered_map<size_t, std::set<Edge>> meshlets2Edges;
 
 		for (size_t meshletIndex = 0; meshletIndex < meshlets.size(); meshletIndex++)
 		{
 			const auto& meshlet = meshlets[meshletIndex];
 			auto getVertexIndex = [&](size_t index) 
 			{
-				return meshPack->m_VertexIndices[meshPack->m_Indices[index + meshlet.primitiveOffset * 3]];
+				return (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
 			};
 
 			const size_t triangleCount = meshlet.nPrimitives;
@@ -208,8 +209,8 @@ namespace Spices {
 					edge.first  = getVertexIndex(i + triangleIndex * 3);
 					edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
 
-					edges2Meshlets[edge].push_back(meshletIndex);
-					meshlets2Edges[meshletIndex].emplace_back(edge);
+					edges2Meshlets[edge].insert(meshletIndex);
+					meshlets2Edges[meshletIndex].insert(edge);
 				}
 			}
 		}
@@ -237,8 +238,7 @@ namespace Spices {
 			return groupWithMeshlets();
 		}
 
-		const auto& meshlet = meshlets[meshlets.size() - 1];
-		idx_t vertexCount   = meshlet.vertexOffset + meshlet.nVertices;
+		idx_t vertexCount   = meshlets.size();
 		idx_t ncon          = 1;
 		idx_t nparts        = meshlets.size() / 4;
 		assert(nparts > 1);
@@ -303,7 +303,7 @@ namespace Spices {
 						else
 						{
 							std::ptrdiff_t d = std::distance(edgeAdjacency.begin(), existingEdgeIter);
-							assert(d > 0 && d < edgeWeights.size());
+							assert(d >= 0 && d < edgeWeights.size());
 							edgeWeights[d]++;
 						}
 					}

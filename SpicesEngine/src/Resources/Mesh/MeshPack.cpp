@@ -51,16 +51,19 @@ namespace Spices {
 		: m_UUID(UUID())
 		, m_MeshPackName(name)
 		, m_Instanced(instanced)
-		, m_Vertices{}
 		, m_NVertices(0)
-		, m_VertexIndices{}
 		, m_NVertexIndices(0)
-		, m_Indices{}
 		, m_NIndices(0)
-		, m_Meshlets{}
 		, m_NMeshlets(0)
 		, m_NTasks(0)
-	{}
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Vertices       = std::make_shared<std::vector<Vertex>>();
+		m_VertexIndices  = std::make_shared<std::vector<uint32_t>>();
+		m_Indices        = std::make_shared<std::vector<uint32_t>>();
+		m_Meshlets       = std::make_shared<std::vector<Meshlet>>();
+	}
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
 	{
@@ -218,7 +221,7 @@ namespace Spices {
 		* @brief Build vertex buffer
 		*/
 		{
-			m_NVertices = m_Vertices.size();
+			m_NVertices = m_Vertices->size();
 			
 			VkDeviceSize bufferSize = sizeof(Vertex) * m_NVertices;
 
@@ -230,7 +233,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			stagingBuffer.WriteToBuffer(m_Vertices.data());
+			stagingBuffer.WriteToBuffer(m_Vertices->data());
 
 			m_VerticesBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
@@ -251,9 +254,9 @@ namespace Spices {
 		* @brief Build meshlet vertex index buffer.
 		*/
 		{
-			m_NVertexIndices = m_VertexIndices.size();
+			m_NVertexIndices = m_VertexIndices->size();
 
-			VkDeviceSize bufferSize = sizeof(m_VertexIndices[0]) * m_NVertexIndices;
+			VkDeviceSize bufferSize = sizeof((*m_VertexIndices)[0]) * m_NVertexIndices;
 
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState(),
@@ -263,7 +266,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			stagingBuffer.WriteToBuffer(m_VertexIndices.data());
+			stagingBuffer.WriteToBuffer(m_VertexIndices->data());
 
 			m_VertexIndicesBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
@@ -282,9 +285,9 @@ namespace Spices {
 		* @brief Build meshlet index buffer.
 		*/
 		{
-			m_NIndices = m_Indices.size();
+			m_NIndices = m_Indices->size();
 
-			VkDeviceSize bufferSize = sizeof(m_Indices[0]) * m_NIndices;
+			VkDeviceSize bufferSize = sizeof((*m_Indices)[0]) * m_NIndices;
 
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState(),
@@ -294,7 +297,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			stagingBuffer.WriteToBuffer(m_Indices.data());
+			stagingBuffer.WriteToBuffer(m_Indices->data());
 
 			m_IndicesBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(), 
@@ -315,7 +318,7 @@ namespace Spices {
 		* @brief Build meshlet buffer.
 		*/
 		{
-			m_NMeshlets = m_Meshlets.size();
+			m_NMeshlets = m_Meshlets->size();
 
 			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlet) * m_NMeshlets;
 
@@ -327,7 +330,7 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 
-			stagingBuffer.WriteToBuffer(m_Meshlets.data());
+			stagingBuffer.WriteToBuffer(m_Meshlets->data());
 
 			m_MeshletsBuffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
@@ -354,10 +357,10 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (uint64_t i = 0; i < m_Vertices.size(); i++)
+		for (uint64_t i = 0; i < m_Vertices->size(); i++)
 		{
-			glm::vec4 newPos = matrix * glm::vec4(m_Vertices[i].position, 1.0f);
-			m_Vertices[i].position = { newPos.x, newPos.y, newPos.z };
+			glm::vec4 newPos = matrix * glm::vec4((*m_Vertices)[i].position, 1.0f);
+			(*m_Vertices)[i].position = { newPos.x, newPos.y, newPos.z };
 		}
 	}
 
@@ -365,19 +368,19 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		vertices.insert(vertices.end(), m_Vertices.begin(), m_Vertices.end());
+		vertices.insert(vertices.end(), m_Vertices->begin(), m_Vertices->end());
 	}
 
 	void MeshPack::CopyToIndices(std::vector<uint32_t>& indices, uint32_t offset)
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (uint64_t i = 0; i < m_Indices.size(); i++)
+		for (uint64_t i = 0; i < m_Indices->size(); i++)
 		{
-			m_Indices[i] += offset;
+			(*m_Indices)[i] += offset;
 		}
 
-		indices.insert(indices.end(), m_Indices.begin(), m_Indices.end());
+		indices.insert(indices.end(), m_Indices->begin(), m_Indices->end());
 	}
 
 	bool PlanePack::OnCreatePack(bool isCreateBuffer)
@@ -395,12 +398,12 @@ namespace Spices {
 				float colRamp = j / static_cast<float>(m_Columns - 1) - 0.5f; // -0.5f ~ 0.5f
 
 				Vertex vt;
-				vt.position = { colRamp, rowRamp, 0.0f};
-				vt.normal = glm::vec3(0.0f, 0.0f, 1.0f);
-				vt.color = glm::vec3{ 1.0f };
-				vt.texCoord = { colRamp + 0.5, 0.5 - rowRamp };
+				vt.position   = { colRamp, rowRamp, 0.0f};
+				vt.normal     = glm::vec3(0.0f, 0.0f, 1.0f);
+				vt.color      = glm::vec3{ 1.0f };
+				vt.texCoord   = { colRamp + 0.5, 0.5 - rowRamp };
 
-				m_Vertices.push_back(vt);
+				m_Vertices->push_back(vt);
 			}
 		}
 
@@ -410,13 +413,13 @@ namespace Spices {
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
 
-				m_Indices.push_back(vtIndex);
-				m_Indices.push_back(vtIndex + 1);
-				m_Indices.push_back(vtIndex + m_Columns + 1);
+				m_Indices->push_back(vtIndex);
+				m_Indices->push_back(vtIndex + 1);
+				m_Indices->push_back(vtIndex + m_Columns + 1);
 
-				m_Indices.push_back(vtIndex + m_Columns + 1);
-				m_Indices.push_back(vtIndex + m_Columns);
-				m_Indices.push_back(vtIndex);
+				m_Indices->push_back(vtIndex + m_Columns + 1);
+				m_Indices->push_back(vtIndex + m_Columns);
+				m_Indices->push_back(vtIndex);
 			}
 		}
 		
@@ -441,8 +444,8 @@ namespace Spices {
 			pack.OnCreatePack(false);
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
 			pack.ApplyMatrix(tran);
-			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Indices.size()));
-			pack.CopyToVertices(m_Vertices);
+			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Indices->size()));
+			pack.CopyToVertices(*m_Vertices);
 			
 		}
 
@@ -453,8 +456,8 @@ namespace Spices {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
 			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
-			pack.CopyToVertices(m_Vertices);
+			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+			pack.CopyToVertices(*m_Vertices);
 			
 		}
 
@@ -465,8 +468,8 @@ namespace Spices {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
-			pack.CopyToVertices(m_Vertices);
+			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+			pack.CopyToVertices(*m_Vertices);
 			
 		}
 
@@ -477,8 +480,8 @@ namespace Spices {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
-			pack.CopyToVertices(m_Vertices);
+			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+			pack.CopyToVertices(*m_Vertices);
 			
 		}
 
@@ -489,8 +492,8 @@ namespace Spices {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
-			pack.CopyToVertices(m_Vertices);
+			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+			pack.CopyToVertices(*m_Vertices);
 			
 		}
 
@@ -501,8 +504,8 @@ namespace Spices {
 			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
 			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
 			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(m_Indices, static_cast<uint32_t>(m_Vertices.size()));
-			pack.CopyToVertices(m_Vertices);
+			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+			pack.CopyToVertices(*m_Vertices);
 			
 		}
 
@@ -547,7 +550,7 @@ namespace Spices {
 				vt.color = glm::vec3{ 1.0f };
 				vt.texCoord = {j / static_cast<float>(m_Columns - 1), i / static_cast<float>(m_Rows - 1) };
 
-				m_Vertices.push_back(std::move(vt));
+				m_Vertices->push_back(std::move(vt));
 			}
 		}
 		
@@ -557,13 +560,13 @@ namespace Spices {
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
 
-				m_Indices.push_back(vtIndex);
-				m_Indices.push_back(vtIndex + 1);
-				m_Indices.push_back(vtIndex + m_Columns + 1);
+				m_Indices->push_back(vtIndex);
+				m_Indices->push_back(vtIndex + 1);
+				m_Indices->push_back(vtIndex + m_Columns + 1);
 
-				m_Indices.push_back(vtIndex + m_Columns + 1);
-				m_Indices.push_back(vtIndex + m_Columns);
-				m_Indices.push_back(vtIndex);
+				m_Indices->push_back(vtIndex + m_Columns + 1);
+				m_Indices->push_back(vtIndex + m_Columns);
+				m_Indices->push_back(vtIndex);
 			}
 		}
 

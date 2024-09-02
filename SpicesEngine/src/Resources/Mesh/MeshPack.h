@@ -169,7 +169,7 @@ namespace Spices {
 		* @brief Get Vertices array.
 		* @return Returns the Vertices array.
 		*/
-		const std::vector<Vertex>& GetVertices() const { return m_Vertices; }
+		const std::vector<Vertex>& GetVertices() const { return *m_Vertices; }
 
 		/**
 		* @brief Get Vertices Count.
@@ -181,13 +181,13 @@ namespace Spices {
 		* @brief Add a Vertex to m_Vertices.
 		* @param[in] v Vertex.
 		*/
-		void AddVertex(const Vertex& v) { m_Vertices.push_back(v); };
+		void AddVertex(const Vertex& v) { m_Vertices->push_back(v); };
 
 		/**
 		* @brief Get Indices array.
 		* @return Returns the Indices array.
 		*/
-		const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
+		const std::vector<uint32_t>& GetIndices() const { return *m_Indices; }
 
 		/**
 		* @brief Get Indices Count.
@@ -199,13 +199,13 @@ namespace Spices {
 		* @brief Add a Index to m_Indices.
 		* @param[in] i Index.
 		*/
-		void AddIndices(const uint32_t& i) { m_Indices.push_back(i); };
+		void AddIndices(const uint32_t& i) { m_Indices->push_back(i); };
 
 		/**
 		* @brief Get Meshlets array.
 		* @return Returns the Meshlets array.
 		*/
-		const std::vector<Meshlet>& GetMeshlets() const { return m_Meshlets; }
+		const std::vector<Meshlet>& GetMeshlets() const { return *m_Meshlets; }
 
 		/**
 		* @brief Get Meshlets Count.
@@ -324,7 +324,7 @@ namespace Spices {
 		/**
 		* @brief Vertices array.
 		*/
-		std::vector<Vertex> m_Vertices;
+		std::shared_ptr<std::vector<Vertex>> m_Vertices;
 
 		/**
 		* @brief Vertices Count.
@@ -343,7 +343,7 @@ namespace Spices {
 		/**
 		* @brief Meshlet Vertex Indices array.
 		*/
-		std::vector<uint32_t> m_VertexIndices;
+		std::shared_ptr<std::vector<uint32_t>> m_VertexIndices;
 
 		/**
 		* @brief Meshlet Vertex Indices Count.
@@ -362,7 +362,7 @@ namespace Spices {
 		/**
 		* @brief Meshlet Indices array.
 		*/
-		std::vector<uint32_t> m_Indices;
+		std::shared_ptr<std::vector<uint32_t>> m_Indices;
 
 		/**
 		* @brief Meshlet Indices Count.
@@ -381,7 +381,7 @@ namespace Spices {
 		/**
 		* @brief MeshPack meshlets.
 		*/
-		std::vector<Meshlet> m_Meshlets;
+		std::shared_ptr<std::vector<Meshlet>> m_Meshlets;
 
 		/**
 		* @brief Meshlets Count;

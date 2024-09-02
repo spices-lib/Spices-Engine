@@ -35,9 +35,10 @@ namespace Spices {
 		/**
 		* @brief Create and Append Meshlets to MeshPack use given indices.
 		* @param[in] meshPack MeshPack.
+		* @param[in] lod current lod level.
 		* @param[in] indices Indices Buffer.
 		*/
-		static void AppendMeshlets(MeshPack* meshPack, const std::vector<uint32_t> indices);
+		static void AppendMeshlets(MeshPack* meshPack, uint32_t lod, const std::vector<uint32_t> indices);
 
 		/**
 		* @brief Split Meshlets to Groups.

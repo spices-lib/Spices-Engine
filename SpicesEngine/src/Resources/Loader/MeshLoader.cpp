@@ -128,11 +128,11 @@ namespace Spices {
 				}
 
 				if (uniqueVertices.count(vertex) == 0) {
-					uniqueVertices[vertex] = static_cast<uint32_t>(outMeshPack->m_Vertices.size());
-					outMeshPack->m_Vertices.push_back(std::move(vertex));
+					uniqueVertices[vertex] = static_cast<uint32_t>(outMeshPack->m_Vertices->size());
+					outMeshPack->m_Vertices->push_back(std::move(vertex));
 				}
 
-				outMeshPack->m_Indices.push_back(uniqueVertices[vertex]);
+				outMeshPack->m_Indices->push_back(uniqueVertices[vertex]);
 			}
 		}
 
@@ -196,19 +196,19 @@ namespace Spices {
 
 		uint32_t verticesCount = 0;
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &verticesCount, &readed);
-		outMeshPack->m_Vertices.resize(verticesCount);
+		outMeshPack->m_Vertices->resize(verticesCount);
 
 		uint32_t indicesCount = 0;
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &indicesCount, &readed);
-		outMeshPack->m_Indices.resize(indicesCount);
+		outMeshPack->m_Indices->resize(indicesCount);
 
 		uint32_t meshletsCount = 0;
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshletsCount, &readed);
-		outMeshPack->m_Meshlets.resize(meshletsCount);
+		outMeshPack->m_Meshlets->resize(meshletsCount);
 
-		FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &readed);
-		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &readed);
-		FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets.data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &readed);
 
 		char overSign[100];
 		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
@@ -221,7 +221,7 @@ namespace Spices {
 
 		FileLibrary::FileLibrary_Close(&f);
 
-		outMeshPack->m_NTasks = outMeshPack->m_Meshlets.size() / SUBGROUP_SIZE + 1;
+		outMeshPack->m_NTasks = outMeshPack->m_Meshlets->size() / SUBGROUP_SIZE + 1;
 		return true;
 	}
 
@@ -240,18 +240,18 @@ namespace Spices {
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignSatrt, &written);
 
-		uint32_t verticesCount = (uint32_t)outMeshPack->m_Vertices.size();
+		uint32_t verticesCount = (uint32_t)outMeshPack->m_Vertices->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
 
-		uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices.size();
+		uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &indicesCount, &written);
 
-		uint32_t meshletsCount = (uint32_t)outMeshPack->m_Meshlets.size();
+		uint32_t meshletsCount = (uint32_t)outMeshPack->m_Meshlets->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
 
-		FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices.data(), &written);
-		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices.data(), &written);
-		FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets.data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignOver, &written);
 

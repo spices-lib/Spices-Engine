@@ -71,12 +71,12 @@ struct Vertex
 };
 
 /**
-* @brief This Struct defines Per Edge Struct of Mesh.
+* @brief This Struct defines Per Half Edge Struct of Mesh.
 */
-struct Edge
+struct HalfEdge
 {
-	uint first;               /* @brief Edge first Vertex index.        */
-	uint second;              /* @brief Edge secone Vertex index.       */
+	uint first;               /* @brief Half Edge first Vertex index.        */
+	uint second;              /* @brief Half Edge secone Vertex index.       */
 };
 
 /**

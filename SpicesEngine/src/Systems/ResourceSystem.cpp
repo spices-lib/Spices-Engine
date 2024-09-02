@@ -25,9 +25,9 @@ namespace Spices {
 		*/
 		ResourcePool<Texture>::Load<Texture2D>("default.jpg", "default.jpg");
 
-		ResourcePool<MeshPack>::Load<SpherePack>("Sphere")->OnCreatePack();
-		ResourcePool<MeshPack>::Load<PlanePack>("Plane")->OnCreatePack();
-		ResourcePool<MeshPack>::Load<CubePack>("Cube")->OnCreatePack();
+		//ResourcePool<MeshPack>::Load<SpherePack>("Sphere")->OnCreatePack();
+		//ResourcePool<MeshPack>::Load<PlanePack>("Plane")->OnCreatePack();
+		//ResourcePool<MeshPack>::Load<CubePack>("Cube")->OnCreatePack();
 	}
 
 	void ResourceSystem::OnSystemShutDown()
