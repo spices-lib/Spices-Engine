@@ -44,9 +44,10 @@ namespace Spices {
 		* @brief Split Meshlets to Groups.
 		* @param[in] meshPack MeshPack.
 		* @param[in] meshlets MeshPack Meshlets.
+		* @param[in] vertexMap Vertex Map.
 		* @return Returns Groups.
 		*/
-		static std::vector<MeshletGroup> GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets);
+		static std::vector<MeshletGroup> GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<uint32_t>& vertexMap);
 
 		/**
 		* @brief Merge Vertex by Distance.
@@ -55,6 +56,6 @@ namespace Spices {
 		* @param[in] maxUVDistance allowed merge by vertex uv.
 		* @return Returns Merged Vertex Map.
 		*/
-		static std::vector<uint64_t> MergeByDistance(MeshPack* meshPack, float maxDistance, float maxUVDistance);
+		static std::vector<uint32_t> MergeByDistance(MeshPack* meshPack, float maxDistance, float maxUVDistance);
 	};
 }

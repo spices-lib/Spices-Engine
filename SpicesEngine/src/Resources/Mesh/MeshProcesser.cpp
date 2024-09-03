@@ -23,8 +23,6 @@ namespace Spices {
 		meshPack->m_Indices = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 
-		//auto map = MergeByDistance(meshPack, 0.1f, 0.01f);
-
 		const int maxLod = 25;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
@@ -36,7 +34,12 @@ namespace Spices {
 				return;
 			}
 
-			std::vector<MeshletGroup> groups = GroupMeshlets(meshPack, meshlets);
+			float simplifyScale = meshopt_simplifyScale(&(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex));
+			const float maxDistance = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
+			const float maxUVDistance = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
+			auto vertexMap = MergeByDistance(meshPack, maxDistance, maxUVDistance);
+
+			std::vector<MeshletGroup> groups = GroupMeshlets(meshPack, meshlets, vertexMap);
 
 			const size_t newMeshletStart = meshPack->m_Meshlets->size();
 			for (const auto& group : groups)
@@ -50,14 +53,15 @@ namespace Spices {
 					groupVertexIndices.resize(start + meshlet.nPrimitives * 3);
 					for (size_t j = 0; j < meshlet.nPrimitives * 3; j++)
 					{
-						groupVertexIndices[j + start] = (*meshPack->m_Indices)[meshlet.primitiveOffset * 3 + j];
+						 uint32_t index = (*meshPack->m_Indices)[meshlet.primitiveOffset * 3 + j];
+						 groupVertexIndices[j + start] = index;
 					}
 				}
 
 				const float threshold = 0.5f;
 				size_t targetIndexCount = groupVertexIndices.size() * threshold;
 				float targetError = 0.9f * tLod + 0.01f * (1 - tLod);
-				uint32_t options = meshopt_SimplifyLockBorder;
+				uint32_t options = meshopt_SimplifyLockBorder | meshopt_SimplifySparse | meshopt_SimplifyErrorAbsolute;
 
 				std::vector<uint32_t> simplifiedIndexBuffer;
 				simplifiedIndexBuffer.resize(groupVertexIndices.size());
@@ -166,7 +170,7 @@ namespace Spices {
 		}
 	}
 
-	std::vector<MeshletGroup> MeshProcesser::GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets)
+	std::vector<MeshletGroup> MeshProcesser::GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<uint32_t>& vertexMap)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -199,7 +203,8 @@ namespace Spices {
 			const auto& meshlet = meshlets[meshletIndex];
 			auto getVertexIndex = [&](size_t index) 
 			{
-				return (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
+				uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
+				return vertexIndex;
 			};
 
 			const size_t triangleCount = meshlet.nPrimitives;
@@ -355,24 +360,24 @@ namespace Spices {
 		return groups;
 	}
 
-	std::vector<uint64_t> MeshProcesser::MergeByDistance(MeshPack* meshPack, float maxDistance, float maxUVDistance)
+	std::vector<uint32_t> MeshProcesser::MergeByDistance(MeshPack* meshPack, float maxDistance, float maxUVDistance)
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<uint64_t> vertexRemap;
+		std::vector<uint32_t> vertexRemap;
 
-		const size_t vertexCount = meshPack->m_Vertices->size();
+		const uint32_t vertexCount = meshPack->m_Vertices->size();
 		vertexRemap.resize(vertexCount, -1);
 
-		for (uint64_t v = 0; v < vertexCount; v++)
+		for (uint32_t v = 0; v < vertexCount; v++)
 		{
 			float maxDistanceSq = maxDistance * maxDistance;
 			float maxUVDistanceSq = maxUVDistance * maxUVDistance;
 
 			const Vertex& vertex = (*meshPack->m_Vertices)[v];
-			uint64_t replacement = -1;
+			uint32_t replacement = -1;
 
-			for (uint64_t potentialReplacement = 0; potentialReplacement < v; potentialReplacement++)
+			for (uint32_t potentialReplacement = 0; potentialReplacement < v; potentialReplacement++)
 			{
 				const Vertex& otherVertex = (*meshPack->m_Vertices)[vertexRemap[potentialReplacement]];
 				const float vertexDistanceSq = glm::distance2(vertex.position, otherVertex.position);
@@ -381,8 +386,8 @@ namespace Spices {
 					const float uvDistanceSq = glm::distance2(vertex.texCoord, otherVertex.texCoord);
 					if (uvDistanceSq <= maxUVDistanceSq)
 					{
-						replacement = potentialReplacement;
-						maxDistanceSq = vertexDistanceSq;
+						replacement     = potentialReplacement;
+						maxDistanceSq   = vertexDistanceSq;
 						maxUVDistanceSq = uvDistanceSq;
 					}
 				}

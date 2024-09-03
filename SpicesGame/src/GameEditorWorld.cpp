@@ -53,8 +53,8 @@ namespace Spices {
 		}*/
 
 		// CornellBox
-		/*{
-			for(int i = 0; i < 3; i++)
+		{
+			for(int i = 0; i < 1; i++)
 			{
 				std::stringstream ss;
 				ss << "CornellBox_" << i;
@@ -72,7 +72,7 @@ namespace Spices {
 				std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 				meshComp.SetMesh(mesh);
 			}
-		}*/
+		}
 
 		// sphere
 		//{
@@ -127,7 +127,7 @@ namespace Spices {
 		//}
 
 		// ground
-		{
+		/*{
 			Entity meshentity = CreateEntity("Ground");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -135,12 +135,12 @@ namespace Spices {
 			transformComp1.SetRotation({90.0f, 0.0f, 0.0f});
 			transformComp1.SetScale({500.0f, 500.0f, 500.0f});
 
-			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(500, 500);
+			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(100, 100);
 
 			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
-		}
+		}*/
 
 		//WorldFunctions::CreateCubeEntity(this);
 
