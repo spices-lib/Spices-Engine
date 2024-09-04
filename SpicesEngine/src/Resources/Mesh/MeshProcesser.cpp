@@ -23,7 +23,7 @@ namespace Spices {
 		meshPack->m_Indices = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 
-		const int maxLod = 25;
+		const int maxLod = 15;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
 			float tLod = lod / (float)maxLod;
@@ -54,7 +54,7 @@ namespace Spices {
 					for (size_t j = 0; j < meshlet.nPrimitives * 3; j++)
 					{
 						 uint32_t index = (*meshPack->m_Indices)[meshlet.primitiveOffset * 3 + j];
-						 groupVertexIndices[j + start] = index;
+						 groupVertexIndices[j + start] = vertexMap[index];
 					}
 				}
 
@@ -204,7 +204,7 @@ namespace Spices {
 			auto getVertexIndex = [&](size_t index) 
 			{
 				uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
-				return vertexIndex;
+				return vertexMap[vertexIndex];
 			};
 
 			const size_t triangleCount = meshlet.nPrimitives;

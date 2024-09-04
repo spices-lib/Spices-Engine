@@ -30,7 +30,7 @@ namespace Spices {
 		}
 
 		// bridge pbr model
-		/*{
+		{
 			Entity meshentity = CreateEntity("DefaultMesh");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -38,22 +38,23 @@ namespace Spices {
 			transformComp1.SetRotation({-180.0f, 0.0f, -180.0f});
 			
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_01");
-			std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_02");
-			std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_03");
-			std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
-			std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
+			//std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_02");
+			//std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_03");
+			//std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
+			//std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
 
 			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack2->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack3->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack5->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
+			//pack2->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			//pack3->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			//pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			//pack5->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			//std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
+			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
-		}*/
+		}
 
 		// CornellBox
-		{
+		/*{
 			for(int i = 0; i < 1; i++)
 			{
 				std::stringstream ss;
@@ -72,7 +73,7 @@ namespace Spices {
 				std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 				meshComp.SetMesh(mesh);
 			}
-		}
+		}*/
 
 		// sphere
 		//{
