@@ -21,7 +21,21 @@ namespace SpicesTest {
 		/**
 		* @brief Testing class initialize function.
 		*/
-		void SetUp() override {}
+		void SetUp() override {
+		
+			/**
+			* @brief Insert points into the kd_tree.
+			*/
+			m_KDTree.insert({ 3, 6 });
+			m_KDTree.insert({ 2, 2 });
+			m_KDTree.insert({ 4, 7 });
+			m_KDTree.insert({ 1, 3 });
+			m_KDTree.insert({ 2, 4 });
+			m_KDTree.insert({ 5, 4 });
+			m_KDTree.insert({ 7, 2 });
+
+			m_KDTree.print();
+		}
 
 		/**
 		* @brief Testing class TearDown function.
@@ -39,33 +53,13 @@ namespace SpicesTest {
 	*/
 	TEST_F(kd_tree_test, Insert) {
 
-		/**
-		* @brief Insert points into the kd_tree.
-		*/
-		m_KDTree.insert({ 3, 6 });
-		m_KDTree.insert({ 2, 2 });
-		m_KDTree.insert({ 4, 7 });
-		m_KDTree.insert({ 1, 3 });
-		m_KDTree.insert({ 2, 4 });
-		m_KDTree.insert({ 5, 4 });
-		m_KDTree.insert({ 7, 2 });
+		m_KDTree.print();
 	}
 
 	/**
 	* @brief Testing if Search successfully.
 	*/
 	TEST_F(kd_tree_test, Search) {
-
-		/**
-		* @brief Insert points into the kd_tree.
-		*/
-		m_KDTree.insert({ 3, 6 });
-		m_KDTree.insert({ 2, 2 });
-		m_KDTree.insert({ 4, 7 });
-		m_KDTree.insert({ 1, 3 });
-		m_KDTree.insert({ 2, 4 });
-		m_KDTree.insert({ 5, 4 });
-		m_KDTree.insert({ 7, 2 });
 
 		/**
 		* @brief Search for specific points in the kd_tree
@@ -88,5 +82,23 @@ namespace SpicesTest {
 		EXPECT_EQ(m_KDTree.search({ 2 + 1, 4 }), false);
 		EXPECT_EQ(m_KDTree.search({ 5 + 1, 4 }), false);
 		EXPECT_EQ(m_KDTree.search({ 7 + 1, 2 }), false);
+	}
+
+	/**
+	* @brief Testing if NearestNeighbourSearch successfully.
+	*/
+	TEST_F(kd_tree_test, NearestNeighbourSearch) {
+
+		
+
+	}
+
+	/**
+	* @brief Testing if RangeSearch successfully.
+	*/
+	TEST_F(kd_tree_test, RangeSearch) {
+
+
+
 	}
 }
