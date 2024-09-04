@@ -1,6 +1,6 @@
 /**
 * @file linked_unordered_map.h.
-* @brief The linked_unordered_map Class Definitions.
+* @brief The linked_unordered_map Class Definitions and Implementation.
 * @author Spices.
 */
 
