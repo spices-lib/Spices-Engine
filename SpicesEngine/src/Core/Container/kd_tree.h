@@ -79,15 +79,14 @@ namespace scl {
 		/**
 		* @brief Recursive function to insert a point into the kd_tree.
 		* @param[in] node recursive node.
-		* @param[in] point Inserted point in k d.
+		* @param[in] points Inserted points in k d.
 		* @param[in] depth recursive depth.
-		* @return Returns recursive node.
 		*/
-		auto insert_recursive(
-			Node*       node  , 
-			const item& point , 
-			int         depth
-		) ->Node*;
+		void insert_recursive(
+			Node*&                   node  , 
+			const std::vector<item>& points ,
+			int                      depth
+		);
 
 		/**
 		* @brief Recursive function to search for a point in the kd_tree.
@@ -145,9 +144,9 @@ namespace scl {
 		* If the new point¡¯s value is less than the root¡¯s, go to the left child; otherwise, go to the right child.
 		* At the next level, compare the second dimension. Continue this process, cycling through dimensions.
 		* When a leaf is reached, create a new node and insert the new point.
-		* @param[in] point Inserted point in k d.
+		* @param[in] points Inserted points in k d.
 		*/
-		void insert(const item& point);
+		void insert(const std::vector<item>& points);
 
 		/**
 		* @brief Search for a point in the kd_tree.
@@ -172,7 +171,7 @@ namespace scl {
 		auto nearest_neighbour_search(
 			const item& point     , 
 			const item& condition
-		) const -> const item&;
+		) const -> item;
 
 		/**
 		* @brief Search for all points within given range.
@@ -193,22 +192,18 @@ namespace scl {
 	};
 
 	template<uint32_t K>
-	inline auto kd_tree<K>::insert_recursive(
-		Node*       node  , 
-		const item& point , 
-		int         depth
-	) 
-		-> kd_tree<K>::Node*
+	inline void kd_tree<K>::insert_recursive(
+		Node*&                   node  , 
+		const std::vector<item>& points,
+		int                      depth
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Base case: If node is null, create a new node.
+		* @brief Return if there is no point needs to insert.
 		*/
-		if (node == nullptr)
-		{
-			return new Node(point);
-		}
+		if (points.size() == 0) return;
 
 		/**
 		* @brief Calculate current dimension (cd).
@@ -216,18 +211,51 @@ namespace scl {
 		int cd = depth % K;
 
 		/**
-		* @brief Compare point with current node and decide to go left or right.
+		* @brief Sort points in cd.
 		*/
-		if (point[cd] < node->m_Point[cd])
+		std::map<float, uint32_t> sorted;
+		for (int i = 0; i < points.size(); i++)
 		{
-			node->m_Left = insert_recursive(node->m_Left, point, depth + 1);
+			sorted[points[i][cd]] = i;
+		}
+
+		/**
+		* @brief Get Center iterator.
+		*/
+		auto centerit = sorted.begin();
+		for(int i = 0; i < std::floor(sorted.size() * 0.5); i++) centerit++;
+
+		/**
+		* @brief Base case: If node is null, create a new node.
+		*/
+		if (node == nullptr)
+		{
+			node = new Node(points[centerit->second]);
 		}
 		else
 		{
-			node->m_Right = insert_recursive(node->m_Right, point, depth + 1);
+			SPICES_CORE_ERROR("Cannot insert a KDTree Node which is not empty.");
 		}
 
-		return node;
+		/**
+		* @brief Insert in left.
+		*/
+		std::vector<item> leftPoints;
+		for (auto it = sorted.begin(); it != centerit; it++)
+		{
+			leftPoints.push_back(points[it->second]);
+		}
+		insert_recursive(node->m_Left, leftPoints, depth + 1);
+
+		/**
+		* @brief Insert in right.
+		*/
+		std::vector<item> rightPoints;
+		for (auto it = ++centerit; it != sorted.end(); it++)
+		{
+			rightPoints.push_back(points[it->second]);
+		}
+		insert_recursive(node->m_Right, rightPoints, depth + 1);
 	}
 
 	template<uint32_t K>
@@ -313,15 +341,22 @@ namespace scl {
 		int cd = depth % K;
 
 		/**
-		* @brief Compare point with current node and decide to go left or right.
+		* @brief Recursive both in left anf right.
 		*/
-		if (point[cd] < node->m_Point[cd])
+		if (node->m_Left)
 		{
-			range_search_recursive(node->m_Left, point, condition, rangePoints, depth + 1);
+			if (std::abs(node->m_Left->m_Point[cd] - point[cd]) <= condition[cd])
+			{
+				range_search_recursive(node->m_Left, point, condition, rangePoints, depth + 1);
+			}
 		}
-		else
+
+		if (node->m_Right)
 		{
-			range_search_recursive(node->m_Right, point, condition, rangePoints, depth + 1);
+			if (std::abs(node->m_Right->m_Point[cd] - point[cd]) <= condition[cd])
+			{
+				range_search_recursive(node->m_Right, point, condition, rangePoints, depth + 1);
+			}
 		}
 	}
 
@@ -392,11 +427,11 @@ namespace scl {
 	}
 
 	template<uint32_t K>
-	inline void kd_tree<K>::insert(const item& point)
+	inline void kd_tree<K>::insert(const std::vector<item>& points)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Root = insert_recursive(m_Root, point, 0);
+		insert_recursive(m_Root, points, 0);
 	}
 
 	template<uint32_t K>
@@ -412,7 +447,7 @@ namespace scl {
 		const item& point, 
 		const item& condition
 	)
-		const -> const kd_tree<K>::item&
+		const -> kd_tree<K>::item
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -428,7 +463,7 @@ namespace scl {
 			{
 				rate += std::abs(rangePoints[i][j] - condition[j]);
 			}
-			if (rate < nearRate)
+			if (rate <= nearRate)
 			{
 				nearRate = rate;
 				nearIndex = i;

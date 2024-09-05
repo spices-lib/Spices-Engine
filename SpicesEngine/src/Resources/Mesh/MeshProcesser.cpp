@@ -435,7 +435,7 @@ namespace Spices {
 			for (int j = 0; j < meshlets[i].nPrimitives * 3; j++)
 			{
 				const glm::vec3& pos = (*meshPack->m_Vertices)[(*meshPack->m_Indices)[meshlets[i].primitiveOffset * 3 + j]].position;
-				kdTree.insert({ pos.x, pos.y, pos.z });
+				//kdTree.insert({ pos.x, pos.y, pos.z });
 			}
 		}
 
