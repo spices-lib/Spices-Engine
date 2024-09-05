@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Vertex.h"
+#include "Core/Container/kd_tree.h"
 
 namespace Spices {
 
@@ -52,10 +53,19 @@ namespace Spices {
 		/**
 		* @brief Merge Vertex by Distance.
 		* @param[in] meshPack MeshPack.
+		* @param[in] kdTree kd_tree.
 		* @param[in] maxDistance allowed merge by vertex position.
 		* @param[in] maxUVDistance allowed merge by vertex uv.
 		* @return Returns Merged Vertex Map.
 		*/
-		static std::vector<uint32_t> MergeByDistance(MeshPack* meshPack, float maxDistance, float maxUVDistance);
+		static std::vector<uint32_t> MergeByDistance(MeshPack* meshPack, scl::kd_tree<3> kdTree, float maxDistance, float maxUVDistance);
+
+		/**
+		* @brief Build KDTree use specific meshlets.
+		* @param[in] meshPack MeshPack.
+		* @param[in] meshlets MeshPack Meshlets.
+		* @return Returns kd_tree.
+		*/
+		static scl::kd_tree<3> BuildKDTree(MeshPack* meshPack, const std::vector<Meshlet>& meshlets);
 	};
 }
