@@ -7,6 +7,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "Core/Thread/ThreadPool.h"
 
 namespace scl {
 
@@ -89,6 +90,20 @@ namespace scl {
 		);
 
 		/**
+		* @brief Recursive function to insert a point into the kd_tree async.
+		* @param[in] node recursive node.
+		* @param[in] points Inserted points in k d.
+		* @param[in] threadPool ThreadPool.
+		* @param[in] depth recursive depth.
+		*/
+		void insert_recursive_async(
+			Node*&                    node  , 
+			const std::vector<item>&  points ,
+			Spices::ThreadPool*       threadPool,
+			int                       depth
+		);
+
+		/**
 		* @brief Recursive function to search for a point in the kd_tree.
 		* @param[in] node recursive node.
 		* @param[in] point Searched point in k d.
@@ -147,6 +162,17 @@ namespace scl {
 		* @param[in] points Inserted points in k d.
 		*/
 		void insert(const std::vector<item>& points);
+
+		/**
+		* @brief Insert a point into the kd_tree async.
+		* Start at the root, comparing the new point¡¯s first dimension with the root¡¯s first dimension.
+		* If the new point¡¯s value is less than the root¡¯s, go to the left child; otherwise, go to the right child.
+		* At the next level, compare the second dimension. Continue this process, cycling through dimensions.
+		* When a leaf is reached, create a new node and insert the new point.
+		* @param[in] points Inserted points in k d.
+		* @param[in] threadPool ThreadPool.
+		*/
+		void insert_async(const std::vector<item>& points, const Spices::ThreadPool& threadPool);
 
 		/**
 		* @brief Search for a point in the kd_tree.
@@ -213,10 +239,10 @@ namespace scl {
 		/**
 		* @brief Sort points in cd.
 		*/
-		std::map<float, uint32_t> sorted;
+		std::multimap<float, uint32_t> sorted;
 		for (int i = 0; i < points.size(); i++)
 		{
-			sorted[points[i][cd]] = i;
+			sorted.emplace(points[i][cd], i);
 		}
 
 		/**
@@ -256,6 +282,78 @@ namespace scl {
 			rightPoints.push_back(points[it->second]);
 		}
 		insert_recursive(node->m_Right, rightPoints, depth + 1);
+	}
+
+	template<uint32_t K>
+	inline void kd_tree<K>::insert_recursive_async(
+		Node*&                   node  , 
+		const std::vector<item>& points,
+		Spices::ThreadPool*      threadPool,
+		int                      depth
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Return if there is no point needs to insert.
+		*/
+		if (points.size() == 0) return;
+
+		/**
+		* @brief Calculate current dimension (cd).
+		*/
+		int cd = depth % K;
+
+		/**
+		* @brief Sort points in cd.
+		*/
+		std::multimap<float, uint32_t> sorted;
+		for (int i = 0; i < points.size(); i++)
+		{
+			sorted.emplace(points[i][cd], i);
+		}
+
+		/**
+		* @brief Get Center iterator.
+		*/
+		auto centerit = sorted.begin();
+		for(int i = 0; i < std::floor(sorted.size() * 0.5); i++) centerit++;
+
+		/**
+		* @brief Base case: If node is null, create a new node.
+		*/
+		if (node == nullptr)
+		{
+			node = new Node(points[centerit->second]);
+		}
+		else
+		{
+			SPICES_CORE_ERROR("Cannot insert a KDTree Node which is not empty.");
+		}
+
+		/**
+		* @brief Insert in left.
+		*/
+		threadPool->SubmitPoolTask([&]() {
+			std::vector<item> leftPoints;
+			for (auto it = sorted.begin(); it != centerit; it++)
+			{
+				leftPoints.push_back(points[it->second]);
+			}
+			insert_recursive_async(node->m_Left, leftPoints, threadPool, depth + 1);
+		});
+
+		/**
+		* @brief Insert in right.
+		*/
+		threadPool->SubmitPoolTask([&]() {
+			std::vector<item> rightPoints;
+			for (auto it = ++centerit; it != sorted.end(); it++)
+			{
+				rightPoints.push_back(points[it->second]);
+			}
+			insert_recursive_async(node->m_Right, rightPoints, threadPool, depth + 1);
+		});
 	}
 
 	template<uint32_t K>
@@ -343,17 +441,27 @@ namespace scl {
 		/**
 		* @brief Recursive both in left anf right.
 		*/
-		if (node->m_Left)
+		if (std::abs(node->m_Point[cd] - point[cd]) <= condition[cd])
 		{
-			if (std::abs(node->m_Left->m_Point[cd] - point[cd]) <= condition[cd])
+			if (node->m_Left)
+			{
+				range_search_recursive(node->m_Left, point, condition, rangePoints, depth + 1);
+			}
+			if (node->m_Right)
+			{
+				range_search_recursive(node->m_Right, point, condition, rangePoints, depth + 1);
+			}
+		}
+		else if (node->m_Point[cd] - point[cd] > 0.0f)
+		{
+			if (node->m_Left)
 			{
 				range_search_recursive(node->m_Left, point, condition, rangePoints, depth + 1);
 			}
 		}
-
-		if (node->m_Right)
+		else
 		{
-			if (std::abs(node->m_Right->m_Point[cd] - point[cd]) <= condition[cd])
+			if (node->m_Right)
 			{
 				range_search_recursive(node->m_Right, point, condition, rangePoints, depth + 1);
 			}
@@ -435,6 +543,14 @@ namespace scl {
 	}
 
 	template<uint32_t K>
+	inline void kd_tree<K>::insert_async(const std::vector<item>& points, const Spices::ThreadPool& threadPool)
+	{
+		SPICES_PROFILE_ZONE;
+
+		insert_recursive_async(m_Root, points, &threadPool, 0);
+	}
+
+	template<uint32_t K>
 	inline bool kd_tree<K>::search(const item& point) const
 	{
 		SPICES_PROFILE_ZONE;
@@ -454,14 +570,14 @@ namespace scl {
 		std::vector<kd_tree<K>::item> rangePoints;
 		range_search_recursive(m_Root, point, condition, rangePoints, 0);
 
-		int nearIndex = 0;
+		int nearIndex = -1;
 		float nearRate = 1E11;
 		for (int i = 0; i < rangePoints.size(); i++)
 		{
 			float rate = 0;
 			for (int j = 0; j < K; j++)
 			{
-				rate += std::abs(rangePoints[i][j] - condition[j]);
+				rate += std::abs(rangePoints[i][j] - point[j]);
 			}
 			if (rate <= nearRate)
 			{
@@ -470,6 +586,7 @@ namespace scl {
 			}
 		}
 
+		if (nearIndex == -1) return {};
 		return rangePoints[nearIndex];
 	}
 
