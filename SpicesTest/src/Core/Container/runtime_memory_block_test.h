@@ -7,6 +7,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Container/runtime_memory_block.h>
+#include "Instrumentor.h"
 
 namespace SpicesTest {
 
@@ -41,6 +42,8 @@ namespace SpicesTest {
 	*/
 	TEST_F(runtime_memory_block_test, Initialize) {
 
+		SPICESTEST_PROFILE_FUNCTION();
+
 		/**
 		* @brief Testing initialized container's size.
 		*/
@@ -69,6 +72,8 @@ namespace SpicesTest {
 	* @brief Testing if Add element successfully.
 	*/
 	TEST_F(runtime_memory_block_test, AddElement) {
+
+		SPICESTEST_PROFILE_FUNCTION();
 
 		/**
 		* @brief Testing initialized container's size.
@@ -103,6 +108,8 @@ namespace SpicesTest {
 	*/
 	TEST_F(runtime_memory_block_test, Build) {
 
+		SPICESTEST_PROFILE_FUNCTION();
+
 		/**
 		* @brief Testing Build container.
 		*/
@@ -126,6 +133,8 @@ namespace SpicesTest {
 	* @brief Testing if Explain element successfully.
 	*/
 	TEST_F(runtime_memory_block_test, ExplainElement) {
+
+		SPICESTEST_PROFILE_FUNCTION();
 
 		/**
 		* @brief Build before explain.
@@ -170,6 +179,8 @@ namespace SpicesTest {
 	*/
 	TEST_F(runtime_memory_block_test, Destruct) {
 
+		SPICESTEST_PROFILE_FUNCTION();
+
 		/**
 		* @brief New a object.
 		*/
@@ -199,6 +210,8 @@ namespace SpicesTest {
 	* @brief Testing if ItemLocation test successfully.
 	*/
 	TEST_F(runtime_memory_block_test, ItemLocation) {
+
+		SPICESTEST_PROFILE_FUNCTION();
 
 		/**
 		* @brief item location in valid item.

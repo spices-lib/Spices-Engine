@@ -302,7 +302,9 @@ namespace scl {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (points->size() <= 30000)
+		const int nPointsWithoutSplitTask = 30000;
+
+		if (points->size() <= nPointsWithoutSplitTask)
 		{
 			insert_recursive(node, points, depth);
 			return;

@@ -7,6 +7,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Container/directed_acyclic_graph.h>
+#include "Instrumentor.h"
 
 namespace SpicesTest {
 
@@ -71,6 +72,9 @@ namespace SpicesTest {
 	* @brief Testing if Addnode successfully.
 	*/
 	TEST_F(directed_acyclic_graph_test, Addnode) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		directed_acyclic_graphFuncTest funcTestClass;
 
 		m_Nodes.push_back({ "A", {"C"}, std::bind((void(directed_acyclic_graphFuncTest::*)()) & directed_acyclic_graphFuncTest::Test, &funcTestClass)});               /* @brief Override Class Function. */
@@ -93,6 +97,9 @@ namespace SpicesTest {
 	* @brief Testing if Execute successfully.
 	*/
 	TEST_F(directed_acyclic_graph_test, Execute) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		directed_acyclic_graphFuncTest funcTestClass;
 
 		m_Nodes.push_back({ "A", {"C"}, std::bind((void(directed_acyclic_graphFuncTest::*)()) & directed_acyclic_graphFuncTest::Test, &funcTestClass) });               /* @brief Override Class Function. */

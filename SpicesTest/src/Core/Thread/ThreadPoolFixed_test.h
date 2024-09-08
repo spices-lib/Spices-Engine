@@ -7,6 +7,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Thread/ThreadPool.h>
+#include "Instrumentor.h"
 
 namespace SpicesTest {
 
@@ -90,6 +91,9 @@ namespace SpicesTest {
 	* @brief Testing if initialize successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, Initialize) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		std::cout << "Hardware threads: " << nThreads << std::endl;
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
@@ -105,6 +109,9 @@ namespace SpicesTest {
 	* @brief Testing if submit different type of function successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitTask_Range_FunctionType) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		ThreadPoolFuncTest funcTestClass;
 		
 		std::future<bool>         future0  = m_ThreadPool.SubmitPoolTask(std::bind((bool(ThreadPoolFuncTest::*)())&ThreadPoolFuncTest::Test, &funcTestClass));                            /* @brief Override Class Function. */
@@ -142,6 +149,9 @@ namespace SpicesTest {
 	* With profermance test.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitTask_ReturnVal) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = [](uint32_t a, uint32_t b) -> uint32_t
 		{
 			uint32_t val = 0;
@@ -181,6 +191,9 @@ namespace SpicesTest {
 	* @brief Testing if submit one pool task successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitOnePoolTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = [](int sec) -> bool
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(sec));
@@ -214,6 +227,9 @@ namespace SpicesTest {
 	* @brief Testing if submit nThreads pool task successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitnThreadsPoolTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = [](int sec) -> bool
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(sec));
@@ -252,6 +268,9 @@ namespace SpicesTest {
 	* @brief Testing if submit 2 nThreads pool task successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, Submit2nThreadsPoolTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = [](int sec) -> bool
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(sec));
@@ -300,6 +319,9 @@ namespace SpicesTest {
 	* @brief Testing if submit very much pool task successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitVeryMuchPoolTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = [](int sec) -> bool
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(sec));
@@ -328,6 +350,9 @@ namespace SpicesTest {
 	* @brief Testing if submit one thread task successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitOneThreadTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = []() -> void
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -356,6 +381,9 @@ namespace SpicesTest {
 	* @brief Testing if submit thread task for each successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitAllThreadTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = []() -> void
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -384,6 +412,9 @@ namespace SpicesTest {
 	* @brief Testing if submit thread task for each twice successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, Submit2AllThreadTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = []() -> void
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -413,6 +444,9 @@ namespace SpicesTest {
 	* @brief Testing if submit very much thread task successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitVeryMuchThreadTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = []() -> void
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -444,6 +478,9 @@ namespace SpicesTest {
 	* @brief Testing if submit very much mixed task successfully.
 	*/
 	TEST_F(ThreadPoolFixed_test, SubmitVeryMuchAnyTask) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		auto func = []() -> void
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));

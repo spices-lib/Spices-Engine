@@ -7,6 +7,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Container/linked_unordered_map.h>
+#include "Instrumentor.h"
 
 namespace SpicesTest {
 
@@ -51,6 +52,8 @@ namespace SpicesTest {
 	*/
 	TEST_F(linked_unordered_map_test, Initialize) {
 
+		SPICESTEST_PROFILE_FUNCTION();
+
 		/**
 		* @brief Testing initialized container's size.
 		*/
@@ -70,6 +73,8 @@ namespace SpicesTest {
 	* @brief Testing if Remove element successfully.
 	*/
 	TEST_F(linked_unordered_map_test, RemoveElement) {
+
+		SPICESTEST_PROFILE_FUNCTION();
 
 		/**
 		* @brief Testing if clear successfully.
@@ -106,6 +111,8 @@ namespace SpicesTest {
 	*/
 	TEST_F(linked_unordered_map_test, FindElement) {
 
+		SPICESTEST_PROFILE_FUNCTION();
+
 		/**
 		* @brief Testing if find a exist element successfully.
 		*/
@@ -136,6 +143,8 @@ namespace SpicesTest {
 	* @brief Testing if Add element successfully.
 	*/
 	TEST_F(linked_unordered_map_test, AddElement) {
+
+		SPICESTEST_PROFILE_FUNCTION();
 
 		/**
 		* @brief Testing if insert a new element successfully.
@@ -170,6 +179,8 @@ namespace SpicesTest {
 	* @brief Testing if Iter in correct order successfully.
 	*/
 	TEST_F(linked_unordered_map_test, IteratorOrder) {
+
+		SPICESTEST_PROFILE_FUNCTION();
 
 		/**
 		* @brief Testing the initialized container's order.
@@ -221,6 +232,8 @@ namespace SpicesTest {
 	* @brief Testing if No Linear Finding is successfully.
 	*/
 	TEST_F(linked_unordered_map_test, NoLinearFind) {
+
+		SPICESTEST_PROFILE_FUNCTION();
 
 		/**
 		* @brief Testing prev_value is getted successfully.

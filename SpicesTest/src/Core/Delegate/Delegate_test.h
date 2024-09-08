@@ -7,6 +7,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Delegate/DelegateBasic.h>
+#include "Instrumentor.h"
 
 namespace SpicesTest {
 
@@ -117,6 +118,9 @@ namespace SpicesTest {
 	* @brief Testing if bind successfully.
 	*/
 	TEST_F(Delegate_test, Bind) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		DelegateFuncTest funcTestClass;
 
 		test0.Bind(std::bind((void(DelegateFuncTest::*)())&DelegateFuncTest::Test, &funcTestClass));                                /* @brief Override Class Function. */
@@ -144,6 +148,9 @@ namespace SpicesTest {
 	* @brief Testing if unbind successfully.
 	*/
 	TEST_F(Delegate_test, UnBind) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		DelegateFuncTest funcTestClass;
 
 		test0.Bind(std::bind((void(DelegateFuncTest::*)())&DelegateFuncTest::Test, &funcTestClass));               
@@ -167,6 +174,9 @@ namespace SpicesTest {
 	* @brief Testing if broadcast successfully.
 	*/
 	TEST_F(Delegate_test, Broadcast) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 		DelegateFuncTest funcTestClass;
 
 		test2.Bind(std::bind(&DelegateFuncTest::Test0, &funcTestClass, std::placeholders::_1, std::placeholders::_2));
