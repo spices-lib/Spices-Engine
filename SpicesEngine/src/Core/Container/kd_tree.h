@@ -311,9 +311,9 @@ namespace scl {
 
 	template<uint32_t K>
 	inline void kd_tree<K>::insert_recursive_async(
-		Node*&                             node  , 
-		std::shared_ptr<std::vector<item>> points,
-		Spices::ThreadPool*                threadPool,
+		Node*&                             node       , 
+		std::shared_ptr<std::vector<item>> points     ,
+		Spices::ThreadPool*                threadPool ,
 		int                                depth
 	)
 	{
@@ -323,10 +323,7 @@ namespace scl {
 
 		if (points->size() <= nPointsWithoutSplitTask)
 		{
-			auto in = std::chrono::high_resolution_clock::now();
 			insert_recursive(node, points, depth);
-			auto out = std::chrono::high_resolution_clock::now();
-			std::cout << "    " << "Insert Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << points->size() << std::endl;
 			return;
 		}
 
@@ -608,6 +605,11 @@ namespace scl {
 			return true;
 		});
 		rval.get();
+
+		/**
+		* @todo Only block this task.
+		*/
+		threadPool->Wait();
 	}
 
 	template<uint32_t K>

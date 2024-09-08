@@ -10,7 +10,7 @@
 #include "Resources/Material/Material.h"
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Resources/ResourcePool/ResourcePool.h"
-#include "MeshProcesser.h"
+#include "MeshProcessor.h"
 
 #include <optional>
 
@@ -441,7 +441,7 @@ namespace Spices {
 		* @brief Allow MeshLoader access all data.
 		*/
 		friend class MeshLoader;
-		friend class MeshProcesser;
+		friend class MeshProcessor;
 	};
 
 	/**

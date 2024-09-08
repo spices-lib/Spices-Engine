@@ -425,7 +425,7 @@ namespace Spices {
 		
 		if (isCreateBuffer)
 		{
-			MeshProcesser::GenerateMeshLodClusterHierarchy(this);
+			MeshProcessor::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 
@@ -511,7 +511,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			MeshProcesser::GenerateMeshLodClusterHierarchy(this);
+			MeshProcessor::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 
@@ -572,7 +572,7 @@ namespace Spices {
 
 		if (isCreateBuffer)
 		{
-			MeshProcesser::GenerateMeshLodClusterHierarchy(this);
+			MeshProcessor::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 

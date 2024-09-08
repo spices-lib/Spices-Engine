@@ -10,7 +10,7 @@
 #include "Core/Library/FileLibrary.h"
 #include "Core/Library/StringLibrary.h"
 #include "Systems/ResourceSystem.h"
-#include "Resources/Mesh/MeshProcesser.h"
+#include "Resources/Mesh/MeshProcessor.h"
 
 #include "tiny_obj_loader.h"
 
@@ -136,7 +136,7 @@ namespace Spices {
 			}
 		}
 
-		MeshProcesser::GenerateMeshLodClusterHierarchy(outMeshPack);
+		MeshProcessor::GenerateMeshLodClusterHierarchy(outMeshPack);
 		WriteSASSET(index, fileName, outMeshPack);
 
 		return true;

@@ -136,7 +136,6 @@ namespace SpicesTest {
 			threadPool.SetMode(Spices::PoolMode::MODE_FIXED);
 			threadPool.Start(10);
 			modelKDTree.insert_async(points, &threadPool);
-			threadPool.Wait();
 			EXPECT_EQ(modelKDTree.size(), nPoints);
 		}
 
