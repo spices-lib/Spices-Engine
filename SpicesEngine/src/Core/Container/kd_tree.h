@@ -44,7 +44,7 @@ namespace scl {
 			Node(const item& pt)
 				: m_Point(pt)
 				, m_Left(nullptr)
-				, m_Right(nullptr) 
+				, m_Right(nullptr)
 			{}
 
 			/**
@@ -151,6 +151,7 @@ namespace scl {
 		*/
 		kd_tree()
 			: m_Root(nullptr) 
+			, m_Size(0)
 		{}
 
 		/**
@@ -177,7 +178,7 @@ namespace scl {
 		* @param[in] points Inserted points in k d.
 		* @param[in] threadPool ThreadPool.
 		*/
-		void insert_async(const std::vector<item>& points, Spices::ThreadPool& threadPool);
+		void insert_async(const std::vector<item>& points, Spices::ThreadPool* threadPool);
 
 		/**
 		* @brief Search for a point in the kd_tree.
@@ -247,17 +248,28 @@ namespace scl {
 		* @brief Sort points in cd.
 		*/
 		std::multimap<float, uint32_t> sorted;
-		for (int i = 0; i < points->size(); i++)
+		if (points->size() <= 512)
 		{
-			sorted.emplace((*points)[i][cd], i);
+			for (int i = 0; i < points->size(); i++)
+			{
+				sorted.emplace((*points)[i][cd], i);
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 512; i++)
+			{
+				uint32_t index = static_cast<uint32_t>(points->size() * std::rand() / float(RAND_MAX));
+				sorted.emplace((*points)[index][cd], index);
+			}
 		}
 
 		/**
 		* @brief Get Center iterator.
-		*/	
+		*/
 		auto centerit = sorted.begin();
 		for (int i = 0; i < std::floor(sorted.size() * 0.5); i++) centerit++;
-		
+
 		/**
 		* @brief Base case: If node is null, create a new node.
 		*/
@@ -272,23 +284,28 @@ namespace scl {
 		}
 
 		/**
-		* @brief Insert in left.
+		* @brief Split points to left and right.
 		*/
-		std::shared_ptr<std::vector<item>> leftPoints = std::make_shared<std::vector<item>>();
-		for (auto it = sorted.begin(); it != centerit; it++)
+		std::shared_ptr<std::vector<item>> leftPoints  = std::make_shared<std::vector<item>>();
+		std::shared_ptr<std::vector<item>> rightPoints = std::make_shared<std::vector<item>>();
+
+		for (int i = 0; i < points->size(); i++)
 		{
-			leftPoints->push_back((*points)[it->second]);
+			if (i == centerit->second) continue;
+			else if ((*points)[i][cd] <= centerit->first)
+			{
+				leftPoints->push_back((*points)[i]);
+			}
+			else
+			{
+				rightPoints->push_back((*points)[i]);
+			}
 		}
-		insert_recursive(node->m_Left, leftPoints, depth + 1);
 
 		/**
-		* @brief Insert in right.
+		* @brief Insert in left and right.
 		*/
-		std::shared_ptr<std::vector<item>> rightPoints = std::make_shared<std::vector<item>>();
-		for (auto it = ++centerit; it != sorted.end(); it++)
-		{
-			rightPoints->push_back((*points)[it->second]);
-		}
+		insert_recursive(node->m_Left,  leftPoints,  depth + 1);
 		insert_recursive(node->m_Right, rightPoints, depth + 1);
 	}
 
@@ -306,7 +323,10 @@ namespace scl {
 
 		if (points->size() <= nPointsWithoutSplitTask)
 		{
+			auto in = std::chrono::high_resolution_clock::now();
 			insert_recursive(node, points, depth);
+			auto out = std::chrono::high_resolution_clock::now();
+			std::cout << "    " << "Insert Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << points->size() << std::endl;
 			return;
 		}
 
@@ -323,18 +343,28 @@ namespace scl {
 		/**
 		* @brief Sort points in cd.
 		*/
-		std::shared_ptr<std::multimap<float, uint32_t>> sorted = std::make_shared<std::multimap<float, uint32_t>>();
-		for (int i = 0; i < points->size(); i++)
+		std::multimap<float, uint32_t> sorted;
+		if (points->size() <= 512)
 		{
-			float v = (*points)[i][cd];
-			sorted->emplace(v, i);
+			for (int i = 0; i < points->size(); i++)
+			{
+				sorted.emplace((*points)[i][cd], i);
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 512; i++)
+			{
+				uint32_t index = static_cast<uint32_t>(points->size() * std::rand() / float(RAND_MAX));
+				sorted.emplace((*points)[index][cd], index);
+			}
 		}
 
 		/**
 		* @brief Get Center iterator.
 		*/
-		std::multimap<float, uint32_t>::iterator centerit = (*sorted).begin();
-		for(int i = 0; i < std::floor(sorted->size() * 0.5); i++) centerit++;
+		auto centerit = sorted.begin();
+		for(int i = 0; i < std::floor(sorted.size() * 0.5); i++) centerit++;
 
 		/**
 		* @brief Base case: If node is null, create a new node.
@@ -352,26 +382,34 @@ namespace scl {
 		/**
 		* @brief Insert in left.
 		*/
-		threadPool->SubmitPoolTask([this, sorted, points, node, threadPool, depth](std::multimap<float, uint32_t>::iterator iter) {
+		threadPool->SubmitPoolTask([this, cd, points, node, threadPool, depth](float centerVal, uint32_t centerIndex) {
 			std::shared_ptr<std::vector<item>> leftPoints = std::make_shared<std::vector<item>>();
-			for (auto it = sorted->begin(); it != iter; it++)
+			for (int i = 0; i < points->size(); i++)
 			{
-				leftPoints->push_back((*points)[it->second]);
+				if (i == centerIndex) continue;
+				else if ((*points)[i][cd] <= centerVal)
+				{
+					leftPoints->push_back((*points)[i]);
+				}
 			}
 			insert_recursive_async(node->m_Left, leftPoints, threadPool, depth + 1);
-		}, centerit);
+		}, centerit->first, centerit->second);
 		
 		/**
 		* @brief Insert in right.
 		*/
-		threadPool->SubmitPoolTask([this, sorted, points, node, threadPool, depth](std::multimap<float, uint32_t>::iterator iter) {
+		threadPool->SubmitPoolTask([this, cd, points, node, threadPool, depth](float centerVal, uint32_t centerIndex) {
 			std::shared_ptr<std::vector<item>> rightPoints = std::make_shared<std::vector<item>>();
-			for (auto it = ++iter; it != sorted->end(); it++)
+			for (int i = 0; i < points->size(); i++)
 			{
-				rightPoints->push_back((*points)[it->second]);
+				if (i == centerIndex) continue;
+				else if ((*points)[i][cd] > centerVal)
+				{
+					rightPoints->push_back((*points)[i]);
+				}
 			}
 			insert_recursive_async(node->m_Right, rightPoints, threadPool, depth + 1);
-		}, centerit);
+		}, centerit->first, centerit->second);
 	}
 
 	template<uint32_t K>
@@ -561,12 +599,12 @@ namespace scl {
 	}
 
 	template<uint32_t K>
-	inline void kd_tree<K>::insert_async(const std::vector<item>& points, Spices::ThreadPool& threadPool)
+	inline void kd_tree<K>::insert_async(const std::vector<item>& points, Spices::ThreadPool* threadPool)
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::future<bool> rval = threadPool.SubmitPoolTask([&]() {
-			insert_recursive_async(m_Root, std::make_shared<std::vector<item>>(points), &threadPool, 0);
+		std::future<bool> rval = threadPool->SubmitPoolTask([&]() {
+			insert_recursive_async(m_Root, std::make_shared<std::vector<item>>(points), threadPool, 0);
 			return true;
 		});
 		rval.get();
@@ -592,6 +630,8 @@ namespace scl {
 		std::vector<kd_tree<K>::item> rangePoints;
 		range_search_recursive(m_Root, point, condition, rangePoints, 0);
 
+		if (rangePoints.size() == 0) return {};
+
 		int nearIndex = -1;
 		float nearRate = 1E11;
 		for (int i = 0; i < rangePoints.size(); i++)
@@ -608,7 +648,6 @@ namespace scl {
 			}
 		}
 
-		if (nearIndex == -1) return {};
 		return rangePoints[nearIndex];
 	}
 

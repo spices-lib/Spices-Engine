@@ -112,7 +112,7 @@ namespace SpicesTest {
 
 		EXPECT_EQ(m_KDTree.nearest_neighbour_search({ 2.0, 0.0 }, { 3.0, 3.0 }), val);
 
-		const int nPoints = 1000000;
+		const int nPoints = 10000000;
 		scl::kd_tree<3> modelKDTree;
 		std::vector<scl::kd_tree<3>::item> points;
 		scl::kd_tree<3>::item findVal = { 50.2f, 87.3f, 12.6f };
@@ -135,7 +135,7 @@ namespace SpicesTest {
 			Spices::ThreadPool threadPool;
 			threadPool.SetMode(Spices::PoolMode::MODE_FIXED);
 			threadPool.Start(10);
-			modelKDTree.insert_async(points, threadPool);
+			modelKDTree.insert_async(points, &threadPool);
 			threadPool.Wait();
 			EXPECT_EQ(modelKDTree.size(), nPoints);
 		}

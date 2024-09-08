@@ -23,6 +23,9 @@ namespace Spices {
 		meshPack->m_Indices = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 
+		scl::kd_tree<6> kdTree;
+		BuildKDTree(meshPack, kdTree);
+
 		const int maxLod = 15;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
@@ -37,9 +40,7 @@ namespace Spices {
 			float simplifyScale = meshopt_simplifyScale(&(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex));
 			const float maxDistance = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
 			const float maxUVDistance = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
-			scl::kd_tree<3> kdTree;
-			BuildKDTree(meshPack, meshlets, kdTree);
-			auto vertexMap = MergeByDistance(meshPack, kdTree, maxDistance, maxUVDistance);
+			auto vertexMap = MergeByDistance(meshPack, kdTree, 0.01f, 0.01f);
 
 			std::vector<MeshletGroup> groups = GroupMeshlets(meshPack, meshlets, vertexMap);
 
@@ -362,82 +363,42 @@ namespace Spices {
 		return groups;
 	}
 
-	std::vector<uint32_t> MeshProcesser::MergeByDistance(MeshPack* meshPack, scl::kd_tree<3>& kdTree, float maxDistance, float maxUVDistance)
+	std::vector<uint32_t> MeshProcesser::MergeByDistance(MeshPack* meshPack, scl::kd_tree<6>& kdTree, float maxDistance, float maxUVDistance)
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::vector<uint32_t> vertexRemap;
+		const uint32_t vertexCount = meshPack->m_Vertices->size();
+		vertexRemap.resize(vertexCount, -1);
+
+		for (uint32_t v = 0; v < vertexCount; v++)
 		{
-			//std::vector<uint32_t> vertexRemap;
+			const Vertex& vertex = (*meshPack->m_Vertices)[v];
+			auto item = kdTree.range_search(
+				{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
+				{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
+			)[0];
 
-			//const uint32_t vertexCount = meshPack->m_Vertices->size();
-			//vertexRemap.resize(vertexCount, -1);
-
-			//for (uint32_t v = 0; v < vertexCount; v++)
-			//{
-			//	float maxDistanceSq = maxDistance * maxDistance;
-			//	float maxUVDistanceSq = maxUVDistance * maxUVDistance;
-
-			//	const Vertex& vertex = (*meshPack->m_Vertices)[v];
-			//	uint32_t replacement = -1;
-
-			//	for (uint32_t potentialReplacement = 0; potentialReplacement < v; potentialReplacement++)
-			//	{
-			//		const Vertex& otherVertex = (*meshPack->m_Vertices)[vertexRemap[potentialReplacement]];
-			//		const float vertexDistanceSq = glm::distance2(vertex.position, otherVertex.position);
-			//		if (vertexDistanceSq <= maxDistanceSq)
-			//		{
-			//			const float uvDistanceSq = glm::distance2(vertex.texCoord, otherVertex.texCoord);
-			//			if (uvDistanceSq <= maxUVDistanceSq)
-			//			{
-			//				replacement     = potentialReplacement;
-			//				maxDistanceSq   = vertexDistanceSq;
-			//				maxUVDistanceSq = uvDistanceSq;
-			//			}
-			//		}
-			//	}
-
-			//	if (replacement == -1)
-			//	{
-			//		vertexRemap[v] = v;
-			//	}
-			//	else
-			//	{
-			//		vertexRemap[v] = replacement;
-			//	}
-			//}
-			//return vertexRemap;
+			vertexRemap[v] = (uint32_t)item[item.size() - 1];
 		}
-
-		{
-			float maxDistanceSq = maxDistance * maxDistance;
-			float maxUVDistanceSq = maxUVDistance * maxUVDistance;
-
-			std::vector<uint32_t> vertexRemap;
-			const uint32_t vertexCount = meshPack->m_Vertices->size();
-			vertexRemap.resize(vertexCount, -1);
-
-			for (uint32_t v = 0; v < vertexCount; v++)
-			{
-				const Vertex& vertex = (*meshPack->m_Vertices)[v];
-				//kdTree.nearest_neighbour_search({ vertex.position.x, vertex.position.y, vertex.position.z }, )
-			}
-			return vertexRemap;
-		}
+		return vertexRemap;
 	}
 
-	bool MeshProcesser::BuildKDTree(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, scl::kd_tree<3>& kdTree)
+	bool MeshProcesser::BuildKDTree(MeshPack* meshPack, scl::kd_tree<6>& kdTree)
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (int i = 0; i < meshlets.size(); i++)
-		{
-			for (int j = 0; j < meshlets[i].nPrimitives * 3; j++)
-			{
-				const glm::vec3& pos = (*meshPack->m_Vertices)[(*meshPack->m_Indices)[meshlets[i].primitiveOffset * 3 + j]].position;
-				//kdTree.insert({ pos.x, pos.y, pos.z });
-			}
-		}
+		std::vector<scl::kd_tree<6>::item> points;
+		points.resize(meshPack->m_Vertices->size());
 
+		for (int i = 0; i < meshPack->m_Vertices->size(); i++)
+		{
+			const Vertex& vt = (*meshPack->m_Vertices)[i];
+			points[i] = { vt.position.x, vt.position.y, vt.position.z, vt.texCoord.x, vt.texCoord.y, (float)i };
+		}
+		
+		kdTree.insert_async(points, ThreadPool::Get().get());
+		ThreadPool::Get()->Wait();
 		return true;
 	}
 }
