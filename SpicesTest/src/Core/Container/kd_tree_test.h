@@ -8,6 +8,7 @@
 #include <gmock/gmock.h>
 #include <Core/Container/kd_tree.h>
 #include <Core/Thread/ThreadPool.h>
+#include <random>
 
 namespace SpicesTest {
 
@@ -60,6 +61,7 @@ namespace SpicesTest {
 	*/
 	TEST_F(kd_tree_test, Insert) {
 
+		EXPECT_EQ(m_KDTree.size(), 7);
 		m_KDTree.print();
 	}
 
@@ -103,56 +105,44 @@ namespace SpicesTest {
 		
 		EXPECT_EQ(m_KDTree.nearest_neighbour_search({ 2.0, 0.0 }, { 3.0, 3.0 }), val);
 
+		const int nPoints = 1000000;
+
 		/**
 		* @brief Create a KDTree from hugh points collection.
 		*/
 		scl::kd_tree<3> modelKDTree;
 		std::vector<scl::kd_tree<3>::item> points;
-		points.resize(1000000);
+		points.resize(nPoints);
 		scl::kd_tree<3>::item findVal = { 50.2f, 87.3f, 12.6f };
 
+		for (int i = 0; i < nPoints; i++)
 		{
-			auto start = std::chrono::high_resolution_clock::now();
-
-			for (int i = 0; i < 1000000; i++)
-			{
-				points[i][0] = std::rand() * 100.0f;
-				points[i][1] = std::rand() * 100.0f;
-				points[i][2] = std::rand() * 100.0f;
-			}
-
-			Spices::ThreadPool threadPool;
-			threadPool.SetMode(Spices::PoolMode::MODE_FIXED);
-			threadPool.Start(10);
-			modelKDTree.insert_async(points, threadPool);
-			threadPool.Wait();
-			auto end = std::chrono::high_resolution_clock::now();
-			std::cout << "KDtree Build Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+			points[i][0] = std::rand() / float(RAND_MAX) * 100.0f;
+			points[i][1] = std::rand() / float(RAND_MAX) * 100.0f;
+			points[i][2] = std::rand() / float(RAND_MAX) * 100.0f;
 		}
 
+		Spices::ThreadPool threadPool;
+		threadPool.SetMode(Spices::PoolMode::MODE_FIXED);
+		threadPool.Start(10);
+		modelKDTree.insert_async(points, threadPool);
+		threadPool.Wait();
+
+		/**
+		* @brief Search in kree.
+		*/
+		modelKDTree.nearest_neighbour_search(findVal, { 0.1f, 0.1f, 0.1f });
+
+		/**
+		* @brief Search in loop.
+		*/
+		scl::kd_tree<3>::item nearPt = { 1E11 };
+		for (int i = 0; i < nPoints; i++)
 		{
-			auto start = std::chrono::high_resolution_clock::now();
-
-			modelKDTree.nearest_neighbour_search(findVal, { 0.1f, 0.1f, 0.1f });
-
-			auto end = std::chrono::high_resolution_clock::now();
-			std::cout << "KDtree nearest search Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
-		}
-
-		{
-			auto start = std::chrono::high_resolution_clock::now();
-
-			scl::kd_tree<3>::item nearPt = { 1E11 };
-			for (int i = 0; i < 1000000; i++)
+			if (points[i][0] < nearPt[0] && points[i][1] < nearPt[1] && points[i][2] < nearPt[2])
 			{
-				if (points[i][0] < nearPt[0] && points[i][1] < nearPt[1] && points[i][2] < nearPt[2])
-				{
-					nearPt = points[i];
-				}
+				nearPt = points[i];
 			}
-
-			auto end = std::chrono::high_resolution_clock::now();
-			std::cout << "Iter nearest search Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
 		}
 	}
 

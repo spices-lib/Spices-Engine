@@ -58,14 +58,14 @@ namespace Spices {
 		* @param[in] maxUVDistance allowed merge by vertex uv.
 		* @return Returns Merged Vertex Map.
 		*/
-		static std::vector<uint32_t> MergeByDistance(MeshPack* meshPack, scl::kd_tree<3> kdTree, float maxDistance, float maxUVDistance);
+		static std::vector<uint32_t> MergeByDistance(MeshPack* meshPack, scl::kd_tree<3>& kdTree, float maxDistance, float maxUVDistance);
 
 		/**
 		* @brief Build KDTree use specific meshlets.
 		* @param[in] meshPack MeshPack.
 		* @param[in] meshlets MeshPack Meshlets.
-		* @return Returns kd_tree.
+		* @param[in] kdTree .
 		*/
-		static scl::kd_tree<3> BuildKDTree(MeshPack* meshPack, const std::vector<Meshlet>& meshlets);
+		static bool BuildKDTree(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, scl::kd_tree<3>& kdTree);
 	};
 }

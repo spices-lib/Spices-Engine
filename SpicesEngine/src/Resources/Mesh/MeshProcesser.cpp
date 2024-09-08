@@ -37,7 +37,8 @@ namespace Spices {
 			float simplifyScale = meshopt_simplifyScale(&(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex));
 			const float maxDistance = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
 			const float maxUVDistance = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
-			scl::kd_tree<3> kdTree = BuildKDTree(meshPack, meshlets);
+			scl::kd_tree<3> kdTree;
+			BuildKDTree(meshPack, meshlets, kdTree);
 			auto vertexMap = MergeByDistance(meshPack, kdTree, maxDistance, maxUVDistance);
 
 			std::vector<MeshletGroup> groups = GroupMeshlets(meshPack, meshlets, vertexMap);
@@ -361,7 +362,7 @@ namespace Spices {
 		return groups;
 	}
 
-	std::vector<uint32_t> MeshProcesser::MergeByDistance(MeshPack* meshPack, scl::kd_tree<3> kdTree, float maxDistance, float maxUVDistance)
+	std::vector<uint32_t> MeshProcesser::MergeByDistance(MeshPack* meshPack, scl::kd_tree<3>& kdTree, float maxDistance, float maxUVDistance)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -424,11 +425,9 @@ namespace Spices {
 		}
 	}
 
-	scl::kd_tree<3> MeshProcesser::BuildKDTree(MeshPack* meshPack, const std::vector<Meshlet>& meshlets)
+	bool MeshProcesser::BuildKDTree(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, scl::kd_tree<3>& kdTree)
 	{
 		SPICES_PROFILE_ZONE;
-
-		scl::kd_tree<3> kdTree{};
 
 		for (int i = 0; i < meshlets.size(); i++)
 		{
@@ -439,6 +438,6 @@ namespace Spices {
 			}
 		}
 
-		return kdTree;
+		return true;
 	}
 }
