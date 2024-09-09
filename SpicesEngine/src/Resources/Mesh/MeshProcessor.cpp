@@ -26,11 +26,9 @@ namespace Spices {
 		scl::kd_tree<6> kdTree;
 		BuildKDTree(meshPack, kdTree);
 
-		const int maxLod = 2;
+		const int maxLod = 5;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
-			auto in = std::chrono::high_resolution_clock::now();
-
 			float tLod = lod / (float)maxLod;
 
 			std::vector<Meshlet> meshlets = std::vector<Meshlet>(meshPack->m_Meshlets->begin() + meshletStart, meshPack->m_Meshlets->end());
@@ -62,28 +60,13 @@ namespace Spices {
 					}
 				}
 
-				std::unordered_map<uint32_t, uint32_t> indicesMap; // key: original index, value: new index.
-				for (auto& index : groupVertexIndices)
-				{
-					if (indicesMap.find(index) == indicesMap.end())
-					{
-						indicesMap[index] = indicesMap.size();
-					}
-				}
-
-				std::vector<Vertex> vertices(indicesMap.size());
+				/**
+				* @brief Pack Sparse Inputs.
+				*/
+				std::vector<Vertex> packVertices;
+				std::vector<uint32_t> packIndices;
 				std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
-				for (auto& pair : indicesMap)
-				{
-					vertices[pair.second] = (*meshPack->m_Vertices)[pair.first];
-					indicesMapReverse[pair.second] = pair.first;
-				}
-
-				std::vector<uint32_t> indices(groupVertexIndices.size());
-				for (int i = 0; i < groupVertexIndices.size(); i++)
-				{
-					indices[i] = indicesMap[groupVertexIndices[i]];
-				}
+				PackVertexFromSparseInputs(meshPack, groupVertexIndices, packVertices, packIndices, indicesMapReverse);
 
 				const float threshold   = 0.5f;
 				size_t targetIndexCount = groupVertexIndices.size() * threshold;
@@ -95,30 +78,25 @@ namespace Spices {
 
 				size_t simplifiedIndexCount = meshopt_simplify(
 					simplifiedIndexBuffer.data(),
-					indices.data(),
-					indices.size(),
-					&vertices[0].position.x,
-					vertices.size(),
+					packIndices.data(),
+					packIndices.size(),
+					&packVertices[0].position.x,
+					packVertices.size(),
 					sizeof(Vertex),
-					targetIndexCount, 
+					targetIndexCount,
 					targetError,
-					options, 
+					options,
 					&simplificationError
 				);
-				simplifiedIndexBuffer.resize(simplifiedIndexCount);
+				simplifiedIndexBuffer.resize(simplifiedIndexCount);			
 
-				std::vector<uint32_t> indicesBuffer(simplifiedIndexCount);
-				for (int i = 0; i < simplifiedIndexBuffer.size(); i++)
-				{
-					indicesBuffer[i] = indicesMapReverse[simplifiedIndexBuffer[i]];
-				}
+				std::vector<uint32_t> indicesBuffer;
+				UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
 
 				AppendMeshlets(meshPack, lod + 1, indicesBuffer);
+
 				meshletStart = nextStart;
 			}
-
-			auto out = std::chrono::high_resolution_clock::now();
-			std::cout << "    Lod Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    "<< meshlets.size() << std::endl;
 		}
 	}
 
@@ -135,7 +113,7 @@ namespace Spices {
 		const uint32_t indicesOffset        = meshPack->m_Indices->size();
 		const uint32_t meshletsOffset       = meshPack->m_Meshlets->size();
 
-		/** 
+		/**
 		* @brief Init meshopt variable.
 		*/
 		size_t max_meshlets = meshopt_buildMeshletsBound(indices.size(), MESHLET_NVERTICES, MESHLET_NPRIMITIVES);
@@ -144,16 +122,24 @@ namespace Spices {
 		std::vector<unsigned char> meshlet_triangles(max_meshlets * MESHLET_NPRIMITIVES * 3);
 
 		/**
+		* @brief Pack Sparse Inputs.
+		*/
+		std::vector<Vertex> packVertices;
+		std::vector<uint32_t> packIndices;
+		std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
+		PackVertexFromSparseInputs(meshPack, indices, packVertices, packIndices, indicesMapReverse);
+
+		/**
 		* @brief Build Meshlets.
 		*/
 		size_t nMeshlet = meshopt_buildMeshlets(
 			meshoptlets.data(), 
 			meshlet_vertices.data(), 
 			meshlet_triangles.data(), 
-			indices.data(),
-			indices.size(), 
-			&(*meshPack->m_Vertices)[0].position.x, 
-			meshPack->m_Vertices->size(), 
+			packIndices.data(),
+			packIndices.size(),
+			&packVertices[0].position.x,
+			packVertices.size(),
 			sizeof(Vertex), 
 			MESHLET_NVERTICES, 
 			MESHLET_NPRIMITIVES, 
@@ -172,35 +158,37 @@ namespace Spices {
 		* @brief Optimize meshlets and compute meshlet bound and cone.
 		*/
 		uint32_t nPrimitives = 0;
-		for (size_t i = 0; i < nMeshlet; ++i)
 		{
-			meshopt_optimizeMeshlet(
-				&meshlet_vertices[meshoptlets[i].vertex_offset], 
-				&meshlet_triangles[meshoptlets[i].triangle_offset],
-				meshoptlets[i].triangle_count, meshoptlets[i].vertex_count
-			);
+			for (size_t i = 0; i < nMeshlet; ++i)
+			{
+				meshopt_optimizeMeshlet(
+					&meshlet_vertices[meshoptlets[i].vertex_offset],
+					&meshlet_triangles[meshoptlets[i].triangle_offset],
+					meshoptlets[i].triangle_count, meshoptlets[i].vertex_count
+				);
 
-			const meshopt_Meshlet& m = meshoptlets[i];
-			meshopt_Bounds bounds = meshopt_computeMeshletBounds(
-				&meshlet_vertices[m.vertex_offset],
-				&meshlet_triangles[m.triangle_offset], 
-				m.triangle_count, 
-				&(*meshPack->m_Vertices)[0].position.x, 
-				meshPack->m_Vertices->size(), 
-				sizeof(Vertex)
-			);
+				const meshopt_Meshlet& m = meshoptlets[i];
+				meshopt_Bounds bounds = meshopt_computeMeshletBounds(
+					&meshlet_vertices[m.vertex_offset],
+					&meshlet_triangles[m.triangle_offset],
+					m.triangle_count,
+					&packVertices[0].position.x,
+					packVertices.size(),
+					sizeof(Vertex)
+				);
 
-			Meshlet meshlet;
-			meshlet.FromMeshopt(meshoptlets[i], bounds);
-			meshlet.primitiveOffset  = nPrimitives;
+				Meshlet meshlet;
+				meshlet.FromMeshopt(meshoptlets[i], bounds);
+				meshlet.primitiveOffset = nPrimitives;
 
-			meshlet.vertexOffset    += vertexIndicesOffset;
-			meshlet.primitiveOffset += indicesOffset / 3;
-			meshlet.lod              = lod;
+				meshlet.vertexOffset += vertexIndicesOffset;
+				meshlet.primitiveOffset += indicesOffset / 3;
+				meshlet.lod = lod;
 
-			meshPack->m_Meshlets->push_back(std::move(meshlet));
+				meshPack->m_Meshlets->push_back(std::move(meshlet));
 
-			nPrimitives += m.triangle_count;
+				nPrimitives += m.triangle_count;
+			}
 		}
 
 		/**
@@ -221,9 +209,9 @@ namespace Spices {
 				uint32_t b = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 1] + m.vertex_offset;
 				uint32_t c = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 2] + m.vertex_offset;
 
-				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 0] = meshlet_vertices[a];
-				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 1] = meshlet_vertices[b];
-				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 2] = meshlet_vertices[c];
+				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 0] = indicesMapReverse[meshlet_vertices[a]];
+				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 1] = indicesMapReverse[meshlet_vertices[b]];
+				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 2] = indicesMapReverse[meshlet_vertices[c]];
 
 				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 0] = a + vertexIndicesOffset;
 				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 1] = b + vertexIndicesOffset;
@@ -434,6 +422,8 @@ namespace Spices {
 
 		for (uint32_t v = 0; v < vertexCount; v++)
 		{
+			auto in = std::chrono::high_resolution_clock::now();
+
 			/*if (boundaryVertices[v])
 			{
 				vertexRemap[v] = v;
@@ -449,13 +439,16 @@ namespace Spices {
 				vertexRemap[v] = (uint32_t)item[item.size() - 1];
 			}*/
 			const Vertex& vertex = (*meshPack->m_Vertices)[v];
-			auto item = kdTree.range_search(
+			auto item = kdTree.nearest_neighbour_search(
 				{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
 				{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
-			)[0];
+			);
 
 			vertexRemap[v] = (uint32_t)item[item.size() - 1];
-			vertexRemap[v] = v;
+			//vertexRemap[v] = v;
+
+			auto out = std::chrono::high_resolution_clock::now();
+			std::cout << "    Search Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << v << std::endl;
 		}
 		return vertexRemap;
 	}
@@ -573,5 +566,47 @@ namespace Spices {
 		}
 
 		return boundaryVertices;
+	}
+
+	bool MeshProcessor::PackVertexFromSparseInputs(MeshPack* meshPack, const std::vector<uint32_t> indices, std::vector<Vertex>& packVertices, std::vector<uint32_t>& packIndices, std::unordered_map<uint32_t, uint32_t>& indicesMapReverse)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unordered_map<uint32_t, uint32_t> indicesMap;  // key: original index, value: new index.
+		for (auto& index : indices)
+		{
+			if (indicesMap.find(index) == indicesMap.end())
+			{
+				indicesMap[index] = indicesMap.size();
+			}
+		}
+
+		packVertices.resize(indicesMap.size());
+		for (auto& pair : indicesMap)
+		{
+			packVertices[pair.second] = (*meshPack->m_Vertices)[pair.first];
+			indicesMapReverse[pair.second] = pair.first;
+		}
+
+		packIndices.resize(indices.size());
+		for (int i = 0; i < indices.size(); i++)
+		{
+			packIndices[i] = indicesMap[indices[i]];
+		}
+
+		return true;
+	}
+
+	bool MeshProcessor::UnPackIndicesToSparseInputs(std::vector<uint32_t>& indices, std::unordered_map<uint32_t, uint32_t>& indicesMapReverse, const std::vector<uint32_t>& packIndices)
+	{
+		SPICES_PROFILE_ZONE;
+
+		indices.resize(packIndices.size());
+		for (int i = 0; i < packIndices.size(); i++)
+		{
+			indices[i] = indicesMapReverse[packIndices[i]];
+		}
+
+		return true;
 	}
 }

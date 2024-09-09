@@ -235,8 +235,6 @@ namespace scl {
 		int                                depth
 	)
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (points->size() == 0) return;
 
 		/**
@@ -317,8 +315,6 @@ namespace scl {
 		int                                depth
 	)
 	{
-		SPICES_PROFILE_ZONE;
-
 		const int nPointsWithoutSplitTask = 30000;
 
 		if (points->size() <= nPointsWithoutSplitTask)
@@ -465,8 +461,6 @@ namespace scl {
 		int                depth
 	) const
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Base case: If node is null, the point is not found.
 		*/

@@ -67,5 +67,9 @@ namespace Spices {
 		static bool BuildKDTree(MeshPack* meshPack, scl::kd_tree<6>& kdTree);
 
 		static std::vector<bool> FindBoundaryVertices(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<MeshletGroup>& groups);
+
+		static bool PackVertexFromSparseInputs(MeshPack* meshPack, const std::vector<uint32_t> indices, std::vector<Vertex>& packVertices, std::vector<uint32_t>& packIndices, std::unordered_map<uint32_t, uint32_t>& indicesMapReverse);
+
+		static bool UnPackIndicesToSparseInputs(std::vector<uint32_t>& indices, std::unordered_map<uint32_t, uint32_t>& indicesMapReverse, const std::vector<uint32_t>& packIndices);
 	};
 }

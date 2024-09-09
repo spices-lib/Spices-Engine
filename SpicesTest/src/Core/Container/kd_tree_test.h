@@ -113,7 +113,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_KDTree.nearest_neighbour_search({ 2.0, 0.0 }, { 3.0, 3.0 }), val);
 
 		const int nPoints  = 10000000;
-		const int nSearchs = 10000000;
+		const int nSearchs = 10000;
 		scl::kd_tree<3> modelKDTree;
 		std::vector<scl::kd_tree<3>::item> points;
 		scl::kd_tree<3>::item findVal = { 50.2f, 87.3f, 12.6f };
@@ -142,36 +142,41 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("Search in KDTree");
-			auto in = std::chrono::high_resolution_clock::now();
 
 			for (int i = 0; i < nSearchs; i++)
 			{
-				modelKDTree.nearest_neighbour_search(findVal, { 0.1f, 0.1f, 0.1f });
+				auto rval = modelKDTree.nearest_neighbour_search(findVal, { 10.0f, 10.0f, 10.0f });
+				bool check = 10.0f - std::abs(rval[0] - findVal[0]) > 0.0f;
+				EXPECT_EQ(check, true);
 			}
-
-			auto out = std::chrono::high_resolution_clock::now();
-			std::cout << "    Search in KDTree Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << std::endl;
 		}
+
+#ifdef CompareWithForLoop
 
 		{
 			SPICESTEST_PROFILE_SCOPE("Search in Loop");
-			auto in = std::chrono::high_resolution_clock::now();
 
-			scl::kd_tree<3>::item nearPt = { 1E11 };
 			for (int i = 0; i < nSearchs; i++)
 			{
+				scl::kd_tree<3>::item nearVal = { 1E11, 1E11, 1E11 };
+
 				for (int j = 0; j < nPoints; j++)
 				{
-					if (points[j][0] < nearPt[0] && points[j][1] < nearPt[1] && points[j][2] < nearPt[2])
+					if (std::abs(points[j][0] - findVal[0]) < nearVal[0] &&
+						std::abs(points[j][1] - findVal[1]) < nearVal[1] && 
+						std::abs(points[j][2] - findVal[2]) < nearVal[2])
 					{
-						nearPt = points[j];
+						nearVal = points[j];
 					}
 				}
-			}
 
-			auto out = std::chrono::high_resolution_clock::now();
-			std::cout << "    Search in Loop Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << std::endl;
+				bool check = 10.0f - nearVal[0] > 0.0f;
+				EXPECT_EQ(check, true);
+			}
 		}
+
+#endif
+
 	}
 
 	/**

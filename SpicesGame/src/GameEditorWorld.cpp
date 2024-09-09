@@ -39,7 +39,7 @@ namespace Spices {
 			
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("not_a_stanford_bunny");
 			//std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_02");
-			//std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_03");
+			//std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("not_a_stanford_bunny");
 			//std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
 			//std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
 
