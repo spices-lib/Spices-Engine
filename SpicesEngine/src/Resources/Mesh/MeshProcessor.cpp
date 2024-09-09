@@ -26,9 +26,11 @@ namespace Spices {
 		scl::kd_tree<6> kdTree;
 		BuildKDTree(meshPack, kdTree);
 
-		const int maxLod = 25;
+		const int maxLod = 2;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
+			auto in = std::chrono::high_resolution_clock::now();
+
 			float tLod = lod / (float)maxLod;
 
 			std::vector<Meshlet> meshlets = std::vector<Meshlet>(meshPack->m_Meshlets->begin() + meshletStart, meshPack->m_Meshlets->end());
@@ -60,21 +62,43 @@ namespace Spices {
 					}
 				}
 
+				std::unordered_map<uint32_t, uint32_t> indicesMap; // key: original index, value: new index.
+				for (auto& index : groupVertexIndices)
+				{
+					if (indicesMap.find(index) == indicesMap.end())
+					{
+						indicesMap[index] = indicesMap.size();
+					}
+				}
+
+				std::vector<Vertex> vertices(indicesMap.size());
+				std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
+				for (auto& pair : indicesMap)
+				{
+					vertices[pair.second] = (*meshPack->m_Vertices)[pair.first];
+					indicesMapReverse[pair.second] = pair.first;
+				}
+
+				std::vector<uint32_t> indices(groupVertexIndices.size());
+				for (int i = 0; i < groupVertexIndices.size(); i++)
+				{
+					indices[i] = indicesMap[groupVertexIndices[i]];
+				}
+
 				const float threshold   = 0.5f;
 				size_t targetIndexCount = groupVertexIndices.size() * threshold;
-				float targetError       = 0.9f * tLod + 0.01f * (1 - tLod);
-				uint32_t options        = meshopt_SimplifyLockBorder | meshopt_SimplifySparse | meshopt_SimplifyErrorAbsolute;
-
-				std::vector<uint32_t> simplifiedIndexBuffer;
-				simplifiedIndexBuffer.resize(groupVertexIndices.size());
+				float targetError       = 0.1f * tLod + 0.01f * (1 - tLod);
+				uint32_t options        = meshopt_SimplifyLockBorder;
+			
+				std::vector<uint32_t> simplifiedIndexBuffer(groupVertexIndices.size());
 				float simplificationError = 0.0f;
 
 				size_t simplifiedIndexCount = meshopt_simplify(
 					simplifiedIndexBuffer.data(),
-					groupVertexIndices.data(), 
-					groupVertexIndices.size(),
-					&(*meshPack->m_Vertices)[0].position.x, 
-					meshPack->m_Vertices->size(), 
+					indices.data(),
+					indices.size(),
+					&vertices[0].position.x,
+					vertices.size(),
 					sizeof(Vertex),
 					targetIndexCount, 
 					targetError,
@@ -83,9 +107,18 @@ namespace Spices {
 				);
 				simplifiedIndexBuffer.resize(simplifiedIndexCount);
 
-				AppendMeshlets(meshPack, lod + 1, simplifiedIndexBuffer);
+				std::vector<uint32_t> indicesBuffer(simplifiedIndexCount);
+				for (int i = 0; i < simplifiedIndexBuffer.size(); i++)
+				{
+					indicesBuffer[i] = indicesMapReverse[simplifiedIndexBuffer[i]];
+				}
+
+				AppendMeshlets(meshPack, lod + 1, indicesBuffer);
 				meshletStart = nextStart;
 			}
+
+			auto out = std::chrono::high_resolution_clock::now();
+			std::cout << "    Lod Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    "<< meshlets.size() << std::endl;
 		}
 	}
 
@@ -397,7 +430,7 @@ namespace Spices {
 		const uint32_t vertexCount = meshPack->m_Vertices->size();
 		vertexRemap.resize(vertexCount, -1);
 
-		std::vector<bool> boundaryVertices = FindBoundaryVertices(meshPack, meshlets, groups);
+		//std::vector<bool> boundaryVertices = FindBoundaryVertices(meshPack, meshlets, groups);
 
 		for (uint32_t v = 0; v < vertexCount; v++)
 		{
@@ -415,6 +448,13 @@ namespace Spices {
 
 				vertexRemap[v] = (uint32_t)item[item.size() - 1];
 			}*/
+			const Vertex& vertex = (*meshPack->m_Vertices)[v];
+			auto item = kdTree.range_search(
+				{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
+				{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
+			)[0];
+
+			vertexRemap[v] = (uint32_t)item[item.size() - 1];
 			vertexRemap[v] = v;
 		}
 		return vertexRemap;

@@ -112,7 +112,8 @@ namespace SpicesTest {
 
 		EXPECT_EQ(m_KDTree.nearest_neighbour_search({ 2.0, 0.0 }, { 3.0, 3.0 }), val);
 
-		const int nPoints = 10000000;
+		const int nPoints  = 10000000;
+		const int nSearchs = 10000000;
 		scl::kd_tree<3> modelKDTree;
 		std::vector<scl::kd_tree<3>::item> points;
 		scl::kd_tree<3>::item findVal = { 50.2f, 87.3f, 12.6f };
@@ -141,21 +142,35 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("Search in KDTree");
+			auto in = std::chrono::high_resolution_clock::now();
 
-			modelKDTree.nearest_neighbour_search(findVal, { 0.1f, 0.1f, 0.1f });
+			for (int i = 0; i < nSearchs; i++)
+			{
+				modelKDTree.nearest_neighbour_search(findVal, { 0.1f, 0.1f, 0.1f });
+			}
+
+			auto out = std::chrono::high_resolution_clock::now();
+			std::cout << "    Search in KDTree Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << std::endl;
 		}
 
 		{
 			SPICESTEST_PROFILE_SCOPE("Search in Loop");
+			auto in = std::chrono::high_resolution_clock::now();
 
 			scl::kd_tree<3>::item nearPt = { 1E11 };
-			for (int i = 0; i < nPoints; i++)
+			for (int i = 0; i < nSearchs; i++)
 			{
-				if (points[i][0] < nearPt[0] && points[i][1] < nearPt[1] && points[i][2] < nearPt[2])
+				for (int j = 0; j < nPoints; j++)
 				{
-					nearPt = points[i];
+					if (points[j][0] < nearPt[0] && points[j][1] < nearPt[1] && points[j][2] < nearPt[2])
+					{
+						nearPt = points[j];
+					}
 				}
 			}
+
+			auto out = std::chrono::high_resolution_clock::now();
+			std::cout << "    Search in Loop Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << std::endl;
 		}
 	}
 

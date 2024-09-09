@@ -37,13 +37,13 @@ namespace Spices {
 			transformComp1.SetPosition({10.0f, 2.0f, 30.0f});
 			transformComp1.SetRotation({-180.0f, 0.0f, -180.0f});
 			
-			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_01");
+			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("not_a_stanford_bunny");
 			//std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_02");
 			//std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_03");
 			//std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
 			//std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
 
-			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			//pack2->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			//pack3->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			//pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
@@ -77,9 +77,9 @@ namespace Spices {
 
 		// sphere
 		//{
-		//	for(int i = 0; i < 4; i++)  // range in albedo
+		//	for(int i = 0; i < 1; i++)  // range in albedo
 		//	{
-		//		for(int j = 0; j < 10; j++)  // range in roughness
+		//		for(int j = 0; j < 1; j++)  // range in roughness
 		//		{
 		//			std::stringstream ss;
 		//			ss << "Sphere_" << 10 * i + j;
@@ -88,7 +88,7 @@ namespace Spices {
 		//			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
 		//			transformComp1.SetPosition({3.0f * i, 0.0f, 3.0f * j});
 
-		//			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>();
+		//			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
 
 		//			std::stringstream mss;
 		//			mss << "BasePassRenderer.Mesh." << 10 * i + j;
@@ -128,7 +128,7 @@ namespace Spices {
 		//}
 
 		// ground
-		{
+		/*{
 			Entity meshentity = CreateEntity("Ground");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -141,7 +141,7 @@ namespace Spices {
 			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
-		}
+		}*/
 
 		//WorldFunctions::CreateCubeEntity(this);
 
