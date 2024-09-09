@@ -25,3 +25,5 @@ Parameters:
     Value: [int, 3]
   - Name: maxShadowDepth
     Value: [int, 1]
+  - Name: lod
+    Value: [int, 0]

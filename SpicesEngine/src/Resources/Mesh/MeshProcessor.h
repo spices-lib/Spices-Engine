@@ -45,10 +45,9 @@ namespace Spices {
 		* @brief Split Meshlets to Groups.
 		* @param[in] meshPack MeshPack.
 		* @param[in] meshlets MeshPack Meshlets.
-		* @param[in] vertexMap Vertex Map.
 		* @return Returns Groups.
 		*/
-		static std::vector<MeshletGroup> GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<uint32_t>& vertexMap);
+		static std::vector<MeshletGroup> GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets);
 
 		/**
 		* @brief Merge Vertex by Distance.
@@ -58,7 +57,7 @@ namespace Spices {
 		* @param[in] maxUVDistance allowed merge by vertex uv.
 		* @return Returns Merged Vertex Map.
 		*/
-		static std::vector<uint32_t> MergeByDistance(MeshPack* meshPack, scl::kd_tree<6>& kdTree, const std::vector<Meshlet>& meshlets, float maxDistance, float maxUVDistance);
+		static std::vector<uint32_t> MergeByDistance(MeshPack* meshPack, scl::kd_tree<6>& kdTree, const std::vector<Meshlet>& meshlets, const std::vector<MeshletGroup>& groups, float maxDistance, float maxUVDistance);
 
 		/**
 		* @brief Build KDTree use specific meshlets.
@@ -67,6 +66,6 @@ namespace Spices {
 		*/
 		static bool BuildKDTree(MeshPack* meshPack, scl::kd_tree<6>& kdTree);
 
-		static std::vector<bool> FindBoundaryVertices(MeshPack* meshPack, const std::vector<Meshlet>& meshlets);
+		static std::vector<bool> FindBoundaryVertices(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<MeshletGroup>& groups);
 	};
 }

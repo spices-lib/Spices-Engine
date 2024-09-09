@@ -26,7 +26,7 @@ namespace Spices {
 		scl::kd_tree<6> kdTree;
 		BuildKDTree(meshPack, kdTree);
 
-		const int maxLod = 15;
+		const int maxLod = 25;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
 			float tLod = lod / (float)maxLod;
@@ -40,8 +40,8 @@ namespace Spices {
 			float simplifyScale        = meshopt_simplifyScale(&(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex));
 			const float maxDistance    = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
 			const float maxUVDistance  = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
-			auto vertexMap             = MergeByDistance(meshPack, kdTree, meshlets, maxDistance, maxUVDistance);
-			auto groups                = GroupMeshlets(meshPack, meshlets, vertexMap);
+			auto groups                = GroupMeshlets(meshPack, meshlets);
+			auto vertexMap             = MergeByDistance(meshPack, kdTree, meshlets, groups, maxDistance, maxUVDistance);
 			const uint32_t nextStart   = meshPack->m_Meshlets->size();
 
 			for (const auto& group : groups)
@@ -199,7 +199,7 @@ namespace Spices {
 		}
 	}
 
-	std::vector<MeshletGroup> MeshProcessor::GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<uint32_t>& vertexMap)
+	std::vector<MeshletGroup> MeshProcessor::GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -233,7 +233,7 @@ namespace Spices {
 			auto getVertexIndex = [&](size_t index) 
 			{
 				uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
-				return vertexMap[vertexIndex];
+				return vertexIndex;
 			};
 
 			const size_t triangleCount = meshlet.nPrimitives;
@@ -389,7 +389,7 @@ namespace Spices {
 		return groups;
 	}
 
-	std::vector<uint32_t> MeshProcessor::MergeByDistance(MeshPack* meshPack, scl::kd_tree<6>& kdTree, const std::vector<Meshlet>& meshlets, float maxDistance, float maxUVDistance)
+	std::vector<uint32_t> MeshProcessor::MergeByDistance(MeshPack* meshPack, scl::kd_tree<6>& kdTree, const std::vector<Meshlet>& meshlets, const std::vector<MeshletGroup>& groups, float maxDistance, float maxUVDistance)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -397,7 +397,7 @@ namespace Spices {
 		const uint32_t vertexCount = meshPack->m_Vertices->size();
 		vertexRemap.resize(vertexCount, -1);
 
-		std::vector<bool> boundaryVertices = FindBoundaryVertices(meshPack, meshlets);
+		std::vector<bool> boundaryVertices = FindBoundaryVertices(meshPack, meshlets, groups);
 
 		for (uint32_t v = 0; v < vertexCount; v++)
 		{
@@ -439,17 +439,61 @@ namespace Spices {
 		return true;
 	}
 
-	std::vector<bool> MeshProcessor::FindBoundaryVertices(MeshPack* meshPack, const std::vector<Meshlet>& meshlets)
+	std::vector<bool> MeshProcessor::FindBoundaryVertices(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<MeshletGroup>& groups)
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::vector<bool> boundaryVertices(meshPack->m_Vertices->size(), false);
 
-		std::unordered_map<Edge, std::unordered_set<uint32_t>> edges2Meshlets;
-		std::unordered_map<Edge, uint32_t> edgesConnects;
+		/*for (uint32_t groupIndex = 0; groupIndex < groups.size(); groupIndex++)
+		{
+			std::unordered_map<Edge, uint32_t> edgesConnects;
+
+			for (auto& meshletIndex : groups[groupIndex].meshlets)
+			{
+				const auto& meshlet = meshlets[meshletIndex];
+
+				auto getVertexIndex = [&](uint32_t index) {
+					uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
+					return vertexIndex;
+				};
+
+				const uint32_t triangleCount = meshlet.nPrimitives;
+
+				for (uint32_t triangleIndex = 0; triangleIndex < triangleCount; triangleIndex++)
+				{
+					for (uint32_t i = 0; i < 3; i++)
+					{
+						Edge edge;
+						edge.first = getVertexIndex(i + triangleIndex * 3);
+						edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
+
+						if (edgesConnects.find(edge) == edgesConnects.end())
+						{
+							edgesConnects[edge] = 1;
+						}
+						else
+						{
+							edgesConnects[edge]++;
+						}
+					}
+				}
+			}
+
+			for (const auto& [edge, connects] : edgesConnects)
+			{
+				if (connects == 1)
+				{
+					boundaryVertices[edge.first] = true;
+					boundaryVertices[edge.second] = true;
+				}
+			}
+		}*/
 
 		for (uint32_t meshletIndex = 0; meshletIndex < meshlets.size(); meshletIndex++)
 		{
+			std::unordered_map<Edge, uint32_t> edgesConnects;
+
 			const auto& meshlet = meshlets[meshletIndex];
 
 			auto getVertexIndex = [&](uint32_t index) {
@@ -464,40 +508,27 @@ namespace Spices {
 				for (uint32_t i = 0; i < 3; i++)
 				{
 					Edge edge;
-					edge.first  = getVertexIndex(i + triangleIndex * 3);
+					edge.first = getVertexIndex(i + triangleIndex * 3);
 					edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
 
-					if (edge.first != edge.second)
+					if (edgesConnects.find(edge) == edgesConnects.end())
 					{
-						edges2Meshlets[edge].insert(meshletIndex);
-						if (edgesConnects.find(edge) == edgesConnects.end())
-						{
-							edgesConnects[edge] = 1;
-						}
-						else
-						{
-							edgesConnects[edge]++;
-						}
+						edgesConnects[edge] = 1;
+					}
+					else
+					{
+						edgesConnects[edge]++;
 					}
 				}
 			}
-		}
 
-		for (const auto& [edge, meshlets] : edges2Meshlets)
-		{
-			if (meshlets.size() == 2)
+			for (const auto& [edge, connects] : edgesConnects)
 			{
-				boundaryVertices[edge.first] = true;
-				boundaryVertices[edge.second] = true;
-			}
-		}
-
-		for (const auto& [edge, connects] : edgesConnects)
-		{
-			if (connects == 1)
-			{
-				boundaryVertices[edge.first] = true;
-				boundaryVertices[edge.second] = true;
+				if (connects == 1)
+				{
+					boundaryVertices[edge.first] = true;
+					boundaryVertices[edge.second] = true;
+				}
 			}
 		}
 

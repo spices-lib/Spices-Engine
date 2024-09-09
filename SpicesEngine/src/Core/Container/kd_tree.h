@@ -259,7 +259,7 @@ namespace scl {
 		{
 			for (int i = 0; i < 512; i++)
 			{
-				uint32_t index = static_cast<uint32_t>(points->size() * std::rand() / float(RAND_MAX));
+				uint32_t index = static_cast<uint32_t>((points->size() - 1) * std::rand() / float(RAND_MAX));
 				sorted.emplace((*points)[index][cd], index);
 			}
 		}
@@ -323,7 +323,10 @@ namespace scl {
 
 		if (points->size() <= nPointsWithoutSplitTask)
 		{
+			auto in = std::chrono::high_resolution_clock::now();
 			insert_recursive(node, points, depth);
+			auto out = std::chrono::high_resolution_clock::now();
+			std::cout << "    Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << points->size() << std::endl;
 			return;
 		}
 
@@ -352,7 +355,7 @@ namespace scl {
 		{
 			for (int i = 0; i < 512; i++)
 			{
-				uint32_t index = static_cast<uint32_t>(points->size() * std::rand() / float(RAND_MAX));
+				uint32_t index = static_cast<uint32_t>((points->size() - 1) * std::rand() / float(RAND_MAX));
 				sorted.emplace((*points)[index][cd], index);
 			}
 		}

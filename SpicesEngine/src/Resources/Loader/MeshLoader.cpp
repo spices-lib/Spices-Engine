@@ -137,7 +137,7 @@ namespace Spices {
 		}
 
 		MeshProcessor::GenerateMeshLodClusterHierarchy(outMeshPack);
-		WriteSASSET(index, fileName, outMeshPack);
+		//WriteSASSET(index, fileName, outMeshPack);
 
 		return true;
 	}
