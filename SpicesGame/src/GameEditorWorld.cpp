@@ -43,7 +43,7 @@ namespace Spices {
 			//std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
 			//std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
 
-			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
+			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			//pack2->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			//pack3->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			//pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
@@ -128,7 +128,7 @@ namespace Spices {
 		//}
 
 		// ground
-		/*{
+		{
 			Entity meshentity = CreateEntity("Ground");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -141,7 +141,7 @@ namespace Spices {
 			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
-		}*/
+		}
 
 		//WorldFunctions::CreateCubeEntity(this);
 

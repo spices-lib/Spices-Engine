@@ -23,12 +23,11 @@ namespace Spices {
 		meshPack->m_Indices = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 
-		scl::kd_tree<6> kdTree;
-		BuildKDTree(meshPack, kdTree);
-
-		const int maxLod = 5;
+		const int maxLod = 25;
 		for (int lod = 0; lod < maxLod; ++lod)
 		{
+			auto in = std::chrono::high_resolution_clock::now();
+
 			float tLod = lod / (float)maxLod;
 
 			std::vector<Meshlet> meshlets = std::vector<Meshlet>(meshPack->m_Meshlets->begin() + meshletStart, meshPack->m_Meshlets->end());
@@ -37,13 +36,9 @@ namespace Spices {
 				return;
 			}
 
-			float simplifyScale        = meshopt_simplifyScale(&(*meshPack->m_Vertices)[0].position.x, meshPack->m_Vertices->size(), sizeof(Vertex));
-			const float maxDistance    = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
-			const float maxUVDistance  = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
-			auto groups                = GroupMeshlets(meshPack, meshlets);
-			auto vertexMap             = MergeByDistance(meshPack, kdTree, meshlets, groups, maxDistance, maxUVDistance);
 			const uint32_t nextStart   = meshPack->m_Meshlets->size();
-
+			auto groups                = GroupMeshlets(meshPack, meshlets);
+			
 			for (const auto& group : groups)
 			{
 				std::vector<uint32_t> groupVertexIndices;
@@ -56,7 +51,7 @@ namespace Spices {
 					for (size_t j = 0; j < meshlet.nPrimitives * 3; j++)
 					{
 						 uint32_t index = (*meshPack->m_Indices)[meshlet.primitiveOffset * 3 + j];
-						 groupVertexIndices[j + start] = vertexMap[index];
+						 groupVertexIndices[j + start] = index;
 					}
 				}
 
@@ -68,10 +63,28 @@ namespace Spices {
 				std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
 				PackVertexFromSparseInputs(meshPack, groupVertexIndices, packVertices, packIndices, indicesMapReverse);
 
+				scl::kd_tree<6> kdTree;
+				BuildKDTree(packVertices, kdTree);
+
+				std::vector<bool> boundaryVertices(packVertices.size(), false);
+				FindBoundaryVertices(packIndices, boundaryVertices);
+
+				float simplifyScale = meshopt_simplifyScale(&packVertices[0].position.x, packVertices.size(), sizeof(Vertex));
+				const float maxDistance = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
+				const float maxUVDistance = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
+				auto vertexMap = MergeByDistance(packVertices, boundaryVertices, kdTree, maxDistance, maxUVDistance);
+
+				for (int i = 0; i < packIndices.size(); i++)
+				{
+					uint32_t index = packIndices[i];
+					packIndices[i] = vertexMap[index];
+				}
+
 				const float threshold   = 0.5f;
 				size_t targetIndexCount = groupVertexIndices.size() * threshold;
 				float targetError       = 0.1f * tLod + 0.01f * (1 - tLod);
 				uint32_t options        = meshopt_SimplifyLockBorder;
+				//uint32_t options        = 0;
 			
 				std::vector<uint32_t> simplifiedIndexBuffer(groupVertexIndices.size());
 				float simplificationError = 0.0f;
@@ -97,10 +110,17 @@ namespace Spices {
 
 				meshletStart = nextStart;
 			}
+
+			auto out = std::chrono::high_resolution_clock::now();
+			std::cout << "    Lod Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << meshlets.size() << std::endl;
 		}
 	}
 
-	void MeshProcessor::AppendMeshlets(MeshPack* meshPack, uint32_t lod, const std::vector<uint32_t> indices)
+	void MeshProcessor::AppendMeshlets(
+		MeshPack*                    meshPack , 
+		uint32_t                     lod      , 
+		const std::vector<uint32_t>& indices
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -410,165 +430,96 @@ namespace Spices {
 		return groups;
 	}
 
-	std::vector<uint32_t> MeshProcessor::MergeByDistance(MeshPack* meshPack, scl::kd_tree<6>& kdTree, const std::vector<Meshlet>& meshlets, const std::vector<MeshletGroup>& groups, float maxDistance, float maxUVDistance)
+	std::vector<uint32_t> MeshProcessor::MergeByDistance(
+		const std::vector<Vertex>& vertices      , 
+		const std::vector<bool>&   boundary      , 
+		scl::kd_tree<6>&           kdTree        , 
+		float                      maxDistance   , 
+		float                      maxUVDistance
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::vector<uint32_t> vertexRemap;
-		const uint32_t vertexCount = meshPack->m_Vertices->size();
-		vertexRemap.resize(vertexCount, -1);
+		vertexRemap.resize(vertices.size(), -1);
 
-		//std::vector<bool> boundaryVertices = FindBoundaryVertices(meshPack, meshlets, groups);
-
-		for (uint32_t v = 0; v < vertexCount; v++)
+		for (uint32_t v = 0; v < vertices.size(); v++)
 		{
-			auto in = std::chrono::high_resolution_clock::now();
-
-			/*if (boundaryVertices[v])
+			if (boundary[v])
 			{
 				vertexRemap[v] = v;
 			}
 			else
 			{
-				const Vertex& vertex = (*meshPack->m_Vertices)[v];
-				auto item = kdTree.range_search(
+				const Vertex& vertex = vertices[v];
+				auto items = kdTree.range_search(
 					{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
 					{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
-				)[0];
+				);
 
-				vertexRemap[v] = (uint32_t)item[item.size() - 1];
-			}*/
-			const Vertex& vertex = (*meshPack->m_Vertices)[v];
-			auto item = kdTree.nearest_neighbour_search(
-				{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
-				{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
-			);
+				uint32_t randIndex = static_cast<uint32_t>((items.size() - 1) * std::rand() / float(RAND_MAX));
 
-			vertexRemap[v] = (uint32_t)item[item.size() - 1];
-			//vertexRemap[v] = v;
-
-			auto out = std::chrono::high_resolution_clock::now();
-			std::cout << "    Search Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << v << std::endl;
+				vertexRemap[v] = (uint32_t)items[randIndex][5];
+			}
 		}
 		return vertexRemap;
 	}
 
-	bool MeshProcessor::BuildKDTree(MeshPack* meshPack, scl::kd_tree<6>& kdTree)
+	bool MeshProcessor::BuildKDTree(const std::vector<Vertex>& vertices, scl::kd_tree<6>& kdTree)
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::vector<scl::kd_tree<6>::item> points;
-		points.resize(meshPack->m_Vertices->size());
+		points.resize(vertices.size());
 
-		for (int i = 0; i < meshPack->m_Vertices->size(); i++)
+		for (int i = 0; i < vertices.size(); i++)
 		{
-			const Vertex& vt = (*meshPack->m_Vertices)[i];
+			const Vertex& vt = vertices[i];
 			points[i] = { vt.position.x, vt.position.y, vt.position.z, vt.texCoord.x, vt.texCoord.y, (float)i };
 		}
 		
-		kdTree.insert_async(points, ThreadPool::Get().get());
-		ThreadPool::Get()->Wait();
+		kdTree.insert(points);
 
 		return true;
 	}
 
-	std::vector<bool> MeshProcessor::FindBoundaryVertices(MeshPack* meshPack, const std::vector<Meshlet>& meshlets, const std::vector<MeshletGroup>& groups)
+	bool MeshProcessor::FindBoundaryVertices(const std::vector<uint32_t>& indices, std::vector<bool>& boundary)
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<bool> boundaryVertices(meshPack->m_Vertices->size(), false);
+		std::unordered_map<Edge, std::unordered_set<uint32_t>> edgesConnects;
 
-		/*for (uint32_t groupIndex = 0; groupIndex < groups.size(); groupIndex++)
+		for (uint32_t triangleIndex = 0; triangleIndex < indices.size() / 3; triangleIndex++)
 		{
-			std::unordered_map<Edge, uint32_t> edgesConnects;
-
-			for (auto& meshletIndex : groups[groupIndex].meshlets)
+			for (uint32_t i = 0; i < 3; i++)
 			{
-				const auto& meshlet = meshlets[meshletIndex];
+				Edge edge;
+				edge.first  = indices[  i           + triangleIndex * 3];
+				edge.second = indices[((i + 1) % 3) + triangleIndex * 3];
 
-				auto getVertexIndex = [&](uint32_t index) {
-					uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
-					return vertexIndex;
-				};
-
-				const uint32_t triangleCount = meshlet.nPrimitives;
-
-				for (uint32_t triangleIndex = 0; triangleIndex < triangleCount; triangleIndex++)
-				{
-					for (uint32_t i = 0; i < 3; i++)
-					{
-						Edge edge;
-						edge.first = getVertexIndex(i + triangleIndex * 3);
-						edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
-
-						if (edgesConnects.find(edge) == edgesConnects.end())
-						{
-							edgesConnects[edge] = 1;
-						}
-						else
-						{
-							edgesConnects[edge]++;
-						}
-					}
-				}
-			}
-
-			for (const auto& [edge, connects] : edgesConnects)
-			{
-				if (connects == 1)
-				{
-					boundaryVertices[edge.first] = true;
-					boundaryVertices[edge.second] = true;
-				}
-			}
-		}*/
-
-		for (uint32_t meshletIndex = 0; meshletIndex < meshlets.size(); meshletIndex++)
-		{
-			std::unordered_map<Edge, uint32_t> edgesConnects;
-
-			const auto& meshlet = meshlets[meshletIndex];
-
-			auto getVertexIndex = [&](uint32_t index) {
-				uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
-				return vertexIndex;
-			};
-
-			const uint32_t triangleCount = meshlet.nPrimitives;
-
-			for (uint32_t triangleIndex = 0; triangleIndex < triangleCount; triangleIndex++)
-			{
-				for (uint32_t i = 0; i < 3; i++)
-				{
-					Edge edge;
-					edge.first = getVertexIndex(i + triangleIndex * 3);
-					edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
-
-					if (edgesConnects.find(edge) == edgesConnects.end())
-					{
-						edgesConnects[edge] = 1;
-					}
-					else
-					{
-						edgesConnects[edge]++;
-					}
-				}
-			}
-
-			for (const auto& [edge, connects] : edgesConnects)
-			{
-				if (connects == 1)
-				{
-					boundaryVertices[edge.first] = true;
-					boundaryVertices[edge.second] = true;
-				}
+				edgesConnects[edge].insert(triangleIndex);
 			}
 		}
 
-		return boundaryVertices;
+		for (const auto& [edge, connects] : edgesConnects)
+		{
+			if (connects.size() == 1)
+			{
+				boundary[edge.first]  = true;
+				boundary[edge.second] = true;
+			}
+		}
+
+		return true;
 	}
 
-	bool MeshProcessor::PackVertexFromSparseInputs(MeshPack* meshPack, const std::vector<uint32_t> indices, std::vector<Vertex>& packVertices, std::vector<uint32_t>& packIndices, std::unordered_map<uint32_t, uint32_t>& indicesMapReverse)
+	bool MeshProcessor::PackVertexFromSparseInputs(
+		MeshPack*                               meshPack          , 
+		const std::vector<uint32_t>             indices           , 
+		std::vector<Vertex>&                    packVertices      , 
+		std::vector<uint32_t>&                  packIndices       , 
+		std::unordered_map<uint32_t, uint32_t>& indicesMapReverse
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -597,7 +548,11 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshProcessor::UnPackIndicesToSparseInputs(std::vector<uint32_t>& indices, std::unordered_map<uint32_t, uint32_t>& indicesMapReverse, const std::vector<uint32_t>& packIndices)
+	bool MeshProcessor::UnPackIndicesToSparseInputs(
+		std::vector<uint32_t>&                  indices           , 
+		std::unordered_map<uint32_t, uint32_t>& indicesMapReverse , 
+		const std::vector<uint32_t>&            packIndices
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
