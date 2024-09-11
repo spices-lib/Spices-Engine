@@ -82,7 +82,8 @@ namespace Spices {
 			scl::kd_tree<6>& kdTree
 		);
 
-		static bool FindBoundaryVertices(
+		static bool FindStableBoundaryVertices(
+			const std::vector<Vertex>&   vertices ,
 			const std::vector<uint32_t>& indices  , 
 			std::vector<bool>&           boundary
 		);

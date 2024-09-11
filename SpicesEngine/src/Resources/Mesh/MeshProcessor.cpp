@@ -66,8 +66,8 @@ namespace Spices {
 				scl::kd_tree<6> kdTree;
 				BuildKDTree(packVertices, kdTree);
 
-				std::vector<bool> boundaryVertices(packVertices.size(), false);
-				FindBoundaryVertices(packIndices, boundaryVertices);
+				std::vector<bool> boundaryVertices;
+				FindStableBoundaryVertices(packVertices, packIndices, boundaryVertices);
 
 				float simplifyScale = meshopt_simplifyScale(&packVertices[0].position.x, packVertices.size(), sizeof(Vertex));
 				const float maxDistance = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
@@ -84,7 +84,6 @@ namespace Spices {
 				size_t targetIndexCount = groupVertexIndices.size() * threshold;
 				float targetError       = 0.1f * tLod + 0.01f * (1 - tLod);
 				uint32_t options        = meshopt_SimplifyLockBorder;
-				//uint32_t options        = 0;
 			
 				std::vector<uint32_t> simplifiedIndexBuffer(groupVertexIndices.size());
 				float simplificationError = 0.0f;
@@ -483,11 +482,18 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshProcessor::FindBoundaryVertices(const std::vector<uint32_t>& indices, std::vector<bool>& boundary)
+	bool MeshProcessor::FindStableBoundaryVertices(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, std::vector<bool>& boundary)
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unordered_map<Edge, std::unordered_set<uint32_t>> edgesConnects;
+		boundary.resize(vertices.size(), false);
+
+		assert(indices.size() % 3 == 0);
+
+		/**
+		* @brief Get edge connected primitive.
+		*/
+		std::unordered_map<Edge, uint32_t> edgesConnects;
 
 		for (uint32_t triangleIndex = 0; triangleIndex < indices.size() / 3; triangleIndex++)
 		{
@@ -497,18 +503,103 @@ namespace Spices {
 				edge.first  = indices[  i           + triangleIndex * 3];
 				edge.second = indices[((i + 1) % 3) + triangleIndex * 3];
 
-				edgesConnects[edge].insert(triangleIndex);
+				if (edgesConnects.find(edge) == edgesConnects.end())
+				{
+					edgesConnects[edge] = 1;
+				}
+				else
+				{
+					edgesConnects[edge]++;
+				}
 			}
 		}
 
-		for (const auto& [edge, connects] : edgesConnects)
+		/*
+		* @brief remove internal edge.
+		*/
+		for (auto first = edgesConnects.begin(), last = edgesConnects.end(); first != last;)
 		{
-			if (connects.size() == 1)
+			if ((*first).second != 1)
 			{
-				boundary[edge.first]  = true;
-				boundary[edge.second] = true;
+				first = edgesConnects.erase(first);
+			}
+			else
+			{
+				++first;
 			}
 		}
+
+		struct EdgePoint
+		{
+			EdgePoint() 
+				: previous(-1)
+				, self(-1)
+				, next(-1)
+			{}
+
+			uint32_t previous;
+			uint32_t self;
+			uint32_t next;
+
+			bool valid()
+			{
+				return previous != -1 && self != -1 && next != -1;
+			}
+		};
+
+		/**
+		* @brief get bound edge points.
+		*/
+		std::unordered_map<uint32_t, EdgePoint> boundEdgePoints;
+		for (auto& pair : edgesConnects)
+		{
+			if (boundEdgePoints.find(pair.first.first) == boundEdgePoints.end())
+			{
+				boundEdgePoints[pair.first.first].self = pair.first.first;
+				boundEdgePoints[pair.first.first].next = pair.first.second;
+			}
+			else
+			{
+				boundEdgePoints[pair.first.first].previous = pair.first.second;
+			}
+
+			if (boundEdgePoints.find(pair.first.second) == boundEdgePoints.end())
+			{
+				boundEdgePoints[pair.first.second].self = pair.first.second;
+				boundEdgePoints[pair.first.second].next = pair.first.first;
+			}
+			else
+			{
+				boundEdgePoints[pair.first.second].previous = pair.first.first;
+			}
+		}
+
+		/**
+		* @brief only stable points with high curvature.
+		*/
+		for (auto& pair : boundEdgePoints)
+		{
+			if (!pair.second.valid()) continue;
+
+			glm::vec3 l = glm::normalize(vertices[pair.second.next].position - vertices[pair.first].position);
+			glm::vec3 r = glm::normalize(vertices[pair.second.previous].position - vertices[pair.first].position);
+
+			if (glm::dot(l, r) > -0.7f)
+			{
+				boundary[pair.first] = true;
+			}
+		}
+
+		uint32_t bounds = 0;
+		for (int i = 0; i < boundary.size(); i++)
+		{
+			if (boundary[i])
+			{
+				++bounds;
+			}
+		}
+
+		std::cout << "Boundarys: " << bounds / float(vertices.size()) << std::endl;
 
 		return true;
 	}

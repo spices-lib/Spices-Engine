@@ -187,10 +187,8 @@ namespace std {
 	*/
 	template<> struct hash<Spices::Edge> {
 		size_t operator()(Spices::Edge const& edge) const {
-			return ((hash<uint32_t>()(edge.first) ^
-				    (hash<uint32_t>()(edge.second) << 1)) >> 1)
-				 + ((hash<uint32_t>()(edge.second) ^
-					(hash<uint32_t>()(edge.first) << 1)) >> 1);
+			return ((hash<uint32_t>()(edge.first)  ^ (hash<uint32_t>()(edge.second) << 1)) >> 1)
+				 + ((hash<uint32_t>()(edge.second) ^ (hash<uint32_t>()(edge.first)  << 1)) >> 1);
 		}
 	};
 
@@ -199,8 +197,7 @@ namespace std {
 	*/
 	template<> struct hash<Spices::HalfEdge> {
 		size_t operator()(Spices::HalfEdge const& edge) const {
-			return ((hash<uint32_t>()(edge.first) ^
-				    (hash<uint32_t>()(edge.second) << 1)) >> 1);
+			return ((hash<uint32_t>()(edge.first) ^ (hash<uint32_t>()(edge.second) << 1)) >> 1);
 		}
 	};
 }

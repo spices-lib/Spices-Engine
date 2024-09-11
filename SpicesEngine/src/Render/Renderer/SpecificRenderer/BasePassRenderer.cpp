@@ -115,7 +115,7 @@ namespace Spices {
 
 		PipelineConfigInfo pipelineConfig{};
 		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-
+		pipelineConfig.rasterizationInfo.polygonMode = VK_POLYGON_MODE_LINE;
 		pipelineConfig.renderPass                      = m_Pass->Get();
 		pipelineConfig.subpass                         = subPass->GetIndex();
 		pipelineConfig.pipelineLayout                  = layout;

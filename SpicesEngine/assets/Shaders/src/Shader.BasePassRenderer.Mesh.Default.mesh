@@ -31,7 +31,7 @@ layout(local_size_x = 128, local_size_y = 1, local_size_z = 1) in;
 taskPayloadSharedEXT struct Task 
 {
     uint meshletIndex[SUBGROUP_SIZE];    /* @brief mesh shader hanled meshlet id. */
-} 
+}
 task;    
 
 /*****************************************************************************************/
@@ -90,7 +90,7 @@ void main()
     uint arrayIndices[3] = { vertexIndex.x, vertexIndex.y, vertexIndex.z };
        
     gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(vertexIndex.x, vertexIndex.y, vertexIndex.z);
-    
+
     [[unroll]]
     for(int j = 0; j < 3; j++)
     {
