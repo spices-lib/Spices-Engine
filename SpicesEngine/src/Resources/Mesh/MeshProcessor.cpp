@@ -18,13 +18,16 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		size_t meshletStart = 0;
-		auto initIndices = meshPack->m_Indices;
-		meshPack->m_Indices = std::make_shared<std::vector<uint32_t>>();
+		/**
+		* @brief Create Lod0 meshlets.
+		*/
+		uint32_t meshletStart  = 0;
+		auto initIndices       = meshPack->m_Indices;
+		meshPack->m_Indices    = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 
 		const int maxLod = 25;
-		for (int lod = 0; lod < maxLod; ++lod)
+		for (UINT32 lod = 0; lod < maxLod; ++lod)
 		{
 			auto in = std::chrono::high_resolution_clock::now();
 
@@ -37,8 +40,10 @@ namespace Spices {
 			}
 
 			const uint32_t nextStart   = meshPack->m_Meshlets->size();
+			meshletStart               = nextStart;
 			auto groups                = GroupMeshlets(meshPack, meshlets);
 			
+			bool Simplified = false;
 			for (const auto& group : groups)
 			{
 				std::vector<uint32_t> groupVertexIndices;
@@ -63,29 +68,15 @@ namespace Spices {
 				std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
 				PackVertexFromSparseInputs(meshPack, groupVertexIndices, packVertices, packIndices, indicesMapReverse);
 
-				scl::kd_tree<6> kdTree;
-				BuildKDTree(packVertices, kdTree);
-
-				std::vector<bool> boundaryVertices;
-				FindStableBoundaryVertices(packVertices, packIndices, boundaryVertices);
-
-				float simplifyScale = meshopt_simplifyScale(&packVertices[0].position.x, packVertices.size(), sizeof(Vertex));
-				const float maxDistance = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
-				const float maxUVDistance = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
-				auto vertexMap = MergeByDistance(packVertices, boundaryVertices, kdTree, maxDistance, maxUVDistance);
-
-				for (int i = 0; i < packIndices.size(); i++)
-				{
-					uint32_t index = packIndices[i];
-					packIndices[i] = vertexMap[index];
-				}
-
+				/**
+				* @brief Simplify meshlets group indices.
+				*/
 				const float threshold   = 0.5f;
-				size_t targetIndexCount = groupVertexIndices.size() * threshold;
+				size_t targetIndexCount = packIndices.size() * threshold;
 				float targetError       = 0.1f * tLod + 0.01f * (1 - tLod);
 				uint32_t options        = meshopt_SimplifyLockBorder;
 			
-				std::vector<uint32_t> simplifiedIndexBuffer(groupVertexIndices.size());
+				std::vector<uint32_t> simplifiedIndexBuffer(packIndices.size());
 				float simplificationError = 0.0f;
 
 				size_t simplifiedIndexCount = meshopt_simplify(
@@ -102,16 +93,79 @@ namespace Spices {
 				);
 				simplifiedIndexBuffer.resize(simplifiedIndexCount);			
 
-				std::vector<uint32_t> indicesBuffer;
-				UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
+				/**
+				* @brief Simplify succeed: merge result to meshlets.
+				*/
+				if (simplifiedIndexCount < packIndices.size())
+				{
+					std::vector<uint32_t> indicesBuffer;
+					UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
 
-				AppendMeshlets(meshPack, lod + 1, indicesBuffer);
+					AppendMeshlets(meshPack, lod + 1, indicesBuffer);
 
-				meshletStart = nextStart;
+					Simplified = true;
+				}
+
+				/**
+				* @brief Simplify failed: try fuse points.
+				*/
+				else
+				{
+					scl::kd_tree<6> kdTree;
+					BuildKDTree(packVertices, kdTree);
+
+					float simplifyScale          = meshopt_simplifyScale(&packVertices[0].position.x, packVertices.size(), sizeof(Vertex));
+					const float maxDistance      = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
+					const float maxUVDistance    = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
+					auto vertexMap               = MergeByDistance(packVertices, kdTree, maxDistance, maxUVDistance);
+
+					FindAndStableBoundaryVertices(packVertices, packIndices, vertexMap);
+
+					/*for (int i = 0; i < packIndices.size(); i++)
+					{
+						uint32_t index = packIndices[i];
+						packIndices[i] = vertexMap[index];
+					}*/
+
+					/**
+					* @brief Simplify meshlets group indices again.
+					*/
+					size_t targetIndexCount = packIndices.size() * threshold;
+
+					size_t simplifiedIndexCount = meshopt_simplify(
+						simplifiedIndexBuffer.data(),
+						packIndices.data(),
+						packIndices.size(),
+						&packVertices[0].position.x,
+						packVertices.size(),
+						sizeof(Vertex),
+						targetIndexCount,
+						targetError,
+						options,
+						&simplificationError
+					);
+					simplifiedIndexBuffer.resize(simplifiedIndexCount);
+
+					if (simplifiedIndexCount < packIndices.size())
+					{
+						Simplified = true;
+					}
+
+					std::vector<uint32_t> indicesBuffer;
+					UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
+
+					AppendMeshlets(meshPack, lod + 1, indicesBuffer);
+				}
+
 			}
 
 			auto out = std::chrono::high_resolution_clock::now();
 			std::cout << "    Lod Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << meshlets.size() << std::endl;
+
+			/**
+			* @brief return if cannot continue simplify meshlet.
+			*/
+			if (!Simplified) return;
 		}
 	}
 
@@ -431,7 +485,6 @@ namespace Spices {
 
 	std::vector<uint32_t> MeshProcessor::MergeByDistance(
 		const std::vector<Vertex>& vertices      , 
-		const std::vector<bool>&   boundary      , 
 		scl::kd_tree<6>&           kdTree        , 
 		float                      maxDistance   , 
 		float                      maxUVDistance
@@ -442,25 +495,37 @@ namespace Spices {
 		std::vector<uint32_t> vertexRemap;
 		vertexRemap.resize(vertices.size(), -1);
 
+		/**
+		* @brief fuse by distance.
+		*/
 		for (uint32_t v = 0; v < vertices.size(); v++)
+		{
+			const Vertex& vertex = vertices[v];
+			auto items = kdTree.range_search(
+				{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
+				{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
+			);
+			
+			for (const auto& item : items)
+			{
+				if (vertexRemap[item[item.size() - 1]] == -1)
+				{
+					vertexRemap[item[item.size() - 1]] = v;
+				}
+			}
+		}
+
+		/**
+		* @brief Stable Points use original index.
+		*/
+		/*for (uint32_t v = 0; v < vertices.size(); v++)
 		{
 			if (boundary[v])
 			{
 				vertexRemap[v] = v;
 			}
-			else
-			{
-				const Vertex& vertex = vertices[v];
-				auto items = kdTree.range_search(
-					{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
-					{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
-				);
+		}*/
 
-				uint32_t randIndex = static_cast<uint32_t>((items.size() - 1) * std::rand() / float(RAND_MAX));
-
-				vertexRemap[v] = (uint32_t)items[randIndex][5];
-			}
-		}
 		return vertexRemap;
 	}
 
@@ -482,11 +547,14 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshProcessor::FindStableBoundaryVertices(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, std::vector<bool>& boundary)
+	bool MeshProcessor::FindAndStableBoundaryVertices(
+		const std::vector<Vertex>&    vertices    , 
+		std::vector<uint32_t>&        indices     , 
+		std::vector<uint32_t>&        verticesMap
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
-		boundary.resize(vertices.size(), false);
 
 		assert(indices.size() % 3 == 0);
 
@@ -500,8 +568,8 @@ namespace Spices {
 			for (uint32_t i = 0; i < 3; i++)
 			{
 				Edge edge;
-				edge.first  = indices[  i           + triangleIndex * 3];
-				edge.second = indices[((i + 1) % 3) + triangleIndex * 3];
+				edge.first  = verticesMap[indices[  i           + triangleIndex * 3]];
+				edge.second = verticesMap[indices[((i + 1) % 3) + triangleIndex * 3]];
 
 				if (edgesConnects.find(edge) == edgesConnects.end())
 				{
@@ -513,6 +581,19 @@ namespace Spices {
 				}
 			}
 		}
+
+#if 0
+
+		for (auto& [edge, connects] : edgesConnects)
+		{
+			if (connects == 1)
+			{
+				boundary[edge.first] = true;
+				boundary[edge.second] = true;
+			}
+		}
+
+#else // Allow facet points in boundary fuse, not working correct now.
 
 		/*
 		* @brief remove internal edge.
@@ -529,77 +610,108 @@ namespace Spices {
 			}
 		}
 
-		struct EdgePoint
+		std::unordered_map<uint32_t, std::unordered_set<uint32_t>> verticesMapReverse;
+		for (int i = 0; i < verticesMap.size(); i++)
 		{
-			EdgePoint() 
-				: previous(-1)
-				, self(-1)
-				, next(-1)
-			{}
-
-			uint32_t previous;
-			uint32_t self;
-			uint32_t next;
-
-			bool valid()
-			{
-				return previous != -1 && self != -1 && next != -1;
-			}
-		};
-
-		/**
-		* @brief get bound edge points.
-		*/
-		std::unordered_map<uint32_t, EdgePoint> boundEdgePoints;
-		for (auto& pair : edgesConnects)
-		{
-			if (boundEdgePoints.find(pair.first.first) == boundEdgePoints.end())
-			{
-				boundEdgePoints[pair.first.first].self = pair.first.first;
-				boundEdgePoints[pair.first.first].next = pair.first.second;
-			}
-			else
-			{
-				boundEdgePoints[pair.first.first].previous = pair.first.second;
-			}
-
-			if (boundEdgePoints.find(pair.first.second) == boundEdgePoints.end())
-			{
-				boundEdgePoints[pair.first.second].self = pair.first.second;
-				boundEdgePoints[pair.first.second].next = pair.first.first;
-			}
-			else
-			{
-				boundEdgePoints[pair.first.second].previous = pair.first.first;
-			}
+			verticesMapReverse[verticesMap[i]].insert(i);
 		}
 
 		/**
-		* @brief only stable points with high curvature.
+		* @brief unfuse edge point.
 		*/
-		for (auto& pair : boundEdgePoints)
+		for (auto& [edge, connects] : edgesConnects)
 		{
-			if (!pair.second.valid()) continue;
-
-			glm::vec3 l = glm::normalize(vertices[pair.second.next].position - vertices[pair.first].position);
-			glm::vec3 r = glm::normalize(vertices[pair.second.previous].position - vertices[pair.first].position);
-
-			if (glm::dot(l, r) > -0.7f)
+			for (auto& vt : verticesMapReverse[edge.first])
 			{
-				boundary[pair.first] = true;
+				verticesMap[vt] = vt;
 			}
 		}
 
-		uint32_t bounds = 0;
-		for (int i = 0; i < boundary.size(); i++)
+		std::vector<uint32_t> tempIndices = indices;
+		for (int i = 0; i < tempIndices.size(); i++)
 		{
-			if (boundary[i])
+			tempIndices[i] = verticesMap[tempIndices[i]];
+		}
+
+		indices.clear();
+		for (int i = 0; i < tempIndices.size() / 3; i++)
+		{
+			std::unordered_set<uint32_t> primVertices;
+
+			primVertices.insert(tempIndices[3 * i + 0]);
+			primVertices.insert(tempIndices[3 * i + 1]);
+			primVertices.insert(tempIndices[3 * i + 2]);
+
+			if (primVertices.size() == 3)
 			{
-				++bounds;
+				indices.push_back(tempIndices[3 * i + 0]);
+				indices.push_back(tempIndices[3 * i + 1]);
+				indices.push_back(tempIndices[3 * i + 2]);
 			}
 		}
 
-		std::cout << "Boundarys: " << bounds / float(vertices.size()) << std::endl;
+		//struct EdgePoint
+		//{
+		//	EdgePoint() 
+		//		: previous(-1)
+		//		, self(-1)
+		//		, next(-1)
+		//	{}
+
+		//	uint32_t previous;
+		//	uint32_t self;
+		//	uint32_t next;
+
+		//	bool valid()
+		//	{
+		//		return previous != -1 && self != -1 && next != -1;
+		//	}
+		//};
+
+		///**
+		//* @brief get bound edge points.
+		//*/
+		//std::unordered_map<uint32_t, EdgePoint> boundEdgePoints;
+		//for (auto& pair : edgesConnects)
+		//{
+		//	if (boundEdgePoints.find(pair.first.first) == boundEdgePoints.end())
+		//	{
+		//		boundEdgePoints[pair.first.first].self = pair.first.first;
+		//		boundEdgePoints[pair.first.first].next = pair.first.second;
+		//	}
+		//	else
+		//	{
+		//		boundEdgePoints[pair.first.first].previous = pair.first.second;
+		//	}
+
+		//	if (boundEdgePoints.find(pair.first.second) == boundEdgePoints.end())
+		//	{
+		//		boundEdgePoints[pair.first.second].self = pair.first.second;
+		//		boundEdgePoints[pair.first.second].next = pair.first.first;
+		//	}
+		//	else
+		//	{
+		//		boundEdgePoints[pair.first.second].previous = pair.first.first;
+		//	}
+		//}
+
+		///**
+		//* @brief only stable points with high curvature.
+		//*/
+		//for (auto& pair : boundEdgePoints)
+		//{
+		//	if (!pair.second.valid()) continue;
+
+		//	glm::vec3 l = glm::normalize(vertices[pair.second.next].position - vertices[pair.first].position);
+		//	glm::vec3 r = glm::normalize(vertices[pair.second.previous].position - vertices[pair.first].position);
+
+		//	if (glm::dot(l, r) > -0.98f)
+		//	{
+		//		boundary[pair.first] = true;
+		//	}
+		//}
+
+#endif
 
 		return true;
 	}

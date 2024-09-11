@@ -66,7 +66,6 @@ namespace Spices {
 		*/
 		static std::vector<uint32_t> MergeByDistance(
 			const std::vector<Vertex>& vertices      , 
-			const std::vector<bool>&   boundary      , 
 			scl::kd_tree<6>&           kdTree        , 
 			float                      maxDistance   , 
 			float                      maxUVDistance
@@ -82,10 +81,10 @@ namespace Spices {
 			scl::kd_tree<6>& kdTree
 		);
 
-		static bool FindStableBoundaryVertices(
-			const std::vector<Vertex>&   vertices ,
-			const std::vector<uint32_t>& indices  , 
-			std::vector<bool>&           boundary
+		static bool FindAndStableBoundaryVertices(
+			const std::vector<Vertex>&   vertices   ,
+			std::vector<uint32_t>&       indices    , 
+			std::vector<uint32_t>&       verticesMap
 		);
 
 		static bool PackVertexFromSparseInputs(

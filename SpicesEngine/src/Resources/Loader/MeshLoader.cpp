@@ -80,14 +80,70 @@ namespace Spices {
 			return false;
 		}
 
-		assert(attrib.vertices.size() % 3 == 0);
+		std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+		for (const auto& shape : shapes)
+		{
+			for (const auto& index : shape.mesh.indices)
+			{
+				Vertex vertex{};
+
+				if (index.vertex_index >= 0)
+				{
+					vertex.position = {
+						attrib.vertices[3 * index.vertex_index + 0],
+						attrib.vertices[3 * index.vertex_index + 1],
+					   -attrib.vertices[3 * index.vertex_index + 2]
+					};
+
+					auto colorIndex = 3 * index.vertex_index + 2;
+					if (colorIndex < attrib.colors.size())
+					{
+						vertex.color = {
+							attrib.colors[colorIndex - 2],
+							attrib.colors[colorIndex - 1],
+							attrib.colors[colorIndex - 0]
+						};
+					}
+					else
+					{
+						vertex.color = { 1.0f, 1.0f, 1.0f };
+					}
+				}
+
+				if (index.normal_index >= 0)
+				{
+					vertex.normal = {
+						attrib.normals[3 * index.normal_index + 0],
+						attrib.normals[3 * index.normal_index + 1],
+					   -attrib.normals[3 * index.normal_index + 2]
+					};
+				}
+
+				if (index.texcoord_index >= 0)
+				{
+					vertex.texCoord = {
+						attrib.texcoords[2 * index.texcoord_index + 0],
+				 1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+					};
+				}
+
+				if (uniqueVertices.count(vertex) == 0) {
+					uniqueVertices[vertex] = static_cast<uint32_t>(outMeshPack->m_Vertices->size());
+					outMeshPack->m_Vertices->push_back(std::move(vertex));
+				}
+
+				outMeshPack->m_Indices->push_back(uniqueVertices[vertex]);
+			}
+		}
+
+		/*assert(attrib.vertices.size() % 3 == 0);
 
 		outMeshPack->m_Vertices->resize(attrib.vertices.size() / 3);
 		for (uint32_t v = 0; v < attrib.vertices.size() / 3; v++)
 		{
-			(*outMeshPack->m_Vertices)[v].position.x = attrib.vertices[3 * v + 0];
-			(*outMeshPack->m_Vertices)[v].position.y = attrib.vertices[3 * v + 1];
-			(*outMeshPack->m_Vertices)[v].position.z = attrib.vertices[3 * v + 2];
+			(*outMeshPack->m_Vertices)[v].position.x =   attrib.vertices[3 * v + 0];
+			(*outMeshPack->m_Vertices)[v].position.y =   attrib.vertices[3 * v + 1];
+			(*outMeshPack->m_Vertices)[v].position.z = - attrib.vertices[3 * v + 2];
 		}
 		
 		if (attrib.normals.size() > 0)
@@ -95,9 +151,9 @@ namespace Spices {
 			assert(attrib.normals.size() % 3 == 0);
 			for (uint32_t v = 0; v < attrib.normals.size() / 3; v++)
 			{
-				(*outMeshPack->m_Vertices)[v].normal.x = attrib.normals[3 * v + 0];
-				(*outMeshPack->m_Vertices)[v].normal.y = attrib.normals[3 * v + 1];
-				(*outMeshPack->m_Vertices)[v].normal.z = attrib.normals[3 * v + 2];
+				(*outMeshPack->m_Vertices)[v].normal.x =   attrib.normals[3 * v + 0];
+				(*outMeshPack->m_Vertices)[v].normal.y =   attrib.normals[3 * v + 1];
+				(*outMeshPack->m_Vertices)[v].normal.z = - attrib.normals[3 * v + 2];
 			}
 		}
 		
@@ -117,10 +173,18 @@ namespace Spices {
 			assert(attrib.texcoords.size() % 2 == 0);
 			for (uint32_t v = 0; v < attrib.colors.size() / 2; v++)
 			{
-				(*outMeshPack->m_Vertices)[v].texCoord.x = attrib.texcoords[2 * v + 0];
-				(*outMeshPack->m_Vertices)[v].texCoord.y = attrib.texcoords[2 * v + 1];
+				(*outMeshPack->m_Vertices)[v].texCoord.x =        attrib.texcoords[2 * v + 0];
+				(*outMeshPack->m_Vertices)[v].texCoord.y = 1.0f - attrib.texcoords[2 * v + 1];
 			}
 		}
+
+		for (const auto& shape : shapes)
+		{
+			for (const auto& index : shape.mesh.indices)
+			{
+				outMeshPack->m_Indices->push_back(index.vertex_index);
+			}
+		}*/
 
 		MeshProcessor::GenerateMeshLodClusterHierarchy(outMeshPack);
 		//WriteSASSET(index, fileName, outMeshPack);
