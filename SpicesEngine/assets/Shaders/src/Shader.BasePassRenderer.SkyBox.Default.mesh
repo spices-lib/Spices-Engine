@@ -87,15 +87,17 @@ void main()
         
     if(localId >= meshlet.nPrimitives) return;
     
-    ivec3 vertexIndex = vertexIndices.i[meshlet.primitiveOffset + localId];
-    ivec3 index = indices.i[meshlet.primitiveOffset + localId];
+    ivec3 primLocation = primitiveLocations.i[meshlet.primitiveOffset + localId];
+    ivec3 primVertex   = primitiveVertices.i[meshlet.primitiveOffset + localId];
     
-    Vertex vts[3] = { vertices.v[index.x], vertices.v[index.y], vertices.v[index.z] };
-        
-    vertexIndex -= ivec3(meshlet.vertexOffset);
-    uint arrayIndices[3] = { vertexIndex.x, vertexIndex.y, vertexIndex.z };
-        
-    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(vertexIndex.x, vertexIndex.y, vertexIndex.z);
+    uint primVertexArray[3] = { primVertex.x, primVertex.y, primVertex.z };
+
+    primLocation -= ivec3(meshlet.vertexOffset);
+    uint arrayIndices[3] = { primLocation.x, primLocation.y, primLocation.z };
+       
+    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(primLocation.x, primLocation.y, primLocation.z);
+
+    Vertex[3] vts = UnpackVertexFromPrimitiveVertices(meshlet.primitiveOffset + localId);
     
     [[unroll]]
     for(int j = 0; j < 3; j++)

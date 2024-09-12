@@ -22,6 +22,47 @@
 
 namespace Spices {
 	
+	template<typename T>
+	struct Attribute
+	{
+		Attribute();
+		virtual ~Attribute();
+		void CreateBuffer(VkBufferUsageFlags usage = 0);
+
+		std::shared_ptr<std::vector<T>> attributes;
+		std::shared_ptr<VulkanBuffer>   buffer;
+	};
+
+	struct MeshResource
+	{
+		MeshResource() = default;
+		virtual ~MeshResource() = default;
+
+		using Positions           = Attribute<glm::vec3>;                // Position.(also as Point)
+		using Normals             = Attribute<glm::vec3>;                // Normal
+		using Colors              = Attribute<glm::vec3>;                // Color
+		using TexCoords           = Attribute<glm::vec2>;                // TexCoord
+		using Vertices            = Attribute<std::array<uint32_t, 4>>;  // Vertex.
+		using PrimitivePoints     = Attribute<glm::uvec3>;               // PrimPoints
+		using PrimitiveVertices   = Attribute<glm::uvec3>;               // PrimVertices.
+		using PrimitiveLocations  = Attribute<glm::uvec3>;               // PrimLocation.
+		using Meshlets            = Attribute<Meshlet>;                  // PrimMeshlet.
+
+		Positions                     positions;
+		Normals                       normals;
+		Colors                        colors;
+		TexCoords                     texCoords;
+		Vertices                      vertices;
+		PrimitivePoints               primitivePoints;
+		PrimitiveVertices             primitiveVertices;
+		PrimitiveLocations            primitiveLocations;
+		Meshlets                      meshlets;
+
+		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
+		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
+		void CreateBuffer();
+	};
+
 	/**
 	* @brief Add Construction Functions to SpicesShader::MeshDesc.
 	*/
@@ -51,15 +92,20 @@ namespace Spices {
 		*/
 		uint64_t GetBufferAddress() { return m_Buffer->GetAddress(); }
 
-		Update_F(modelAddress               )
-		Update_F(verticesAddress            )
-		Update_F(vertexIndicesAddress       )
-		Update_F(indicesAddress             )
-		Update_F(materialParameterAddress   )
-		Update_F(meshletAddress             )
-		Update_F(nMeshlets                  )
-		Update_F(entityID                   )
-			 
+		Update_F(modelAddress                   )
+		Update_F(positionsAddress               )
+		Update_F(normalsAddress                 )
+		Update_F(colorsAddress                  )
+		Update_F(texCoordsAddress               )
+		Update_F(verticesAddress                )
+		Update_F(primitivePointsAddress         )
+		Update_F(primitiveVerticesAddress       )
+		Update_F(primitiveLocationsAddress      )
+		Update_F(materialParameterAddress       )
+		Update_F(meshletsAddress                )
+		Update_F(nMeshlets                      )
+		Update_F(entityID                       )
+		
 		/**
 		* @brief Buffer of this.
 		*/
@@ -166,52 +212,16 @@ namespace Spices {
 		void OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const;
 		
 		/**
-		* @brief Get Vertices array.
-		* @return Returns the Vertices array.
+		* @brief Get PrimVertices array.
+		* @return Returns the PrimVertices array.
 		*/
-		const std::vector<Vertex>& GetVertices() const { return *m_Vertices; }
-
-		/**
-		* @brief Get Vertices Count.
-		* @return Returns Vertices Count.
-		*/
-		uint32_t GetNVertices() const { return m_NVertices; }
-
-		/**
-		* @brief Add a Vertex to m_Vertices.
-		* @param[in] v Vertex.
-		*/
-		void AddVertex(const Vertex& v) { m_Vertices->push_back(v); };
-
-		/**
-		* @brief Get Indices array.
-		* @return Returns the Indices array.
-		*/
-		const std::vector<uint32_t>& GetIndices() const { return *m_Indices; }
-
-		/**
-		* @brief Get Indices Count.
-		* @return Returns Indices Count.
-		*/
-		uint32_t GetNIndices() const { return m_NIndices; }
-
-		/**
-		* @brief Add a Index to m_Indices.
-		* @param[in] i Index.
-		*/
-		void AddIndices(const uint32_t& i) { m_Indices->push_back(i); };
+		const std::vector<glm::uvec3>& GetPrimVertices() const { return *m_MeshResource.primitiveVertices.attributes; }
 
 		/**
 		* @brief Get Meshlets array.
 		* @return Returns the Meshlets array.
 		*/
-		const std::vector<Meshlet>& GetMeshlets() const { return *m_Meshlets; }
-
-		/**
-		* @brief Get Meshlets Count.
-		* @return Returns Meshlets Count.
-		*/
-		uint32_t GetNMeshlets() const { return m_NMeshlets; }
+		const std::vector<Meshlet>& GetMeshlets() const { return *m_MeshResource.meshlets.attributes; }
 
 		/**
 		* @brief Get NTasks.
@@ -244,40 +254,10 @@ namespace Spices {
 		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR() const;
 
 		/**
-		* @brief Get VerticesBuffer.
-		* @return Returns the VerticesBuffer.
+		* @brief Get Resource.
+		* @return Returns the Resource.
 		*/
-		std::shared_ptr<VulkanBuffer> GetVerticesBuffer() const { return m_VerticesBuffer; }
-
-		/**
-		* @brief Get IndicesBuffer.
-		* @return Returns the IndicesBuffer.
-		*/
-		std::shared_ptr<VulkanBuffer> GetIndicesBuffer() const { return m_IndicesBuffer; }
-
-		/**
-		* @brief Get MeshletsBuffer.
-		* @return Returns the MeshletsBuffer.
-		*/
-		std::shared_ptr<VulkanBuffer> GetMeshletsBuffer() const { return m_MeshletsBuffer; }
-
-		/**
-		* @brief Get VerticesBuffer Video memory address.
-		* @return Returns the VerticesBuffer Video memory address.
-		*/
-		VkDeviceAddress GetVerticesBufferAddress() const { return m_VerticesBuffer->GetAddress(); }
-
-		/**
-		* @brief Get IndicesBuffer Video memory address.
-		* @return Returns the IndicesBuffer Video memory address.
-		*/
-		VkDeviceAddress GetIndicesBufferAddress() const { return m_IndicesBuffer->GetAddress(); }
-
-		/**
-		* @brief Get MeshletsBuffer Video memory address.
-		* @return Returns the MeshletsBuffer Video memory address.
-		*/
-		VkDeviceAddress GetMeshletsBufferAddress() const { return m_MeshletsBuffer->GetAddress(); }
+		const MeshResource& GetResource() const { return m_MeshResource; }
 
 	protected:
 
@@ -285,27 +265,6 @@ namespace Spices {
 		* @brief Create Vertices buffer anf Inddices buffer.
 		*/
 		void CreateBuffer();
-
-	public:
-
-		/**
-		* @brief Transform Vertices Position before CreateBuffer
-		* @param[in] matrix Which matrix we want apply.
-		*/
-		void ApplyMatrix(const glm::mat4& matrix);
-
-		/**
-		* @brief Copy this Vertices to another pack
-		* @param[out] vertices Which vertices we want Copy to.
-		*/
-		void CopyToVertices(std::vector<Vertex>& vertices) const;
-
-		/**
-		* @brief Copy this Indices to another pack
-		* @param[out] indices Which indices we want Copy to.
-		* @param[in] offset How much offset we want apply.
-		*/
-		void CopyToIndices(std::vector<uint32_t>& indices, uint32_t offset = 0);
 
 	protected:
 
@@ -319,81 +278,10 @@ namespace Spices {
 		*/
 		bool m_Instanced;
 
-		/*********************************************************************/
-
 		/**
-		* @brief Vertices array.
+		* @brief Mesh Resources.
 		*/
-		std::shared_ptr<std::vector<Vertex>> m_Vertices;
-
-		/**
-		* @brief Vertices Count.
-		*/
-		uint32_t m_NVertices;
-
-		/**
-		* @brief Vertices buffer.
-		*/
-		std::shared_ptr<VulkanBuffer> m_VerticesBuffer;
-
-		/*********************************************************************/
-
-		/*********************************************************************/
-
-		/**
-		* @brief Meshlet Vertex Indices array.
-		*/
-		std::shared_ptr<std::vector<uint32_t>> m_VertexIndices;
-
-		/**
-		* @brief Meshlet Vertex Indices Count.
-		*/
-		uint32_t m_NVertexIndices;
-
-		/**
-		* @brief Meshlet Vertex Indices buffer.
-		*/
-		std::shared_ptr<VulkanBuffer> m_VertexIndicesBuffer;
-
-		/*********************************************************************/
-
-		/*********************************************************************/
-
-		/**
-		* @brief Meshlet Indices array.
-		*/
-		std::shared_ptr<std::vector<uint32_t>> m_Indices;
-
-		/**
-		* @brief Meshlet Indices Count.
-		*/
-		uint32_t m_NIndices;
-
-		/**
-		* @brief Meshlet Indices buffer.
-		*/
-		std::shared_ptr<VulkanBuffer> m_IndicesBuffer;
-
-		/*********************************************************************/
-
-		/*********************************************************************/
-
-		/**
-		* @brief MeshPack meshlets.
-		*/
-		std::shared_ptr<std::vector<Meshlet>> m_Meshlets;
-
-		/**
-		* @brief Meshlets Count;
-		*/
-		uint32_t m_NMeshlets;
-
-		/**
-		* @brief Indices buffer.
-		*/
-		std::shared_ptr<VulkanBuffer> m_MeshletsBuffer;
-
-		/*********************************************************************/
+		MeshResource m_MeshResource;
 
 		/**
 		* @brief Task Sahder Work Group Size.
@@ -443,6 +331,57 @@ namespace Spices {
 		friend class MeshLoader;
 		friend class MeshProcessor;
 	};
+
+	template<typename T>
+	inline Attribute<T>::Attribute()
+		: attributes(nullptr)
+		, buffer(nullptr)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!attributes)
+		{
+			attributes = std::make_shared<std::vector<T>>();
+		}
+	}
+
+	template<typename T>
+	inline Attribute<T>::~Attribute()
+	{
+		SPICES_PROFILE_ZONE;
+
+		attributes = nullptr;
+		buffer = nullptr;
+	}
+
+	template<typename T>
+	inline void Attribute<T>::CreateBuffer(VkBufferUsageFlags usage)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkDeviceSize bufferSize = sizeof((*attributes)[0]) * attributes->size();
+
+		VulkanBuffer stagingBuffer(
+			VulkanRenderBackend::GetState(),
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
+
+		stagingBuffer.WriteToBuffer(attributes->data());
+
+		buffer = std::make_shared<VulkanBuffer>(
+			VulkanRenderBackend::GetState(),
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+			usage,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+		);
+
+		buffer->CopyBuffer(stagingBuffer.Get(), buffer->Get(), bufferSize);
+	}
 
 	/**
 	* @brief PlanePack Class.

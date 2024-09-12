@@ -56,7 +56,7 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Model
 void main()
 {
     ExplainMeshDesciption(push.descAddress);
-    vertOut.texCoord = texCoord;
+    vertOut.texCoord = position.xy + vec2(0.5f);
     gl_Position = view.projection * view.view * model * vec4(position, 1.0);
 }
 

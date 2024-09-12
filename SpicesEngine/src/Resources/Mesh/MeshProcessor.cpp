@@ -22,7 +22,7 @@ namespace Spices {
 		* @brief Create Lod0 meshlets.
 		*/
 		uint32_t meshletStart  = 0;
-		auto initIndices       = meshPack->m_Indices;
+		auto initIndices       = meshPack->m_MeshResource.primitivePoints;
 		meshPack->m_Indices    = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 

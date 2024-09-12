@@ -199,12 +199,12 @@ namespace Spices {
 		/**
 		* @brief VkVertexInputBindingDescription.
 		*/
-		configInfo.bindingDescriptions                       = Vertex::GetBindingDescriptions();
+		configInfo.bindingDescriptions                       = MeshResource::GetBindingDescriptions();
 
 		/**
 		* @brief VkVertexInputAttributeDescription.
 		*/
-		configInfo.attributeDescriptions                     = Vertex::GetAttributeDescriptions();
+		configInfo.attributeDescriptions                     = MeshResource::GetAttributeDescriptions();
 	}
 
 	VulkanRayTracingPipeline::VulkanRayTracingPipeline(

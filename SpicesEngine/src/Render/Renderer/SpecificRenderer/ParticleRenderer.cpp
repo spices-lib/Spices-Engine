@@ -40,7 +40,7 @@ namespace Spices {
 			{
 				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);
 				std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
-				buffer = meshPack->GetVerticesBuffer();
+				buffer = meshPack->GetResource().positions.buffer;
 				return true;
 			}
 			return false;
@@ -107,7 +107,7 @@ namespace Spices {
 			{
 				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);
 				std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
-				buffer = meshPack->GetVerticesBuffer();
+				buffer = meshPack->GetResource().positions.buffer;
 				return true;
 			}
 			return false;

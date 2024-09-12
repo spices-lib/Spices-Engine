@@ -65,7 +65,7 @@ namespace Spices {
 		* @return Returns Merged Vertex Map.
 		*/
 		static std::vector<uint32_t> MergeByDistance(
-			const std::vector<Vertex>& vertices      , 
+			const std::vector<glm::vec3>& vertices      ,
 			scl::kd_tree<6>&           kdTree        , 
 			float                      maxDistance   , 
 			float                      maxUVDistance
@@ -77,12 +77,12 @@ namespace Spices {
 		* @param[in] kdTree .
 		*/
 		static bool BuildKDTree(
-			const std::vector<Vertex>& vertices, 
+			const std::vector<glm::vec3>& vertices,
 			scl::kd_tree<6>& kdTree
 		);
 
 		static bool FindAndStableBoundaryVertices(
-			const std::vector<Vertex>&   vertices   ,
+			const std::vector<glm::vec3>&   vertices   ,
 			std::vector<uint32_t>&       indices    , 
 			std::vector<uint32_t>&       verticesMap
 		);
@@ -90,7 +90,7 @@ namespace Spices {
 		static bool PackVertexFromSparseInputs(
 			MeshPack*                               meshPack          , 
 			const std::vector<uint32_t>             indices           , 
-			std::vector<Vertex>&                    packVertices      , 
+			std::vector<glm::vec3>&                 packVertices      ,
 			std::vector<uint32_t>&                  packIndices       , 
 			std::unordered_map<uint32_t, uint32_t>& indicesMapReverse
 		);

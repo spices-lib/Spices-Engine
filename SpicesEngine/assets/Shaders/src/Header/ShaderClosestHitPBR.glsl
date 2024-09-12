@@ -184,41 +184,34 @@ Pixel UnPackPixel(in vec3 weight)
     ExplainMeshDesciption(meshDescBuffer.i[gl_InstanceCustomIndexEXT]);
     
     /**
-    * @brief Get Indices of the triangle.
+    * @brief Get Vertices of the triangle.
     */ 
-    ivec3 index = indices.i[gl_PrimitiveID];
+    Vertex[3] vts = UnpackVertexFromPrimitiveVertices(gl_PrimitiveID);
     
-    /**
-    * @brief Get Vertex of the triangle.
-    */ 
-    Vertex v0 = vertices.v[index.x];
-    Vertex v1 = vertices.v[index.y];
-    Vertex v2 = vertices.v[index.z];
-    
-    const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
-    
+    const vec3 barycentrics = vec3(1.0 - weight.x - weight.y, weight.x, weight.y);
+
     /**
     * @brief Computing the coordinates of the hit position.
     */ 
-    const vec3 localpos = v0.position * barycentrics.x + v1.position * barycentrics.y + v2.position * barycentrics.z;
+    const vec3 localpos = vts[0].position * barycentrics.x + vts[1].position * barycentrics.y + vts[2].position * barycentrics.z;
     const vec3 worldPos = vec3(gl_ObjectToWorldEXT * vec4(localpos, 1.0));
     //const vec3 worldPos = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT; /* @brief another way, low accuracy. */
     
     /**
     * @brief Computing the normal at hit position.
     */ 
-    const vec3 localnrm = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
+    const vec3 localnrm = vts[0].normal * barycentrics.x + vts[1].normal * barycentrics.y + vts[2].normal * barycentrics.z;
     const vec3 worldNrm = normalize(vec3(localnrm * gl_WorldToObjectEXT));
     
     /**
     * @brief Computing the color at hit position.
     */
-    const vec3 color = v0.color * barycentrics.x + v1.color * barycentrics.y + v2.color * barycentrics.z;
+    const vec3 color = vts[0].color * barycentrics.x + vts[1].color * barycentrics.y + vts[2].color * barycentrics.z;
     
     /**
     * @brief Computing the uv at hit position.
     */ 
-    const vec2 uv = v0.texCoord * barycentrics.x + v1.texCoord * barycentrics.y + v2.texCoord * barycentrics.z;
+    const vec2 uv = vts[0].texCoord * barycentrics.x + vts[1].texCoord * barycentrics.y + vts[2].texCoord * barycentrics.z;
     
     /**
     * @brief Make Pixel.

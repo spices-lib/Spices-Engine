@@ -11,16 +11,59 @@
 
 namespace Spices {
 	
+	std::vector<VkVertexInputBindingDescription> MeshResource::GetBindingDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+		bindingDescriptions[0].binding = 0;
+		bindingDescriptions[0].stride = sizeof(glm::vec3);
+		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+		return bindingDescriptions;
+	}
+
+	std::vector<VkVertexInputAttributeDescription> MeshResource::GetAttributeDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
+
+		attributeDescriptions.push_back({ 0, 0, VK_FORMAT_R32G32B32_SFLOAT, 0 });
+
+		return attributeDescriptions;
+	}
+
+	void MeshResource::CreateBuffer()
+	{
+		SPICES_PROFILE_ZONE;
+
+		positions.CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
+		normals.CreateBuffer();
+		colors.CreateBuffer();
+		texCoords.CreateBuffer();
+		vertices.CreateBuffer();
+		primitivePoints.CreateBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
+		primitiveVertices.CreateBuffer();
+		primitiveLocations.CreateBuffer();
+		meshlets.CreateBuffer();
+	}
+
 	MeshDesc::MeshDesc()
 	{
 		SPICES_PROFILE_ZONE;
 
 		modelAddress                = 0;
+		positionsAddress            = 0;
+		normalsAddress              = 0;
+		colorsAddress               = 0;
+		texCoordsAddress            = 0;
 		verticesAddress             = 0;
-		vertexIndicesAddress        = 0;
-		indicesAddress              = 0;
+		primitivePointsAddress      = 0;
+		primitiveVerticesAddress    = 0;
+		primitiveLocationsAddress   = 0;
 		materialParameterAddress    = 0;
-		meshletAddress              = 0;
+		meshletsAddress             = 0;
 		nMeshlets                   = 0;
 		entityID                    = 0;
 
@@ -51,35 +94,24 @@ namespace Spices {
 		: m_UUID(UUID())
 		, m_MeshPackName(name)
 		, m_Instanced(instanced)
-		, m_NVertices(0)
-		, m_NVertexIndices(0)
-		, m_NIndices(0)
-		, m_NMeshlets(0)
 		, m_NTasks(0)
-	{
-		SPICES_PROFILE_ZONE;
-
-		m_Vertices       = std::make_shared<std::vector<Vertex>>();
-		m_VertexIndices  = std::make_shared<std::vector<uint32_t>>();
-		m_Indices        = std::make_shared<std::vector<uint32_t>>();
-		m_Meshlets       = std::make_shared<std::vector<Meshlet>>();
-	}
+	{}
 
 	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		const VkBuffer buffers[] = { m_VerticesBuffer->Get() };
+		const VkBuffer buffers[] = { m_MeshResource.positions.buffer->Get() };
 		constexpr VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-		vkCmdBindIndexBuffer(commandBuffer, m_IndicesBuffer->Get(), 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(commandBuffer, m_MeshResource.primitivePoints.buffer->Get(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
 	void MeshPack::OnDraw(VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_NIndices), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size()), 1, 0, 0, 0);
 	}
 
 	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
@@ -101,15 +133,7 @@ namespace Spices {
 		* @brief Copy Data from ResourcePool.
 		*/
 		m_Desc                              = ptr->m_Desc.Copy();
-		m_VerticesBuffer                    = ptr->m_VerticesBuffer;
-		m_VertexIndicesBuffer               = ptr->m_VertexIndicesBuffer;
-		m_IndicesBuffer                     = ptr->m_IndicesBuffer;
-		m_MeshletsBuffer                    = ptr->m_MeshletsBuffer;
-		m_MeshTaskIndirectDrawCommand       = ptr->m_MeshTaskIndirectDrawCommand;
-		m_NVertexIndices                    = ptr->m_NVertexIndices;
-		m_NIndices                          = ptr->m_NIndices;
-		m_NVertices                         = ptr->m_NVertices;
-		m_NMeshlets                         = ptr->m_NMeshlets;
+		m_MeshResource                      = ptr->m_MeshResource;
 
 		if (m_Material)
 		{
@@ -166,10 +190,10 @@ namespace Spices {
 		/**
 		* @brief BLAS builder requires raw device addresses.
 		*/
-		const VkDeviceAddress vertexAddress          = m_VerticesBuffer->GetAddress();
-		const VkDeviceAddress indicesAddress         = m_IndicesBuffer->GetAddress();
+		const VkDeviceAddress vertexAddress          = m_MeshResource.positions.buffer->GetAddress();
+		const VkDeviceAddress indicesAddress         = m_MeshResource.primitivePoints.buffer->GetAddress();
 
-		const uint32_t maxPrimitiveCount             = static_cast<uint32_t>(m_NIndices / 3);
+		const uint32_t maxPrimitiveCount             = static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size());
 
 		/**
 		* @brief device pointer to the buffers holding triangle vertex/index data, 
@@ -178,12 +202,12 @@ namespace Spices {
 		VkAccelerationStructureGeometryTrianglesDataKHR triangles {};
 		triangles.sType                              = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
 		triangles.vertexFormat                       = VK_FORMAT_R32G32B32_SFLOAT;  // vec3 vertex position data.
-		triangles.vertexData.deviceAddress           = vertexAddress;          /* @note position needs to be the first attribute of Vertex, otherwise correct offset is needs to be added here. */
-		triangles.vertexStride                       = sizeof(Vertex);
+		triangles.vertexData.deviceAddress           = vertexAddress;               /* @note position needs to be the first attribute of Vertex, otherwise correct offset is needs to be added here. */
+		triangles.vertexStride                       = sizeof(glm::vec3);
 		triangles.indexType                          = VK_INDEX_TYPE_UINT32;
 		triangles.indexData.deviceAddress            = indicesAddress;
 	  //triangles.transformData = {};
-		triangles.maxVertex                          = static_cast<uint32_t>(m_NVertices - 1);
+		triangles.maxVertex                          = static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size() * 3 - 1);
 
 		/**
 		* @brief wrapper around the above with the geometry type enum (triangles in this case) plus flags for the AS builder.
@@ -217,170 +241,18 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		/*
-		* @brief Build vertex buffer
-		*/
-		{
-			m_NVertices = m_Vertices->size();
-			
-			VkDeviceSize bufferSize = sizeof(Vertex) * m_NVertices;
+		m_MeshResource.CreateBuffer();
 
-			VulkanBuffer stagingBuffer(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-			);
-
-			stagingBuffer.WriteToBuffer(m_Vertices->data());
-
-			m_VerticesBuffer = std::make_shared<VulkanBuffer>(
-				VulkanRenderBackend::GetState(),
-				bufferSize, 
-				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     | 
-				VK_BUFFER_USAGE_VERTEX_BUFFER_BIT                                    |
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
-				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-			);
-
-			m_VerticesBuffer->CopyBuffer(stagingBuffer.Get(), m_VerticesBuffer->Get(), bufferSize);
-
-			m_Desc.UpdateverticesAddress(m_VerticesBuffer->GetAddress());
-		}
-
-		/*
-		* @brief Build meshlet vertex index buffer.
-		*/
-		{
-			m_NVertexIndices = m_VertexIndices->size();
-
-			VkDeviceSize bufferSize = sizeof((*m_VertexIndices)[0]) * m_NVertexIndices;
-
-			VulkanBuffer stagingBuffer(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_SRC_BIT    ,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-			);
-
-			stagingBuffer.WriteToBuffer(m_VertexIndices->data());
-
-			m_VertexIndicesBuffer = std::make_shared<VulkanBuffer>(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_DST_BIT          |
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT ,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-			);
-
-			m_VertexIndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_VertexIndicesBuffer->Get(), bufferSize);
-
-			m_Desc.UpdatevertexIndicesAddress(m_VertexIndicesBuffer->GetAddress());
-		}
-
-		/*
-		* @brief Build meshlet index buffer.
-		*/
-		{
-			m_NIndices = m_Indices->size();
-
-			VkDeviceSize bufferSize = sizeof((*m_Indices)[0]) * m_NIndices;
-
-			VulkanBuffer stagingBuffer(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-			);
-
-			stagingBuffer.WriteToBuffer(m_Indices->data());
-
-			m_IndicesBuffer = std::make_shared<VulkanBuffer>(
-				VulkanRenderBackend::GetState(), 
-				bufferSize, 
-				VK_BUFFER_USAGE_TRANSFER_DST_BIT                                     | 
-				VK_BUFFER_USAGE_INDEX_BUFFER_BIT                                     |
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT                            |
-				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-			);
-
-			m_IndicesBuffer->CopyBuffer(stagingBuffer.Get(), m_IndicesBuffer->Get(), bufferSize);
-
-			m_Desc.UpdateindicesAddress(m_IndicesBuffer->GetAddress());
-		}
-
-		/**
-		* @brief Build meshlet buffer.
-		*/
-		{
-			m_NMeshlets = m_Meshlets->size();
-
-			VkDeviceSize bufferSize = sizeof(SpicesShader::Meshlet) * m_NMeshlets;
-
-			VulkanBuffer stagingBuffer(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-			);
-
-			stagingBuffer.WriteToBuffer(m_Meshlets->data());
-
-			m_MeshletsBuffer = std::make_shared<VulkanBuffer>(
-				VulkanRenderBackend::GetState(),
-				bufferSize,
-				VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
-				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-			);
-
-			m_MeshletsBuffer->CopyBuffer(stagingBuffer.Get(), m_MeshletsBuffer->Get(), bufferSize);
-
-			m_NTasks = m_NMeshlets / SUBGROUP_SIZE + 1;
-
-			m_MeshTaskIndirectDrawCommand.firstTask = 0;
-			m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
-
-			m_Desc.UpdatenMeshlets(m_NMeshlets);
-			m_Desc.UpdatemeshletAddress(m_MeshletsBuffer->GetAddress());
-		}
-	}
-
-	void MeshPack::ApplyMatrix(const glm::mat4& matrix)
-	{
-		SPICES_PROFILE_ZONE;
-
-		for (uint64_t i = 0; i < m_Vertices->size(); i++)
-		{
-			glm::vec4 newPos = matrix * glm::vec4((*m_Vertices)[i].position, 1.0f);
-			(*m_Vertices)[i].position = { newPos.x, newPos.y, newPos.z };
-		}
-	}
-
-	void MeshPack::CopyToVertices(std::vector<Vertex>& vertices) const
-	{
-		SPICES_PROFILE_ZONE;
-
-		vertices.insert(vertices.end(), m_Vertices->begin(), m_Vertices->end());
-	}
-
-	void MeshPack::CopyToIndices(std::vector<uint32_t>& indices, uint32_t offset)
-	{
-		SPICES_PROFILE_ZONE;
-
-		for (uint64_t i = 0; i < m_Indices->size(); i++)
-		{
-			(*m_Indices)[i] += offset;
-		}
-
-		indices.insert(indices.end(), m_Indices->begin(), m_Indices->end());
+		m_Desc.UpdatepositionsAddress(m_MeshResource.positions.buffer->GetAddress());
+		m_Desc.UpdatenormalsAddress(m_MeshResource.normals.buffer->GetAddress());
+		m_Desc.UpdatecolorsAddress(m_MeshResource.colors.buffer->GetAddress());
+		m_Desc.UpdatetexCoordsAddress(m_MeshResource.texCoords.buffer->GetAddress());
+		m_Desc.UpdateverticesAddress(m_MeshResource.vertices.buffer->GetAddress());
+		m_Desc.UpdateprimitivePointsAddress(m_MeshResource.primitivePoints.buffer->GetAddress());
+		m_Desc.UpdateprimitiveVerticesAddress(m_MeshResource.primitiveVertices.buffer->GetAddress());
+		m_Desc.UpdateprimitiveLocationsAddress(m_MeshResource.primitiveLocations.buffer->GetAddress());
+		m_Desc.UpdatemeshletsAddress(m_MeshResource.meshlets.buffer->GetAddress());
+		m_Desc.UpdatenMeshlets(m_MeshResource.meshlets.attributes->size());
 	}
 
 	bool PlanePack::OnCreatePack(bool isCreateBuffer)
@@ -397,13 +269,10 @@ namespace Spices {
 			{
 				float colRamp = j / static_cast<float>(m_Columns - 1) - 0.5f; // -0.5f ~ 0.5f
 
-				Vertex vt;
-				vt.position   = { colRamp, rowRamp, 0.0f};
-				vt.normal     = glm::vec3(0.0f, 0.0f, 1.0f);
-				vt.color      = glm::vec3{ 1.0f };
-				vt.texCoord   = { colRamp + 0.5, 0.5 - rowRamp };
-
-				m_Vertices->push_back(vt);
+				m_MeshResource.positions.attributes->push_back({ colRamp, rowRamp, 0.0f });
+				m_MeshResource.normals  .attributes->push_back({ 0.0f, 0.0f, 1.0f });
+				m_MeshResource.colors   .attributes->push_back({ 1.0f, 1.0f, 1.0f });
+				m_MeshResource.texCoords.attributes->push_back({ colRamp + 0.5, 0.5 - rowRamp });
 			}
 		}
 
@@ -412,20 +281,20 @@ namespace Spices {
 			for (uint32_t j = 0; j < m_Columns - 1; j++)
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
+				
+				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 
-				m_Indices->push_back(vtIndex);
-				m_Indices->push_back(vtIndex + 1);
-				m_Indices->push_back(vtIndex + m_Columns + 1);
+				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 
-				m_Indices->push_back(vtIndex + m_Columns + 1);
-				m_Indices->push_back(vtIndex + m_Columns);
-				m_Indices->push_back(vtIndex);
+				m_MeshResource.vertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1, vtIndex + m_Columns });
 			}
 		}
 		
 		if (isCreateBuffer)
 		{
-			MeshProcessor::GenerateMeshLodClusterHierarchy(this);
+			//MeshProcessor::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 
@@ -436,84 +305,84 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
-
-		// Front
-		{
-			PlanePack pack(m_Rows, m_Columns);
-			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
-			pack.ApplyMatrix(tran);
-			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Indices->size()));
-			pack.CopyToVertices(*m_Vertices);
-			
-		}
-
-		// Back
-		{
-			PlanePack pack(m_Rows, m_Columns);
-			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
-			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
-			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-			pack.CopyToVertices(*m_Vertices);
-			
-		}
-
-		// Left
-		{
-			PlanePack pack(m_Rows, m_Columns);
-			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
-			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-			pack.CopyToVertices(*m_Vertices);
-			
-		}
-
-		// Right
-		{
-			PlanePack pack(m_Rows, m_Columns);
-			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
-			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-			pack.CopyToVertices(*m_Vertices);
-			
-		}
-
-		// Top
-		{
-			PlanePack pack(m_Rows, m_Columns);
-			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
-			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-			pack.CopyToVertices(*m_Vertices);
-			
-		}
-
-		// Button
-		{
-			PlanePack pack(m_Rows, m_Columns);
-			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
-			pack.ApplyMatrix(tran * rot);
-			pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-			pack.CopyToVertices(*m_Vertices);
-			
-		}
-
-		if (isCreateBuffer)
-		{
-			MeshProcessor::GenerateMeshLodClusterHierarchy(this);
-			CreateBuffer();
-		}
+		//if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
+		//
+		//// Front
+		//{
+		//	PlanePack pack(m_Rows, m_Columns);
+		//	pack.OnCreatePack(false);
+		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
+		//	pack.ApplyMatrix(tran);
+		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Indices->size()));
+		//	pack.CopyToVertices(*m_Vertices);
+		//	
+		//}
+		//
+		//// Back
+		//{
+		//	PlanePack pack(m_Rows, m_Columns);
+		//	pack.OnCreatePack(false);
+		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
+		//	glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
+		//	pack.ApplyMatrix(tran * rot);
+		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+		//	pack.CopyToVertices(*m_Vertices);
+		//	
+		//}
+		//
+		//// Left
+		//{
+		//	PlanePack pack(m_Rows, m_Columns);
+		//	pack.OnCreatePack(false);
+		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+		//	glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
+		//	pack.ApplyMatrix(tran * rot);
+		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+		//	pack.CopyToVertices(*m_Vertices);
+		//	
+		//}
+		//
+		//// Right
+		//{
+		//	PlanePack pack(m_Rows, m_Columns);
+		//	pack.OnCreatePack(false);
+		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
+		//	glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
+		//	pack.ApplyMatrix(tran * rot);
+		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+		//	pack.CopyToVertices(*m_Vertices);
+		//	
+		//}
+		//
+		//// Top
+		//{
+		//	PlanePack pack(m_Rows, m_Columns);
+		//	pack.OnCreatePack(false);
+		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
+		//	glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
+		//	pack.ApplyMatrix(tran * rot);
+		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+		//	pack.CopyToVertices(*m_Vertices);
+		//	
+		//}
+		//
+		//// Button
+		//{
+		//	PlanePack pack(m_Rows, m_Columns);
+		//	pack.OnCreatePack(false);
+		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+		//	glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
+		//	pack.ApplyMatrix(tran * rot);
+		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
+		//	pack.CopyToVertices(*m_Vertices);
+		//	
+		//}
+		//
+		//if (isCreateBuffer)
+		//{
+		//	MeshProcessor::GenerateMeshLodClusterHierarchy(this);
+		//	CreateBuffer();
+		//}
 
 		return true;
 	}
@@ -544,13 +413,12 @@ namespace Spices {
 			{
 				const float colRamp = j * 360.0f / static_cast<float>(m_Columns - 1); // 0 ~ 360
 
-				Vertex vt;
-				vt.position = { glm::sin(glm::radians(rowRamp)) * glm::sin(glm::radians(colRamp)), glm::cos(glm::radians(rowRamp)), glm::sin(glm::radians(rowRamp)) * glm::cos(glm::radians(colRamp)) };
-				vt.normal = glm::normalize(vt.position);
-				vt.color = glm::vec3{ 1.0f };
-				vt.texCoord = {j / static_cast<float>(m_Columns - 1), i / static_cast<float>(m_Rows - 1) };
+				glm::vec3 position{ glm::sin(glm::radians(rowRamp)) * glm::sin(glm::radians(colRamp)), glm::cos(glm::radians(rowRamp)), glm::sin(glm::radians(rowRamp)) * glm::cos(glm::radians(colRamp)) };
 
-				m_Vertices->push_back(std::move(vt));
+				m_MeshResource.positions.attributes->push_back(position);
+				m_MeshResource.normals  .attributes->push_back(glm::normalize(position));
+				m_MeshResource.colors   .attributes->push_back({ 1.0f, 1.0f, 1.0f });
+				m_MeshResource.texCoords.attributes->push_back({ j / static_cast<float>(m_Columns - 1), i / static_cast<float>(m_Rows - 1) });
 			}
 		}
 		
@@ -560,13 +428,13 @@ namespace Spices {
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
 
-				m_Indices->push_back(vtIndex);
-				m_Indices->push_back(vtIndex + 1);
-				m_Indices->push_back(vtIndex + m_Columns + 1);
+				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 
-				m_Indices->push_back(vtIndex + m_Columns + 1);
-				m_Indices->push_back(vtIndex + m_Columns);
-				m_Indices->push_back(vtIndex);
+				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
+
+				m_MeshResource.vertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1, vtIndex + m_Columns });
 			}
 		}
 

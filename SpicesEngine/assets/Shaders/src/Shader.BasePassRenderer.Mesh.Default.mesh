@@ -41,7 +41,7 @@ task;
 /**
 * @brief Output triangles meshlet per workgroup.
 */
-layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPRIMITIVES) out;
+layout(triangles, max_vertices = MESHLET_NVERTICES * 3, max_primitives = MESHLET_NPRIMITIVES) out;
 
 /**
 * @brief Mesh Shader Output to Fragment Shader.
@@ -81,23 +81,25 @@ void main()
         
     if(localId >= meshlet.nPrimitives) return;
     
-    ivec3 vertexIndex = vertexIndices.i[meshlet.primitiveOffset + localId];
-    ivec3 index = indices.i[meshlet.primitiveOffset + localId];
+    ivec3 primLocation = primitiveLocations.i[meshlet.primitiveOffset + localId];
+    ivec3 primVertex   = primitiveVertices.i[meshlet.primitiveOffset + localId];
     
-    Vertex vts[3] = { vertices.v[index.x], vertices.v[index.y], vertices.v[index.z] };
-        
-    vertexIndex -= ivec3(meshlet.vertexOffset);
-    uint arrayIndices[3] = { vertexIndex.x, vertexIndex.y, vertexIndex.z };
+    uint primVertexArray[3] = { primVertex.x, primVertex.y, primVertex.z };
+
+    primLocation -= ivec3(meshlet.vertexOffset);
+    uint arrayIndices[3] = { primLocation.x, primLocation.y, primLocation.z };
        
-    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(vertexIndex.x, vertexIndex.y, vertexIndex.z);
+    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(primLocation.x, primLocation.y, primLocation.z);
+
+    Vertex[3] vts = UnpackVertexFromPrimitiveVertices(meshlet.primitiveOffset + localId);
 
     [[unroll]]
     for(int j = 0; j < 3; j++)
-    {
+    {   
         Vertex vt = vts[j];
-    
+
         gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
-            
+        
         pixel[arrayIndices[j]].position  = vec3(model * vec4(vt.position, 1.0f));
         pixel[arrayIndices[j]].normal    = normalize(m3model * vt.normal);
         pixel[arrayIndices[j]].color     = vt.color;

@@ -185,14 +185,19 @@ struct PointLight
 */
 struct MeshDesc
 {
-	uint64_t modelAddress;                    /* @brief Address of the Model Matrix.                   */
-	uint64_t verticesAddress;                 /* @brief Address of the Vertices buffer.                */
-	uint64_t vertexIndicesAddress;            /* @brief Address of the Vertex Indices buffer.          */
-	uint64_t indicesAddress;                  /* @brief Address of the Indices buffer.                 */
-	uint64_t materialParameterAddress;        /* @brief Address of the Material Parameter buffer.      */
-	uint64_t meshletAddress;                  /* @brief Address of the Meshlet Buffer.                 */
-	uint     nMeshlets;                       /* @brief Meshlets Count.                                */
-	uint     entityID;                        /* @brief EntityId, cast from entt::entity.              */
+	uint64_t modelAddress;                    /* @brief Address of the Model Matrix.                      */																									  
+	uint64_t positionsAddress;                /* @brief Address of the Positions buffer.                  */
+	uint64_t normalsAddress;                  /* @brief Address of the Normals buffer.                    */
+	uint64_t colorsAddress;                   /* @brief Address of the Colors buffer.                     */
+	uint64_t texCoordsAddress;                /* @brief Address of the TexCoords buffer.                  */
+	uint64_t verticesAddress;                 /* @brief Address of the Vertices buffer.                   */
+	uint64_t primitivePointsAddress;          /* @brief Address of the PrimitivePoints buffer.            */
+	uint64_t primitiveVerticesAddress;        /* @brief Address of the PrimitiveVertices buffer.          */
+	uint64_t primitiveLocationsAddress;       /* @brief Address of the PrimitiveLocationsAddress buffer.  */
+	uint64_t materialParameterAddress;        /* @brief Address of the Material Parameter buffer.         */
+	uint64_t meshletsAddress;                 /* @brief Address of the Meshlet Buffer.                    */
+	uint     nMeshlets;                       /* @brief Meshlets Count.                                   */
+	uint     entityID;                        /* @brief EntityId, cast from entt::entity.                 */
 };
 
 /**

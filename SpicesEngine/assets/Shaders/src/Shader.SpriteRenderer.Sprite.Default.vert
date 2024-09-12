@@ -58,7 +58,7 @@ void main()
     ExplainMeshDesciption(push.descAddress);
     vec3 pos = mat3(view.inView) * position;
 
-    vertOut.texCoord = texCoord;
+    vertOut.texCoord = position.xy + vec2(0.5f);
     gl_Position = view.projection * view.view  * model * vec4(pos, 1.0);
 }
 

@@ -51,92 +51,92 @@ namespace Spices {
 
 	bool MeshLoader::LoadFromOBJ(const std::string& fileName, MeshPack* outMeshPack)
 	{
-		bool isFind = false;
-		std::string filePath;
-		int index = 0;
-		for (auto& it : ResourceSystem::GetSearchFolder())
-		{
-			filePath = it + defaultOBJMeshPath + fileName + ".obj";
-			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
-			{
-				isFind = true;
-				break;
-			}
-			index++;
-		}
-		if (!isFind) return false;
-
-		if (!FileLibrary::FileLibrary_Exists(filePath.c_str())) {
-			return false;
-		}
-
-		tinyobj::attrib_t attrib;
-		std::vector<tinyobj::shape_t> shapes;
-		std::vector<tinyobj::material_t> materials;
-		std::string warn, err;
-
-		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filePath.c_str()))
-		{
-			return false;
-		}
-
-		std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-		for (const auto& shape : shapes)
-		{
-			for (const auto& index : shape.mesh.indices)
-			{
-				Vertex vertex{};
-
-				if (index.vertex_index >= 0)
-				{
-					vertex.position = {
-						attrib.vertices[3 * index.vertex_index + 0],
-						attrib.vertices[3 * index.vertex_index + 1],
-					   -attrib.vertices[3 * index.vertex_index + 2]
-					};
-
-					auto colorIndex = 3 * index.vertex_index + 2;
-					if (colorIndex < attrib.colors.size())
-					{
-						vertex.color = {
-							attrib.colors[colorIndex - 2],
-							attrib.colors[colorIndex - 1],
-							attrib.colors[colorIndex - 0]
-						};
-					}
-					else
-					{
-						vertex.color = { 1.0f, 1.0f, 1.0f };
-					}
-				}
-
-				if (index.normal_index >= 0)
-				{
-					vertex.normal = {
-						attrib.normals[3 * index.normal_index + 0],
-						attrib.normals[3 * index.normal_index + 1],
-					   -attrib.normals[3 * index.normal_index + 2]
-					};
-				}
-
-				if (index.texcoord_index >= 0)
-				{
-					vertex.texCoord = {
-						attrib.texcoords[2 * index.texcoord_index + 0],
-				 1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-					};
-				}
-
-				if (uniqueVertices.count(vertex) == 0) {
-					uniqueVertices[vertex] = static_cast<uint32_t>(outMeshPack->m_Vertices->size());
-					outMeshPack->m_Vertices->push_back(std::move(vertex));
-				}
-
-				outMeshPack->m_Indices->push_back(uniqueVertices[vertex]);
-			}
-		}
-
-		MeshProcessor::GenerateMeshLodClusterHierarchy(outMeshPack);
+		//bool isFind = false;
+		//std::string filePath;
+		//int index = 0;
+		//for (auto& it : ResourceSystem::GetSearchFolder())
+		//{
+		//	filePath = it + defaultOBJMeshPath + fileName + ".obj";
+		//	if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+		//	{
+		//		isFind = true;
+		//		break;
+		//	}
+		//	index++;
+		//}
+		//if (!isFind) return false;
+		//
+		//if (!FileLibrary::FileLibrary_Exists(filePath.c_str())) {
+		//	return false;
+		//}
+		//
+		//tinyobj::attrib_t attrib;
+		//std::vector<tinyobj::shape_t> shapes;
+		//std::vector<tinyobj::material_t> materials;
+		//std::string warn, err;
+		//
+		//if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filePath.c_str()))
+		//{
+		//	return false;
+		//}
+		//
+		//std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+		//for (const auto& shape : shapes)
+		//{
+		//	for (const auto& index : shape.mesh.indices)
+		//	{
+		//		Vertex vertex{};
+		//
+		//		if (index.vertex_index >= 0)
+		//		{
+		//			vertex.position = {
+		//				attrib.vertices[3 * index.vertex_index + 0],
+		//				attrib.vertices[3 * index.vertex_index + 1],
+		//			   -attrib.vertices[3 * index.vertex_index + 2]
+		//			};
+		//
+		//			auto colorIndex = 3 * index.vertex_index + 2;
+		//			if (colorIndex < attrib.colors.size())
+		//			{
+		//				vertex.color = {
+		//					attrib.colors[colorIndex - 2],
+		//					attrib.colors[colorIndex - 1],
+		//					attrib.colors[colorIndex - 0]
+		//				};
+		//			}
+		//			else
+		//			{
+		//				vertex.color = { 1.0f, 1.0f, 1.0f };
+		//			}
+		//		}
+		//
+		//		if (index.normal_index >= 0)
+		//		{
+		//			vertex.normal = {
+		//				attrib.normals[3 * index.normal_index + 0],
+		//				attrib.normals[3 * index.normal_index + 1],
+		//			   -attrib.normals[3 * index.normal_index + 2]
+		//			};
+		//		}
+		//
+		//		if (index.texcoord_index >= 0)
+		//		{
+		//			vertex.texCoord = {
+		//				attrib.texcoords[2 * index.texcoord_index + 0],
+		//		 1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+		//			};
+		//		}
+		//
+		//		if (uniqueVertices.count(vertex) == 0) {
+		//			uniqueVertices[vertex] = static_cast<uint32_t>(outMeshPack->m_Vertices->size());
+		//			outMeshPack->m_Vertices->push_back(std::move(vertex));
+		//		}
+		//
+		//		outMeshPack->m_Indices->push_back(uniqueVertices[vertex]);
+		//	}
+		//}
+		//
+		//MeshProcessor::GenerateMeshLodClusterHierarchy(outMeshPack);
 		//WriteSASSET(index, fileName, outMeshPack);
 
 		return true;
@@ -194,21 +194,21 @@ namespace Spices {
 			return false;
 		}
 
-		uint32_t verticesCount = 0;
-		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &verticesCount, &readed);
-		outMeshPack->m_Vertices->resize(verticesCount);
-
-		uint32_t indicesCount = 0;
-		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &indicesCount, &readed);
-		outMeshPack->m_Indices->resize(indicesCount);
-
-		uint32_t meshletsCount = 0;
-		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshletsCount, &readed);
-		outMeshPack->m_Meshlets->resize(meshletsCount);
-
-		FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &readed);
-		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &readed);
-		FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &readed);
+		//uint32_t verticesCount = 0;
+		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &verticesCount, &readed);
+		//outMeshPack->m_Vertices->resize(verticesCount);
+		//
+		//uint32_t indicesCount = 0;
+		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &indicesCount, &readed);
+		//outMeshPack->m_Indices->resize(indicesCount);
+		//
+		//uint32_t meshletsCount = 0;
+		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshletsCount, &readed);
+		//outMeshPack->m_Meshlets->resize(meshletsCount);
+		//
+		//FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &readed);
+		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &readed);
+		//FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &readed);
 
 		char overSign[100];
 		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
@@ -221,7 +221,7 @@ namespace Spices {
 
 		FileLibrary::FileLibrary_Close(&f);
 
-		outMeshPack->m_NTasks = outMeshPack->m_Meshlets->size() / SUBGROUP_SIZE + 1;
+		//outMeshPack->m_NTasks = outMeshPack->m_Meshlets->size() / SUBGROUP_SIZE + 1;
 		return true;
 	}
 
@@ -240,18 +240,18 @@ namespace Spices {
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignSatrt, &written);
 
-		uint32_t verticesCount = (uint32_t)outMeshPack->m_Vertices->size();
-		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
-
-		uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices->size();
-		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &indicesCount, &written);
-
-		uint32_t meshletsCount = (uint32_t)outMeshPack->m_Meshlets->size();
-		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
-
-		FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &written);
-		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &written);
-		FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &written);
+		//uint32_t verticesCount = (uint32_t)outMeshPack->m_Vertices->size();
+		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
+		//
+		//uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices->size();
+		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &indicesCount, &written);
+		//
+		//uint32_t meshletsCount = (uint32_t)outMeshPack->m_Meshlets->size();
+		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
+		//
+		//FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &written);
+		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &written);
+		//FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignOver, &written);
 

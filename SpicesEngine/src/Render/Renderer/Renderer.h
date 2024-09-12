@@ -1499,28 +1499,28 @@ namespace Spices {
 							break;
 
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_VERTEX_BUFFER_NV:
-							vbo.bufferAddress = v->GetVerticesBufferAddress();
-							vbo.size          = v->GetNVertices() * sizeof(Vertex);
-							vbo.stride        = sizeof(Vertex);
+							vbo.bufferAddress = v->GetResource().positions.buffer->GetAddress();
+							vbo.size          = sizeof(v->GetResource().positions.attributes);
+							vbo.stride        = sizeof(glm::vec3);
 							stagingBuffer.WriteToBuffer(&vbo, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
 
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NV:
-							ibo.bufferAddress = v->GetIndicesBufferAddress();
-							ibo.size = v->GetNIndices() * sizeof(uint32_t);
-							ibo.indexType = VK_INDEX_TYPE_UINT32;
+							ibo.bufferAddress = v->GetResource().primitivePoints.buffer->GetAddress();
+							ibo.size          = sizeof(v->GetResource().primitivePoints.attributes);
+							ibo.indexType     = VK_INDEX_TYPE_UINT32;
 							stagingBuffer.WriteToBuffer(&ibo, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
 
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV:
-							push = v->GetMeshDesc().GetBufferAddress();
+							push              = v->GetMeshDesc().GetBufferAddress();
 							stagingBuffer.WriteToBuffer(&push, inputStrides[i], index * inputStrides[i] + offset[i]);
 							break;
 
 						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NV:
 							drawIndexed.firstIndex     = 0;
 							drawIndexed.firstInstance  = 0;
-							drawIndexed.indexCount     = v->GetNIndices();
+							drawIndexed.indexCount     = v->GetResource().primitivePoints.attributes->size();
 							drawIndexed.instanceCount  = 1;
 							drawIndexed.vertexOffset   = 0;
 							stagingBuffer.WriteToBuffer(&drawIndexed, inputStrides[i], index* inputStrides[i] + offset[i]);
