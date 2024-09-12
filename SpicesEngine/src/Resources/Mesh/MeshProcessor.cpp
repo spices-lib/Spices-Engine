@@ -26,7 +26,7 @@ namespace Spices {
 		meshPack->m_Indices    = std::make_shared<std::vector<uint32_t>>();
 		AppendMeshlets(meshPack, 0, *initIndices);
 
-		const int maxLod = 25;
+		const int maxLod = 0;
 		for (UINT32 lod = 0; lod < maxLod; ++lod)
 		{
 			auto in = std::chrono::high_resolution_clock::now();
@@ -610,106 +610,66 @@ namespace Spices {
 			}
 		}
 
-		std::unordered_map<uint32_t, std::unordered_set<uint32_t>> verticesMapReverse;
-		for (int i = 0; i < verticesMap.size(); i++)
+		struct EdgePoint
 		{
-			verticesMapReverse[verticesMap[i]].insert(i);
+			EdgePoint() 
+				: previous(-1)
+				, self(-1)
+				, next(-1)
+			{}
+
+			uint32_t previous;
+			uint32_t self;
+			uint32_t next;
+
+			bool valid()
+			{
+				return previous != -1 && self != -1 && next != -1;
+			}
+		};
+
+		/**
+		* @brief get bound edge points.
+		*/
+		std::unordered_map<uint32_t, EdgePoint> boundEdgePoints;
+		for (auto& pair : edgesConnects)
+		{
+			if (boundEdgePoints.find(pair.first.first) == boundEdgePoints.end())
+			{
+				boundEdgePoints[pair.first.first].self = pair.first.first;
+				boundEdgePoints[pair.first.first].next = pair.first.second;
+			}
+			else
+			{
+				boundEdgePoints[pair.first.first].previous = pair.first.second;
+			}
+
+			if (boundEdgePoints.find(pair.first.second) == boundEdgePoints.end())
+			{
+				boundEdgePoints[pair.first.second].self = pair.first.second;
+				boundEdgePoints[pair.first.second].next = pair.first.first;
+			}
+			else
+			{
+				boundEdgePoints[pair.first.second].previous = pair.first.first;
+			}
 		}
 
 		/**
-		* @brief unfuse edge point.
+		* @brief only stable points with high curvature.
 		*/
-		for (auto& [edge, connects] : edgesConnects)
+		for (auto& pair : boundEdgePoints)
 		{
-			for (auto& vt : verticesMapReverse[edge.first])
+			if (!pair.second.valid()) continue;
+
+			glm::vec3 l = glm::normalize(vertices[pair.second.next].position - vertices[pair.first].position);
+			glm::vec3 r = glm::normalize(vertices[pair.second.previous].position - vertices[pair.first].position);
+
+			if (glm::dot(l, r) > -0.98f)
 			{
-				verticesMap[vt] = vt;
+				//boundary[pair.first] = true;
 			}
 		}
-
-		std::vector<uint32_t> tempIndices = indices;
-		for (int i = 0; i < tempIndices.size(); i++)
-		{
-			tempIndices[i] = verticesMap[tempIndices[i]];
-		}
-
-		indices.clear();
-		for (int i = 0; i < tempIndices.size() / 3; i++)
-		{
-			std::unordered_set<uint32_t> primVertices;
-
-			primVertices.insert(tempIndices[3 * i + 0]);
-			primVertices.insert(tempIndices[3 * i + 1]);
-			primVertices.insert(tempIndices[3 * i + 2]);
-
-			if (primVertices.size() == 3)
-			{
-				indices.push_back(tempIndices[3 * i + 0]);
-				indices.push_back(tempIndices[3 * i + 1]);
-				indices.push_back(tempIndices[3 * i + 2]);
-			}
-		}
-
-		//struct EdgePoint
-		//{
-		//	EdgePoint() 
-		//		: previous(-1)
-		//		, self(-1)
-		//		, next(-1)
-		//	{}
-
-		//	uint32_t previous;
-		//	uint32_t self;
-		//	uint32_t next;
-
-		//	bool valid()
-		//	{
-		//		return previous != -1 && self != -1 && next != -1;
-		//	}
-		//};
-
-		///**
-		//* @brief get bound edge points.
-		//*/
-		//std::unordered_map<uint32_t, EdgePoint> boundEdgePoints;
-		//for (auto& pair : edgesConnects)
-		//{
-		//	if (boundEdgePoints.find(pair.first.first) == boundEdgePoints.end())
-		//	{
-		//		boundEdgePoints[pair.first.first].self = pair.first.first;
-		//		boundEdgePoints[pair.first.first].next = pair.first.second;
-		//	}
-		//	else
-		//	{
-		//		boundEdgePoints[pair.first.first].previous = pair.first.second;
-		//	}
-
-		//	if (boundEdgePoints.find(pair.first.second) == boundEdgePoints.end())
-		//	{
-		//		boundEdgePoints[pair.first.second].self = pair.first.second;
-		//		boundEdgePoints[pair.first.second].next = pair.first.first;
-		//	}
-		//	else
-		//	{
-		//		boundEdgePoints[pair.first.second].previous = pair.first.first;
-		//	}
-		//}
-
-		///**
-		//* @brief only stable points with high curvature.
-		//*/
-		//for (auto& pair : boundEdgePoints)
-		//{
-		//	if (!pair.second.valid()) continue;
-
-		//	glm::vec3 l = glm::normalize(vertices[pair.second.next].position - vertices[pair.first].position);
-		//	glm::vec3 r = glm::normalize(vertices[pair.second.previous].position - vertices[pair.first].position);
-
-		//	if (glm::dot(l, r) > -0.98f)
-		//	{
-		//		boundary[pair.first] = true;
-		//	}
-		//}
 
 #endif
 

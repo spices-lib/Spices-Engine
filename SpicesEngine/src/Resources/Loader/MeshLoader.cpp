@@ -136,56 +136,6 @@ namespace Spices {
 			}
 		}
 
-		/*assert(attrib.vertices.size() % 3 == 0);
-
-		outMeshPack->m_Vertices->resize(attrib.vertices.size() / 3);
-		for (uint32_t v = 0; v < attrib.vertices.size() / 3; v++)
-		{
-			(*outMeshPack->m_Vertices)[v].position.x =   attrib.vertices[3 * v + 0];
-			(*outMeshPack->m_Vertices)[v].position.y =   attrib.vertices[3 * v + 1];
-			(*outMeshPack->m_Vertices)[v].position.z = - attrib.vertices[3 * v + 2];
-		}
-		
-		if (attrib.normals.size() > 0)
-		{
-			assert(attrib.normals.size() % 3 == 0);
-			for (uint32_t v = 0; v < attrib.normals.size() / 3; v++)
-			{
-				(*outMeshPack->m_Vertices)[v].normal.x =   attrib.normals[3 * v + 0];
-				(*outMeshPack->m_Vertices)[v].normal.y =   attrib.normals[3 * v + 1];
-				(*outMeshPack->m_Vertices)[v].normal.z = - attrib.normals[3 * v + 2];
-			}
-		}
-		
-		if (attrib.colors.size() > 0)
-		{
-			assert(attrib.colors.size() % 3 == 0);
-			for (uint32_t v = 0; v < attrib.colors.size() / 3; v++)
-			{
-				(*outMeshPack->m_Vertices)[v].color.x = attrib.colors[3 * v + 0];
-				(*outMeshPack->m_Vertices)[v].color.y = attrib.colors[3 * v + 1];
-				(*outMeshPack->m_Vertices)[v].color.z = attrib.colors[3 * v + 2];
-			}
-		}
-		
-		if (attrib.texcoords.size() > 0)
-		{
-			assert(attrib.texcoords.size() % 2 == 0);
-			for (uint32_t v = 0; v < attrib.colors.size() / 2; v++)
-			{
-				(*outMeshPack->m_Vertices)[v].texCoord.x =        attrib.texcoords[2 * v + 0];
-				(*outMeshPack->m_Vertices)[v].texCoord.y = 1.0f - attrib.texcoords[2 * v + 1];
-			}
-		}
-
-		for (const auto& shape : shapes)
-		{
-			for (const auto& index : shape.mesh.indices)
-			{
-				outMeshPack->m_Indices->push_back(index.vertex_index);
-			}
-		}*/
-
 		MeshProcessor::GenerateMeshLodClusterHierarchy(outMeshPack);
 		//WriteSASSET(index, fileName, outMeshPack);
 
