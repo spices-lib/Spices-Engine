@@ -241,6 +241,11 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		m_NTasks = m_MeshResource.meshlets.attributes->size() / SUBGROUP_SIZE + 1;
+
+		m_MeshTaskIndirectDrawCommand.firstTask = 0;
+		m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
+
 		m_MeshResource.CreateBuffer();
 
 		m_Desc.UpdatepositionsAddress(m_MeshResource.positions.buffer->GetAddress());
@@ -273,6 +278,9 @@ namespace Spices {
 				m_MeshResource.normals  .attributes->push_back({ 0.0f, 0.0f, 1.0f });
 				m_MeshResource.colors   .attributes->push_back({ 1.0f, 1.0f, 1.0f });
 				m_MeshResource.texCoords.attributes->push_back({ colRamp + 0.5, 0.5 - rowRamp });
+
+				const uint32_t vtIndex = i * m_Columns + j;
+				m_MeshResource.vertices .attributes->push_back({ vtIndex, vtIndex, vtIndex, vtIndex });
 			}
 		}
 
@@ -287,14 +295,12 @@ namespace Spices {
 
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
-
-				m_MeshResource.vertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1, vtIndex + m_Columns });
 			}
 		}
 		
 		if (isCreateBuffer)
 		{
-			//MeshProcessor::GenerateMeshLodClusterHierarchy(this);
+			MeshProcessor::GenerateMeshLodClusterHierarchy(this);
 			CreateBuffer();
 		}
 
@@ -304,6 +310,8 @@ namespace Spices {
 	bool CubePack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 
 		//if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 		//
@@ -386,7 +394,7 @@ namespace Spices {
 
 		return true;
 	}
-
+	
 	bool FilePack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
@@ -419,6 +427,9 @@ namespace Spices {
 				m_MeshResource.normals  .attributes->push_back(glm::normalize(position));
 				m_MeshResource.colors   .attributes->push_back({ 1.0f, 1.0f, 1.0f });
 				m_MeshResource.texCoords.attributes->push_back({ j / static_cast<float>(m_Columns - 1), i / static_cast<float>(m_Rows - 1) });
+
+				const uint32_t vtIndex = i * m_Columns + j;
+				m_MeshResource.vertices.attributes->push_back({ vtIndex, vtIndex, vtIndex, vtIndex });
 			}
 		}
 		
@@ -433,8 +444,6 @@ namespace Spices {
 
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
-
-				m_MeshResource.vertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1, vtIndex + m_Columns });
 			}
 		}
 

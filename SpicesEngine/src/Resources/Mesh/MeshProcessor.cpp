@@ -21,158 +21,158 @@ namespace Spices {
 		/**
 		* @brief Create Lod0 meshlets.
 		*/
-		uint32_t meshletStart  = 0;
-		auto initIndices       = meshPack->m_MeshResource.primitivePoints;
-		meshPack->m_Indices    = std::make_shared<std::vector<uint32_t>>();
-		AppendMeshlets(meshPack, 0, *initIndices);
+		uint32_t meshletStart    = 0;
+		auto primPoints          = meshPack->m_MeshResource.primitivePoints.attributes;
+		meshPack->m_MeshResource.primitivePoints.attributes = std::make_shared<std::vector<glm::ivec3>>();
+		AppendMeshlets(meshPack, 0, *primPoints);
 
-		const int maxLod = 0;
-		for (UINT32 lod = 0; lod < maxLod; ++lod)
-		{
-			auto in = std::chrono::high_resolution_clock::now();
-
-			float tLod = lod / (float)maxLod;
-
-			std::vector<Meshlet> meshlets = std::vector<Meshlet>(meshPack->m_Meshlets->begin() + meshletStart, meshPack->m_Meshlets->end());
-			if (meshlets.size() <= 1)
-			{
-				return;
-			}
-
-			const uint32_t nextStart   = meshPack->m_Meshlets->size();
-			meshletStart               = nextStart;
-			auto groups                = GroupMeshlets(meshPack, meshlets);
-			
-			bool Simplified = false;
-			for (const auto& group : groups)
-			{
-				std::vector<uint32_t> groupVertexIndices;
-
-				for (const auto& meshletIndex : group.meshlets)
-				{
-					const auto& meshlet = meshlets[meshletIndex];
-					size_t start = groupVertexIndices.size();
-					groupVertexIndices.resize(start + meshlet.nPrimitives * 3);
-					for (size_t j = 0; j < meshlet.nPrimitives * 3; j++)
-					{
-						 uint32_t index = (*meshPack->m_Indices)[meshlet.primitiveOffset * 3 + j];
-						 groupVertexIndices[j + start] = index;
-					}
-				}
-
-				/**
-				* @brief Pack Sparse Inputs.
-				*/
-				std::vector<Vertex> packVertices;
-				std::vector<uint32_t> packIndices;
-				std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
-				PackVertexFromSparseInputs(meshPack, groupVertexIndices, packVertices, packIndices, indicesMapReverse);
-
-				/**
-				* @brief Simplify meshlets group indices.
-				*/
-				const float threshold   = 0.5f;
-				size_t targetIndexCount = packIndices.size() * threshold;
-				float targetError       = 0.1f * tLod + 0.01f * (1 - tLod);
-				uint32_t options        = meshopt_SimplifyLockBorder;
-			
-				std::vector<uint32_t> simplifiedIndexBuffer(packIndices.size());
-				float simplificationError = 0.0f;
-
-				size_t simplifiedIndexCount = meshopt_simplify(
-					simplifiedIndexBuffer.data(),
-					packIndices.data(),
-					packIndices.size(),
-					&packVertices[0].position.x,
-					packVertices.size(),
-					sizeof(Vertex),
-					targetIndexCount,
-					targetError,
-					options,
-					&simplificationError
-				);
-				simplifiedIndexBuffer.resize(simplifiedIndexCount);			
-
-				/**
-				* @brief Simplify succeed: merge result to meshlets.
-				*/
-				if (simplifiedIndexCount < packIndices.size())
-				{
-					std::vector<uint32_t> indicesBuffer;
-					UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
-
-					AppendMeshlets(meshPack, lod + 1, indicesBuffer);
-
-					Simplified = true;
-				}
-
-				/**
-				* @brief Simplify failed: try fuse points.
-				*/
-				else
-				{
-					scl::kd_tree<6> kdTree;
-					BuildKDTree(packVertices, kdTree);
-
-					float simplifyScale          = meshopt_simplifyScale(&packVertices[0].position.x, packVertices.size(), sizeof(Vertex));
-					const float maxDistance      = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
-					const float maxUVDistance    = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
-					auto vertexMap               = MergeByDistance(packVertices, kdTree, maxDistance, maxUVDistance);
-
-					FindAndStableBoundaryVertices(packVertices, packIndices, vertexMap);
-
-					/*for (int i = 0; i < packIndices.size(); i++)
-					{
-						uint32_t index = packIndices[i];
-						packIndices[i] = vertexMap[index];
-					}*/
-
-					/**
-					* @brief Simplify meshlets group indices again.
-					*/
-					size_t targetIndexCount = packIndices.size() * threshold;
-
-					size_t simplifiedIndexCount = meshopt_simplify(
-						simplifiedIndexBuffer.data(),
-						packIndices.data(),
-						packIndices.size(),
-						&packVertices[0].position.x,
-						packVertices.size(),
-						sizeof(Vertex),
-						targetIndexCount,
-						targetError,
-						options,
-						&simplificationError
-					);
-					simplifiedIndexBuffer.resize(simplifiedIndexCount);
-
-					if (simplifiedIndexCount < packIndices.size())
-					{
-						Simplified = true;
-					}
-
-					std::vector<uint32_t> indicesBuffer;
-					UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
-
-					AppendMeshlets(meshPack, lod + 1, indicesBuffer);
-				}
-
-			}
-
-			auto out = std::chrono::high_resolution_clock::now();
-			std::cout << "    Lod Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << meshlets.size() << std::endl;
-
-			/**
-			* @brief return if cannot continue simplify meshlet.
-			*/
-			if (!Simplified) return;
-		}
+		//const int maxLod = 0;
+		//for (UINT32 lod = 0; lod < maxLod; ++lod)
+		//{
+		//	auto in = std::chrono::high_resolution_clock::now();
+		//
+		//	float tLod = lod / (float)maxLod;
+		//
+		//	std::vector<Meshlet> meshlets = std::vector<Meshlet>(meshPack->m_Meshlets->begin() + meshletStart, meshPack->m_Meshlets->end());
+		//	if (meshlets.size() <= 1)
+		//	{
+		//		return;
+		//	}
+		//
+		//	const uint32_t nextStart   = meshPack->m_Meshlets->size();
+		//	meshletStart               = nextStart;
+		//	auto groups                = GroupMeshlets(meshPack, meshlets);
+		//	
+		//	bool Simplified = false;
+		//	for (const auto& group : groups)
+		//	{
+		//		std::vector<uint32_t> groupVertexIndices;
+		//
+		//		for (const auto& meshletIndex : group.meshlets)
+		//		{
+		//			const auto& meshlet = meshlets[meshletIndex];
+		//			size_t start = groupVertexIndices.size();
+		//			groupVertexIndices.resize(start + meshlet.nPrimitives * 3);
+		//			for (size_t j = 0; j < meshlet.nPrimitives * 3; j++)
+		//			{
+		//				 //uint32_t index = (*meshPack->m_Indices)[meshlet.primitiveOffset * 3 + j];
+		//				 //groupVertexIndices[j + start] = index;
+		//			}
+		//		}
+		//
+		//		/**
+		//		* @brief Pack Sparse Inputs.
+		//		*/
+		//		std::vector<Vertex> packVertices;
+		//		std::vector<uint32_t> packIndices;
+		//		std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
+		//		PackVertexFromSparseInputs(meshPack, groupVertexIndices, packVertices, packIndices, indicesMapReverse);
+		//
+		//		/**
+		//		* @brief Simplify meshlets group indices.
+		//		*/
+		//		const float threshold   = 0.5f;
+		//		size_t targetIndexCount = packIndices.size() * threshold;
+		//		float targetError       = 0.1f * tLod + 0.01f * (1 - tLod);
+		//		uint32_t options        = meshopt_SimplifyLockBorder;
+		//	
+		//		std::vector<uint32_t> simplifiedIndexBuffer(packIndices.size());
+		//		float simplificationError = 0.0f;
+		//
+		//		size_t simplifiedIndexCount = meshopt_simplify(
+		//			simplifiedIndexBuffer.data(),
+		//			packIndices.data(),
+		//			packIndices.size(),
+		//			&packVertices[0].position.x,
+		//			packVertices.size(),
+		//			sizeof(Vertex),
+		//			targetIndexCount,
+		//			targetError,
+		//			options,
+		//			&simplificationError
+		//		);
+		//		simplifiedIndexBuffer.resize(simplifiedIndexCount);			
+		//
+		//		/**
+		//		* @brief Simplify succeed: merge result to meshlets.
+		//		*/
+		//		if (simplifiedIndexCount < packIndices.size())
+		//		{
+		//			std::vector<uint32_t> indicesBuffer;
+		//			UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
+		//
+		//			AppendMeshlets(meshPack, lod + 1, indicesBuffer);
+		//
+		//			Simplified = true;
+		//		}
+		//
+		//		/**
+		//		* @brief Simplify failed: try fuse points.
+		//		*/
+		//		else
+		//		{
+		//			scl::kd_tree<6> kdTree;
+		//			BuildKDTree(packVertices, kdTree);
+		//
+		//			float simplifyScale          = meshopt_simplifyScale(&packVertices[0].position.x, packVertices.size(), sizeof(Vertex));
+		//			const float maxDistance      = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
+		//			const float maxUVDistance    = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
+		//			auto vertexMap               = MergeByDistance(packVertices, kdTree, maxDistance, maxUVDistance);
+		//
+		//			FindAndStableBoundaryVertices(packVertices, packIndices, vertexMap);
+		//
+		//			/*for (int i = 0; i < packIndices.size(); i++)
+		//			{
+		//				uint32_t index = packIndices[i];
+		//				packIndices[i] = vertexMap[index];
+		//			}*/
+		//
+		//			/**
+		//			* @brief Simplify meshlets group indices again.
+		//			*/
+		//			size_t targetIndexCount = packIndices.size() * threshold;
+		//
+		//			size_t simplifiedIndexCount = meshopt_simplify(
+		//				simplifiedIndexBuffer.data(),
+		//				packIndices.data(),
+		//				packIndices.size(),
+		//				&packVertices[0].position.x,
+		//				packVertices.size(),
+		//				sizeof(Vertex),
+		//				targetIndexCount,
+		//				targetError,
+		//				options,
+		//				&simplificationError
+		//			);
+		//			simplifiedIndexBuffer.resize(simplifiedIndexCount);
+		//
+		//			if (simplifiedIndexCount < packIndices.size())
+		//			{
+		//				Simplified = true;
+		//			}
+		//
+		//			std::vector<uint32_t> indicesBuffer;
+		//			UnPackIndicesToSparseInputs(indicesBuffer, indicesMapReverse, simplifiedIndexBuffer);
+		//
+		//			AppendMeshlets(meshPack, lod + 1, indicesBuffer);
+		//		}
+		//
+		//	}
+		//
+		//	auto out = std::chrono::high_resolution_clock::now();
+		//	std::cout << "    Lod Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << meshlets.size() << std::endl;
+		//
+		//	/**
+		//	* @brief return if cannot continue simplify meshlet.
+		//	*/
+		//	if (!Simplified) return;
+		//}
 	}
 
 	void MeshProcessor::AppendMeshlets(
-		MeshPack*                    meshPack , 
-		uint32_t                     lod      , 
-		const std::vector<uint32_t>& indices
+		MeshPack*                      meshPack , 
+		uint32_t                       lod      , 
+		const std::vector<glm::ivec3>& primPoints
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -182,26 +182,26 @@ namespace Spices {
 		* Get Const variable.
 		*/
 		const float coneWeight              = 0.5f;
-		const uint32_t vertexIndicesOffset  = meshPack->m_VertexIndices->size();
-		const uint32_t indicesOffset        = meshPack->m_Indices->size();
-		const uint32_t meshletsOffset       = meshPack->m_Meshlets->size();
-
+		const uint32_t primLocationsOffset  = meshPack->m_MeshResource.primitiveLocations.attributes->size();
+		const uint32_t primVerticesOffset   = meshPack->m_MeshResource.primitiveVertices.attributes->size();
+		const uint32_t meshletsOffset       = meshPack->m_MeshResource.meshlets.attributes->size();
+		
 		/**
 		* @brief Init meshopt variable.
 		*/
-		size_t max_meshlets = meshopt_buildMeshletsBound(indices.size(), MESHLET_NVERTICES, MESHLET_NPRIMITIVES);
+		size_t max_meshlets = meshopt_buildMeshletsBound(primPoints.size() * 3, MESHLET_NVERTICES, MESHLET_NPRIMITIVES);
 		std::vector<meshopt_Meshlet> meshoptlets(max_meshlets);
 		std::vector<unsigned int> meshlet_vertices(max_meshlets * MESHLET_NVERTICES);
 		std::vector<unsigned char> meshlet_triangles(max_meshlets * MESHLET_NPRIMITIVES * 3);
-
+		
 		/**
 		* @brief Pack Sparse Inputs.
 		*/
-		std::vector<Vertex> packVertices;
-		std::vector<uint32_t> packIndices;
-		std::unordered_map<uint32_t, uint32_t> indicesMapReverse;
-		PackVertexFromSparseInputs(meshPack, indices, packVertices, packIndices, indicesMapReverse);
-
+		std::vector<glm::vec3>  packPoints;
+		std::vector<glm::ivec3> packPrimPoints;
+		std::unordered_map<uint32_t, uint32_t> primPointsMapReverse;
+		PackVertexFromSparseInputs(meshPack, primPoints, packPoints, packPrimPoints, primPointsMapReverse);
+		
 		/**
 		* @brief Build Meshlets.
 		*/
@@ -209,16 +209,16 @@ namespace Spices {
 			meshoptlets.data(), 
 			meshlet_vertices.data(), 
 			meshlet_triangles.data(), 
-			packIndices.data(),
-			packIndices.size(),
-			&packVertices[0].position.x,
-			packVertices.size(),
-			sizeof(Vertex), 
+			&packPrimPoints[0].x,
+			packPrimPoints.size() * 3,
+			&packPoints[0].x,
+			packPoints.size(),
+			sizeof(glm::vec3), 
 			MESHLET_NVERTICES, 
 			MESHLET_NPRIMITIVES, 
 			coneWeight
 		);
-
+		
 		/**
 		* @brief Adjust meshopt variable.
 		*/
@@ -226,7 +226,7 @@ namespace Spices {
 		meshoptlets.resize(nMeshlet);
 		meshlet_vertices.resize(last.vertex_offset + last.vertex_count);
 		meshlet_triangles.resize(last.triangle_offset + (last.triangle_count * 3 + 3) & ~3);
-
+		
 		/**
 		* @brief Optimize meshlets and compute meshlet bound and cone.
 		*/
@@ -239,56 +239,58 @@ namespace Spices {
 					&meshlet_triangles[meshoptlets[i].triangle_offset],
 					meshoptlets[i].triangle_count, meshoptlets[i].vertex_count
 				);
-
+		
 				const meshopt_Meshlet& m = meshoptlets[i];
 				meshopt_Bounds bounds = meshopt_computeMeshletBounds(
 					&meshlet_vertices[m.vertex_offset],
 					&meshlet_triangles[m.triangle_offset],
 					m.triangle_count,
-					&packVertices[0].position.x,
-					packVertices.size(),
-					sizeof(Vertex)
+					&packPoints[0].x,
+					packPoints.size(),
+					sizeof(glm::vec3)
 				);
-
+		
 				Meshlet meshlet;
 				meshlet.FromMeshopt(meshoptlets[i], bounds);
 				meshlet.primitiveOffset = nPrimitives;
-
-				meshlet.vertexOffset += vertexIndicesOffset;
-				meshlet.primitiveOffset += indicesOffset / 3;
+		
+				meshlet.vertexOffset += primLocationsOffset;
+				meshlet.primitiveOffset += primVerticesOffset;
 				meshlet.lod = lod;
-
-				meshPack->m_Meshlets->push_back(std::move(meshlet));
-
+		
+				meshPack->m_MeshResource.meshlets.attributes->push_back(std::move(meshlet));
+		
 				nPrimitives += m.triangle_count;
 			}
 		}
-
+		
 		/**
 		* @brief Fill in data back to meshpack variable.
 		*/
-		const Meshlet& lastm = (*meshPack->m_Meshlets)[meshletsOffset + nMeshlet - 1];
-		meshPack->m_Indices->resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
-		meshPack->m_VertexIndices->resize(3 * (lastm.primitiveOffset + lastm.nPrimitives), 0);
-
+		const Meshlet& lastm = (*meshPack->m_MeshResource.meshlets.attributes)[meshletsOffset + nMeshlet - 1];
+		meshPack->m_MeshResource.primitivePoints    .attributes->resize(lastm.primitiveOffset + lastm.nPrimitives);
+		meshPack->m_MeshResource.primitiveVertices  .attributes->resize(lastm.primitiveOffset + lastm.nPrimitives);
+		meshPack->m_MeshResource.primitiveLocations .attributes->resize(lastm.primitiveOffset + lastm.nPrimitives);
+		meshPack->m_MeshResource.vertices           .attributes->resize(lastm.primitiveOffset + lastm.nPrimitives);
+		
 		for (uint32_t i = 0; i < nMeshlet; i++)
 		{
 			const meshopt_Meshlet& m = meshoptlets[i];
-			const Meshlet& ml = (*meshPack->m_Meshlets)[meshletsOffset + i];
-
+			const Meshlet& ml = (*meshPack->m_MeshResource.meshlets.attributes)[meshletsOffset + i];
+		
 			for (uint32_t j = 0; j < m.triangle_count; j++)
 			{
 				uint32_t a = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 0] + m.vertex_offset;
 				uint32_t b = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 1] + m.vertex_offset;
 				uint32_t c = (uint32_t)meshlet_triangles[m.triangle_offset + 3 * j + 2] + m.vertex_offset;
-
-				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 0] = indicesMapReverse[meshlet_vertices[a]];
-				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 1] = indicesMapReverse[meshlet_vertices[b]];
-				(*meshPack->m_Indices)[3 * ml.primitiveOffset + 3 * j + 2] = indicesMapReverse[meshlet_vertices[c]];
-
-				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 0] = a + vertexIndicesOffset;
-				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 1] = b + vertexIndicesOffset;
-				(*meshPack->m_VertexIndices)[3 * ml.primitiveOffset + 3 * j + 2] = c + vertexIndicesOffset;
+		
+				(*meshPack->m_MeshResource.primitivePoints.attributes)[ml.primitiveOffset + j].x = primPointsMapReverse[meshlet_vertices[a]];
+				(*meshPack->m_MeshResource.primitivePoints.attributes)[ml.primitiveOffset + j].y = primPointsMapReverse[meshlet_vertices[b]];
+				(*meshPack->m_MeshResource.primitivePoints.attributes)[ml.primitiveOffset + j].z = primPointsMapReverse[meshlet_vertices[c]];
+		
+				(*meshPack->m_MeshResource.primitiveLocations.attributes)[ml.primitiveOffset + j].x = a + primLocationsOffset;
+				(*meshPack->m_MeshResource.primitiveLocations.attributes)[ml.primitiveOffset + j].y = b + primLocationsOffset;
+				(*meshPack->m_MeshResource.primitiveLocations.attributes)[ml.primitiveOffset + j].z = c + primLocationsOffset;
 			}
 		}
 	}
@@ -326,8 +328,8 @@ namespace Spices {
 			const auto& meshlet = meshlets[meshletIndex];
 			auto getVertexIndex = [&](size_t index) 
 			{
-				uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
-				return vertexIndex;
+				//uint32_t vertexIndex = (*meshPack->m_Indices)[index + meshlet.primitiveOffset * 3];
+				//return vertexIndex;
 			};
 
 			const size_t triangleCount = meshlet.nPrimitives;
@@ -337,8 +339,8 @@ namespace Spices {
 				for (size_t i = 0; i < 3; i++)
 				{
 					Edge edge;
-					edge.first  = getVertexIndex(i + triangleIndex * 3);
-					edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
+					//edge.first  = getVertexIndex(i + triangleIndex * 3);
+					//edge.second = getVertexIndex(((i + 1) % 3) + triangleIndex * 3);
 
 					edges2Meshlets[edge].insert(meshletIndex);
 					meshlets2Edges[meshletIndex].push_back(edge);
@@ -484,10 +486,10 @@ namespace Spices {
 	}
 
 	std::vector<uint32_t> MeshProcessor::MergeByDistance(
-		const std::vector<Vertex>& vertices      , 
-		scl::kd_tree<6>&           kdTree        , 
-		float                      maxDistance   , 
-		float                      maxUVDistance
+		const std::vector<glm::vec3>& vertices      ,
+		scl::kd_tree<6>&              kdTree        , 
+		float                         maxDistance   , 
+		float                         maxUVDistance
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -500,19 +502,19 @@ namespace Spices {
 		*/
 		for (uint32_t v = 0; v < vertices.size(); v++)
 		{
-			const Vertex& vertex = vertices[v];
-			auto items = kdTree.range_search(
-				{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
-				{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
-			);
-			
-			for (const auto& item : items)
-			{
-				if (vertexRemap[item[item.size() - 1]] == -1)
-				{
-					vertexRemap[item[item.size() - 1]] = v;
-				}
-			}
+			//const Vertex& vertex = vertices[v];
+			//auto items = kdTree.range_search(
+			//	{ vertex.position.x, vertex.position.y, vertex.position.z, vertex.texCoord.x, vertex.texCoord.y, (float)v },
+			//	{ maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX }
+			//);
+			//
+			//for (const auto& item : items)
+			//{
+			//	if (vertexRemap[item[item.size() - 1]] == -1)
+			//	{
+			//		vertexRemap[item[item.size() - 1]] = v;
+			//	}
+			//}
 		}
 
 		/**
@@ -529,7 +531,7 @@ namespace Spices {
 		return vertexRemap;
 	}
 
-	bool MeshProcessor::BuildKDTree(const std::vector<Vertex>& vertices, scl::kd_tree<6>& kdTree)
+	bool MeshProcessor::BuildKDTree(const std::vector<glm::vec3>& vertices, scl::kd_tree<6>& kdTree)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -538,8 +540,8 @@ namespace Spices {
 
 		for (int i = 0; i < vertices.size(); i++)
 		{
-			const Vertex& vt = vertices[i];
-			points[i] = { vt.position.x, vt.position.y, vt.position.z, vt.texCoord.x, vt.texCoord.y, (float)i };
+			//const Vertex& vt = vertices[i];
+			//points[i] = { vt.position.x, vt.position.y, vt.position.z, vt.texCoord.x, vt.texCoord.y, (float)i };
 		}
 		
 		kdTree.insert(points);
@@ -548,9 +550,9 @@ namespace Spices {
 	}
 
 	bool MeshProcessor::FindAndStableBoundaryVertices(
-		const std::vector<Vertex>&    vertices    , 
-		std::vector<uint32_t>&        indices     , 
-		std::vector<uint32_t>&        verticesMap
+		const std::vector<glm::vec3>&    vertices    ,
+		std::vector<uint32_t>&           indices     , 
+		std::vector<uint32_t>&           verticesMap
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -662,13 +664,13 @@ namespace Spices {
 		{
 			if (!pair.second.valid()) continue;
 
-			glm::vec3 l = glm::normalize(vertices[pair.second.next].position - vertices[pair.first].position);
-			glm::vec3 r = glm::normalize(vertices[pair.second.previous].position - vertices[pair.first].position);
-
-			if (glm::dot(l, r) > -0.98f)
-			{
-				//boundary[pair.first] = true;
-			}
+			//glm::vec3 l = glm::normalize(vertices[pair.second.next].position - vertices[pair.first].position);
+			//glm::vec3 r = glm::normalize(vertices[pair.second.previous].position - vertices[pair.first].position);
+			//
+			//if (glm::dot(l, r) > -0.98f)
+			//{
+			//	//boundary[pair.first] = true;
+			//}
 		}
 
 #endif
@@ -678,34 +680,46 @@ namespace Spices {
 
 	bool MeshProcessor::PackVertexFromSparseInputs(
 		MeshPack*                               meshPack          , 
-		const std::vector<uint32_t>             indices           , 
-		std::vector<Vertex>&                    packVertices      , 
-		std::vector<uint32_t>&                  packIndices       , 
-		std::unordered_map<uint32_t, uint32_t>& indicesMapReverse
+		const std::vector<glm::ivec3>           primPoints        ,
+		std::vector<glm::vec3>&                 packPoints        ,
+		std::vector<glm::ivec3>&                packPrimPoints    ,
+		std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse
 	)
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unordered_map<uint32_t, uint32_t> indicesMap;  // key: original index, value: new index.
-		for (auto& index : indices)
+		std::unordered_map<uint32_t, uint32_t> primPointsMap;  // key: original index, value: new index.
+		for (auto& pt : primPoints)
 		{
-			if (indicesMap.find(index) == indicesMap.end())
+			if (primPointsMap.find(pt.x) == primPointsMap.end())
 			{
-				indicesMap[index] = indicesMap.size();
+				primPointsMap[pt.x] = primPointsMap.size();
+			}
+
+			if (primPointsMap.find(pt.y) == primPointsMap.end())
+			{
+				primPointsMap[pt.y] = primPointsMap.size();
+			}
+
+			if (primPointsMap.find(pt.z) == primPointsMap.end())
+			{
+				primPointsMap[pt.z] = primPointsMap.size();
 			}
 		}
 
-		packVertices.resize(indicesMap.size());
-		for (auto& pair : indicesMap)
+		packPoints.resize(primPointsMap.size());
+		for (auto& pair : primPointsMap)
 		{
-			packVertices[pair.second] = (*meshPack->m_Vertices)[pair.first];
-			indicesMapReverse[pair.second] = pair.first;
+			packPoints[pair.second] = (*meshPack->m_MeshResource.positions.attributes)[pair.first];
+			primPointsMapReverse[pair.second] = pair.first;
 		}
 
-		packIndices.resize(indices.size());
-		for (int i = 0; i < indices.size(); i++)
+		packPrimPoints.resize(primPoints.size());
+		for (int i = 0; i < primPoints.size(); i++)
 		{
-			packIndices[i] = indicesMap[indices[i]];
+			packPrimPoints[i].x = primPointsMap[primPoints[i].x];
+			packPrimPoints[i].y = primPointsMap[primPoints[i].y];
+			packPrimPoints[i].z = primPointsMap[primPoints[i].z];
 		}
 
 		return true;

@@ -42,10 +42,10 @@ namespace Spices {
 		using Normals             = Attribute<glm::vec3>;                // Normal
 		using Colors              = Attribute<glm::vec3>;                // Color
 		using TexCoords           = Attribute<glm::vec2>;                // TexCoord
-		using Vertices            = Attribute<std::array<uint32_t, 4>>;  // Vertex.
-		using PrimitivePoints     = Attribute<glm::uvec3>;               // PrimPoints
-		using PrimitiveVertices   = Attribute<glm::uvec3>;               // PrimVertices.
-		using PrimitiveLocations  = Attribute<glm::uvec3>;               // PrimLocation.
+		using Vertices            = Attribute<glm::ivec4>;               // Vertex.
+		using PrimitivePoints     = Attribute<glm::ivec3>;               // PrimPoints
+		using PrimitiveVertices   = Attribute<glm::ivec3>;               // PrimVertices.
+		using PrimitiveLocations  = Attribute<glm::ivec3>;               // PrimLocation.
 		using Meshlets            = Attribute<Meshlet>;                  // PrimMeshlet.
 
 		Positions                     positions;
@@ -215,7 +215,7 @@ namespace Spices {
 		* @brief Get PrimVertices array.
 		* @return Returns the PrimVertices array.
 		*/
-		const std::vector<glm::uvec3>& GetPrimVertices() const { return *m_MeshResource.primitiveVertices.attributes; }
+		const std::vector<glm::ivec3>& GetPrimVertices() const { return *m_MeshResource.primitiveVertices.attributes; }
 
 		/**
 		* @brief Get Meshlets array.

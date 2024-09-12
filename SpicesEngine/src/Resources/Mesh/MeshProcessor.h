@@ -40,9 +40,9 @@ namespace Spices {
 		* @param[in] indices Indices Buffer.
 		*/
 		static void AppendMeshlets(
-			MeshPack*                    meshPack , 
-			uint32_t                     lod      , 
-			const std::vector<uint32_t>& indices
+			MeshPack*                      meshPack , 
+			uint32_t                       lod      , 
+			const std::vector<glm::ivec3>& primPoints
 		);
 
 		/**
@@ -66,9 +66,9 @@ namespace Spices {
 		*/
 		static std::vector<uint32_t> MergeByDistance(
 			const std::vector<glm::vec3>& vertices      ,
-			scl::kd_tree<6>&           kdTree        , 
-			float                      maxDistance   , 
-			float                      maxUVDistance
+			scl::kd_tree<6>&              kdTree        , 
+			float                         maxDistance   , 
+			float                         maxUVDistance
 		);
 
 		/**
@@ -89,10 +89,10 @@ namespace Spices {
 
 		static bool PackVertexFromSparseInputs(
 			MeshPack*                               meshPack          , 
-			const std::vector<uint32_t>             indices           , 
-			std::vector<glm::vec3>&                 packVertices      ,
-			std::vector<uint32_t>&                  packIndices       , 
-			std::unordered_map<uint32_t, uint32_t>& indicesMapReverse
+			const std::vector<glm::ivec3>           primPoints        ,
+			std::vector<glm::vec3>&                 packPoints        ,
+			std::vector<glm::ivec3>&                packPrimPoints    ,
+			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse
 		);
 
 		static bool UnPackIndicesToSparseInputs(
