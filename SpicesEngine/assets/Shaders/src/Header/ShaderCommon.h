@@ -192,7 +192,6 @@ struct MeshDesc
 	uint64_t texCoordsAddress;                /* @brief Address of the TexCoords buffer.                  */
 	uint64_t verticesAddress;                 /* @brief Address of the Vertices buffer.                   */
 	uint64_t primitivePointsAddress;          /* @brief Address of the PrimitivePoints buffer.            */
-	uint64_t primitiveVerticesAddress;        /* @brief Address of the PrimitiveVertices buffer.          */
 	uint64_t primitiveLocationsAddress;       /* @brief Address of the PrimitiveLocationsAddress buffer.  */
 	uint64_t materialParameterAddress;        /* @brief Address of the Material Parameter buffer.         */
 	uint64_t meshletsAddress;                 /* @brief Address of the Meshlet Buffer.                    */

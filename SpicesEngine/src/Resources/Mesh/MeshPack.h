@@ -44,7 +44,6 @@ namespace Spices {
 		using TexCoords           = Attribute<glm::vec2>;                // TexCoord
 		using Vertices            = Attribute<glm::ivec4>;               // Vertex.
 		using PrimitivePoints     = Attribute<glm::ivec3>;               // PrimPoints
-		using PrimitiveVertices   = Attribute<glm::ivec3>;               // PrimVertices.
 		using PrimitiveLocations  = Attribute<glm::ivec3>;               // PrimLocation.
 		using Meshlets            = Attribute<Meshlet>;                  // PrimMeshlet.
 
@@ -54,7 +53,6 @@ namespace Spices {
 		TexCoords                     texCoords;
 		Vertices                      vertices;
 		PrimitivePoints               primitivePoints;
-		PrimitiveVertices             primitiveVertices;
 		PrimitiveLocations            primitiveLocations;
 		Meshlets                      meshlets;
 
@@ -99,7 +97,6 @@ namespace Spices {
 		Update_F(texCoordsAddress               )
 		Update_F(verticesAddress                )
 		Update_F(primitivePointsAddress         )
-		Update_F(primitiveVerticesAddress       )
 		Update_F(primitiveLocationsAddress      )
 		Update_F(materialParameterAddress       )
 		Update_F(meshletsAddress                )
@@ -210,12 +207,6 @@ namespace Spices {
 		* @param[in] commandBuffer Which command buffer we will submit commands.
 		*/
 		void OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const;
-		
-		/**
-		* @brief Get PrimVertices array.
-		* @return Returns the PrimVertices array.
-		*/
-		const std::vector<glm::ivec3>& GetPrimVertices() const { return *m_MeshResource.primitiveVertices.attributes; }
 
 		/**
 		* @brief Get Meshlets array.

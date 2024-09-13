@@ -37,7 +37,7 @@ namespace Spices {
 		* @brief Create and Append Meshlets to MeshPack use given indices.
 		* @param[in] meshPack MeshPack.
 		* @param[in] lod current lod level.
-		* @param[in] indices Indices Buffer.
+		* @param[in] primPoints PrimPoints Buffer.
 		*/
 		static void AppendMeshlets(
 			MeshPack*                      meshPack , 
@@ -73,12 +73,12 @@ namespace Spices {
 
 		/**
 		* @brief Build KDTree use specific meshlets.
-		* @param[in] meshPack MeshPack.
+		* @param[in] points Points.
 		* @param[in] kdTree .
 		*/
 		static bool BuildKDTree(
-			const std::vector<glm::vec3>& vertices,
-			scl::kd_tree<6>& kdTree
+			const std::vector<glm::vec3>& points,
+			scl::kd_tree<6>&              kdTree
 		);
 
 		static bool FindAndStableBoundaryVertices(
@@ -89,16 +89,17 @@ namespace Spices {
 
 		static bool PackVertexFromSparseInputs(
 			MeshPack*                               meshPack          , 
-			const std::vector<glm::ivec3>           primPoints        ,
+			const std::vector<glm::ivec4>           vertices          ,
 			std::vector<glm::vec3>&                 packPoints        ,
 			std::vector<glm::ivec3>&                packPrimPoints    ,
+			std::vector<glm::ivec4>&                packVertices      ,
 			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse
 		);
 
 		static bool UnPackIndicesToSparseInputs(
-			std::vector<uint32_t>&                  indices           , 
-			std::unordered_map<uint32_t, uint32_t>& indicesMapReverse , 
-			const std::vector<uint32_t>&            packIndices
+			std::vector<glm::ivec3>&                primPoints           , 
+			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse , 
+			const std::vector<glm::ivec3>&          packPrimPoints
 		);
 	};
 }

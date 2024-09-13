@@ -38,15 +38,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		positions.CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
-		normals.CreateBuffer();
-		colors.CreateBuffer();
-		texCoords.CreateBuffer();
-		vertices.CreateBuffer();
-		primitivePoints.CreateBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
-		primitiveVertices.CreateBuffer();
-		primitiveLocations.CreateBuffer();
-		meshlets.CreateBuffer();
+		positions          .CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
+		normals            .CreateBuffer();
+		colors             .CreateBuffer();
+		texCoords          .CreateBuffer();
+		vertices           .CreateBuffer();
+		primitivePoints    .CreateBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
+		primitiveLocations .CreateBuffer();
+		meshlets           .CreateBuffer();
 	}
 
 	MeshDesc::MeshDesc()
@@ -60,7 +59,6 @@ namespace Spices {
 		texCoordsAddress            = 0;
 		verticesAddress             = 0;
 		primitivePointsAddress      = 0;
-		primitiveVerticesAddress    = 0;
 		primitiveLocationsAddress   = 0;
 		materialParameterAddress    = 0;
 		meshletsAddress             = 0;
@@ -111,7 +109,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size() * 3), 1, 0, 0, 0);
 	}
 
 	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
@@ -242,22 +240,20 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_NTasks = m_MeshResource.meshlets.attributes->size() / SUBGROUP_SIZE + 1;
-
 		m_MeshTaskIndirectDrawCommand.firstTask = 0;
 		m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
 
 		m_MeshResource.CreateBuffer();
 
-		m_Desc.UpdatepositionsAddress(m_MeshResource.positions.buffer->GetAddress());
-		m_Desc.UpdatenormalsAddress(m_MeshResource.normals.buffer->GetAddress());
-		m_Desc.UpdatecolorsAddress(m_MeshResource.colors.buffer->GetAddress());
-		m_Desc.UpdatetexCoordsAddress(m_MeshResource.texCoords.buffer->GetAddress());
-		m_Desc.UpdateverticesAddress(m_MeshResource.vertices.buffer->GetAddress());
-		m_Desc.UpdateprimitivePointsAddress(m_MeshResource.primitivePoints.buffer->GetAddress());
-		m_Desc.UpdateprimitiveVerticesAddress(m_MeshResource.primitiveVertices.buffer->GetAddress());
-		m_Desc.UpdateprimitiveLocationsAddress(m_MeshResource.primitiveLocations.buffer->GetAddress());
-		m_Desc.UpdatemeshletsAddress(m_MeshResource.meshlets.buffer->GetAddress());
-		m_Desc.UpdatenMeshlets(m_MeshResource.meshlets.attributes->size());
+		m_Desc.UpdatepositionsAddress          (m_MeshResource.positions.buffer          ->GetAddress());
+		m_Desc.UpdatenormalsAddress            (m_MeshResource.normals.buffer            ->GetAddress());
+		m_Desc.UpdatecolorsAddress             (m_MeshResource.colors.buffer             ->GetAddress());
+		m_Desc.UpdatetexCoordsAddress          (m_MeshResource.texCoords.buffer          ->GetAddress());
+		m_Desc.UpdateverticesAddress           (m_MeshResource.vertices.buffer           ->GetAddress());
+		m_Desc.UpdateprimitivePointsAddress    (m_MeshResource.primitivePoints.buffer    ->GetAddress());
+		m_Desc.UpdateprimitiveLocationsAddress (m_MeshResource.primitiveLocations.buffer ->GetAddress());
+		m_Desc.UpdatemeshletsAddress           (m_MeshResource.meshlets.buffer           ->GetAddress());
+		m_Desc.UpdatenMeshlets                 (m_MeshResource.meshlets.attributes       ->size());
 	}
 
 	bool PlanePack::OnCreatePack(bool isCreateBuffer)
@@ -278,9 +274,6 @@ namespace Spices {
 				m_MeshResource.normals  .attributes->push_back({ 0.0f, 0.0f, 1.0f });
 				m_MeshResource.colors   .attributes->push_back({ 1.0f, 1.0f, 1.0f });
 				m_MeshResource.texCoords.attributes->push_back({ colRamp + 0.5, 0.5 - rowRamp });
-
-				const uint32_t vtIndex = i * m_Columns + j;
-				m_MeshResource.vertices .attributes->push_back({ vtIndex, vtIndex, vtIndex, vtIndex });
 			}
 		}
 
@@ -291,10 +284,16 @@ namespace Spices {
 				const uint32_t vtIndex = i * m_Columns + j;
 				
 				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+				
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + 1));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + m_Columns + 1));
+
 				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 
-				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
-				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + m_Columns + 1));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + m_Columns));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex));
 			}
 		}
 		
@@ -427,9 +426,6 @@ namespace Spices {
 				m_MeshResource.normals  .attributes->push_back(glm::normalize(position));
 				m_MeshResource.colors   .attributes->push_back({ 1.0f, 1.0f, 1.0f });
 				m_MeshResource.texCoords.attributes->push_back({ j / static_cast<float>(m_Columns - 1), i / static_cast<float>(m_Rows - 1) });
-
-				const uint32_t vtIndex = i * m_Columns + j;
-				m_MeshResource.vertices.attributes->push_back({ vtIndex, vtIndex, vtIndex, vtIndex });
 			}
 		}
 		
@@ -440,10 +436,16 @@ namespace Spices {
 				const uint32_t vtIndex = i * m_Columns + j;
 
 				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + 1));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + m_Columns + 1));
+
 				m_MeshResource.primitivePoints.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 
-				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
-				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + m_Columns + 1));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex + m_Columns));
+				m_MeshResource.vertices.attributes->push_back(glm::ivec4(vtIndex));
 			}
 		}
 

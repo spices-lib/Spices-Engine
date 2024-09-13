@@ -56,10 +56,22 @@ namespace Spices {
 	struct Edge : public SpicesShader::HalfEdge
 	{
 	public:
+
 		/**
 		* @brief Constructor Function.
 		*/
 		Edge() = default;
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] f first.
+		* @param[in] s seconf.
+		*/
+		Edge(uint32_t f, uint32_t s)
+		{
+			first = f;
+			second = s;
+		};
 
 		/**
 		* @brief Destructor Function.
@@ -95,10 +107,22 @@ namespace Spices {
 	struct HalfEdge : public SpicesShader::HalfEdge
 	{
 	public:
+
 		/**
 		* @brief Constructor Function.
 		*/
 		HalfEdge() = default;
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] f first.
+		* @param[in] s seconf.
+		*/
+		HalfEdge(uint32_t f, uint32_t s)
+		{
+			first = f;
+			second = s;
+		};
 
 		/**
 		* @brief Destructor Function.

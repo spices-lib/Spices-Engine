@@ -33,13 +33,13 @@ namespace Spices {
 		}
 		
 		// skybox
-		{
+		/*{
 			Entity skyboxentity = CreateEntity("SkyBox");
 			SkyBoxComponent& skyboxComp = skyboxentity.AddComponent<SkyBoxComponent>();
 			skyboxComp.SetMaterial("BasePassRenderer.SkyBox.little_paris_eiffel_tower_4k");
 			TransformComponent& transformComp = skyboxentity.GetComponent<TransformComponent>();
 			transformComp.SetScale({5000, 5000, 5000});
-		}
+		}*/
 
 		// directionallight
 		{

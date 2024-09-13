@@ -88,15 +88,6 @@ layout(buffer_reference, scalar, buffer_reference_align = 8) buffer PrimitivePoi
 PrimitivePoints primitivePoints;
 
 /**
-* @brief Mesh PrimitiveVertices Buffer.
-*/
-layout(buffer_reference, scalar, buffer_reference_align = 8) buffer PrimitiveVertices
-{
-    ivec3 i[];
-};
-PrimitiveVertices primitiveVertices;
-
-/**
 * @brief Mesh PrimitiveLocations Buffer.
 */
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer PrimitiveLocations
@@ -132,7 +123,6 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
     texCoords           = TexCoords(desc.texCoordsAddress);
     vertices            = Vertices(desc.verticesAddress);
     primitivePoints     = PrimitivePoints(desc.primitivePointsAddress);
-    primitiveVertices   = PrimitiveVertices(desc.primitiveVerticesAddress);
     primitiveLocations  = PrimitiveLocations(desc.primitiveLocationsAddress);
     meshlets            = Meshlets(desc.meshletsAddress);
     
@@ -151,11 +141,9 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
 */
 Vertex[3] UnpackVertexFromPrimitiveVertices(in uint primitiveID)
 {
-    ivec3 primVertex = primitiveVertices.i[primitiveID];
-
-    ivec4 vti0 = vertices.i[primVertex.x];
-    ivec4 vti1 = vertices.i[primVertex.y];
-    ivec4 vti2 = vertices.i[primVertex.z];
+    ivec4 vti0 = vertices.i[3 * primitiveID + 0];
+    ivec4 vti1 = vertices.i[3 * primitiveID + 1];
+    ivec4 vti2 = vertices.i[3 * primitiveID + 2];
 
     Vertex v0;
     v0.position  = positions.i[vti0.x];
