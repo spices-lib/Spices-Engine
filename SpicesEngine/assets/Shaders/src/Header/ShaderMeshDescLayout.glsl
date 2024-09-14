@@ -74,7 +74,7 @@ TexCoords texCoords;
 */
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer Vertices 
 { 
-    ivec4 i[];           
+    uvec4 i[];           
 };
 Vertices vertices;
 
@@ -83,16 +83,25 @@ Vertices vertices;
 */
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer PrimitivePoints
 {
-    ivec3 i[];
+    uvec3 i[];
 };
 PrimitivePoints primitivePoints;
+
+/**
+* @brief Mesh PrimitiveVertices Buffer.
+*/
+layout(buffer_reference, scalar, buffer_reference_align = 8) buffer PrimitiveVertices
+{
+    uvec3 i[];
+};
+PrimitiveVertices primitiveVertices;
 
 /**
 * @brief Mesh PrimitiveLocations Buffer.
 */
 layout(buffer_reference, scalar, buffer_reference_align = 8) buffer PrimitiveLocations
 {
-    ivec3 i[];
+    uvec3 i[];
 };
 PrimitiveLocations primitiveLocations;
 
@@ -123,6 +132,7 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
     texCoords           = TexCoords(desc.texCoordsAddress);
     vertices            = Vertices(desc.verticesAddress);
     primitivePoints     = PrimitivePoints(desc.primitivePointsAddress);
+    primitiveVertices   = PrimitiveVertices(desc.primitiveVerticesAddress);
     primitiveLocations  = PrimitiveLocations(desc.primitiveLocationsAddress);
     meshlets            = Meshlets(desc.meshletsAddress);
     
@@ -141,29 +151,31 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
 */
 Vertex[3] UnpackVertexFromPrimitiveVertices(in uint primitiveID)
 {
-    ivec4 vti0 = vertices.i[3 * primitiveID + 0];
-    ivec4 vti1 = vertices.i[3 * primitiveID + 1];
-    ivec4 vti2 = vertices.i[3 * primitiveID + 2];
-
-    Vertex v0;
-    v0.position  = positions.i[vti0.x];
-    v0.normal    =   normals.i[vti0.y];
-    v0.color     =    colors.i[vti0.z];
-    v0.texCoord  = texCoords.i[vti0.w];
-
-    Vertex v1;
-    v1.position  = positions.i[vti1.x];
-    v1.normal    =   normals.i[vti1.y];
-    v1.color     =    colors.i[vti1.z];
-    v1.texCoord  = texCoords.i[vti1.w];
-
-    Vertex v2;
-    v2.position  = positions.i[vti2.x];
-    v2.normal    =   normals.i[vti2.y];
-    v2.color     =    colors.i[vti2.z];
-    v2.texCoord  = texCoords.i[vti2.w];
-
-    Vertex[3] vts = { v0, v1, v2 };
+    uvec3 primVertex   = primitiveVertices.i[primitiveID];
+                       
+    uvec4 vti0         = vertices.i[primVertex.x];
+    uvec4 vti1         = vertices.i[primVertex.y];
+    uvec4 vti2         = vertices.i[primVertex.z];
+                       
+    Vertex v0;         
+    v0.position        = positions.i[vti0.x];
+    v0.normal          =   normals.i[vti0.y];
+    v0.color           =    colors.i[vti0.z];
+    v0.texCoord        = texCoords.i[vti0.w];
+                       
+    Vertex v1;         
+    v1.position        = positions.i[vti1.x];
+    v1.normal          =   normals.i[vti1.y];
+    v1.color           =    colors.i[vti1.z];
+    v1.texCoord        = texCoords.i[vti1.w];
+                       
+    Vertex v2;         
+    v2.position        = positions.i[vti2.x];
+    v2.normal          =   normals.i[vti2.y];
+    v2.color           =    colors.i[vti2.z];
+    v2.texCoord        = texCoords.i[vti2.w];
+                       
+    Vertex[3] vts      = { v0, v1, v2 };
 
     return vts;
 }

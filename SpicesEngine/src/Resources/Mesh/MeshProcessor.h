@@ -37,12 +37,12 @@ namespace Spices {
 		* @brief Create and Append Meshlets to MeshPack use given indices.
 		* @param[in] meshPack MeshPack.
 		* @param[in] lod current lod level.
-		* @param[in] primPoints PrimPoints Buffer.
+		* @param[in] primVertices PrimVertices Buffer.
 		*/
 		static void AppendMeshlets(
 			MeshPack*                      meshPack , 
 			uint32_t                       lod      , 
-			const std::vector<glm::ivec3>& primPoints
+			const std::vector<glm::uvec3>& primVertices
 		);
 
 		/**
@@ -73,12 +73,16 @@ namespace Spices {
 
 		/**
 		* @brief Build KDTree use specific meshlets.
+		* @param[in] meshPack MeshPack.
 		* @param[in] points Points.
+		* @param[in] primVertices PrimVertices.
 		* @param[in] kdTree .
 		*/
 		static bool BuildKDTree(
-			const std::vector<glm::vec3>& points,
-			scl::kd_tree<6>&              kdTree
+			MeshPack*                      meshPack     ,
+			const std::vector<glm::vec3>&  points       ,
+			const std::vector<glm::uvec3>& primVertices ,
+			scl::kd_tree<6>&               kdTree
 		);
 
 		static bool FindAndStableBoundaryVertices(
@@ -88,18 +92,19 @@ namespace Spices {
 		);
 
 		static bool PackVertexFromSparseInputs(
-			MeshPack*                               meshPack          , 
-			const std::vector<glm::ivec4>           vertices          ,
-			std::vector<glm::vec3>&                 packPoints        ,
-			std::vector<glm::ivec3>&                packPrimPoints    ,
-			std::vector<glm::ivec4>&                packVertices      ,
-			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse
+			MeshPack*                               meshPack              , 
+			const std::vector<glm::uvec3>           primVertices          ,
+			std::vector<glm::vec3>&                 packPoints            ,
+			std::vector<glm::uvec3>&                packPrimPoints        ,
+			std::vector<glm::uvec3>&                packPrimVertices      ,
+			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse  ,
+			std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse
 		);
 
 		static bool UnPackIndicesToSparseInputs(
-			std::vector<glm::ivec3>&                primPoints           , 
+			std::vector<glm::uvec3>&                primVertices         , 
 			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse , 
-			const std::vector<glm::ivec3>&          packPrimPoints
+			const std::vector<glm::uvec3>&          packPrimPoints
 		);
 	};
 }

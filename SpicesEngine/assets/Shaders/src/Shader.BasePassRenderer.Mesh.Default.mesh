@@ -81,7 +81,7 @@ void main()
         
     if(localId >= meshlet.nPrimitives) return;
     
-    ivec3 primLocation = primitiveLocations.i[meshlet.primitiveOffset + localId];
+    uvec3 primLocation = primitiveLocations.i[meshlet.primitiveOffset + localId];
 
     primLocation -= ivec3(meshlet.vertexOffset);
     uint arrayIndices[3] = { primLocation.x, primLocation.y, primLocation.z };

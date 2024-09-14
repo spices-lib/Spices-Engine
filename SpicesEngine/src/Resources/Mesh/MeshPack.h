@@ -42,10 +42,12 @@ namespace Spices {
 		using Normals             = Attribute<glm::vec3>;                // Normal
 		using Colors              = Attribute<glm::vec3>;                // Color
 		using TexCoords           = Attribute<glm::vec2>;                // TexCoord
-		using Vertices            = Attribute<glm::ivec4>;               // Vertex.
-		using PrimitivePoints     = Attribute<glm::ivec3>;               // PrimPoints
-		using PrimitiveLocations  = Attribute<glm::ivec3>;               // PrimLocation.
-		using Meshlets            = Attribute<Meshlet>;                  // PrimMeshlet.
+		using Vertices            = Attribute<glm::uvec4>;               // Vertex.
+
+		using PrimitivePoints     = Attribute<glm::uvec3>;               // PrimPoints
+		using PrimitiveVertices   = Attribute<glm::uvec3>;               // PrimVertices
+		using PrimitiveLocations  = Attribute<glm::uvec3>;               // PrimLocation
+		using Meshlets            = Attribute<Meshlet>;                  // PrimMeshlet
 
 		Positions                     positions;
 		Normals                       normals;
@@ -53,6 +55,7 @@ namespace Spices {
 		TexCoords                     texCoords;
 		Vertices                      vertices;
 		PrimitivePoints               primitivePoints;
+		PrimitiveVertices             primitiveVertices;
 		PrimitiveLocations            primitiveLocations;
 		Meshlets                      meshlets;
 
@@ -97,6 +100,7 @@ namespace Spices {
 		Update_F(texCoordsAddress               )
 		Update_F(verticesAddress                )
 		Update_F(primitivePointsAddress         )
+		Update_F(primitiveVerticesAddress       )
 		Update_F(primitiveLocationsAddress      )
 		Update_F(materialParameterAddress       )
 		Update_F(meshletsAddress                )
