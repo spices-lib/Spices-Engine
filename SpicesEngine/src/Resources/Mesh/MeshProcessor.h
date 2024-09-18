@@ -95,12 +95,12 @@ namespace Spices {
 			const std::vector<glm::uvec3>           primVertices          ,
 			std::vector<glm::vec3>&                 packPoints            ,
 			std::vector<glm::uvec3>&                packPrimPoints        ,
-			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse
+			std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse
 		);
 
 		static bool UnPackIndicesToSparseInputs(
-			std::vector<glm::uvec3>&                primVertices         , 
-			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse , 
+			std::vector<glm::uvec3>&                primVertices           , 
+			std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse ,
 			const std::vector<glm::uvec3>&          packPrimPoints
 		);
 	};
