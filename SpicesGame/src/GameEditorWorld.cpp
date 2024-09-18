@@ -138,7 +138,7 @@ namespace Spices {
 
 			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(18, 18);
 
-			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
 		}

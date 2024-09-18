@@ -41,7 +41,7 @@ task;
 /**
 * @brief Output triangles meshlet per workgroup.
 */
-layout(triangles, max_vertices = MESHLET_NVERTICES * 3, max_primitives = MESHLET_NPRIMITIVES) out;
+layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPRIMITIVES) out;
 
 /**
 * @brief Mesh Shader Output to Fragment Shader.

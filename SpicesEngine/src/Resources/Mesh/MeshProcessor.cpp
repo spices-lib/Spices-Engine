@@ -24,9 +24,9 @@ namespace Spices {
 		auto primVertices        = meshPack->m_MeshResource.primitiveVertices.attributes;
 		meshPack->m_MeshResource.primitiveVertices.attributes = std::make_shared<std::vector<glm::uvec3>>();
 		AppendMeshlets(meshPack, 0, *primVertices);
-
+		std::cout << meshPack->m_MeshResource.meshlets.attributes->size() << std::endl;
 		uint32_t meshletStart = 0;
-		const uint32_t maxLod = 0;
+		const uint32_t maxLod = 25;
 		for (uint32_t lod = 0; lod < maxLod; ++lod)
 		{
 			auto in = std::chrono::high_resolution_clock::now();
@@ -153,7 +153,7 @@ namespace Spices {
 		std::vector<glm::uvec3> packPrimPoints;
 		std::unordered_map<uint32_t, uint32_t> primPointsMapReverse;
 		PackVertexFromSparseInputs(meshPack, primVertices, packPoints, packPrimPoints, primPointsMapReverse);
-		
+
 		/**
 		* @brief Build Meshlets.
 		*/
@@ -175,8 +175,8 @@ namespace Spices {
 		* @brief Adjust meshopt variable.
 		*/
 		const meshopt_Meshlet& last = meshoptlets[nMeshlet - 1];
-		meshoptlets.resize(nMeshlet);
-		meshlet_vertices.resize(last.vertex_offset + last.vertex_count);
+		meshoptlets      .resize(nMeshlet);
+		meshlet_vertices .resize(last.vertex_offset + last.vertex_count);
 		meshlet_triangles.resize(last.triangle_offset + (last.triangle_count * 3 + 3) & ~3);
 		
 		/**
@@ -197,8 +197,8 @@ namespace Spices {
 					&meshlet_vertices[m.vertex_offset]    ,
 					&meshlet_triangles[m.triangle_offset] ,
 					m.triangle_count                      ,
-					&packPoints[0].x                      ,
-					packPoints.size()                     ,
+					&packPoints[0].x,
+					packPoints.size(),
 					sizeof(glm::vec3)
 				);
 		
@@ -673,14 +673,20 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		/**
+		* @brief Merge Vertex.
+		*/
 		std::unordered_map<uint32_t, uint32_t> primVerticesMap;
 		for (auto& primVertex : primVertices)
 		{
-			if (primVerticesMap.find(primVertex.x) ==primVerticesMap.end()) primVerticesMap[primVertex.x] = primVerticesMap.size();
-			if (primVerticesMap.find(primVertex.y) ==primVerticesMap.end()) primVerticesMap[primVertex.y] = primVerticesMap.size();
-			if (primVerticesMap.find(primVertex.z) ==primVerticesMap.end()) primVerticesMap[primVertex.z] = primVerticesMap.size();
+			if (primVerticesMap.find(primVertex.x) == primVerticesMap.end()) primVerticesMap[primVertex.x] = primVerticesMap.size();
+			if (primVerticesMap.find(primVertex.y) == primVerticesMap.end()) primVerticesMap[primVertex.y] = primVerticesMap.size();
+			if (primVerticesMap.find(primVertex.z) == primVerticesMap.end()) primVerticesMap[primVertex.z] = primVerticesMap.size();
 		}
-
+		
+		/**
+		* @brief Flatten Vertex Position.
+		*/
 		packPoints.resize(primVerticesMap.size());
 		auto& vertices = *meshPack->m_MeshResource.vertices.attributes;
 		for (auto& pair : primVerticesMap)
@@ -688,16 +694,35 @@ namespace Spices {
 			packPoints[pair.second] = (*meshPack->m_MeshResource.positions.attributes)[vertices[pair.first].x];
 			primPointsMapReverse[pair.second] = pair.first;
 		}
-
+		
 		packPrimPoints.resize(primVertices.size());
 		for (int i = 0; i < primVertices.size(); i++)
 		{
 			const glm::uvec3& primVertex = primVertices[i];
-
+		
 			packPrimPoints[i].x = primVerticesMap[vertices[primVertex.x].x];
 			packPrimPoints[i].y = primVerticesMap[vertices[primVertex.y].x];
 			packPrimPoints[i].z = primVerticesMap[vertices[primVertex.z].x];
 		}
+
+		//packPoints.resize(primVertices.size() * 3);
+		//packPrimPoints.resize(primVertices.size());
+		//auto& positions = *meshPack->m_MeshResource.positions.attributes;
+		//auto& vertices = *meshPack->m_MeshResource.vertices.attributes;
+		//for (int i = 0; i < primVertices.size(); i++)
+		//{
+		//	packPoints[3 * i + 0] = positions[vertices[primVertices[i].x].x];
+		//	packPoints[3 * i + 1] = positions[vertices[primVertices[i].y].x];
+		//	packPoints[3 * i + 2] = positions[vertices[primVertices[i].z].x];
+		//
+		//	primPointsMapReverse[3 * i + 0] = vertices[primVertices[i].x].x;
+		//	primPointsMapReverse[3 * i + 1] = vertices[primVertices[i].y].x;
+		//	primPointsMapReverse[3 * i + 2] = vertices[primVertices[i].z].x;
+		//
+		//	packPrimPoints[i].x = 3 * i + 0;
+		//	packPrimPoints[i].y = 3 * i + 1;
+		//	packPrimPoints[i].z = 3 * i + 2;
+		//}
 
 		return true;
 	}
