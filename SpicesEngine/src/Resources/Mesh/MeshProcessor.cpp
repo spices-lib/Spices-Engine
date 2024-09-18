@@ -21,14 +21,12 @@ namespace Spices {
 		/**
 		* @brief Create Lod0 meshlets.
 		*/
-		uint32_t meshletStart    = 0;
-		auto primPoints          = meshPack->m_MeshResource.primitivePoints.attributes;
 		auto primVertices        = meshPack->m_MeshResource.primitiveVertices.attributes;
-		meshPack->m_MeshResource.primitivePoints  .attributes = std::make_shared<std::vector<glm::uvec3>>();
 		meshPack->m_MeshResource.primitiveVertices.attributes = std::make_shared<std::vector<glm::uvec3>>();
 		AppendMeshlets(meshPack, 0, *primVertices);
 
-		const uint32_t maxLod = 1;
+		uint32_t meshletStart = 0;
+		const uint32_t maxLod = 0;
 		for (uint32_t lod = 0; lod < maxLod; ++lod)
 		{
 			auto in = std::chrono::high_resolution_clock::now();
@@ -74,18 +72,15 @@ namespace Spices {
 				const float maxUVDistance = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
 				auto primVerticesMap      = MergeByDistance(meshPack, groupPrimVertices, kdTree, maxDistance, maxUVDistance);
 
-				FindAndStableBoundaryVertices(meshPack, groupPrimVertices, primVerticesMap);
+				//FindAndStableBoundaryVertices(meshPack, groupPrimVertices, primVerticesMap);
 
 				/**
 				* @brief Pack Sparse Inputs.
 				*/
 				std::vector<glm::vec3>  packPoints;
-				std::vector<glm::uvec4> packVertices;
 				std::vector<glm::uvec3> packPrimPoints;
-				std::vector<glm::uvec3> packPrimVertices;
 				std::unordered_map<uint32_t, uint32_t> primPointsMapReverse;
-				std::unordered_map<uint32_t, uint32_t> primVerticesMapReverse;
-				PackVertexFromSparseInputs(meshPack, groupPrimVertices, packPoints, packPrimPoints, packPrimVertices, primPointsMapReverse, primVerticesMapReverse);
+				PackVertexFromSparseInputs(meshPack, groupPrimVertices, packPoints, packPrimPoints, primPointsMapReverse);
 				
 				/**
 				* @brief Simplify meshlets group primPoints.
@@ -156,10 +151,8 @@ namespace Spices {
 		*/
 		std::vector<glm::vec3>  packPoints;
 		std::vector<glm::uvec3> packPrimPoints;
-		std::vector<glm::uvec3> packPrimVertices;
 		std::unordered_map<uint32_t, uint32_t> primPointsMapReverse;
-		std::unordered_map<uint32_t, uint32_t> primVerticesMapReverse;
-		PackVertexFromSparseInputs(meshPack, primVertices, packPoints, packPrimPoints, packPrimVertices, primPointsMapReverse, primVerticesMapReverse);
+		PackVertexFromSparseInputs(meshPack, primVertices, packPoints, packPrimPoints, primPointsMapReverse);
 		
 		/**
 		* @brief Build Meshlets.
@@ -530,8 +523,8 @@ namespace Spices {
 	}
 
 	bool MeshProcessor::FindAndStableBoundaryVertices(
-		MeshPack*                               meshPack     ,
-		std::vector<glm::uvec3>&                primVertices ,
+		MeshPack*                               meshPack       ,
+		std::vector<glm::uvec3>&                primVertices   ,
 		std::unordered_map<uint32_t, uint32_t>& primVerticesMap
 	)
 	{
@@ -541,6 +534,7 @@ namespace Spices {
 		* @brief Get edge connected primitive.
 		*/
 		std::unordered_map<Edge, uint32_t> edgesConnects;
+		std::unordered_map<uint32_t, bool> boundary;
 
 		auto& vertices = *meshPack->m_MeshResource.vertices.attributes;
 		for (uint32_t triangleIndex = 0; triangleIndex < primVertices.size(); triangleIndex++)
@@ -565,19 +559,6 @@ namespace Spices {
 			}
 		}
 
-#if 0
-
-		for (auto& [edge, connects] : edgesConnects)
-		{
-			if (connects == 1)
-			{
-				boundary[edge.first] = true;
-				boundary[edge.second] = true;
-			}
-		}
-
-#else // Allow facet points in boundary fuse, not working correct now.
-
 		/*
 		* @brief remove internal edge.
 		*/
@@ -592,6 +573,19 @@ namespace Spices {
 				++first;
 			}
 		}
+
+#if 0
+
+		for (auto& [edge, connects] : edgesConnects)
+		{
+			if (connects == 1)
+			{
+				boundary[edge.first] = true;
+				boundary[edge.second] = true;
+			}
+		}
+
+#else // Allow facet points in boundary fuse, not working correct now.
 
 		struct EdgePoint
 		{
@@ -642,7 +636,6 @@ namespace Spices {
 		* @brief only stable points with high curvature.
 		*/
 		auto& position = *meshPack->m_MeshResource.positions.attributes;
-		std::unordered_map<uint32_t, bool> boundary;
 		for (auto& pair : boundEdgePoints)
 		{
 			if (!pair.second.valid()) continue;
@@ -656,16 +649,16 @@ namespace Spices {
 			}
 		}
 
+#endif
+
 		for (int i = 0; i < primVertices.size(); i++)
 		{
-			auto& primVertex = primVertices[i];
+			auto primVertex = primVertices[i];
 
-			if(boundary.find(vertices[primVertex.x].x) == boundary.end()) primVertices[i].x = primVerticesMap[primVertex.x];
-			if(boundary.find(vertices[primVertex.y].x) == boundary.end()) primVertices[i].y = primVerticesMap[primVertex.y];
-			if(boundary.find(vertices[primVertex.z].x) == boundary.end()) primVertices[i].z = primVerticesMap[primVertex.z];
+			if(boundary.find(primVertex.x) == boundary.end()) primVertices[i].x = primVerticesMap[primVertex.x];
+			if(boundary.find(primVertex.y) == boundary.end()) primVertices[i].y = primVerticesMap[primVertex.y];
+			if(boundary.find(primVertex.z) == boundary.end()) primVertices[i].z = primVerticesMap[primVertex.z];
 		}
-
-#endif
 
 		return true;
 	}
@@ -675,56 +668,35 @@ namespace Spices {
 		const std::vector<glm::uvec3>           primVertices          ,
 		std::vector<glm::vec3>&                 packPoints            ,
 		std::vector<glm::uvec3>&                packPrimPoints        ,
-		std::vector<glm::uvec3>&                packPrimVertices      ,
-		std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse  ,
-		std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse
+		std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse
 	)
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unordered_map<uint32_t, uint32_t> primVerticesMap;  // key: original vertex index, value: new vertex index.
-		for (const auto& primVertex : primVertices)
+		std::unordered_map<uint32_t, uint32_t> primVerticesMap;
+		for (auto& primVertex : primVertices)
 		{
-			if (primVerticesMap.find(primVertex.x) == primVerticesMap.end()) primVerticesMap[primVertex.x] = primVerticesMap.size();
-			if (primVerticesMap.find(primVertex.y) == primVerticesMap.end()) primVerticesMap[primVertex.y] = primVerticesMap.size();
-			if (primVerticesMap.find(primVertex.z) == primVerticesMap.end()) primVerticesMap[primVertex.z] = primVerticesMap.size();
+			if (primVerticesMap.find(primVertex.x) ==primVerticesMap.end()) primVerticesMap[primVertex.x] = primVerticesMap.size();
+			if (primVerticesMap.find(primVertex.y) ==primVerticesMap.end()) primVerticesMap[primVertex.y] = primVerticesMap.size();
+			if (primVerticesMap.find(primVertex.z) ==primVerticesMap.end()) primVerticesMap[primVertex.z] = primVerticesMap.size();
 		}
 
-		std::unordered_map<uint32_t, uint32_t> primPointsMap;    // key: original point index, value: new point index.
-		for (const auto& pair : primVerticesMap)
+		packPoints.resize(primVerticesMap.size());
+		auto& vertices = *meshPack->m_MeshResource.vertices.attributes;
+		for (auto& pair : primVerticesMap)
 		{
-			auto& vertices = *meshPack->m_MeshResource.vertices.attributes;
-
-			if (primPointsMap.find(vertices[pair.first].x) == primPointsMap.end()) primPointsMap[vertices[pair.first].x] = primPointsMap.size();
-			primVerticesMapReverse[pair.second] = pair.first;
-		}
-
-		packPoints.resize(primPointsMap.size());
-		for (auto& pair : primPointsMap)
-		{
-			packPoints[pair.second] = (*meshPack->m_MeshResource.positions.attributes)[pair.first];
+			packPoints[pair.second] = (*meshPack->m_MeshResource.positions.attributes)[vertices[pair.first].x];
 			primPointsMapReverse[pair.second] = pair.first;
 		}
 
 		packPrimPoints.resize(primVertices.size());
 		for (int i = 0; i < primVertices.size(); i++)
 		{
-			glm::uvec3 primVertex = primVertices[i];
-			auto& vertices = *meshPack->m_MeshResource.vertices.attributes;
+			const glm::uvec3& primVertex = primVertices[i];
 
-			packPrimPoints[i].x = primPointsMap[vertices[primVertex.x].x];
-			packPrimPoints[i].y = primPointsMap[vertices[primVertex.y].x];
-			packPrimPoints[i].z = primPointsMap[vertices[primVertex.z].x];
-		}
-
-		packPrimVertices.resize(primVertices.size());
-		for (int i = 0; i < primVertices.size(); i++)
-		{
-			glm::uvec3 primVertex = primVertices[i];
-
-			packPrimVertices[i].x = primVerticesMap[primVertex.x];
-			packPrimVertices[i].y = primVerticesMap[primVertex.y];
-			packPrimVertices[i].z = primVerticesMap[primVertex.z];
+			packPrimPoints[i].x = primVerticesMap[vertices[primVertex.x].x];
+			packPrimPoints[i].y = primVerticesMap[vertices[primVertex.y].x];
+			packPrimPoints[i].z = primVerticesMap[vertices[primVertex.z].x];
 		}
 
 		return true;
@@ -745,8 +717,7 @@ namespace Spices {
 			uint32_t y = primPointsMapReverse[packPrimPoints[i].y];
 			uint32_t z = primPointsMapReverse[packPrimPoints[i].z];
 
-			glm::uvec3 primPoint = glm::uvec3(x, y, z);
-
+			primVertices[i] = glm::uvec3(x, y, z);
 		}
 
 		return true;

@@ -70,12 +70,24 @@ namespace Spices {
 	struct MeshDesc : public SpicesShader::MeshDesc
 	{
 
-#define Update_F(item)                                                            \
-		void Update##item(uint64_t p)                                             \
-	{                                                                             \
-		item = static_cast<decltype(item)>(p);                                    \
-		m_Buffer->WriteToBuffer(&item, sizeof(item), offsetof(MeshDesc, item));   \
-	}
+#define Update_F(item)                                                                \
+		void Update##item(std::shared_ptr<VulkanBuffer> buffer)                       \
+		{                                                                             \
+			if(buffer)                                                                \
+			{                                                                         \
+				item = static_cast<decltype(item)>(buffer->GetAddress());             \
+			}                                                                         \
+			else                                                                      \
+			{                                                                         \
+				item = static_cast<decltype(item)>(0);                                \
+			}                                                                         \
+			m_Buffer->WriteToBuffer(&item, sizeof(item), offsetof(MeshDesc, item));   \
+		}                                                                             \
+		void Update##item(uint64_t p)                                                 \
+		{                                                                             \
+			item = static_cast<decltype(item)>(p);                                    \
+			m_Buffer->WriteToBuffer(&item, sizeof(item), offsetof(MeshDesc, item));   \
+		}
 
 		/**
 		* @brief Constructor Function.
@@ -356,26 +368,53 @@ namespace Spices {
 
 		VkDeviceSize bufferSize = sizeof((*attributes)[0]) * attributes->size();
 
-		VulkanBuffer stagingBuffer(
-			VulkanRenderBackend::GetState(),
-			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-		);
+		if (bufferSize > 0)
+		{
+			VulkanBuffer stagingBuffer(
+				VulkanRenderBackend::GetState()      ,
+				bufferSize                           ,
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT     ,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT  |
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
 
-		stagingBuffer.WriteToBuffer(attributes->data());
+			buffer = std::make_shared<VulkanBuffer>(
+				VulkanRenderBackend::GetState()           ,
+				bufferSize                                ,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT          |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+				usage                                     ,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
 
-		buffer = std::make_shared<VulkanBuffer>(
-			VulkanRenderBackend::GetState(),
-			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
-			usage,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-		);
+			stagingBuffer.WriteToBuffer(attributes->data());
+			buffer->CopyBuffer(stagingBuffer.Get(), buffer->Get(), bufferSize);
+		}
+		else
+		{
+			bufferSize = 16;
 
-		buffer->CopyBuffer(stagingBuffer.Get(), buffer->Get(), bufferSize);
+			VulkanBuffer stagingBuffer(
+				VulkanRenderBackend::GetState()      ,
+				bufferSize                           ,
+				VK_BUFFER_USAGE_TRANSFER_SRC_BIT     ,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT  |
+				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
+
+			buffer = std::make_shared<VulkanBuffer>(
+				VulkanRenderBackend::GetState()           ,
+				bufferSize                                ,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT          |
+				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+				usage                                     ,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
+
+			glm::vec4 empty = glm::vec4(0.0f);
+			stagingBuffer.WriteToBuffer(&empty);
+			buffer->CopyBuffer(stagingBuffer.Get(), buffer->Get(), bufferSize);
+		}
 	}
 
 	/**

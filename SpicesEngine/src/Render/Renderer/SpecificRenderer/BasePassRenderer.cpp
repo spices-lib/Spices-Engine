@@ -198,7 +198,7 @@ namespace Spices {
 						}, cmdBuffer);
 					});
 
-				return true;
+				return false;
 			});
 
 

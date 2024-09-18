@@ -247,15 +247,15 @@ namespace Spices {
 
 		m_MeshResource.CreateBuffer();
 
-		m_Desc.UpdatepositionsAddress          (m_MeshResource.positions.buffer          ->GetAddress());
-		m_Desc.UpdatenormalsAddress            (m_MeshResource.normals.buffer            ->GetAddress());
-		m_Desc.UpdatecolorsAddress             (m_MeshResource.colors.buffer             ->GetAddress());
-		m_Desc.UpdatetexCoordsAddress          (m_MeshResource.texCoords.buffer          ->GetAddress());
-		m_Desc.UpdateverticesAddress           (m_MeshResource.vertices.buffer           ->GetAddress());
-		m_Desc.UpdateprimitivePointsAddress    (m_MeshResource.primitivePoints.buffer    ->GetAddress());
-		m_Desc.UpdateprimitiveVerticesAddress  (m_MeshResource.primitiveVertices.buffer  ->GetAddress());
-		m_Desc.UpdateprimitiveLocationsAddress (m_MeshResource.primitiveLocations.buffer ->GetAddress());
-		m_Desc.UpdatemeshletsAddress           (m_MeshResource.meshlets.buffer           ->GetAddress());
+		m_Desc.UpdatepositionsAddress          (m_MeshResource.positions.buffer                  );
+		m_Desc.UpdatenormalsAddress            (m_MeshResource.normals.buffer                    );
+		m_Desc.UpdatecolorsAddress             (m_MeshResource.colors.buffer                     );
+		m_Desc.UpdatetexCoordsAddress          (m_MeshResource.texCoords.buffer                  );
+		m_Desc.UpdateverticesAddress           (m_MeshResource.vertices.buffer                   );
+		m_Desc.UpdateprimitivePointsAddress    (m_MeshResource.primitivePoints.buffer            );
+		m_Desc.UpdateprimitiveVerticesAddress  (m_MeshResource.primitiveVertices.buffer          );
+		m_Desc.UpdateprimitiveLocationsAddress (m_MeshResource.primitiveLocations.buffer         );
+		m_Desc.UpdatemeshletsAddress           (m_MeshResource.meshlets.buffer                   );
 		m_Desc.UpdatenMeshlets                 (m_MeshResource.meshlets.attributes       ->size());
 	}
 
@@ -289,10 +289,10 @@ namespace Spices {
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
 				
-				m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 
-				m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
+				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 			}
 		}
@@ -438,10 +438,10 @@ namespace Spices {
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
 
-				m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
+				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 
-				m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
+				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 			}
 		}

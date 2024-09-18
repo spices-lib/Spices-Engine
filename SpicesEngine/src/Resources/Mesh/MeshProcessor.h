@@ -85,8 +85,8 @@ namespace Spices {
 		);
 
 		static bool FindAndStableBoundaryVertices(
-			MeshPack*                               meshPack     ,
-			std::vector<glm::uvec3>&                primVertices ,
+			MeshPack*                               meshPack       ,
+			std::vector<glm::uvec3>&                primVertices   ,
 			std::unordered_map<uint32_t, uint32_t>& primVerticesMap
 		);
 
@@ -95,9 +95,7 @@ namespace Spices {
 			const std::vector<glm::uvec3>           primVertices          ,
 			std::vector<glm::vec3>&                 packPoints            ,
 			std::vector<glm::uvec3>&                packPrimPoints        ,
-			std::vector<glm::uvec3>&                packPrimVertices      ,
-			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse  ,
-			std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse
+			std::unordered_map<uint32_t, uint32_t>& primPointsMapReverse
 		);
 
 		static bool UnPackIndicesToSparseInputs(
