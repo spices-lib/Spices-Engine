@@ -68,20 +68,18 @@ namespace Spices {
 				BuildKDTree(meshPack, groupPrimVertices, kdTree);
 
 				//float simplifyScale          = meshopt_simplifyScale(&packPoints[0].x, packPrimPoints.size() * 3, sizeof(glm::vec3));
-				const float maxDistance   = (tLod * 0.1f + (1 - tLod) * 0.01f);
-				const float maxUVDistance = tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
-				auto primVerticesMap      = MergeByDistance(meshPack, groupPrimVertices, kdTree, maxDistance, maxUVDistance);
-
-				FindAndStableBoundaryVertices(meshPack, groupPrimVertices, primVerticesMap);
+				const float maxDistance   = (tLod * 0.1f + (1 - tLod) * 0.01f) * 100;
+				const float maxUVDistance =  tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
+				MergeByDistance(meshPack, groupPrimVertices, kdTree, maxDistance, maxUVDistance);
 
 				/**
 				* @brief Pack Sparse Inputs.
 				*/
-				std::vector<glm::vec3>  packPoints;
-				std::vector<glm::uvec3> packPrimPoints;
+				std::vector<glm::vec3>                 packPoints;
+				std::vector<glm::uvec3>                packPrimPoints;
 				std::unordered_map<uint32_t, uint32_t> primVerticesMapReverse;
 				PackVertexFromSparseInputs(meshPack, groupPrimVertices, packPoints, packPrimPoints, primVerticesMapReverse);
-				
+
 				/**
 				* @brief Simplify meshlets group primPoints.
 				*/
@@ -445,47 +443,201 @@ namespace Spices {
 		return groups;
 	}
 
-	std::unordered_map<uint32_t, uint32_t> MeshProcessor::MergeByDistance(
-		MeshPack*                      meshPack      ,
-		const std::vector<glm::uvec3>& primVertices  ,
-		scl::kd_tree<6>&               kdTree        , 
-		float                          maxDistance   , 
-		float                          maxUVDistance
+	bool MeshProcessor::MergeByDistance(
+		MeshPack*                meshPack      ,
+		std::vector<glm::uvec3>& primVertices  ,
+		scl::kd_tree<6>&         kdTree        , 
+		float                    maxDistance   , 
+		float                    maxUVDistance
 	)
 	{
 		SPICES_PROFILE_ZONE;
-
-		std::unordered_map<uint32_t, uint32_t> primVerticesMap;
 
 		auto& positions = *meshPack->m_MeshResource.positions.attributes;
 		auto& texCoords = *meshPack->m_MeshResource.texCoords.attributes;
 		auto& vertices  = *meshPack->m_MeshResource.vertices .attributes;
 
+		/**
+		* @brief Get boundary points.
+		*/
+		std::unordered_map<uint32_t, bool>                               boundaryPoints;
+		std::unordered_map<uint32_t, bool>                               stableBoundaryPoints;
+		std::unordered_map<uint32_t, EdgePoint>                          boundaryEdgePoints;
+		std::unordered_map<uint32_t, std::unordered_map<uint32_t, bool>> pointConnect;
+		FindBoundaryPoints(
+			meshPack             , 
+			primVertices         , 
+			boundaryPoints       , 
+			stableBoundaryPoints , 
+			boundaryEdgePoints   , 
+			pointConnect
+		);
+
+		std::unordered_map<uint32_t, uint32_t> primVerticesMap;
+		auto addToMap = [&](const uint32_t& k, const uint32_t& v) {
+			if (primVerticesMap.find(k) == primVerticesMap.end())
+			{
+				primVerticesMap[k] = v;
+			}
+		};
+
+		/**
+		* @brief Find merged vertices.
+		*/
 		for (int i = 0; i < primVertices.size(); i++)
 		{
 			auto& primVertex = primVertices[i];
 
 			std::array<uint32_t, 3> primVertexArray = { primVertex.x, primVertex.y, primVertex.z };
 
-			for (int j = 0; j < primVertexArray.size(); j++)
+			for (int j = 0; j < 3; j++)
 			{
-				glm::uvec4 vertex = vertices[primVertexArray[j]];
-				scl::kd_tree<6>::item item = { positions[vertex.x].x, positions[vertex.x].y, positions[vertex.x].z, texCoords[vertex.w].x, texCoords[vertex.w].y, (float)primVertexArray[j] };
+				const glm::uvec4& vertex = vertices[primVertexArray[j]];
+
+				/**
+				* @brief Find near vertex.
+				*/
+				scl::kd_tree<6>::item item = { 
+					positions[vertex.x].x, 
+					positions[vertex.x].y, 
+					positions[vertex.x].z, 
+					texCoords[vertex.w].x, 
+					texCoords[vertex.w].y, 
+					(float)primVertexArray[j] 
+				};
 				auto rangeVts = kdTree.range_search(item, { maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX });
 
-				for (auto& rangeVt : rangeVts)
+				/**
+				* @brief Only allow near merge.
+				*/
+				std::vector<scl::kd_tree<6>::item> nearVts;
+				for (auto& vt : rangeVts)
 				{
-					uint32_t primVertexIndex = (uint32_t)rangeVt[5];
+					uint32_t pt = vertices[(uint32_t)vt[5]].x;
 
-					if (primVerticesMap.find(primVertexIndex) == primVerticesMap.end())
+					if (pointConnect[vertex.x].find(pt) != pointConnect[vertex.x].end())
 					{
-						primVerticesMap[primVertexIndex] = primVertexArray[j];
+						nearVts.push_back(vt);
+					}
+				}
+
+				/**
+				* @brief Can merge if this vertex is in stableboundary.
+				* @attention This situation not allowed merge to line and point here.
+				*/
+				if (stableBoundaryPoints.find(vertex.x) != stableBoundaryPoints.end())
+				{
+					std::unordered_map<uint32_t, bool> mergedVertex;
+
+					for (auto& rangeVt : nearVts)
+					{
+						uint32_t primVertexIndex = (uint32_t)rangeVt[5];
+						mergedVertex[vertices[primVertexIndex].x] = true;
+					}
+
+					bool canBeTriangle = true;
+					for (int k = 0; k < primVertexArray.size(); k++)
+					{
+						if (mergedVertex.find(vertices[primVertexArray[k]].x) != mergedVertex.end())
+						{
+							canBeTriangle = false;
+							break;
+						}
+					}
+
+					if(canBeTriangle)
+					{ 
+						for (auto& rangeVt : nearVts)
+						{
+							uint32_t primVertexIndex = (uint32_t)rangeVt[5];
+							addToMap(primVertexIndex, primVertexArray[j]);
+						}
+					}
+					else
+					{
+						addToMap(primVertexArray[j], primVertexArray[j]);
+					}
+				}
+
+				/**
+				* @brief Can merge when target is not in stableboundary if this vertex is in boundary.
+				* @attention boundarypoint can only be merged when connected.
+				*/
+				else if (boundaryPoints.find(vertex.x) != boundaryPoints.end())
+				{
+					for (auto& rangeVt : nearVts)
+					{
+						uint32_t primVertexIndex = (uint32_t)rangeVt[5];
+						uint32_t pt = vertices[primVertexIndex].x;
+
+						if (boundaryPoints.find(pt) == boundaryPoints.end())
+						{
+							addToMap(primVertexIndex, primVertexArray[j]);
+						}
+						else if (stableBoundaryPoints.find(pt) == stableBoundaryPoints.end())
+						{
+							if (boundaryEdgePoints[vertex.x].next == pt ||
+								boundaryEdgePoints[vertex.x].prev == pt ||
+								boundaryEdgePoints[vertex.x].self == pt
+							)
+							{
+								addToMap(primVertexIndex, primVertexArray[j]);
+							}
+						}
+					}
+				}
+
+				/**
+				* @brief Can merge when target is not in boundary if this vertex is not in boundary.
+				*/
+				else
+				{
+					for (auto& rangeVt : nearVts)
+					{
+						uint32_t primVertexIndex = (uint32_t)rangeVt[5];
+						uint32_t pt = vertices[primVertexIndex].x;
+
+						if (boundaryPoints.find(pt) == boundaryPoints.end())
+						{
+							addToMap(primVertexIndex, primVertexArray[j]);
+						}
 					}
 				}
 			}
 		}
 
-		return primVerticesMap;
+		/**
+		* @brief Copy primVertices and merge.
+		*/
+		std::vector<glm::uvec3> tempPrimVertices;
+		tempPrimVertices.resize(primVertices.size());
+		for (int i = 0; i < primVertices.size(); i++)
+		{
+			auto primVertex = primVertices[i];
+		
+			tempPrimVertices[i].x = primVerticesMap[primVertex.x];
+			tempPrimVertices[i].y = primVerticesMap[primVertex.y];
+			tempPrimVertices[i].z = primVerticesMap[primVertex.z];
+		}
+		
+		/**
+		* @brief Remove lines and poins merged from triangles;
+		*/
+		primVertices.clear();
+		for (auto& primVertex : tempPrimVertices)
+		{
+			std::set<uint32_t> set;
+			
+			set.insert(primVertex.x);
+			set.insert(primVertex.y);
+			set.insert(primVertex.z);
+			
+			if (set.size() < 3) continue;
+		
+			primVertices.push_back(primVertex);
+		}
+
+		return true;
 	}
 
 	bool MeshProcessor::BuildKDTree(
@@ -501,7 +653,7 @@ namespace Spices {
 
 		auto& positions = *meshPack->m_MeshResource.positions.attributes;
 		auto& texCoords = *meshPack->m_MeshResource.texCoords.attributes;
-		auto& vertices  = *meshPack->m_MeshResource.vertices.attributes;
+		auto& vertices  = *meshPack->m_MeshResource.vertices .attributes;
 		for (int i = 0; i < primVertices.size(); i++)
 		{
 			auto& primVertex = primVertices[i];
@@ -520,10 +672,13 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshProcessor::FindAndStableBoundaryVertices(
-		MeshPack*                               meshPack       ,
-		std::vector<glm::uvec3>&                primVertices   ,
-		std::unordered_map<uint32_t, uint32_t>& primVerticesMap
+	bool MeshProcessor::FindBoundaryPoints(
+		MeshPack*                                                         meshPack             ,
+		const std::vector<glm::uvec3>&                                    primVertices         ,
+		std::unordered_map<uint32_t, bool>&                               boundaryPoints       ,
+		std::unordered_map<uint32_t, bool>&                               stableBoundaryPoints ,
+		std::unordered_map<uint32_t, EdgePoint>&                          boundaryEdgePoints   ,
+		std::unordered_map<uint32_t, std::unordered_map<uint32_t, bool>>& pointConnect
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -532,8 +687,6 @@ namespace Spices {
 		* @brief Get edge connected primitive.
 		*/
 		std::unordered_map<Edge, uint32_t> edgesConnects;
-		std::unordered_map<uint32_t, bool> boundary;
-
 		auto& vertices = *meshPack->m_MeshResource.vertices.attributes;
 		for (uint32_t triangleIndex = 0; triangleIndex < primVertices.size(); triangleIndex++)
 		{
@@ -557,6 +710,18 @@ namespace Spices {
 			}
 		}
 
+		/**
+		* @brief Get pointconnect.
+		*/
+		for (auto& [edge, connects] : edgesConnects)
+		{
+			pointConnect[edge.first][edge.second] = true;
+			pointConnect[edge.first][edge.first] = true;
+
+			pointConnect[edge.second][edge.first] = true;
+			pointConnect[edge.second][edge.second] = true;
+		}
+
 		/*
 		* @brief remove internal edge.
 		*/
@@ -572,61 +737,35 @@ namespace Spices {
 			}
 		}
 
-#if 0
-
 		for (auto& [edge, connects] : edgesConnects)
 		{
-			if (connects == 1)
-			{
-				boundary[edge.first] = true;
-				boundary[edge.second] = true;
-			}
+			boundaryPoints[edge.first]  = true;
+			boundaryPoints[edge.second] = true;
 		}
-
-#else // Allow facet points in boundary fuse, not working correct now.
-
-		struct EdgePoint
-		{
-			EdgePoint() 
-				: previous(-1)
-				, self(-1)
-				, next(-1)
-			{}
-
-			uint32_t previous;
-			uint32_t self;
-			uint32_t next;
-
-			bool valid()
-			{
-				return previous != -1 && self != -1 && next != -1;
-			}
-		};
 
 		/**
 		* @brief get bound edge points.
 		*/
-		std::unordered_map<uint32_t, EdgePoint> boundEdgePoints;
-		for (auto& pair : edgesConnects)
+		for (auto& [edge, connects] : edgesConnects)
 		{
-			if (boundEdgePoints.find(pair.first.first) == boundEdgePoints.end())
+			if (boundaryEdgePoints.find(edge.first) == boundaryEdgePoints.end())
 			{
-				boundEdgePoints[pair.first.first].self = pair.first.first;
-				boundEdgePoints[pair.first.first].next = pair.first.second;
+				boundaryEdgePoints[edge.first].self = edge.first;
+				boundaryEdgePoints[edge.first].next = edge.second;
 			}
 			else
 			{
-				boundEdgePoints[pair.first.first].previous = pair.first.second;
+				boundaryEdgePoints[edge.first].prev = edge.second;
 			}
 
-			if (boundEdgePoints.find(pair.first.second) == boundEdgePoints.end())
+			if (boundaryEdgePoints.find(edge.second) == boundaryEdgePoints.end())
 			{
-				boundEdgePoints[pair.first.second].self = pair.first.second;
-				boundEdgePoints[pair.first.second].next = pair.first.first;
+				boundaryEdgePoints[edge.second].self = edge.second;
+				boundaryEdgePoints[edge.second].next = edge.first;
 			}
 			else
 			{
-				boundEdgePoints[pair.first.second].previous = pair.first.first;
+				boundaryEdgePoints[edge.second].prev = edge.first;
 			}
 		}
 
@@ -634,46 +773,25 @@ namespace Spices {
 		* @brief only stable points with high curvature.
 		*/
 		auto& position = *meshPack->m_MeshResource.positions.attributes;
-		for (auto& pair : boundEdgePoints)
+		for (auto& pair : boundaryEdgePoints)
 		{
 			if (!pair.second.valid()) continue;
 
-			glm::vec3 l = glm::normalize(position[pair.second.next]     - position[pair.first]);
-			glm::vec3 r = glm::normalize(position[pair.second.previous] - position[pair.first]);
+			glm::vec3 l = glm::normalize(position[pair.second.next] - position[pair.first]);
+			glm::vec3 r = glm::normalize(position[pair.second.prev] - position[pair.first]);
 			
 			if (glm::dot(l, r) > -0.98f)
 			{
-				boundary[pair.first] = true;
-			}
-		}
+				stableBoundaryPoints[pair.second.self] = true;
+
+#ifdef ExpandStablePoint
+
+				stableBoundaryPoints[pair.second.next] = true;
+				stableBoundaryPoints[pair.second.prev] = true;
 
 #endif
 
-		std::vector<glm::uvec3> tempPrimVertices = primVertices;
-		for (int i = 0; i < primVertices.size(); i++)
-		{
-			auto primVertex = primVertices[i];
-
-			if(boundary.find(vertices[primVertex.x].x) == boundary.end()) tempPrimVertices[i].x = primVerticesMap[primVertex.x];
-			if(boundary.find(vertices[primVertex.y].x) == boundary.end()) tempPrimVertices[i].y = primVerticesMap[primVertex.y];
-			if(boundary.find(vertices[primVertex.z].x) == boundary.end()) tempPrimVertices[i].z = primVerticesMap[primVertex.z];
-		}
-
-		/**
-		* @brief Remove lines and poins merged from triangles;
-		*/
-		primVertices.clear();
-		for (auto& primVertex : tempPrimVertices)
-		{
-			std::set<uint32_t> set;
-
-			set.insert(primVertex.x);
-			set.insert(primVertex.y);
-			set.insert(primVertex.z);
-
-			if (set.size() < 3) continue;
-
-			primVertices.push_back(primVertex);
+			}
 		}
 
 		return true;

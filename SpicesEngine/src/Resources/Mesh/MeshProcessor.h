@@ -64,12 +64,12 @@ namespace Spices {
 		* @param[in] maxUVDistance allowed merge by vertex uv.
 		* @return Returns Merged Vertex Map.
 		*/
-		static std::unordered_map<uint32_t, uint32_t> MergeByDistance(
-			MeshPack*                      meshPack      ,
-			const std::vector<glm::uvec3>& primVertices  ,
-			scl::kd_tree<6>&               kdTree        , 
-			float                          maxDistance   , 
-			float                          maxUVDistance
+		static bool MergeByDistance(
+			MeshPack*                meshPack      ,
+			std::vector<glm::uvec3>& primVertices  ,
+			scl::kd_tree<6>&         kdTree        , 
+			float                    maxDistance   , 
+			float                    maxUVDistance
 		);
 
 		/**
@@ -84,10 +84,13 @@ namespace Spices {
 			scl::kd_tree<6>&               kdTree
 		);
 
-		static bool FindAndStableBoundaryVertices(
-			MeshPack*                               meshPack       ,
-			std::vector<glm::uvec3>&                primVertices   ,
-			std::unordered_map<uint32_t, uint32_t>& primVerticesMap
+		static bool FindBoundaryPoints(
+			MeshPack*                                                         meshPack             ,
+			const std::vector<glm::uvec3>&                                    primVertices         ,
+			std::unordered_map<uint32_t, bool>&                               boundaryPoints       ,
+			std::unordered_map<uint32_t, bool>&                               stableBoundaryPoints ,
+			std::unordered_map<uint32_t, EdgePoint>&                          boundaryEdgePoints   ,
+			std::unordered_map<uint32_t, std::unordered_map<uint32_t, bool>>& pointConnect
 		);
 
 		static bool PackVertexFromSparseInputs(

@@ -69,7 +69,7 @@ namespace Spices {
 		*/
 		Edge(uint32_t f, uint32_t s)
 		{
-			first = f;
+			first  = f;
 			second = s;
 		};
 
@@ -120,7 +120,7 @@ namespace Spices {
 		*/
 		HalfEdge(uint32_t f, uint32_t s)
 		{
-			first = f;
+			first  = f;
 			second = s;
 		};
 
@@ -149,6 +149,53 @@ namespace Spices {
 			return first < other.first;
 		}
 	};
+
+	/**
+	* @brief EdgePoint Class.
+	* This class defines what EdgePoint data.
+	*/
+	struct EdgePoint
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		*/
+		EdgePoint()
+			: prev(-1)
+			, self(-1)
+			, next(-1)
+		{}
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] prev Previous connected point.
+		* @param[in] self This point.
+		* @param[in] next Next connected point.
+		*/
+		EdgePoint(uint32_t prev, uint32_t self, uint32_t next)
+			: prev(prev)
+			, self(self)
+			, next(next)
+		{}
+
+		/**
+		* @brief Determain whether this edgepoint is valid.
+		* @return Returns true if valid.
+		*/
+		bool valid()
+		{
+			return prev != -1 && self != -1 && next != -1;
+		}
+
+		/**
+		* @brief datas.
+		*/
+		uint32_t prev;
+		uint32_t self;
+		uint32_t next;
+
+	};
 }
 
 namespace std {
@@ -169,6 +216,16 @@ namespace std {
 	template<> struct hash<Spices::HalfEdge> {
 		size_t operator()(Spices::HalfEdge const& edge) const {
 			return ((hash<uint32_t>()(edge.first) ^ (hash<uint32_t>()(edge.second) << 1)) >> 1);
+		}
+	};
+
+	/**
+	* @brief Hash function used for unordered_map.
+	*/
+	template<> struct hash<Spices::EdgePoint> {
+		size_t operator()(Spices::EdgePoint const& edgeP) const {
+			return hash<glm::uvec3>()({ edgeP.next, edgeP.prev, edgeP.self }) + 
+				   hash<glm::uvec3>()({ edgeP.prev, edgeP.next, edgeP.self });
 		}
 	};
 }
