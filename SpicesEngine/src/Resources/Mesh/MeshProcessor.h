@@ -72,6 +72,12 @@ namespace Spices {
 			float                    maxUVDistance
 		);
 
+		static bool PackVertexToPoints(
+			MeshPack*                      meshPack      ,
+			const std::vector<glm::uvec3>& primVertices  ,
+			std::vector<glm::vec3>&        points
+		);
+
 		/**
 		* @brief Build KDTree use specific meshlets.
 		* @param[in] meshPack MeshPack.

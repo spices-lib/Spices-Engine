@@ -67,8 +67,11 @@ namespace Spices {
 				scl::kd_tree<6> kdTree;
 				BuildKDTree(meshPack, groupPrimVertices, kdTree);
 
-				//float simplifyScale          = meshopt_simplifyScale(&packPoints[0].x, packPrimPoints.size() * 3, sizeof(glm::vec3));
-				const float maxDistance   = (tLod * 0.1f + (1 - tLod) * 0.01f) * 100;
+				std::vector<glm::vec3> points;
+				PackVertexToPoints(meshPack, groupPrimVertices, points);
+
+				float simplifyScale       = meshopt_simplifyScale(&points[0].x, points.size(), sizeof(glm::vec3));
+				const float maxDistance   = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
 				const float maxUVDistance =  tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
 				MergeByDistance(meshPack, groupPrimVertices, kdTree, maxDistance, maxUVDistance);
 
@@ -481,6 +484,51 @@ namespace Spices {
 			}
 		};
 
+
+
+
+
+		/*for (int i = 0; i < primVertices.size(); i++)
+		{
+			auto& primVertex = primVertices[i];
+			std::array<uint32_t, 3> primVertexArray = { primVertex.x, primVertex.y, primVertex.z };
+
+			for (int j = 0; j < 3; j++)
+			{
+				const glm::uvec4& vertex = vertices[primVertexArray[j]];
+
+				scl::kd_tree<6>::item item = { 
+					positions[vertex.x].x, 
+					positions[vertex.x].y, 
+					positions[vertex.x].z, 
+					texCoords[vertex.w].x, 
+					texCoords[vertex.w].y, 
+					(float)primVertexArray[j] 
+				};
+				auto rangeVts = kdTree.range_search(item, { maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX });
+
+				for (auto& rangeVt : rangeVts)
+				{
+					uint32_t primVertexIndex = (uint32_t)rangeVt[5];
+					uint32_t pt = vertices[primVertexIndex].x;
+
+					if (primVerticesMap.find(primVertexIndex) == primVerticesMap.end())
+					{
+						primVerticesMap[primVertexIndex] = primVertexArray[j];
+					}
+				}
+			}
+		}
+		for (int i = 0; i < primVertices.size(); i++)
+		{
+			auto primVertex = primVertices[i];
+
+			if(boundaryPoints.find(vertices[primVertex.x].x) == boundaryPoints.end()) primVertices[i].x = primVerticesMap[primVertex.x];
+			if(boundaryPoints.find(vertices[primVertex.x].x) == boundaryPoints.end()) primVertices[i].y = primVerticesMap[primVertex.y];
+			if(boundaryPoints.find(vertices[primVertex.x].x) == boundaryPoints.end()) primVertices[i].z = primVerticesMap[primVertex.z];
+		}*/
+
+
 		/**
 		* @brief Find merged vertices.
 		*/
@@ -505,7 +553,14 @@ namespace Spices {
 					texCoords[vertex.w].y, 
 					(float)primVertexArray[j] 
 				};
-				auto rangeVts = kdTree.range_search(item, { maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX });
+				auto rangeVts = kdTree.range_search(item, { 
+					maxDistance   , 
+					maxDistance   , 
+					maxDistance   , 
+					maxUVDistance , 
+					maxUVDistance , 
+					(float)UINT32_MAX 
+				});
 
 				/**
 				* @brief Only allow near merge.
@@ -615,9 +670,9 @@ namespace Spices {
 		{
 			auto primVertex = primVertices[i];
 		
-			tempPrimVertices[i].x = primVerticesMap[primVertex.x];
-			tempPrimVertices[i].y = primVerticesMap[primVertex.y];
-			tempPrimVertices[i].z = primVerticesMap[primVertex.z];
+			if(primVerticesMap.find(primVertex.x) != primVerticesMap.end()) tempPrimVertices[i].x = primVerticesMap[primVertex.x];
+			if(primVerticesMap.find(primVertex.y) != primVerticesMap.end()) tempPrimVertices[i].y = primVerticesMap[primVertex.y];
+			if(primVerticesMap.find(primVertex.z) != primVerticesMap.end()) tempPrimVertices[i].z = primVerticesMap[primVertex.z];
 		}
 		
 		/**
@@ -633,8 +688,42 @@ namespace Spices {
 			set.insert(primVertex.z);
 			
 			if (set.size() < 3) continue;
-		
+
 			primVertices.push_back(primVertex);
+		}
+
+		return true;
+	}
+
+	bool MeshProcessor::PackVertexToPoints(
+		MeshPack*                      meshPack     , 
+		const std::vector<glm::uvec3>& primVertices , 
+		std::vector<glm::vec3>&        points
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unordered_map<uint32_t, bool> pointsMap;
+
+		auto& positions = *meshPack->m_MeshResource.positions.attributes;
+		auto& vertices  = *meshPack->m_MeshResource.vertices .attributes;
+		for (auto& primVertex : primVertices)
+		{
+			const glm::uvec4& vertex0 = vertices[primVertex.x];
+			const glm::uvec4& vertex1 = vertices[primVertex.y];
+			const glm::uvec4& vertex2 = vertices[primVertex.z];
+
+			pointsMap[vertex0.x] = true;
+			pointsMap[vertex1.x] = true;
+			pointsMap[vertex2.x] = true;
+		}
+
+		points.resize(pointsMap.size());
+		uint32_t i = 0;
+		for (auto& [pt, ignore] : pointsMap)
+		{
+			points[i] = positions[pt];
+			++i;
 		}
 
 		return true;
@@ -716,9 +805,9 @@ namespace Spices {
 		for (auto& [edge, connects] : edgesConnects)
 		{
 			pointConnect[edge.first][edge.second] = true;
-			pointConnect[edge.first][edge.first] = true;
+			pointConnect[edge.first][edge.first]  = true;
 
-			pointConnect[edge.second][edge.first] = true;
+			pointConnect[edge.second][edge.first]  = true;
 			pointConnect[edge.second][edge.second] = true;
 		}
 
@@ -784,6 +873,7 @@ namespace Spices {
 			{
 				stableBoundaryPoints[pair.second.self] = true;
 
+#define ExpandStablePoint
 #ifdef ExpandStablePoint
 
 				stableBoundaryPoints[pair.second.next] = true;
