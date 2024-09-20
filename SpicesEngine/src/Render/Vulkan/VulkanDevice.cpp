@@ -285,9 +285,15 @@ namespace Spices {
 
 		VkPhysicalDeviceProperties2                   prop2 {};
 		prop2.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-		prop2.properties                            = m_DeviceProperties;
 		prop2.pNext                                 = &subGroupProperties;
 		vkGetPhysicalDeviceProperties2(device, &prop2);
+		m_DeviceProperties                          = prop2.properties;
+
+		{
+			std::stringstream ss;
+			ss << "Limits : maxFragmentOutputAttachments = " << m_DeviceProperties.limits.maxFragmentOutputAttachments;
+			SPICES_CORE_INFO(ss.str());
+		}
 
 		{
 			std::stringstream ss;

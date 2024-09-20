@@ -53,12 +53,16 @@ namespace Spices {
 			for (const auto& group : groups)
 			{
 				std::vector<glm::uvec3> groupPrimVertices;
+				auto ptr = meshPack->m_MeshResource.primitiveVertices.attributes;
 				for (const auto& meshletIndex : group.meshlets)
 				{
 					const auto& meshlet = meshlets[meshletIndex];
 
-					auto ptr = meshPack->m_MeshResource.primitiveVertices.attributes;
-					groupPrimVertices.insert(groupPrimVertices.end(), ptr->begin() + meshlet.primitiveOffset, ptr->begin() + meshlet.primitiveOffset + meshlet.nPrimitives);
+					groupPrimVertices.insert(
+						groupPrimVertices.end(), 
+						ptr->begin() + meshlet.primitiveOffset, 
+						ptr->begin() + meshlet.primitiveOffset + meshlet.nPrimitives
+					);
 				}
 
 				/**
@@ -71,8 +75,8 @@ namespace Spices {
 				PackVertexToPoints(meshPack, groupPrimVertices, points);
 
 				float simplifyScale       = meshopt_simplifyScale(&points[0].x, points.size(), sizeof(glm::vec3));
-				const float maxDistance   = (tLod * 0.1f + (1 - tLod) * 0.01f) * simplifyScale;
-				const float maxUVDistance =  tLod * 0.5f + (1 - tLod) * 1.0f / 256.0f;
+				const float maxDistance   = (tLod * 0.01f + (1 - tLod) * 0.001f) * simplifyScale;
+				const float maxUVDistance =  tLod * 0.1f  + (1 - tLod) * 0.001f;
 				MergeByDistance(meshPack, groupPrimVertices, kdTree, maxDistance, maxUVDistance);
 
 				/**
@@ -259,7 +263,7 @@ namespace Spices {
 		}
 	}
 
-	std::vector<MeshletGroup> MeshProcessor::GroupMeshlets(MeshPack* meshPack, const std::vector<Meshlet>& meshlets)
+	std::vector<MeshletGroup> MeshProcessor::GroupMeshlets(MeshPack* meshPack, std::vector<Meshlet>& meshlets)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -439,6 +443,8 @@ namespace Spices {
 		groups.resize(nparts);
 		for (size_t i = 0; i < meshlets.size(); i++)
 		{
+			meshlets[i].clusterMeshletIndex = groups.size();
+
 			idx_t partitionNumber = partition[i];
 			groups[partitionNumber].meshlets.push_back(i);
 		}
@@ -484,64 +490,19 @@ namespace Spices {
 			}
 		};
 
-
-
-
-
-		/*for (int i = 0; i < primVertices.size(); i++)
-		{
-			auto& primVertex = primVertices[i];
-			std::array<uint32_t, 3> primVertexArray = { primVertex.x, primVertex.y, primVertex.z };
-
-			for (int j = 0; j < 3; j++)
-			{
-				const glm::uvec4& vertex = vertices[primVertexArray[j]];
-
-				scl::kd_tree<6>::item item = { 
-					positions[vertex.x].x, 
-					positions[vertex.x].y, 
-					positions[vertex.x].z, 
-					texCoords[vertex.w].x, 
-					texCoords[vertex.w].y, 
-					(float)primVertexArray[j] 
-				};
-				auto rangeVts = kdTree.range_search(item, { maxDistance, maxDistance, maxDistance, maxUVDistance, maxUVDistance, (float)UINT32_MAX });
-
-				for (auto& rangeVt : rangeVts)
-				{
-					uint32_t primVertexIndex = (uint32_t)rangeVt[5];
-					uint32_t pt = vertices[primVertexIndex].x;
-
-					if (primVerticesMap.find(primVertexIndex) == primVerticesMap.end())
-					{
-						primVerticesMap[primVertexIndex] = primVertexArray[j];
-					}
-				}
-			}
-		}
-		for (int i = 0; i < primVertices.size(); i++)
-		{
-			auto primVertex = primVertices[i];
-
-			if(boundaryPoints.find(vertices[primVertex.x].x) == boundaryPoints.end()) primVertices[i].x = primVerticesMap[primVertex.x];
-			if(boundaryPoints.find(vertices[primVertex.x].x) == boundaryPoints.end()) primVertices[i].y = primVerticesMap[primVertex.y];
-			if(boundaryPoints.find(vertices[primVertex.x].x) == boundaryPoints.end()) primVertices[i].z = primVerticesMap[primVertex.z];
-		}*/
-
-
 		/**
 		* @brief Find merged vertices.
 		*/
 		for (int i = 0; i < primVertices.size(); i++)
 		{
 			auto& primVertex = primVertices[i];
-
+		
 			std::array<uint32_t, 3> primVertexArray = { primVertex.x, primVertex.y, primVertex.z };
-
+		
 			for (int j = 0; j < 3; j++)
 			{
 				const glm::uvec4& vertex = vertices[primVertexArray[j]];
-
+		
 				/**
 				* @brief Find near vertex.
 				*/
@@ -561,7 +522,7 @@ namespace Spices {
 					maxUVDistance , 
 					(float)UINT32_MAX 
 				});
-
+		
 				/**
 				* @brief Only allow near merge.
 				*/
@@ -569,13 +530,13 @@ namespace Spices {
 				for (auto& vt : rangeVts)
 				{
 					uint32_t pt = vertices[(uint32_t)vt[5]].x;
-
+				
 					if (pointConnect[vertex.x].find(pt) != pointConnect[vertex.x].end())
 					{
 						nearVts.push_back(vt);
 					}
 				}
-
+		
 				/**
 				* @brief Can merge if this vertex is in stableboundary.
 				* @attention This situation not allowed merge to line and point here.
@@ -583,13 +544,13 @@ namespace Spices {
 				if (stableBoundaryPoints.find(vertex.x) != stableBoundaryPoints.end())
 				{
 					std::unordered_map<uint32_t, bool> mergedVertex;
-
+		
 					for (auto& rangeVt : nearVts)
 					{
 						uint32_t primVertexIndex = (uint32_t)rangeVt[5];
 						mergedVertex[vertices[primVertexIndex].x] = true;
 					}
-
+		
 					bool canBeTriangle = true;
 					for (int k = 0; k < primVertexArray.size(); k++)
 					{
@@ -599,7 +560,7 @@ namespace Spices {
 							break;
 						}
 					}
-
+		
 					if(canBeTriangle)
 					{ 
 						for (auto& rangeVt : nearVts)
@@ -613,7 +574,7 @@ namespace Spices {
 						addToMap(primVertexArray[j], primVertexArray[j]);
 					}
 				}
-
+		
 				/**
 				* @brief Can merge when target is not in stableboundary if this vertex is in boundary.
 				* @attention boundarypoint can only be merged when connected.
@@ -624,7 +585,7 @@ namespace Spices {
 					{
 						uint32_t primVertexIndex = (uint32_t)rangeVt[5];
 						uint32_t pt = vertices[primVertexIndex].x;
-
+		
 						if (boundaryPoints.find(pt) == boundaryPoints.end())
 						{
 							addToMap(primVertexIndex, primVertexArray[j]);
@@ -641,7 +602,7 @@ namespace Spices {
 						}
 					}
 				}
-
+		
 				/**
 				* @brief Can merge when target is not in boundary if this vertex is not in boundary.
 				*/
@@ -651,7 +612,7 @@ namespace Spices {
 					{
 						uint32_t primVertexIndex = (uint32_t)rangeVt[5];
 						uint32_t pt = vertices[primVertexIndex].x;
-
+		
 						if (boundaryPoints.find(pt) == boundaryPoints.end())
 						{
 							addToMap(primVertexIndex, primVertexArray[j]);
@@ -664,8 +625,7 @@ namespace Spices {
 		/**
 		* @brief Copy primVertices and merge.
 		*/
-		std::vector<glm::uvec3> tempPrimVertices;
-		tempPrimVertices.resize(primVertices.size());
+		std::vector<glm::uvec3> tempPrimVertices = primVertices;
 		for (int i = 0; i < primVertices.size(); i++)
 		{
 			auto primVertex = primVertices[i];
@@ -688,7 +648,7 @@ namespace Spices {
 			set.insert(primVertex.z);
 			
 			if (set.size() < 3) continue;
-
+		
 			primVertices.push_back(primVertex);
 		}
 
@@ -737,23 +697,37 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<scl::kd_tree<6>::item> items;
-		items.resize(primVertices.size() * 3);
+		std::unordered_map<uint32_t, bool> primVerticesMap;
+		for (auto& primVertex : primVertices)
+		{
+			primVerticesMap[primVertex.x] = true;
+			primVerticesMap[primVertex.y] = true;
+			primVerticesMap[primVertex.z] = true;
+		}
 
 		auto& positions = *meshPack->m_MeshResource.positions.attributes;
 		auto& texCoords = *meshPack->m_MeshResource.texCoords.attributes;
 		auto& vertices  = *meshPack->m_MeshResource.vertices .attributes;
-		for (int i = 0; i < primVertices.size(); i++)
+
+		std::vector<scl::kd_tree<6>::item> items;
+		items.resize(primVerticesMap.size());
+
+		uint32_t i = 0;
+		for (auto& [primVertex, ignore] : primVerticesMap)
 		{
-			auto& primVertex = primVertices[i];
+			glm::uvec4 vertex = vertices[primVertex];
 
-			glm::uvec4 vertex0 = vertices[primVertex.x];
-			glm::uvec4 vertex1 = vertices[primVertex.y];
-			glm::uvec4 vertex2 = vertices[primVertex.z];
+			items[i] = 
+			{ 
+				positions[vertex.x].x, 
+				positions[vertex.x].y, 
+				positions[vertex.x].z, 
+				texCoords[vertex.w].x, 
+				texCoords[vertex.w].y, 
+				(float)primVertex 
+			};
 
-			items[3 * i + 0] = { positions[vertex0.x].x, positions[vertex0.x].y, positions[vertex0.x].z, texCoords[vertex0.w].x, texCoords[vertex0.w].y, (float)primVertex.x };
-			items[3 * i + 1] = { positions[vertex1.x].x, positions[vertex1.x].y, positions[vertex1.x].z, texCoords[vertex1.w].x, texCoords[vertex1.w].y, (float)primVertex.y };
-			items[3 * i + 2] = { positions[vertex2.x].x, positions[vertex2.x].y, positions[vertex2.x].z, texCoords[vertex2.w].x, texCoords[vertex2.w].y, (float)primVertex.z };
+			++i;
 		}
 		
 		kdTree.insert(items);

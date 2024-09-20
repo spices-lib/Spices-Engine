@@ -52,8 +52,8 @@ namespace Spices {
 		* @return Returns Groups.
 		*/
 		static std::vector<MeshletGroup> GroupMeshlets(
-			MeshPack*                   meshPack , 
-			const std::vector<Meshlet>& meshlets
+			MeshPack*             meshPack , 
+			std::vector<Meshlet>& meshlets
 		);
 
 		/**

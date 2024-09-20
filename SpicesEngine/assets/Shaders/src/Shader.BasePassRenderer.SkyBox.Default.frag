@@ -41,8 +41,9 @@ layout(location = 0) in struct FragInput
 } 
 fragInput;
 
-layout(location = 2) in flat uint triangleId;          /* @brief Triangle ID.    */
-layout(location = 3) in flat uint meshletId;           /* @brief Meshlet ID.     */
+layout(location = 2) in flat uint triangleId;          /* @brief Triangle ID.             */
+layout(location = 3) in flat uint meshletId;           /* @brief Meshlet ID.              */
+layout(location = 4) in flat uint clusterMeshletId;    /* @brief ClusterMeshletId ID.     */
 
 /*****************************************************************************************/
 
@@ -51,11 +52,11 @@ layout(location = 3) in flat uint meshletId;           /* @brief Meshlet ID.    
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4  outColor;                /* @brief Fragmet Color       */
-layout(location = 1) out vec4  outPosition;             /* @brief position Attachment */
-layout(location = 2) out float outID;                   /* @brief ID Attachment       */
-layout(location = 3) out vec4  outTriangleID;           /* @brief ID Attachment.       */
-layout(location = 4) out vec4  outMeshletID;            /* @brief ID Attachment.       */
+layout(location = 0) out vec4  outColor;                /* @brief Fragmet Color                */
+layout(location = 1) out vec4  outPosition;             /* @brief position Attachment          */
+layout(location = 2) out float outID;                   /* @brief EntityID Attachment          */
+layout(location = 3) out vec4  outTriangleID;           /* @brief TriangleID Attachment.       */
+layout(location = 4) out vec4  outMeshletID;            /* @brief MeshletID Attachment.        */
 
 /*****************************************************************************************/
 
@@ -88,12 +89,17 @@ void main()
     float meshletrand1 = rnd(meshletSeed);
     float meshletrand2 = rnd(meshletSeed);
 
-    vec2 uv       = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
-    outColor      = texture(BindLessTextureBuffer[materialParam.albedo], uv);
-    outPosition   = vec4(fragInput.worldPosition, 1.0f);
-    outID         = desc.entityID;
-    outTriangleID = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
-    outMeshletID  = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
+    uint  clusterMeshletSeed  = clusterMeshletId;
+    float clusterMeshletrand0 = rnd(clusterMeshletSeed);
+    float clusterMeshletrand1 = rnd(clusterMeshletSeed);
+    float clusterMeshletrand2 = rnd(clusterMeshletSeed);
+
+    vec2 uv             = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
+    outColor            = texture(BindLessTextureBuffer[materialParam.albedo], uv);
+    outPosition         = vec4(fragInput.worldPosition, 1.0f);
+    outID               = desc.entityID;
+    outTriangleID       = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
+    outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
 }
 
 /*****************************************************************************************/

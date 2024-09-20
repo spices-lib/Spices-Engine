@@ -29,9 +29,9 @@ namespace Spices {
         if (!m_IsSlateOn) return;
 
         /**
-        * @brief Begin render GBuffer Visualizer.
+        * @brief Begin render VirtualGeometry Visualizer.
         */
-        Begin("GBuffer");
+        Begin("VirtualGeometry");
 
         ImVec2 size = { m_Width , m_Height };
 
@@ -106,10 +106,10 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        VkDescriptorImageInfo* triangleID = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "TriangleID" });
-        VkDescriptorImageInfo* meshletID = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "MeshletID" });
+        VkDescriptorImageInfo* triangleID       = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "TriangleID" });
+        VkDescriptorImageInfo* meshletID        = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "MeshletID" });
 
-        m_BufferID.TriangleID = ImGui_ImplVulkan_AddTexture(triangleID->sampler, triangleID->imageView, triangleID->imageLayout);
-        m_BufferID.MeshletID = ImGui_ImplVulkan_AddTexture(meshletID->sampler, meshletID->imageView, meshletID->imageLayout);
+        m_BufferID.TriangleID       = ImGui_ImplVulkan_AddTexture(triangleID->sampler, triangleID->imageView, triangleID->imageLayout);
+        m_BufferID.MeshletID        = ImGui_ImplVulkan_AddTexture(meshletID->sampler, meshletID->imageView, meshletID->imageLayout);
     }
 }

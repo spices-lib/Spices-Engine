@@ -46,9 +46,10 @@ layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPR
 /**
 * @brief Mesh Shader Output to Fragment Shader.
 */
-layout(location = 0) out Pixel pixel[];               /* @brief Pixel Data.     */
-layout(location = 4) out flat uint triangleId[];      /* @brief Triangle ID.    */
-layout(location = 5) out flat uint meshletId[];       /* @brief Meshlet ID.     */
+layout(location = 0) out Pixel pixel[];                      /* @brief Pixel Data.              */
+layout(location = 4) out flat uint triangleId[];             /* @brief Triangle ID.             */
+layout(location = 5) out flat uint meshletId[];              /* @brief Meshlet ID.              */
+layout(location = 6) out flat uint clusterMeshletId[];       /* @brief ClusterMeshletId ID.     */
 
 /*****************************************************************************************/
 
@@ -97,12 +98,13 @@ void main()
 
         gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
         
-        pixel[arrayIndices[j]].position  = vec3(model * vec4(vt.position, 1.0f));
-        pixel[arrayIndices[j]].normal    = normalize(m3model * vt.normal);
-        pixel[arrayIndices[j]].color     = vt.color;
-        pixel[arrayIndices[j]].texCoord  = vt.texCoord;
-        triangleId[arrayIndices[j]]      = localId + meshlet.primitiveOffset;
-        meshletId[arrayIndices[j]]       = id;
+        pixel[arrayIndices[j]].position   = vec3(model * vec4(vt.position, 1.0f));
+        pixel[arrayIndices[j]].normal     = normalize(m3model * vt.normal);
+        pixel[arrayIndices[j]].color      = vt.color;
+        pixel[arrayIndices[j]].texCoord   = vt.texCoord;
+        triangleId[arrayIndices[j]]       = localId + meshlet.primitiveOffset;
+        meshletId[arrayIndices[j]]        = id;
+        clusterMeshletId[arrayIndices[j]] = meshlet.clusterMeshletIndex;
     }
     
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);

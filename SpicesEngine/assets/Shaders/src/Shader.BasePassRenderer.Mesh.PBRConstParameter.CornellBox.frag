@@ -39,9 +39,10 @@ struct MaterialParameter
 /**
 * @brief Fragment Shader Input From Vertex Shader.
 */
-layout(location = 0) in Pixel pixel;                   /* @brief Pixel Data.     */
-layout(location = 4) in flat uint triangleId;          /* @brief Triangle ID.    */
-layout(location = 5) in flat uint meshletId;           /* @brief Meshlet ID.     */
+layout(location = 0) in Pixel pixel;                   /* @brief Pixel Data.              */
+layout(location = 4) in flat uint triangleId;          /* @brief Triangle ID.             */
+layout(location = 5) in flat uint meshletId;           /* @brief Meshlet ID.              */
+layout(location = 6) in flat uint clusterMeshletId;    /* @brief ClusterMeshletId ID.     */
 
 /*****************************************************************************************/
 
@@ -50,14 +51,14 @@ layout(location = 5) in flat uint meshletId;           /* @brief Meshlet ID.    
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4  outAlbedo;               /* @brief albedo Attachment.   */
-layout(location = 1) out vec4  outNormal;               /* @brief normal Attachment.   */
-layout(location = 2) out vec4  outRoughness;            /* @brief roughness Attachment.*/
-layout(location = 3) out vec4  outMetallic;             /* @brief metallic Attachment. */
-layout(location = 4) out vec4  outPosition;             /* @brief position Attachment. */
-layout(location = 5) out float outID;                   /* @brief ID Attachment.       */
-layout(location = 6) out vec4  outTriangleID;           /* @brief ID Attachment.       */
-layout(location = 7) out vec4  outMeshletID;            /* @brief ID Attachment.       */
+layout(location = 0) out vec4  outAlbedo;               /* @brief albedo Attachment.           */
+layout(location = 1) out vec4  outNormal;               /* @brief normal Attachment.           */
+layout(location = 2) out vec4  outRoughness;            /* @brief roughness Attachment.        */
+layout(location = 3) out vec4  outMetallic;             /* @brief metallic Attachment.         */
+layout(location = 4) out vec4  outPosition;             /* @brief position Attachment.         */
+layout(location = 5) out float outID;                   /* @brief EntityID Attachment.         */
+layout(location = 6) out vec4  outTriangleID;           /* @brief TriangleID Attachment.       */
+layout(location = 7) out vec4  outMeshletID;            /* @brief MeshletID Attachment.        */
 
 /*****************************************************************************************/
 
@@ -103,13 +104,18 @@ void main()
     float meshletrand1 = rnd(meshletSeed);
     float meshletrand2 = rnd(meshletSeed);
 
-    outNormal      = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
-    outRoughness   = vec4(materialParam.roughness);
-    outMetallic    = vec4(materialParam.metallic);
-    outPosition    = vec4(pixel.position, 1.0f);
-    outID          = desc.entityID;
-    outTriangleID  = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
-    outMeshletID   = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
+    uint  clusterMeshletSeed  = clusterMeshletId;
+    float clusterMeshletrand0 = rnd(clusterMeshletSeed);
+    float clusterMeshletrand1 = rnd(clusterMeshletSeed);
+    float clusterMeshletrand2 = rnd(clusterMeshletSeed);
+
+    outNormal           = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
+    outRoughness        = vec4(materialParam.roughness);
+    outMetallic         = vec4(materialParam.metallic);
+    outPosition         = vec4(pixel.position, 1.0f);
+    outID               = desc.entityID;
+    outTriangleID       = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
+    outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
 }
 
 /*****************************************************************************************/

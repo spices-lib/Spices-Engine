@@ -15,8 +15,8 @@ namespace Spices {
 	*/
 	struct VirtualGeometryBufferID
 	{
-		ImTextureID TriangleID;   /* @brief ImTextureID of TriangleID. */
-		ImTextureID MeshletID;    /* @brief ImTextureID of MeshletID.  */
+		ImTextureID TriangleID;          /* @brief ImTextureID of TriangleID. */
+		ImTextureID MeshletID;           /* @brief ImTextureID of MeshletID.  */
 
 		/**
 		* @brief Free in used DescripotorSet used by GBuffer Visualizer.

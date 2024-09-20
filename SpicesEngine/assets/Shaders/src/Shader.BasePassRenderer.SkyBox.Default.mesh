@@ -53,8 +53,9 @@ layout(location = 0) out struct MeshOut
 } 
 meshOut[];
 
-layout(location = 2) out flat uint triangleId[];      /* @brief Triangle ID.    */
-layout(location = 3) out flat uint meshletId[];       /* @brief Meshlet ID.     */
+layout(location = 2) out flat uint triangleId[];             /* @brief Triangle ID.    */
+layout(location = 3) out flat uint meshletId[];              /* @brief Meshlet ID.     */
+layout(location = 4) out flat uint clusterMeshletId[];       /* @brief ClusterMeshletId ID.     */
 
 /*****************************************************************************************/
 
@@ -107,6 +108,7 @@ void main()
         meshOut[arrayIndices[j]].worldPosition = vec3(model * vec4(vt.position, 1.0f));
         triangleId[arrayIndices[j]]            = localId + meshlet.primitiveOffset;
         meshletId[arrayIndices[j]]             = id;
+        clusterMeshletId[arrayIndices[j]]      = meshlet.clusterMeshletIndex;
     }
 
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);
