@@ -182,22 +182,22 @@ namespace Spices {
 		builder.Async([&](VkCommandBuffer& cmdBuffer) {
 
 			builder.SetViewPort(cmdBuffer);
-
+			
 			builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
-
+			
 			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
-
+			
 			IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-
+			
 				meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
-
+			
 					builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
-
+			
 					builder.UpdatePushConstant<uint64_t>([&](auto& push) {
 						push = meshPack->GetMeshDesc().GetBufferAddress();
 						}, cmdBuffer);
 					});
-
+			
 				return false;
 			});
 

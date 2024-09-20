@@ -176,7 +176,7 @@ namespace Spices {
 		}
 
 		MeshProcessor::GenerateMeshLodClusterHierarchy(outMeshPack);
-		//WriteSASSET(index, fileName, outMeshPack);
+		WriteSASSET(index, fileName, outMeshPack);
 
 		return true;
 	}
@@ -233,21 +233,53 @@ namespace Spices {
 			return false;
 		}
 
-		//uint32_t verticesCount = 0;
-		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &verticesCount, &readed);
-		//outMeshPack->m_Vertices->resize(verticesCount);
-		//
-		//uint32_t indicesCount = 0;
-		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &indicesCount, &readed);
-		//outMeshPack->m_Indices->resize(indicesCount);
-		//
-		//uint32_t meshletsCount = 0;
-		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshletsCount, &readed);
-		//outMeshPack->m_Meshlets->resize(meshletsCount);
-		//
-		//FileLibrary::FileLibrary_Read(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &readed);
-		//FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &readed);
-		//FileLibrary::FileLibrary_Read(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &readed);
+		uint32_t positionsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &positionsCount, &readed);
+		outMeshPack->m_MeshResource.positions.attributes->resize(positionsCount);
+		
+		uint32_t normalsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &normalsCount, &readed);
+		outMeshPack->m_MeshResource.normals.attributes->resize(normalsCount);
+
+		uint32_t colorsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &colorsCount, &readed);
+		outMeshPack->m_MeshResource.colors.attributes->resize(colorsCount);
+
+		uint32_t texCoordsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &texCoordsCount, &readed);
+		outMeshPack->m_MeshResource.texCoords.attributes->resize(texCoordsCount);
+
+		uint32_t verticesCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &verticesCount, &readed);
+		outMeshPack->m_MeshResource.vertices.attributes->resize(verticesCount);
+
+		uint32_t primitivePointsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &primitivePointsCount, &readed);
+		outMeshPack->m_MeshResource.primitivePoints.attributes->resize(primitivePointsCount);
+
+		uint32_t primitiveVerticesCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &primitiveVerticesCount, &readed);
+		outMeshPack->m_MeshResource.primitiveVertices.attributes->resize(primitiveVerticesCount);
+
+		uint32_t primitiveLocationsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &primitiveLocationsCount, &readed);
+		outMeshPack->m_MeshResource.primitiveLocations.attributes->resize(primitiveLocationsCount);
+
+		uint32_t meshletsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshletsCount, &readed);
+		outMeshPack->m_MeshResource.meshlets.attributes->resize(meshletsCount);
+
+		
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::vec3)  * positionsCount          , outMeshPack->m_MeshResource.positions.attributes          ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::vec3)  * normalsCount            , outMeshPack->m_MeshResource.normals.attributes            ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::vec3)  * colorsCount             , outMeshPack->m_MeshResource.colors.attributes             ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::vec2)  * texCoordsCount          , outMeshPack->m_MeshResource.texCoords.attributes          ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::uvec4) * verticesCount           , outMeshPack->m_MeshResource.vertices.attributes           ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::uvec3) * primitivePointsCount    , outMeshPack->m_MeshResource.primitivePoints.attributes    ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::uvec3) * primitiveVerticesCount  , outMeshPack->m_MeshResource.primitiveVertices.attributes  ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(glm::uvec3) * primitiveLocationsCount , outMeshPack->m_MeshResource.primitiveLocations.attributes ->data(), &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(Meshlet)    * meshletsCount           , outMeshPack->m_MeshResource.meshlets.attributes           ->data(), &readed);
+
 
 		char overSign[100];
 		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
@@ -260,7 +292,6 @@ namespace Spices {
 
 		FileLibrary::FileLibrary_Close(&f);
 
-		//outMeshPack->m_NTasks = outMeshPack->m_Meshlets->size() / SUBGROUP_SIZE + 1;
 		return true;
 	}
 
@@ -279,18 +310,43 @@ namespace Spices {
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignSatrt, &written);
 
-		//uint32_t verticesCount = (uint32_t)outMeshPack->m_Vertices->size();
-		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
-		//
-		//uint32_t indicesCount = (uint32_t)outMeshPack->m_Indices->size();
-		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &indicesCount, &written);
-		//
-		//uint32_t meshletsCount = (uint32_t)outMeshPack->m_Meshlets->size();
-		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
-		//
-		//FileLibrary::FileLibrary_Write(&f, sizeof(Vertex) * verticesCount, outMeshPack->m_Vertices->data(), &written);
-		//FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t) * indicesCount, outMeshPack->m_Indices->data(), &written);
-		//FileLibrary::FileLibrary_Write(&f, sizeof(SpicesShader::Meshlet) * meshletsCount, outMeshPack->m_Meshlets->data(), &written);
+		uint32_t positionsCount = (uint32_t)outMeshPack->m_MeshResource.positions.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &positionsCount, &written);
+		
+		uint32_t normalsCount = (uint32_t)outMeshPack->m_MeshResource.normals.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &normalsCount, &written);
+
+		uint32_t colorsCount = (uint32_t)outMeshPack->m_MeshResource.colors.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &colorsCount, &written);
+
+		uint32_t texCoordsCount = (uint32_t)outMeshPack->m_MeshResource.texCoords.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &texCoordsCount, &written);
+
+		uint32_t verticesCount = (uint32_t)outMeshPack->m_MeshResource.vertices.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
+
+		uint32_t primitivePointsCount = (uint32_t)outMeshPack->m_MeshResource.primitivePoints.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &primitivePointsCount, &written);
+
+		uint32_t primitiveVerticesCount = (uint32_t)outMeshPack->m_MeshResource.primitiveVertices.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &primitiveVerticesCount, &written);
+		
+		uint32_t primitiveLocationsCount = (uint32_t)outMeshPack->m_MeshResource.primitiveLocations.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &primitiveLocationsCount, &written);
+
+		uint32_t meshletsCount = (uint32_t)outMeshPack->m_MeshResource.meshlets.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
+		
+
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::vec3)  * positionsCount          , outMeshPack->m_MeshResource.positions.attributes          ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::vec3)  * normalsCount            , outMeshPack->m_MeshResource.normals.attributes            ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::vec3)  * colorsCount             , outMeshPack->m_MeshResource.colors.attributes             ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::vec2)  * texCoordsCount          , outMeshPack->m_MeshResource.texCoords.attributes          ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::uvec4) * verticesCount           , outMeshPack->m_MeshResource.vertices.attributes           ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::uvec3) * primitivePointsCount    , outMeshPack->m_MeshResource.primitivePoints.attributes    ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::uvec3) * primitiveVerticesCount  , outMeshPack->m_MeshResource.primitiveVertices.attributes  ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(glm::uvec3) * primitiveLocationsCount , outMeshPack->m_MeshResource.primitiveLocations.attributes ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(Meshlet)    * meshletsCount           , outMeshPack->m_MeshResource.meshlets.attributes           ->data(), &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignOver, &written);
 

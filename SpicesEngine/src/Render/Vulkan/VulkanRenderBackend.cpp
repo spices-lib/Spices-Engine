@@ -87,8 +87,8 @@ namespace Spices {
 			.Push<PreRenderer>              (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 
 			/* @brief Ray Tracing Renderer */
-			//.Push<RayTracingRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			//.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+			.Push<RayTracingRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+			.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 
 			/* @brief Rasterization Renderer */
 			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
@@ -131,8 +131,8 @@ namespace Spices {
 			.Pop("SceneComposeRenderer")
 			//.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
-		    //.Pop("RayTracingComposeRenderer")
-			//.Pop("RayTracingRenderer")
+		    .Pop("RayTracingComposeRenderer")
+			.Pop("RayTracingRenderer")
 			.Pop("PreRenderer");
 		}
 	}
