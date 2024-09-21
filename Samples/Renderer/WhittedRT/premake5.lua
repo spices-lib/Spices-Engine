@@ -48,6 +48,7 @@ project "WhittedRT"
 		"%{IncludeDir.ImGuizmo}",			   -- Library: ImGuizmo Source Folder.
 		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
 		"%{IncludeDir.tracy}",				   -- Library: tracy Source Folder.
+		"%{IncludeDir.NvAftermath}",           -- Library: NvAftermath Source Folder.
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
 		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.

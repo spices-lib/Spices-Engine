@@ -14,6 +14,7 @@ IncludeDir["tinyobjloader"]               = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["yaml_cpp"]                    = "%{wks.location}/SpicesEngine/vendor/yaml-cpp/include"                            -- Include: yaml_cpp
 IncludeDir["rapidyaml"]                   = "%{wks.location}/SpicesEngine/vendor/rapidyaml"                                   -- Include: rapidyaml
 IncludeDir["ImPlot"]                      = "%{wks.location}/SpicesEngine/vendor/implot"                                      -- Include: ImPlot
+IncludeDir["NvAftermath"]                 = "%{wks.location}/SpicesEngine/vendor/NvAftermath/include"                         -- Include: NvAftermath version 2024.2.0.24200
 IncludeDir["NvPerf"]                      = "%{wks.location}/SpicesEngine/vendor/NvPerf/include"                              -- Include: NvPerf
 IncludeDir["NvPerfUtility"]               = "%{wks.location}/SpicesEngine/vendor/NvPerfUtility/include"                       -- Include: NvPerfUtility
 IncludeDir["spdlog"]                      = "%{wks.location}/SpicesEngine/vendor/spdlog/include"                              -- Include: spdlog
@@ -32,6 +33,7 @@ IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/g
 -- Library Directries Folder
 LibraryDir                                = {}
 LibraryDir["VulkanSDK"]                   = "C:/VulkanSDK/1.3.275.0/Lib"                                                      -- Library Directries: VulkanSDK Folder
+LibraryDir["NvAftermath"]                 = "%{wks.location}/SpicesEngine/vendor/NvAftermath/lib/x64"                         -- Library Directries: NvAftermath Folder
 LibraryDir["NvPerfUtility"]               = "%{wks.location}/SpicesEngine/vendor/NvPerfUtility/lib"                           -- Library Directries: NvPerfUtility Folder
 LibraryDir["HoudiniEnginedll"]            = "C:/Program Files/Side Effects Software/Houdini 20.5.278/bin"                     -- Library Directries: HoudiniEnginedll Folder
 LibraryDir["HoudiniEnginelib"]            = "C:/Program Files/Side Effects Software/Houdini 20.5.278/custom/houdini/dsolib"   -- Library Directries: HoudiniEnginelib Folder
@@ -39,5 +41,6 @@ LibraryDir["HoudiniEnginelib"]            = "C:/Program Files/Side Effects Softw
 -- Library Directries
 Library                                   = {}
 Library["VulkanSDK"]                      = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"                                            -- Library Directries: VulkanSDK
+Library["NvAftermath"]                    = "%{LibraryDir.NvAftermath}/GFSDK_Aftermath_Lib.x64.lib"                           -- Library Directries: NvAftermath
 Library["NvPerfUtility"]                  = "%{LibraryDir.NvPerfUtility}/nvperf_grfx_host.dll"                                -- Library Directries: NvPerfUtility
 Library["HoudiniEnginelib"]               = "%{LibraryDir.HoudiniEnginelib}/libHAPIL.lib"                                     -- Library Directries: HoudiniEnginelib

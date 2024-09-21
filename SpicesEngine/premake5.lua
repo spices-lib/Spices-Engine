@@ -88,6 +88,7 @@ project "SpicesEngine"
 		"%{IncludeDir.yaml_cpp}",              -- Library: yaml_cpp Source Folder.
 		"%{IncludeDir.rapidyaml}",             -- Library: rapidyaml Source Folder.
 		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
+		"%{IncludeDir.NvAftermath}",           -- Library: NvAftermath Source Folder.
 		"%{IncludeDir.NvPerf}",                -- Library: NvPerf Source Folder.
 		"%{IncludeDir.NvPerfUtility}",         -- Library: NvPerfUtility Source Folder.
 		"%{IncludeDir.spdlog}",                -- Library: spdlog Source Folder.
@@ -109,6 +110,7 @@ project "SpicesEngine"
 		"imgui",                              -- Dependency: imgui
 		"yaml-cpp",                           -- Dependency: yaml-cpp
 		"implot",                             -- Dependency: implot
+		"%{Library.NvAftermath}",             -- Dependency: NvAftermath
 		"%{Library.NvPerfUtility}",           -- Dependency: NvPerfUtility
 		"%{Library.HoudiniEnginelib}",        -- Dependency: HoudiniEngine
 		"METIS",                              -- Dependency: METIS

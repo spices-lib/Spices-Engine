@@ -47,6 +47,7 @@ project "SpicesGame"
 		"%{IncludeDir.spdlog}",				   -- Library: yaml_cpp Source Folder.
 		"%{IncludeDir.ImGuizmo}",			   -- Library: rapidyaml Source Folder.
 		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
+		"%{IncludeDir.NvAftermath}",           -- Library: NvAftermath Source Folder.
 		"%{IncludeDir.tracy}",                 -- Library: tracy Source Folder.
 		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
 		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
