@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanBuffer.h"
 #include "VulkanCommandBuffer.h"
+#include "VulkanMemoryAllocator.h"
 
 namespace Spices {
 
@@ -262,7 +263,12 @@ namespace Spices {
 
 		if (properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
 		{
-			allocInfo.flags                              = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+			allocInfo.flags                             |= VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+		}
+
+		if (properties & VMA_MEMORY_PROPERTY_DEDICATED_MEMORY_BIT)
+		{
+			allocInfo.flags                             |= VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT;
 		}
 
 		/**
@@ -292,7 +298,7 @@ namespace Spices {
 		* @brief Create a Buffer.
 		*/
 		VK_CHECK(vkCreateBuffer(vulkanState.m_Device, &bufferInfo, nullptr, &m_Buffer));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, m_Buffer, vulkanState.m_Device, "Buffer");
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_Buffer, vulkanState.m_Device, "Buffer");
 
 		/**
 		* @brief Get Buffer Memory Requirements.

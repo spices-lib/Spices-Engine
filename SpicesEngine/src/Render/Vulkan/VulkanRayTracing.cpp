@@ -1,5 +1,6 @@
 #include "Pchheader.h"
 #include "VulkanRayTracing.h"
+#include "VulkanMemoryAllocator.h"
 
 namespace Spices {
 
@@ -121,8 +122,8 @@ namespace Spices {
 			m_VulkanState, 
 			maxScratchSize, 
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 
-			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 
-			0
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT        , 
+			VMA_MEMORY_PROPERTY_DEDICATED_MEMORY_BIT
 		);
 
 		const VkDeviceAddress scratchAddress = scratchBuffer.GetAddress();

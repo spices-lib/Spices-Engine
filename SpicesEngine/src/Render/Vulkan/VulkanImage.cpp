@@ -629,7 +629,7 @@ namespace Spices {
 		* @brief Create Image.
 		*/
 		VK_CHECK(vkCreateImage(vulkanState.m_Device, &imageInfo, nullptr, &m_Image));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, m_Image, m_VulkanState.m_Device, name);
+		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_Image, m_VulkanState.m_Device, name);
 
 		/**
 		* @brief Get VkMemoryRequirements.
