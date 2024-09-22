@@ -32,9 +32,8 @@ namespace Spices {
 
         /**
         * @brief Constructor Function.
-        * @param[in] markerMap .
         */
-        GpuCrashTracker(const MarkerMap& markerMap);
+        GpuCrashTracker();
 
         /**
         * @brief Destructor Function.
@@ -46,25 +45,58 @@ namespace Spices {
         */
         void Initialize();
 
+        /**
+        * @brief Create single instance of this class.
+        */
+        static void Init();
+
+        /**
+        * @brief Get single instance of this class.
+        * @return Return this reference.
+        */
+        static GpuCrashTracker& Get() { return *m_GpuCrashTracker; }
+
+        /**
+        * @brief Set FrameCut.
+        * @param[in] frameCut FrameCut.
+        */
+        void SetFrameCut(uint32_t frameCut);
+
+        /**
+        * @brief Set Marker.
+        * @param[in] markerId Marker Id.
+        * @param[in] info Marker informations.
+        */
+        void SetMarker(uint64_t markerId, const std::string& info);
+
     private:
 
         /**
         * @brief Handler for GPU crash dump callbacks from Nsight Aftermath.
+        * @param[in] pGpuCrashDump .
+        * @param[in] gpuCrashDumpSize .
         */
         void OnCrashDump(const void* pGpuCrashDump, const uint32_t gpuCrashDumpSize);
 
         /**
         * @brief Handler for shader debug information callbacks.
+        * @param[in] pShaderDebugInfo .
+        * @param[in] shaderDebugInfoSize .
         */
         void OnShaderDebugInfo(const void* pShaderDebugInfo, const uint32_t shaderDebugInfoSize);
 
         /**
         * @brief Handler for GPU crash dump description callbacks.
+        * @param[in] addDescription PFN_GFSDK_Aftermath_AddGpuCrashDumpDescription.
         */
         void OnDescription(PFN_GFSDK_Aftermath_AddGpuCrashDumpDescription addDescription);
 
         /**
         * @brief Handler for app-managed marker resolve callback.
+        * @param[in] pMarkerData .
+        * @param[in] markerDataSize .
+        * @param[in] ppResolvedMarkerData .
+        * @param[in] pResolvedMarkerDataSize .
         */
         void OnResolveMarker(
             const void*    pMarkerData             , 
@@ -75,11 +107,16 @@ namespace Spices {
 
         /**
         * @brief Helper for writing a GPU crash dump to a file.
+        * @param[in] pGpuCrashDump .
+        * @param[in] gpuCrashDumpSize .
         */
         void WriteGpuCrashDumpToFile(const void* pGpuCrashDump, const uint32_t gpuCrashDumpSize);
 
         /**
         * @brief Helper for writing shader debug information to a file.
+        * @param[in] identifier GFSDK_Aftermath_ShaderDebugInfoIdentifier.
+        * @param[in] pShaderDebugInfo .
+        * @param[in] shaderDebugInfoSize .
         */
         void WriteShaderDebugInformationToFile(
             GFSDK_Aftermath_ShaderDebugInfoIdentifier identifier          ,
@@ -91,6 +128,8 @@ namespace Spices {
         * @brief Handler for shader debug information lookup callbacks.
         * This is used by the JSON decoder for mapping shader instruction
         * addresses to SPIR-V IL lines or GLSL source lines.
+        * @param[in] identifier GFSDK_Aftermath_ShaderDebugInfoIdentifier.
+        * @param[in] setShaderDebugInfo PFN_GFSDK_Aftermath_SetData.
         */
         void OnShaderDebugInfoLookup(
             const GFSDK_Aftermath_ShaderDebugInfoIdentifier& identifier         ,
@@ -104,6 +143,8 @@ namespace Spices {
         * NOTE: If the application loads stripped shader binaries (ie; --strip-all in spirv-remap),
         * Aftermath will require access to both the stripped and the not stripped
         * shader binaries.
+        * @param[in] shaderHash GFSDK_Aftermath_ShaderBinaryHash.
+        * @param[in] setShaderBinary PFN_GFSDK_Aftermath_SetData.
         */
         void OnShaderLookup(
             const GFSDK_Aftermath_ShaderBinaryHash& shaderHash      ,
@@ -115,6 +156,8 @@ namespace Spices {
         * This is used by the JSON decoder for mapping shader instruction addresses to
         * GLSL source lines, if the shaders used by the application were compiled with
         * separate debug info data files.
+        * @param[in] shaderDebugName GFSDK_Aftermath_ShaderDebugName.
+        * @param[in] setShaderBinary PFN_GFSDK_Aftermath_SetData.
         */
         void OnShaderSourceDebugInfoLookup(
             const GFSDK_Aftermath_ShaderDebugName& shaderDebugName ,
@@ -123,6 +166,9 @@ namespace Spices {
 
         /**
         * @brief GPU crash dump callback.
+        * @param[in] pGpuCrashDump .
+        * @param[in] gpuCrashDumpSize .
+        * @param[in] pUserData .
         */
         static void GpuCrashDumpCallback(
             const void*    pGpuCrashDump    ,
@@ -132,6 +178,9 @@ namespace Spices {
 
         /**
         * @brief Shader debug information callback.
+        * @param[in] pShaderDebugInfo .
+        * @param[in] shaderDebugInfoSize .
+        * @param[in] pUserData .
         */
         static void ShaderDebugInfoCallback(
             const void*    pShaderDebugInfo    ,
@@ -141,6 +190,8 @@ namespace Spices {
 
         /**
         * @brief GPU crash dump description callback.
+        * @param[in] addDescription PFN_GFSDK_Aftermath_AddGpuCrashDumpDescription.
+        * @param[in] pUserData .
         */
         static void CrashDumpDescriptionCallback(
             PFN_GFSDK_Aftermath_AddGpuCrashDumpDescription addDescription,
@@ -149,6 +200,11 @@ namespace Spices {
 
         /**
         * @brief App-managed marker resolve callback.
+        * @param[in] pMarkerData .
+        * @param[in] markerDataSize .
+        * @param[in] pUserData .
+        * @param[in] ppResolvedMarkerData .
+        * @param[in] pResolvedMarkerDataSize .
         */
         static void ResolveMarkerCallback(
             const void*    pMarkerData             ,
@@ -160,6 +216,9 @@ namespace Spices {
 
         /**
         * @brief Shader debug information lookup callback.
+        * @param[in] pIdentifier GFSDK_Aftermath_ShaderDebugInfoIdentifier.
+        * @param[in] setShaderDebugInfo PFN_GFSDK_Aftermath_SetData.
+        * @param[in] pUserData .
         */
         static void ShaderDebugInfoLookupCallback(
             const GFSDK_Aftermath_ShaderDebugInfoIdentifier* pIdentifier        ,
@@ -169,6 +228,9 @@ namespace Spices {
 
         /**
         * @brief Shader lookup callback.
+        * @param[in] pShaderHash GFSDK_Aftermath_ShaderBinaryHash.
+        * @param[in] setShaderBinary PFN_GFSDK_Aftermath_SetData.
+        * @param[in] pUserData .
         */
         static void ShaderLookupCallback(
             const GFSDK_Aftermath_ShaderBinaryHash* pShaderHash     ,
@@ -178,6 +240,9 @@ namespace Spices {
 
         /**
         * @brief Shader source debug info lookup callback.
+        * @param[in] pShaderDebugName GFSDK_Aftermath_ShaderDebugName.
+        * @param[in] setShaderBinary PFN_GFSDK_Aftermath_SetData.
+        * @param[in] pUserData .
         */
         static void ShaderSourceDebugInfoLookupCallback(
             const GFSDK_Aftermath_ShaderDebugName* pShaderDebugName ,
@@ -208,9 +273,35 @@ namespace Spices {
         ShaderDatabase m_ShaderDatabase;
 
         /**
-        * @brief App-managed marker tracking
+        * @brief App-managed marker tracking.
         */
-        const MarkerMap& m_MarkerMap;
+        MarkerMap m_MarkerMap;
+
+        /**
+        * @brief Frame Count cut.
+        */
+        uint32_t m_FrameCut;
+
+        /**
+        * @brief GpuCrashTracker single instance.
+        */
+        static std::unique_ptr<GpuCrashTracker> m_GpuCrashTracker;
     };
+
+#ifdef SPICES_DEBUG
+
+#define AFTERMATH_INIT                      ::Spices::GpuCrashTracker::Init()
+#define AFTERMATH_SETFRAMECUT(...)          ::Spices::GpuCrashTracker::Get().SetFrameCut(__VA_ARGS__)
+#define AFTERMATH_SETMARKER(...)            ::Spices::GpuCrashTracker::Get().SetMarker(__VA_ARGS__)
+
+#endif
+
+#ifdef SPICES_RELEASE
+
+#define AFTERMATH_INIT                        
+#define AFTERMATH_SETFRAMECUT(...)            
+#define AFTERMATH_SETMARKER(...)              
+
+#endif
 
 }

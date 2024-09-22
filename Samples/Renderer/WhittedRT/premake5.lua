@@ -62,6 +62,7 @@ project "WhittedRT"
 	debugenvs 
 	{
 		"PATH=%{LibraryDir.HoudiniEnginedll}", -- Houdini dll Path.
+		"PATH=%{LibraryDir.NvAftermath}",      -- NvAftermath dll Path.
 	}
 
 	-- The Solution Dependency

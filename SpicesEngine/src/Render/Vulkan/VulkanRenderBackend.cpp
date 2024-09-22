@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "VulkanRenderBackend.h"
+#include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
@@ -37,6 +38,13 @@ namespace Spices {
 	VulkanRenderBackend::VulkanRenderBackend()
 	{
 		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Init Aftermath GpuCrashTracker.
+		*/
+		{
+			AFTERMATH_INIT;
+		}
 
 		/**
 		* @brief Create basic Vulkan Objects.

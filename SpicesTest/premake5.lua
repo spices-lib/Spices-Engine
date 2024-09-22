@@ -60,6 +60,14 @@ project "SpicesTest"
 		"%{IncludeDir.METIS}/include",         -- Library: METIS Header Folder.
 	}
 
+	-- In Visual Studio, it only works when generated a new solution, remember update solution will not works.
+    -- In Rider, it will not work, needs to add environment variables manually in project configurations setting.
+	debugenvs 
+	{
+		"PATH=%{LibraryDir.HoudiniEnginedll}", -- Houdini dll Path.
+		"PATH=%{LibraryDir.NvAftermath}",      -- NvAftermath dll Path.
+	}
+
 	-- The Solution Dependency
 	links
 	{

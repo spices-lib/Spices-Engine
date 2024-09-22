@@ -18,6 +18,11 @@
 
 namespace std
 {
+    /**
+    * @brief Convert T to hex string.
+    * @param[in] n T.
+    * @return Returns converted string.
+    */
     template<typename T>
     inline std::string to_hex_string(T n)
     {
@@ -26,66 +31,90 @@ namespace std
         return stream.str();
     }
 
+    /**
+    * @brief Convert GFSDK_Aftermath_Result to string.
+    * @param[in] result GFSDK_Aftermath_Result.
+    * @return Returns converted string.
+    */
     inline std::string to_string(GFSDK_Aftermath_Result result)
     {
         return std::string("0x") + to_hex_string(static_cast<uint32_t>(result));
     }
 
+    /**
+    * @brief Convert GFSDK_Aftermath_ShaderDebugInfoIdentifier to string.
+    * @param[in] identifier GFSDK_Aftermath_ShaderDebugInfoIdentifier.
+    * @return Returns converted string.
+    */
     inline std::string to_string(const GFSDK_Aftermath_ShaderDebugInfoIdentifier& identifier)
     {
         return to_hex_string(identifier.id[0]) + "-" + to_hex_string(identifier.id[1]);
     }
 
+    /**
+    * @brief Convert GFSDK_Aftermath_ShaderBinaryHash to string.
+    * @param[in] hash GFSDK_Aftermath_ShaderBinaryHash.
+    * @return Returns converted string.
+    */
     inline std::string to_string(const GFSDK_Aftermath_ShaderBinaryHash& hash)
     {
         return to_hex_string(hash.hash);
     }
 }
 
-namespace Spices {
-
-    /**
-    * @brief Helper for comparing GFSDK_Aftermath_ShaderDebugInfoIdentifier.
-    */
-    inline bool operator<(const GFSDK_Aftermath_ShaderDebugInfoIdentifier& lhs, const GFSDK_Aftermath_ShaderDebugInfoIdentifier& rhs)
+/**
+* @brief Helper for comparing GFSDK_Aftermath_ShaderDebugInfoIdentifier.
+* @param[in] lhs GFSDK_Aftermath_ShaderDebugInfoIdentifier.
+* @param[in] rhs GFSDK_Aftermath_ShaderDebugInfoIdentifier.
+* @return Returns true if less.
+*/
+inline bool operator<(const GFSDK_Aftermath_ShaderDebugInfoIdentifier& lhs, const GFSDK_Aftermath_ShaderDebugInfoIdentifier& rhs)
+{
+    if (lhs.id[0] == rhs.id[0])
     {
-        if (lhs.id[0] == rhs.id[0])
-        {
-            return lhs.id[1] < rhs.id[1];
-        }
-        return lhs.id[0] < rhs.id[0];
+        return lhs.id[1] < rhs.id[1];
     }
+    return lhs.id[0] < rhs.id[0];
+}
 
-    /**
-    * @brief Helper for comparing GFSDK_Aftermath_ShaderBinaryHash.
-    */
-    inline bool operator<(const GFSDK_Aftermath_ShaderBinaryHash& lhs, const GFSDK_Aftermath_ShaderBinaryHash& rhs)
+/**
+* @brief Helper for comparing GFSDK_Aftermath_ShaderBinaryHash.
+* @param[in] lhs GFSDK_Aftermath_ShaderBinaryHash.
+* @param[in] rhs GFSDK_Aftermath_ShaderBinaryHash.
+* @return Returns true if less.
+*/
+inline bool operator<(const GFSDK_Aftermath_ShaderBinaryHash& lhs, const GFSDK_Aftermath_ShaderBinaryHash& rhs)
+{
+    return lhs.hash < rhs.hash;
+}
+
+/**
+* @brief Helper for comparing GFSDK_Aftermath_ShaderDebugName.
+* @param[in] lhs GFSDK_Aftermath_ShaderDebugName.
+* @param[in] rhs GFSDK_Aftermath_ShaderDebugName.
+* @return Returns true if less.
+*/
+inline bool operator<(const GFSDK_Aftermath_ShaderDebugName& lhs, const GFSDK_Aftermath_ShaderDebugName& rhs)
+{
+    return strncmp(lhs.name, rhs.name, sizeof(lhs.name)) < 0;
+}
+    
+/**
+* @brief Helper for checking Nsight Aftermath failures.
+* @param[in] result GFSDK_Aftermath_Result.
+* @return Returns debug info.
+*/
+inline std::string AftermathErrorMessage(GFSDK_Aftermath_Result result)
+{
+    switch (result)
     {
-        return lhs.hash < rhs.hash;
+    case GFSDK_Aftermath_Result_FAIL_DriverVersionNotSupported:
+        return "Unsupported driver version - requires an NVIDIA R495 display driver or newer.";
+    default:
+        return "Aftermath Error 0x" + std::to_hex_string(result);
     }
-
-    /**
-    * @brief Helper for comparing GFSDK_Aftermath_ShaderDebugName.
-    */
-    inline bool operator<(const GFSDK_Aftermath_ShaderDebugName& lhs, const GFSDK_Aftermath_ShaderDebugName& rhs)
-    {
-        return strncmp(lhs.name, rhs.name, sizeof(lhs.name)) < 0;
-    }
-
-    /**
-    * @brief Helper for checking Nsight Aftermath failures.
-    */
-    inline std::string  AftermathErrorMessage(GFSDK_Aftermath_Result result)
-    {
-        switch (result)
-        {
-        case GFSDK_Aftermath_Result_FAIL_DriverVersionNotSupported:
-            return "Unsupported driver version - requires an NVIDIA R495 display driver or newer.";
-        default:
-            return "Aftermath Error 0x" + std::to_hex_string(result);
-        }
-    }
-
+}
+    
 /**
 * @brief Helper macro for checking Nsight Aftermath results and throwing exception
 * in case of a failure.
@@ -112,5 +141,3 @@ namespace Spices {
         }                                                                                                   \
     }()
 #endif
-
-}

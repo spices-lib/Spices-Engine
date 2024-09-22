@@ -105,7 +105,8 @@ namespace Spices {
 */
 #define VK_CHECK(expr)                        \
     {                                         \
-        DeviceLostCheck(expr);                \
-        ASSERT(expr == VK_SUCCESS);           \
+        auto value = expr;                    \
+        DeviceLostCheck(value);               \
+        ASSERT(value == VK_SUCCESS);          \
     }
 }

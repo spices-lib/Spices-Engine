@@ -61,7 +61,8 @@ project "SpicesGame"
     -- In Rider, it will not work, needs to add environment variables manually in project configurations setting.
 	debugenvs 
 	{
-		"PATH=%{LibraryDir.HoudiniEnginedll}"  -- Houdini dll Path.
+		"PATH=%{LibraryDir.HoudiniEnginedll}", -- Houdini dll Path.
+		"PATH=%{LibraryDir.NvAftermath}",      -- NvAftermath dll Path.
 	}
 
 	-- The Solution Dependency

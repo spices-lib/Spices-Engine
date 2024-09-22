@@ -15,9 +15,11 @@
 namespace Spices {
 
     ShaderDatabase::ShaderDatabase()
-        : m_shaderBinaries()
-        , m_shaderBinariesWithDebugInfo()
+        : m_ShaderBinaries()
+        , m_ShaderBinariesWithDebugInfo()
     {
+        SPICES_PROFILE_ZONE;
+
         /**
         * @brief Add shader binaries to database.
         */
@@ -33,6 +35,8 @@ namespace Spices {
 
     bool ShaderDatabase::ReadFile(const char* filename, std::vector<uint8_t>& data)
     {
+        SPICES_PROFILE_ZONE;
+
         std::ifstream fs(filename, std::ios::in | std::ios::binary);
         if (!fs)
         {
@@ -50,6 +54,8 @@ namespace Spices {
 
     void ShaderDatabase::AddShaderBinary(const char* shaderFilePath)
     {
+        SPICES_PROFILE_ZONE;
+
         /**
         * @brief Read the shader binary code from the file.
         */
@@ -74,11 +80,13 @@ namespace Spices {
         * @brief Store the data for shader mapping when decoding GPU crash dumps.
         * cf. FindShaderBinary()
         */
-        m_shaderBinaries[shaderHash].swap(data);
+        m_ShaderBinaries[shaderHash].swap(data);
     }
 
     void ShaderDatabase::AddShaderBinaryWithDebugInfo(const char* strippedShaderFilePath, const char* shaderFilePath)
     {
+        SPICES_PROFILE_ZONE;
+
         /**
         * @brief Read the shader debug data from the file.
         */
@@ -110,16 +118,18 @@ namespace Spices {
         * @brief Store the data for shader instruction address mapping when decoding GPU crash dumps.
         * cf. FindShaderBinaryWithDebugData()
         */
-        m_shaderBinariesWithDebugInfo[debugName].swap(data);
+        m_ShaderBinariesWithDebugInfo[debugName].swap(data);
     }
 
     bool ShaderDatabase::FindShaderBinary(const GFSDK_Aftermath_ShaderBinaryHash& shaderHash, std::vector<uint8_t>& shader) const
     {
+        SPICES_PROFILE_ZONE;
+
         /**
         * @brief Find shader binary data for the shader hash.
         */
-        auto i_shader = m_shaderBinaries.find(shaderHash);
-        if (i_shader == m_shaderBinaries.end())
+        auto i_shader = m_ShaderBinaries.find(shaderHash);
+        if (i_shader == m_ShaderBinaries.end())
         {
             /**
             * @brief Nothing found.
@@ -133,11 +143,13 @@ namespace Spices {
 
     bool ShaderDatabase::FindShaderBinaryWithDebugData(const GFSDK_Aftermath_ShaderDebugName& shaderDebugName, std::vector<uint8_t>& shader) const
     {
+        SPICES_PROFILE_ZONE;
+
         /**
         * @brief Find shader binary for the shader debug name.
         */
-        auto i_shader = m_shaderBinariesWithDebugInfo.find(shaderDebugName);
-        if (i_shader == m_shaderBinariesWithDebugInfo.end())
+        auto i_shader = m_ShaderBinariesWithDebugInfo.find(shaderDebugName);
+        if (i_shader == m_ShaderBinariesWithDebugInfo.end())
         {
             /**
             * @brief Nothing found.
