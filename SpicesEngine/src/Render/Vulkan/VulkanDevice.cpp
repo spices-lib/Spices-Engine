@@ -58,9 +58,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceDiagnosticsConfigFeaturesNV               diagnosticsConfig{};
+		diagnosticsConfig.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV;
+		diagnosticsConfig.pNext                                 = nullptr;
+												       
 		VkPhysicalDeviceDeviceGeneratedCommandsFeaturesNV         dgcFeatures{};
 		dgcFeatures.sType                                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV;
-		dgcFeatures.pNext                                       = nullptr;
+		dgcFeatures.pNext                                       = &diagnosticsConfig;
 														       
 		VkPhysicalDeviceVulkan13Features                          vk13Frature{};
 		vk13Frature.sType                                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
@@ -109,12 +113,25 @@ namespace Spices {
 		/**
 		* @brief Get all Features that supported.
 		*/
-		VkPhysicalDeviceFeatures2 deviceFeatures{};
-		deviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-		deviceFeatures.pNext = &bufferDeviceAddressFeatures;
+		VkPhysicalDeviceFeatures2                                 deviceFeatures{};
+		deviceFeatures.sType                                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		deviceFeatures.pNext                                    = &bufferDeviceAddressFeatures;
 
-		// Fetch all features
+		/**
+		* @brief Fetch all features.
+		*/ 
 		vkGetPhysicalDeviceFeatures2(m_VulkanState.m_PhysicalDevice, &deviceFeatures);
+
+		/**
+		* @brief aftermath config.
+		*/
+		VkDeviceDiagnosticsConfigCreateInfoNV                     aftermathInfo{};
+		aftermathInfo.sType                                     = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV;
+		aftermathInfo.flags                                     = VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV  |  // Enable automatic call stack checkpoints.
+											                      VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV      |  // Enable tracking of resources.
+											                      VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV      |  // Generate debug information for shaders.
+							            	                      VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_ERROR_REPORTING_BIT_NV ;  // Enable additional runtime shader error reporting.
+		aftermathInfo.pNext                                     = &deviceFeatures;
 
 		/**
 		* @brief Instanced a VkDeviceCreateInfo with default value.
@@ -127,7 +144,7 @@ namespace Spices {
 		createInfo.enabledExtensionCount    = static_cast<uint32_t>(m_ExtensionProperties.size());
 		createInfo.ppEnabledExtensionNames  = m_ExtensionProperties.data();
 		createInfo.enabledLayerCount        = 0;
-		createInfo.pNext                    = &deviceFeatures;
+		createInfo.pNext                    = &aftermathInfo;
 
 		/**
 		* @brief Create device and set it global.
@@ -325,9 +342,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceDiagnosticsConfigFeaturesNV           diagnosticsConfig{};
+		diagnosticsConfig.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV;
+		diagnosticsConfig.pNext                             = nullptr;
+
 		VkPhysicalDeviceDeviceGeneratedCommandsFeaturesNV     dgcFeatures{};
 		dgcFeatures.sType                                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV;
-		dgcFeatures.pNext                                   = nullptr;
+		dgcFeatures.pNext                                   = &diagnosticsConfig;
 
 		VkPhysicalDeviceVulkan13Features                      vk13Frature{};
 		vk13Frature.sType                                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
@@ -419,6 +440,8 @@ namespace Spices {
 
 		ASSERT(dgcFeatures.deviceGeneratedCommands)                                            /* @brief Enable Nvidia GPU Generate Commands Feature.                     */
 
+		ASSERT(diagnosticsConfig.diagnosticsConfig)                                            /* @brief Enable Nvidia GPU Generate Diagnostic Checkpoints Feature.       */
+
 		return true;
 	}
 
@@ -426,19 +449,21 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                        /* @brief Swapchain Extension.                 */
-		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /* @brief Negative Viewport Extension.         */
-		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /* @brief To build acceleration structures.    */
-		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /* @brief To use vkCmdTraceRaysKHR.            */
-		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.    */
-		m_ExtensionProperties.push_back(VK_KHR_SHADER_CLOCK_EXTENSION_NAME);                     /* @brief Enable Shader Clock Extension.       */
-		m_ExtensionProperties.push_back(VK_KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME);         /* @brief Enable Shader Debug Print.           */
-		m_ExtensionProperties.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);                        /* @brief Enable Shader spirv1.4.              */
-		m_ExtensionProperties.push_back(VK_EXT_MESH_SHADER_EXTENSION_NAME);                      /* @brief Enable Mesh Shader, Task Shader.     */
-		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.        */
-		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.       */
-		m_ExtensionProperties.push_back(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME);            /* @brief Enable Nested Command Buffer.        */
-		m_ExtensionProperties.push_back(VK_NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Generate Commands. */
+		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                        /* @brief Swapchain Extension.                      */
+		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /* @brief Negative Viewport Extension.              */
+		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /* @brief To build acceleration structures.         */
+		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /* @brief To use vkCmdTraceRaysKHR.                 */
+		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.         */
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_CLOCK_EXTENSION_NAME);                     /* @brief Enable Shader Clock Extension.            */
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME);         /* @brief Enable Shader Debug Print.                */
+		m_ExtensionProperties.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);                        /* @brief Enable Shader spirv1.4.                   */
+		m_ExtensionProperties.push_back(VK_EXT_MESH_SHADER_EXTENSION_NAME);                      /* @brief Enable Mesh Shader, Task Shader.          */
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.             */
+		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.            */
+		m_ExtensionProperties.push_back(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME);            /* @brief Enable Nested Command Buffer.             */
+		m_ExtensionProperties.push_back(VK_NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Generate Commands.      */
+		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);     /* @brief Enable Nvidia GPU Diagnostic Checkpoints. */
+		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Diagnostic Config.      */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

@@ -44,5 +44,7 @@ namespace Spices {
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdExecuteGeneratedCommandsNV                 )
 		EXPLAIN_VK_FUNCTION_POINTER(vkGetGeneratedCommandsMemoryRequirementsNV      )
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdPreprocessGeneratedCommandsNV              )
+
+		EXPLAIN_VK_FUNCTION_POINTER(vkCmdSetCheckpointNV                            )
 	}
 }

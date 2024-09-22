@@ -107,15 +107,15 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 #define SPICES_CORE_TRACE(...)    ::Spices::Log::GetCoreLogger()->trace      (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__)
 #define SPICES_CORE_INFO(...)     ::Spices::Log::GetCoreLogger()->info       (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__)
 #define SPICES_CORE_WARN(...)     ::Spices::Log::GetCoreLogger()->warn       (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__)
-#define SPICES_CORE_ERROR(...)    ::Spices::Log::GetCoreLogger()->error      (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
-#define SPICES_CORE_CRITICAL(...) ::Spices::Log::GetCoreLogger()->critical   (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
-
-// Client log macros
+#define SPICES_CORE_ERROR(...)    ::Spices::Log::GetCoreLogger()->error      (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  //throw std::runtime_error(__VA_ARGS__)
+#define SPICES_CORE_CRITICAL(...) ::Spices::Log::GetCoreLogger()->critical   (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  //throw std::runtime_error(__VA_ARGS__)
+																																	
+// Client log macros																												
 #define SPICES_TRACE(...)         ::Spices::Log::GetClientLogger()->trace    (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__)
 #define SPICES_INFO(...)          ::Spices::Log::GetClientLogger()->info     (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__)
 #define SPICES_WARN(...)          ::Spices::Log::GetClientLogger()->warn     (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__)
-#define SPICES_ERROR(...)         ::Spices::Log::GetClientLogger()->error    (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
-#define SPICES_CRITICAL(...)      ::Spices::Log::GetClientLogger()->critical (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  throw std::runtime_error(__VA_ARGS__)
+#define SPICES_ERROR(...)         ::Spices::Log::GetClientLogger()->error    (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  //throw std::runtime_error(__VA_ARGS__)
+#define SPICES_CRITICAL(...)      ::Spices::Log::GetClientLogger()->critical (__VA_ARGS__)   ;   ::Spices::Log::PostHandle(__VA_ARGS__);  //throw std::runtime_error(__VA_ARGS__)
 
 #endif // SPICES_DEBUG
 

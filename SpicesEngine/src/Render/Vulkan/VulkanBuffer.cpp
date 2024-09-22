@@ -94,6 +94,7 @@ namespace Spices {
 		}
 
 		SPICES_CORE_ERROR("This Buffer Cannot Get Address");
+		return m_BufferAddress;
 	}
 
 	void VulkanBuffer::Map(VkDeviceSize size, VkDeviceSize offset)

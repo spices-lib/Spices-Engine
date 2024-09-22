@@ -81,5 +81,10 @@ namespace Spices {
 		VK_FUNCTION_POINTER(vkCmdExecuteGeneratedCommandsNV                 )
 		VK_FUNCTION_POINTER(vkGetGeneratedCommandsMemoryRequirementsNV      )
 		VK_FUNCTION_POINTER(vkCmdPreprocessGeneratedCommandsNV              )
+
+		/**
+		* @brief Aftermath Function.
+		*/
+		VK_FUNCTION_POINTER(vkCmdSetCheckpointNV                            )
 	};
 }

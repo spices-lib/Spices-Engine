@@ -118,6 +118,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		size_t markerId = 1;
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdSetCheckpointNV(commandBuffer, (const void*)markerId);
 		VulkanRenderBackend::GetState().m_VkFunc.vkCmdDrawMeshTasksEXT(commandBuffer, m_NTasks, 1, 1);
 	}
 

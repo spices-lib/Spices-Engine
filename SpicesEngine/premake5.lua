@@ -22,6 +22,7 @@ project "SpicesEngine"
 	{
 		-- Engine Source Files.
 		"src/**.h",
+		"src/**.hpp",
 		"src/**.cpp",
 
 		-- Engine Shader Headers.

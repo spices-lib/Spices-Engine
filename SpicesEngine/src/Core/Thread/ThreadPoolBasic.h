@@ -296,12 +296,12 @@ namespace Spices {
 		/**
 		* @brief Initialized thread size.
 		*/
-		int m_InitThreadSize;
+		uint32_t m_InitThreadSize;
 
 		/**
 		* @brief thread idle time out.
 		*/
-		int m_ThreadIdleTimeOut;
+		uint32_t m_ThreadIdleTimeOut;
 
 		/**
 		* @brief Idled thread size.
