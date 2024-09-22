@@ -538,8 +538,8 @@ namespace Spices {
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
 			* @param[in] textureNames All Texture's Name.
-			* @param[in] format Texture Format.
-			* @param[in] type Texture's type.
+			* @param[in] format Texture Format, used in init.
+			* @param[in] type Texture's type, used in init.
 			* @return Returns this reference.
 			*/
 			DescriptorSetBuilder& AddStorageTexture(

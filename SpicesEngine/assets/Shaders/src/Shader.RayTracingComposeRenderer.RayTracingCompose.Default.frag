@@ -11,6 +11,7 @@
 #extension GL_GOOGLE_include_directive : enable    /* @brief Enable include Macro. */
 
 #include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderFunctionLibrary.glsl"
 
 /*****************************************************************************************/
 
@@ -32,8 +33,9 @@ fragInput;
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4 outColor;    /* @brief SceneColor Attachment. */
-layout(location = 1) out float outID;      /* @brief ID Attachment.         */
+layout(location = 0) out vec4  outColor;           /* @brief SceneColor Attachment. */
+layout(location = 1) out float outEntityID;        /* @brief ID Attachment.         */
+layout(location = 2) out vec4  outTriangleID;      /* @brief ID Attachment.         */
 
 /*****************************************************************************************/
 
@@ -43,7 +45,7 @@ layout(location = 1) out float outID;      /* @brief ID Attachment.         */
 * @brief Storage Image written by RayTracing Renderer.
 */
 layout(set = 2, binding = 0, rgba32f) uniform image2D RayImage;
-layout(set = 2, binding = 1, r32f) uniform image2D RayID;
+layout(set = 2, binding = 1, r32f) uniform image2D RayID[];
 
 /*****************************************************************************************/
 
@@ -51,9 +53,16 @@ layout(set = 2, binding = 1, r32f) uniform image2D RayID;
 
 void main()
 {
-	ivec2 uv  = ivec2(view.sceneTextureSize.xy * fragInput.texCoord.xy);
-	outColor  = imageLoad(RayImage, uv);
-	outID     = imageLoad(RayID, uv).x;
+	ivec2 uv     = ivec2(view.sceneTextureSize.xy * fragInput.texCoord.xy);
+	outColor     = imageLoad(RayImage, uv);
+	outEntityID  = imageLoad(RayID[0], uv).x;
+
+	uint  triangleSeed  = uint(imageLoad(RayID[1], uv).x);
+	float trianglerand0 = rnd(triangleSeed);
+	float trianglerand1 = rnd(triangleSeed);
+	float trianglerand2 = rnd(triangleSeed);
+
+	outTriangleID = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
 }
 
 /*****************************************************************************************/

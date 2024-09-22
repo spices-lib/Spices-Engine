@@ -56,7 +56,7 @@ namespace Spices {
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
-				->AccessRowResource("ID")
+				->AccessRowResource("EntityID")
 				->CopyImageTexelToBuffer(
 					pair.first, 
 					pair.second, 
@@ -82,7 +82,7 @@ namespace Spices {
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
-				->AccessRowResource("ID")
+				->AccessRowResource("EntityID")
 				->CopyImageTexelToBuffer(
 					pair.first, 
 					pair.second, 
@@ -111,7 +111,7 @@ namespace Spices {
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
-				->AccessRowResource("ID")
+				->AccessRowResource("EntityID")
 				->CopyImageTexelToBuffer(
 					pair.first, 
 					pair.second, 

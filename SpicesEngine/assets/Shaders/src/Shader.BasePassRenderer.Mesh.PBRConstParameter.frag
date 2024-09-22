@@ -56,7 +56,7 @@ layout(location = 1) out vec4  outNormal;               /* @brief normal Attachm
 layout(location = 2) out vec4  outRoughness;            /* @brief roughness Attachment.        */
 layout(location = 3) out vec4  outMetallic;             /* @brief metallic Attachment.         */
 layout(location = 4) out vec4  outPosition;             /* @brief position Attachment.         */
-layout(location = 5) out float outID;                   /* @brief EntityID Attachment.         */
+layout(location = 5) out float outEntityID;             /* @brief EntityID Attachment.         */
 layout(location = 6) out vec4  outTriangleID;           /* @brief TriangleID Attachment.       */
 layout(location = 7) out vec4  outMeshletID;            /* @brief MeshletID Attachment.        */
 
@@ -101,7 +101,7 @@ void main()
     outRoughness        = vec4(materialParam.roughness);
     outMetallic         = vec4(materialParam.metallic);
     outPosition         = vec4(pixel.position, 1.0f);
-    outID               = desc.entityID;
+    outEntityID         = desc.entityID;
     outTriangleID       = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
     outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
 }

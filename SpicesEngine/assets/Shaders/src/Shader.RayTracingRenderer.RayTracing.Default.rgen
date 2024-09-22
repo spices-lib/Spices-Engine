@@ -36,8 +36,8 @@ layout(set = 2, binding = 0) uniform accelerationStructureEXT topLevelAS;
 /**
 * @brief Ray Tracing Out Image.
 */
-layout(set = 2, binding = 1, rgba32f) uniform image2D RayImage;    /* @brief Color. */
-layout(set = 2, binding = 2, r32f) uniform image2D RayID;          /* @brief ID.    */
+layout(set = 2, binding = 1, rgba32f) uniform image2D RayImage;    /* @brief Color.      */
+layout(set = 2, binding = 2, r32f) uniform image2D RayID[];        /* @brief ID.         */
 
 /*****************************************************************************************/
 
@@ -79,6 +79,7 @@ void main()
     vec3 hitValue           = vec3(0.0f);
     uint  maxRayDepth       = 0;
     uint  entityID          = 0;
+    uint  triangleID        = 0;
     
     /**
     * @brief First Entry.
@@ -100,6 +101,7 @@ void main()
     curWeight   *= prd.weight;
     maxRayDepth  = prd.maxRayDepth;
     entityID     = prd.entityID;
+    triangleID   = prd.triangleID;
     
     /**
     * @brief Recursive Ray by hit material ateribute.
@@ -139,7 +141,9 @@ void main()
         */ 
         imageStore(RayImage, ivec2(gl_LaunchIDEXT.xy), vec4(hitValue, 1.0f));
     }
-    imageStore(RayID, ivec2(gl_LaunchIDEXT.xy), vec4(entityID));
+
+    imageStore(RayID[0], ivec2(gl_LaunchIDEXT.xy), vec4(entityID));
+    imageStore(RayID[1], ivec2(gl_LaunchIDEXT.xy), vec4(triangleID));
 }
 
 /*****************************************************************************************/

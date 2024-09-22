@@ -54,7 +54,7 @@ layout(location = 4) in flat uint clusterMeshletId;    /* @brief ClusterMeshletI
 */
 layout(location = 0) out vec4  outColor;                /* @brief Fragmet Color                */
 layout(location = 1) out vec4  outPosition;             /* @brief position Attachment          */
-layout(location = 2) out float outID;                   /* @brief EntityID Attachment          */
+layout(location = 2) out float outEntityID;             /* @brief EntityID Attachment          */
 layout(location = 3) out vec4  outTriangleID;           /* @brief TriangleID Attachment.       */
 layout(location = 4) out vec4  outMeshletID;            /* @brief MeshletID Attachment.        */
 
@@ -97,7 +97,7 @@ void main()
     vec2 uv             = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
     outColor            = texture(BindLessTextureBuffer[materialParam.albedo], uv);
     outPosition         = vec4(fragInput.worldPosition, 1.0f);
-    outID               = desc.entityID;
+    outEntityID         = desc.entityID;
     outTriangleID       = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
     outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
 }

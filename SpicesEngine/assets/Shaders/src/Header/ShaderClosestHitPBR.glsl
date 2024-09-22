@@ -172,6 +172,7 @@ void main()
     prd.weight         = BRDF * cos_theta / p;
     prd.maxRayDepth    = materialAttributes.maxRayDepth;
     prd.entityID       = desc.entityID;
+    prd.triangleID     = gl_PrimitiveID;
 }
 
 /*****************************************************************************************/

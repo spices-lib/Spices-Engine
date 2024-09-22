@@ -59,6 +59,7 @@ void main()
     prd.rayDepth      = 100;                  // Ending trace
     prd.maxRayDepth   = 0;
     prd.entityID      = push.entityID;
+    prd.triangleID    = 0;
 }
 
 /*****************************************************************************************/

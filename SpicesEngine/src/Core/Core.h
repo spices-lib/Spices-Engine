@@ -5,7 +5,7 @@
 */
 
 #pragma once
-#include "Core/Performance/Profiler.h"
+#include "Debugger/CPUProfiler/TracyProfiler.hpp"
 #include "TimeStep.h"
 #include "Log/Log.h"
 

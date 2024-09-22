@@ -31,10 +31,15 @@ namespace Spices {
 			description.initialLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp            = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
-		.AddColorAttachment("ID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("EntityID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp            = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			description.format            = VK_FORMAT_R32_SFLOAT;
+		})
+		.AddColorAttachment("TriangleID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp            = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.finalLayout       = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
 		.EndSubPass()
 		.Build();
@@ -46,7 +51,7 @@ namespace Spices {
 
 		DescriptorSetBuilder{ "RayTracingCompose", this }
 		.AddStorageTexture(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "RayImage" })
-		.AddStorageTexture(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT, { "RayID" })
+		.AddStorageTexture(2, 1, VK_SHADER_STAGE_FRAGMENT_BIT, { "RayEntityID", "RayTriangleID" })
 		.Build();
 	}
 

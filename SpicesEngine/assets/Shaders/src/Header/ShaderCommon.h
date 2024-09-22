@@ -205,14 +205,15 @@ struct MeshDesc
 */
 struct HitPayLoad
 {
-	vec3 hitValue;                  /* @brief Current Hit Fragment Color.                                        */
-	uint seed;                      /* @brief Random Seed for BRDF Lambertian Light Reflection Direction Select. */
-	uint rayDepth;                  /* @brief Ray Tracing Depth for diffuse.                                     */
-	vec3 rayOrigin;                 /* @brief Next Ray Original World Position.                                  */
-	vec3 rayDirection;              /* @brief Next Ray Direction in World Space.                                 */
-	vec3 weight;                    /* @brief Current Fragment Color Weight.                                     */
-	uint maxRayDepth;               /* @brief Max Ray Tracing Depth, defined specific from material.             */
-	uint entityID;                  /* @brief Entity ID from Closest Hit to Ray Gen Shader to RayID Image.       */
+	vec3 hitValue;                  /* @brief Current Hit Fragment Color.                                                */
+	uint seed;                      /* @brief Random Seed for BRDF Lambertian Light Reflection Direction Select.         */
+	uint rayDepth;                  /* @brief Ray Tracing Depth for diffuse.                                             */
+	vec3 rayOrigin;                 /* @brief Next Ray Original World Position.                                          */
+	vec3 rayDirection;              /* @brief Next Ray Direction in World Space.                                         */
+	vec3 weight;                    /* @brief Current Fragment Color Weight.                                             */
+	uint maxRayDepth;               /* @brief Max Ray Tracing Depth, defined specific from material.                     */
+	uint entityID;                  /* @brief Entity ID from Closest Hit to Ray Gen Shader to RayEntityID Image.         */
+	uint triangleID;                /* @brief Triangle ID from Closest Hit to Ray Gen Shader to RayTriangleID Image.     */
 };
 
 /*****************************************************************************************/
