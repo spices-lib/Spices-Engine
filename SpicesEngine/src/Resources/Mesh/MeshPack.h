@@ -22,6 +22,14 @@
 
 namespace Spices {
 	
+	struct Lod
+	{
+		uint32_t primVertexOffset;
+		uint32_t nPrimitives;
+		uint32_t meshletOffset;
+		uint32_t nMeshlets;
+	};
+
 	template<typename T>
 	struct Attribute
 	{
@@ -48,6 +56,7 @@ namespace Spices {
 		using PrimitiveVertices   = Attribute<glm::uvec3>;               // PrimVertices
 		using PrimitiveLocations  = Attribute<glm::uvec3>;               // PrimLocation
 		using Meshlets            = Attribute<Meshlet>;                  // PrimMeshlet
+		using Lods                = Attribute<Lod>;                      // Lod
 
 		Positions                     positions;
 		Normals                       normals;
@@ -58,6 +67,7 @@ namespace Spices {
 		PrimitiveVertices             primitiveVertices;
 		PrimitiveLocations            primitiveLocations;
 		Meshlets                      meshlets;
+		Lods                          lods;
 
 		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();

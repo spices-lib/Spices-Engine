@@ -261,6 +261,17 @@ namespace Spices {
 				(*meshPack->m_MeshResource.primitiveVertices.attributes)[ml.primitiveOffset + j] = primVertices[inPrimPointsLayoutMap[{ x, y, z }]];
 			}
 		}
+
+		/**
+		* @brief Fill in Lod data.
+		*/
+		Lod lodData;
+		lodData.primVertexOffset = primVerticesOffset;
+		lodData.nPrimitives      = lastm.primitiveOffset + lastm.nPrimitives - primVerticesOffset;
+		lodData.nMeshlets        = nMeshlet;
+		lodData.meshletOffset    = meshletsOffset;
+
+		meshPack->m_MeshResource.lods.attributes->push_back(std::move(lodData));
 	}
 
 	std::vector<MeshletGroup> MeshProcessor::GroupMeshlets(MeshPack* meshPack, std::vector<Meshlet>& meshlets)

@@ -112,7 +112,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size() * 3), 1, 0, 0, 0);
+		int lodLevel = 0;
+		auto ptr = m_Material->GetConstantParams().find_value("lod");
+		if (ptr)
+		{
+			lodLevel = std::any_cast<int>(ptr->paramValue);
+		}
+		const Lod& lod0 = (*m_MeshResource.lods.attributes)[lodLevel];
+		vkCmdDrawIndexed(commandBuffer, lod0.nPrimitives * 3, 1, lod0.primVertexOffset * 3, 0, 0);
 	}
 
 	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
@@ -194,7 +201,8 @@ namespace Spices {
 		const VkDeviceAddress vertexAddress          = m_MeshResource.positions.buffer->GetAddress();
 		const VkDeviceAddress indicesAddress         = m_MeshResource.primitivePoints.buffer->GetAddress();
 
-		const uint32_t maxPrimitiveCount             = static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size());
+		const Lod& lod0                              = (*m_MeshResource.lods.attributes)[0];
+		const uint32_t maxPrimitiveCount             = lod0.nPrimitives;
 
 		/**
 		* @brief device pointer to the buffers holding triangle vertex/index data, 
@@ -225,7 +233,7 @@ namespace Spices {
 		VkAccelerationStructureBuildRangeInfoKHR       offset {};
 		offset.firstVertex                           = 0;
 		offset.primitiveCount                        = maxPrimitiveCount;
-		offset.primitiveOffset                       = 0;
+		offset.primitiveOffset                       = lod0.primVertexOffset;
 		offset.transformOffset                       = 0;
 
 		/**
@@ -242,7 +250,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_NTasks = m_MeshResource.meshlets.attributes->size() / SUBGROUP_SIZE + 1;
+		const Lod& lod0 = (*m_MeshResource.lods.attributes)[0];
+		m_NTasks = lod0.nMeshlets / SUBGROUP_SIZE + 1;
 		m_MeshTaskIndirectDrawCommand.firstTask = 0;
 		m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
 
