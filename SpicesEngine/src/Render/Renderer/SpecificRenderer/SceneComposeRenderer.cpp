@@ -40,19 +40,22 @@ namespace Spices {
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout                 = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                        = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			description.format                        = VK_FORMAT_R8G8B8_UNORM;
 		})
 		.AddInputAttachment("Albedo", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.format                        = VK_FORMAT_R8G8B8_UNORM;
 		})
-		.AddInputAttachment("NRM", TextureType::Texture2D, [](VkAttachmentDescription& description) {
+		.AddInputAttachment("Normal", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.format                        = VK_FORMAT_R8G8B8A8_UNORM;
+		})
+		.AddInputAttachment("Roughness", TextureType::Texture2D, [](VkAttachmentDescription& description) {
+			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		})
+		.AddInputAttachment("Metallic", TextureType::Texture2D, [](VkAttachmentDescription& description) {
+			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
 		.AddInputAttachment("Position", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.format                        = VK_FORMAT_R32G32B32_SFLOAT;
+			description.format                        = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
 		.AddInputAttachment("Depth", TextureType::Texture2D, [&](VkAttachmentDescription& description) {
 			description.format                        = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);

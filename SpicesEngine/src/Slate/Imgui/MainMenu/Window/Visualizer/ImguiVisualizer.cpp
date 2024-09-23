@@ -24,8 +24,8 @@ namespace Spices {
         /**
         * @brief Instance.
         */
-        //m_GBufferVisualizer = SlateSystem::GetRegister()->Register<ImguiGBufferVisualizer>(true, "GBuffer");
-        //m_VirtualGeometryVisualizer = SlateSystem::GetRegister()->Register<ImguiVirtualGeometryVisualizer>(true, "VirtualGeometry");
+        m_GBufferVisualizer = SlateSystem::GetRegister()->Register<ImguiGBufferVisualizer>(true, "GBuffer");
+        m_VirtualGeometryVisualizer = SlateSystem::GetRegister()->Register<ImguiVirtualGeometryVisualizer>(true, "VirtualGeometry");
     }
 
     void ImguiVisualizer::OnRender()
@@ -42,12 +42,12 @@ namespace Spices {
             /**
             * @brief Render GBufferVisualizer.
             */
-            //if (ImGui::MenuItem("GBuffer")) m_GBufferVisualizer->SetWindowState(true);
+            if (ImGui::MenuItem("GBuffer")) m_GBufferVisualizer->SetWindowState(true);
 
             /**
             * @brief Render VirtualGeometryVisualizer.
             */
-            //if (ImGui::MenuItem("VirtualGeometry")) m_VirtualGeometryVisualizer->SetWindowState(true);
+            if (ImGui::MenuItem("VirtualGeometry")) m_VirtualGeometryVisualizer->SetWindowState(true);
 
             /**
             * @brief End render Visualizer.

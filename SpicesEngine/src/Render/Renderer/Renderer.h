@@ -2015,7 +2015,7 @@ namespace Spices {
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddColorAttachment(
 		const std::string& attachmentName , 
 		const TextureType& type           ,
-		T                  func 
+		T                  func
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -2039,10 +2039,7 @@ namespace Spices {
 		* @param[in attachmentDescription VkAttachmentDescription.
 		*/
 		bool isEnableBlend = false;
-		if (func)
-		{
-			func(isEnableBlend, attachmentDescription);
-		}
+		func(isEnableBlend, attachmentDescription);
 
 		/**
 		* @brief Instance a VkClearValue.
@@ -2145,10 +2142,7 @@ namespace Spices {
 		* @brief Write in data.
 		* @param[in attachmentDescription VkAttachmentDescription.
 		*/
-		if (func)
-		{
-			func(depthAttachment);
-		}
+		func(depthAttachment);
 
 		/**
 		* @brief Instance a VkClearValue.

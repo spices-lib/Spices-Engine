@@ -18,45 +18,58 @@ namespace Spices {
 		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R8G8B8_UNORM;           // RGB U8
 		})
-		.AddColorAttachment("NRM", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("Normal", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R8G8B8A8_UNORM;         // RGBA U8
+		})
+		.AddColorAttachment("Roughness", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		})
+		.AddColorAttachment("Metallic", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R32G32B32_SFLOAT;       // RGB S32
+			description.format                = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
-		.AddColorAttachment("ETMID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("EntityID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R32G32B32_UINT;         // RGB U32
+			description.format                = VK_FORMAT_R32_SFLOAT;
+		})
+		.AddColorAttachment("TriangleID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.finalLayout           = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		})
+		.AddColorAttachment("MeshletID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.finalLayout           = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {
-			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;        /* @attention It seams that layout transform is not work? */
+			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;   /* @attention It seams that layout transform is not work? */
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		})
-		.AddSelfDependency(
-			VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV   ,
-			VK_ACCESS_INDIRECT_COMMAND_READ_BIT         ,
-			VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV ,
-			VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT
-		)
+		.AddSelfDependency(VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV,VK_ACCESS_INDIRECT_COMMAND_READ_BIT,VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT)
 		.EndSubPass()
 		.AddSubPass("SkyBox")
-		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format                = VK_FORMAT_R8G8B8_UNORM;
-		})
+		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format                = VK_FORMAT_R32G32B32_SFLOAT;
+			description.format                = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
-		.AddColorAttachment("ETMID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format                = VK_FORMAT_R32G32B32_UINT;
+		.AddColorAttachment("EntityID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+			description.format                = VK_FORMAT_R32_SFLOAT;
 		})
-		.AddDepthAttachment("Depth", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
+		.AddColorAttachment("TriangleID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		})
+		.AddColorAttachment("MeshletID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		})
+		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {})
 		.EndSubPass()
 		.Build();
 	}
