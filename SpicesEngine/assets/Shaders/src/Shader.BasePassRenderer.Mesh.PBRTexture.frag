@@ -52,14 +52,10 @@ layout(location = 6) in flat uint clusterMeshletId;    /* @brief ClusterMeshletI
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4  outAlbedo;               /* @brief albedo Attachment.           */
-layout(location = 1) out vec4  outNormal;               /* @brief normal Attachment.           */
-layout(location = 2) out vec4  outRoughness;            /* @brief roughness Attachment.        */
-layout(location = 3) out vec4  outMetallic;             /* @brief metallic Attachment.         */
-layout(location = 4) out vec4  outPosition;             /* @brief position Attachment.         */
-layout(location = 5) out float outEntityID;             /* @brief EntityID Attachment.         */
-layout(location = 6) out vec4  outTriangleID;           /* @brief TriangleID Attachment.       */
-layout(location = 7) out vec4  outMeshletID;            /* @brief MeshletID Attachment.        */
+layout(location = 0) out vec3  outAlbedo;               /* @brief albedo Attachment.                     */
+layout(location = 1) out vec4  outNRM;                  /* @brief normal roughness metallic Attachment.  */
+layout(location = 2) out vec3  outPosition;             /* @brief position Attachment.                   */
+layout(location = 3) out uvec3 outETMID;                /* @brief EntityID Attachment.                   */
 
 /*****************************************************************************************/
 
@@ -82,29 +78,26 @@ void main()
 {
     ExplainMeshDesciption(push.descAddress);
     
-    uint  triangleSeed  = triangleId;
-    float trianglerand0 = rnd(triangleSeed);
-    float trianglerand1 = rnd(triangleSeed);
-    float trianglerand2 = rnd(triangleSeed);
+    //uint  triangleSeed  = triangleId;
+    //float trianglerand0 = rnd(triangleSeed);
+    //float trianglerand1 = rnd(triangleSeed);
+    //float trianglerand2 = rnd(triangleSeed);
 
-    uint  meshletSeed  = meshletId;
-    float meshletrand0 = rnd(meshletSeed);
-    float meshletrand1 = rnd(meshletSeed);
-    float meshletrand2 = rnd(meshletSeed);
+    //uint  meshletSeed  = meshletId;
+    //float meshletrand0 = rnd(meshletSeed);
+    //float meshletrand1 = rnd(meshletSeed);
+    //float meshletrand2 = rnd(meshletSeed);
 
-    uint  clusterMeshletSeed  = clusterMeshletId;
-    float clusterMeshletrand0 = rnd(clusterMeshletSeed);
-    float clusterMeshletrand1 = rnd(clusterMeshletSeed);
-    float clusterMeshletrand2 = rnd(clusterMeshletSeed);
+    //uint  clusterMeshletSeed  = clusterMeshletId;
+    //float clusterMeshletrand0 = rnd(clusterMeshletSeed);
+    //float clusterMeshletrand1 = rnd(clusterMeshletSeed);
+    //float clusterMeshletrand2 = rnd(clusterMeshletSeed);
 
-    outAlbedo           = texture(BindLessTextureBuffer[materialParam.albedoTexture], pixel.texCoord);
-    outNormal           = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
-    outRoughness        = texture(BindLessTextureBuffer[materialParam.roughnessTexture], pixel.texCoord);
-    outMetallic         = texture(BindLessTextureBuffer[materialParam.metallicTexture], pixel.texCoord);
-    outPosition         = vec4(pixel.position, 1.0f);
-    outEntityID         = desc.entityID;
-    outTriangleID       = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
-    outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
+    outAlbedo           = texture(BindLessTextureBuffer[materialParam.albedoTexture], pixel.texCoord).xyz;
+    vec3 normal         = vec3(pixel.normal * 0.5f + vec3(0.5f));
+    outNRM              = vec4(normal.xy, materialParam.roughness, materialParam.metallic);
+    outPosition         = pixel.position;
+    outETMID            = vec3(desc.entityID, triangleId, meshletId);
 }
 
 /*****************************************************************************************/
