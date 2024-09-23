@@ -12,7 +12,9 @@
 namespace Spices {
 
 	WorldPickIDQueryer::WorldPickIDQueryer()
-	{}
+	{
+		m_WorldPickIDMemory = &m_WorldPickID[0];
+	}
 
 	void WorldPickIDQueryer::OnEvent(Event& e)
 	{
@@ -54,7 +56,7 @@ namespace Spices {
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
-				->AccessRowResource("ETMID")
+				->AccessRowResource("EntityID")
 				->CopyImageTexelToBuffer(
 					pair.first, 
 					pair.second, 
@@ -80,7 +82,7 @@ namespace Spices {
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
-				->AccessRowResource("ETMID")
+				->AccessRowResource("EntityID")
 				->CopyImageTexelToBuffer(
 					pair.first, 
 					pair.second, 
@@ -109,7 +111,7 @@ namespace Spices {
 				auto pair = m_ViewPort->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
-				->AccessRowResource("ETMID")
+				->AccessRowResource("EntityID")
 				->CopyImageTexelToBuffer(
 					pair.first, 
 					pair.second, 

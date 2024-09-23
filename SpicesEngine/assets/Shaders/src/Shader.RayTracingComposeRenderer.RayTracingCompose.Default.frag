@@ -34,7 +34,8 @@ fragInput;
 * @brief Fragment Shader Output to FrameBuffer.
 */
 layout(location = 0) out vec4  outColor;           /* @brief SceneColor Attachment. */
-layout(location = 1) out uvec4 outETMID;           /* @brief ID Attachment.         */
+layout(location = 1) out float outEntityID;        /* @brief ID Attachment.         */
+layout(location = 2) out vec4  outTriangleID;      /* @brief ID Attachment.         */
 
 /*****************************************************************************************/
 
@@ -53,8 +54,15 @@ layout(set = 2, binding = 1, r32f) uniform image2D RayID[];
 void main()
 {
 	ivec2 uv     = ivec2(view.sceneTextureSize.xy * fragInput.texCoord.xy);
-	outColor     = vec4(imageLoad(RayImage, uv).xyz, 1.0f);
-	outETMID     = uvec4(imageLoad(RayID[0], uv).x, imageLoad(RayID[1], uv).x, 0, 0);
+	outColor     = imageLoad(RayImage, uv);
+	outEntityID  = imageLoad(RayID[0], uv).x;
+
+	uint  triangleSeed  = uint(imageLoad(RayID[1], uv).x);
+	float trianglerand0 = rnd(triangleSeed);
+	float trianglerand1 = rnd(triangleSeed);
+	float trianglerand2 = rnd(triangleSeed);
+
+	outTriangleID = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
 }
 
 /*****************************************************************************************/

@@ -22,7 +22,7 @@ namespace Spices {
 /**
 * @brief Use VMA for memory allocate.
 */
-//#define VMA_ALLOCATOR
+#define VMA_ALLOCATOR
 
 	/**
 	* @brief This struct contains all Vulkan object in used golbal.

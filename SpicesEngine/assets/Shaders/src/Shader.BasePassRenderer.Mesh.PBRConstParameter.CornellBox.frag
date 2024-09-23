@@ -51,10 +51,10 @@ layout(location = 6) in flat uint clusterMeshletId;    /* @brief ClusterMeshletI
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4  outAR;                   /* @brief albedo roughnss Attachment.   */
-layout(location = 1) out vec4  outNM;                    /* @brief normal metallic Attachment.  */
-layout(location = 2) out vec4  outPosition;             /* @brief position Attachment.          */
-layout(location = 3) out uvec4 outETMID;                /* @brief EntityID Attachment.          */
+layout(location = 0) out vec3  outAlbedo;               /* @brief albedo Attachment.                     */
+layout(location = 1) out vec4  outNRM;                  /* @brief normal roughness metallic Attachment.  */
+layout(location = 2) out vec3  outPosition;             /* @brief position Attachment.                   */
+layout(location = 3) out uvec3 outETMID;                /* @brief EntityID Attachment.                   */
 
 /*****************************************************************************************/
 
@@ -79,15 +79,15 @@ void main()
     
     if(pixel.normal.z > 0.999)
     {
-        outAR = vec4(1.0f, 0.0f, 0.0f, materialParam.roughness);
+        outAlbedo = vec3(1.0f, 0.0f, 0.0f);
     }
     else if(pixel.normal.z < -0.999)
     {
-        outAR = vec4(0.0f, 1.0f, 0.0f, materialParam.roughness);
+        outAlbedo = vec3(0.0f, 1.0f, 0.0f);
     }
     else
     {
-        outAR = vec4(materialParam.albedo, materialParam.roughness);
+        outAlbedo = materialParam.albedo;
     }
 
     //uint  triangleSeed  = triangleId;
@@ -106,9 +106,9 @@ void main()
     //float clusterMeshletrand2 = rnd(clusterMeshletSeed);
 
     vec3 normal         = vec3(pixel.normal * 0.5f + vec3(0.5f));
-    outNM               = vec4(normal.xyz, materialParam.metallic);
-    outPosition         = vec4(pixel.position, 0.0f);
-    outETMID            = uvec4(desc.entityID.x, triangleId, meshletId, 0);
+    outNRM              = vec4(normal.xy, materialParam.roughness, materialParam.metallic);
+    outPosition         = pixel.position;
+    outETMID            = vec3(desc.entityID, triangleId, meshletId);
 }
 
 /*****************************************************************************************/

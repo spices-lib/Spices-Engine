@@ -317,7 +317,6 @@ namespace Spices {
 			channelize = 4;
 			break;
 		case VK_FORMAT_R32G32B32A32_SFLOAT:      // 16 bytes.
-		case VK_FORMAT_R32G32B32A32_UINT:
 			channelize = 16;
 			break;
 		default:

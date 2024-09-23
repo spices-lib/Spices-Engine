@@ -2039,7 +2039,10 @@ namespace Spices {
 		* @param[in attachmentDescription VkAttachmentDescription.
 		*/
 		bool isEnableBlend = false;
-		func(isEnableBlend, attachmentDescription);
+		if (func)
+		{
+			func(isEnableBlend, attachmentDescription);
+		}
 
 		/**
 		* @brief Instance a VkClearValue.
@@ -2142,7 +2145,10 @@ namespace Spices {
 		* @brief Write in data.
 		* @param[in attachmentDescription VkAttachmentDescription.
 		*/
-		func(depthAttachment);
+		if (func)
+		{
+			func(depthAttachment);
+		}
 
 		/**
 		* @brief Instance a VkClearValue.

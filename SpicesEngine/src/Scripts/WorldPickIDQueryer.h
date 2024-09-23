@@ -27,7 +27,8 @@ namespace Spices {
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
 	private:
-		uint32_t m_WorldPickID[4] = { 0, 0, 0, 0 };
+		float m_WorldPickID[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		float* m_WorldPickIDMemory;
 		std::shared_ptr<ImguiViewport> m_ViewPort;
 	};
 }

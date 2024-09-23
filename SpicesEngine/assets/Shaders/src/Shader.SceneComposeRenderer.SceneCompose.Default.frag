@@ -23,7 +23,7 @@
 */
 layout(location = 0) in struct FragInput 
 {
-	vec2 texCoord;                         /* @brief Fragmet U V*/
+	vec2 texCoord;                         /*Fragmet UV*/
 } 
 fragInput;
 
@@ -34,7 +34,7 @@ fragInput;
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4 outSceneColor;    /* @brief SceneColor Attachment. */
+layout(location = 0) out vec4 outSceneColor;    /*SceneColor Attachment*/
 
 /*****************************************************************************************/
 
@@ -51,14 +51,16 @@ layout(location = 0) out vec4 outSceneColor;    /* @brief SceneColor Attachment.
 */
 
 #define ALBEDO    0
-#define NRM       1
-#define POSITION  2
-#define DEPTH     3
+#define NORMAL    1
+#define ROUGHNESS 2
+#define METALLIC  3
+#define POSITION  4
+#define DEPTH     5
 
 /**
 * @brief Subpass Input Attachments.
 */
-layout(input_attachment_index = 0, set = 2, binding = 0) uniform subpassInput GBuffer[4];
+layout(input_attachment_index = 0, set = 2, binding = 0) uniform subpassInput GBuffer[6];
 
 /**
 * @brief DirectionalLight Buffer in World.
@@ -136,9 +138,9 @@ GBufferPixel GetGBufferPixel()
 	GBufferPixel gbp;
 	
 	gbp.albedo      = subpassLoad(GBuffer[ALBEDO]).xyz;
-	gbp.normal      = (subpassLoad(GBuffer[NRM]).xyz - vec3(0.5f)) * 2.0f;
-	gbp.roughness   = subpassLoad(GBuffer[NRM]).z;
-	gbp.metallic    = subpassLoad(GBuffer[NRM]).w;
+	gbp.normal      = (subpassLoad(GBuffer[NORMAL]).xyz - vec3(0.5f)) * 2.0f;
+	gbp.roughness   = subpassLoad(GBuffer[ROUGHNESS]).x;
+	gbp.metallic    = subpassLoad(GBuffer[METALLIC]).x;
 	gbp.position    = subpassLoad(GBuffer[POSITION]).xyz;
 	gbp.depth       = subpassLoad(GBuffer[DEPTH]).x;
 	

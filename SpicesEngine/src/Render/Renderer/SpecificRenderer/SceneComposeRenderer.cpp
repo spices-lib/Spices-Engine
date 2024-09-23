@@ -40,16 +40,19 @@ namespace Spices {
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout                 = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                        = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			description.format                        = VK_FORMAT_R8G8B8_UNORM;
 		})
-		.AddInputAttachment("AR", TextureType::Texture2D, [](VkAttachmentDescription& description) {
+		.AddInputAttachment("Albedo", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format                        = VK_FORMAT_R8G8B8_UNORM;
 		})
-		.AddInputAttachment("NM", TextureType::Texture2D, [](VkAttachmentDescription& description) {
+		.AddInputAttachment("NRM", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format                        = VK_FORMAT_R8G8B8A8_UNORM;
 		})
 		.AddInputAttachment("Position", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			description.format                        = VK_FORMAT_R32G32B32A32_SFLOAT;
+			description.format                        = VK_FORMAT_R32G32B32_SFLOAT;
 		})
 		.AddInputAttachment("Depth", TextureType::Texture2D, [&](VkAttachmentDescription& description) {
 			description.format                        = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
@@ -65,7 +68,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "SceneCompose", this }
-		.AddInput(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "AR", "NM", "Position", "Depth" })
+		.AddInput(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Albedo", "Normal", "Roughness", "Metallic", "Position", "Depth" })
 		.AddStorageBuffer(3, 0, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                        /* @brief World Directional Light Buffer. */
 		.AddStorageBuffer(3, 1, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                              /* @brief World PointLight Buffer.        */
 		.Build();

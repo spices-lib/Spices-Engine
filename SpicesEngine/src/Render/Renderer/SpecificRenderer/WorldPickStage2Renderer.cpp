@@ -30,6 +30,7 @@ namespace Spices {
 		.AddSubPass("WorldPickStage2")
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.finalLayout                          = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format                               = VK_FORMAT_R8G8B8_UNORM;
 		})
 		.EndSubPass()
 		.Build();
