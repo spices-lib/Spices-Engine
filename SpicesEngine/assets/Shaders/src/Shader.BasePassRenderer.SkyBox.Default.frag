@@ -52,9 +52,10 @@ layout(location = 4) in flat uint clusterMeshletId;    /* @brief ClusterMeshletI
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec3  outAlbedo;               /* @brief albedo Attachment.                     */
-layout(location = 1) out vec3  outPosition;             /* @brief position Attachment.                   */
-layout(location = 2) out uvec3 outETMID;                /* @brief EntityID Attachment.                   */
+layout(location = 0) out vec4  outAR;                   /* @brief albedo roughnss Attachment.   */
+layout(location = 1) out vec4  outNM;                    /* @brief normal metallic Attachment.  */
+layout(location = 2) out vec4  outPosition;             /* @brief position Attachment.          */
+layout(location = 3) out uvec4 outETMID;                /* @brief EntityID Attachment.          */
 
 /*****************************************************************************************/
 
@@ -93,9 +94,9 @@ void main()
     //float clusterMeshletrand2 = rnd(clusterMeshletSeed);
 
     vec2 uv             = SampleSphericalMap(normalize(fragInput.localPosition));      // make sure to normalize localPos
-    outAlbedo           = texture(BindLessTextureBuffer[materialParam.albedo], uv).xyz;
-    outPosition         = fragInput.worldPosition;
-    outETMID            = vec3(desc.entityID, triangleId, meshletId);
+    outAR               = vec4(texture(BindLessTextureBuffer[materialParam.albedo], uv).xyz, 0.0f);
+    outPosition         = vec4(fragInput.worldPosition, 0.0f);
+    outETMID            = uvec4(desc.entityID.x, triangleId, meshletId, 0);
 }
 
 /*****************************************************************************************/

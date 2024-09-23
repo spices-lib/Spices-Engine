@@ -47,7 +47,7 @@ fragInput;
 * @brief Fragment Shader Output to FrameBuffer.
 */
 layout(location = 0) out vec4 outSceneColor;
-layout(location = 1) out float outEntityID;
+layout(location = 1) out uvec4 outETMID;
 
 /*****************************************************************************************/
 
@@ -75,7 +75,7 @@ void main()
     if (texColor.w < 0.01f) discard;
 
     outSceneColor  = texColor;
-    outEntityID    = desc.entityID;
+    outETMID       = uvec4(desc.entityID.x, 0, 0, 0);
 }
 
 /*****************************************************************************************/

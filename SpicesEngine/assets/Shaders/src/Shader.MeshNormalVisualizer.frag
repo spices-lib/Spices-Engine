@@ -28,7 +28,7 @@ fragInput;
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec3  outAlbedo;                /* @brief albedo Attachment  */
+layout(location = 0) out vec4  outAlbedo;                /* @brief albedo Attachment  */
 
 /*****************************************************************************************/
 
@@ -36,7 +36,7 @@ layout(location = 0) out vec3  outAlbedo;                /* @brief albedo Attach
 
 void main()
 {
-    outAlbedo = fragInput.color;
+    outAlbedo = vec4(fragInput.color, 1.0f);
 }
 
 /*****************************************************************************************/

@@ -15,25 +15,23 @@ namespace Spices {
 
 		RendererPassBuilder{ "BassPass", this }
 		.AddSubPass("Mesh")
-		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("AR", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R8G8B8_UNORM;           // RGB U8
 		})
-		.AddColorAttachment("NRM", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		.AddColorAttachment("NM", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R8G8B8A8_UNORM;         // RGBA U8
 		})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R32G32B32_SFLOAT;       // RGB S32
+			description.format                = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
 		.AddColorAttachment("ETMID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			description.format                = VK_FORMAT_R32G32B32_UINT;         // RGB U32
+			description.format                = VK_FORMAT_R32G32B32A32_UINT;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;        /* @attention It seams that layout transform is not work? */
@@ -47,16 +45,17 @@ namespace Spices {
 		)
 		.EndSubPass()
 		.AddSubPass("SkyBox")
-		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format                = VK_FORMAT_R8G8B8_UNORM;
+		.AddColorAttachment("AR", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
+		})
+		.AddColorAttachment("NM", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 		})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format                = VK_FORMAT_R32G32B32_SFLOAT;
+			description.format                = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
 		.AddColorAttachment("ETMID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
-			description.format                = VK_FORMAT_R32G32B32_UINT;
+			description.format                = VK_FORMAT_R32G32B32A32_UINT;
 		})
-		.AddDepthAttachment("Depth", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {})
+		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {})
 		.EndSubPass()
 		.Build();
 	}
