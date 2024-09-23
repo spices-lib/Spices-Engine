@@ -1,6 +1,6 @@
 /**
-* @file NsightAftermathShaderDatabase.h
-* @brief The ShaderDatabase Class Definitions.
+* @file NsightAftermathShaderDataBase.h
+* @brief The ShaderDataBase Class Definitions.
 * @author NVIDIA
 * @see https://github.com/NVIDIA/nsight-aftermath-samples
 */
@@ -22,19 +22,19 @@ namespace Spices {
     * In a real world scenario this would be part of an offline
     * analysis tool. This is for demonstration purposes only!
     */
-    class ShaderDatabase
+    class ShaderDataBase
     {
     public:
 
         /**
         * @brief Constructor Function.
         */
-        ShaderDatabase();
+        ShaderDataBase();
 
         /**
         * @brief Destructor Function.
         */
-        virtual ~ShaderDatabase() = default;
+        virtual ~ShaderDataBase() = default;
 
         /**
         * @brief Find a shader bytecode binary by shader hash.
@@ -56,8 +56,6 @@ namespace Spices {
             std::vector<uint8_t>&                  shader
         ) const;
 
-    private:
-
         /**
         * @brief Add a shader binary to m_ShaderBinaries.
         * @param[in] shaderFilePath .
@@ -70,6 +68,8 @@ namespace Spices {
         * @param[in] shaderFilePath .
         */
         void AddShaderBinaryWithDebugInfo(const char* strippedShaderFilePath, const char* shaderFilePath);
+
+    private:
 
         /**
         * @brief Read a file.

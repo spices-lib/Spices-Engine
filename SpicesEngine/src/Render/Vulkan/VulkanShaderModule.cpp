@@ -67,6 +67,12 @@ namespace Spices {
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SHADER_MODULE, (uint64_t)m_ShaderModule, m_VulkanState.m_Device, shaderName)
 
 		FileLibrary::FileLibrary_Close(&fileHandle);
+
+		/**
+		* @brief Add to Aftermath.
+		*/
+		AFTERMATH_ADDSHADERBINARY(filePath.c_str())
+		AFTERMATH_ADDSHADERBINARY_WITHDEBUGINFO(filePath.c_str(), filePath.c_str())
 	}
 
 	VulkanShaderModule::~VulkanShaderModule()

@@ -11,7 +11,7 @@
 #include <mutex>
 
 #include "NsightAftermathHelpers.h"
-#include "NsightAftermathShaderDatabase.h"
+#include "NsightAftermathShaderDataBase.h"
 
 namespace Spices {
 
@@ -68,6 +68,12 @@ namespace Spices {
         * @param[in] info Marker informations.
         */
         void SetMarker(uint64_t& markerId, const std::string& info);
+
+        /**
+        * @brief Get ShaderDataBase.
+        * @return Returns ShaderDataBase.
+        */
+        ShaderDataBase& GetShaderDataBase() { return m_ShaderDataBase; }
 
     private:
 
@@ -270,7 +276,7 @@ namespace Spices {
         /**
         * @brief The mock shader database.
         */
-        ShaderDatabase m_ShaderDatabase;
+        ShaderDataBase m_ShaderDataBase;
 
         /**
         * @brief App-managed marker tracking.
@@ -293,6 +299,8 @@ namespace Spices {
 #define AFTERMATH_INIT                                                    { ::Spices::GpuCrashTracker::Init(); }
 #define AFTERMATH_SETFRAMECUT(...)                                        { ::Spices::GpuCrashTracker::Get().SetFrameCut(__VA_ARGS__); }
 #define AFTERMATH_SETCHECKPOINT(commandBuffer, funcLibrary, string)       { uint64_t markId; ::Spices::GpuCrashTracker::Get().SetMarker(markId, string);  funcLibrary.vkCmdSetCheckpointNV(commandBuffer, (const void*)markId); }
+#define AFTERMATH_ADDSHADERBINARY(...)                                    { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinary(__VA_ARGS__); }
+#define AFTERMATH_ADDSHADERBINARY_WITHDEBUGINFO(...)                      { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinaryWithDebugInfo(__VA_ARGS__); }
 
 #endif
 
@@ -301,6 +309,8 @@ namespace Spices {
 #define AFTERMATH_INIT                                
 #define AFTERMATH_SETFRAMECUT(...)                    
 #define AFTERMATH_SETCHECKPOINT(commandBuffer, string)             
+#define AFTERMATH_ADDSHADERBINARY(...)
+#define AFTERMATH_ADDSHADERBINARY_WITHDEBUGINFO(...)
 
 #endif
 

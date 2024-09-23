@@ -1,6 +1,6 @@
 /**
-* @file NsightAftermathShaderDatabase.cpp
-* @brief The ShaderDatabase Class Implementation.
+* @file NsightAftermathShaderDataBase.cpp
+* @brief The ShaderDataBase Class Implementation.
 * @author NVIDIA
 * @see https://github.com/NVIDIA/nsight-aftermath-samples
 */
@@ -14,26 +14,12 @@
 
 namespace Spices {
 
-    ShaderDatabase::ShaderDatabase()
+    ShaderDataBase::ShaderDataBase()
         : m_ShaderBinaries()
         , m_ShaderBinariesWithDebugInfo()
-    {
-        SPICES_PROFILE_ZONE;
+    {}
 
-        /**
-        * @brief Add shader binaries to database.
-        */
-        AddShaderBinary("cube.vert.spirv");
-        AddShaderBinary("cube.frag.spirv");
-
-        /**
-        * @brief Add the not stripped shader binaries to the database, too.
-        */
-        AddShaderBinaryWithDebugInfo("cube.vert.spirv", "cube.vert.full.spirv");
-        AddShaderBinaryWithDebugInfo("cube.frag.spirv", "cube.frag.full.spirv");
-    }
-
-    bool ShaderDatabase::ReadFile(const char* filename, std::vector<uint8_t>& data)
+    bool ShaderDataBase::ReadFile(const char* filename, std::vector<uint8_t>& data)
     {
         SPICES_PROFILE_ZONE;
 
@@ -52,7 +38,7 @@ namespace Spices {
         return true;
     }
 
-    void ShaderDatabase::AddShaderBinary(const char* shaderFilePath)
+    void ShaderDataBase::AddShaderBinary(const char* shaderFilePath)
     {
         SPICES_PROFILE_ZONE;
 
@@ -83,7 +69,7 @@ namespace Spices {
         m_ShaderBinaries[shaderHash].swap(data);
     }
 
-    void ShaderDatabase::AddShaderBinaryWithDebugInfo(const char* strippedShaderFilePath, const char* shaderFilePath)
+    void ShaderDataBase::AddShaderBinaryWithDebugInfo(const char* strippedShaderFilePath, const char* shaderFilePath)
     {
         SPICES_PROFILE_ZONE;
 
@@ -121,7 +107,7 @@ namespace Spices {
         m_ShaderBinariesWithDebugInfo[debugName].swap(data);
     }
 
-    bool ShaderDatabase::FindShaderBinary(const GFSDK_Aftermath_ShaderBinaryHash& shaderHash, std::vector<uint8_t>& shader) const
+    bool ShaderDataBase::FindShaderBinary(const GFSDK_Aftermath_ShaderBinaryHash& shaderHash, std::vector<uint8_t>& shader) const
     {
         SPICES_PROFILE_ZONE;
 
@@ -141,7 +127,7 @@ namespace Spices {
         return true;
     }
 
-    bool ShaderDatabase::FindShaderBinaryWithDebugData(const GFSDK_Aftermath_ShaderDebugName& shaderDebugName, std::vector<uint8_t>& shader) const
+    bool ShaderDataBase::FindShaderBinaryWithDebugData(const GFSDK_Aftermath_ShaderDebugName& shaderDebugName, std::vector<uint8_t>& shader) const
     {
         SPICES_PROFILE_ZONE;
 

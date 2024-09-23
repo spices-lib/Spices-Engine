@@ -22,7 +22,7 @@ namespace Spices {
         : m_Initialized(false)
         , m_Mutex()
         , m_ShaderDebugInfo()
-        , m_ShaderDatabase()
+        , m_ShaderDataBase()
         , m_FrameCut(0)
     {}
 
@@ -358,7 +358,7 @@ namespace Spices {
         * @brief Find shader binary data for the shader hash in the shader database.
         */
         std::vector<uint8_t> shaderBinary;
-        if (!m_ShaderDatabase.FindShaderBinary(shaderHash, shaderBinary))
+        if (!m_ShaderDataBase.FindShaderBinary(shaderHash, shaderBinary))
         {
             /**
             * @brief Early exit, nothing found. No need to call setShaderBinary.
@@ -385,7 +385,7 @@ namespace Spices {
         * @brief Find source debug info for the shader DebugName in the shader database.
         */
         std::vector<uint8_t> shaderBinary;
-        if (!m_ShaderDatabase.FindShaderBinaryWithDebugData(shaderDebugName, shaderBinary))
+        if (!m_ShaderDataBase.FindShaderBinaryWithDebugData(shaderDebugName, shaderBinary))
         {
             /**
             * @brief Early exit, nothing found. No need to call setShaderBinary.

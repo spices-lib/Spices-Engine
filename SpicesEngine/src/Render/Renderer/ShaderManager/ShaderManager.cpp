@@ -24,7 +24,7 @@ namespace Spices {
 		}
 		
 		m_Shaders[s2] = std::make_shared<VulkanShaderModule>(VulkanRenderBackend::GetState(), name, stage);
-
+		
 		return m_Shaders[s2];
 	}
 
