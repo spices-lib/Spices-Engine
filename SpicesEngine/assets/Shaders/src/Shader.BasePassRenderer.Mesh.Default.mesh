@@ -97,7 +97,7 @@ void main()
         Vertex vt = vts[j];
 
         gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
-        
+
         pixel[arrayIndices[j]].position   = vec3(model * vec4(vt.position, 1.0f));
         pixel[arrayIndices[j]].normal     = normalize(m3model * vt.normal);
         pixel[arrayIndices[j]].color      = vt.color;

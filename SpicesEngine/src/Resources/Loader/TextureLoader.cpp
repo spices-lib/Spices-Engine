@@ -79,6 +79,7 @@ namespace Spices {
 		*/
 		VulkanBuffer stagingBuffer(
 			resourceptr->m_VulkanState, 
+			"StagingBuffer",
 			imageSize, 
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 

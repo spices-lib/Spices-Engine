@@ -32,12 +32,14 @@ namespace Spices {
 		* @brief Constructor Function.
 		* Create VkBuffer.
 		* @param[in] vulkanState The global VulkanState.
+		* @param[in] name Buffer Name.
 		* @param[in] size The buffer size(bytes).
 		* @param[in] usage The buffer usage.
 		* @param[in] properties The buffer memory used flags.
 		*/
 		VulkanBuffer(
-			VulkanState&          vulkanState  , 
+			VulkanState&          vulkanState  ,
+			const std::string&    name         ,
 			VkDeviceSize          size         , 
 			VkBufferUsageFlags    usage        , 
 			VkMemoryPropertyFlags properties
@@ -122,12 +124,14 @@ namespace Spices {
 		/**
 		* @brief Create a buffer.
 		* @param[in] vulkanState The global VulkanState.
+		* @param[in] name Buffer name
 		* @param[in] size The buffer size.
 		* @param[in] usage The buffer usage.
 		* @param[in] properties The buffer memory requirement flags.
 		*/
 		void CreateBuffer(
-			VulkanState&          vulkanState , 
+			VulkanState&          vulkanState ,
+			const std::string&    name        ,
 			VkDeviceSize          size        , 
 			VkBufferUsageFlags    usage       , 
 			VkMemoryPropertyFlags properties
@@ -144,6 +148,11 @@ namespace Spices {
 		);
 
 	private:
+
+		/**
+		* @brief Buffer Name.
+		*/
+		std::string m_Name;
 
 		/**
 		* @brief The buffer size.

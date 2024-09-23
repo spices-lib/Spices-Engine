@@ -34,19 +34,19 @@ namespace Spices {
 		return attributeDescriptions;
 	}
 
-	void MeshResource::CreateBuffer()
+	void MeshResource::CreateBuffer(const std::string& name)
 	{
 		SPICES_PROFILE_ZONE;
 
-		positions          .CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
-		normals            .CreateBuffer();
-		colors             .CreateBuffer();
-		texCoords          .CreateBuffer();
-		vertices           .CreateBuffer();
-		primitivePoints    .CreateBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
-		primitiveVertices  .CreateBuffer();
-		primitiveLocations .CreateBuffer();
-		meshlets           .CreateBuffer();
+		positions          .CreateBuffer(name + "PositionsBuffer", VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
+		normals            .CreateBuffer(name + "NormalsBuffer");
+		colors             .CreateBuffer(name + "ColorsBuffer");
+		texCoords          .CreateBuffer(name + "TexCoordsBuffer");
+		vertices           .CreateBuffer(name + "VerticesBuffer");
+		primitivePoints    .CreateBuffer(name + "PrimitivePointsBuffer", VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
+		primitiveVertices  .CreateBuffer(name + "PrimitiveVerticesBuffer");
+		primitiveLocations .CreateBuffer(name + "PrimitiveLocationsBuffer");
+		meshlets           .CreateBuffer(name + "MeshletsBuffer");
 	}
 
 	MeshDesc::MeshDesc()
@@ -68,8 +68,9 @@ namespace Spices {
 		entityID                    = 0;
 
 		m_Buffer = std::make_shared<VulkanBuffer>(
-			VulkanRenderBackend::GetState(),
-			sizeof(SpicesShader::MeshDesc),
+			VulkanRenderBackend::GetState()          ,
+			"MeshDescBuffer"                         ,
+			sizeof(SpicesShader::MeshDesc)           ,
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT         |
 			VK_BUFFER_USAGE_TRANSFER_DST_BIT         |
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
@@ -245,7 +246,7 @@ namespace Spices {
 		m_MeshTaskIndirectDrawCommand.firstTask = 0;
 		m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
 
-		m_MeshResource.CreateBuffer();
+		m_MeshResource.CreateBuffer(m_MeshPackName);
 
 		m_Desc.UpdatepositionsAddress          (m_MeshResource.positions.buffer                  );
 		m_Desc.UpdatenormalsAddress            (m_MeshResource.normals.buffer                    );

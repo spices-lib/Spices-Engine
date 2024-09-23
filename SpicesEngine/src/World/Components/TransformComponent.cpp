@@ -28,6 +28,7 @@ namespace Spices {
 
 		m_ModelBuffer = std::make_shared<VulkanBuffer>(
 			VulkanRenderBackend::GetState(),
+			"ModelBuffer",
 			sizeof(glm::mat4),
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT ,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT   |

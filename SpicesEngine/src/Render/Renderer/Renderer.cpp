@@ -506,6 +506,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, caption)
+		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
 	void Renderer::RenderBehaveBuilder::Endrecording()
@@ -513,6 +514,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
 	void Renderer::RenderBehaveBuilder::Async(std::function<void(VkCommandBuffer& cmdBuffer)> func)
@@ -705,6 +707,8 @@ namespace Spices {
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
+		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
@@ -745,6 +749,8 @@ namespace Spices {
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 			
+		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+
 		/**
 		* @brief This command not allow async.
 		*/
@@ -1174,6 +1180,7 @@ namespace Spices {
 		*/
 		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
 			m_Renderer->m_VulkanState,
+			"UniformBuffer",
 			size,
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
@@ -1209,6 +1216,7 @@ namespace Spices {
 		*/
 		m_HandledSubPass->GetBuffers(id) = std::make_shared<VulkanBuffer>(
 			m_Renderer->m_VulkanState,
+			"StorageBuffer",
 			size,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,

@@ -70,6 +70,7 @@ namespace Spices {
 
 		m_InputBuffer = std::make_shared<VulkanBuffer>(
 			m_VulkanState,
+			"GDCInputBuffer",
 			size,
 			VK_BUFFER_USAGE_TRANSFER_DST_BIT    ,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -84,6 +85,7 @@ namespace Spices {
 
 		m_PreprocessBuffer = std::make_shared<VulkanBuffer>(
 			m_VulkanState,
+			"GDCPreprocessBuffer",
 			size,
 			VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT

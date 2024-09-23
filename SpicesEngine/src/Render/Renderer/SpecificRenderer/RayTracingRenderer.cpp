@@ -272,6 +272,7 @@ namespace Spices {
 
 		m_RTSBTBuffer = std::make_unique<VulkanBuffer>(
 			m_VulkanState, 
+			"SBTBuffer",
 			sbtSize, 
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT             | 
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT    | 

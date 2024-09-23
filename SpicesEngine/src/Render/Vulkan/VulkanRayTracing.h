@@ -169,6 +169,7 @@ namespace Spices {
 		*/
 		VulkanBuffer instancesBuffer(
 			m_VulkanState,
+			"TLASInstancesBuffer",
 			sizeof(T) * instances.size(),
 			VK_BUFFER_USAGE_TRANSFER_DST_BIT |
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 
@@ -178,6 +179,7 @@ namespace Spices {
 
 		VulkanBuffer stagingBuffer(
 			m_VulkanState,
+			"StagingBuffer",
 			sizeof(T) * instances.size(),
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |

@@ -102,7 +102,7 @@ void main()
     maxRayDepth  = prd.maxRayDepth;
     entityID     = prd.entityID;
     triangleID   = prd.triangleID;
-    
+
     /**
     * @brief Recursive Ray by hit material ateribute.
     */

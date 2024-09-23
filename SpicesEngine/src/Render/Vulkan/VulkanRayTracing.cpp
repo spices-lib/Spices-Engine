@@ -120,6 +120,7 @@ namespace Spices {
 		*/ 
 		VulkanBuffer scratchBuffer(
 			m_VulkanState, 
+			"ScratchBuffer",
 			maxScratchSize, 
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT        , 
@@ -242,7 +243,14 @@ namespace Spices {
 		);
 
 		// Allocate the scratch buffer and setting the scratch info
-		VulkanBuffer scratchBuffer(m_VulkanState, sizeInfo.buildScratchSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, 0);
+		VulkanBuffer scratchBuffer(
+			m_VulkanState, 
+			"ScratchBuffer",
+			sizeInfo.buildScratchSize, 
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | 
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, 
+			0
+		);
 
 		VkBufferDeviceAddressInfo bufferInfo{};
 		bufferInfo.sType                               = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
@@ -362,6 +370,7 @@ namespace Spices {
 		*/ 
 		scratchBuffer = std::make_unique<VulkanBuffer>(
 			m_VulkanState,
+			"ScratchBuffer",
 			sizeInfo.buildScratchSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
@@ -566,6 +575,7 @@ namespace Spices {
 		*/
 		resultAccel.buffer = std::make_shared<VulkanBuffer>(
 			m_VulkanState, 
+			"AccelBuffer",
 			accel.size, 
 			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR | 
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, 

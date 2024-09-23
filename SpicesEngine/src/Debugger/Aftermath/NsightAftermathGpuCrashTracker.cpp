@@ -11,6 +11,7 @@
 #include <string>
 #include <array>
 #include <winuser.h>
+#include <filesystem>
 
 #include "NsightAftermathGpuCrashTracker.h"
 
@@ -285,11 +286,29 @@ namespace Spices {
             + std::to_string(++count);
 
         /**
+        * @brief Aftermath file folder.
+        */
+        time_t timep;
+        tm* p;
+
+        auto error = time(&timep);
+        p = localtime(&timep);
+
+        std::stringstream ss;
+        ss << SPICES_AFTERMATHCRASHREPORT_PATH <<
+        p->tm_year + 1900 << "-" <<
+        p->tm_mon + 1 << "-" <<
+        p->tm_mday << " " <<
+        p->tm_hour << "-" <<
+        p->tm_min << "-00" << "/";
+        std::filesystem::create_directories(ss.str());
+
+        /**
         * @brief Write the crash dump data to a file using the .nv-gpudmp extension
         * registered with Nsight Graphics.
         */
         const std::string crashDumpFileName = baseFileName + ".nv-gpudmp";
-        std::ofstream dumpFile(crashDumpFileName, std::ios::out | std::ios::binary);
+        std::ofstream dumpFile(ss.str() + crashDumpFileName, std::ios::out | std::ios::binary);
         if (dumpFile)
         {
             dumpFile.write(static_cast<const char*>(pGpuCrashDump), gpuCrashDumpSize);
@@ -326,14 +345,14 @@ namespace Spices {
         * @brief Write the crash dump data as JSON to a file.
         */
         const std::string jsonFileName = crashDumpFileName + ".json";
-        std::ofstream jsonFile(jsonFileName, std::ios::out | std::ios::binary);
+        std::ofstream jsonFile(ss.str() + jsonFileName, std::ios::out | std::ios::binary);
         if (jsonFile)
         {
-           /**
-           * @brief Write the JSON to the file (excluding string termination).
-           */
-           jsonFile.write(json.data(), json.size() - 1);
-           jsonFile.close();
+            /**
+            * @brief Write the JSON to the file (excluding string termination).
+            */
+            jsonFile.write(json.data(), json.size() - 1);
+            jsonFile.close();
         }
 
         /**
@@ -351,14 +370,32 @@ namespace Spices {
         SPICES_PROFILE_ZONE;
 
         /**
+        * @brief Aftermath file folder.
+        */
+        time_t timep;
+        tm* p;
+
+        auto error = time(&timep);
+        p = localtime(&timep);
+
+        std::stringstream ss;
+        ss << SPICES_AFTERMATHCRASHREPORT_PATH <<
+        p->tm_year + 1900 << "-" <<
+        p->tm_mon + 1 << "-" <<
+        p->tm_mday << " " <<
+        p->tm_hour << "-" <<
+        p->tm_min << "-00" << "/";
+        std::filesystem::create_directories(ss.str());
+
+        /**
         * @brief Create a unique file name.
         */
         const std::string filePath = "shader-" + std::to_string(identifier) + ".nvdbg";
-
-        std::ofstream f(filePath, std::ios::out | std::ios::binary);
+        std::ofstream f(ss.str() + filePath, std::ios::out | std::ios::binary);
         if (f)
         {
             f.write((const char*)pShaderDebugInfo, shaderDebugInfoSize);
+            f.close();
         }
     }
 

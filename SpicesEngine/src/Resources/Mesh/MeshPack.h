@@ -27,7 +27,7 @@ namespace Spices {
 	{
 		Attribute();
 		virtual ~Attribute();
-		void CreateBuffer(VkBufferUsageFlags usage = 0);
+		void CreateBuffer(const std::string& name, VkBufferUsageFlags usage = 0);
 
 		std::shared_ptr<std::vector<T>> attributes;
 		std::shared_ptr<VulkanBuffer>   buffer;
@@ -61,7 +61,12 @@ namespace Spices {
 
 		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
-		void CreateBuffer();
+
+		/**
+		* @brief Create MeshResource Buffers.
+		* @param[in] name MeshPack Name.
+		*/
+		void CreateBuffer(const std::string& name);
 	};
 
 	/**
@@ -362,7 +367,7 @@ namespace Spices {
 	}
 
 	template<typename T>
-	inline void Attribute<T>::CreateBuffer(VkBufferUsageFlags usage)
+	inline void Attribute<T>::CreateBuffer(const std::string& name, VkBufferUsageFlags usage)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -372,6 +377,7 @@ namespace Spices {
 		{
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState()      ,
+				"StagingBuffer"                      ,
 				bufferSize                           ,
 				VK_BUFFER_USAGE_TRANSFER_SRC_BIT     ,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT  |
@@ -380,6 +386,7 @@ namespace Spices {
 
 			buffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState()           ,
+				name                                      ,
 				bufferSize                                ,
 				VK_BUFFER_USAGE_TRANSFER_DST_BIT          |
 				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
@@ -396,6 +403,7 @@ namespace Spices {
 
 			VulkanBuffer stagingBuffer(
 				VulkanRenderBackend::GetState()      ,
+				"StagingBuffer"                      ,
 				bufferSize                           ,
 				VK_BUFFER_USAGE_TRANSFER_SRC_BIT     ,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT  |
@@ -404,6 +412,7 @@ namespace Spices {
 
 			buffer = std::make_shared<VulkanBuffer>(
 				VulkanRenderBackend::GetState()           ,
+				name                                      ,
 				bufferSize                                ,
 				VK_BUFFER_USAGE_TRANSFER_DST_BIT          |
 				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |

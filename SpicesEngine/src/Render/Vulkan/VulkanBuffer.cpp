@@ -13,11 +13,13 @@ namespace Spices {
 
 	VulkanBuffer::VulkanBuffer(
 		VulkanState&          vulkanState  , 
+		const std::string&    name         ,
 		VkDeviceSize          size         , 
 		VkBufferUsageFlags    usage        , 
 		VkMemoryPropertyFlags properties
 	)
 		: VulkanObject(vulkanState)
+		, m_Name      (name       )
 		, m_DeviceSize(size       )
 		, m_Usage     (usage      )
 		, m_Flags     (properties )
@@ -27,7 +29,7 @@ namespace Spices {
 		/**
 		* @brief Create a buffer.
 		*/
-		CreateBuffer(vulkanState, size, usage, properties);
+		CreateBuffer(vulkanState, name, size, usage, properties);
 	}
 
 	VulkanBuffer::~VulkanBuffer()
@@ -237,13 +239,20 @@ namespace Spices {
 		
 	}
 
-	void VulkanBuffer::CreateBuffer(VulkanState& vulkanState, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
+	void VulkanBuffer::CreateBuffer(
+		VulkanState&          vulkanState , 
+		const std::string&    name        , 
+		VkDeviceSize          size        , 
+		VkBufferUsageFlags    usage       , 
+		VkMemoryPropertyFlags properties
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
+		m_Name       = name;
 		m_DeviceSize = size;
-		m_Usage = usage;
-		m_Flags = properties;
+		m_Usage      = usage;
+		m_Flags      = properties;
 
 		/**
 		* @brief Instance a VkBufferCreateInfo.
@@ -276,7 +285,7 @@ namespace Spices {
 		* @brief Create a Buffer.
 		*/
 		VK_CHECK(vmaCreateBuffer(vulkanState.m_VmaAllocator, &bufferInfo, &allocInfo, &m_Buffer, &m_Alloc, nullptr))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_Buffer, vulkanState.m_Device, "Buffer")
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_Buffer, vulkanState.m_Device, name)
 
 		if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{

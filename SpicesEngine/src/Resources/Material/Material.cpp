@@ -155,6 +155,7 @@ namespace Spices {
 
 			m_MaterialParameterBuffer = std::make_unique<VulkanBuffer>(
 				VulkanRenderBackend::GetState(),
+				"MaterialParameterBuffer",
 				size,
 				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
 				VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,

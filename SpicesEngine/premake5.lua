@@ -66,7 +66,10 @@ project "SpicesEngine"
 		'SPICES_ENGINE_ASSETS_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/assets/")',
 
 		-- Define Engine Logs Folder.
-		'SPICES_lOGFILE_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/../bin/Log/")',
+		'SPICES_CONSOLElOGFILE_PATH=std::string("saved/ConsoleLog/")',
+
+		-- Define Engine AftermathCrashReport Folder.
+		'SPICES_AFTERMATHCRASHREPORT_PATH=std::string("saved/AftermathCrashReport/")',
 
 		-- Define Engine Extent Processes Folder.
 		'SPICES_EXTENT_PROCESS_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/../vendor/")',

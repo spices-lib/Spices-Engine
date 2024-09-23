@@ -236,6 +236,12 @@ namespace Spices {
 			*/
 			VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_ComputeCommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
 			VK_CHECK(vkBeginCommandBuffer(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], &beginInfo))
+
+			/**
+			* @brief Checkpoint of start primary commandBuffers.
+			*/
+			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryComputeCommandBuffer")
+			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryGraphicCommandBuffer")
 		}
 	}
 
@@ -246,6 +252,12 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::EndCommandBuffer");
 			
+			/**
+			* @brief Checkpoint of end primary commandBuffers.
+			*/
+			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "EndPrimaryGraphicCommandBuffer")
+			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryGraphicCommandBuffer")
+
 			/**
 			* @brief End recording the CommandBuffer.
 			*/

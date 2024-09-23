@@ -40,12 +40,12 @@ namespace Spices {
 
 		std::stringstream ss;
 		ss << 
-		SPICES_lOGFILE_PATH << 
+		SPICES_CONSOLElOGFILE_PATH << 
 		p->tm_year + 1900 << "-" <<
 		p->tm_mon  + 1 << "-" <<
 		p->tm_mday << " " <<
-		p->tm_hour << "," << 
-		p->tm_min  << "," <<
+		p->tm_hour << "-" << 
+		p->tm_min  << "-" <<
 		p->tm_sec  <<
 		".log";
 
