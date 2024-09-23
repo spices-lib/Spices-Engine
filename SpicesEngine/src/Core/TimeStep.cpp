@@ -10,6 +10,9 @@
 namespace Spices {
 
 	TimeStep::TimeStep()
+		: m_FrameTime(0.0f)
+		, m_GameTime(0.0f)
+		, m_Frames(0)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -43,5 +46,11 @@ namespace Spices {
 		* @brief Setting current time.
 		*/
 		m_LastTime = nowTime;
+
+		/**
+		* @brief Update frames.
+		*/
+		++m_Frames;
+		m_Frames %= UINT64_MAX;
 	}
 }

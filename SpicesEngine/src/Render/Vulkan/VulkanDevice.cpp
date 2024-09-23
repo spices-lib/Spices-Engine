@@ -150,7 +150,7 @@ namespace Spices {
 		* @brief Create device and set it global.
 		*/
 		VK_CHECK(vkCreateDevice(vulkanState.m_PhysicalDevice, &createInfo, nullptr, &vulkanState.m_Device));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DEVICE, (uint64_t)vulkanState.m_Device, vulkanState.m_Device, m_DeviceProperties.deviceName);
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DEVICE, (uint64_t)vulkanState.m_Device, vulkanState.m_Device, m_DeviceProperties.deviceName)
 
 		/**
 		* @brief Get graphic queue and set it global.

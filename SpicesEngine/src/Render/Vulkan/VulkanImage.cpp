@@ -526,7 +526,7 @@ namespace Spices {
 		* @brief Create ImageView. 
 		*/
 		VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &viewInfo, nullptr, &m_ImageView));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)m_ImageView, m_VulkanState.m_Device, "ImageView");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)m_ImageView, m_VulkanState.m_Device, "ImageView")
 	}
 
 	void VulkanImage::CreateSampler()
@@ -566,7 +566,7 @@ namespace Spices {
 		* @brief Create Sampler.
 		*/
 		VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_TextureSampler));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SAMPLER, (uint64_t)m_TextureSampler, m_VulkanState.m_Device, "ImageSampler");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SAMPLER, (uint64_t)m_TextureSampler, m_VulkanState.m_Device, "ImageSampler")
 	}
 
 	void VulkanImage::CreateImage(
@@ -621,7 +621,7 @@ namespace Spices {
 		* @brief Create Image.
 		*/
 		VK_CHECK(vmaCreateImage(vulkanState.m_VmaAllocator, &imageInfo, &createInfo, &m_Image, &m_Alloc, nullptr))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_Image, m_VulkanState.m_Device, name);
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_Image, m_VulkanState.m_Device, name)
 
 #else
 
@@ -629,7 +629,7 @@ namespace Spices {
 		* @brief Create Image.
 		*/
 		VK_CHECK(vkCreateImage(vulkanState.m_Device, &imageInfo, nullptr, &m_Image));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_Image, m_VulkanState.m_Device, name);
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_Image, m_VulkanState.m_Device, name)
 
 		/**
 		* @brief Get VkMemoryRequirements.
@@ -709,7 +709,7 @@ namespace Spices {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)m_DescriptorSetLayout, m_VulkanState.m_Device, "DescriptorSetLayoutImage");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)m_DescriptorSetLayout, m_VulkanState.m_Device, "DescriptorSetLayoutImage")
 
 		/**
 		* @brief Instance a VkDescriptorSetAllocateInfo.
@@ -724,7 +724,7 @@ namespace Spices {
 		* @brief Allocate DescriptorSets.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSetImage");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSetImage")
 		
 		/**
 		* @brief Instance a VkDescriptorImageInfo.

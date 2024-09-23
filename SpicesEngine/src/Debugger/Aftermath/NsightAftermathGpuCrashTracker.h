@@ -60,14 +60,14 @@ namespace Spices {
         * @brief Set FrameCut.
         * @param[in] frameCut FrameCut.
         */
-        void SetFrameCut(uint32_t frameCut);
+        void SetFrameCut(uint64_t frameCut);
 
         /**
         * @brief Set Marker.
         * @param[in] markerId Marker Id.
         * @param[in] info Marker informations.
         */
-        void SetMarker(uint64_t markerId, const std::string& info);
+        void SetMarker(uint64_t& markerId, const std::string& info);
 
     private:
 
@@ -290,17 +290,17 @@ namespace Spices {
 
 #ifdef SPICES_DEBUG
 
-#define AFTERMATH_INIT                      ::Spices::GpuCrashTracker::Init()
-#define AFTERMATH_SETFRAMECUT(...)          ::Spices::GpuCrashTracker::Get().SetFrameCut(__VA_ARGS__)
-#define AFTERMATH_SETMARKER(...)            ::Spices::GpuCrashTracker::Get().SetMarker(__VA_ARGS__)
+#define AFTERMATH_INIT                                                    { ::Spices::GpuCrashTracker::Init(); }
+#define AFTERMATH_SETFRAMECUT(...)                                        { ::Spices::GpuCrashTracker::Get().SetFrameCut(__VA_ARGS__); }
+#define AFTERMATH_SETCHECKPOINT(commandBuffer, funcLibrary, string)       { uint64_t markId; ::Spices::GpuCrashTracker::Get().SetMarker(markId, string);  funcLibrary.vkCmdSetCheckpointNV(commandBuffer, (const void*)markId); }
 
 #endif
 
 #ifdef SPICES_RELEASE
 
-#define AFTERMATH_INIT                        
-#define AFTERMATH_SETFRAMECUT(...)            
-#define AFTERMATH_SETMARKER(...)              
+#define AFTERMATH_INIT                                
+#define AFTERMATH_SETFRAMECUT(...)                    
+#define AFTERMATH_SETCHECKPOINT(commandBuffer, string)             
 
 #endif
 

@@ -280,7 +280,7 @@ namespace Spices {
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_RTSBTBuffer->Get(), m_VulkanState.m_Device, "SBT Buffer");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_RTSBTBuffer->Get(), m_VulkanState.m_Device, "SBT Buffer")
 
 		m_RgenRegion.deviceAddress              = m_RTSBTBuffer->GetAddress();
 		m_MissRegion.deviceAddress              = m_RTSBTBuffer->GetAddress() + m_RgenRegion.size;

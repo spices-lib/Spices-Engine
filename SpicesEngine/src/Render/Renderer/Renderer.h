@@ -749,6 +749,7 @@ namespace Spices {
 				SPICES_PROFILE_ZONE;
 
 				m_CommandBuffer = m_Renderer->m_VulkanState.m_GraphicCommandBuffer[currentFrame];
+				AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 			}
 
 			/**

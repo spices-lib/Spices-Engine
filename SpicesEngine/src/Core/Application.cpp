@@ -60,11 +60,10 @@ namespace Spices {
 		* @brief Destroy all Systems.
 		*/
 		SystemManager::Get()
-			.PopSystem("SlateSystem")
-			.PopSystem("ResourceSystem")
-			.PopSystem("RenderSystem")
-			.PopSystem("NativeScriptSystem");
-
+		.PopSystem("SlateSystem")
+		.PopSystem("ResourceSystem")
+		.PopSystem("RenderSystem")
+		.PopSystem("NativeScriptSystem");
 
 		/**
 		* @brief Shutdown Log Class.
@@ -111,6 +110,11 @@ namespace Spices {
 			*/
 			ts.Flush();
 			
+			/**
+			* @brief Update Aftermath frame cut.
+			*/
+			AFTERMATH_SETFRAMECUT(ts.fs())
+
 			/**
 			* @brief Activete Our Specific World.
 			*/

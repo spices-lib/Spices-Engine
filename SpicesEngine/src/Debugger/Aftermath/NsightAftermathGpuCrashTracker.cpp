@@ -79,7 +79,7 @@ namespace Spices {
         }
     }
 
-    void GpuCrashTracker::SetFrameCut(uint32_t frameCut)
+    void GpuCrashTracker::SetFrameCut(uint64_t frameCut)
     {
         SPICES_PROFILE_ZONE;
 
@@ -88,10 +88,11 @@ namespace Spices {
         m_MarkerMap[m_FrameCut].clear();
     }
 
-    void GpuCrashTracker::SetMarker(uint64_t markerId, const std::string& info)
+    void GpuCrashTracker::SetMarker(uint64_t& markerId, const std::string& info)
     {
         SPICES_PROFILE_ZONE;
 
+        markerId = m_MarkerMap[m_FrameCut].size();
         m_MarkerMap[m_FrameCut][markerId] = info;
     }
 

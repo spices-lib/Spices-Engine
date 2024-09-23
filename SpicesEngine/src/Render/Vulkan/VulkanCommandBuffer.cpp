@@ -26,7 +26,7 @@ namespace Spices {
 		* @brief Create commandpool and set it global. 
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)vulkanState.m_GraphicCommandPool, vulkanState.m_Device, "GraphicCommandPool");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)vulkanState.m_GraphicCommandPool, vulkanState.m_Device, "GraphicCommandPool")
 
 		poolInfo.queueFamilyIndex = vulkanState.m_ComputeQueueFamily;
 
@@ -34,7 +34,7 @@ namespace Spices {
 		* @brief Create commandpool and set it global.
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_ComputeCommandPool));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)vulkanState.m_ComputeCommandPool, vulkanState.m_Device, "ComputeCommandPool");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)vulkanState.m_ComputeCommandPool, vulkanState.m_Device, "ComputeCommandPool")
 	}
 
 	VulkanCommandPool::~VulkanCommandPool()
@@ -72,8 +72,8 @@ namespace Spices {
 
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_GraphicCommandBuffer[i], vulkanState.m_Device, "GraphicCommandBuffer");
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_ComputeCommandBuffer[i], vulkanState.m_Device, "ComputeCommandBuffer");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_GraphicCommandBuffer[i], vulkanState.m_Device, "GraphicCommandBuffer")
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_ComputeCommandBuffer[i], vulkanState.m_Device, "ComputeCommandBuffer")
 		}
 	}
 }

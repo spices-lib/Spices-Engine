@@ -104,4 +104,31 @@ namespace Spices {
 			std::vector<char*> captions
 		);
 	};
+
+#ifdef SPICES_DEBUG
+
+#define DEBUGUTILS_BEGINLABEL(...)                 { ::Spices::VulkanDebugUtils::BeginLabel       (__VA_ARGS__)	; }
+#define DEBUGUTILS_ENDLABEL(...)                   { ::Spices::VulkanDebugUtils::EndLabel         (__VA_ARGS__)	; }
+#define DEBUGUTILS_INSERTLABEL(...)                { ::Spices::VulkanDebugUtils::InsertLabel      (__VA_ARGS__)	; }
+#define DEBUGUTILS_BEGINQUEUELABEL(...)            { ::Spices::VulkanDebugUtils::BeginQueueLabel  (__VA_ARGS__)	; }
+#define DEBUGUTILS_ENDQUEUELABEL(...)              { ::Spices::VulkanDebugUtils::EndQueueLabel    (__VA_ARGS__)	; }
+#define DEBUGUTILS_INSERTQUEUELABEL(...)           { ::Spices::VulkanDebugUtils::InsertQueueLabel (__VA_ARGS__)	; }
+#define DEBUGUTILS_SETOBJECTNAME(...)              { ::Spices::VulkanDebugUtils::SetObjectName    (__VA_ARGS__)	; }
+#define DEBUGUTILS_SETOBJECTTAG(...)               { ::Spices::VulkanDebugUtils::SetObjectTag     (__VA_ARGS__)	; }
+
+#endif
+
+#ifdef SPICES_RELEASE
+
+#define DEBUGUTILS_BEGINLABEL(...)      
+#define DEBUGUTILS_ENDLABEL(...)        
+#define DEBUGUTILS_INSERTLABEL(...)     
+#define DEBUGUTILS_BEGINQUEUELABEL(...) 
+#define DEBUGUTILS_ENDQUEUELABEL(...)   
+#define DEBUGUTILS_INSERTQUEUELABEL(...)
+#define DEBUGUTILS_SETOBJECTNAME(...)   
+#define DEBUGUTILS_SETOBJECTTAG(...)                 
+
+#endif
+
 }

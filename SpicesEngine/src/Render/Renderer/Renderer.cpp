@@ -256,7 +256,7 @@ namespace Spices {
 		*/
 		VkPipelineLayout pipelineLayout;
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_PIPELINE_LAYOUT, (uint64_t)pipelineLayout, m_VulkanState.m_Device, "PipelineLayout");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE_LAYOUT, (uint64_t)pipelineLayout, m_VulkanState.m_Device, "PipelineLayout")
 
 		return pipelineLayout;
 	}
@@ -505,14 +505,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, caption);
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, caption)
 	}
 
 	void Renderer::RenderBehaveBuilder::Endrecording()
 	{
 		SPICES_PROFILE_ZONE;
 
-		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 	}
 
 	void Renderer::RenderBehaveBuilder::Async(std::function<void(VkCommandBuffer& cmdBuffer)> func)
@@ -648,8 +648,8 @@ namespace Spices {
 		++m_SubpassIndex;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
 
-		VulkanDebugUtils::EndLabel(m_CommandBuffer);
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -662,8 +662,8 @@ namespace Spices {
 		++m_SubpassIndex;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
 
-		VulkanDebugUtils::EndLabel(m_CommandBuffer);
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 	}
@@ -702,8 +702,8 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -742,9 +742,9 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_Renderer->m_Pass->GetName());
-		VulkanDebugUtils::BeginLabel(m_CommandBuffer, m_HandledSubPass->GetName());
-
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
+			
 		/**
 		* @brief This command not allow async.
 		*/
@@ -757,8 +757,10 @@ namespace Spices {
 
 		vkCmdEndRenderPass(m_CommandBuffer);
 
-		VulkanDebugUtils::EndLabel(m_CommandBuffer);
-		VulkanDebugUtils::EndLabel(m_CommandBuffer);
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+
+		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
 	Renderer::RayTracingRenderBehaveBuilder::RayTracingRenderBehaveBuilder(

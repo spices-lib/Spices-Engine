@@ -47,13 +47,19 @@ namespace Spices {
 		* @brief Get time step during frames.
 		* @return time step(s) during frames.
 		*/
-		float ft() const { return m_FrameTime; }
+		const float& ft() const { return m_FrameTime; }
 
 		/**
 		* @brief Get time step since Engine Start.
 		* @return time step(s) since Engine Start.
 		*/
-		float gt() const { return m_GameTime; }
+		const float& gt() const { return m_GameTime; }
+
+		/**
+		* @brief Get frames count.
+		* @return Returns frames count.
+		*/
+		const uint64_t& fs() const { return m_Frames; }
 
 		/**
 		* @brief Refresh time in each engine loop.
@@ -75,11 +81,16 @@ namespace Spices {
 		/**
 		* @brief time step(s) during frames.
 		*/
-		float m_FrameTime = 0;
+		float m_FrameTime;
 
 		/**
 		* @brief time step(s) since Engine Start.
 		*/
-		float m_GameTime = 0;
+		float m_GameTime;
+
+		/**
+		* @brief Frames since Engine Start.
+		*/
+		uint64_t m_Frames;
 	};
 }

@@ -138,7 +138,7 @@ namespace Spices {
 		* @breif Create SwapChain.
 		*/
 		VK_CHECK(vkCreateSwapchainKHR(m_VulkanState.m_Device, &createInfo, nullptr, &m_VulkanState.m_SwapChain));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SWAPCHAIN_KHR, (uint64_t)m_VulkanState.m_SwapChain, m_VulkanState.m_Device, "SpicesEngineSwapChainKHR");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SWAPCHAIN_KHR, (uint64_t)m_VulkanState.m_SwapChain, m_VulkanState.m_Device, "SpicesEngineSwapChainKHR")
 
 		/**
 		* @brief Get Swapchain images created by SwapChain automatically.
@@ -176,8 +176,10 @@ namespace Spices {
 				info.subresourceRange.baseArrayLayer = 0;
 				info.subresourceRange.layerCount     = 1;
 
-				VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_VulkanState.m_SwapChainImages[i], m_VulkanState.m_Device, "SwapChainImage");
+				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_VulkanState.m_SwapChainImages[i], m_VulkanState.m_Device, "SwapChainImage")
+
 				VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &info, nullptr, &m_VulkanState.m_SwapChainImageViews[i]))
+				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)m_VulkanState.m_SwapChainImageViews[i], m_VulkanState.m_Device, "SwapChainImageView")
 			}
 
 			/**
@@ -211,6 +213,7 @@ namespace Spices {
 				samplerInfo.maxLod                  = static_cast<float>(0);
 
 				VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_VulkanState.m_SwapChainImageSamplers[i]))
+				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SAMPLER, (uint64_t)m_VulkanState.m_SwapChainImageSamplers[i], m_VulkanState.m_Device, "SwapChainImageSampler")
 			}
 		}
 	}
@@ -265,24 +268,23 @@ namespace Spices {
 		{
 			// Graphic SyncObkects.
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_GraphicImageSemaphore[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_GraphicImageSemaphore[i], m_VulkanState.m_Device, "GraphicImageSemaphore");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_GraphicImageSemaphore[i], m_VulkanState.m_Device, "GraphicImageSemaphore")
 
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_GraphicQueueSemaphore[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_GraphicQueueSemaphore[i], m_VulkanState.m_Device, "GraphicQueueSemaphore");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_GraphicQueueSemaphore[i], m_VulkanState.m_Device, "GraphicQueueSemaphore")
 
 			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_GraphicFence[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FENCE, (uint64_t)m_VulkanState.m_GraphicFence[i], m_VulkanState.m_Device, "GraphicFence");
-
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_FENCE, (uint64_t)m_VulkanState.m_GraphicFence[i], m_VulkanState.m_Device, "GraphicFence")
 
 			// Compute SyncObkects.
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ComputeImageSemaphore[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_ComputeImageSemaphore[i], m_VulkanState.m_Device, "ComputeImageSemaphore");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_ComputeImageSemaphore[i], m_VulkanState.m_Device, "ComputeImageSemaphore")
 
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ComputeQueueSemaphore[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_ComputeQueueSemaphore[i], m_VulkanState.m_Device, "ComputeQueueSemaphore");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_ComputeQueueSemaphore[i], m_VulkanState.m_Device, "ComputeQueueSemaphore")
 
 			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_ComputeFence[i]))
-			VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_FENCE, (uint64_t)m_VulkanState.m_ComputeFence[i], m_VulkanState.m_Device, "ComputeFence");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_FENCE, (uint64_t)m_VulkanState.m_ComputeFence[i], m_VulkanState.m_Device, "ComputeFence")
 		}
 	}
 

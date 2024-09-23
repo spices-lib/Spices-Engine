@@ -19,15 +19,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-
-		return;
-
-#endif
-
-		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
 		*/
 		VkDebugUtilsLabelEXT             labelInfo{};
@@ -51,15 +42,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-
-		return;
-
-#endif
-
-		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
 		*/
 		VkDebugUtilsLabelEXT         labelInfo{};
@@ -79,15 +61,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-
-		return;
-
-#endif
-
-		/**
 		* @brief Execute the function pointer.
 		*/
 		VulkanRenderBackend::GetState().m_VkFunc.vkCmdEndDebugUtilsLabelEXT(cmdbuffer);
@@ -100,15 +73,6 @@ namespace Spices {
 	)
 	{
 		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-
-		return;
-
-#endif
 
 		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
@@ -130,15 +94,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEAS
-
-		return;
-
-#endif
-
-		/**
 		* @brief Execute the function pointer.
 		*/
 		VulkanRenderBackend::GetState().m_VkFunc.vkQueueEndDebugUtilsLabelEXT(queue);
@@ -147,15 +102,6 @@ namespace Spices {
 	void VulkanDebugUtils::InsertQueueLabel(VkQueue queue, const std::string& caption, glm::vec4 color)
 	{
 		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-
-		return;
-
-#endif
 
 		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
@@ -182,15 +128,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-
-		return;
-
-#endif
-
-		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.
 		*/
 		VkDebugUtilsObjectNameInfoEXT       name_info{};
@@ -213,15 +150,6 @@ namespace Spices {
 	)
 	{
 		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Only Show Debug info with Debug Mode.
-		*/
-#ifdef SPICES_RELEASE
-
-		return;
-
-#endif
 
 		/**
 		* @brief Instance a VkDebugUtilsObjectNameInfoEXT.

@@ -276,7 +276,7 @@ namespace Spices {
 		* @brief Create a Buffer.
 		*/
 		VK_CHECK(vmaCreateBuffer(vulkanState.m_VmaAllocator, &bufferInfo, &allocInfo, &m_Buffer, &m_Alloc, nullptr))
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_Buffer, vulkanState.m_Device, "Buffer");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_Buffer, vulkanState.m_Device, "Buffer")
 
 		if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
@@ -299,7 +299,7 @@ namespace Spices {
 		* @brief Create a Buffer.
 		*/
 		VK_CHECK(vkCreateBuffer(vulkanState.m_Device, &bufferInfo, nullptr, &m_Buffer));
-		VulkanDebugUtils::SetObjectName(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_Buffer, vulkanState.m_Device, "Buffer");
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_Buffer, vulkanState.m_Device, "Buffer")
 
 		/**
 		* @brief Get Buffer Memory Requirements.
