@@ -43,7 +43,6 @@ fragInput;
 
 layout(location = 2) in flat uint triangleId;          /* @brief Triangle ID.             */
 layout(location = 3) in flat uint meshletId;           /* @brief Meshlet ID.              */
-layout(location = 4) in flat uint clusterMeshletId;    /* @brief ClusterMeshletId ID.     */
 
 /*****************************************************************************************/
 
@@ -88,11 +87,6 @@ void main()
     float meshletrand0 = rnd(meshletSeed);
     float meshletrand1 = rnd(meshletSeed);
     float meshletrand2 = rnd(meshletSeed);
-
-    uint  clusterMeshletSeed  = clusterMeshletId;
-    float clusterMeshletrand0 = rnd(clusterMeshletSeed);
-    float clusterMeshletrand1 = rnd(clusterMeshletSeed);
-    float clusterMeshletrand2 = rnd(clusterMeshletSeed);
 
     vec2 uv             = SampleSphericalMap(normalize(fragInput.localPosition)); // make sure to normalize localPos
     outColor            = texture(BindLessTextureBuffer[materialParam.albedo], uv);

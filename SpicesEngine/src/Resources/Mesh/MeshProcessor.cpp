@@ -18,12 +18,24 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		auto primVertices = meshPack->m_MeshResource.primitiveVertices.attributes;
+		meshPack->m_MeshResource.primitiveVertices.attributes = std::make_shared<std::vector<glm::uvec3>>();
+
+		/**
+		* @brief Pack to Points.
+		*/
+		std::vector<glm::vec3> initPoints;
+		PackVertexToPoints(meshPack, *primVertices, initPoints);
+
+		/**
+		* @brief Calculate Bound Sphere.
+		*/
+		SpicesShader::Sphere initBoundSphere = CalculateBoundSphere(initPoints);
+		
 		/**
 		* @brief Create Lod0 meshlets.
 		*/
-		auto primVertices        = meshPack->m_MeshResource.primitiveVertices.attributes;
-		meshPack->m_MeshResource.primitiveVertices.attributes = std::make_shared<std::vector<glm::uvec3>>();
-		AppendMeshlets(meshPack, 0, *primVertices);
+		AppendMeshlets(meshPack, 0, initBoundSphere, *primVertices);
 
 		uint32_t meshletStart = 0;
 		const uint32_t maxLod = 25;
@@ -71,8 +83,16 @@ namespace Spices {
 				scl::kd_tree<6> kdTree;
 				BuildKDTree(meshPack, groupPrimVertices, kdTree);
 
+				/**
+				* @brief Pack to Points.
+				*/
 				std::vector<glm::vec3> points;
 				PackVertexToPoints(meshPack, groupPrimVertices, points);
+
+				/**
+				* @brief Calculate Bound Sphere.
+				*/
+				SpicesShader::Sphere clusterBoundSphere = CalculateBoundSphere(points);
 
 				float simplifyScale       = meshopt_simplifyScale(&points[0].x, points.size(), sizeof(glm::vec3));
 				const float maxDistance   = (tLod * 0.01f + (1 - tLod) * 0.001f) * simplifyScale;
@@ -85,7 +105,7 @@ namespace Spices {
 				std::vector<glm::vec3>                 packPoints;
 				std::vector<glm::uvec3>                packPrimPoints;
 				std::unordered_map<uint32_t, uint32_t> primVerticesMapReverse;
-				PackVertexFromSparseInputs(meshPack, groupPrimVertices, packPoints, packPrimPoints, primVerticesMapReverse);
+				PackPrimVerticesFromSparseInputs(meshPack, groupPrimVertices, packPoints, packPrimPoints, primVerticesMapReverse);
 
 				/**
 				* @brief Simplify meshlets group primPoints.
@@ -116,9 +136,9 @@ namespace Spices {
 				* @brief Simplify succeed: merge result to meshlets.
 				*/
 				std::vector<glm::uvec3> primVerticesBuffer;
-				UnPackIndicesToSparseInputs(primVerticesBuffer, primVerticesMapReverse, simplifiedPrimPoints);
+				UnPackPrimVerticesToSparseInputs(primVerticesBuffer, primVerticesMapReverse, simplifiedPrimPoints);
 				
-				AppendMeshlets(meshPack, lod + 1, primVerticesBuffer);
+				AppendMeshlets(meshPack, lod + 1, clusterBoundSphere, primVerticesBuffer);
 			}
 		
 			auto out = std::chrono::high_resolution_clock::now();
@@ -127,8 +147,9 @@ namespace Spices {
 	}
 
 	void MeshProcessor::AppendMeshlets(
-		MeshPack*                      meshPack , 
-		uint32_t                       lod      , 
+		MeshPack*                      meshPack           , 
+		uint32_t                       lod                , 
+		const SpicesShader::Sphere&    clusterBoundSphere ,
 		const std::vector<glm::uvec3>& primVertices
 	)
 	{
@@ -157,7 +178,7 @@ namespace Spices {
 		std::vector<glm::vec3>  packPoints;
 		std::vector<glm::uvec3> packPrimPoints;
 		std::unordered_map<uint32_t, uint32_t> primVerticesMapReverse;
-		PackVertexFromSparseInputs(meshPack, primVertices, packPoints, packPrimPoints, primVerticesMapReverse);
+		PackPrimVerticesFromSparseInputs(meshPack, primVertices, packPoints, packPrimPoints, primVerticesMapReverse);
 
 		/**
 		* @brief Build Meshlets.
@@ -208,12 +229,14 @@ namespace Spices {
 		
 			Meshlet meshlet;
 			meshlet.FromMeshopt(meshoptlets[i], bounds);
-			meshlet.primitiveOffset = nPrimitives;
-		
-			meshlet.vertexOffset    += primLocationsOffset;
-			meshlet.primitiveOffset += primVerticesOffset;
-			meshlet.lod = lod;
-		
+			meshlet.primitiveOffset      = nPrimitives;
+									    
+			meshlet.vertexOffset        += primLocationsOffset;
+			meshlet.primitiveOffset     += primVerticesOffset;
+			meshlet.lod                  = lod;
+									    
+			meshlet.clusterBoundSphere   = clusterBoundSphere;
+
 			meshPack->m_MeshResource.meshlets.attributes->push_back(std::move(meshlet));
 		
 			nPrimitives += m.triangle_count;
@@ -265,13 +288,25 @@ namespace Spices {
 		/**
 		* @brief Fill in Lod data.
 		*/
-		Lod lodData;
-		lodData.primVertexOffset = primVerticesOffset;
-		lodData.nPrimitives      = lastm.primitiveOffset + lastm.nPrimitives - primVerticesOffset;
-		lodData.nMeshlets        = nMeshlet;
-		lodData.meshletOffset    = meshletsOffset;
+		uint32_t nLods = meshPack->m_MeshResource.lods.attributes->size();
 
-		meshPack->m_MeshResource.lods.attributes->push_back(std::move(lodData));
+		if (nLods == lod + 1)
+		{
+			Lod& lodRef = (*meshPack->m_MeshResource.lods.attributes)[lod];
+
+			lodRef.nPrimitives       += lastm.primitiveOffset + lastm.nPrimitives - primVerticesOffset;
+			lodRef.nMeshlets         += nMeshlet;
+		}
+		else
+		{
+			Lod lodData;
+			lodData.primVertexOffset  = primVerticesOffset;
+			lodData.nPrimitives       = lastm.primitiveOffset + lastm.nPrimitives - primVerticesOffset;
+			lodData.nMeshlets         = nMeshlet;
+			lodData.meshletOffset     = meshletsOffset;
+
+			meshPack->m_MeshResource.lods.attributes->push_back(std::move(lodData));
+		}
 	}
 
 	std::vector<MeshletGroup> MeshProcessor::GroupMeshlets(MeshPack* meshPack, std::vector<Meshlet>& meshlets)
@@ -454,8 +489,6 @@ namespace Spices {
 		groups.resize(nparts);
 		for (size_t i = 0; i < meshlets.size(); i++)
 		{
-			meshlets[i].clusterMeshletIndex = groups.size();
-
 			idx_t partitionNumber = partition[i];
 			groups[partitionNumber].meshlets.push_back(i);
 		}
@@ -700,6 +733,28 @@ namespace Spices {
 		return true;
 	}
 
+	SpicesShader::Sphere MeshProcessor::CalculateBoundSphere(const std::vector<glm::vec3>& points)
+	{
+		SPICES_PROFILE_ZONE;
+
+		SpicesShader::Sphere sphere;
+
+		glm::vec3 min = {  1E11,  1E11,  1E11 };
+		glm::vec3 max = { -1E11, -1E11, -1E11 };
+
+		for (const auto& point : points)
+		{
+			min = glm::min(min, point);
+			max = glm::max(max, point);
+		}
+
+		glm::vec3 bound = max - min;
+		sphere.c = 0.5f * (max + min);
+		sphere.r = 0.5f * glm::sqrt(bound.x * bound.x + bound.y * bound.y + bound.z * bound.z);
+
+		return sphere;
+	}
+
 	bool MeshProcessor::BuildKDTree(
 		MeshPack*                      meshPack     , 
 		const std::vector<glm::uvec3>& primVertices ,
@@ -872,7 +927,7 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshProcessor::PackVertexFromSparseInputs(
+	bool MeshProcessor::PackPrimVerticesFromSparseInputs(
 		MeshPack*                               meshPack              , 
 		const std::vector<glm::uvec3>           primVertices          ,
 		std::vector<glm::vec3>&                 packPoints            ,
@@ -917,7 +972,7 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshProcessor::UnPackIndicesToSparseInputs(
+	bool MeshProcessor::UnPackPrimVerticesToSparseInputs(
 		std::vector<glm::uvec3>&                primVertices           , 
 		std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse ,
 		const std::vector<glm::uvec3>&          packPrimPoints

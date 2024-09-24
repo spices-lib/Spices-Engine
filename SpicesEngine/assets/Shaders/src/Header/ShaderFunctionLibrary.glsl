@@ -172,6 +172,27 @@ bool IsInsideFrustum_Sphere(in vec4[5] planes, in vec3 center, in float radius)
 }
 
 /**
+* @brief Transform a Shere using matrix.
+* @param[in] sph Original Sphere.
+* @param[in] modelRo Camera Position in Model Space.
+* @param[in] fov .
+* @return Returns Transformed Sphere.
+* @see https://www.shadertoy.com/view/XdBGzd
+*/
+float ProjectSphere(in Sphere sph, in vec3 modelRo, in float fov)
+{
+	vec3 o = sph.c - modelRo;
+	
+	float r2 = sph.r * sph.r;
+	float z2 = o.z * o.z;
+	float l2 = dot(o, o);
+	
+	float area = -PI * fov * fov * r2 * sqrt(abs((l2 - r2) / (r2 - z2))) / (r2 - z2);
+	
+	return area;
+}
+
+/**
 * @brief BRDF Diffuse part, use lambert model.
 * @param[in] albedo .
 * @return Returns diffuse.

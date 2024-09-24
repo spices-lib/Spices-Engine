@@ -43,7 +43,6 @@ struct MaterialParameter
 layout(location = 0) in Pixel pixel;                   /* @brief Pixel Data.              */
 layout(location = 4) in flat uint triangleId;          /* @brief Triangle ID.             */
 layout(location = 5) in flat uint meshletId;           /* @brief Meshlet ID.              */
-layout(location = 6) in flat uint clusterMeshletId;    /* @brief ClusterMeshletId ID.     */
 
 /*****************************************************************************************/
 
@@ -91,11 +90,6 @@ void main()
     float meshletrand0 = rnd(meshletSeed);
     float meshletrand1 = rnd(meshletSeed);
     float meshletrand2 = rnd(meshletSeed);
-
-    uint  clusterMeshletSeed  = clusterMeshletId;
-    float clusterMeshletrand0 = rnd(clusterMeshletSeed);
-    float clusterMeshletrand1 = rnd(clusterMeshletSeed);
-    float clusterMeshletrand2 = rnd(clusterMeshletSeed);
 
     outAlbedo           = texture(BindLessTextureBuffer[materialParam.albedoTexture], pixel.texCoord);
     outNormal           = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);

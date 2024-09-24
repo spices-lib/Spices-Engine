@@ -49,7 +49,6 @@ layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPR
 layout(location = 0) out Pixel pixel[];                      /* @brief Pixel Data.              */
 layout(location = 4) out flat uint triangleId[];             /* @brief Triangle ID.             */
 layout(location = 5) out flat uint meshletId[];              /* @brief Meshlet ID.              */
-layout(location = 6) out flat uint clusterMeshletId[];       /* @brief ClusterMeshletId ID.     */
 
 /*****************************************************************************************/
 
@@ -104,7 +103,6 @@ void main()
         pixel[arrayIndices[j]].texCoord   = vt.texCoord;
         triangleId[arrayIndices[j]]       = localId + meshlet.primitiveOffset;
         meshletId[arrayIndices[j]]        = id;
-        clusterMeshletId[arrayIndices[j]] = meshlet.clusterMeshletIndex;
     }
     
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);

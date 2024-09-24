@@ -98,7 +98,7 @@ void main()
         mat4 mvp            = view.projection * view.view * model;
         
         vec4 ro             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        vec4 worldCenter    = model * vec4(meshlet.boundCenter, 1.0f);
+        vec4 worldCenter    = model * vec4(meshlet.boundSphere.c, 1.0f);
         vec3 dis            = worldCenter.xyz - ro.xyz;
 
         /**
@@ -106,7 +106,7 @@ void main()
         */
         vec4 frustumPlanes[5];
         ExtractFrustumPlanes(mvp, frustumPlanes);
-        bool frustumCulled = !IsInsideFrustum_Sphere(frustumPlanes, meshlet.boundCenter, meshlet.boundRadius);
+        bool frustumCulled = !IsInsideFrustum_Sphere(frustumPlanes, meshlet.boundSphere.c, meshlet.boundSphere.r);
         
         /**
         * @brief cull by cone normal.
@@ -114,7 +114,25 @@ void main()
         vec4 modelRo = inverse(view.view * model)[3];
         bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, -meshlet.coneAxis, meshlet.coneCutoff, modelRo.xyz);
 
-        bool lodCulled = meshlet.lod != materialParam.lod;
+        bool lodCulled = false;
+        if(meshlet.lod != 0)
+        {
+            float area         = ProjectSphere(meshlet.boundSphere       , modelRo.xyz, tan( 45.0f /2 )) * view.sceneTextureSize.y * view.sceneTextureSize.y * 0.25f;
+            float clusterArea  = ProjectSphere(meshlet.clusterBoundSphere, modelRo.xyz, tan( 45.0f /2 )) * view.sceneTextureSize.y * view.sceneTextureSize.y * 0.25f;
+
+            //debugPrintfEXT("x: %f, y: %f", area, clusterArea);
+
+            if(area < 1.0f && clusterArea > 1.0f)
+            {
+                lodCulled = false;
+            }
+            else
+            {
+                lodCulled = true;
+            }
+        }
+
+        //lodCulled = meshlet.lod != materialParam.lod;
 
         if(frustumCulled || normalConeCulled || lodCulled) cull = true;
     }

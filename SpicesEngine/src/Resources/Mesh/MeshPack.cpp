@@ -117,6 +117,8 @@ namespace Spices {
 		if (ptr)
 		{
 			lodLevel = std::any_cast<int>(ptr->paramValue);
+			lodLevel = std::max(lodLevel, 0);
+			lodLevel = std::min(lodLevel, (int)m_MeshResource.lods.attributes->size() - 1);
 		}
 		const Lod& lod0 = (*m_MeshResource.lods.attributes)[lodLevel];
 		vkCmdDrawIndexed(commandBuffer, lod0.nPrimitives * 3, 1, lod0.primVertexOffset * 3, 0, 0);
@@ -250,8 +252,9 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const Lod& lod0 = (*m_MeshResource.lods.attributes)[0];
-		m_NTasks = lod0.nMeshlets / SUBGROUP_SIZE + 1;
+		//const Lod& lod0 = (*m_MeshResource.lods.attributes)[0];
+		//m_NTasks = lod0.nMeshlets / SUBGROUP_SIZE + 1;
+		m_NTasks = m_MeshResource.meshlets.attributes->size() / SUBGROUP_SIZE + 1;
 		m_MeshTaskIndirectDrawCommand.firstTask = 0;
 		m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
 
@@ -285,7 +288,7 @@ namespace Spices {
 				float colRamp = j / static_cast<float>(m_Columns - 1) - 0.5f; // -0.5f ~ 0.5f
 
 				m_MeshResource.positions.attributes->push_back({ colRamp, rowRamp, 0.0f });
-				m_MeshResource.normals  .attributes->push_back({ 0.0f, 0.0f, 1.0f });
+				m_MeshResource.normals  .attributes->push_back({ 0.0f, 0.0f, -1.0f });
 				m_MeshResource.colors   .attributes->push_back({ 1.0f, 1.0f, 1.0f });
 				m_MeshResource.texCoords.attributes->push_back({ colRamp + 0.5, 0.5 - rowRamp });
 

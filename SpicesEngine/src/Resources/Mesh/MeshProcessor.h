@@ -37,11 +37,13 @@ namespace Spices {
 		* @brief Create and Append Meshlets to MeshPack use given indices.
 		* @param[in] meshPack MeshPack.
 		* @param[in] lod current lod level.
+		* @param[in] clusterBoundSphere Cluster's Bound Sphere.
 		* @param[in] primVertices PrimVertices Buffer.
 		*/
 		static void AppendMeshlets(
-			MeshPack*                      meshPack , 
-			uint32_t                       lod      , 
+			MeshPack*                      meshPack           , 
+			uint32_t                       lod                , 
+			const SpicesShader::Sphere&    clusterBoundSphere ,
 			const std::vector<glm::uvec3>& primVertices
 		);
 
@@ -72,6 +74,13 @@ namespace Spices {
 			float                    maxUVDistance
 		);
 
+		/**
+		* @brief Pack Vertices to Points.
+		* @param[in] meshPack MeshPack.
+		* @param[in] primVertices .
+		* @param[in,out] points .
+		* @return Returns true if succeed.
+		*/
 		static bool PackVertexToPoints(
 			MeshPack*                      meshPack      ,
 			const std::vector<glm::uvec3>& primVertices  ,
@@ -79,10 +88,20 @@ namespace Spices {
 		);
 
 		/**
+		* @brief Calculate BoundSphere from Points.
+		* @param[in] points .
+		* @return Returns BoundSphere.
+		*/
+		static SpicesShader::Sphere CalculateBoundSphere(
+			const std::vector<glm::vec3>& points
+		);
+
+		/**
 		* @brief Build KDTree use specific meshlets.
 		* @param[in] meshPack MeshPack.
 		* @param[in] primVertices PrimVertices.
-		* @param[in] kdTree .
+		* @param[in,out] kdTree .
+		* @return Returns true if succeed.
 		*/
 		static bool BuildKDTree(
 			MeshPack*                      meshPack     ,
@@ -90,6 +109,16 @@ namespace Spices {
 			scl::kd_tree<6>&               kdTree
 		);
 
+		/**
+		* @brief Find Points located in Boundarys.
+		* @param[in] meshPack MeshPack.
+		* @param[in] primVertices .
+		* @param[in,out] boundaryPoints .
+		* @param[in,out] stableBoundaryPoints .
+		* @param[in,out] boundaryEdgePoints .
+		* @param[in,out] pointConnect .
+		* @return Returns true if succeed.
+		*/
 		static bool FindBoundaryPoints(
 			MeshPack*                                                         meshPack             ,
 			const std::vector<glm::uvec3>&                                    primVertices         ,
@@ -99,7 +128,16 @@ namespace Spices {
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, bool>>& pointConnect
 		);
 
-		static bool PackVertexFromSparseInputs(
+		/**
+		* @brief Pack PrimVertices from Sparse PrimVertices Inputs.
+		* @param[in] meshPack MeshPack.
+		* @param[in] primVertices .
+		* @param[in,out] packPoints .
+		* @param[in,out] packPrimPoints ,
+		* @param[in,out] primVerticesMapReverse .
+		* @return Returns true if succeed.
+		*/
+		static bool PackPrimVerticesFromSparseInputs(
 			MeshPack*                               meshPack              , 
 			const std::vector<glm::uvec3>           primVertices          ,
 			std::vector<glm::vec3>&                 packPoints            ,
@@ -107,7 +145,14 @@ namespace Spices {
 			std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse
 		);
 
-		static bool UnPackIndicesToSparseInputs(
+		/**
+		* @brief Unpack PrimVertices to Sparse PrimVertices Inputs.
+		* @param[in,out] primVertices .
+		* @param[in] primVerticesMapReverse .
+		* @param[in] packPrimPoints .
+		* @return Returns true if succeed.
+		*/
+		static bool UnPackPrimVerticesToSparseInputs(
 			std::vector<glm::uvec3>&                primVertices           , 
 			std::unordered_map<uint32_t, uint32_t>& primVerticesMapReverse ,
 			const std::vector<glm::uvec3>&          packPrimPoints

@@ -222,21 +222,38 @@ struct HitPayLoad
 /*********************************************Mesh***************************************/
 
 /**
+* @brief Sphere Struct.
+*/
+struct Sphere
+{
+	vec3  c;                                          /* @brief Center of Bound Sphere.                 */
+	float r;                                          /* @brief Radius of Bound Sphere.                 */
+};
+
+/**
+* @brief Bound AABB Struct.
+*/
+struct AABB
+{
+	vec3 min;                                         /* @brief Min of Bound AABB.                 */    
+	vec3 max;                                         /* @brief Max of Bound AABB.                 */
+};
+
+/**
 * @brief Meshlet Structure Data.
 */
 struct Meshlet
 {
-	uint  vertexOffset;                        /* @brief Offset of Vertices this meshlet.        */
-	uint  primitiveOffset;                     /* @brief Offset of primitives this meshlet.      */
-	uint  nVertices;                           /* @brief Vertices Count this meshlet.( <= 64)    */
-	uint  nPrimitives;                         /* @brief Primitives Count this meshlet.( <= 126) */
-	uint  lod;                                 /* @brief Current meshlet lod level.              */
-	uint  clusterMeshletIndex;                 /* @brief current cluster meshlet index.          */
-	vec3  boundCenter;                         /* @brief Bounding Sphere Center in local world.  */
-	float boundRadius;                         /* @brief Bounding Sphere radius.                 */
-	vec3  coneApex;                            /* @brief Normal Cone center.                     */
-	vec3  coneAxis;                            /* @brief Normal Cone axis.                       */
-	float coneCutoff;                          /* @brief Normal Cone cutoff rate.                */
+	uint    vertexOffset;                        /* @brief Offset of Vertices this meshlet.        */
+	uint    primitiveOffset;                     /* @brief Offset of primitives this meshlet.      */
+	uint    nVertices;                           /* @brief Vertices Count this meshlet.( <= 64)    */
+	uint    nPrimitives;                         /* @brief Primitives Count this meshlet.( <= 126) */
+	uint    lod;                                 /* @brief Current meshlet lod level.              */
+	Sphere  boundSphere;                         /* @brief Bounding Sphere in local world.         */
+	Sphere  clusterBoundSphere;                  /* @brief Cluster Bounding Sphere in local world. */
+	vec3    coneApex;                            /* @brief Normal Cone center.                     */
+	vec3    coneAxis;                            /* @brief Normal Cone axis.                       */
+	float   coneCutoff;                          /* @brief Normal Cone cutoff rate.                */
 };
 
 /*****************************************************************************************/
