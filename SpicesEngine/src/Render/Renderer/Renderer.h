@@ -273,9 +273,9 @@ namespace Spices {
 		/**
 		* @brief Get The activated camera entity's view matrix and projection matrix.
 		* @param[in] frameInfo The current frame data.
-		* @return Returns a tuple of view matrix, projection matrix, stable frames.
+		* @return Returns a tuple of view matrix, projection matrix, stable frames, fov.
 		*/
-		std::tuple<glm::mat4, glm::mat4, unsigned int> GetActiveCameraMatrix(FrameInfo& frameInfo);
+		std::tuple<glm::mat4, glm::mat4, unsigned int, float> GetActiveCameraMatrix(FrameInfo& frameInfo);
 
 		/**
 		* @brief Get DirectionalLightComponent's render data in World.

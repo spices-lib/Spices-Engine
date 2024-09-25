@@ -15,61 +15,111 @@
 #include <optional>
 
 #ifdef RENDERAPI_VULKAN
-
 #include "Render/Vulkan/VulkanRayTracing.h"
-
 #endif
 
 namespace Spices {
 	
+	/**
+	* @brief Lod Data.
+	*/
 	struct Lod
 	{
-		uint32_t primVertexOffset;
-		uint32_t nPrimitives;
-		uint32_t meshletOffset;
-		uint32_t nMeshlets;
+		uint32_t primVertexOffset;     /* @brief Lod PrimVertexOffset (also PrimPointOffset).   */
+		uint32_t nPrimitives;          /* @brief Lod PrimVertics Count (also PrimPoints Count). */
+		uint32_t meshletOffset;        /* @brief Lod MeshletOffset.                             */
+		uint32_t nMeshlets;            /* @brief Lod Meshlets Count.                            */
 	};
 
+	/**
+	* @brief MeshResource's item template.
+	* @tparam T specific item value type.
+	*/
 	template<typename T>
 	struct Attribute
 	{
+		/**
+		* @brief Constructor Function.
+		*/
 		Attribute();
+
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~Attribute();
+
+		/**
+		* @brief Create Attribute Buffer.
+		* @param[in] name Buffer Debug Name.
+		* @param[in] usage Buffer Usage.
+		*/
 		void CreateBuffer(const std::string& name, VkBufferUsageFlags usage = 0);
 
+		/**
+		* @brief Attribute Data Array.
+		*/
 		std::shared_ptr<std::vector<T>> attributes;
-		std::shared_ptr<VulkanBuffer>   buffer;
+
+		/**
+		* @brief Attribute Buffer.
+		*/
+		std::shared_ptr<VulkanBuffer> buffer;
 	};
 
+	/**
+	* @brief Mesh Resources Data.
+	*/
 	struct MeshResource
 	{
+		/**
+		* @brief Constructor Function.
+		*/
 		MeshResource() = default;
+
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~MeshResource() = default;
 
-		using Positions           = Attribute<glm::vec3>;                // Position.(also as Point)
-		using Normals             = Attribute<glm::vec3>;                // Normal
-		using Colors              = Attribute<glm::vec3>;                // Color
-		using TexCoords           = Attribute<glm::vec2>;                // TexCoord
-		using Vertices            = Attribute<glm::uvec4>;               // Vertex.
+		/**
+		* @brief Declear value Type.
+		*/
+		using Positions           = Attribute<glm::vec3>;                // @brief Position.(also as Point)
+		using Normals             = Attribute<glm::vec3>;                // @brief Normal
+		using Colors              = Attribute<glm::vec3>;                // @brief Color
+		using TexCoords           = Attribute<glm::vec2>;                // @brief TexCoord
+		using Vertices            = Attribute<glm::uvec4>;               // @brief Vertex.
 
-		using PrimitivePoints     = Attribute<glm::uvec3>;               // PrimPoints
-		using PrimitiveVertices   = Attribute<glm::uvec3>;               // PrimVertices
-		using PrimitiveLocations  = Attribute<glm::uvec3>;               // PrimLocation
-		using Meshlets            = Attribute<Meshlet>;                  // PrimMeshlet
-		using Lods                = Attribute<Lod>;                      // Lod
+		using PrimitivePoints     = Attribute<glm::uvec3>;               // @brief PrimPoints
+		using PrimitiveVertices   = Attribute<glm::uvec3>;               // @brief PrimVertices
+		using PrimitiveLocations  = Attribute<glm::uvec3>;               // @brief PrimLocation
+		using Meshlets            = Attribute<Meshlet>;                  // @brief PrimMeshlet
+		using Lods                = Attribute<Lod>;                      // @brief Lod
 
-		Positions                     positions;
-		Normals                       normals;
-		Colors                        colors;
-		TexCoords                     texCoords;
-		Vertices                      vertices;
-		PrimitivePoints               primitivePoints;
-		PrimitiveVertices             primitiveVertices;
-		PrimitiveLocations            primitiveLocations;
-		Meshlets                      meshlets;
-		Lods                          lods;
+		/**
+		* @brief Declear value.
+		*/
+		Positions                   positions;
+		Normals                     normals;
+		Colors                      colors;
+		TexCoords                   texCoords;
+		Vertices                    vertices;
+		PrimitivePoints             primitivePoints;
+		PrimitiveVertices           primitiveVertices;
+		PrimitiveLocations          primitiveLocations;
+		Meshlets                    meshlets;
+		Lods                        lods;
 
+		/**
+		* @brief Get VkVertexInputBindingDescription for IA.
+		* @return Returns VkVertexInputBindingDescription Array.
+		*/
 		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
+
+		/**
+		* @brief Get VkVertexInputAttributeDescription for IA.
+		* @return Returns VkVertexInputAttributeDescription Array.
+		*/
 		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
 
 		/**
@@ -120,6 +170,9 @@ namespace Spices {
 		*/
 		uint64_t GetBufferAddress() { return m_Buffer->GetAddress(); }
 
+		/**
+		* @brief Update Function.
+		*/
 		Update_F(modelAddress                   )
 		Update_F(positionsAddress               )
 		Update_F(normalsAddress                 )

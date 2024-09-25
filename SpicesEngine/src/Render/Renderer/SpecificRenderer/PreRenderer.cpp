@@ -38,7 +38,7 @@ namespace Spices {
 		builder.BeginRenderPass();
 
 		builder.UpdateUniformBuffer<SpicesShader::View>(0, 0, [&](auto& ubo) {
-			auto [ invViewMatrix, projectionMatrix, stableFrames ] = GetActiveCameraMatrix(frameInfo);
+			auto [ invViewMatrix, projectionMatrix, stableFrames, fov ] = GetActiveCameraMatrix(frameInfo);
 			ImVec2 sceneTextureSize = SlateSystem::GetRegister()->GetViewPort()->GetPanelSize();
 			const VkExtent2D windowSize = m_Device->GetSwapChainSupport().surfaceSize;
 
@@ -66,6 +66,8 @@ namespace Spices {
 			};
 
 			ubo.stableFrames = stableFrames;
+
+			ubo.fov = fov;
 		});
 
 		builder.UpdateUniformBuffer<SpicesShader::Input>(0, 1, [&](auto& ubo) {

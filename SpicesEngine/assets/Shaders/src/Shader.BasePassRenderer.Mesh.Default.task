@@ -14,23 +14,6 @@
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
 #include "Header/ShaderFunctionLibrary.glsl"
-
-
-struct MaterialParameter
-{
-    vec3  albedo;
-    float roughness;
-    float metallic;
-    int   maxRayDepth;
-    int   maxLightDepth;
-    int   maxShadowDepth;
-    int   lod;
-};
-
-
-
-
-#include "Header/ShaderBindLessMaterial.glsl"
 #include "Header/ShaderMeshDescLayout.glsl"
 
 /*****************************************************************************************/
@@ -114,25 +97,10 @@ void main()
         vec4 modelRo = inverse(view.view * model)[3];
         bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, -meshlet.coneAxis, meshlet.coneCutoff, modelRo.xyz);
 
-        bool lodCulled = false;
-        if(meshlet.lod != 0)
-        {
-            float area         = ProjectSphere(meshlet.boundSphere       , modelRo.xyz, tan( 45.0f /2 )) * view.sceneTextureSize.y * view.sceneTextureSize.y * 0.25f;
-            float clusterArea  = ProjectSphere(meshlet.clusterBoundSphere, modelRo.xyz, tan( 45.0f /2 )) * view.sceneTextureSize.y * view.sceneTextureSize.y * 0.25f;
-
-            //debugPrintfEXT("x: %f, y: %f", area, clusterArea);
-
-            if(area < 1.0f && clusterArea > 1.0f)
-            {
-                lodCulled = false;
-            }
-            else
-            {
-                lodCulled = true;
-            }
-        }
-
-        //lodCulled = meshlet.lod != materialParam.lod;
+        /**
+        * @brief cull by lod.
+        */
+        bool lodCulled = !IsRenderSuchLodCluster(meshlet, view, model);
 
         if(frustumCulled || normalConeCulled || lodCulled) cull = true;
     }

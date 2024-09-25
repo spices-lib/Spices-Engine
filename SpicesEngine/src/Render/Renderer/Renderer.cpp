@@ -333,7 +333,7 @@ namespace Spices {
 		);
 	}
 
-	std::tuple<glm::mat4, glm::mat4, unsigned int> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
+	std::tuple<glm::mat4, glm::mat4, unsigned int, float> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -343,6 +343,7 @@ namespace Spices {
 		glm::mat4 invViewMat       = glm::mat4(1.0f);
 		glm::mat4 projectionMat    = glm::mat4(1.0f);
 		unsigned int stableFrames  = 0;
+		float fov                  = 0.0f;
 
 		bool find = false;
 
@@ -365,6 +366,7 @@ namespace Spices {
 				invViewMat    = transComp.GetModelMatrix();
 				projectionMat = camComp.GetCamera()->GetPMatrixReverseZ();
 				stableFrames  = camComp.GetCamera()->GetStableFrames();
+				fov           = glm::radians(camComp.GetCamera()->GetPerspectiveParam().fov);
 
 				/**
 				* @brief Since we enable Negative viewport, we do not need reverse y axis here.
@@ -395,7 +397,7 @@ namespace Spices {
 			SPICES_CORE_WARN(ss.str());
 		}
 
-		return std::make_tuple(invViewMat, projectionMat, stableFrames);
+		return std::make_tuple(invViewMat, projectionMat, stableFrames, fov);
 	}
 
 	void Renderer::GetDirectionalLight(FrameInfo& frameInfo, std::array<SpicesShader::DirectionalLight, DIRECTIONALLIGHT_BUFFER_MAXNUM>& dLightBuffer)

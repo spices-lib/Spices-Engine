@@ -43,6 +43,8 @@ namespace Spices {
 
 	bool MeshLoader::Load(const std::string& fileName, MeshPack* outMeshPack)
 	{
+		SPICES_PROFILE_ZONE;
+
 		if      ( LoadFromSASSET(fileName, outMeshPack)) return true;
 		else if ( LoadFromOBJ(   fileName, outMeshPack)) return true;
 		else if ( LoadFromFBX(   fileName, outMeshPack)) return true;
@@ -51,6 +53,8 @@ namespace Spices {
 
 	bool MeshLoader::LoadFromOBJ(const std::string& fileName, MeshPack* outMeshPack)
 	{
+		SPICES_PROFILE_ZONE;
+
 		bool isFind = false;
 		std::string filePath;
 		int index = 0;
@@ -183,6 +187,8 @@ namespace Spices {
 
 	bool MeshLoader::LoadFromFBX(const std::string& fileName, MeshPack* outMeshPack)
 	{
+		SPICES_PROFILE_ZONE;
+
 		bool isFind = false;
 		std::string filePath;
 		for (auto& it : ResourceSystem::GetSearchFolder())
@@ -202,6 +208,8 @@ namespace Spices {
 
 	bool MeshLoader::LoadFromSASSET(const std::string& fileName, MeshPack* outMeshPack)
 	{
+		SPICES_PROFILE_ZONE;
+
 		bool isFind = false;
 		std::string filePath;
 		for (auto& it : ResourceSystem::GetSearchFolder())
@@ -269,6 +277,9 @@ namespace Spices {
 		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &meshletsCount, &readed);
 		outMeshPack->m_MeshResource.meshlets.attributes->resize(meshletsCount);
 
+		uint32_t lodsCount = 0;
+		FileLibrary::FileLibrary_Read(&f, sizeof(uint32_t), &lodsCount, &readed);
+		outMeshPack->m_MeshResource.lods.attributes->resize(lodsCount);
 		
 		FileLibrary::FileLibrary_Read(&f, sizeof(glm::vec3)  * positionsCount          , outMeshPack->m_MeshResource.positions.attributes          ->data(), &readed);
 		FileLibrary::FileLibrary_Read(&f, sizeof(glm::vec3)  * normalsCount            , outMeshPack->m_MeshResource.normals.attributes            ->data(), &readed);
@@ -279,7 +290,7 @@ namespace Spices {
 		FileLibrary::FileLibrary_Read(&f, sizeof(glm::uvec3) * primitiveVerticesCount  , outMeshPack->m_MeshResource.primitiveVertices.attributes  ->data(), &readed);
 		FileLibrary::FileLibrary_Read(&f, sizeof(glm::uvec3) * primitiveLocationsCount , outMeshPack->m_MeshResource.primitiveLocations.attributes ->data(), &readed);
 		FileLibrary::FileLibrary_Read(&f, sizeof(Meshlet)    * meshletsCount           , outMeshPack->m_MeshResource.meshlets.attributes           ->data(), &readed);
-
+		FileLibrary::FileLibrary_Read(&f, sizeof(Lod)        * lodsCount               , outMeshPack->m_MeshResource.lods.attributes               ->data(), &readed);
 
 		char overSign[100];
 		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
@@ -297,6 +308,8 @@ namespace Spices {
 
 	bool MeshLoader::WriteSASSET(int folderIndex, const std::string& fileName, MeshPack* outMeshPack)
 	{
+		SPICES_PROFILE_ZONE;
+
 		std::string filePath = ResourceSystem::GetSearchFolder()[folderIndex] + defaultBinMeshPath + fileName + ".sasset";
 
 		if (FileLibrary::FileLibrary_Exists(filePath.c_str())) {
@@ -337,6 +350,8 @@ namespace Spices {
 		uint32_t meshletsCount = (uint32_t)outMeshPack->m_MeshResource.meshlets.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
 		
+		uint32_t lodsCount = (uint32_t)outMeshPack->m_MeshResource.lods.attributes->size();
+		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &lodsCount, &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(glm::vec3)  * positionsCount          , outMeshPack->m_MeshResource.positions.attributes          ->data(), &written);
 		FileLibrary::FileLibrary_Write(&f, sizeof(glm::vec3)  * normalsCount            , outMeshPack->m_MeshResource.normals.attributes            ->data(), &written);
@@ -347,6 +362,7 @@ namespace Spices {
 		FileLibrary::FileLibrary_Write(&f, sizeof(glm::uvec3) * primitiveVerticesCount  , outMeshPack->m_MeshResource.primitiveVertices.attributes  ->data(), &written);
 		FileLibrary::FileLibrary_Write(&f, sizeof(glm::uvec3) * primitiveLocationsCount , outMeshPack->m_MeshResource.primitiveLocations.attributes ->data(), &written);
 		FileLibrary::FileLibrary_Write(&f, sizeof(Meshlet)    * meshletsCount           , outMeshPack->m_MeshResource.meshlets.attributes           ->data(), &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(Lod)        * lodsCount               , outMeshPack->m_MeshResource.lods.attributes               ->data(), &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignOver, &written);
 

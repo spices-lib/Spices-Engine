@@ -47,7 +47,7 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Sprite" }));
 		
-		auto& [ invViewMatrix, projectionMatrix, stableFrames ] = GetActiveCameraMatrix(frameInfo);
+		auto [ invViewMatrix, projectionMatrix, stableFrames, fov ] = GetActiveCameraMatrix(frameInfo);
 		const glm::vec3 camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
 
 		std::map<float, int> sortedEntity;

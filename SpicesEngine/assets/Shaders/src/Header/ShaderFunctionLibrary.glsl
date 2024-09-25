@@ -114,6 +114,28 @@ vec2 SampleSphericalMap(in vec3 v)
 }
 
 /**
+* @brief Transform a Shere using matrix.
+* @param[in] sph Original Sphere.
+* @param[in] mv Model View Matrix.
+* @param[in] fov Radians fov.
+* @return Returns Transformed Sphere.
+* @see https://www.shadertoy.com/view/XdBGzd
+* https://jglrxavpok.github.io/2024/05/13/recreating-nanite-mesh-shader-time.html
+*/
+float ProjectSphere(in Sphere sph, in mat4 mv, in float fov)
+{
+	vec4 hCenter              = vec4(sph.c, 1.0f);
+	hCenter                   = mv * hCenter;
+	const vec3 center         = hCenter.xyz / hCenter.w;
+	const float r             = length((mv * vec4(sph.r, 0, 0, 0)).xyz);
+
+	const float d2            = dot(center, center);
+	const float screenRadius  = 1.0f / tan(fov / 2.0f) * r / sqrt(d2 - r * r);
+
+	return screenRadius;
+}
+
+/**
 * @brief Check if the cone is backfacing.
 * @param[in] coneApex .
 * @param[in] coneAxis .
@@ -172,24 +194,27 @@ bool IsInsideFrustum_Sphere(in vec4[5] planes, in vec3 center, in float radius)
 }
 
 /**
-* @brief Transform a Shere using matrix.
-* @param[in] sph Original Sphere.
-* @param[in] modelRo Camera Position in Model Space.
-* @param[in] fov .
-* @return Returns Transformed Sphere.
-* @see https://www.shadertoy.com/view/XdBGzd
+* @brief Check if such lod meshlet can be render.
+* @param[in] meshlet Meshlet.
+* @param[in] view View.
+* @param[in] model Model Matrix.
+* @return Returns true if can be render.
 */
-float ProjectSphere(in Sphere sph, in vec3 modelRo, in float fov)
+bool IsRenderSuchLodCluster(in Meshlet meshlet, in View view, in mat4 model)
 {
-	vec3 o = sph.c - modelRo;
-	
-	float r2 = sph.r * sph.r;
-	float z2 = o.z * o.z;
-	float l2 = dot(o, o);
-	
-	float area = -PI * fov * fov * r2 * sqrt(abs((l2 - r2) / (r2 - z2))) / (r2 - z2);
-	
-	return area;
+	const float threshhold = 1.0f;
+
+	//return meshlet.lod == 0;
+
+	float radius        = ProjectSphere(meshlet.boundSphere       , view.view * model, view.fov) * view.sceneTextureSize.y;
+	float clusterRadius = ProjectSphere(meshlet.clusterBoundSphere, view.view * model, view.fov) * view.sceneTextureSize.y;
+
+	if (meshlet.lod == 0)
+	{
+		return !(radius <= threshhold);
+	}
+
+	return (radius <= threshhold && clusterRadius > threshhold);
 }
 
 /**

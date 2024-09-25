@@ -11,11 +11,17 @@
 
 namespace Spices {
 
+	/**
+	* @brief MeshletGroup for simplify.
+	*/
 	struct MeshletGroup 
 	{
 		std::vector<size_t> meshlets;
 	};
 
+	/**
+	* @brief Forward declear.
+	*/
 	class MeshPack;
 
 	/**

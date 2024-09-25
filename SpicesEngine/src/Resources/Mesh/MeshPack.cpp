@@ -39,14 +39,14 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		positions          .CreateBuffer(name + "PositionsBuffer", VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
-		normals            .CreateBuffer(name + "NormalsBuffer");
-		colors             .CreateBuffer(name + "ColorsBuffer");
-		texCoords          .CreateBuffer(name + "TexCoordsBuffer");
-		vertices           .CreateBuffer(name + "VerticesBuffer");
+		normals            .CreateBuffer(name + "NormalsBuffer"            );
+		colors             .CreateBuffer(name + "ColorsBuffer"             );
+		texCoords          .CreateBuffer(name + "TexCoordsBuffer"          );
+		vertices           .CreateBuffer(name + "VerticesBuffer"           );
 		primitivePoints    .CreateBuffer(name + "PrimitivePointsBuffer", VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
-		primitiveVertices  .CreateBuffer(name + "PrimitiveVerticesBuffer");
-		primitiveLocations .CreateBuffer(name + "PrimitiveLocationsBuffer");
-		meshlets           .CreateBuffer(name + "MeshletsBuffer");
+		primitiveVertices  .CreateBuffer(name + "PrimitiveVerticesBuffer"  );
+		primitiveLocations .CreateBuffer(name + "PrimitiveLocationsBuffer" );
+		meshlets           .CreateBuffer(name + "MeshletsBuffer"           );
 	}
 
 	MeshDesc::MeshDesc()
