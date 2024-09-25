@@ -18,24 +18,29 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto primVertices = meshPack->m_MeshResource.primitiveVertices.attributes;
-		meshPack->m_MeshResource.primitiveVertices.attributes = std::make_shared<std::vector<glm::uvec3>>();
+		/**
+		* @brief Lod0
+		*/
+		{
+			auto primVertices = meshPack->m_MeshResource.primitiveVertices.attributes;
+			meshPack->m_MeshResource.primitiveVertices.attributes = std::make_shared<std::vector<glm::uvec3>>();
 
-		/**
-		* @brief Pack to Points.
-		*/
-		std::vector<glm::vec3> initPoints;
-		PackVertexToPoints(meshPack, *primVertices, initPoints);
+			/**
+			* @brief Pack to Points.
+			*/
+			std::vector<glm::vec3> initPoints;
+			PackVertexToPoints(meshPack, *primVertices, initPoints);
 
-		/**
-		* @brief Calculate Bound Sphere.
-		*/
-		SpicesShader::Sphere initBoundSphere = CalculateBoundSphere(initPoints);
-		
-		/**
-		* @brief Create Lod0 meshlets.
-		*/
-		AppendMeshlets(meshPack, 0, initBoundSphere, *primVertices);
+			/**
+			* @brief Calculate Bound Sphere.
+			*/
+			SpicesShader::Sphere initBoundSphere = CalculateBoundSphere(initPoints);
+
+			/**
+			* @brief Create Lod0 meshlets.
+			*/
+			AppendMeshlets(meshPack, 0, initBoundSphere, *primVertices);
+		}
 
 		uint32_t meshletStart = 0;
 		const uint32_t maxLod = 0;
