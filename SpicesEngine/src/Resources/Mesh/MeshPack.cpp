@@ -252,8 +252,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		//const Lod& lod0 = (*m_MeshResource.lods.attributes)[0];
-		//m_NTasks = lod0.nMeshlets / SUBGROUP_SIZE + 1;
 		m_NTasks = m_MeshResource.meshlets.attributes->size() / SUBGROUP_SIZE + 1;
 		m_MeshTaskIndirectDrawCommand.firstTask = 0;
 		m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
@@ -302,10 +300,7 @@ namespace Spices {
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
 				
-				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
-
-				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 			}
 		}
@@ -325,84 +320,188 @@ namespace Spices {
 
 		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 
-		//if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
-		//
-		//// Front
-		//{
-		//	PlanePack pack(m_Rows, m_Columns);
-		//	pack.OnCreatePack(false);
-		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
-		//	pack.ApplyMatrix(tran);
-		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Indices->size()));
-		//	pack.CopyToVertices(*m_Vertices);
-		//	
-		//}
-		//
-		//// Back
-		//{
-		//	PlanePack pack(m_Rows, m_Columns);
-		//	pack.OnCreatePack(false);
-		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
-		//	glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
-		//	pack.ApplyMatrix(tran * rot);
-		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-		//	pack.CopyToVertices(*m_Vertices);
-		//	
-		//}
-		//
-		//// Left
-		//{
-		//	PlanePack pack(m_Rows, m_Columns);
-		//	pack.OnCreatePack(false);
-		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
-		//	glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
-		//	pack.ApplyMatrix(tran * rot);
-		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-		//	pack.CopyToVertices(*m_Vertices);
-		//	
-		//}
-		//
-		//// Right
-		//{
-		//	PlanePack pack(m_Rows, m_Columns);
-		//	pack.OnCreatePack(false);
-		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
-		//	glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
-		//	pack.ApplyMatrix(tran * rot);
-		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-		//	pack.CopyToVertices(*m_Vertices);
-		//	
-		//}
-		//
-		//// Top
-		//{
-		//	PlanePack pack(m_Rows, m_Columns);
-		//	pack.OnCreatePack(false);
-		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
-		//	glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
-		//	pack.ApplyMatrix(tran * rot);
-		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-		//	pack.CopyToVertices(*m_Vertices);
-		//	
-		//}
-		//
-		//// Button
-		//{
-		//	PlanePack pack(m_Rows, m_Columns);
-		//	pack.OnCreatePack(false);
-		//	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
-		//	glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
-		//	pack.ApplyMatrix(tran * rot);
-		//	pack.CopyToIndices(*m_Indices, static_cast<uint32_t>(m_Vertices->size()));
-		//	pack.CopyToVertices(*m_Vertices);
-		//	
-		//}
-		//
-		//if (isCreateBuffer)
-		//{
-		//	MeshProcessor::GenerateMeshLodClusterHierarchy(this);
-		//	CreateBuffer();
-		//}
+		auto ApplyMatrixInPositions = [&](auto& positions, const glm::mat4 matrix) {
+			
+			for (uint64_t i = 0; i < positions.size(); i++)
+			{
+				glm::vec4 p  = matrix * glm::vec4(positions[i], 1.0f);
+				positions[i] = { p.x, p.y, p.z };
+			}
+		};
+
+		auto ApplyMatrixInNormals = [&](auto& normals, const glm::mat4 matrix) {
+
+			for (uint64_t i = 0; i < normals.size(); i++)
+			{
+				glm::vec4 n = matrix * glm::vec4(normals[i], 1.0f);
+				normals[i]  = { n.x, n.y, n.z };
+			}
+		};
+
+		auto CopyToVertices = [&](auto& resources) {
+
+			uint64_t nPositions = m_MeshResource.positions.attributes->size();
+			m_MeshResource.positions.attributes->insert(
+				m_MeshResource.positions.attributes->end(), 
+				resources.positions.attributes->begin(),
+				resources.positions.attributes->end()
+			);
+
+			uint64_t nNormals = m_MeshResource.normals.attributes->size();
+			m_MeshResource.normals.attributes->insert(
+				m_MeshResource.normals.attributes->end(),
+				resources.normals.attributes->begin(),
+				resources.normals.attributes->end()
+			);
+
+			uint64_t nColors = m_MeshResource.colors.attributes->size();
+			m_MeshResource.colors.attributes->insert(
+				m_MeshResource.colors.attributes->end(),
+				resources.colors.attributes->begin(),
+				resources.colors.attributes->end()
+			);
+
+			uint64_t nTexCoords = m_MeshResource.texCoords.attributes->size();
+			m_MeshResource.texCoords.attributes->insert(
+				m_MeshResource.texCoords.attributes->end(),
+				resources.texCoords.attributes->begin(),
+				resources.texCoords.attributes->end()
+			);
+
+			uint64_t nVertices = m_MeshResource.vertices.attributes->size();
+			for (auto& vertex : *resources.vertices.attributes)
+			{
+				m_MeshResource.vertices.attributes->push_back({
+						vertex.x + nPositions ,
+						vertex.y + nNormals   ,
+						vertex.z + nColors    ,
+						vertex.w + nTexCoords
+				});
+			}
+
+			uint64_t nPrimVertices = m_MeshResource.primitiveVertices.attributes->size();
+			for (auto& primitiveVertex : *resources.primitiveVertices.attributes)
+			{
+				m_MeshResource.primitiveVertices.attributes->push_back({
+					primitiveVertex.x + nVertices,
+					primitiveVertex.y + nVertices,
+					primitiveVertex.z + nVertices
+				});
+			}
+		};
+
+		// Front
+		{
+			PlanePack pack(m_Rows, m_Columns);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
+
+			auto& resources = pack.GetResource();
+
+			auto positions = resources.positions.attributes;
+			ApplyMatrixInPositions(*positions, tran);
+
+			auto normals = resources.normals.attributes;
+			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+
+			CopyToVertices(resources);
+		}
+		
+		// Back
+		{
+			PlanePack pack(m_Rows, m_Columns);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
+			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
+
+			auto& resources = pack.GetResource();
+
+			auto positions = resources.positions.attributes;
+			ApplyMatrixInPositions(*positions, tran * rot);
+
+			auto normals = resources.normals.attributes;
+			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+
+			CopyToVertices(resources);			
+		}
+		
+		// Left
+		{
+			PlanePack pack(m_Rows, m_Columns);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
+
+			auto& resources = pack.GetResource();
+
+			auto positions = resources.positions.attributes;
+			ApplyMatrixInPositions(*positions, tran * rot);
+
+			auto normals = resources.normals.attributes;
+			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+
+			CopyToVertices(resources);			
+		}
+		
+		// Right
+		{
+			PlanePack pack(m_Rows, m_Columns);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
+
+			auto& resources = pack.GetResource();
+
+			auto positions = resources.positions.attributes;
+			ApplyMatrixInPositions(*positions, tran * rot);
+
+			auto normals = resources.normals.attributes;
+			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+
+			CopyToVertices(resources);
+		}
+		
+		// Top
+		{
+			PlanePack pack(m_Rows, m_Columns);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
+
+			auto& resources = pack.GetResource();
+
+			auto positions = resources.positions.attributes;
+			ApplyMatrixInPositions(*positions, tran * rot);
+
+			auto normals = resources.normals.attributes;
+			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+
+			CopyToVertices(resources);
+		}
+		
+		// Button
+		{
+			PlanePack pack(m_Rows, m_Columns);
+			pack.OnCreatePack(false);
+			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
+
+			auto& resources = pack.GetResource();
+
+			auto positions = resources.positions.attributes;
+			ApplyMatrixInPositions(*positions, tran * rot);
+
+			auto normals = resources.normals.attributes;
+			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+
+			CopyToVertices(resources);
+		}
+		
+		if (isCreateBuffer)
+		{
+			MeshProcessor::GenerateMeshLodClusterHierarchy(this);
+			CreateBuffer();
+		}
 
 		return true;
 	}
@@ -451,10 +550,7 @@ namespace Spices {
 			{
 				const uint32_t vtIndex = i * m_Columns + j;
 
-				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex, vtIndex + 1, vtIndex + m_Columns + 1 });
-
-				//m_MeshResource.primitivePoints  .attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 				m_MeshResource.primitiveVertices.attributes->push_back({ vtIndex + m_Columns + 1, vtIndex + m_Columns, vtIndex });
 			}
 		}
