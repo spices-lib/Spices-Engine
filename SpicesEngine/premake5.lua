@@ -115,7 +115,7 @@ project "SpicesEngine"
 		"yaml-cpp",                           -- Dependency: yaml-cpp
 		"implot",                             -- Dependency: implot
 		"%{Library.NvAftermath}",             -- Dependency: NvAftermath
-		"%{Library.NvPerfUtility}",           -- Dependency: NvPerfUtility
+		"%{Library.NvPerf}",                  -- Dependency: NvPerf
 		"%{Library.HoudiniEnginelib}",        -- Dependency: HoudiniEngine
 		"METIS",                              -- Dependency: METIS
 	}
