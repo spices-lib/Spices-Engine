@@ -7,7 +7,7 @@ Shaders:
   - Stage: task
     Path: BasePassRenderer.SkyBox.Default
   - Stage: mesh
-    Path: BasePassRenderer.Mesh.Default
+    Path: BasePassRenderer.SkyBox.Default
   - Stage: frag
     Path: BasePassRenderer.SkyBox.Default
 Textures:
