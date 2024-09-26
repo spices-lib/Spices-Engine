@@ -145,11 +145,11 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
 }
 
 /**
-* @brief Unpack Vertices from PrimitiveVerteces.
+* @brief Get Vertices from PrimitiveVerteces.
 * @param[in] primitiveID Primitive index.
 * @return Returns Primitive Vertices.
 */
-Vertex[3] UnpackVertexFromPrimitiveVertices(in uint primitiveID)
+Vertex[3] GetVerticesUsingPrimitive(in uint primitiveID)
 {
     uvec3 primVertex   = primitiveVertices.i[primitiveID];
                        
@@ -178,6 +178,30 @@ Vertex[3] UnpackVertexFromPrimitiveVertices(in uint primitiveID)
     Vertex[3] vts      = { v0, v1, v2 };
 
     return vts;
+}
+
+/**
+* @brief Get Pixel from Primitive Barycentric.
+* @param[in] primitiveID Primitive index.
+* @param[in] baryCoord Barycentric Coord.
+* @return Returns Barycentric Pxiel.
+*/
+Pixel GetPixelUsingPrimitiveBarycentric(in uint primitiveID, in vec3 baryCoord)
+{
+    Vertex[3] vertices = GetVerticesUsingPrimitive(primitiveID);
+
+    Pixel pixel;
+    vec3 p             = vertices[0].position * baryCoord.x + vertices[1].position * baryCoord.y + vertices[2].position * baryCoord.z;
+    vec3 n             = vertices[0].normal   * baryCoord.x + vertices[1].normal   * baryCoord.y + vertices[2].normal   * baryCoord.z;
+    pixel.color        = vertices[0].color    * baryCoord.x + vertices[1].color    * baryCoord.y + vertices[2].color    * baryCoord.z;
+    pixel.texCoord     = vertices[0].texCoord * baryCoord.x + vertices[1].texCoord * baryCoord.y + vertices[2].texCoord * baryCoord.z;
+
+    pixel.position     = vec3(model * vec4(p, 1.0f));
+
+    mat3 m3model       = mat3(transpose(inverse(model)));
+    pixel.normal       = normalize(m3model * n);
+
+    return pixel;
 }
 
 /*****************************************************************************************/

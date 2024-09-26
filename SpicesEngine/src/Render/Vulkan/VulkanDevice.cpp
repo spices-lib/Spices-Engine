@@ -58,9 +58,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR      fragShaderBarycentric{};
+		fragShaderBarycentric.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR;
+		fragShaderBarycentric.pNext                             = nullptr;
+															    
 		VkPhysicalDeviceDiagnosticsConfigFeaturesNV               diagnosticsConfig{};
 		diagnosticsConfig.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV;
-		diagnosticsConfig.pNext                                 = nullptr;
+		diagnosticsConfig.pNext                                 = &fragShaderBarycentric;
 												       
 		VkPhysicalDeviceDeviceGeneratedCommandsFeaturesNV         dgcFeatures{};
 		dgcFeatures.sType                                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV;
@@ -342,9 +346,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR  fragShaderBarycentric{};
+		fragShaderBarycentric.sType                         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR;
+		fragShaderBarycentric.pNext                         = nullptr;
+
 		VkPhysicalDeviceDiagnosticsConfigFeaturesNV           diagnosticsConfig{};
 		diagnosticsConfig.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV;
-		diagnosticsConfig.pNext                             = nullptr;
+		diagnosticsConfig.pNext                             = &fragShaderBarycentric;
 
 		VkPhysicalDeviceDeviceGeneratedCommandsFeaturesNV     dgcFeatures{};
 		dgcFeatures.sType                                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV;
@@ -441,6 +449,8 @@ namespace Spices {
 		ASSERT(dgcFeatures.deviceGeneratedCommands)                                            /* @brief Enable Nvidia GPU Generate Commands Feature.                     */
 
 		ASSERT(diagnosticsConfig.diagnosticsConfig)                                            /* @brief Enable Nvidia GPU Generate Diagnostic Checkpoints Feature.       */
+		
+		ASSERT(fragShaderBarycentric.fragmentShaderBarycentric)                                /* @brief Enable FragmentShader Barycentric access Feature.                */
 
 		return true;
 	}
@@ -464,6 +474,7 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Generate Commands.      */
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);     /* @brief Enable Nvidia GPU Diagnostic Checkpoints. */
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Diagnostic Config.      */
+		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);      /* @brief Enable FragmentShaderBarycentric.         */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

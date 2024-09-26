@@ -8,7 +8,8 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable        /* @brief Enable include Macro. */
+#extension GL_GOOGLE_include_directive          : enable    /* @brief Enable include Macro.            */
+#extension GL_EXT_fragment_shader_barycentric   : require   /* @brief Enable barycentric access Macro. */
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
@@ -34,15 +35,16 @@ struct MaterialParameter
 /**
 * @brief Fragment Shader Input From Mesh Shader.
 */
-layout(location = 0) in struct FragInput 
+layout(location = 0) in flat uint primitiveId;         /* @brief Primitive ID.            */
+layout(location = 1) in flat uint meshletId;           /* @brief Meshlet ID.              */
+
+layout(location = 2) in pervertexEXT struct FragInput
 {
     vec3 localPosition;
     vec3 worldPosition;
-} 
-fragInput;
-
-layout(location = 2) in flat uint triangleId;          /* @brief Triangle ID.             */
-layout(location = 3) in flat uint meshletId;           /* @brief Meshlet ID.              */
+}
+fragInputs[];
+FragInput fragInput;
 
 /*****************************************************************************************/
 
@@ -77,11 +79,17 @@ push;
 void main()
 {
     ExplainMeshDesciption(push.descAddress);
+    Pixel pixel = GetPixelUsingPrimitiveBarycentric(primitiveId, gl_BaryCoordEXT);
 
-    uint  triangleSeed  = triangleId;
-    float trianglerand0 = rnd(triangleSeed);
-    float trianglerand1 = rnd(triangleSeed);
-    float trianglerand2 = rnd(triangleSeed);
+    
+
+    fragInput.localPosition = fragInputs[0].localPosition * gl_BaryCoordEXT.x + fragInputs[1].localPosition * gl_BaryCoordEXT.y + fragInputs[2].localPosition * gl_BaryCoordEXT.z;
+    fragInput.worldPosition = fragInputs[0].worldPosition * gl_BaryCoordEXT.x + fragInputs[1].worldPosition * gl_BaryCoordEXT.y + fragInputs[2].worldPosition * gl_BaryCoordEXT.z;
+
+    uint  primitiveSeed  = primitiveId;
+    float primitiverand0 = rnd(primitiveSeed);
+    float primitiverand1 = rnd(primitiveSeed);
+    float primitiverand2 = rnd(primitiveSeed);
 
     uint  meshletSeed  = meshletId;
     float meshletrand0 = rnd(meshletSeed);
@@ -92,7 +100,7 @@ void main()
     outColor            = texture(BindLessTextureBuffer[materialParam.albedo], uv);
     outPosition         = vec4(fragInput.worldPosition, 1.0f);
     outEntityID         = desc.entityID;
-    outTriangleID       = vec4(trianglerand0, trianglerand1, trianglerand2, 1.0f);
+    outTriangleID       = vec4(primitiverand0, primitiverand1, primitiverand2, 1.0f);
     outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
 }
 

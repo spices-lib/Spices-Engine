@@ -46,9 +46,8 @@ layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPR
 /**
 * @brief Mesh Shader Output to Fragment Shader.
 */
-layout(location = 0) out Pixel pixel[];                      /* @brief Pixel Data.              */
-layout(location = 4) out flat uint triangleId[];             /* @brief Triangle ID.             */
-layout(location = 5) out flat uint meshletId[];              /* @brief Meshlet ID.              */
+layout(location = 0) out flat uint primitiveId[];            /* @brief Primitive ID.            */
+layout(location = 1) out flat uint meshletId[];              /* @brief Meshlet ID.              */
 
 /*****************************************************************************************/
 
@@ -78,17 +77,17 @@ void main()
     mat3 m3model = mat3(transpose(inverse(model)));
 
     const uint localId = gl_LocalInvocationIndex;
-        
+
     if(localId >= meshlet.nPrimitives) return;
     
     uvec3 primLocation = primitiveLocations.i[meshlet.primitiveOffset + localId];
 
     primLocation -= ivec3(meshlet.vertexOffset);
     uint arrayIndices[3] = { primLocation.x, primLocation.y, primLocation.z };
-       
+
     gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(primLocation.x, primLocation.y, primLocation.z);
 
-    Vertex[3] vts = UnpackVertexFromPrimitiveVertices(meshlet.primitiveOffset + localId);
+    Vertex[3] vts = GetVerticesUsingPrimitive(meshlet.primitiveOffset + localId);
 
     [[unroll]]
     for(int j = 0; j < 3; j++)
@@ -97,11 +96,7 @@ void main()
 
         gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
 
-        pixel[arrayIndices[j]].position   = vec3(model * vec4(vt.position, 1.0f));
-        pixel[arrayIndices[j]].normal     = normalize(m3model * vt.normal);
-        pixel[arrayIndices[j]].color      = vt.color;
-        pixel[arrayIndices[j]].texCoord   = vt.texCoord;
-        triangleId[arrayIndices[j]]       = localId + meshlet.primitiveOffset;
+        primitiveId[arrayIndices[j]]      = localId + meshlet.primitiveOffset;
         meshletId[arrayIndices[j]]        = id;
     }
     

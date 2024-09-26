@@ -187,7 +187,7 @@ Pixel UnPackPixel(in vec3 weight)
     /**
     * @brief Get Vertices of the triangle.
     */ 
-    Vertex[3] vts = UnpackVertexFromPrimitiveVertices(gl_PrimitiveID);
+    Vertex[3] vts = GetVerticesUsingPrimitive(gl_PrimitiveID);
     
     const vec3 barycentrics = vec3(1.0 - weight.x - weight.y, weight.x, weight.y);
 

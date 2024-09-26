@@ -46,15 +46,15 @@ layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPR
 /**
 * @brief Output data to fragment shader.
 */
-layout(location = 0) out struct MeshOut 
+layout(location = 0) out flat uint primitiveId[];            /* @brief Primitive ID.            */
+layout(location = 1) out flat uint meshletId[];              /* @brief Meshlet ID.              */
+
+layout(location = 2) out struct MeshOut 
 {
     vec3 localPosition;
     vec3 worldPosition;
 } 
 meshOut[];
-
-layout(location = 2) out flat uint triangleId[];             /* @brief Triangle ID.    */
-layout(location = 3) out flat uint meshletId[];              /* @brief Meshlet ID.     */
 
 /*****************************************************************************************/
 
@@ -94,7 +94,7 @@ void main()
        
     gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(primLocation.x, primLocation.y, primLocation.z);
 
-    Vertex[3] vts = UnpackVertexFromPrimitiveVertices(meshlet.primitiveOffset + localId);
+    Vertex[3] vts = GetVerticesUsingPrimitive(meshlet.primitiveOffset + localId);
     
     [[unroll]]
     for(int j = 0; j < 3; j++)
@@ -103,10 +103,13 @@ void main()
     
         gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
             
-        meshOut[arrayIndices[j]].localPosition = vt.position;
-        meshOut[arrayIndices[j]].worldPosition = vec3(model * vec4(vt.position, 1.0f));
-        triangleId[arrayIndices[j]]            = localId + meshlet.primitiveOffset;
-        meshletId[arrayIndices[j]]             = id;
+        primitiveId[arrayIndices[j]]            = localId + meshlet.primitiveOffset;
+        meshletId[arrayIndices[j]]              = id;
+
+        meshOut[arrayIndices[j]].localPosition  = vt.position;
+        meshOut[arrayIndices[j]].worldPosition  = vec3(model * vec4(vt.position, 1.0f));
+
+        //debugPrintfEXT("Hello: %f, %f, %f", vt.position.x, vt.position.y, vt.position.z);
     }
 
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);
