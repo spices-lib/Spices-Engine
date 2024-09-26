@@ -69,7 +69,7 @@ void main()
 {
     uint meshletIndex = glGlobalInvocationIndex();
     ExplainMeshDesciption(push.descAddress);
-
+    
     /**
     * @brief cull if reach meshlets count.
     */

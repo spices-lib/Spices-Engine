@@ -108,8 +108,6 @@ void main()
 
         meshOut[arrayIndices[j]].localPosition  = vt.position;
         meshOut[arrayIndices[j]].worldPosition  = vec3(model * vec4(vt.position, 1.0f));
-
-        //debugPrintfEXT("Hello: %f, %f, %f", vt.position.x, vt.position.y, vt.position.z);
     }
 
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);

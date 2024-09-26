@@ -81,8 +81,6 @@ void main()
     ExplainMeshDesciption(push.descAddress);
     Pixel pixel = GetPixelUsingPrimitiveBarycentric(primitiveId, gl_BaryCoordEXT);
 
-    
-
     fragInput.localPosition = fragInputs[0].localPosition * gl_BaryCoordEXT.x + fragInputs[1].localPosition * gl_BaryCoordEXT.y + fragInputs[2].localPosition * gl_BaryCoordEXT.z;
     fragInput.worldPosition = fragInputs[0].worldPosition * gl_BaryCoordEXT.x + fragInputs[1].worldPosition * gl_BaryCoordEXT.y + fragInputs[2].worldPosition * gl_BaryCoordEXT.z;
 
