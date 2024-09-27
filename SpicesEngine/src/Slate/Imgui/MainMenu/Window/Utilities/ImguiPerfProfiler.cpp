@@ -27,7 +27,7 @@ namespace Spices {
         /**
         * @brief Begin render PerfProfilerHUD.
         */
-        Begin(m_PanelName.c_str());
+        Begin("Graphics General Triage");
 
         PERF_RENDERHUD;
 

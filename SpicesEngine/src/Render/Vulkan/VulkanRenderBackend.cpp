@@ -370,6 +370,12 @@ namespace Spices {
 				SPICES_CORE_ERROR("Failed to present swap chain image!");
 			}
 		}
+
+		{
+			SPICES_PROFILE_ZONEN("EndFrame::PerfFrameEnd");
+
+			PERF_ENDFRAME
+		}
 	}
 
 	void VulkanRenderBackend::RenderFrame(TimeStep& ts, FrameInfo& frameInfo)

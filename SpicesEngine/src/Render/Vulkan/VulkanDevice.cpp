@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "VulkanDevice.h"
+#include "Debugger/Perf/NsightPerf.h"
 
 namespace Spices {
 
@@ -475,6 +476,8 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);     /* @brief Enable Nvidia GPU Diagnostic Checkpoints. */
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Diagnostic Config.      */
 		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);      /* @brief Enable FragmentShaderBarycentric.         */
+
+		PERF_QUERYDEVICEEXTENSION(VK_API_VERSION_1_3, m_ExtensionProperties)                     /* @brief Query Nsight Perf Extension Rquerment.    */
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)

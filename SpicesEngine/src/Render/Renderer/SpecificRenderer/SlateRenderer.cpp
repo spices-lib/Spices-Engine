@@ -133,6 +133,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		PERF_RESET
+
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImPlot::DestroyContext();

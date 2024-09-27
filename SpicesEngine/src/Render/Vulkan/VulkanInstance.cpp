@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanInstance.h"
 #include "Core/Library/StringLibrary.h"
+#include "Debugger/Perf/NsightPerf.h"
 
 namespace Spices {
 
@@ -177,6 +178,11 @@ namespace Spices {
 		* @brief To enable validation layer, we need this instance extension.
 		*/
 		m_ExtensionProperties.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+		/**
+		* @brief Add Nsight Perf Extensions.
+		*/
+		PERF_QUERYINSTANCEEXTENSION(m_ExtensionProperties, VK_API_VERSION_1_3);
 
 #endif
 	}

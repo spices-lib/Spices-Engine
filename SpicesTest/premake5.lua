@@ -66,7 +66,8 @@ project "SpicesTest"
 	{
 		-- Houdini dll Path.
 		-- NvAftermath dll Path.
-		"PATH=%{LibraryDir.HoudiniEnginedll};%{LibraryDir.NvAftermath}",  
+		-- NvPerf dll Path.
+		"PATH=%{LibraryDir.HoudiniEnginedll};%{LibraryDir.NvAftermath};%{LibraryDir.NvPerf}", 
 	}
 
 	-- The Solution Dependency

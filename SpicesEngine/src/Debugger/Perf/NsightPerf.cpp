@@ -1,5 +1,13 @@
+/**
+* @file NsightPerf.cpp
+* @brief The NsightPerf Class Implementation.
+* @author Spices
+*/
+
 #include "Pchheader.h"
 #include "NsightPerf.h"
+
+#include <NvPerfMiniTraceVulkan.h>
 
 // Note:
 //   Do this in exactly one source file to add rapidyaml's symbols.
@@ -30,9 +38,9 @@ namespace Spices {
 		*/
 		uint32_t samplingFrequencyInHz = 60;
 		
-		uint32_t samplingIntervalInNs = 1000000000 / samplingFrequencyInHz;
-		uint32_t maxDecodeLatencyInNs = 1000000000;
-		uint32_t maxFrameLatency = 5;
+		uint32_t samplingIntervalInNs = 1000 * 1000 * 1000 / samplingFrequencyInHz;
+		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000;
+		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
 		m_Sampler.BeginSession(
 			state.m_GraphicQueue       , 
 			state.m_GraphicQueueFamily , 
@@ -40,7 +48,7 @@ namespace Spices {
 			maxDecodeLatencyInNs       , 
 			maxFrameLatency
 		);
-		
+	
 		/**
 		* @brief Select a HUD configuration to record via the HudPresets class. Here we select Graphics
 		* General Triage.
@@ -48,7 +56,7 @@ namespace Spices {
 		nv::perf::hud::HudPresets hudPressets;
 		auto deviceIdentifiers = m_Sampler.GetGpuDeviceIdentifiers();
 		hudPressets.Initialize(deviceIdentifiers.pChipName);
-		m_HudDataModel.Load(hudPressets.GetPreset("Graphic General Triangle"));
+		m_HudDataModel.Load(hudPressets.GetPreset("Graphics General Triage"));
 		
 		/**
 		* @brief Initialize the data model, choose a window of time to store in the TimePlots, and specify the
@@ -95,5 +103,81 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_HudRenderer.Render();
+	}
+
+	void NsightPerf::ConsumeSample()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Sampler.DecodeCounters();
+		m_Sampler.ConsumeSamples([&](
+		const uint8_t* pCounterDataImage    , 
+		size_t         counterDataImageSize , 
+		uint32_t       rangeIndex           , 
+		bool&          stop
+		) {
+			stop = false;
+			return m_HudDataModel.AddSample(pCounterDataImage, counterDataImageSize, rangeIndex);
+		});
+		
+		for (auto& frameDelimiter : m_Sampler.GetFrameDelimiters())
+		{
+			m_HudDataModel.AddFrameDelimiter(frameDelimiter.frameEndTime);
+		}
+	}
+
+	void NsightPerf::QueryDeviceExtensionRequerment(uint32_t vulkanApiVersion, std::vector<const char*>& deviceExtensionNames)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<const char*> deviceExtensions;
+		nv::perf::mini_trace::MiniTracerVulkan::AppendDeviceRequiredExtensions(vulkanApiVersion, deviceExtensions);
+
+		for (auto& e : deviceExtensions)
+		{
+			deviceExtensionNames.push_back(e);
+		}
+	}
+
+	void NsightPerf::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Enable this if want define a specific folder for dll search.
+		*/
+
+#if 0
+
+		const char* paths[] = {"G:/Vulkan/Spices-Engine/SpicesEngine/vendor/NvPerf/lib"};
+		NVPW_SetLibraryLoadPaths_Params params{ NVPW_SetLibraryLoadPaths_Params_STRUCT_SIZE };
+		params.numPaths = sizeof(paths) / sizeof(paths[0]);
+		params.ppPaths = paths;
+		NVPW_SetLibraryLoadPaths(&params);
+
+#endif
+
+		std::vector<const char*> instanceExtensions;
+		nv::perf::InitializeNvPerf();
+		nv::perf::VulkanAppendInstanceRequiredExtensions(instanceExtensions, apiVersion);
+
+		for (const char* e : instanceExtensions)
+		{
+			instanceExtensionNames.push_back(e);
+		}
+	}
+
+	void NsightPerf::EndFrame()
+	{
+		SPICES_PROFILE_ZONE;
+		
+		m_Sampler.OnFrameEnd();
+	}
+
+	void NsightPerf::Reset()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Sampler.Reset();
 	}
 }
