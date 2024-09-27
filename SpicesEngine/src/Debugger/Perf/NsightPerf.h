@@ -4,19 +4,10 @@
 
 #define NV_PERF_ENABLE_INSTRUMENTATION
 #ifdef NV_PERF_ENABLE_INSTRUMENTATION
-//#include <windows-desktop-x64/nvperf_host_impl.h>
 #include <NvPerfHudDataModel.h>
 #include <NvPerfHudImPlotRenderer.h>
 #include <NvPerfPeriodicSamplerVulkan.h>
 #include <NvPerfReportGeneratorVulkan.h>
-#include <implot.h>
-
-// Note:
-//   Do this in exactly one source file to add rapidyaml's symbols.
-//   If Windows.h is included before ryml_all.hpp, it needs to be included with NOMINMAX defined.
-//   Otherwise min/max-related errors occur.
-#define RYML_SINGLE_HDR_DEFINE_NOW
-#include <ryml_all.hpp>
 #endif
 
 namespace Spices {
@@ -56,9 +47,9 @@ namespace Spices {
 
 #ifdef SPICES_DEBUG
 
-#define PERF_CREATEINSTANCE(...)                                                    //{ ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
-#define PERF_INITHUDRENDERER                                                        //{ ::Spices::NsightPerf::Get().InitHUDRenderer(); }
-#define PERF_RENDERHUD                                                              //{ ::Spices::NsightPerf::Get().RenderHUD(); }
+#define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
+#define PERF_INITHUDRENDERER                                                       { ::Spices::NsightPerf::Get().InitHUDRenderer(); }
+#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().RenderHUD(); }
 #endif
 
 #ifdef SPICES_RELEASE
