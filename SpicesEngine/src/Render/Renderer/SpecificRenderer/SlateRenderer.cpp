@@ -169,6 +169,12 @@ namespace Spices {
 
 			ImGuizmo::BeginFrame();
 		}
+
+		{
+			SPICES_PROFILE_ZONEN("NvPerf::Consume");
+
+			PERF_FRAMECONSUME
+		}
 	}
 
 	void SlateRenderer::EndImguiFrame(uint32_t index)

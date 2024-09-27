@@ -99,7 +99,8 @@ namespace Spices {
 
 #define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
 #define PERF_INITHUDRENDERER                                                       { ::Spices::NsightPerf::Get().InitHUDRenderer(); }
-#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().ConsumeSample(); ::Spices::NsightPerf::Get().RenderHUD(); }
+#define PERF_FRAMECONSUME                                                          { ::Spices::NsightPerf::Get().ConsumeSample(); }
+#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().RenderHUD(); }
 #define PERF_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerf::Get().QueryDeviceExtensionRequerment(__VA_ARGS__); }
 #define PERF_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerf::Get().QueryInstanceExtensionRequerment(__VA_ARGS__); }
 #define PERF_ENDFRAME                                                              { ::Spices::NsightPerf::Get().EndFrame(); }
@@ -109,9 +110,13 @@ namespace Spices {
 
 #ifdef SPICES_RELEASE
 
-#define PERF_INIT         
-
+#define PERF_CREATEINSTANCE(...)              
+#define PERF_INITHUDRENDERER            
+#define PERF_FRAMECONSUME               
+#define PERF_RENDERHUD 
+#define PERF_QUERYDEVICEEXTENSION(...)  
+#define PERF_QUERYINSTANCEEXTENSION(...)
+#define PERF_ENDFRAME                   
+#define PERF_RESET              
 
 #endif
-
-}

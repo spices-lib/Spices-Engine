@@ -179,12 +179,13 @@ namespace Spices {
 		*/
 		m_ExtensionProperties.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
+#endif
+
 		/**
 		* @brief Add Nsight Perf Extensions.
 		*/
-		PERF_QUERYINSTANCEEXTENSION(m_ExtensionProperties, VK_API_VERSION_1_3);
+		PERF_QUERYINSTANCEEXTENSION(m_ExtensionProperties, VK_API_VERSION_1_3)
 
-#endif
 	}
 
 	bool VulkanInstance::CheckExtensionRequirementsSatisfied()
