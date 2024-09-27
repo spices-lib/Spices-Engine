@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "SlateRenderer.h"
 #include "Systems/SlateSystem.h"
+#include "Debugger/Perf/NsightPerf.h"
 
 namespace Spices {
 
@@ -86,7 +87,9 @@ namespace Spices {
 		ImGuiH::SetStyle();
 		ImGuiH::SetFonts();
 
-		// Setup Platform/Renderer backends
+		/**
+		* @brief Setup Platform / Renderer backends.
+		*/
 		ImGui_ImplGlfw_InitForVulkan(m_VulkanState.m_Windows, true);
 
 		/**
@@ -113,7 +116,16 @@ namespace Spices {
 		*/
 		ImGui_ImplVulkan_Init(&init_info);
 
+		/**
+		* @brief Create IconFont.
+		*/
 		ImGui_ImplVulkan_CreateFontsTexture();
+
+		/**
+		* @brief Init NsightPerf HUD Renderer.
+		*/
+		PERF_INITHUDRENDERER;
+
 		vkDeviceWaitIdle(m_VulkanState.m_Device);
 	}
 

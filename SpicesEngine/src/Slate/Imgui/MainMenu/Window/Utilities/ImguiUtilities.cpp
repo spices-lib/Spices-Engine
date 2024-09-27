@@ -9,6 +9,7 @@
 
 #include "Systems/SlateSystem.h"
 #include "Core/Library/ProcessLibrary.h"
+#include "ImguiPerfProfiler.h"
 
 namespace Spices {
 
@@ -17,7 +18,14 @@ namespace Spices {
         FrameInfo&         frameInfo
     )
         : ImguiSlate(panelName, frameInfo)
-    {}
+    {
+        SPICES_PROFILE_ZONE;
+
+        /**
+        * @brief Instance.
+        */
+        m_ImguiPerfProfiler = SlateSystem::GetRegister()->Register<ImguiPerfProfiler>(true, "PerfProfilerHUD");
+    }
 
     void ImguiUtilities::OnRender()
     {
@@ -37,7 +45,8 @@ namespace Spices {
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Activity Progress))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Asset Validator))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Console))) {}
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Profiler), "F8")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, TracyProfiler), "F8")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, PerfProfiler), "F9"))  { m_ImguiPerfProfiler->OnRender(); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Scene Optimizer))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Statistics))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, USD Paths))) {}

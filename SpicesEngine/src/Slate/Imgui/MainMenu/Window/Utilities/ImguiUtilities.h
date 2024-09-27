@@ -10,6 +10,10 @@
 
 namespace Spices {
 
+	/**
+	* @brief Forward Declear.
+	*/
+	class ImguiPerfProfiler;
 
 	/**
 	* @brief The ImguiUtilities Class.
@@ -56,5 +60,10 @@ namespace Spices {
 		* @brief The Path of tracy-profiler.
 		*/
 		std::string m_ProfileProcessName = SPICES_EXTENT_PROCESS_PATH +  "tracy/tracy-profiler.exe";
+
+		/**
+		* @brief The shared pointer of ImguiPerfProfiler.
+		*/
+		std::shared_ptr<ImguiPerfProfiler> m_ImguiPerfProfiler;
 	};
 }

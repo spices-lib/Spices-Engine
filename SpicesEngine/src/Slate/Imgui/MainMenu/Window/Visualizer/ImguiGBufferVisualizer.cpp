@@ -31,7 +31,7 @@ namespace Spices {
         /**
         * @brief Begin render GBuffer Visualizer.
         */
-        Begin("GBuffer");
+        Begin(m_PanelName.c_str());
 
         ImVec2 size = { m_Width , m_Height };
 

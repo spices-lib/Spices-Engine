@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanRenderBackend.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
+#include "Debugger/Perf/NsightPerf.h"
 
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
@@ -40,7 +41,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Init Aftermath GpuCrashTracker.
+		* @brief Init NsightAftermath GpuCrashTracker.
 		*/
 		{
 			AFTERMATH_INIT;
@@ -57,6 +58,13 @@ namespace Spices {
 			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>    (m_VulkanState);
 			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>  (m_VulkanState);
 			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>      (m_VulkanState, m_VulkanDevice);
+		}
+
+		/**
+		* @brief Init Nsight Perf
+		*/
+		{
+			PERF_CREATEINSTANCE(m_VulkanState);
 		}
 
 		/**
