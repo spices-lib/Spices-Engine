@@ -27,7 +27,7 @@ namespace Spices {
 		*/
 		std::string outDir = "";
 		m_NvPerf.outputOptions.directoryName = "D:/OpenGLProjects/Spices-Engine/SpicesGame";
-		//bool b = m_NvPerf.StartCollectionOnNextFrame();
+		bool b = m_NvPerf.StartCollectionOnNextFrame();
 
 		/**
 		* @brief VulkanLoadDriver() must be called first, which is taken care of by InitializeReportGenerator().
@@ -51,7 +51,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_NvPerf.OnFrameEnd();
-
+		
 		if (m_NvPerf.IsCollectingReport())
 		{
 			SPICES_CORE_INFO("Nsight Perf: Currently profiling the frame. HTML Report will be written to: ");

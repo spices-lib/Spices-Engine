@@ -152,6 +152,7 @@ namespace Spices {
 		pipelineConfig.renderPass                     = m_Pass->Get();
 		pipelineConfig.subpass                        = subPass->GetIndex();
 		pipelineConfig.pipelineLayout                 = layout;
+		//pipelineConfig.rasterizationInfo.cullMode     = VK_CULL_MODE_NONE;
 		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
 		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
 
@@ -186,23 +187,8 @@ namespace Spices {
 			builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
 			
 			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
-			
-			IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-			
-				meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
-			
-					builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
-			
-					builder.UpdatePushConstant<uint64_t>([&](auto& push) {
-						push = meshPack->GetMeshDesc().GetBufferAddress();
-						}, cmdBuffer);
-					});
-			
-				return false;
-			});
 
-
-			//builder.RunDGC(cmdBuffer);
+			builder.RunDGC(cmdBuffer);
 		});
 
 		builder.BeginNextSubPass("SkyBox");

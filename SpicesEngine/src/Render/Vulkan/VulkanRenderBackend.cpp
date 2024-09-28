@@ -382,8 +382,8 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::PerfFrameEnd");
 
-			PERF_ENDFRAME
 			PERFREPORT_ENDFRAME(m_VulkanState.m_GraphicQueue)
+			PERF_ENDFRAME
 		}
 	}
 
