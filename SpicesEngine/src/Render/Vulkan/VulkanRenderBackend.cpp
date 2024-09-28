@@ -8,6 +8,7 @@
 #include "VulkanRenderBackend.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerf.h"
+#include "Debugger/Perf/NsightPerfReportGenerator.h"
 
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
@@ -64,7 +65,8 @@ namespace Spices {
 		* @brief Init Nsight Perf
 		*/
 		{
-			PERF_CREATEINSTANCE(m_VulkanState);
+			PERF_CREATEINSTANCE(m_VulkanState)
+			PERFREPORT_CREATEINSTANCE(m_VulkanState)
 		}
 
 		/**
@@ -229,6 +231,12 @@ namespace Spices {
 		}
 
 		{
+			SPICES_PROFILE_ZONEN("StartFrame::PerfFrameStart");
+
+			PERFREPORT_BEGINFRAME(m_VulkanState.m_GraphicQueue, m_VulkanState.m_GraphicQueueFamily)
+		}
+
+		{
 			SPICES_PROFILE_ZONEN("BeginFrame::BeginCommandBuffer");
 			
 			/**
@@ -375,6 +383,7 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("EndFrame::PerfFrameEnd");
 
 			PERF_ENDFRAME
+			PERFREPORT_ENDFRAME(m_VulkanState.m_GraphicQueue)
 		}
 	}
 

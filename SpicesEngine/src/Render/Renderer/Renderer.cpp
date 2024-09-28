@@ -507,6 +507,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		PERFREPORF_PUSHRANGE(m_CommandBuffer, caption)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, caption)
 		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 	}
@@ -515,6 +516,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		PERFREPORT_POPRANGE(m_CommandBuffer)
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
@@ -652,6 +654,9 @@ namespace Spices {
 		++m_SubpassIndex;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
 
+		PERFREPORT_POPRANGE(m_CommandBuffer)
+		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
@@ -665,6 +670,9 @@ namespace Spices {
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
 		++m_SubpassIndex;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
+
+		PERFREPORT_POPRANGE(m_CommandBuffer)
+		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -705,6 +713,9 @@ namespace Spices {
 
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
+
+		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -748,6 +759,9 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
+		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 			
@@ -764,6 +778,9 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		vkCmdEndRenderPass(m_CommandBuffer);
+
+		PERFREPORT_POPRANGE(m_CommandBuffer)
+		PERFREPORT_POPRANGE(m_CommandBuffer)
 
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)

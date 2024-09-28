@@ -128,7 +128,7 @@ namespace Spices {
 		//}
 
 		// ground
-		/*{
+		{
 			Entity meshentity = CreateEntity("Ground");
 			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
 			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
@@ -136,12 +136,12 @@ namespace Spices {
 			transformComp1.SetRotation({90.0f, 0.0f, 0.0f});
 			transformComp1.SetScale({500.0f, 500.0f, 500.0f});
 		
-			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(100, 100);
+			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(2, 2);
 		
 			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
-		}*/
+		}
 
 		//WorldFunctions::CreateCubeEntity(this);
 

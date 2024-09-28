@@ -133,6 +133,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		PERFREPORT_RESET(m_VulkanState)
 		PERF_RESET
 
 		ImGui_ImplVulkan_Shutdown();

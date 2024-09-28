@@ -123,7 +123,7 @@ namespace Spices {
 		const Lod& lod0 = (*m_MeshResource.lods.attributes)[lodLevel];
 		vkCmdDrawIndexed(commandBuffer, lod0.nPrimitives * 3, 1, lod0.primVertexOffset * 3, 0, 0);
 	}
-
+	
 	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;

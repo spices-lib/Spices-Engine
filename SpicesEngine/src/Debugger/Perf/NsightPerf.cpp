@@ -143,12 +143,11 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+#if 0
+
 		/**
 		* @brief Enable this if want define a specific folder for dll search.
 		*/
-
-#if 0
-
 		const char* paths[] = {"G:/Vulkan/Spices-Engine/SpicesEngine/vendor/NvPerf/lib"};
 		NVPW_SetLibraryLoadPaths_Params params{ NVPW_SetLibraryLoadPaths_Params_STRUCT_SIZE };
 		params.numPaths = sizeof(paths) / sizeof(paths[0]);

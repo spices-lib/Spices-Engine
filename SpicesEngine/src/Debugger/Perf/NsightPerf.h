@@ -40,7 +40,7 @@ namespace Spices {
 		* @brief Get this Single Instance.
 		* @return Returns this Single Instance.
 		*/
-		static NsightPerf& Get() { return *m_NsightPerf; };
+		static NsightPerf& Get() { return *m_NsightPerf; }
 
 		/**
 		* @brief Initialize ImGui, ImPlot and pass the data model into HUD Renderer.
@@ -95,20 +95,20 @@ namespace Spices {
 		nv::perf::hud::HudImPlotRenderer m_HudRenderer;
 	};
 
-#ifdef SPICES_DEBUG
-
-#define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
-#define PERF_INITHUDRENDERER                                                       { ::Spices::NsightPerf::Get().InitHUDRenderer(); }
-#define PERF_FRAMECONSUME                                                          { ::Spices::NsightPerf::Get().ConsumeSample(); }
-#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().RenderHUD(); }
-#define PERF_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerf::Get().QueryDeviceExtensionRequerment(__VA_ARGS__); }
-#define PERF_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerf::Get().QueryInstanceExtensionRequerment(__VA_ARGS__); }
-#define PERF_ENDFRAME                                                              { ::Spices::NsightPerf::Get().EndFrame(); }
-#define PERF_RESET                                                                 { ::Spices::NsightPerf::Get().Reset(); }
-
-#endif
-
-#ifdef SPICES_RELEASE
+//#ifdef SPICES_DEBUG
+//
+//#define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
+//#define PERF_INITHUDRENDERER                                                       { ::Spices::NsightPerf::Get().InitHUDRenderer(); }
+//#define PERF_FRAMECONSUME                                                          { ::Spices::NsightPerf::Get().ConsumeSample(); }
+//#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().RenderHUD(); }
+//#define PERF_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerf::Get().QueryDeviceExtensionRequerment(__VA_ARGS__); }
+//#define PERF_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerf::Get().QueryInstanceExtensionRequerment(__VA_ARGS__); }
+//#define PERF_ENDFRAME                                                              { ::Spices::NsightPerf::Get().EndFrame(); }
+//#define PERF_RESET                                                                 { ::Spices::NsightPerf::Get().Reset(); }
+//
+//#endif
+//
+//#ifdef SPICES_RELEASE
 
 #define PERF_CREATEINSTANCE(...)              
 #define PERF_INITHUDRENDERER            
@@ -119,6 +119,6 @@ namespace Spices {
 #define PERF_ENDFRAME                   
 #define PERF_RESET              
 
-#endif
+//#endif
 
 }
