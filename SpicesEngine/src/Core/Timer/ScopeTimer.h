@@ -1,6 +1,6 @@
 /**
-* @file Log.h
-* @brief The Log Class Definitions.
+* @file ScopeTimer.h
+* @brief The ScopeTimer Class Definitions.
 * @author Spices.
 */
 
@@ -10,14 +10,23 @@
 
 namespace Spices {
 
+	/**
+	* @brief This class helps recording scope time and output logs.
+	*/
 	class ScopeTimer
 	{
 	public:
 
+		/**
+		* @brief Constructor Function.
+		* @param[in] log .
+		*/
 		ScopeTimer(const std::string& log);
 
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~ScopeTimer();
-
 
 	private:
 
@@ -30,5 +39,10 @@ namespace Spices {
 		* @brief Leave Scope time.
 		*/
 		std::chrono::steady_clock::time_point m_LeaveTime;
+
+		/**
+		* @brief Logs.
+		*/
+		std::string m_Log;
 	};
 }

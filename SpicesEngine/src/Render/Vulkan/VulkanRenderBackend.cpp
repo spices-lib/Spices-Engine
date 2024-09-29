@@ -9,6 +9,7 @@
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerf.h"
 #include "Debugger/Perf/NsightPerfReportGenerator.h"
+#include "Core/Timer/ScopeTimer.h"
 
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
@@ -191,10 +192,16 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("BeginFrame::WaitForFences");
 			
+			ScopeTimer s("Wait Fence.");
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(3));  // game thread.
+
 			/**
 			* @brief Wait for last frame done.
 			*/
 			VK_CHECK(vkWaitForFences(m_VulkanState.m_Device, 2, fence, VK_TRUE, UINT64_MAX))
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(3)); // render/rhi thread.
 		}
 
 		{
