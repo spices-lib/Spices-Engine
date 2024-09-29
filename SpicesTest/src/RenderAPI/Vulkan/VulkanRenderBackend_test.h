@@ -77,7 +77,7 @@ namespace SpicesTest {
 		EXPECT_NE(m_RenderBackend->GetState().m_VmaAllocator,                      nullptr            );    /* @see Spices::VmaAllocator         */
 		EXPECT_NE(m_RenderBackend->GetState().m_GraphicQueue,                      nullptr            );    /* @see Spices::VkQueue              */
 		EXPECT_NE(m_RenderBackend->GetState().m_PresentQueue,                      nullptr            );    /* @see Spices::VkQueue              */
-		EXPECT_NE(m_RenderBackend->GetState().m_TransformQueue,                    nullptr            );    /* @see Spices::VkQueue              */
+		EXPECT_NE(m_RenderBackend->GetState().m_TransferQueue,                     nullptr            );    /* @see Spices::VkQueue              */
 		EXPECT_NE(m_RenderBackend->GetState().m_ComputeQueue,                      nullptr            );    /* @see Spices::VkQueue              */
 		EXPECT_NE(m_RenderBackend->GetState().m_SwapChain,                         nullptr            );    /* @see Spices::VkSwapchainKHR       */
 		EXPECT_NE(m_RenderBackend->GetState().m_SwapChainImages.data(),            nullptr            );    /* @see Spices::VkImage              */

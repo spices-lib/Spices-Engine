@@ -105,20 +105,20 @@ namespace Spices {
 		bool m_CapturedThisFrame;
 	};
 
-#ifdef SPICES_DEBUG
-
-#define PERFREPORT_CREATEINSTANCE(...)                                                  { ::Spices::NsightPerfReportGenerator::CreateInstance(__VA_ARGS__); }
-#define PERFREPORT_BEGINFRAME(...)                                                      { ::Spices::NsightPerfReportGenerator::Get().BeginFrame(__VA_ARGS__); }
-#define PERFREPORT_ENDFRAME(...)                                                        { ::Spices::NsightPerfReportGenerator::Get().EndFrame(__VA_ARGS__); }
-#define PERFREPORF_PUSHRANGE(...)                                                       { ::Spices::NsightPerfReportGenerator::Get().PushRange(__VA_ARGS__); }
-#define PERFREPORT_POPRANGE(...)                                                        { ::Spices::NsightPerfReportGenerator::Get().PopRange(__VA_ARGS__); }
-#define PERFREPORT_RESET(...)                                                           { ::Spices::NsightPerfReportGenerator::Get().Reset(__VA_ARGS__); }
-#define PERFREPORT_ENABLECAPTURE                                                        { ::Spices::NsightPerfReportGenerator::Get().EnableCapture(); }
-#define PERFREPORT_CAPTUREFRAME                                                         { ::Spices::NsightPerfReportGenerator::Get().CollectionNextFrame(); }
-
-#endif
-
-#ifdef SPICES_RELEASE
+//#ifdef SPICES_DEBUG
+//
+//#define PERFREPORT_CREATEINSTANCE(...)                                                  { ::Spices::NsightPerfReportGenerator::CreateInstance(__VA_ARGS__); }
+//#define PERFREPORT_BEGINFRAME(...)                                                      { ::Spices::NsightPerfReportGenerator::Get().BeginFrame(__VA_ARGS__); }
+//#define PERFREPORT_ENDFRAME(...)                                                        { ::Spices::NsightPerfReportGenerator::Get().EndFrame(__VA_ARGS__); }
+//#define PERFREPORF_PUSHRANGE(...)                                                       { ::Spices::NsightPerfReportGenerator::Get().PushRange(__VA_ARGS__); }
+//#define PERFREPORT_POPRANGE(...)                                                        { ::Spices::NsightPerfReportGenerator::Get().PopRange(__VA_ARGS__); }
+//#define PERFREPORT_RESET(...)                                                           { ::Spices::NsightPerfReportGenerator::Get().Reset(__VA_ARGS__); }
+//#define PERFREPORT_ENABLECAPTURE                                                        { ::Spices::NsightPerfReportGenerator::Get().EnableCapture(); }
+//#define PERFREPORT_CAPTUREFRAME                                                         { ::Spices::NsightPerfReportGenerator::Get().CollectionNextFrame(); }
+//
+//#endif
+//
+//#ifdef SPICES_RELEASE
 
 #define PERFREPORT_CREATEINSTANCE(...)  
 #define PERFREPORT_BEGINFRAME(...)      
@@ -126,8 +126,9 @@ namespace Spices {
 #define PERFREPORF_PUSHRANGE(...)       
 #define PERFREPORT_POPRANGE(...)                  
 #define PERFREPORT_RESET(...)
+#define PERFREPORT_ENABLECAPTURE
 #define PERFREPORT_CAPTUREFRAME
 
-#endif
+//#endif
 
 }

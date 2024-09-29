@@ -12,6 +12,14 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
+		* @brief Initiate collection with the following call.
+		*/
+		m_NvPerf.outputOptions.directoryName            = "D:/OpenGLProjects/Spices-Engine/SpicesGame/Hello";
+		m_NvPerf.outputOptions.writeCounterConfigImage  = true;
+		m_NvPerf.outputOptions.writeCounterDataImage    = true;
+		m_NvPerf.outputOptions.appendDateTimeToDirName  = nv::perf::AppendDateTime::yes;
+
+		/**
 		* @brief Initialize the report generator any time after VkDevice initialization. This step determines the list
         * of counters. Specify additionalMetrics before calling InitializeReportGenerator. This is also a
         * good time to decide whether a frame-level range is desirable.
@@ -21,12 +29,8 @@ namespace Spices {
 		m_NvPerf.SetFrameLevelRangeName("Frame");
 		m_NvPerf.SetNumNestingLevels(10);
 		m_NvPerf.SetMaxNumRanges(10);
+		m_NvPerf.SetOpenReportDirectoryAfterCollection(true);
 
-		/**
-		* @brief Initiate collection with the following call.
-		*/
-		std::string outDir = "";
-		m_NvPerf.outputOptions.directoryName = "D:/OpenGLProjects/Spices-Engine/SpicesGame";
 		bool b = m_NvPerf.StartCollectionOnNextFrame();
 
 		/**

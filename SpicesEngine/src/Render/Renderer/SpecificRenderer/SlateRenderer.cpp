@@ -100,12 +100,12 @@ namespace Spices {
 		init_info.PhysicalDevice            = m_VulkanState.m_PhysicalDevice;
 		init_info.Device                    = m_VulkanState.m_Device;
 		init_info.QueueFamily               = m_VulkanState.m_GraphicQueueFamily;
-		init_info.Queue                     = m_VulkanState.m_GraphicQueue;
+		init_info.Queue                     = m_VulkanState.m_SlateGraphicQueue;
 		init_info.PipelineCache             = VK_NULL_HANDLE;
 		init_info.DescriptorPool            = m_DescriptorPool->GetPool();
 		init_info.RenderPass                = m_Pass->Get();
 		init_info.Subpass                   = 0;
-		init_info.MinImageCount             = 2;
+		init_info.MinImageCount             = MaxFrameInFlight;
 		init_info.ImageCount                = MaxFrameInFlight;
 		init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Allocator                 = VK_NULL_HANDLE;

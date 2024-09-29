@@ -63,10 +63,11 @@ namespace Spices {
 
 		/***
 		* @brief Query Device Extensions Requerments.
-		* @param[in] vulkanApiVersion Vulkan API Version.
+		* @param[in] instance VkInstance.
+		* @param[in] physicalDevice VkPhysicalDevice.
 		* @param[in,out] deviceExtensionNames Extensions.
 		*/
-		void QueryDeviceExtensionRequerment(uint32_t vulkanApiVersion, std::vector<const char*>& deviceExtensionNames);
+		void QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames);
 
 		/**
 		* @brief Query Instance Extension Requerments.
@@ -95,20 +96,20 @@ namespace Spices {
 		nv::perf::hud::HudImPlotRenderer m_HudRenderer;
 	};
 
-#ifdef SPICES_DEBUG
-
-#define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
-#define PERF_INITHUDRENDERER                                                       { ::Spices::NsightPerf::Get().InitHUDRenderer(); }
-#define PERF_FRAMECONSUME                                                          { ::Spices::NsightPerf::Get().ConsumeSample(); }
-#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().RenderHUD(); }
-#define PERF_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerf::Get().QueryDeviceExtensionRequerment(__VA_ARGS__); }
-#define PERF_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerf::Get().QueryInstanceExtensionRequerment(__VA_ARGS__); }
-#define PERF_ENDFRAME                                                              { ::Spices::NsightPerf::Get().EndFrame(); }
-#define PERF_RESET                                                                 { ::Spices::NsightPerf::Get().Reset(); }
-
-#endif
-
-#ifdef SPICES_RELEASE
+//#ifdef SPICES_DEBUG
+//
+//#define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
+//#define PERF_INITHUDRENDERER                                                       { ::Spices::NsightPerf::Get().InitHUDRenderer(); }
+//#define PERF_FRAMECONSUME                                                          { ::Spices::NsightPerf::Get().ConsumeSample(); }
+//#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().RenderHUD(); }
+//#define PERF_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerf::Get().QueryDeviceExtensionRequerment(__VA_ARGS__); }
+//#define PERF_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerf::Get().QueryInstanceExtensionRequerment(__VA_ARGS__); }
+//#define PERF_ENDFRAME                                                              { ::Spices::NsightPerf::Get().EndFrame(); }
+//#define PERF_RESET                                                                 { ::Spices::NsightPerf::Get().Reset(); }
+//
+//#endif
+//
+//#ifdef SPICES_RELEASE
 
 #define PERF_CREATEINSTANCE(...)              
 #define PERF_INITHUDRENDERER            
@@ -119,6 +120,6 @@ namespace Spices {
 #define PERF_ENDFRAME                   
 #define PERF_RESET              
 
-#endif
+//#endif
 
 }

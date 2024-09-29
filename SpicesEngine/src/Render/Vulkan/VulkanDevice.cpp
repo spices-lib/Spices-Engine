@@ -28,30 +28,47 @@ namespace Spices {
 		/**
 		* @brief Create a queue identifies container.
 		*/
-		std::set<uint32_t> uniqueQueueFamilies = 
-		{   
-			m_QueueHelper.graphicqueuefamily.value(), 
-			m_QueueHelper.presentqueuefamily.value(), 
-			m_QueueHelper.computequeuefamily.value(),
-			m_QueueHelper.transferqueuefamily.value() 
-		};
+		std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::array<VkQueue, MaxFrameInFlight>>> queueFamilies;  // family - id - queues(flightframes)
+
+		queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0];
+		queueFamilies[m_QueueHelper.presentqueuefamily .value()][1];
+		queueFamilies[m_QueueHelper.computequeuefamily .value()][2];
+		queueFamilies[m_QueueHelper.transferqueuefamily.value()][3];
 
 		/**
 		* @brief Fill in VkDeviceQueueCreateInfo.
 		*/
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-		for (uint32_t queueFamily : uniqueQueueFamilies) 
+		std::vector<std::shared_ptr<std::vector<float>>> QueuePriorities;
+		for (auto& [family, idItems] : queueFamilies)
 		{
 			/**
 			* @brief Instanced a VkDeviceQueueCreateInfo with default value.
 			*/
-			VkDeviceQueueCreateInfo queueCreateInfo{};
-			queueCreateInfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueCreateInfo.queueFamilyIndex = queueFamily;
-			queueCreateInfo.queueCount       = 1;
+			VkDeviceQueueCreateInfo                               queueCreateInfo{};
+			queueCreateInfo.sType                               = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex                    = family;
 
-			float queuePriority = 1.0f;
-			queueCreateInfo.pQueuePriorities = &queuePriority;
+			uint32_t queueCount = 0;
+			for (auto& pair : idItems)
+			{
+				queueCount += pair.second.size();
+			}
+
+			/**
+			* @brief Add a queue for imgui.
+			*/
+			if (family == m_QueueHelper.graphicqueuefamily.value())
+			{
+				queueCount++;
+			}
+
+			queueCreateInfo.queueCount                          = queueCount;
+			
+			std::shared_ptr<std::vector<float>> queuePriority   = std::make_shared<std::vector<float>>(queueCount, 1.0f);
+			QueuePriorities.push_back(queuePriority);
+
+			queueCreateInfo.pQueuePriorities = queuePriority->data();
 
 			queueCreateInfos.push_back(queueCreateInfo);
 		}
@@ -59,9 +76,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceTimelineSemaphoreFeatures                 timelineSemaphore{};
+		timelineSemaphore.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
+		timelineSemaphore.pNext                                 = nullptr;
+															    
 		VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR      fragShaderBarycentric{};
 		fragShaderBarycentric.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR;
-		fragShaderBarycentric.pNext                             = nullptr;
+		fragShaderBarycentric.pNext                             = &timelineSemaphore;
 															    
 		VkPhysicalDeviceDiagnosticsConfigFeaturesNV               diagnosticsConfig{};
 		diagnosticsConfig.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV;
@@ -141,15 +162,15 @@ namespace Spices {
 		/**
 		* @brief Instanced a VkDeviceCreateInfo with default value.
 		*/
-		VkDeviceCreateInfo createInfo{};
-		createInfo.sType                    = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.pQueueCreateInfos        = queueCreateInfos.data();
-		createInfo.queueCreateInfoCount     = static_cast<uint32_t>(queueCreateInfos.size());
-		createInfo.pEnabledFeatures         = VK_NULL_HANDLE;
-		createInfo.enabledExtensionCount    = static_cast<uint32_t>(m_ExtensionProperties.size());
-		createInfo.ppEnabledExtensionNames  = m_ExtensionProperties.data();
-		createInfo.enabledLayerCount        = 0;
-		createInfo.pNext                    = &aftermathInfo;
+		VkDeviceCreateInfo                                        createInfo{};
+		createInfo.sType                                        = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.pQueueCreateInfos                            = queueCreateInfos.data();
+		createInfo.queueCreateInfoCount                         = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pEnabledFeatures                             = VK_NULL_HANDLE;
+		createInfo.enabledExtensionCount                        = static_cast<uint32_t>(m_ExtensionProperties.size());
+		createInfo.ppEnabledExtensionNames                      = m_ExtensionProperties.data();
+		createInfo.enabledLayerCount                            = 0;
+		createInfo.pNext                                        = &aftermathInfo;
 
 		/**
 		* @brief Create device and set it global.
@@ -158,24 +179,42 @@ namespace Spices {
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DEVICE, (uint64_t)vulkanState.m_Device, vulkanState.m_Device, m_DeviceProperties.deviceName)
 
 		/**
-		* @brief Get graphic queue and set it global.
+		* @brief Get Queues.
 		*/
-		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.graphicqueuefamily.value(), 0, &vulkanState.m_GraphicQueue);
+		{
+			for (auto& [ family, idItems] : queueFamilies)
+			{
+				int index = 0;
+				for (auto& [id, items] : idItems)
+				{
+					for (int i = 0; i < MaxFrameInFlight; i++)
+					{
+						vkGetDeviceQueue(vulkanState.m_Device, family, index, &queueFamilies[family][id][i]);
+						index++;
+					}
+				}
 
-		/**
-		* @brief Get present queue and set it global.
-		*/
-		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.presentqueuefamily.value(), 0, &vulkanState.m_PresentQueue);
+				if (family == m_QueueHelper.graphicqueuefamily.value())
+				{
+					vkGetDeviceQueue(vulkanState.m_Device, family, index, &vulkanState.m_SlateGraphicQueue);
+				}
+			}
 
-		/**
-		* @brief Get compute queue and set it global.
-		*/
-		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.computequeuefamily.value(), 0, &vulkanState.m_ComputeQueue);
+			vulkanState.m_GraphicQueues  = queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0];
+			vulkanState.m_PresentQueues  = queueFamilies[m_QueueHelper.presentqueuefamily .value()][1];
+			vulkanState.m_ComputeQueues  = queueFamilies[m_QueueHelper.computequeuefamily .value()][2];
+			vulkanState.m_TransferQueues = queueFamilies[m_QueueHelper.transferqueuefamily.value()][3];
 
-		/**
-		* @brief Get transfer queue and set it global.
-		*/
-		vkGetDeviceQueue(vulkanState.m_Device, m_QueueHelper.transferqueuefamily.value(), 0, &vulkanState.m_TransformQueue);
+			for(int i = 0; i < MaxFrameInFlight; i++)
+			{
+				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_GraphicQueues[i] , vulkanState.m_Device, "GraphicQueue" );
+				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_PresentQueues[i] , vulkanState.m_Device, "PresentQueue" );
+				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_ComputeQueues[i] , vulkanState.m_Device, "ComputeQueue" );
+				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_TransferQueues[i], vulkanState.m_Device, "TransferQueue");
+			}
+
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_SlateGraphicQueue, vulkanState.m_Device, "SlateGraphicQueue");
+		}
 	}
 
 	VulkanDevice::~VulkanDevice()
@@ -347,9 +386,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceTimelineSemaphoreFeatures             timelineSemaphore{};
+		timelineSemaphore.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
+		timelineSemaphore.pNext                             = nullptr;
+
 		VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR  fragShaderBarycentric{};
 		fragShaderBarycentric.sType                         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR;
-		fragShaderBarycentric.pNext                         = nullptr;
+		fragShaderBarycentric.pNext                         = &timelineSemaphore;
 
 		VkPhysicalDeviceDiagnosticsConfigFeaturesNV           diagnosticsConfig{};
 		diagnosticsConfig.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV;
@@ -453,6 +496,8 @@ namespace Spices {
 		
 		ASSERT(fragShaderBarycentric.fragmentShaderBarycentric)                                /* @brief Enable FragmentShader Barycentric access Feature.                */
 
+		ASSERT(timelineSemaphore.timelineSemaphore)                                            /* @brief Enable timeline semaphore Feature.                               */
+
 		return true;
 	}
 
@@ -477,7 +522,11 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Diagnostic Config.      */
 		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);      /* @brief Enable FragmentShaderBarycentric.         */
 
-		PERF_QUERYDEVICEEXTENSION(VK_API_VERSION_1_3, m_ExtensionProperties)                     /* @brief Query Nsight Perf Extension Rquerment.    */
+		/**
+		* @brief Those Extensions are enabled other place.
+		* 
+		* VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME                                                  @brief Enable timeline semaphore.                
+		*/            
 	}
 
 	bool VulkanDevice::IsExtensionMeetDemand(const VkPhysicalDevice& device)
@@ -506,12 +555,32 @@ namespace Spices {
 		*/
 		std::set<std::string> requiredExtensions(m_ExtensionProperties.begin(), m_ExtensionProperties.end());
 
+		/**
+		* @brief Get NvperfDeviceExtensions.
+		*/
+		std::vector<const char*> nvperfDeviceExtensions;
+		//PERF_QUERYDEVICEEXTENSION(m_VulkanState.m_Instance, device, nvperfDeviceExtensions)
+
+		for (auto& e : nvperfDeviceExtensions)
+		{
+			requiredExtensions.insert(e);
+		}
+
 		for (const auto& extension : availableExtensions) 
 		{
 			requiredExtensions.erase(extension.extensionName);
 		}
 
-		if (!requiredExtensions.empty())
+		if (requiredExtensions.empty())
+		{
+			/**
+			* @brief Add NvperfDeviceExtensions to m_ExtensionProperties.
+			*/
+			m_ExtensionProperties.insert(m_ExtensionProperties.end(), nvperfDeviceExtensions.begin(), nvperfDeviceExtensions.end());
+
+			return true;
+		}
+		else
 		{
 			for (auto& set : requiredExtensions)
 			{
@@ -522,9 +591,9 @@ namespace Spices {
 				ss << "Device Extension Required: " << set << ", Which is not satisfied with device: " << deviceProperties.deviceName;
 				SPICES_CORE_WARN(ss.str());
 			}
-		}
 
-		return requiredExtensions.empty();
+			return false;
+		}
 	}
 
 	bool VulkanDevice::IsQueueMeetDemand(const VkPhysicalDevice& device, const VkSurfaceKHR& surface)

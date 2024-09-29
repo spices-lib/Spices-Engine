@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "NsightPerf.h"
+#include "Render/FrameInfo.h"
 
 #include <NvPerfMiniTraceVulkan.h>
 
@@ -42,10 +43,10 @@ namespace Spices {
 		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000;
 		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
 		m_Sampler.BeginSession(
-			state.m_GraphicQueue       , 
-			state.m_GraphicQueueFamily , 
-			samplingIntervalInNs       ,
-			maxDecodeLatencyInNs       , 
+			state.m_GraphicQueues[FrameInfo::Get().m_FrameIndex] ,
+			state.m_GraphicQueueFamily                           , 
+			samplingIntervalInNs                                 ,
+			maxDecodeLatencyInNs                                 , 
 			maxFrameLatency
 		);
 	
@@ -126,17 +127,12 @@ namespace Spices {
 		}
 	}
 
-	void NsightPerf::QueryDeviceExtensionRequerment(uint32_t vulkanApiVersion, std::vector<const char*>& deviceExtensionNames)
+	void NsightPerf::QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames)
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<const char*> deviceExtensions;
-		nv::perf::mini_trace::MiniTracerVulkan::AppendDeviceRequiredExtensions(vulkanApiVersion, deviceExtensions);
-
-		for (auto& e : deviceExtensions)
-		{
-			deviceExtensionNames.push_back(e);
-		}
+		//nv::perf::mini_trace::MiniTracerVulkan::AppendDeviceRequiredExtensions(vulkanApiVersion, deviceExtensions);
+		nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNames);
 	}
 
 	void NsightPerf::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)

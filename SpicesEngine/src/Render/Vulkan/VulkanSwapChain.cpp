@@ -99,7 +99,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkSwapchainCreateInfoKHR.
 		*/
-		VkSwapchainCreateInfoKHR createInfo{};
+		VkSwapchainCreateInfoKHR                 createInfo{};
 		createInfo.sType                       = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		createInfo.surface                     = m_VulkanState.m_Surface;                                             // With Specific Surface, we might not change surface size after all.
 		createInfo.minImageCount               = MaxFrameInFlight;                                                    // 2.

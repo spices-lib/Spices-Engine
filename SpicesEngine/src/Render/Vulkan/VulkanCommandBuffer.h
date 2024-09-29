@@ -117,12 +117,12 @@ namespace Spices {
 		/**
 		* @brief Submit the CommandBuffer in graphic Queue.
 		*/
-		VK_CHECK(vkQueueSubmit(vulkanState.m_GraphicQueue, 1, &submitInfo, VK_NULL_HANDLE));
+		VK_CHECK(vkQueueSubmit(vulkanState.m_GraphicQueues[FrameInfo::Get().m_FrameIndex], 1, &submitInfo, VK_NULL_HANDLE));
 
 		/**
 		* @brief Wait for queu execute.
 		*/
-		VK_CHECK(vkQueueWaitIdle(vulkanState.m_GraphicQueue));
+		VK_CHECK(vkQueueWaitIdle(vulkanState.m_GraphicQueues[FrameInfo::Get().m_FrameIndex]));
 
 		/**
 		* @brief Free the CommandBuffer that created.

@@ -43,7 +43,7 @@ namespace Spices {
 		}
 
 		uint32_t meshletStart = 0;
-		const uint32_t maxLod = 25;
+		const uint32_t maxLod = 0;
 		for (uint32_t lod = 0; lod < maxLod; ++lod)
 		{
 			auto in = std::chrono::high_resolution_clock::now();
