@@ -60,6 +60,11 @@ namespace Spices {
 		*/
 		static FrameInfo& Get();
 
+		/**
+		* @brief Get Previouse Frame Index.
+		*/
+		uint32_t PrevFrameIndex();
+
 	public:
 
 		/**
@@ -73,6 +78,16 @@ namespace Spices {
 		* Used in swapchain index and framebuffer index.
 		*/
 		uint32_t m_Imageindex = 0;
+
+		/**
+		* @brief True if is skiped present this frame.
+		*/
+		bool m_IsSkipPresent = true;
+
+		/**
+		* @brief  Skiped present frames count.
+		*/
+		uint32_t m_NSkipPresentFrame = 0;
 
 		/**
 		* @breif A container of mouse picked entityid.

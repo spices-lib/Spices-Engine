@@ -192,16 +192,10 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("BeginFrame::WaitForFences");
 			
-			ScopeTimer s("Wait Fence.");
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(3));  // game thread.
-
 			/**
 			* @brief Wait for last frame done.
 			*/
 			VK_CHECK(vkWaitForFences(m_VulkanState.m_Device, 2, fence, VK_TRUE, UINT64_MAX))
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(3)); // render/rhi thread.
 		}
 
 		{
@@ -216,28 +210,28 @@ namespace Spices {
 		/**
 		* @brief Prepare Writing another SwapchainImage.
 		*/
-		const VkResult result = vkAcquireNextImageKHR(
-			m_VulkanState.m_Device                                        , 
-			m_VulkanState.m_SwapChain                                     , 
-			UINT64_MAX                                                    , 
-			m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex] ,   // Singal Semaphore.
-			VK_NULL_HANDLE                                                , 
-			&frameInfo.m_Imageindex
-		);
-		if (frameInfo.m_Imageindex != frameInfo.m_FrameIndex)
+		if(!frameInfo.m_IsSkipPresent)
 		{
-			std::cout << "Hello" << std::endl;
-		}
-		/**
-		* @brief Confine whether swapchain need recreated.
-		*/
-		if (result == VK_ERROR_OUT_OF_DATE_KHR) 
-		{
-			RecreateSwapChain();
-		}
-		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
-		{
-			SPICES_CORE_ERROR("Failed to acquire swap chain image!");
+			const VkResult result = vkAcquireNextImageKHR(
+				m_VulkanState.m_Device                                        , 
+				m_VulkanState.m_SwapChain                                     , 
+				UINT64_MAX                                                    , 
+				m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex] ,   // Singal Semaphore.
+				VK_NULL_HANDLE                                                , 
+				&frameInfo.m_Imageindex
+			);
+
+			/**
+			* @brief Confine whether swapchain need recreated.
+			*/
+			if (result == VK_ERROR_OUT_OF_DATE_KHR) 
+			{
+				RecreateSwapChain();
+			}
+			else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
+			{
+				SPICES_CORE_ERROR("Failed to acquire swap chain image!");
+			}
 		}
 
 		{
@@ -300,11 +294,20 @@ namespace Spices {
 			VkSubmitInfo submitInfo{};
 			submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-			VkSemaphore waitSemphores[]         = { m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex]};
+			VkSemaphore waitSemphores[]         = { m_VulkanState.m_GraphicImageSemaphore[frameInfo.PrevFrameIndex()] };
 			VkPipelineStageFlags waitStages[]   = { VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT };
 
-			submitInfo.waitSemaphoreCount       = 0;
-			submitInfo.pWaitSemaphores          = nullptr;
+			if (frameInfo.m_IsSkipPresent)
+			{
+				submitInfo.waitSemaphoreCount  = 0;
+				submitInfo.pWaitSemaphores     = nullptr;
+			}
+			else
+			{
+				submitInfo.waitSemaphoreCount   = 1;
+				submitInfo.pWaitSemaphores      = waitSemphores;
+			}
+
 			submitInfo.pWaitDstStageMask        = waitStages;
 			submitInfo.commandBufferCount       = 1;
 			submitInfo.pCommandBuffers          = &m_VulkanState.m_ComputeCommandBuffer[frameInfo.m_FrameIndex];
@@ -328,18 +331,27 @@ namespace Spices {
 			VkSubmitInfo                          submitInfo{};
 			submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 										        
-			VkSemaphore waitSemphores[]         = { m_VulkanState.m_ComputeQueueSemaphore[frameInfo.m_FrameIndex], m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex] };
+			VkSemaphore waitSemphores[]         = { m_VulkanState.m_ComputeQueueSemaphore[frameInfo.m_FrameIndex] };
 			VkPipelineStageFlags waitStages[]   = { VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
-			submitInfo.waitSemaphoreCount       = 2;
+			submitInfo.waitSemaphoreCount       = 1;
 			submitInfo.pWaitSemaphores          = waitSemphores;
 			submitInfo.pWaitDstStageMask        = waitStages;
 			submitInfo.commandBufferCount       = 1;
 			submitInfo.pCommandBuffers          = &m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex];
 
 			VkSemaphore signalSemaphores[]      = { m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex] };
-			submitInfo.signalSemaphoreCount     = 1;
-			submitInfo.pSignalSemaphores        = signalSemaphores;
+
+			if (frameInfo.m_NSkipPresentFrame >= MaxFrameInFlight)
+			{
+				submitInfo.signalSemaphoreCount = 0;
+				submitInfo.pSignalSemaphores    = nullptr;
+			}
+			else
+			{
+				submitInfo.signalSemaphoreCount = 1;
+				submitInfo.pSignalSemaphores    = signalSemaphores;
+			}
 
 			/**
 			* @brief Submit all commands recorded in queue.
@@ -350,33 +362,36 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::QueuePresent");
 			
-			/**
-			* @brief Instance a VkPresentInfoKHR.
-			*/
-			VkPresentInfoKHR                      presentInfo{};
-			presentInfo.sType                   = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-			presentInfo.waitSemaphoreCount      = 1;
-			presentInfo.pWaitSemaphores         = &m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex];
-
-			VkSwapchainKHR swapChains[]         = { m_VulkanState.m_SwapChain };
-			presentInfo.swapchainCount          = 1;
-			presentInfo.pSwapchains             = swapChains;
-			presentInfo.pImageIndices           = &frameInfo.m_Imageindex;
-
-			presentInfo.pResults                = nullptr;
-
-			/**
-			* @brief Present the swapchain image to windows.
-			*/
-			VkResult result = vkQueuePresentKHR(m_VulkanState.m_PresentQueues[frameInfo.m_Imageindex], &presentInfo);
-			if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_VulkanWindows->IsResized()) 
+			if(!frameInfo.m_IsSkipPresent)
 			{
-				m_VulkanWindows->SetResized(false);
-				RecreateSwapChain();
-			}
-			else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
-			{
-				SPICES_CORE_ERROR("Failed to present swap chain image!");
+				/**
+				* @brief Instance a VkPresentInfoKHR.
+				*/
+				VkPresentInfoKHR                      presentInfo{};
+				presentInfo.sType                   = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+				presentInfo.waitSemaphoreCount      = 1;
+				presentInfo.pWaitSemaphores         = &m_VulkanState.m_GraphicQueueSemaphore[frameInfo.PrevFrameIndex()];
+
+				VkSwapchainKHR swapChains[]         = { m_VulkanState.m_SwapChain };
+				presentInfo.swapchainCount          = 1;
+				presentInfo.pSwapchains             = swapChains;
+				presentInfo.pImageIndices           = &frameInfo.m_Imageindex;
+
+				presentInfo.pResults                = nullptr;
+
+				/**
+				* @brief Present the swapchain image to windows.
+				*/
+				VkResult result = vkQueuePresentKHR(m_VulkanState.m_PresentQueues[frameInfo.m_Imageindex], &presentInfo);
+				if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_VulkanWindows->IsResized()) 
+				{
+					m_VulkanWindows->SetResized(false);
+					RecreateSwapChain();
+				}
+				else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
+				{
+					SPICES_CORE_ERROR("Failed to present swap chain image!");
+				}
 			}
 		}
 
@@ -413,6 +428,10 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		vkDeviceWaitIdle(m_VulkanState.m_Device);
+		FrameInfo::Get().m_IsSkipPresent = true;
+		FrameInfo::Get().m_NSkipPresentFrame++;
+
 		m_VulkanDevice->RequerySwapChainSupport();
 
 		/**
@@ -435,6 +454,10 @@ namespace Spices {
 	bool VulkanRenderBackend::OnSlateResize(SlateResizeEvent& event)
 	{
 		SPICES_PROFILE_ZONE;
+
+		vkDeviceWaitIdle(m_VulkanState.m_Device);
+		FrameInfo::Get().m_IsSkipPresent = true;
+		FrameInfo::Get().m_NSkipPresentFrame++;
 
 		/**
 		* @brief Recreate all resources which size is determained by viewportsize.
