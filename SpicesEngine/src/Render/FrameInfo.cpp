@@ -19,6 +19,6 @@ namespace Spices
 	uint32_t FrameInfo::PrevFrameIndex()
 	{
 		uint32_t f = m_FrameIndex;
-		return f == 0 ? MaxFrameInFlight - 1 : (f--) % MaxFrameInFlight;
+		return f == 0 ? MaxFrameInFlight - 1 : (f - 1) % MaxFrameInFlight;
 	}
 }

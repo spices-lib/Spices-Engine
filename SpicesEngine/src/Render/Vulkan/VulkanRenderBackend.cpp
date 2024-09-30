@@ -288,13 +288,15 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::ComputeQueueSubmit");
 
+			DEBUGUTILS_BEGINQUEUELABEL(m_VulkanState.m_ComputeQueues[frameInfo.m_FrameIndex], "MainComputeQueue")
+
 			/**
 			* @brief Instance a VkSubmitInfo.
 			*/
-			VkSubmitInfo submitInfo{};
+			VkSubmitInfo                          submitInfo{};
 			submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-			VkSemaphore waitSemphores[]         = { m_VulkanState.m_GraphicImageSemaphore[frameInfo.PrevFrameIndex()] };
+			VkSemaphore waitSemphores[]         = { m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex] };
 			VkPipelineStageFlags waitStages[]   = { VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT };
 
 			if (frameInfo.m_IsSkipPresent)
@@ -320,10 +322,14 @@ namespace Spices {
 			* @brief Submit all commands recorded in queue.
 			*/
 			VK_CHECK(vkQueueSubmit(m_VulkanState.m_ComputeQueues[frameInfo.m_FrameIndex], 1, &submitInfo, m_VulkanState.m_ComputeFence[frameInfo.m_FrameIndex]))
+
+			DEBUGUTILS_ENDQUEUELABEL(m_VulkanState.m_ComputeQueues[frameInfo.m_FrameIndex])
 		}
 
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::GraphicQueueSubmit");
+
+			DEBUGUTILS_BEGINQUEUELABEL(m_VulkanState.m_GraphicQueues[frameInfo.m_FrameIndex], "MainGraphicQueue")
 
 			/**
 			* @brief Instance a VkSubmitInfo.
@@ -357,6 +363,8 @@ namespace Spices {
 			* @brief Submit all commands recorded in queue.
 			*/
 			VK_CHECK(vkQueueSubmit(m_VulkanState.m_GraphicQueues[frameInfo.m_FrameIndex], 1, &submitInfo, m_VulkanState.m_GraphicFence[frameInfo.m_FrameIndex]))
+
+			DEBUGUTILS_ENDQUEUELABEL(m_VulkanState.m_GraphicQueues[frameInfo.m_FrameIndex])
 		}
 
 		{
@@ -364,13 +372,15 @@ namespace Spices {
 			
 			if(!frameInfo.m_IsSkipPresent)
 			{
+				DEBUGUTILS_BEGINQUEUELABEL(m_VulkanState.m_PresentQueues[frameInfo.m_Imageindex], "PresentQueue")
+
 				/**
 				* @brief Instance a VkPresentInfoKHR.
 				*/
 				VkPresentInfoKHR                      presentInfo{};
 				presentInfo.sType                   = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 				presentInfo.waitSemaphoreCount      = 1;
-				presentInfo.pWaitSemaphores         = &m_VulkanState.m_GraphicQueueSemaphore[frameInfo.PrevFrameIndex()];
+				presentInfo.pWaitSemaphores         = &m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_Imageindex];
 
 				VkSwapchainKHR swapChains[]         = { m_VulkanState.m_SwapChain };
 				presentInfo.swapchainCount          = 1;
@@ -392,6 +402,8 @@ namespace Spices {
 				{
 					SPICES_CORE_ERROR("Failed to present swap chain image!");
 				}
+
+				DEBUGUTILS_ENDQUEUELABEL(m_VulkanState.m_PresentQueues[frameInfo.m_Imageindex])
 			}
 		}
 

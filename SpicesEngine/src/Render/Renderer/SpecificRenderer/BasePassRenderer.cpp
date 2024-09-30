@@ -188,7 +188,28 @@ namespace Spices {
 			
 			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
 
+#if 0    // Use DGC or not
+
+			IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+
+				meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
+
+					builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
+
+					builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+						push = meshPack->GetMeshDesc().GetBufferAddress();
+					}, cmdBuffer);
+				});
+
+				return false;
+			});
+
+#else
+
 			builder.RunDGC(cmdBuffer);
+
+#endif
+
 		});
 
 		builder.BeginNextSubPass("SkyBox");

@@ -51,9 +51,9 @@ namespace Spices {
 		static uint32_t nSkipFrames = FrameInfo::Get().m_NSkipPresentFrame;
 		if (nSkipFrames == FrameInfo::Get().m_NSkipPresentFrame)
 		{
-			nSkipFrames = 0;
 			FrameInfo::Get().m_NSkipPresentFrame = 0;
 		}
+		nSkipFrames = FrameInfo::Get().m_NSkipPresentFrame;
 	}
 
 	void RenderSystem::OnEvent(Event& event)
