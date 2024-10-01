@@ -160,11 +160,6 @@ namespace Spices{
 		FrameInfo& m_FrameInfo;
 
 		/**
-		* @brief turn false if click quit botton. 
-		*/
-		bool m_IsOpen = true;
-
-		/**
 		* @brief True if Focuse.
 		*/
 		bool m_IsFocused = false;

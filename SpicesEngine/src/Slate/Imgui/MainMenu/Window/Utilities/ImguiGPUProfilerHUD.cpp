@@ -7,7 +7,6 @@
 #include "Pchheader.h"
 #include "ImguiGPUProfilerHUD.h"
 #include "Debugger/Perf/NsightGPUProfilerHUD.h"
-#include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spices {
 

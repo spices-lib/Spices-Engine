@@ -503,6 +503,7 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);     /* @brief Enable Nvidia GPU Diagnostic Checkpoints. */
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Diagnostic Config.      */
 		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);      /* @brief Enable FragmentShaderBarycentric.         */
+		m_ExtensionProperties.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);                    /* @brief Enable GPU Memory Statics.                */
 
 		/**
 		* @brief Those Extensions are enabled other place.

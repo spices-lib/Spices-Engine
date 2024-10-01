@@ -33,11 +33,7 @@ namespace Spices {
 			ImGuiH::DrawPropertyItem("UUID", columeWidth, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				char buffer[256] = {};
-				strcpy_s(buffer, sizeof(buffer), std::to_string(m_uuid).c_str());
-				if (ImGui::InputText("##", buffer, sizeof(buffer)))
-				{
-					strcpy_s(buffer, sizeof(buffer), std::to_string(m_uuid).c_str());
-				}
+				ImGui::InputTextWithHint("##", std::to_string(m_uuid).c_str(), buffer, sizeof(buffer));
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				ImGuiH::DrawResetIcon(false);

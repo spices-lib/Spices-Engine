@@ -14,6 +14,7 @@ namespace Spices {
 	* @brief Forward Declear.
 	*/
 	class ImguiGPUProfilerHUD;
+	class ImguiGPUMemoryHUD;
 
 	/**
 	* @brief The ImguiUtilities Class.
@@ -65,5 +66,10 @@ namespace Spices {
 		* @brief The shared pointer of ImguiPerfProfiler.
 		*/
 		std::shared_ptr<ImguiGPUProfilerHUD> m_ImguiGPUProfilerHUD;
+
+		/**
+		* @brief The shared pointer of ImguiGPUMemoryHUD.
+		*/
+		std::shared_ptr<ImguiGPUMemoryHUD> m_ImguiGPUMemoryHUD;
 	};
 }

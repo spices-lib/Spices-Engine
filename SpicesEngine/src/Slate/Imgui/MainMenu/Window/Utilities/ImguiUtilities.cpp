@@ -11,6 +11,7 @@
 #include "Systems/SlateSystem.h"
 #include "Core/Library/ProcessLibrary.h"
 #include "ImguiGPUProfilerHUD.h"
+#include "ImguiGPUMemoryHUD.h"
 
 namespace Spices {
 
@@ -26,6 +27,7 @@ namespace Spices {
         * @brief Instance.
         */
         m_ImguiGPUProfilerHUD = SlateSystem::GetRegister()->Register<ImguiGPUProfilerHUD>(true, "GPU Profiler HUD");
+        m_ImguiGPUMemoryHUD   = SlateSystem::GetRegister()->Register<ImguiGPUMemoryHUD>(true, "GPU Memory HUD");
     }
 
     void ImguiUtilities::OnRender()
@@ -46,9 +48,10 @@ namespace Spices {
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Activity Progress))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Asset Validator))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Console))) {}
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, TracyProfiler), "F8")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, CPU Profiler), "F8")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Profiler HUD), "F9"))  { m_ImguiGPUProfilerHUD->SetWindowState(true); }
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, CaptureFrame), "F10")) { PERFREPORT_CAPTUREFRAME }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Frame Capture), "F10")) { PERFREPORT_CAPTUREFRAME }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Memory HUD), "F11")) { m_ImguiGPUMemoryHUD->SetWindowState(true); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Scene Optimizer))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Statistics))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, USD Paths))) {}

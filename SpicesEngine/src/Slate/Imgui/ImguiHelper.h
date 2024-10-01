@@ -91,9 +91,26 @@ namespace Spices {
 		*/
 		static void Checkbox(bool* isChecked);
 		
+		/**
+		* @brief Draw main menu titile separator.
+		*/
 		static void MainMenuTitleSeparator();
 
+		/**
+		* @brief Draw a single property.
+		* @param[in] itemName Property name.
+		* @param[in] columeWidth .
+		* @param[in] func second column function.
+		*/
 		static void DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> func);
+
+		/**
+		* @brief Draw a stylized tree title bar.
+		* @param[in] treeName .
+		* @param[in] optionFunc Function of draw option.
+		* @param[in] treeFunc Function of draw tree.
+		*/
+		static void DrawTreeTitle(const std::string& treeName, std::function<void()> optionFunc, std::function<void()> treeFunc);
 
 	private:
 
@@ -106,5 +123,10 @@ namespace Spices {
 
 namespace ImGui {
 
+	/**
+	* @brief Draw a center text.
+	* @param[in] label Text.
+	* @param[in] size_arg Text Size.
+	*/
 	void CenteredText(const char* label, const ImVec2& size_arg);
 }

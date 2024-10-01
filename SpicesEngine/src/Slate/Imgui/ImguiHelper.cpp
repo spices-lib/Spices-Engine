@@ -314,6 +314,53 @@ namespace Spices {
         ImGui::PopID();
     }
 
+    void ImGuiH::DrawTreeTitle(const std::string& treeName, std::function<void()> optionFunc, std::function<void()> treeFunc)
+    {
+        SPICES_PROFILE_ZONE;
+
+        constexpr ImGuiTreeNodeFlags treeNodeFlags = 
+				ImGuiTreeNodeFlags_DefaultOpen      | 
+				ImGuiTreeNodeFlags_AllowItemOverlap | 
+				ImGuiTreeNodeFlags_Framed           | 
+				ImGuiTreeNodeFlags_FramePadding     ;
+
+        ImGui::PushStyleColor(ImGuiCol_Header            , ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered     , ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive      , ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg          , ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding   , ImVec2(2.0f, 6.0f));
+        const bool open = ImGui::TreeNodeEx(treeName.c_str(), treeNodeFlags, treeName.c_str());
+        ImGui::SameLine(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
+        ImGui::PushStyleColor(ImGuiCol_Button           , ImVec4(0.16f, 0.16f, 0.16f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered    , ImVec4(0.608f, 0.608f, 0.608f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive     , ImVec4(0.396f, 0.439f, 0.168f, 1.0f));
+        if (ImGui::Button(ICON_MD_FILTER_VINTAGE, ImGuiH::GetLineItemSize()))
+        {
+            ImGui::OpenPopup(treeName.c_str());
+        }
+        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar();
+        if (ImGui::BeginPopup(treeName.c_str()))
+        {
+            if (optionFunc)
+            {
+                optionFunc();
+            }
+            ImGui::EndPopup();
+        }
+        if (open)
+        {
+            if (treeFunc)
+            {
+                treeFunc();
+            }
+            ImGui::TreePop();
+        }
+
+        ImGui::PopStyleColor(4);
+    }
+
     float ImGuiH::GetDPIScale()
     {
         SPICES_PROFILE_ZONE;
