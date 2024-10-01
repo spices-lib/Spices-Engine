@@ -449,6 +449,7 @@ namespace Spices {
 		ASSERT(deviceFeatures.features.independentBlend)                                      /* @brief Enable Independent Attachment AlphaBlend State. */
 		ASSERT(deviceFeatures.features.geometryShader)                                        /* @brief Enable Geometry Shader Feature.                 */
 		ASSERT(bufferDeviceAddressFeatures.bufferDeviceAddress)                               /* @brief Enable Buffer Address Feature.                  */
+		ASSERT(bufferDeviceAddressFeatures.bufferDeviceAddressCaptureReplay)                  /* @brief Enable Buffer Address Capture Feature.          */
 		ASSERT(accelerationStructureFeatures.accelerationStructure)                           /* @brief Enable RayTracing AccelerationStructure.        */
 		ASSERT(rayTracingFeatures.rayTracingPipeline)                                         /* @brief Enable RayTracing Pipeline.                     */
 		ASSERT(hostQueryResetFeatures.hostQueryReset)                                         /* @brief Enable HostQueryReset Feature.                  */
