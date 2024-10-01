@@ -14,25 +14,29 @@ namespace Spices {
 		/**
 		* @brief Initiate collection with the following call.
 		*/
-		m_NvPerf.outputOptions.directoryName            = "D:/OpenGLProjects/Spices-Engine/SpicesGame/Hello";
+		m_NvPerf.outputOptions.directoryName            = SPICES_GPUPROFILEREPORT_PATH;
 		m_NvPerf.outputOptions.writeCounterConfigImage  = true;
 		m_NvPerf.outputOptions.writeCounterDataImage    = true;
 		m_NvPerf.outputOptions.appendDateTimeToDirName  = nv::perf::AppendDateTime::yes;
-
+		
 		/**
 		* @brief Initialize the report generator any time after VkDevice initialization. This step determines the list
         * of counters. Specify additionalMetrics before calling InitializeReportGenerator. This is also a
         * good time to decide whether a frame-level range is desirable.
 		*/
-		m_NvPerf.additionalMetrics = { "crop__write_throughput" };
+		m_NvPerf.additionalMetrics = { 
+			"zrop_cycles_elapsed",
+			"lts_t_sector_hit_rate",
+			"crop__write_throughput" 
+		};
 		m_NvPerf.InitializeReportGenerator(state.m_Instance, state.m_PhysicalDevice, state.m_Device);
 		m_NvPerf.SetFrameLevelRangeName("Frame");
-		m_NvPerf.SetNumNestingLevels(10);
-		m_NvPerf.SetMaxNumRanges(10);
+		m_NvPerf.SetNumNestingLevels(1);
+		m_NvPerf.SetMaxNumRanges(1);
 		m_NvPerf.SetOpenReportDirectoryAfterCollection(true);
-
-		bool b = m_NvPerf.StartCollectionOnNextFrame();
-
+		
+		//bool b = m_NvPerf.StartCollectionOnNextFrame();
+		
 		/**
 		* @brief VulkanLoadDriver() must be called first, which is taken care of by InitializeReportGenerator().
 		*/
@@ -50,7 +54,7 @@ namespace Spices {
 		}
 	}
 
-	void NsightPerfReportGenerator::EndFrame(VkQueue queue)
+	void NsightPerfReportGenerator::EndFrame()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -68,14 +72,13 @@ namespace Spices {
 		{
 			SPICES_CORE_INFO("Nsight Perf: Initialization failed. Please check the logs.");
 		}
-
-		vkQueueWaitIdle(queue);     // workaround to avoid hang
 	}
 
 	void NsightPerfReportGenerator::BeginFrame(VkQueue queue, uint32_t queueFamilyIndex)
 	{
 		SPICES_PROFILE_ZONE;
 
+		CollectionNextFrame();
 		m_NvPerf.OnFrameStart(queue, queueFamilyIndex);
 	}
 

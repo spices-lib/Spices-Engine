@@ -234,6 +234,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("StartFrame::PerfFrameStart");
 
+			PERFREPORT_ENDFRAME
 			PERFREPORT_BEGINFRAME(m_VulkanState.m_GraphicQueue, m_VulkanState.m_GraphicQueueFamily)
 		}
 
@@ -379,7 +380,6 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::PerfFrameEnd");
 
-			PERFREPORT_ENDFRAME(m_VulkanState.m_GraphicQueue)
 			PERF_ENDFRAME
 		}
 	}

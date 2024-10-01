@@ -68,8 +68,11 @@ project "SpicesEngine"
 		-- Define Engine Logs Folder.
 		'SPICES_CONSOLElOGFILE_PATH=std::string("saved/ConsoleLog/")',
 
-		-- Define Engine AftermathCrashReport Folder.
-		'SPICES_AFTERMATHCRASHREPORT_PATH=std::string("saved/AftermathCrashReport/")',
+		-- Define Engine GPUCrashReport Folder.
+		'SPICES_GPUCRASHREPORT_PATH=std::string("saved/GPUCrashReport/")',
+
+		-- Define Engine GPUProfilerReport Folder.
+		'SPICES_GPUPROFILEREPORT_PATH=std::string("saved/GPUProfilerReport/")',
 
 		-- Define Engine Extent Processes Folder.
 		'SPICES_EXTENT_PROCESS_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/../vendor/")',

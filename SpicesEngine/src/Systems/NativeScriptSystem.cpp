@@ -16,7 +16,6 @@
 #include "Scripts/ViewPortResizeQueryer.h"
 #include "Scripts/WorldPickIDQueryer.h"
 #include "Scripts/WorldMarkQueryer.h"
-#include "Scripts/NsightPrefReporterCaptureQueryer.h"
 
 namespace Spices {
 
@@ -27,7 +26,6 @@ namespace Spices {
 		m_NativeScriptRegister->Register<ViewPortResizeQueryer>();
 		m_NativeScriptRegister->Register<WorldPickIDQueryer>();
 		m_NativeScriptRegister->Register<WorldMarkQueryer>();
-		m_NativeScriptRegister->Register<NsightPrefReporterCaptureQueryer>();
 	}
 
 	void NativeScriptSystem::OnSystemShutDown()

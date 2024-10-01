@@ -48,7 +48,7 @@ namespace Spices {
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Console))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, TracyProfiler), "F8")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Profiler HUD), "F9"))  { m_ImguiGPUProfilerHUD->SetWindowState(true); }
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, CaptureFrame), "F10")) { PERFREPORT_ENABLECAPTURE }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, CaptureFrame), "F10")) { PERFREPORT_CAPTUREFRAME }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Scene Optimizer))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Statistics))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, USD Paths))) {}

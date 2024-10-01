@@ -541,7 +541,7 @@ namespace Spices {
 		* @brief Get NvperfDeviceExtensions.
 		*/
 		std::vector<const char*> nvperfDeviceExtensions;
-		//PERF_QUERYDEVICEEXTENSION(m_VulkanState.m_Instance, device, nvperfDeviceExtensions)
+		PERF_QUERYDEVICEEXTENSION(m_VulkanState.m_Instance, device, nvperfDeviceExtensions)
 
 		for (auto& e : nvperfDeviceExtensions)
 		{

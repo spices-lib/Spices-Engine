@@ -136,8 +136,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::vector<const char*> deviceExtensionNamesTemp;
+		nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNamesTemp);
 		//nv::perf::mini_trace::MiniTracerVulkan::AppendDeviceRequiredExtensions(vulkanApiVersion, deviceExtensions);
-		nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNames);
+
+		for (const char* e : deviceExtensionNamesTemp)
+		{
+			deviceExtensionNames.push_back(e);
+		}
 	}
 
 	void NsightGPUProfilerHUD::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
