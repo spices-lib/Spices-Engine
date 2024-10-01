@@ -21,16 +21,33 @@ namespace Spices {
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2.0f, 4.0f));
 
         /**
+        * @brief Search String.
+        */
+        static std::string searchString;
+        static bool isEnableSearch = false;
+
+        /**
         * @brief Begin render Search Input Text.
         */
         {
             SPICES_PROFILE_ZONEN("ImguiMaterialPanel::Search");
 
             ImGui::Spacing();
-            ImGui::PushItemWidth(m_PanelSize.x);
-            char search[128] = "";
-            if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128)) {}
+            ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f - ImGui::GetStyle().WindowPadding.x);
+            static char search[256] = {};
+            if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128))
+            {
+                searchString = std::string(search);
+                if (searchString.size() == 0) isEnableSearch = false;
+                else isEnableSearch = true;
+            }
             ImGui::PopItemWidth();
+
+            ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
+            ImGui::Button(ICON_MD_FILTER_ALT, ImGuiH::GetLineItemSize());
+            ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 1.0f);
+            ImGui::Button(ICON_MD_REORDER, ImGuiH::GetLineItemSize());
+            ImGui::Spacing();
         }
         
         if(m_FrameInfo.m_PickEntityID.size() == 0)

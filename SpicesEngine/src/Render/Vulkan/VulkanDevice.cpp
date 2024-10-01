@@ -6,7 +6,7 @@
 
 #include "Pchheader.h"
 #include "VulkanDevice.h"
-#include "Debugger/Perf/NsightPerf.h"
+#include "Debugger/Perf/NsightGPUProfilerHUD.h"
 
 namespace Spices {
 

@@ -7,7 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanInstance.h"
 #include "Core/Library/StringLibrary.h"
-#include "Debugger/Perf/NsightPerf.h"
+#include "Debugger/Perf/NsightGPUProfilerHUD.h"
 
 namespace Spices {
 

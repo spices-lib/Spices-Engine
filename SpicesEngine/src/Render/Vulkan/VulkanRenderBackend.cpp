@@ -7,7 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanRenderBackend.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
-#include "Debugger/Perf/NsightPerf.h"
+#include "Debugger/Perf/NsightGPUProfilerHUD.h"
 #include "Debugger/Perf/NsightPerfReportGenerator.h"
 #include "Core/Timer/ScopeTimer.h"
 

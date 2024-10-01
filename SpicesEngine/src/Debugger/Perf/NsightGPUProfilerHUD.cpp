@@ -1,11 +1,11 @@
 /**
-* @file NsightPerf.cpp
-* @brief The NsightPerf Class Implementation.
+* @file NsightGPUProfilerHUD.cpp
+* @brief The NsightGPUProfilerHUD Class Implementation.
 * @author Spices
 */
 
 #include "Pchheader.h"
-#include "NsightPerf.h"
+#include "NsightGPUProfilerHUD.h"
 #include "Render/FrameInfo.h"
 
 #include <NvPerfMiniTraceVulkan.h>
@@ -21,9 +21,9 @@
 
 namespace Spices {
 
-	std::shared_ptr<NsightPerf> NsightPerf::m_NsightPerf;
+	std::shared_ptr<NsightGPUProfilerHUD> NsightGPUProfilerHUD::m_NsightPerf;
 
-	NsightPerf::NsightPerf(VulkanState& state)
+	NsightGPUProfilerHUD::NsightGPUProfilerHUD(VulkanState& state)
 		: m_VulkanState(state)
 	{
 		SPICES_PROFILE_ZONE;
@@ -49,7 +49,7 @@ namespace Spices {
 			maxDecodeLatencyInNs          , 
 			maxFrameLatency
 		);
-	
+
 		/**
 		* @brief Select a HUD configuration to record via the HudPresets class. Here we select Graphics
 		* General Triage.
@@ -58,6 +58,7 @@ namespace Spices {
 		auto deviceIdentifiers = m_Sampler.GetGpuDeviceIdentifiers();
 		hudPressets.Initialize(deviceIdentifiers.pChipName);
 		m_HudDataModel.Load(hudPressets.GetPreset("Graphics General Triage"));
+		//m_HudDataModel.Load(hudPressets.GetPreset("Graphics High Speed Triage"));
 		
 		/**
 		* @brief Initialize the data model, choose a window of time to store in the TimePlots, and specify the
@@ -74,17 +75,17 @@ namespace Spices {
 		m_HudDataModel.PrepareSampleProcessing(m_Sampler.GetCounterData());
 	}
 
-	void NsightPerf::CreateInstance(VulkanState& state)
+	void NsightGPUProfilerHUD::CreateInstance(VulkanState& state)
 	{
 		SPICES_PROFILE_ZONE;
 
 		if (!m_NsightPerf)
 		{
-			m_NsightPerf = std::make_shared<NsightPerf>(state);
+			m_NsightPerf = std::make_shared<NsightGPUProfilerHUD>(state);
 		}
 	}
 
-	void NsightPerf::InitHUDRenderer()
+	void NsightGPUProfilerHUD::InitHUDRenderer()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -95,18 +96,18 @@ namespace Spices {
 		* ImGui_ImplGlfw_InitForVulkan(...);
 		* ImGui_ImplVulkan_Init(...);
 		*/
-		nv::perf::hud::HudImPlotRenderer::SetStyle();
+		//nv::perf::hud::HudImPlotRenderer::SetStyle();
 		m_HudRenderer.Initialize(m_HudDataModel);
 	}
 
-	void NsightPerf::RenderHUD()
+	void NsightGPUProfilerHUD::RenderHUD()
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_HudRenderer.Render();
 	}
 
-	void NsightPerf::ConsumeSample()
+	void NsightGPUProfilerHUD::ConsumeSample()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -127,7 +128,7 @@ namespace Spices {
 		}
 	}
 
-	void NsightPerf::QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames)
+	void NsightGPUProfilerHUD::QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -135,7 +136,7 @@ namespace Spices {
 		nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNames);
 	}
 
-	void NsightPerf::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
+	void NsightGPUProfilerHUD::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -162,14 +163,14 @@ namespace Spices {
 		}
 	}
 
-	void NsightPerf::EndFrame()
+	void NsightGPUProfilerHUD::EndFrame()
 	{
 		SPICES_PROFILE_ZONE;
 		
 		m_Sampler.OnFrameEnd();
 	}
 
-	void NsightPerf::Reset()
+	void NsightGPUProfilerHUD::Reset()
 	{
 		SPICES_PROFILE_ZONE;
 

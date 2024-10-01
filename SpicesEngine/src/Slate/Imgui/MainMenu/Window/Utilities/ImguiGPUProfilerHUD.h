@@ -1,6 +1,6 @@
 /**
-* @file ImguiPerfProfiler.h
-* @brief The ImguiPerfProfiler Class Definitions.
+* @file ImguiGPUProfilerHUD.h
+* @brief The ImguiGPUProfilerHUD Class Definitions.
 * @author Spices.
 */
 
@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/*
-	* @brief The ImguiPerfProfiler Class.
-	* This class defines how to render Perf Profiler HUD.
+	* @brief The ImguiGPUProfilerHUD Class.
+	* This class defines how to render GPU Profiler HUD.
 	*/
-	class ImguiPerfProfiler : public ImguiSlate
+	class ImguiGPUProfilerHUD : public ImguiSlate
 	{
 	public:
 
@@ -23,7 +23,7 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiPerfProfiler(
+		ImguiGPUProfilerHUD(
 			const std::string& panelName,
 			FrameInfo& frameInfo
 		);
@@ -31,7 +31,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiPerfProfiler() override = default;
+		virtual ~ImguiGPUProfilerHUD() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

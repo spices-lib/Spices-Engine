@@ -7,7 +7,7 @@
 #include "Pchheader.h"
 #include "SlateRenderer.h"
 #include "Systems/SlateSystem.h"
-#include "Debugger/Perf/NsightPerf.h"
+#include "Debugger/Perf/NsightGPUProfilerHUD.h"
 
 namespace Spices {
 

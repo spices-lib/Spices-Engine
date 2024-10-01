@@ -17,6 +17,7 @@
 #pragma once
 
 #include "NvPerfHudRenderer.h"
+#include "IconsMaterialDesign.h"
 
 #include <imgui.h>
 #include <implot.h>
@@ -40,10 +41,28 @@ protected:
     {
         auto color = panel.label.color.IsValid() ? panel.label.color.Abgr() : m_defaultTextColor.Abgr();
 
+        constexpr ImGuiTreeNodeFlags treeNodeFlags = 
+			  //ImGuiTreeNodeFlags_DefaultOpen      | 
+				ImGuiTreeNodeFlags_AllowItemOverlap | 
+				ImGuiTreeNodeFlags_Framed           | 
+				ImGuiTreeNodeFlags_FramePadding     ;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 6.0f));
         ImGui::PushStyleColor(ImGuiCol_Text, color);
-        bool show = ImGui::CollapsingHeader(panel.label.text.c_str(), panel.defaultOpen ? ImGuiTreeNodeFlags_DefaultOpen : 0);
+        bool show = ImGui::CollapsingHeader(panel.label.text.c_str(), treeNodeFlags);
+        float x = ImGui::GetFont()->FontSize* ImGui::GetIO().FontGlobalScale + ImGui::GetStyle().FramePadding.y * 2.0f;
+        ImGui::SameLine(ImGui::GetContentRegionAvail().x - x);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.16f, 0.16f, 0.16f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.608f, 0.608f, 0.608f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.396f, 0.439f, 0.168f, 1.0f));
+        if (ImGui::Button(ICON_MD_FILTER_VINTAGE, ImVec2(x, x)))
+        {
+            ImGui::OpenPopup("ComponentSettings");
+        }
+        ImGui::PopStyleColor(3);
         ImGui::PopStyleColor();
-            
+        ImGui::PopStyleVar();
+         
         if (showContents != nullptr)
         {
             *showContents = show;

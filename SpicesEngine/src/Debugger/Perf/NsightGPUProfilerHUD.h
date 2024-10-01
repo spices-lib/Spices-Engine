@@ -1,6 +1,6 @@
 /**
-* @file NsightPerf.h
-* @brief The NsightPerf Class Definitions.
+* @file NsightGPUProfilerHUD.h
+* @brief The NsightGPUProfilerHUD Class Definitions.
 * @author Spices
 */
 
@@ -15,7 +15,7 @@
 
 namespace Spices {
 
-	class NsightPerf
+	class NsightGPUProfilerHUD
 	{
 	public:
 
@@ -23,12 +23,12 @@ namespace Spices {
 		* @brief Constructor Function.
 		* @param[in] state VulkanState.
 		*/
-		NsightPerf(VulkanState& state);
+		NsightGPUProfilerHUD(VulkanState& state);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~NsightPerf() = default;
+		virtual ~NsightGPUProfilerHUD() = default;
 
 		/**
 		* @brief Create this Single Instance.
@@ -40,7 +40,7 @@ namespace Spices {
 		* @brief Get this Single Instance.
 		* @return Returns this Single Instance.
 		*/
-		static NsightPerf& Get() { return *m_NsightPerf; }
+		static NsightGPUProfilerHUD& Get() { return *m_NsightPerf; }
 
 		/**
 		* @brief Initialize ImGui, ImPlot and pass the data model into HUD Renderer.
@@ -89,27 +89,27 @@ namespace Spices {
 	private:
 
 		VulkanState& m_VulkanState;
-		static std::shared_ptr<NsightPerf> m_NsightPerf;
+		static std::shared_ptr<NsightGPUProfilerHUD> m_NsightPerf;
 
 		nv::perf::sampler::PeriodicSamplerTimeHistoryVulkan m_Sampler;
 		nv::perf::hud::HudDataModel m_HudDataModel;
 		nv::perf::hud::HudImPlotRenderer m_HudRenderer;
 	};
 
-//#ifdef SPICES_DEBUG
-//
-//#define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerf::CreateInstance(__VA_ARGS__); }
-//#define PERF_INITHUDRENDERER                                                       { ::Spices::NsightPerf::Get().InitHUDRenderer(); }
-//#define PERF_FRAMECONSUME                                                          { ::Spices::NsightPerf::Get().ConsumeSample(); }
-//#define PERF_RENDERHUD                                                             { ::Spices::NsightPerf::Get().RenderHUD(); }
-//#define PERF_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerf::Get().QueryDeviceExtensionRequerment(__VA_ARGS__); }
-//#define PERF_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerf::Get().QueryInstanceExtensionRequerment(__VA_ARGS__); }
-//#define PERF_ENDFRAME                                                              { ::Spices::NsightPerf::Get().EndFrame(); }
-//#define PERF_RESET                                                                 { ::Spices::NsightPerf::Get().Reset(); }
-//
-//#endif
-//
-//#ifdef SPICES_RELEASE
+#ifdef SPICES_DEBUG
+
+#define PERF_CREATEINSTANCE(...)                                                   { ::Spices::NsightGPUProfilerHUD::CreateInstance(__VA_ARGS__); }
+#define PERF_INITHUDRENDERER                                                       { ::Spices::NsightGPUProfilerHUD::Get().InitHUDRenderer(); }
+#define PERF_FRAMECONSUME                                                          { ::Spices::NsightGPUProfilerHUD::Get().ConsumeSample(); }
+#define PERF_RENDERHUD                                                             { ::Spices::NsightGPUProfilerHUD::Get().RenderHUD(); }
+#define PERF_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightGPUProfilerHUD::Get().QueryDeviceExtensionRequerment(__VA_ARGS__); }
+#define PERF_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightGPUProfilerHUD::Get().QueryInstanceExtensionRequerment(__VA_ARGS__); }
+#define PERF_ENDFRAME                                                              { ::Spices::NsightGPUProfilerHUD::Get().EndFrame(); }
+#define PERF_RESET                                                                 { ::Spices::NsightGPUProfilerHUD::Get().Reset(); }
+
+#endif
+
+#ifdef SPICES_RELEASE
 
 #define PERF_CREATEINSTANCE(...)              
 #define PERF_INITHUDRENDERER            
@@ -120,6 +120,6 @@ namespace Spices {
 #define PERF_ENDFRAME                   
 #define PERF_RESET              
 
-//#endif
+#endif
 
 }
