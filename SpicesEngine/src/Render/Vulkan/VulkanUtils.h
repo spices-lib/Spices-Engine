@@ -54,12 +54,11 @@ namespace Spices {
 		VkDevice                                         m_Device;                     /* @brief From VulkanDevice.                                              */
 		VmaAllocator                                     m_VmaAllocator;               /* @brief From VulkanMemoryAllocator.                                     */
 		VulkanFunctions                                  m_VkFunc;                     /* @brief From VulkanFunctions.                                           */
-		std::array<VkQueue,           MaxFrameInFlight>  m_GraphicQueues;              /* @brief From VulkanDevice, Queue for graphic compute.                   */
-		VkQueue                                          m_SlateGraphicQueue;          /* @brief From VulkanDevice, Queue for slate graphic compute.             */
+		VkQueue											 m_GraphicQueue;               /* @brief From VulkanDevice, Queue for graphic compute.                   */
 		uint32_t                                         m_GraphicQueueFamily;         /* @brief From VulkanDevice, ID for graphic queue.                        */
-		std::array<VkQueue,           MaxFrameInFlight>  m_PresentQueues;              /* @brief From VulkanDevice, Queue for present windows.                   */
-		std::array<VkQueue,           MaxFrameInFlight>  m_TransferQueues;             /* @brief From VulkanDevice, Queue for transfer buffer.                   */
-		std::array<VkQueue,           MaxFrameInFlight>  m_ComputeQueues;              /* @brief From VulkanDevice, Queue for compute shader.                    */
+		VkQueue											 m_PresentQueue;               /* @brief From VulkanDevice, Queue for present windows.                   */
+		VkQueue											 m_TransferQueue;              /* @brief From VulkanDevice, Queue for transfer buffer.                   */
+		VkQueue											 m_ComputeQueue;               /* @brief From VulkanDevice, Queue for compute shader.                    */
 		uint32_t                                         m_ComputeQueueFamily;         /* @brief From VulkanDevice, ID for compute queue.                        */
 		VkSwapchainKHR                                   m_SwapChain;                  /* @brief From VulkanSwapChain.                                           */
 		std::array<VkImage,           MaxFrameInFlight>  m_SwapChainImages;            /* @brief The SwapChain's image, used for present.                        */

@@ -28,12 +28,12 @@ namespace Spices {
 		/**
 		* @brief Create a queue identifies container.
 		*/
-		std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::array<VkQueue, MaxFrameInFlight>>> queueFamilies;  // family - id - queues(flightframes)
+		std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkQueue>> queueFamilies;  // family - id - queue
 
-		queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0];
-		queueFamilies[m_QueueHelper.presentqueuefamily .value()][1];
-		queueFamilies[m_QueueHelper.computequeuefamily .value()][2];
-		queueFamilies[m_QueueHelper.transferqueuefamily.value()][3];
+		queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0] = VK_NULL_HANDLE;
+		queueFamilies[m_QueueHelper.presentqueuefamily .value()][1] = VK_NULL_HANDLE;
+		queueFamilies[m_QueueHelper.computequeuefamily .value()][2] = VK_NULL_HANDLE;
+		queueFamilies[m_QueueHelper.transferqueuefamily.value()][3] = VK_NULL_HANDLE;
 
 		/**
 		* @brief Fill in VkDeviceQueueCreateInfo.
@@ -42,34 +42,18 @@ namespace Spices {
 		std::vector<std::shared_ptr<std::vector<float>>> QueuePriorities;
 		for (auto& [family, idItems] : queueFamilies)
 		{
+			std::shared_ptr<std::vector<float>> queuePriority   = std::make_shared<std::vector<float>>(idItems.size(), 1.0f);
+
 			/**
 			* @brief Instanced a VkDeviceQueueCreateInfo with default value.
 			*/
 			VkDeviceQueueCreateInfo                               queueCreateInfo{};
 			queueCreateInfo.sType                               = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			queueCreateInfo.queueFamilyIndex                    = family;
-
-			uint32_t queueCount = 0;
-			for (auto& pair : idItems)
-			{
-				queueCount += pair.second.size();
-			}
-
-			/**
-			* @brief Add a queue for imgui.
-			*/
-			if (family == m_QueueHelper.graphicqueuefamily.value())
-			{
-				queueCount++;
-			}
-
-			queueCreateInfo.queueCount                          = queueCount;
+			queueCreateInfo.queueCount                          = idItems.size();
+			queueCreateInfo.pQueuePriorities                    = queuePriority->data();
 			
-			std::shared_ptr<std::vector<float>> queuePriority   = std::make_shared<std::vector<float>>(queueCount, 1.0f);
 			QueuePriorities.push_back(queuePriority);
-
-			queueCreateInfo.pQueuePriorities = queuePriority->data();
-
 			queueCreateInfos.push_back(queueCreateInfo);
 		}
 
@@ -182,38 +166,36 @@ namespace Spices {
 		* @brief Get Queues.
 		*/
 		{
-			for (auto& [ family, idItems] : queueFamilies)
+			for (auto& [ family, idItems ] : queueFamilies)
 			{
 				int index = 0;
-				for (auto& [id, items] : idItems)
+				for (auto& [id, item] : idItems)
 				{
-					for (int i = 0; i < MaxFrameInFlight; i++)
-					{
-						vkGetDeviceQueue(vulkanState.m_Device, family, index, &queueFamilies[family][id][i]);
-						index++;
-					}
-				}
-
-				if (family == m_QueueHelper.graphicqueuefamily.value())
-				{
-					vkGetDeviceQueue(vulkanState.m_Device, family, index, &vulkanState.m_SlateGraphicQueue);
+					vkGetDeviceQueue(vulkanState.m_Device, family, index, &item);
+					index++;
 				}
 			}
 
-			vulkanState.m_GraphicQueues  = queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0];
-			vulkanState.m_PresentQueues  = queueFamilies[m_QueueHelper.presentqueuefamily .value()][1];
-			vulkanState.m_ComputeQueues  = queueFamilies[m_QueueHelper.computequeuefamily .value()][2];
-			vulkanState.m_TransferQueues = queueFamilies[m_QueueHelper.transferqueuefamily.value()][3];
+#if 1 // Use One Queue for all commands. This method with higher fps.
 
-			for(int i = 0; i < MaxFrameInFlight; i++)
-			{
-				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_GraphicQueues[i] , vulkanState.m_Device, "GraphicQueue" );
-				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_PresentQueues[i] , vulkanState.m_Device, "PresentQueue" );
-				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_ComputeQueues[i] , vulkanState.m_Device, "ComputeQueue" );
-				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_TransferQueues[i], vulkanState.m_Device, "TransferQueue");
-			}
+			vulkanState.m_GraphicQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0];
+			vulkanState.m_PresentQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0];
+			vulkanState.m_ComputeQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0];
+			vulkanState.m_TransferQueue = queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0];
 
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_SlateGraphicQueue, vulkanState.m_Device, "SlateGraphicQueue");
+#else // Split Commands to different Queues.
+
+			vulkanState.m_GraphicQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0];
+			vulkanState.m_PresentQueue  = queueFamilies[m_QueueHelper.presentqueuefamily .value()][1];
+			vulkanState.m_ComputeQueue  = queueFamilies[m_QueueHelper.computequeuefamily .value()][2];
+			vulkanState.m_TransferQueue = queueFamilies[m_QueueHelper.transferqueuefamily.value()][3];
+
+#endif
+
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_GraphicQueue , vulkanState.m_Device, "GraphicQueue" );
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_PresentQueue , vulkanState.m_Device, "PresentQueue" );
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_ComputeQueue , vulkanState.m_Device, "ComputeQueue" );
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_TransferQueue, vulkanState.m_Device, "TransferQueue");
 		}
 	}
 
@@ -490,13 +472,13 @@ namespace Spices {
 		ASSERT(fragShadingRateFeature.pipelineFragmentShadingRate)                            /* @brief Enable pipelineFragmentShadingRate Feature.                       */
 		ASSERT(vk13Frature.maintenance4)                                                      /* @brief Enable maintenance4 Feature.                                      */
 
-		ASSERT(dgcFeatures.deviceGeneratedCommands)                                            /* @brief Enable Nvidia GPU Generate Commands Feature.                     */
+		ASSERT(dgcFeatures.deviceGeneratedCommands)                                           /* @brief Enable Nvidia GPU Generate Commands Feature.                     */
 
-		ASSERT(diagnosticsConfig.diagnosticsConfig)                                            /* @brief Enable Nvidia GPU Generate Diagnostic Checkpoints Feature.       */
+		ASSERT(diagnosticsConfig.diagnosticsConfig)                                           /* @brief Enable Nvidia GPU Generate Diagnostic Checkpoints Feature.       */
 		
-		ASSERT(fragShaderBarycentric.fragmentShaderBarycentric)                                /* @brief Enable FragmentShader Barycentric access Feature.                */
+		ASSERT(fragShaderBarycentric.fragmentShaderBarycentric)                               /* @brief Enable FragmentShader Barycentric access Feature.                */
 
-		ASSERT(timelineSemaphore.timelineSemaphore)                                            /* @brief Enable timeline semaphore Feature.                               */
+		ASSERT(timelineSemaphore.timelineSemaphore)                                           /* @brief Enable timeline semaphore Feature.                               */
 
 		return true;
 	}

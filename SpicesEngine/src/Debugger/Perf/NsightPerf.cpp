@@ -43,10 +43,10 @@ namespace Spices {
 		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000;
 		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
 		m_Sampler.BeginSession(
-			state.m_GraphicQueues[FrameInfo::Get().m_FrameIndex] ,
-			state.m_GraphicQueueFamily                           , 
-			samplingIntervalInNs                                 ,
-			maxDecodeLatencyInNs                                 , 
+			state.m_GraphicQueue          ,
+			state.m_GraphicQueueFamily    , 
+			samplingIntervalInNs          ,
+			maxDecodeLatencyInNs          , 
 			maxFrameLatency
 		);
 	

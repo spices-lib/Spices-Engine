@@ -100,7 +100,7 @@ namespace Spices {
 		init_info.PhysicalDevice            = m_VulkanState.m_PhysicalDevice;
 		init_info.Device                    = m_VulkanState.m_Device;
 		init_info.QueueFamily               = m_VulkanState.m_GraphicQueueFamily;
-		init_info.Queue                     = m_VulkanState.m_SlateGraphicQueue;
+		init_info.Queue                     = m_VulkanState.m_GraphicQueue;
 		init_info.PipelineCache             = VK_NULL_HANDLE;
 		init_info.DescriptorPool            = m_DescriptorPool->GetPool();
 		init_info.RenderPass                = m_Pass->Get();

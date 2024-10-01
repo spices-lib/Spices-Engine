@@ -46,14 +46,6 @@ namespace Spices {
 		* @brief Update frameindex.
 		*/
 		FrameInfo::Get().m_FrameIndex = (FrameInfo::Get().m_FrameIndex + 1) % MaxFrameInFlight;
-		FrameInfo::Get().m_IsSkipPresent = false;
-
-		static uint32_t nSkipFrames = FrameInfo::Get().m_NSkipPresentFrame;
-		if (nSkipFrames == FrameInfo::Get().m_NSkipPresentFrame)
-		{
-			FrameInfo::Get().m_NSkipPresentFrame = 0;
-		}
-		nSkipFrames = FrameInfo::Get().m_NSkipPresentFrame;
 	}
 
 	void RenderSystem::OnEvent(Event& event)
