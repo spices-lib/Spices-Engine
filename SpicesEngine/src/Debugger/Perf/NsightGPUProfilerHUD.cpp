@@ -32,15 +32,19 @@ namespace Spices {
 		* @brief Initialize the sampler any time after VkDevice initialization.
 		*/
 		m_Sampler.Initialize(state.m_Instance, state.m_PhysicalDevice, state.m_Device);
-		
+
 		/**
 		* @brief start a recording session and specify the sampling frequency, maximum decoding latency
 		* (explained below) and the number of concurrently unfinished frames (maxFrameLatency).
 		*/
 		uint32_t samplingFrequencyInHz = 60;
 		
+		/**
+		* @todo There remains a bug about off screen frames still fill in buffer,
+		* That will cause buffer is fulled useage.
+		*/
 		uint32_t samplingIntervalInNs = 1000 * 1000 * 1000 / samplingFrequencyInHz;
-		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000;
+		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000 * 60;
 		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
 		m_Sampler.BeginSession(
 			state.m_GraphicQueue          ,
