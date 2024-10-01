@@ -46,4 +46,7 @@
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.ParticleRenderer.Particle.Default.comp -o Shader.ParticleRenderer.Particle.Default.comp.spv -g  --target-env=vulkan1.3
 
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.ViewportGridRenderer.ViewportGrid.Default.vert -o Shader.ViewportGridRenderer.ViewportGrid.Default.vert.spv -g  --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.ViewportGridRenderer.ViewportGrid.Default.frag -o Shader.ViewportGridRenderer.ViewportGrid.Default.frag.spv -g  --target-env=vulkan1.3
+
 pause
