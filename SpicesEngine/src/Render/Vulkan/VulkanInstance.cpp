@@ -83,6 +83,7 @@ namespace Spices {
 
 		/**
 		* @brief Enable Shader Debug Feature.
+		* Enable DescriptorSet Index Check.
 		*/
 		std::vector<VkValidationFeatureEnableEXT> validationFeatureEnable;
 		validationFeatureEnable.push_back(VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT);
