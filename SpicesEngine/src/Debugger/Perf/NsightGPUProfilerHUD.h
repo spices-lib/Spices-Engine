@@ -15,6 +15,9 @@
 
 namespace Spices {
 
+	/**
+	* @brief Wapper of Nvidia Nsight Perfermance HUD.
+	*/
 	class NsightGPUProfilerHUD
 	{
 	public:
@@ -88,11 +91,29 @@ namespace Spices {
 
 	private:
 
+		/**
+		* @brief VulkanState.
+		*/
 		VulkanState& m_VulkanState;
+
+		/**
+		* @brief This Single Instance.
+		*/
 		static std::shared_ptr<NsightGPUProfilerHUD> m_NsightPerf;
 
+		/**
+		* @brief Sampler.
+		*/
 		nv::perf::sampler::PeriodicSamplerTimeHistoryVulkan m_Sampler;
+
+		/**
+		* @brief HUD data.
+		*/
 		nv::perf::hud::HudDataModel m_HudDataModel;
+
+		/**
+		* @brief HUD imgui renderer.
+		*/
 		nv::perf::hud::HudImPlotRenderer m_HudRenderer;
 	};
 

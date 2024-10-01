@@ -15,6 +15,9 @@
 
 namespace Spices {
 
+	/**
+	* @brief Wapper of Nvidia Nsight Perfermance ReportGenerator.
+	*/
 	class NsightPerfReportGenerator
 	{
 	public:
@@ -89,8 +92,14 @@ namespace Spices {
 
 	private:
 
+		/**
+		* @brief This Single Instance.
+		*/
 		static std::shared_ptr<NsightPerfReportGenerator> m_NsightPerfReportGenerator;
 
+		/**
+		* @brief Nvidia Nsight Perfermance ReportGenerator.
+		*/
 		nv::perf::profiler::ReportGeneratorVulkan m_NvPerf;
 
 		/**

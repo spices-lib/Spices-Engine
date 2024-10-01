@@ -96,8 +96,6 @@ namespace SpicesTest {
 		EXPECT_NE(m_RenderBackend->GetState().m_GraphicCommandBuffer.data(),       nullptr            );    /* @see Spices::VkCommandBuffer      */
 		EXPECT_EQ(m_RenderBackend->GetState().m_GraphicCommandBuffer.size(),       MaxFrameInFlight   );    /* @see Spices::VkCommandBuffer      */
 		EXPECT_NE(m_RenderBackend->GetState().m_ComputeCommandPool,                nullptr            );    /* @see Spices::VkCommandPool        */
-		EXPECT_NE(m_RenderBackend->GetState().m_ComputeImageSemaphore.data(),      nullptr            );    /* @see Spices::VkSemaphore          */
-		EXPECT_EQ(m_RenderBackend->GetState().m_ComputeImageSemaphore.size(),      MaxFrameInFlight   );    /* @see Spices::VkSemaphore          */
 		EXPECT_NE(m_RenderBackend->GetState().m_ComputeQueueSemaphore.data(),      nullptr            );    /* @see Spices::VkSemaphore          */
 		EXPECT_EQ(m_RenderBackend->GetState().m_ComputeQueueSemaphore.size(),      MaxFrameInFlight   );    /* @see Spices::VkSemaphore          */
 		EXPECT_NE(m_RenderBackend->GetState().m_ComputeFence.data(),               nullptr            );    /* @see Spices::VkFence              */

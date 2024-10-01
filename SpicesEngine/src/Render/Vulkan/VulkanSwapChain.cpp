@@ -277,9 +277,6 @@ namespace Spices {
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_FENCE, (uint64_t)m_VulkanState.m_GraphicFence[i], m_VulkanState.m_Device, "GraphicFence")
 
 			// Compute SyncObkects.
-			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ComputeImageSemaphore[i]))
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_ComputeImageSemaphore[i], m_VulkanState.m_Device, "ComputeImageSemaphore")
-
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ComputeQueueSemaphore[i]))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_VulkanState.m_ComputeQueueSemaphore[i], m_VulkanState.m_Device, "ComputeQueueSemaphore")
 
@@ -303,7 +300,6 @@ namespace Spices {
 			vkDestroyFence(m_VulkanState.m_Device, m_VulkanState.m_GraphicFence[i], nullptr);
 
 			// Compute SyncObkects.
-			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_ComputeImageSemaphore[i], nullptr);
 			vkDestroySemaphore(m_VulkanState.m_Device, m_VulkanState.m_ComputeQueueSemaphore[i], nullptr);
 			vkDestroyFence(m_VulkanState.m_Device, m_VulkanState.m_ComputeFence[i], nullptr);
 		}

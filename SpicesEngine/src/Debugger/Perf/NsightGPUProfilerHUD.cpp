@@ -138,6 +138,10 @@ namespace Spices {
 
 		std::vector<const char*> deviceExtensionNamesTemp;
 		nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNamesTemp);
+
+		/**
+		* @brief This method returens null extensions back, so do not use it.
+		*/
 		//nv::perf::mini_trace::MiniTracerVulkan::AppendDeviceRequiredExtensions(vulkanApiVersion, deviceExtensions);
 
 		for (const char* e : deviceExtensionNamesTemp)
@@ -155,7 +159,7 @@ namespace Spices {
 		/**
 		* @brief Enable this if want define a specific folder for dll search.
 		*/
-		const char* paths[] = {"G:/Vulkan/Spices-Engine/SpicesEngine/vendor/NvPerf/lib"};
+		const char* paths[] = {"G:/NvPerf/lib"};
 		NVPW_SetLibraryLoadPaths_Params params{ NVPW_SetLibraryLoadPaths_Params_STRUCT_SIZE };
 		params.numPaths = sizeof(paths) / sizeof(paths[0]);
 		params.ppPaths = paths;

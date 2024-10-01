@@ -75,7 +75,6 @@ namespace Spices {
 		// Use for Compute Queue.	  
 		VkCommandPool                                    m_ComputeCommandPool;         /* @brief From VulkanCommandBuffer                                        */
 		std::array<VkCommandBuffer,   MaxFrameInFlight>  m_ComputeCommandBuffer;       /* @brief From VulkanCommandBuffer, Array num equals to MaxFrameInFlight. */
-		std::array<VkSemaphore,       MaxFrameInFlight>  m_ComputeImageSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */     /* @note not in use. */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_ComputeQueueSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 		std::array<VkFence,           MaxFrameInFlight>  m_ComputeFence;               /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 	};
