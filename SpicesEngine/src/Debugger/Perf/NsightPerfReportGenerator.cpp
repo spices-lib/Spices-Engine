@@ -35,8 +35,6 @@ namespace Spices {
 		m_NvPerf.SetMaxNumRanges(1);
 		m_NvPerf.SetOpenReportDirectoryAfterCollection(true);
 		
-		//bool b = m_NvPerf.StartCollectionOnNextFrame();
-		
 		/**
 		* @brief VulkanLoadDriver() must be called first, which is taken care of by InitializeReportGenerator().
 		*/
