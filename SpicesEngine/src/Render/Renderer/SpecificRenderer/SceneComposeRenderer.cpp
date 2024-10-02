@@ -57,11 +57,6 @@ namespace Spices {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			description.format                        = VK_FORMAT_R32G32B32A32_SFLOAT;
 		})
-		.AddInputAttachment("Depth", TextureType::Texture2D, [&](VkAttachmentDescription& description) {
-			description.format                        = VulkanSwapChain::FindDepthFormat(m_VulkanState.m_PhysicalDevice);
-			description.initialLayout                 = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		})
 		.EndSubPass()
 		.Build();
 	}
@@ -71,7 +66,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "SceneCompose", this }
-		.AddInput(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Albedo", "Normal", "Roughness", "Metallic", "Position", "Depth" })
+		.AddInput(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Albedo", "Normal", "Roughness", "Metallic", "Position" })
 		.AddStorageBuffer(3, 0, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                        /* @brief World Directional Light Buffer. */
 		.AddStorageBuffer(3, 1, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                              /* @brief World PointLight Buffer.        */
 		.Build();

@@ -26,6 +26,7 @@
 #include "Render/Renderer/SpecificRenderer/ParticleRenderer.h"
 #include "Render/Renderer/SpecificRenderer/TestRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingComposeRenderer.h"
+#include "Render/Renderer/SpecificRenderer/ViewportGridRenderer.h"
 
 namespace Spices {
 
@@ -113,6 +114,7 @@ namespace Spices {
 			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    //.Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+			.Push<ViewportGridRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<WorldPickStage2Renderer>  (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
@@ -147,6 +149,7 @@ namespace Spices {
 			.Pop("WorldPickStage2Renderer")
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
+			.Pop("ViewportGridRenderer")
 			.Pop("SceneComposeRenderer")
 			//.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")

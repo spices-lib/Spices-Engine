@@ -95,7 +95,6 @@ struct GBufferPixel
 	float roughness;           /* @brief Roughness.  */
 	float metallic;            /* @brief Metallic.   */
 	vec3  position;            /* @brief Position.   */
-	float depth;               /* @brief Depth.      */
 };
 
 /*****************************************************************************************/

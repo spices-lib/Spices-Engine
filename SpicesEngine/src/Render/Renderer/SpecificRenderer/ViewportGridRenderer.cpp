@@ -18,6 +18,7 @@ namespace Spices {
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			isEnableBlend                            = true;
 		})
+		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {})
 		.EndSubPass()
 		.Build();
 	}

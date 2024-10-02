@@ -47,7 +47,6 @@ layout(location = 0) out vec4 outSceneColor;    /*SceneColor Attachment*/
 * 2 - Roughness.
 * 3 - Metallic.
 * 4 - Position.
-* 5 - Depth.
 */
 
 #define ALBEDO    0
@@ -55,12 +54,11 @@ layout(location = 0) out vec4 outSceneColor;    /*SceneColor Attachment*/
 #define ROUGHNESS 2
 #define METALLIC  3
 #define POSITION  4
-#define DEPTH     5
 
 /**
 * @brief Subpass Input Attachments.
 */
-layout(input_attachment_index = 0, set = 2, binding = 0) uniform subpassInput GBuffer[6];
+layout(input_attachment_index = 0, set = 2, binding = 0) uniform subpassInput GBuffer[5];
 
 /**
 * @brief DirectionalLight Buffer in World.
@@ -142,7 +140,6 @@ GBufferPixel GetGBufferPixel()
 	gbp.roughness   = subpassLoad(GBuffer[ROUGHNESS]).x;
 	gbp.metallic    = subpassLoad(GBuffer[METALLIC]).x;
 	gbp.position    = subpassLoad(GBuffer[POSITION]).xyz;
-	gbp.depth       = subpassLoad(GBuffer[DEPTH]).x;
 	
 	return gbp;
 }

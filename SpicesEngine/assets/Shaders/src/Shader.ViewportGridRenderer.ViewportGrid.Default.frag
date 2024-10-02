@@ -22,10 +22,8 @@
 * @brief Fragment Shader Input From Vertex Shader.
 */
 layout(location = 0) in struct FragInput
-{
-	vec2 texCoord;                        /* @brief Fragmet UV */
-	vec3 nearPoint;
-	vec3 farPoint;                       
+{ 
+    vec2 texCoord;
 }
 fragInput;
 
@@ -36,18 +34,70 @@ fragInput;
 /**
 * @brief Fragment Shader Output to FrameBuffer.
 */
-layout(location = 0) out vec4 outSceneColor;    /*SceneColor Attachment*/
+layout(location = 0) out vec4 outSceneColor;    /* @brief SceneColor Attachment. */
 
 /*****************************************************************************************/
 
 /********************************Specific Renderer Data***********************************/
 
+/**
+* @brief Simplify format of pow by 10.0f.
+*/
+#define POW(l) pow(10.0f, l)
 
+/**
+* @brief View grid Adaption.
+*/
+const float viewAdaption = POW(2);
 
 /*****************************************************************************************/
 
 /******************************************Functions**************************************/
 
+/**
+* @brief Draw editor grid lines in world.
+* @param[in] ro Camera Position.
+* @param[in] sd Grid World Position.
+* @param[in] l Specific Level of grid.
+* @return Returns Color.
+*/
+vec4 DrawEditorGridLines(in vec3 ro, in vec3 sd, in int l)
+{
+    vec2 uv      = sd.xz / POW(l);
+    vec2 d       = fwidth(uv);
+    vec2 grid    = abs(fract(uv - 0.5f) - 0.5f) / d;
+
+    float line   = min(grid.x, grid.y);
+    float minz   = min(d.y, 1.0f);
+    float minx   = min(d.x, 1.0f);
+                
+    vec4 color   = vec4(0.2f, 0.2f, 0.2f, 1.0f - min(line, 1.0f));
+    color.w     *= 1.0f - smoothstep(0.1f * viewAdaption * POW(l), viewAdaption * POW(l), length(ro - sd));
+
+    // z axis
+    if (sd.x > -0.1f * minx && sd.x < 0.1f * minx)
+    {
+        color.z = 1.0f;
+    }
+    // x axis
+    if (sd.z > -0.1f * minz && sd.z < 0.1f * minz)
+    {
+        color.x = 1.0f;
+    }
+
+    return color;
+}
+
+/**
+* @brief Compute depth from position.
+* @param[in] p Position.
+* @return Depth.
+*/
+float ComputeDepth(in vec3 p)
+{
+    vec4 cp = view.projection * view.view * vec4(p.xyz, 1.0);
+    return cp.z / cp.w;
+}
 
 /*****************************************************************************************/
 
@@ -55,9 +105,53 @@ layout(location = 0) out vec4 outSceneColor;    /*SceneColor Attachment*/
 
 void main()
 {
-	float t = - fragInput.nearPoint.y / (fragInput.farPoint.y - fragInput.nearPoint.y);
+    vec2 d          = fragInput.texCoord * 2.0f - 1.0f;
 
-    outSceneColor = vec4(1.0f, 0.0f, 0.0f, 1.0f * float(t > 0.0f));
+    /**
+    * @brief Calculate Screen World Direction.
+    */
+    vec4 origin    = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	vec4 target    = inverse(view.nprojection) * vec4(d.x, d.y, 1.0f, 1.0f);
+	vec4 direction = view.inView * vec4(normalize(target.xyz), 0.0f);
+
+    /**
+    * @brief Only draw ground grid.
+    */
+	if (direction.y > 0.0f) discard;
+
+    /**
+    * @brief Get sd.
+    */
+    float t        = -origin.y / direction.y;
+    float px       =  origin.x + direction.x * t;
+    float pz       =  origin.z + direction.z * t;
+    vec3  sd       = vec3(px, 0.0f, pz);
+
+    /**
+    * @brief Write depth.
+    */
+    gl_FragDepth  = ComputeDepth(sd);
+
+    /**
+    * @brief Get specific view level.
+    */
+    int level = -1;
+    float l = length(origin.xyz - sd);
+    for (;;)
+    {
+        if (viewAdaption * POW(level) > l)
+        {
+            break;
+        }
+
+        level++;
+    }
+
+    /**
+    * @brief Draw Grids.
+    */
+    outSceneColor  = DrawEditorGridLines(origin.xyz, sd, level) + DrawEditorGridLines(origin.xyz, sd, level + 1);
+    outSceneColor *= mix(0.0f, 1.0f, max(dot(direction.xyz, vec3(0.0f, -1.0f, 0.0f)), 0.0f));
 }
 
 /*****************************************************************************************/
