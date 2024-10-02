@@ -56,31 +56,31 @@ const float viewAdaption = POW(2);
 
 /**
 * @brief Draw editor grid lines in world.
-* @param[in] ro Camera Position.
 * @param[in] sd Grid World Position.
 * @param[in] l Specific Level of grid.
 * @return Returns Color.
 */
-vec4 DrawEditorGridLines(in vec3 ro, in vec3 sd, in int l)
+vec4 DrawEditorGridLines(in vec3 sd, in float t, in int l)
 {
     vec2 uv      = sd.xz / POW(l);
-    vec2 d       = fwidth(uv);
+    vec2 d       = fwidth(uv) ;
     vec2 grid    = abs(fract(uv - 0.5f) - 0.5f) / d;
+    float c      = 0.001f * POW(l);
 
     float line   = min(grid.x, grid.y);
     float minz   = min(d.y, 1.0f);
     float minx   = min(d.x, 1.0f);
-                
+    
     vec4 color   = vec4(0.2f, 0.2f, 0.2f, 1.0f - min(line, 1.0f));
-    color.w     *= 1.0f - smoothstep(0.1f * viewAdaption * POW(l), viewAdaption * POW(l), length(ro - sd));
+    color.w     *= 1.0f - smoothstep(0.1f * viewAdaption * POW(l), viewAdaption * POW(l), t);
 
     // z axis
-    if (sd.x > -0.1f * minx && sd.x < 0.1f * minx)
+    if (sd.x > -c && sd.x < c)
     {
         color.z = 1.0f;
     }
     // x axis
-    if (sd.z > -0.1f * minz && sd.z < 0.1f * minz)
+    if (sd.z > -c && sd.z < c)
     {
         color.x = 1.0f;
     }
@@ -105,7 +105,7 @@ float ComputeDepth(in vec3 p)
 
 void main()
 {
-    vec2 d          = fragInput.texCoord * 2.0f - 1.0f;
+    vec2 d         = fragInput.texCoord * 2.0f - 1.0f;
 
     /**
     * @brief Calculate Screen World Direction.
@@ -130,16 +130,15 @@ void main()
     /**
     * @brief Write depth.
     */
-    gl_FragDepth  = ComputeDepth(sd);
+    gl_FragDepth   = ComputeDepth(sd);
 
     /**
     * @brief Get specific view level.
     */
-    int level = -1;
-    float l = length(origin.xyz - sd);
+    int level = -1;  // Start from 0.1m, multiple 10  per level.
     for (;;)
     {
-        if (viewAdaption * POW(level) > l)
+        if (viewAdaption * POW(level) > t)
         {
             break;
         }
@@ -150,7 +149,10 @@ void main()
     /**
     * @brief Draw Grids.
     */
-    outSceneColor  = DrawEditorGridLines(origin.xyz, sd, level) + DrawEditorGridLines(origin.xyz, sd, level + 1);
+    vec4 a = DrawEditorGridLines(sd, t, level);
+    vec4 b = DrawEditorGridLines(sd, t, level + 1);
+
+    outSceneColor  = max(a, b);
     outSceneColor *= mix(0.0f, 1.0f, max(dot(direction.xyz, vec3(0.0f, -1.0f, 0.0f)), 0.0f));
 }
 
