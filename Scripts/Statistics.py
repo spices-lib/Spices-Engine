@@ -7,6 +7,14 @@
 import os
 from itertools import (takewhile, repeat)
 
+'''
+@brief Files basic root folder.
+'''
+rootfolder: str = 'D:/OpenGLProjects/Spices-Engine'
+
+'''
+@brief Files with those extensions can be counted.
+'''
 extensions: dict = {
     'c': 1,
     'h': 1,
@@ -28,6 +36,9 @@ extensions: dict = {
     'bat': 1,
 }
 
+'''
+@brief Files in those folders can not be counted.
+'''
 ignorefolders: dict = {
     'vendor': 1,
     '.git': 1,
@@ -38,9 +49,19 @@ ignorefolders: dict = {
     'venv': 1
 }
 
+'''
+@brief Counted rows.
+'''
 nrows: int = 0
 
 def iter_count(file_name: str):
+
+    '''
+    @brief calculate file rows.
+    @param[in] file_name File's full name.
+    @return Returns file rows.
+    '''
+
     buffer = 1024 * 1024
     with open(file_name, encoding='gb18030', errors='ignore') as f:
         buf_gen = takewhile(lambda x: x, (f.read(buffer) for _ in repeat(None)))
@@ -48,6 +69,11 @@ def iter_count(file_name: str):
         return n
 
 def iter_files(file_dir: str):
+
+    '''
+    @brief Iter all files and count rows.
+    @param[in] file_dir File's folder.
+    '''
 
     global extensions
     global ignorefolders
@@ -69,5 +95,16 @@ def iter_files(file_dir: str):
             if extensions.get(os.path.splitext(filename)[-1][1:]) is not None:
                 nrows += iter_count(os.path.join(filepath, filename))
 
-iter_files('D:/OpenGLProjects/Spices-Engine')
-print(nrows)
+def main():
+
+    '''
+    @brief Iter all files and count rows and print result.
+    '''
+
+    global rootfolder
+
+    iter_files(rootfolder)
+    print(nrows)
+
+if __name__ == '__main__':
+    main()
