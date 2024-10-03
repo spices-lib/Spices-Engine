@@ -79,7 +79,7 @@ namespace Spices {
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Editor)))
+            if (ImGui::BeginMenu(ICON_TEXT(ICON_EMPTY, Particles)))
             {
                 if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Editor))) {}
                 if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Playback Controls))) {}

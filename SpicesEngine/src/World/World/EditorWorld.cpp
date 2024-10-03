@@ -38,7 +38,7 @@ namespace Spices {
 			SkyBoxComponent& skyboxComp = skyboxentity.AddComponent<SkyBoxComponent>();
 			skyboxComp.SetMaterial("BasePassRenderer.SkyBox.little_paris_eiffel_tower_4k");
 			TransformComponent& transformComp = skyboxentity.GetComponent<TransformComponent>();
-			transformComp.SetScale({5000, 5000, 5000});
+			transformComp.SetScale({50000000.0f, 50000000.0f, 50000000.0f});
 		}
 
 		// directionallight

@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "../ImguiUtils.h"
+#include "Slate/Imgui/ImguiUtils.h"
 
 namespace Spices {
 
@@ -31,13 +31,13 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiEdit() {};
+		virtual ~ImguiEdit() = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnUpdate(TimeStep& ts) override {}
 
 		/**
 		* @brief This interface is called On SlateRenderer Render.
@@ -47,7 +47,7 @@ namespace Spices {
 		/**
 		* @brief This interface is called On Global Event Function Pointer is called.
 		*/
-		virtual void OnEvent(Event& event) override {};
+		virtual void OnEvent(Event& event) override {}
 	};
 
 }

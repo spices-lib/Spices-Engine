@@ -9,7 +9,7 @@
 
 #include "Systems/SlateSystem.h"
 #include "ImguiFile.h"
-#include "ImguiEdit.h"
+#include "Edit/ImguiEdit.h"
 #include "Window/ImguiWindow.h"
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
