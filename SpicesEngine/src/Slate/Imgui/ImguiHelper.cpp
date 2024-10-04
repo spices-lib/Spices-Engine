@@ -10,6 +10,8 @@
 
 // This file Only Can include once.
 #include <imgui.cpp>
+#include <imgui_internal.h>
+#include <imgui_widgets.cpp>
 
 namespace Spices {
 
@@ -359,6 +361,45 @@ namespace Spices {
         }
 
         ImGui::PopStyleColor(4);
+    }
+
+    bool ImGuiH::S_DragScalarN(const char* label, ImGuiDataType data_type, void* p_data, int components, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
+    {
+        using namespace ImGui;
+
+        ImGuiWindow* window = GetCurrentWindow();
+        if (window->SkipItems)
+            return false;
+        
+        ImGuiContext& g = *GImGui;
+        bool value_changed = false;
+        BeginGroup();
+        PushID(label);
+        PushMultiItemsWidths(components, CalcItemWidth());
+        size_t type_size = GDataTypeInfo[data_type].Size;
+        for (int i = 0; i < components; i++)
+        {
+            PushID(i);
+            if (i > 0)
+                SameLine(0, g.Style.ItemInnerSpacing.x);
+            const void* cp_min = (float*)p_min + i;
+            const void* cp_mmx = (float*)p_max + i;
+            value_changed |= DragScalar("", data_type, p_data, v_speed, cp_min, cp_mmx, format, flags);
+            PopID();
+            PopItemWidth();
+            p_data = (void*)((char*)p_data + type_size);
+        }
+        PopID();
+        
+        const char* label_end = FindRenderedTextEnd(label);
+        if (label != label_end)
+        {
+            SameLine(0, g.Style.ItemInnerSpacing.x);
+            TextEx(label, label_end);
+        }
+        
+        EndGroup();
+        return value_changed;
     }
 
     float ImGuiH::GetDPIScale()

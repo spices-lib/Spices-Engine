@@ -126,6 +126,7 @@ namespace YAML {
 			else if(param.paramType == "float2") node.push_back(std::any_cast<glm::vec2>(param.paramValue));
 			else if(param.paramType == "float")  node.push_back(std::any_cast<float>(param.paramValue));
 			else if(param.paramType == "int")    node.push_back(std::any_cast<int>(param.paramValue));
+			else if(param.paramType == "bool")   node.push_back(std::any_cast<bool>(param.paramValue));
 			else
 			{
 				std::stringstream ss;
@@ -155,6 +156,7 @@ namespace YAML {
 			else if(param.paramType == "float2") param.paramValue = node[1].as<glm::vec2>();
 			else if(param.paramType == "float")  param.paramValue = node[1].as<float>();
 			else if(param.paramType == "int")    param.paramValue = node[1].as<int>();
+			else if(param.paramType == "bool")   param.paramValue = node[1].as<bool>();
 			else
 			{
 				std::stringstream ss;
@@ -222,6 +224,10 @@ namespace Spices {
 		else if(p.paramType == "int")
 		{
 			out << std::any_cast<int>(p.paramValue);
+		}
+		else if (p.paramType == "bool")
+		{
+			out << std::any_cast<bool>(p.paramValue);
 		}
 		else
 		{

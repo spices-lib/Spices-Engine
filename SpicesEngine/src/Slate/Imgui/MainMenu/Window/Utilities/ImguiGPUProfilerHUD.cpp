@@ -26,7 +26,7 @@ namespace Spices {
         /**
         * @brief Begin render PerfProfilerHUD.
         */
-        Begin(m_PanelName.c_str());
+        Begin();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2.0f, 4.0f));
 

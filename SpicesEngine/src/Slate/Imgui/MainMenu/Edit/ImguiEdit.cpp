@@ -6,6 +6,9 @@
 
 #include "Pchheader.h"
 #include "ImguiEdit.h"
+#include "Systems/SlateSystem.h"
+
+#include "Preferences/ImguiPreferences.h"
 
 namespace Spices {
 
@@ -16,6 +19,11 @@ namespace Spices {
         : ImguiSlate(panelName, frameInfo)
     {
         SPICES_PROFILE_ZONE;
+
+        /**
+        * @brief Instance.
+        */
+        m_ImguiPreferences = SlateSystem::GetRegister()->Register<ImguiPreferences>(true, "Preferences");
     }
 
     void ImguiEdit::OnRender()
@@ -94,7 +102,7 @@ namespace Spices {
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Toggle Visualization Mode))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_EMPTY, Capture Screenshot), "F10")) {}
             ImGui::Separator();
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_FILTER_VINTAGE, Preferences))) {}
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_FILTER_VINTAGE, Preferences))) { m_ImguiPreferences->SetWindowState(true); }
 
             /**
             * @brief End ImguiFileMenu.

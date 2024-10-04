@@ -34,10 +34,25 @@ namespace Spices {
 	*/
 	struct ConstantParam
 	{	
-		std::string paramType;        /* @brief parameter type. */
+		std::string paramType;        /* @brief parameter type.  */
 		std::any    paramValue;       /* @brief parameter value. */
 	};
 	
+	/**
+	* @brief This struct's data is defined from .material file.
+	*/
+	struct ConstantParams
+	{
+		ConstantParam value;             /* @brief Value.             */
+		ConstantParam defaultValue;      /* @brief Default Value.     */
+
+		bool hasMinValue = false;        /* @brief Is have Min Value. */
+		ConstantParam min;               /* @brief Min Value.         */
+
+		bool hasMaxValue = false;        /* @brief Is have Max Value. */
+		ConstantParam max;               /* @brief Max Value.         */
+	};
+
 	/**
 	* @brief Material Class.
 	* This class contains a branch of parameter and shader, also descriptor.
@@ -105,7 +120,15 @@ namespace Spices {
 		* @brief Get material constant parameters.
 		* @return Returns the material constant parameters.
 		*/
-		scl::linked_unordered_map<std::string, ConstantParam>& GetConstantParams() { return m_ConstantParams; }
+		scl::linked_unordered_map<std::string, ConstantParams>& GetConstantParams() { return m_ConstantParams; }
+
+		/**
+		* @brief Get default material constant parameter.
+		* @param[in] name Parameter Name.
+		* @return Returns the default material constant parameter.
+		*/
+		template<typename T>
+		T GetDefaultConstantParams(const std::string& name);
 
 		/**
 		* @brief Get material parameter address on GPU.
@@ -160,18 +183,20 @@ namespace Spices {
 		* Key: shader usage, Value: shader file name.
 		*/
 		std::unordered_map<std::string, std::vector<std::string>> m_Shaders;
+		std::unordered_map<std::string, std::vector<std::string>> m_DefaultShaders;
 
 		/**
 		* @brief Texture parameters.
 		* Key: parameter name, Value: parameter value.
 		*/
 		scl::linked_unordered_map<std::string, TextureParam> m_TextureParams;
+		scl::linked_unordered_map<std::string, TextureParam> m_DefaultTextureParams;
 
 		/**
 		* @brief Constant parameters.
 		* Key: parameter name, Value: parameter value.
 		*/
-		scl::linked_unordered_map<std::string, ConstantParam> m_ConstantParams;
+		scl::linked_unordered_map<std::string, ConstantParams> m_ConstantParams;
 
 		/**
 		* @brief m_Buffers's c++ data container.
@@ -189,4 +214,20 @@ namespace Spices {
 		*/
 		bool m_IsDrawWindow = false;
 	};
+
+	template<typename T>
+	inline T Material::GetDefaultConstantParams(const std::string& name)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto ptr = m_ConstantParams.find_value(name);
+		if(ptr)
+		{
+			return std::any_cast<T>(ptr->defaultValue.paramValue);
+		}
+		else
+		{
+			return T();
+		}
+	}
 }

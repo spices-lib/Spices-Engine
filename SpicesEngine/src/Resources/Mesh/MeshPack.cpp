@@ -116,7 +116,7 @@ namespace Spices {
 		auto ptr = m_Material->GetConstantParams().find_value("lod");
 		if (ptr)
 		{
-			lodLevel = std::any_cast<int>(ptr->paramValue);
+			lodLevel = std::any_cast<int>(ptr->value.paramValue);
 			lodLevel = std::max(lodLevel, 0);
 			lodLevel = std::min(lodLevel, (int)m_MeshResource.lods.attributes->size() - 1);
 		}

@@ -126,8 +126,8 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("BuildMaterial::Build Local ConstantParameter Block");
 
-			m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
-				m_Buffermemoryblocks.add_element(k, v.paramType);
+			m_ConstantParams.for_each([&](const std::string& k, const ConstantParams& v) {
+				m_Buffermemoryblocks.add_element(k, v.value.paramType);
 				return false;
 			});
 
@@ -224,7 +224,7 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("BuildMaterial::Add ConstantParameter Buffer");
 
 			m_Buffermemoryblocks.for_each([&](const std::string& name, void* pt) {
-				ConstantParam& ref = *m_ConstantParams.find_value(name);
+				ConstantParam& ref = m_ConstantParams.find_value(name)->value;
 				size_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.item_location(name);
 				
 				/**
@@ -260,6 +260,12 @@ namespace Spices {
 					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(int), size);
 					m_MaterialParameterBuffer->Flush();
 				}
+				else if (ref.paramType == "bool")
+				{
+					*static_cast<int*>(pt)           = std::any_cast<bool>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(bool), size);
+					m_MaterialParameterBuffer->Flush();
+				}
 				else
 				{
 					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.");
@@ -290,8 +296,8 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("BuildMaterial::Build Local ConstantParameter Block");
 
-			m_ConstantParams.for_each([&](const std::string& k, const ConstantParam& v) {
-				m_Buffermemoryblocks.add_element(k, v.paramType);
+			m_ConstantParams.for_each([&](const std::string& k, const ConstantParams& v) {
+				m_Buffermemoryblocks.add_element(k, v.value.paramType);
 				return false;
 			});
 
@@ -359,7 +365,7 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("BuildMaterial::Add ConstantParameter Buffer");
 
 			m_Buffermemoryblocks.for_each([&](const std::string& name, void* pt) {
-				ConstantParam& ref = *m_ConstantParams.find_value(name);
+				ConstantParam& ref = m_ConstantParams.find_value(name)->value;
 				size_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.item_location(name);
 				
 				/**
@@ -393,6 +399,12 @@ namespace Spices {
 				{
 					*static_cast<int*>(pt)           = std::any_cast<int>(ref.paramValue);
 					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(int), size);
+					m_MaterialParameterBuffer->Flush();
+				}
+				else if (ref.paramType == "bool")
+				{
+					*static_cast<int*>(pt)           = std::any_cast<bool>(ref.paramValue);
+					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(bool), size);
 					m_MaterialParameterBuffer->Flush();
 				}
 				else

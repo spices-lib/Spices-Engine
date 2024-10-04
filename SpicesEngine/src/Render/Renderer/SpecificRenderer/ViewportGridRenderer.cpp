@@ -28,6 +28,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		DescriptorSetBuilder{ "ViewportGrid", this }
+		.AddPushConstant(sizeof(uint64_t))
 		.Build();
 	}
 
@@ -74,6 +75,10 @@ namespace Spices {
 		
 		builder.BindPipeline("ViewportGridRenderer.ViewportGrid.Default");
 
+		builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+			push = GetDefaultMaterial("ViewportGrid")->GetMaterialParamsAddress();
+		});
+		
 		builder.DrawFullScreenTriangle();
 
 		builder.EndRenderPass();

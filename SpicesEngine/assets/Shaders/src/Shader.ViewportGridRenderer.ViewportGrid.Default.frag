@@ -15,6 +15,26 @@
 #include "Header/ShaderFunctionLibrary.glsl"
 #include "Header/ShaderSampleDigit.glsl"
 
+/**
+* @brief Material Parameter.
+* It should be the struct of all textures index and parameter buffer address.
+* One index per texture, One address per buffer.
+*/
+struct MaterialParameter
+{
+    bool  show;
+    float axisSpacing;
+    float gridViewAdaptionRatio;
+    vec2  fontSize;
+    float gridWidthScale;
+    vec3  gridColor;
+    float fade;
+    vec3  xAxisColor;
+    vec3  yAxisColor;
+};
+
+#include "Header/ShaderBindLessMaterial.glsl"
+
 /*****************************************************************************************/
 
 /************************************Fragment Input***************************************/
@@ -39,26 +59,42 @@ layout(location = 0) out vec4 outSceneColor;    /* @brief SceneColor Attachment.
 
 /*****************************************************************************************/
 
-/********************************Specific Renderer Data***********************************/
+/*********************************Push Constant*******************************************/
 
 /**
-* @brief Simplify format of pow by 10.0f.
+* @brief push constant.
 */
-#define POW(l) pow(10.0f, l)
-
-/**
-* @brief View grid Adaption.
-*/
-const float viewAdaption = POW(2);
-
-const vec2 vFontSize = vec2(8.0, 15.0);
+layout(push_constant) uniform Push 
+{
+    uint64_t descAddress;
+} 
+push;
 
 /*****************************************************************************************/
 
 /******************************************Functions**************************************/
 
 /**
-* @brief Get a digital number's level by using POW(l) macros.
+* @brief Simplify format of Pow basic axisSpacing.
+* @param[in] e pow by this.
+* @return Returns pow value.
+*/
+float Pow(in float e)
+{
+    return pow(max(materialParam.axisSpacing, 1.05f), e);
+}
+
+/**
+* @brief Get View grid Adaption.
+* @return Returns View grid Adaption.
+*/
+float ViewAdaption()
+{
+    return Pow(materialParam.gridViewAdaptionRatio);
+}
+
+/**
+* @brief Get a digital number's level by using Pow(l) macros.
 * @param[in] v digital number.
 * @param[in] minl Min Level for search.
 * @param[in] s scale ratio. 
@@ -69,10 +105,29 @@ int GetDigitalNumberLevel(in float v, in int minl, in float s)
     int l = minl;
     for(;;)
     {
-        if (s * POW(l) > abs(v)) break;
+        if (s * Pow(l) > abs(v)) break;
         l++;
     }
     
+    return l;
+}
+
+/**
+* @brief Get a digital number's level by using pow(10.0f, x).
+* @param[in] v digital number.
+* @param[in] minl Min Level for search.
+* @param[in] s scale ratio.
+* @return Returns level.
+*/
+int GetDigitalNumberDigit(in float v, in int minl, in float s)
+{
+    int l = minl;
+    for (;;)
+    {
+        if (s * pow(10.0f, l) > abs(v)) break;
+        l++;
+    }
+
     return l;
 }
 
@@ -85,8 +140,8 @@ int GetDigitalNumberLevel(in float v, in int minl, in float s)
 */
 vec4 DrawEditorGridLines(in vec3 sd, in float t, in int l)
 {
-    vec2 uv        = sd.xz / POW(l);
-    vec2 d         = fwidth(uv);
+    vec2 uv        = sd.xz / Pow(l);
+    vec2 d         = materialParam.gridWidthScale * fwidth(uv);
     float minz     = min(d.y, 1.0f);
     float minx     = min(d.x, 1.0f);
     
@@ -95,36 +150,44 @@ vec4 DrawEditorGridLines(in vec3 sd, in float t, in int l)
     */
     vec2 grid      = abs(fract(uv - 0.5f) - 0.5f) / d;
     float line     = 1.0f - min(min(grid.x, grid.y), 1.0f);
-    vec4 color     = vec4(0.2f, 0.2f, 0.2f, line);
-    color.w       *= 1.0f - smoothstep(POW(-1) * viewAdaption * POW(l), viewAdaption * POW(l), t);
+    vec4 color     = vec4(materialParam.gridColor, line);
+    color.w       *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.fade);
 
     /**
     * @brief Draw x/z axis.
     */
-    if (sd.x > -minx * POW(l) && sd.x < minx * POW(l)) color.z = 1.0f;
-    if (sd.z > -minz * POW(l) && sd.z < minz * POW(l)) color.x = 1.0f;
+    if (sd.x > -minx * Pow(l) && sd.x < minx * Pow(l)) color.xyz = materialParam.xAxisColor;
+    if (sd.z > -minz * Pow(l) && sd.z < minz * Pow(l)) color.xyz = materialParam.yAxisColor;
 
     return color;
 }
 
-vec4 DrawEditorGridDigitalNumber(in vec4 color, in vec3 sd, in float t, in int l, in vec2 vFontSize)
+/**
+* @brief Draw editor grid digital number in world.
+* @param[in] color mixed color.
+* @param[in] sd Surface Position.
+* @param[in] t distance to sdf.
+* @param[in] l level.
+* @return Returns mixed color.
+*/
+vec4 DrawEditorGridDigitalNumber(in vec4 color, in vec3 sd, in float t, in int l)
 {
-    vec2 uv        = sd.xz / POW(l + 1);
+    vec2 uv        = sd.xz / Pow(l + 1);
     vec2 duv       = fract(uv) / fwidth(uv);
-    vec2 v         = floor(uv) * POW(l + 1);
+    vec2 v         = floor(uv) * Pow(l + 1);
     
     if(abs(v.x) >= abs(v.y))
     {
         if(abs(uv.y - 0.5f) < 0.5f)
         {
             float xa       = 1.0f;
-            int vxl        = GetDigitalNumberLevel(v.x, 0, 1.0f);
+            int vxl        = GetDigitalNumberDigit(v.x, 0, 1.0f);
             if(floor(uv.x) < 0.1f) vxl++;
-            if(floor(mod(v.x, POW(l + 2))) != 0.0f)
+            if(floor(mod(v.x, Pow(l + 2))) != 0.0f)
             {
-                xa        *= 1.0f - smoothstep(POW(-1) * viewAdaption * POW(l), viewAdaption * POW(l), t);
+                xa        *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.fade);
             }
-            return mix(color, vec4(1.0f, 0.0f, 0.0f, xa), PrintValue(duv, vec2(0.0f), vFontSize ,v.x , vxl, 0.0f));
+            return mix(color, vec4(materialParam.xAxisColor, xa), PrintValue(duv, vec2(0.0f), materialParam.fontSize ,v.x , vxl, 0.0f));
         }
     }
     else
@@ -132,13 +195,13 @@ vec4 DrawEditorGridDigitalNumber(in vec4 color, in vec3 sd, in float t, in int l
         if(abs(uv.x - 0.5f) < 0.5f)
         {
             float ya       = 1.0f;
-            int vyl        = GetDigitalNumberLevel(v.y, 0, 1.0f);
+            int vyl        = GetDigitalNumberDigit(v.y, 0, 1.0f);
             if(floor(uv.y) < 0.1f) vyl++;
-            if(floor(mod(v.y, POW(l + 2))) != 0.0f)
+            if(floor(mod(v.y, Pow(l + 2))) != 0.0f)
             {
-                ya        *= 1.0f - smoothstep(POW(-1) * viewAdaption * POW(l), viewAdaption * POW(l), t);
+                ya        *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.fade);
             }
-            return mix(color, vec4(0.0f, 0.0f, 1.0f, ya), PrintValue(duv, vec2(0.0f), vFontSize ,v.y , vyl, 0.0f));
+            return mix(color, vec4(materialParam.yAxisColor, ya), PrintValue(duv, vec2(0.0f), materialParam.fontSize ,v.y , vyl, 0.0f));
         }
     }
     
@@ -162,6 +225,9 @@ float ComputeDepth(in vec3 p)
 
 void main()
 {
+    ExplainMaterialParameter(push.descAddress);
+
+    if (!materialParam.show) discard;
     vec2 d         = fragInput.texCoord * 2.0f - 1.0f;
 
     /**
@@ -193,14 +259,14 @@ void main()
     * @brief Get specific view level.
     * Start from 0.1m, multiple 10  per level.
     */
-    int level = GetDigitalNumberLevel(t, -1, viewAdaption);
+    int level = GetDigitalNumberLevel(t, -1, ViewAdaption());
 
     /**
     * @brief Draw Grids.
     */
     vec4 a = DrawEditorGridLines(sd, t, level);
     vec4 b = DrawEditorGridLines(sd, t, level + 1);
-    vec4 c = DrawEditorGridDigitalNumber(max(a, b), sd, t, level, vFontSize);
+    vec4 c = DrawEditorGridDigitalNumber(max(a, b), sd, t, level);
     
     c.w   *= mix(0.0f, 1.0f, max(dot(direction.xyz, vec3(0.0f, -1.0f, 0.0f)), 0.0f));
     if(c.w < 0.01f) discard;

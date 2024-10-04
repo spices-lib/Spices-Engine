@@ -20,7 +20,7 @@
 namespace Spices{
 
 	/**
-	* @brief This Class defines the basic behaver of specific slate.
+	* @brief This Class defines the basic behaves of specific slate.
 	* When we add an new Slate, we need inherit from this.
 	*/
 	class ImguiSlate
@@ -38,12 +38,12 @@ namespace Spices{
 		) 
 			: m_PanelName(panelName)
 			, m_FrameInfo(frameInfo) 
-		{};
+		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiSlate() {};
+		virtual ~ImguiSlate() = default;
 
 		/**
 		* @brief This interface is called on SlateSystem Update.
@@ -86,7 +86,7 @@ namespace Spices{
 
 		/**
 		* @brief Load a Texture from ResourcePool.
-		* @param[out] id The ImTextureID Created with inconFilePath.
+		* @param[out] id The ImTextureID Created with iconFilePath.
 		* @param[in] iconFile The file path of icon.
 		*/
 		void LoadSlateIcon(ImTextureID& id, const std::string& iconFile);
@@ -100,10 +100,10 @@ namespace Spices{
 	public:
 
 		/**
-		* @brief Set Slate is rendererable or not.
-		* @param[in] isSlateOn The boolean of renderable.
+		* @brief Set Slate is render able or not.
+		* @param[in] isSlateOn The boolean of render able.
 		*/
-		void SetWindowState(bool isSlateOn) { m_IsSlateOn = isSlateOn; };
+		void SetWindowState(bool isSlateOn) { m_IsSlateOn = isSlateOn; }
 
 	public:
 
@@ -111,31 +111,31 @@ namespace Spices{
 		* @brief Get Panel Size.
 		* @return Returns the Panel Size.
 		*/
-		inline ImVec2& GetPanelSize() { return m_PanelSize; };
+		inline ImVec2& GetPanelSize() { return m_PanelSize; }
 
 		/**
 		* @brief Get Panel Pos.
 		* @return Returns the Panel Pos.
 		*/
-		inline ImVec2& GetPanelPos() { return m_PanelPos; };
+		inline ImVec2& GetPanelPos() { return m_PanelPos; }
 
 		/**
 		* @brief Get is IsFocused.
 		* @return Returns true if focused.
 		*/
-		inline bool IsFocused() { return m_IsFocused; };
+		inline bool IsFocused() const { return m_IsFocused; }
 
 		/**
 		* @brief Get is IsHovered.
 		* @return  Returns true if hovered.
 		*/
-		inline bool IsHovered() { return m_IsHovered; };
+		inline bool IsHovered() const { return m_IsHovered; }
 
 		/**
 		* @brief Get boolean of whether resized this frame.
 		* @return Returns true if resized.
 		*/
-		inline bool IsResizedThisFrame() { return m_IsResized; };
+		inline bool IsResizedThisFrame() const { return m_IsResized; }
 
 	protected:
 
@@ -160,7 +160,7 @@ namespace Spices{
 		FrameInfo& m_FrameInfo;
 
 		/**
-		* @brief True if Focuse.
+		* @brief True if Focus.
 		*/
 		bool m_IsFocused = false;
 
@@ -170,7 +170,7 @@ namespace Spices{
 		bool m_IsHovered = false;
 
 		/**
-		* @breif The boolean of rendererable.
+		* @breif The boolean of render able.
 		*/
 		bool m_IsSlateOn = false;
 

@@ -191,6 +191,19 @@ namespace Spices {
 		m_Pipelines[ss.str()] = CreateDGCPipeline(ss.str(), materialName, pipelinelayout, subPass);
 	}
 
+	std::shared_ptr<Material> Renderer::GetDefaultMaterial(const std::string& subpassName) const
+	{
+		SPICES_PROFILE_ZONE;
+		
+		std::stringstream ss;
+		ss << m_RendererName << "." << subpassName << ".Default";
+
+		/**
+		* @brief Real Material.
+		*/
+		return ResourcePool<Material>::Load<Material>(ss.str(), ss.str());
+	}
+
 	void Renderer::CreateDefaultMaterial()
 	{
 		SPICES_PROFILE_ZONE;
@@ -201,16 +214,15 @@ namespace Spices {
 		if (m_IsLoadDefaultMaterial)
 		{
 			m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
-
-				/**
-				* @brief Real Material.
-				*/
+				
 				std::stringstream ss;
 				ss << m_RendererName << "." << K << ".Default";
-				{
-					const auto material = ResourcePool<Material>::Load<Material>(ss.str(), ss.str());
-					material->BuildMaterial();
-				}
+
+				/**
+				* @brief Registry Real Material.
+				*/
+				auto material = GetDefaultMaterial(K);
+				material->BuildMaterial();
 				
 				/**
 				* @brief Abstract Indirect Material.

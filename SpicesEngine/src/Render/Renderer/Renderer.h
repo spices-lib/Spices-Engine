@@ -175,6 +175,13 @@ namespace Spices {
 		*/
 		inline std::shared_ptr<RendererPass>& GetPasses() { return m_Pass; }
 
+		/**
+		* @brief Get default material using sub pass Name.
+		* @param subpassName sub pass Name.
+		* @return default material.
+		*/
+		std::shared_ptr<Material> GetDefaultMaterial(const std::string& subpassName) const;
+		
 	private:
 
 		/**

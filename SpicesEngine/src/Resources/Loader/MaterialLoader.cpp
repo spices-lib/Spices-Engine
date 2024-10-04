@@ -136,7 +136,17 @@ namespace Spices {
 		{
 			for (auto& shader : shaders)
 			{
-				outMaterial->m_Shaders[shader["Stage"].as<std::string>()].push_back(shader["Path"].as<std::string>());
+				if(shader["Stage"].IsDefined() && shader["Path"].IsDefined())
+				{
+					outMaterial->m_Shaders       [shader["Stage"].as<std::string>()].push_back(shader["Path"].as<std::string>());
+					outMaterial->m_DefaultShaders[shader["Stage"].as<std::string>()].push_back(shader["Path"].as<std::string>());
+				}
+				else
+				{
+					std::stringstream ss;
+					ss << "Stage/Path not finded in " << fileName;
+					SPICES_CORE_ERROR(ss.str());
+				}
 			}
 		}
 		else
@@ -156,7 +166,17 @@ namespace Spices {
 		{
 			for (auto& texture : textures)
 			{
-				outMaterial->m_TextureParams.push_back(texture["Name"].as<std::string>(), texture["Value"].as<TextureParam>());
+				if (texture["Name"].IsDefined() && texture["Value"].IsDefined())
+				{
+					outMaterial->m_TextureParams       .push_back(texture["Name"].as<std::string>(), texture["Value"].as<TextureParam>());
+					outMaterial->m_DefaultTextureParams.push_back(texture["Name"].as<std::string>(), texture["Value"].as<TextureParam>());
+				}
+				else
+				{
+					std::stringstream ss;
+					ss << "Name/Value not finded in " << fileName;
+					SPICES_CORE_ERROR(ss.str());
+				}
 			}
 		}
 
@@ -168,7 +188,32 @@ namespace Spices {
 		{
 			for (auto& parameter : parameters)
 			{
-				outMaterial->m_ConstantParams.push_back(parameter["Name"].as<std::string>(), parameter["Value"].as<ConstantParam>());
+				ConstantParams constantParams;
+				if (parameter["Name"].IsDefined() && parameter["Value"].IsDefined())
+				{
+					
+					constantParams.value        = parameter["Value"].as<ConstantParam>();
+					constantParams.defaultValue = parameter["Value"].as<ConstantParam>();
+				}
+				else
+				{
+					std::stringstream ss;
+					ss << "Name/Value not finded in " << fileName;
+					SPICES_CORE_ERROR(ss.str());
+				}
+
+				if (parameter["MinValue"].IsDefined())
+				{
+					constantParams.hasMinValue  = true;
+					constantParams.min          = parameter["MinValue"].as<ConstantParam>();
+				}
+				if (parameter["MaxValue"].IsDefined())
+				{
+					constantParams.hasMaxValue  = true;
+					constantParams.max          = parameter["MaxValue"].as<ConstantParam>();
+				}
+
+				outMaterial->m_ConstantParams.push_back(parameter["Name"].as<std::string>(), constantParams);
 			}
 		}
 

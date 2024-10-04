@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "Resources/Material/Material.h"
 
 // imgui header.
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -112,6 +113,11 @@ namespace Spices {
 		*/
 		static void DrawTreeTitle(const std::string& treeName, std::function<void()> optionFunc, std::function<void()> treeFunc);
 
+		static bool S_DragScalarN(const char* label, ImGuiDataType data_type, void* p_data, int components, float v_speed = 1.0f, const void* p_min = NULL, const void* p_max = NULL, const char* format = NULL, ImGuiSliderFlags flags = 0);
+
+		template<typename T>
+		static void DrawMaterialConstParams(std::shared_ptr<Material> material, ImGuiDataType data_type, int components, const std::string& name, ConstantParams& value);
+
 	private:
 
 		/**
@@ -119,6 +125,34 @@ namespace Spices {
 		*/
 		static float GetDPIScale();
 	};
+
+	template<typename T>
+	inline void ImGuiH::DrawMaterialConstParams(std::shared_ptr<Material> material, ImGuiDataType data_type, int components, const std::string& name, ConstantParams& value)
+	{
+		SPICES_PROFILE_ZONE;
+
+		T f    = std::any_cast<T>(value.value.paramValue);
+		T df   = std::any_cast<T>(value.defaultValue.paramValue);
+		T minf = T();
+		if (value.hasMinValue) minf = std::any_cast<T>(value.min.paramValue);
+		T maxf = T();
+		if (value.hasMaxValue) maxf = std::any_cast<T>(value.max.paramValue);
+
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
+		if (ImGuiH::S_DragScalarN("##", data_type, &f, components, 0.01f, (const void*)&minf, (const void*)&maxf, "%.2f"))
+		{
+			value.value.paramValue = f;
+			material->UpdateMaterial();
+		}
+
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		if (ImGuiH::DrawResetIcon(f != df))
+		{
+			value.value.paramValue = df;
+			material->UpdateMaterial();
+		}
+	}
 }
 
 namespace ImGui {

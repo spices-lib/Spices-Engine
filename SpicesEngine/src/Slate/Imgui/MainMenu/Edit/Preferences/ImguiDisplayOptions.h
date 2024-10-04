@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/**
-	* @brief The ImguiPreferences Class.
+	* @brief The ImguiDisplayOptions Class.
 	* This class defines how to render a edit menu.
 	*/
-	class ImguiPreferences : public ImguiSlate
+	class ImguiDisplayOptions : public ImguiSlate
 	{
 	public:
 
@@ -23,7 +23,7 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiPreferences(
+		ImguiDisplayOptions(
 			const std::string& panelName ,
 			FrameInfo&         frameInfo
 		);
@@ -31,7 +31,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiPreferences() = default;
+		virtual ~ImguiDisplayOptions() = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

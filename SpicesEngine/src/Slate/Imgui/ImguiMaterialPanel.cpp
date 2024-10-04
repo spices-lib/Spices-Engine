@@ -169,7 +169,7 @@ namespace Spices {
             {
                 SPICES_PROFILE_ZONEN("ImguiMaterialPanel::ShaderParameter");
 
-                DrawParameter("Shader", [&](){
+                ImGuiH::DrawTreeTitle("Shader", nullptr, [&](){
                     for(auto& pair : material->GetShaderPath())
                     {
 						ImGuiH::DrawPropertyItem(pair.first, columeWidth, [&](){
@@ -189,7 +189,7 @@ namespace Spices {
             {
                 SPICES_PROFILE_ZONEN("ImguiMaterialPanel::TextureParameter");
 
-                DrawParameter("Texture", [&](){
+                ImGuiH::DrawTreeTitle("Texture", nullptr, [&](){
                     material->GetTextureParams().for_each([&](const auto& k, const auto& v) {
   
                         ImGuiH::DrawPropertyItem(k, columeWidth, [&](){
@@ -210,74 +210,33 @@ namespace Spices {
             {
                 SPICES_PROFILE_ZONEN("ImguiMaterialPanel::ConstantParameter");
 
-                DrawParameter("Parameter", [&](){
-                    material->GetConstantParams().for_each([&](const std::string& k, ConstantParam& v){
+                ImGuiH::DrawTreeTitle("Parameter", nullptr, [&](){
+                    material->GetConstantParams().for_each([&](const std::string& k, ConstantParams& v){
                         ImGuiH::DrawPropertyItem(k, columeWidth, [&](){
-                            if(v.paramType == "float")
+                            if (v.value.paramType == "float")
                             {
-                                float f = std::any_cast<float>(v.paramValue);
-                                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-                                if(ImGui::DragFloat("##", &f, 0.01f, 0.0f, 0.0f, "%.2f"))
-                                {
-                                    v.paramValue = f;
-                                    material->UpdateMaterial();
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
-                                }
-                                ImGui::PopItemWidth();
+                                ImGuiH::DrawMaterialConstParams<float>(material, ImGuiDataType_Float, 1, k, v);
                             }
-                            else if(v.paramType == "float2")
+                            else if (v.value.paramType == "float2")
                             {
-                                const glm::vec2 value = std::any_cast<glm::vec2>(v.paramValue);
-                                float f[2] = { value.x, value.y };
-                                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-                                if(ImGui::DragFloat2("##", f, 0.01f, 0.0f, 0.0f, "%.2f"))
-                                {
-                                    v.paramValue = glm::vec2(f[0], f[1]);
-                                    material->UpdateMaterial();
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
-                                }
-                                ImGui::PopItemWidth();
+                                ImGuiH::DrawMaterialConstParams<glm::vec2>(material, ImGuiDataType_Float, 2, k, v);
                             }
-                            else if(v.paramType == "float3")
+                            else if (v.value.paramType == "float3")
                             {
-                                const glm::vec3 value = std::any_cast<glm::vec3>(v.paramValue);
-                                float f[3] = { value.x, value.y , value.z };
-                                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-                                if(ImGui::DragFloat3("##", f, 0.01f, 0.0f, 0.0f, "%.2f"))
-                                {
-                                    v.paramValue = glm::vec3(f[0], f[1], f[2]);
-                                    material->UpdateMaterial();
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
-                                }
-                                ImGui::PopItemWidth();
+                                ImGuiH::DrawMaterialConstParams<glm::vec3>(material, ImGuiDataType_Float, 3, k, v);
                             }
-                            else if(v.paramType == "float4")
+                            else if (v.value.paramType == "float4")
                             {
-                                const glm::vec4 value = std::any_cast<glm::vec4>(v.paramValue);
-                                float f[4] = { value.x, value.y, value.z, value.w };
-                                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-                                if(ImGui::DragFloat4("##", f, 0.01f, 0.0f, 0.0f, "%.2f"))
-                                {
-                                    v.paramValue = glm::vec4(f[0], f[1], f[2], f[3]);
-                                    material->UpdateMaterial();
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
-                                }
-                                ImGui::PopItemWidth();
+                                ImGuiH::DrawMaterialConstParams<glm::vec4>(material, ImGuiDataType_Float, 4, k, v);
                             }
-                            else if(v.paramType == "int")
+                            else if (v.value.paramType == "int")
                             {
-                                int value = std::any_cast<int>(v.paramValue);
-                                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-                                if(ImGui::DragInt("##", &value, 0.2f))
-                                {
-                                    v.paramValue = value;
-                                    material->UpdateMaterial();
-                                    FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
-                                }
-                                ImGui::PopItemWidth();
+                                ImGuiH::DrawMaterialConstParams<int>(material, ImGuiDataType_S32, 1, k, v);
                             }
-                            ImGui::SameLine();
-                            ImGuiH::DrawResetIcon(false);
+                            else if (v.value.paramType == "bool")
+                            {
+
+                            }
                         });
                         return false;
                     });

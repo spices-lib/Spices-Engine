@@ -1,6 +1,6 @@
 /**
-* @file ImguiEdit.h
-* @brief The ImguiEdit Class Definitions.
+* @file ImguiPreferences.h
+* @brief The ImguiPreferences Class Definitions.
 * @author Spices.
 */
 
@@ -9,17 +9,17 @@
 #include "Slate/Imgui/ImguiUtils.h"
 
 namespace Spices {
-	
+
 	/**
-	* @brief Forward declare. 
+	* @brief Forward declare.
 	*/
-	class ImguiPreferences;
-	
+	class ImguiDisplayOptions;
+
 	/**
-	* @brief The ImguiEdit Class.
+	* @brief The ImguiPreferences Class.
 	* This class defines how to render a edit menu.
 	*/
-	class ImguiEdit : public ImguiSlate
+	class ImguiPreferences : public ImguiSlate
 	{
 	public:
 
@@ -28,15 +28,15 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiEdit(
-			const std::string& panelName,
-			FrameInfo& frameInfo
+		ImguiPreferences(
+			const std::string& panelName ,
+			FrameInfo&         frameInfo
 		);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiEdit() = default;
+		virtual ~ImguiPreferences() = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
@@ -56,7 +56,7 @@ namespace Spices {
 
 	private:
 
-		std::shared_ptr<ImguiPreferences> m_ImguiPreferences;
+		std::shared_ptr<ImguiDisplayOptions> m_ImguiDisplayOptions;
 	};
 
 }

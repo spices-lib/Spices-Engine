@@ -18,3 +18,67 @@ Shaders:
   - Stage: frag
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: ViewportGridRenderer.ViewportGrid.Default
+
+# @brief Material Parameters usages. 
+Parameters:
+  
+  # @brief Usage: show.
+  - Name: show
+    # @brief [Parameter Type, Parameter Value]
+    Value: [bool, y]
+  
+  # @brief Usage: axisSpacing.
+  - Name: axisSpacing
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 10.0]
+    MinValue: [float, 2.0]
+    MaxValue: [float, 100.0]
+
+  # @brief Usage: gridViewAdaptionRatio.
+  - Name: gridViewAdaptionRatio
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 2.0]
+    MinValue: [float, 1.0]
+    MaxValue: [float, 10.0]
+  
+  # @brief Usage: fontSize.
+  - Name: fontSize
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float2, [8.0, 15.0]]
+    MinValue: [float2, [1.0, 2.0]]
+    MaxValue: [float2, [16.0, 30.0]]
+    
+  # @brief Usage: gridWidthScale.
+  - Name: gridWidthScale
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 1.0]
+    MinValue: [float, 0.1]
+    MaxValue: [float, 10.0]
+    
+  # @brief Usage: gridColor.
+  - Name: gridColor
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float3, [0.2, 0.2, 0.2]]
+    MinValue: [float3, [0.0, 0.0, 0.0]]
+    MaxValue: [float3, [1.0, 1.0, 1.0]]
+    
+  # @brief Usage: fade.
+  - Name: fade
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 1.0]
+    MinValue: [float, 0.1]
+    MaxValue: [float, 10.0]
+    
+  # @brief Usage: xAxisColor.
+  - Name: xAxisColor
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float3, [1.0, 0.0, 0.0]]
+    MinValue: [float3, [0.0, 0.0, 0.0]]
+    MaxValue: [float3, [1.0, 1.0, 1.0]]
+    
+  # @brief Usage: yAxisColor.
+  - Name: yAxisColor
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float3, [0.0, 0.0, 1.0]]
+    MinValue: [float3, [0.0, 0.0, 0.0]]
+    MaxValue: [float3, [1.0, 1.0, 1.0]]
