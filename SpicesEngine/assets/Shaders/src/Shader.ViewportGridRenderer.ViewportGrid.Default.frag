@@ -27,7 +27,8 @@ struct MaterialParameter
     vec2  fontSize;
     float gridWidthScale;
     vec3  gridColor;
-    float fade;
+    float viewFade;
+    float upFade;
     vec3  xAxisColor;
     vec3  yAxisColor;
     bool  enable;
@@ -151,13 +152,13 @@ vec4 DrawEditorGridLines(in vec3 sd, in float t, in int l)
     vec2 grid      = abs(fract(uv - 0.5f) - 0.5f) / d;
     float line     = 1.0f - min(min(grid.x, grid.y), 1.0f);
     vec4 color     = vec4(materialParam.gridColor, line);
-    color.w       *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.fade);
+    color.w       *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.viewFade);
 
     /**
     * @brief Draw x/z axis.
     */
-    if (sd.x > -minx * Pow(l) && sd.x < minx * Pow(l)) color.xyz = materialParam.xAxisColor;
-    if (sd.z > -minz * Pow(l) && sd.z < minz * Pow(l)) color.xyz = materialParam.yAxisColor;
+    if (sd.x > -minx * Pow(l) && sd.x < minx * Pow(l)) color.xyz = materialParam.yAxisColor;
+    if (sd.z > -minz * Pow(l) && sd.z < minz * Pow(l)) color.xyz = materialParam.xAxisColor;
 
     return color;
 }
@@ -185,7 +186,7 @@ vec4 DrawEditorGridDigitalNumber(in vec4 color, in vec3 sd, in float t, in int l
             if(floor(uv.x) < 0.1f) vxl++;
             if(floor(mod(v.x, Pow(l + 2))) != 0.0f)
             {
-                xa        *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.fade);
+                xa        *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.viewFade);
             }
             return mix(color, vec4(materialParam.xAxisColor, xa), PrintValue(duv, vec2(0.0f), materialParam.fontSize ,v.x , vxl, 0.0f));
         }
@@ -199,7 +200,7 @@ vec4 DrawEditorGridDigitalNumber(in vec4 color, in vec3 sd, in float t, in int l
             if(floor(uv.y) < 0.1f) vyl++;
             if(floor(mod(v.y, Pow(l + 2))) != 0.0f)
             {
-                ya        *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.fade);
+                ya        *= 1.0f - pow(smoothstep(Pow(-1) * ViewAdaption() * Pow(l), ViewAdaption() * Pow(l), t), materialParam.viewFade);
             }
             return mix(color, vec4(materialParam.yAxisColor, ya), PrintValue(duv, vec2(0.0f), materialParam.fontSize ,v.y , vyl, 0.0f));
         }
@@ -268,7 +269,7 @@ void main()
     vec4 b = DrawEditorGridLines(sd, t, level + 1);
     vec4 c = DrawEditorGridDigitalNumber(max(a, b), sd, t, level);
     
-    c.w   *= mix(0.0f, 1.0f, max(dot(direction.xyz, vec3(0.0f, -1.0f, 0.0f)), 0.0f));
+    c.w   *= mix(0.0f, 1.0f, pow(max(dot(direction.xyz, vec3(0.0f, -1.0f, 0.0f)), 0.0f), materialParam.upFade));
     if(c.w < 0.01f) discard;
     outSceneColor    = c;
 }

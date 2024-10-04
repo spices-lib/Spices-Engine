@@ -57,12 +57,19 @@ Parameters:
     MinValue: [float3, [0.0, 0.0, 0.0]]
     MaxValue: [float3, [1.0, 1.0, 1.0]]
     
-  # @brief Usage: fade.
-  - Name: fade
+  # @brief Usage: viewFade.
+  - Name: viewFade
     # @brief [Parameter Type, Parameter Value]
     Value: [float, 1.0]
     MinValue: [float, 0.1]
     MaxValue: [float, 10.0]
+      
+  # @brief Usage: upFade.
+  - Name: upFade
+    # @brief [Parameter Type, Parameter Value]
+    Value: [ float, 1.0 ]
+    MinValue: [ float, 0.1 ]
+    MaxValue: [ float, 10.0 ]
     
   # @brief Usage: xAxisColor.
   - Name: xAxisColor

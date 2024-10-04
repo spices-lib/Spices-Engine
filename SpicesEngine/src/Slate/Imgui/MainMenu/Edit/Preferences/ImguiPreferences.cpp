@@ -43,9 +43,13 @@ namespace Spices {
             SPICES_PROFILE_ZONEN("ImguiPreferences::Reset");
 
             ImGui::Spacing();
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
-            ImGui::Button("Reset to Default");
-            ImGui::PopStyleColor();
+            ImGui::SetWindowFontScale(1.15f);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.204f, 0.78f, 1.0f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
+            ImGui::Button(" Reset to Default ");
+            ImGui::PopStyleColor(2);
+            ImGui::SetWindowFontScale(1.0f);
+            ImGui::SetItemTooltip("This will reset all settings back to installed state after the application is restarted");
             ImGui::Spacing();
         }
 
@@ -65,6 +69,8 @@ namespace Spices {
             {
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4.0f, 4.0f));
+                ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.267f, 0.282f, 0.282f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.121f, 0.129f, 0.137f, 1.0f));
 
                 if (ImGui::MenuItem(ICON_TEXT(" ", Animation))) {}
                 if (ImGui::MenuItem(ICON_TEXT(" ", Audio))) {}
@@ -92,6 +98,7 @@ namespace Spices {
                 if (ImGui::MenuItem(ICON_TEXT(" ", Visual Scripting))) {}
                 if (ImGui::MenuItem(ICON_TEXT(" ", Visualization))) {}
 
+                ImGui::PopStyleColor(2);
                 ImGui::PopStyleVar(2);
             }
             ImGui::EndChild();
