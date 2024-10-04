@@ -52,6 +52,30 @@ namespace Spices {
                         {
                             ImGuiH::DrawMaterialConstParams<int>(material, ImGuiDataType_S32, 1, k, v);
                         }
+                        else if (v.value.paramType == "bool")
+                        {
+                            bool  f = std::any_cast<bool>(v.value.paramValue);
+                            bool nf = f;
+                            bool df = std::any_cast<bool>(v.defaultValue.paramValue);
+
+                            const float seperatorWidthS = ImGuiH::GetLineItemSize().x - 3.0f * ImGui::GetStyle().IndentSpacing;
+                            ImGuiH::Checkbox(&nf);
+                            if (nf != f)
+                            {
+                                v.value.paramValue = nf;
+                                material->UpdateMaterial();
+                            }
+                            ImGui::SameLine();
+                            ImGui::PushItemWidth(100.0f);
+                            ImGui::SeparatorText("##");
+                            ImGui::PopItemWidth();
+                            ImGui::SameLine(ImGui::GetContentRegionAvail().x - ImGui::GetStyle().ItemSpacing.x);
+                            if (ImGuiH::DrawResetIcon(f != df))
+                            {
+                                v.value.paramValue = df;
+                                material->UpdateMaterial();
+                            }
+                        }
                     });
                     return false;
                 });

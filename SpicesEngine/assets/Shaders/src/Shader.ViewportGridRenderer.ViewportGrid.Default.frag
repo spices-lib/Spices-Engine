@@ -22,7 +22,6 @@
 */
 struct MaterialParameter
 {
-    bool  show;
     float axisSpacing;
     float gridViewAdaptionRatio;
     vec2  fontSize;
@@ -31,6 +30,7 @@ struct MaterialParameter
     float fade;
     vec3  xAxisColor;
     vec3  yAxisColor;
+    bool  enable;
 };
 
 #include "Header/ShaderBindLessMaterial.glsl"
@@ -227,7 +227,7 @@ void main()
 {
     ExplainMaterialParameter(push.descAddress);
 
-    if (!materialParam.show) discard;
+    if (!materialParam.enable) discard;
     vec2 d         = fragInput.texCoord * 2.0f - 1.0f;
 
     /**

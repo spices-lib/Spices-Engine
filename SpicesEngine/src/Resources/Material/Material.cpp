@@ -262,7 +262,7 @@ namespace Spices {
 				}
 				else if (ref.paramType == "bool")
 				{
-					*static_cast<int*>(pt)           = std::any_cast<bool>(ref.paramValue);
+					*static_cast<bool*>(pt)          = std::any_cast<bool>(ref.paramValue);
 					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(bool), size);
 					m_MaterialParameterBuffer->Flush();
 				}
@@ -403,7 +403,7 @@ namespace Spices {
 				}
 				else if (ref.paramType == "bool")
 				{
-					*static_cast<int*>(pt)           = std::any_cast<bool>(ref.paramValue);
+					*static_cast<bool*>(pt)           = std::any_cast<bool>(ref.paramValue);
 					m_MaterialParameterBuffer->WriteToBuffer(pt, sizeof(bool), size);
 					m_MaterialParameterBuffer->Flush();
 				}

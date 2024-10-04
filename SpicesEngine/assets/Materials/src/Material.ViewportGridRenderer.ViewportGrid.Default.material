@@ -22,11 +22,6 @@ Shaders:
 # @brief Material Parameters usages. 
 Parameters:
   
-  # @brief Usage: show.
-  - Name: show
-    # @brief [Parameter Type, Parameter Value]
-    Value: [bool, y]
-  
   # @brief Usage: axisSpacing.
   - Name: axisSpacing
     # @brief [Parameter Type, Parameter Value]
@@ -82,3 +77,8 @@ Parameters:
     Value: [float3, [0.0, 0.0, 1.0]]
     MinValue: [float3, [0.0, 0.0, 0.0]]
     MaxValue: [float3, [1.0, 1.0, 1.0]]
+    
+  # @brief Usage: enable.
+  - Name: enable
+    # @brief [Parameter Type, Parameter Value]
+    Value: [bool, y]
