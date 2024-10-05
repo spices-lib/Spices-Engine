@@ -229,4 +229,28 @@ namespace SpicesTest {
 		EXPECT_EQ(m0.item_location("7"), UINT32_MAX);
 		EXPECT_EQ(m0.item_location("8"), UINT32_MAX);
 	}
+
+	/**
+	* @brief Testing if has_value test successfully.
+	*/
+	TEST_F(runtime_memory_block_test, HasValue) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		/**
+		* @brief item location in valid item.
+		*/
+		EXPECT_EQ(m0.has_value("1"), true);
+		EXPECT_EQ(m0.has_value("2"), true);
+		EXPECT_EQ(m0.has_value("3"), true);
+		EXPECT_EQ(m0.has_value("4"), true);
+
+		/**
+		* @brief item location in unvalid item.
+		*/
+		EXPECT_EQ(m0.has_value("5"), false);
+		EXPECT_EQ(m0.has_value("6"), false);
+		EXPECT_EQ(m0.has_value("7"), false);
+		EXPECT_EQ(m0.has_value("8"), false);
+	}
 }

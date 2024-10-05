@@ -296,6 +296,8 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("BuildMaterial::Build Local ConstantParameter Block");
 
+			m_Buffermemoryblocks = scl::runtime_memory_block();
+
 			m_ConstantParams.for_each([&](const std::string& k, const ConstantParams& v) {
 				m_Buffermemoryblocks.add_element(k, v.value.paramType);
 				return false;

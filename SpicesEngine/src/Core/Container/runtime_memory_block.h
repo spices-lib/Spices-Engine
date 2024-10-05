@@ -106,6 +106,13 @@ namespace scl {
         * @return Returns item location.
         */
         size_t item_location(const std::string& name);
+
+        /**
+        * @brief Determain is item inside this container.
+        * @param[in] name Item Name.
+        * @return Returns true if item inside this container.
+        */
+        bool has_value(const std::string& name);
     };
 
     template <typename T>

@@ -95,4 +95,15 @@ namespace scl {
         if (object_.find(name) == object_.end()) return UINT32_MAX;
         return object_[name];
     }
+
+    bool runtime_memory_block::has_value(const std::string& name)
+    {
+        SPICES_PROFILE_ZONE;
+
+        /**
+        * @brief Return true if finded.
+        */
+        if (object_.find(name) != object_.end()) return true;
+        return false;
+    }
 }
