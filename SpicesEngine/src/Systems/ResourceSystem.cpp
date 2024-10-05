@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "ResourceSystem.h"
 #include "Resources/ResourcePool/ResourcePool.h"
+#include "Resources/Texture/Transcoder.h"
 
 #include "Resources/Texture/Texture.h"
 #include "Resources/Material/Material.h"
@@ -19,6 +20,11 @@ namespace Spices {
 	void ResourceSystem::OnSystemInitialize()
 	{
 		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Init Texture Resource Transcoder.
+		*/
+		Transcoder::Init();
 
 		/**
 		* @brief Create Default Resource in different ResourccePool.

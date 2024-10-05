@@ -59,6 +59,8 @@ project "WhittedRT"
 		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
 		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
 		"%{IncludeDir.METIS}/include",         -- Library: METIS Header Folder.
+		"%{IncludeDir.basic_universal}",       -- Library: basic_universal Header Folder.
+		"%{IncludeDir.ktx}",                   -- Library: ktx Header Folder.
 	}
 
 	-- In Visual Studio, it only works when generated a new solution, remember update solution will not works.

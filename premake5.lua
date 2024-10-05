@@ -40,11 +40,13 @@ group ""
 
 -- Project Dependencies.
 group "Dependencies"
-	include "SpicesEngine/vendor/GLFW/"        -- Dependency GLFW.
-	include "SpicesEngine/vendor/imgui"        -- Dependency imgui.
-	include "SpicesEngine/vendor/yaml-cpp"     -- Dependency yaml-cpp.
-	include "SpicesEngine/vendor/implot"       -- Dependency implot.
-	include "SpicesEngine/vendor/GKlib"        -- Dependency GKlib.
-	include "SpicesEngine/vendor/METIS"        -- Dependency METIS.
-	include "SpicesTest/vendor/googletest"     -- Dependency googletest.
+	include "SpicesEngine/vendor/GLFW/"           -- Dependency GLFW.
+	include "SpicesEngine/vendor/imgui"           -- Dependency imgui.
+	include "SpicesEngine/vendor/yaml-cpp"        -- Dependency yaml-cpp.
+	include "SpicesEngine/vendor/implot"          -- Dependency implot.
+	include "SpicesEngine/vendor/GKlib"           -- Dependency GKlib.
+	include "SpicesEngine/vendor/METIS"           -- Dependency METIS.
+	include "SpicesEngine/vendor/basic_universal" -- Dependency basic_universal.
+	include "SpicesEngine/vendor/KTX_Software"    -- Dependency ktx.
+	include "SpicesTest/vendor/googletest"        -- Dependency googletest.
 group ""
