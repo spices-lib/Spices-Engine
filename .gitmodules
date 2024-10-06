@@ -43,3 +43,6 @@
 [submodule "SpicesEngine/vendor/METIS"]
 	path = SpicesEngine/vendor/METIS
 	url = https://github.com/spices-lib/METIS.git
+[submodule "SpicesEngine/vendor/KTX-Software"]
+	path = SpicesEngine/vendor/KTX-Software
+	url = https://github.com/spices-lib/KTX-Software.git
