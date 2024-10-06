@@ -107,8 +107,7 @@ project "SpicesEngine"
 		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
 		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
 		"%{IncludeDir.METIS}/include",         -- Library: METIS Header Folder.
-		"%{IncludeDir.basic_universal}",       -- Library: basic_universal Header Folder.
-		"%{IncludeDir.ktx}",                   -- Library: ktx Header Folder.
+		"%{IncludeDir.ktx}/include",           -- Library: ktx Header Folder.
 	}
 
 	-- The Solution Dependency
@@ -123,7 +122,6 @@ project "SpicesEngine"
 		"%{Library.NvPerf}",                  -- Dependency: NvPerf
 		"%{Library.HoudiniEnginelib}",        -- Dependency: HoudiniEngine
 		"METIS",                              -- Dependency: METIS
-		"basic_universal",                    -- Dependency: basic_universal
 		"ktx",                                -- Dependency: ktx
 	}
 

@@ -10,6 +10,11 @@
 
 namespace Spices {
 
+	VkPhysicalDeviceProperties VulkanDevice::m_DeviceProperties{};
+	VkPhysicalDeviceFeatures   VulkanDevice::m_DeviceFeatures{};
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR VulkanDevice::m_RayTracingProperties{};
+	VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV VulkanDevice::m_DGCProperties{};
+
 	VulkanDevice::VulkanDevice(
 		VulkanState&  vulkanState
 	)
@@ -439,6 +444,7 @@ namespace Spices {
 		* @Fetch all features.
 		*/ 
 		vkGetPhysicalDeviceFeatures2(device, &deviceFeatures);
+		m_DeviceFeatures = deviceFeatures.features;
 
 		/**
 		* @brief Just return true for we do not need a specific feature supported now.

@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanDebugUtils.h"
+#include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "VulkanFunctions.h"
 #include "vk_mem_alloc.h"
 

@@ -38,7 +38,7 @@ namespace Spices {
 			transformComp1.SetRotation({-180.0f, 0.0f, -180.0f});
 			
 			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_01");
-			std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("not_a_stanford_bunny");
+			std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_02");
 			std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_03");
 			std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
 			std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
@@ -48,8 +48,8 @@ namespace Spices {
 			pack3->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			pack5->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			//std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
-			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack2).Build();
+			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
+			//std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack2).Build();
 			meshComp.SetMesh(mesh);
 		}
 

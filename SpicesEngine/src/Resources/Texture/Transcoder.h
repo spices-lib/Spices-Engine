@@ -1,7 +1,6 @@
 #pragma once
 #include "Core/Core.h"
-
-#include <transcoder/basisu_transcoder.h>
+#include <ktxvulkan.h>
 
 namespace Spices {
 
@@ -13,6 +12,10 @@ namespace Spices {
 		virtual ~Transcoder() = default;
 
 		static void Init();
+
+		static bool SaveSrcToKTX(const std::string& filePath, const unsigned char* data, int width, int height);
+
+		static bool LoadFromKTX(const std::string& filePath, ktxVulkanTexture* vkTexture);
 
 	private:
 

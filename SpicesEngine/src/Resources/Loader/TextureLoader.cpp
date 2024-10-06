@@ -10,6 +10,7 @@
 #include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Core/Library/FileLibrary.h"
 #include "Systems/ResourceSystem.h"
+#include "Resources/Texture/Transcoder.h"
 
 #include <stb_image.h>
 
@@ -22,30 +23,123 @@ namespace Spices {
 	* @brief Const variable: Original Image File Path.
 	*/
 	const std::string defaultTexturePath = "Textures/src/";
+	const std::string binTexturePath     = "Textures/bin/";
 
 	void TextureLoader::Load(const std::string& fileName, Texture2D* outTexture)
 	{
 		SPICES_PROFILE_ZONE;
 
-		bool isFind = false;
-		std::string filePath;
+		SearchFile(
+			fileName, 
+			[&](const std::string& it) {
+				LoadBin(fileName, it, outTexture);
+			}, 
+			[&](const std::string& it) {
+				LoadSrc(fileName, it, outTexture);
+			}
+		);
+	}
+
+	void TextureLoader::Load(const std::string& fileName, Texture2DCube* outTexture)
+	{
+
+	}
+
+	bool TextureLoader::SearchFile(const std::string& fileName, std::function<void(const std::string&)> binF, std::function<void(const std::string&)> srcF)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
+
 		for (auto& it : ResourceSystem::GetSearchFolder())
 		{
-			filePath = it + defaultTexturePath + fileName;
+			std::string filePath = it + binTexturePath + splitString[0] + ".ktx";
 			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
 			{
-				isFind = true;
-				break;
+				binF(it);
+				return true;
 			}
 		}
-		if (!isFind)
+		for (auto& it : ResourceSystem::GetSearchFolder())
 		{
-			std::stringstream ss;
-			ss << "File: " << filePath << " Not Find";
-
-			SPICES_CORE_ERROR(ss.str());
-			return;
+			std::string filePath = it + defaultTexturePath + fileName;
+			if (FileLibrary::FileLibrary_Exists(filePath.c_str()))
+			{
+				srcF(it);
+				return true;
+			}
 		}
+
+		std::stringstream ss;
+		ss << "File: " << fileName << " Not Find";
+
+		SPICES_CORE_ERROR(ss.str());
+		return false;
+	}
+
+	bool TextureLoader::LoadBin(const std::string& fileName, const std::string& it, Texture2D* outTexture)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
+		std::string binPath = it + binTexturePath + splitString[0] + ".ktx";
+
+		ktxVulkanTexture vkTexture;
+		Transcoder::LoadFromKTX(binPath, &vkTexture);
+
+		outTexture->m_Resource       = std::make_shared<VulkanImage>(VulkanRenderBackend::GetState());
+		auto resourceptr             = outTexture->GetResource<VulkanImage>();
+
+		resourceptr->m_IsBin         = true;
+		resourceptr->m_Image         = vkTexture.image;
+		resourceptr->m_Format        = vkTexture.imageFormat;
+		resourceptr->m_ImageMemory   = vkTexture.deviceMemory;
+		resourceptr->m_Height        = vkTexture.height;
+		resourceptr->m_Width         = vkTexture.width;
+		resourceptr->m_Layers        = vkTexture.layerCount;
+		resourceptr->m_MipLevels     = vkTexture.levelCount;
+
+		/**
+		* @brief Create Image View.
+		*/
+		resourceptr->CreateImageView(
+			VK_FORMAT_R8G8B8A8_UNORM,
+			VK_IMAGE_VIEW_TYPE_2D,
+			VK_IMAGE_ASPECT_COLOR_BIT
+		);
+
+		/**
+		* @brief Create Image Sampler.
+		*/
+		resourceptr->CreateSampler();
+
+		return true;
+	}
+
+	bool TextureLoader::LoadSrc(const std::string& fileName, const std::string& it, Texture2D* outTexture)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
+		std::string filePath = it + defaultTexturePath + fileName;
+		std::string binPath  = it + binTexturePath + splitString[0] + ".ktx";
+
+		/**
+		* @brief Load Texture data.
+		*/
+		int width;
+		int height;
+		int texChannels;
+		stbi_uc* pixels = stbi_load(filePath.c_str(), &width, &height, &texChannels, STBI_rgb_alpha);
+		if (!pixels)
+		{
+			SPICES_CORE_ERROR("Failed to load texture image!");
+		}
+
+		/**
+		* @brief Save to disk.
+		*/
+		Transcoder::SaveSrcToKTX(binPath, pixels, width, height);
 
 		/**
 		* @brief Instance the VulkanImage as Texture2D Resource.
@@ -54,19 +148,11 @@ namespace Spices {
 		auto resourceptr = outTexture->GetResource<VulkanImage>();
 
 		/**
-		* @brief Load Texture data.
+		* @brief Set resource values.
 		*/
-		int texChannels;
-		stbi_uc* pixels = stbi_load(filePath.c_str(), &resourceptr->m_Width, &resourceptr->m_Height, &texChannels, STBI_rgb_alpha);
-		if (!pixels)
-		{
-			SPICES_CORE_ERROR("Failed to load texture image!");
-		}
-
-		/**
-		* @brief Set resource miplevels.
-		*/
-		resourceptr->m_MipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(resourceptr->m_Width, resourceptr->m_Height)))) + 1;
+		resourceptr->m_Width       = width;
+		resourceptr->m_Height      = height;
+		resourceptr->m_MipLevels   = static_cast<uint32_t>(std::floor(std::log2(std::max(resourceptr->m_Width, resourceptr->m_Height)))) + 1;
 
 		/**
 		* @brief Get Texture bytes.
@@ -158,9 +244,7 @@ namespace Spices {
 		* @brief Create Image Sampler.
 		*/
 		resourceptr->CreateSampler();
-	}
 
-	void TextureLoader::Load(const std::string& fileName, Texture2DCube* outTexture)
-	{
+		return true;
 	}
 }

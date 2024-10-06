@@ -45,5 +45,13 @@ namespace Spices {
 		* @todo finish it.
 		*/
 		static void Load(const std::string& fileName, Texture2DCube* outTexture);
+
+	private:
+
+		static bool SearchFile(const std::string& fileName, std::function<void(const std::string&)> binF, std::function<void(const std::string&)> srcF);
+
+		static bool LoadBin(const std::string& fileName, const std::string& it, Texture2D* outTexture);
+		static bool LoadSrc(const std::string& fileName, const std::string& it, Texture2D* outTexture);
+
 	};
 }

@@ -12,6 +12,7 @@
 #include "Render/Renderer/RendererPass/RendererPass.h"
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
+#include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerfReportGenerator.h"
 /***************************************************************************************************/
 

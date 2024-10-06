@@ -158,13 +158,19 @@ namespace Spices {
 		* @brief Get RayTracingPipelineProperties.
 		* @return Returns RayTracingPipelineProperties.
 		*/
-		inline VkPhysicalDeviceRayTracingPipelinePropertiesKHR& GetRTPipelineProperties() { return m_RayTracingProperties; }
+		inline static VkPhysicalDeviceRayTracingPipelinePropertiesKHR& GetRTPipelineProperties() { return m_RayTracingProperties; }
 
 		/**
 		* @brief Get DeviceGeneratedCommandsPropertiesNV.
 		* @return Returns DeviceGeneratedCommandsPropertiesNV.
 		*/
-		inline VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV& GetDGCProperties() { return m_DGCProperties; };
+		inline static VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV& GetDGCProperties() { return m_DGCProperties; };
+
+		/**
+		* @brief Get VkPhysicalDeviceFeatures.
+		* @return Returns VkPhysicalDeviceFeatures.
+		*/
+		inline static VkPhysicalDeviceFeatures& GetDeviceFeatures() { return m_DeviceFeatures; };
 
 	private:
 
@@ -194,7 +200,7 @@ namespace Spices {
 		* @param[in] device VkPhysicalDevice.
 		* @return Returns true if all Feature we need meet.
 		*/
-		static bool IsFeatureMeetDemand(const VkPhysicalDevice& device);
+		bool IsFeatureMeetDemand(const VkPhysicalDevice& device);
 
 		/**
 		* @brief Get all physical device extension requirements our engine needed.
@@ -241,17 +247,22 @@ namespace Spices {
 		/**
 		* @brief Selected Physical Device Properties.
 		*/
-		VkPhysicalDeviceProperties m_DeviceProperties {};
+		static VkPhysicalDeviceProperties m_DeviceProperties;
+
+		/**
+		* @brief Selected Physical Device Features.
+		*/
+		static VkPhysicalDeviceFeatures m_DeviceFeatures;
 
 		/**
 		* @brief Device RayTracing Properties.
 		*/
-		VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_RayTracingProperties{};
+		static VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_RayTracingProperties;
 
 		/**
 		* @brief Device DGC Properties.
 		*/
-		VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV m_DGCProperties{};
+		static VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV m_DGCProperties;
 
 		/**
 		* @brief QueueHelper.

@@ -46,7 +46,6 @@ group "Dependencies"
 	include "SpicesEngine/vendor/implot"          -- Dependency implot.
 	include "SpicesEngine/vendor/GKlib"           -- Dependency GKlib.
 	include "SpicesEngine/vendor/METIS"           -- Dependency METIS.
-	include "SpicesEngine/vendor/basic_universal" -- Dependency basic_universal.
-	include "SpicesEngine/vendor/KTX_Software"    -- Dependency ktx.
+	include "SpicesEngine/vendor/KTX-Software"    -- Dependency ktx.
 	include "SpicesTest/vendor/googletest"        -- Dependency googletest.
 group ""

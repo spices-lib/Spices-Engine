@@ -73,22 +73,34 @@ namespace Spices {
 		vkDestroySampler(m_VulkanState.m_Device, m_TextureSampler, nullptr);
 		vkDestroyImageView(m_VulkanState.m_Device, m_ImageView, nullptr);
 
+		if (m_IsBin)
+		{
+			/**
+			* @brief Destroy VkImage.
+			*/
+			vkDestroyImage(m_VulkanState.m_Device, m_Image, nullptr);
+			vkFreeMemory(m_VulkanState.m_Device, m_ImageMemory, nullptr);
+		}
+		else
+		{
+
 #ifdef VMA_ALLOCATOR
 
-		/**
-		* @brief Destroy VkImage.
-		*/
-		vmaDestroyImage(m_VulkanState.m_VmaAllocator, m_Image, m_Alloc);
+			/**
+			* @brief Destroy VkImage.
+			*/
+			vmaDestroyImage(m_VulkanState.m_VmaAllocator, m_Image, m_Alloc);
 
 #else
 
-		/**
-		* @brief Destroy VkImage.
-		*/
-		vkDestroyImage(m_VulkanState.m_Device, m_Image, nullptr);
-		vkFreeMemory(m_VulkanState.m_Device, m_ImageMemory, nullptr);
+			/**
+			* @brief Destroy VkImage.
+			*/
+			vkDestroyImage(m_VulkanState.m_Device, m_Image, nullptr);
+			vkFreeMemory(m_VulkanState.m_Device, m_ImageMemory, nullptr);
 
 #endif
+		}
 
 	}
 

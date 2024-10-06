@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
+#include <ktxvulkan.h>
 
 namespace Spices {
 
@@ -256,21 +257,20 @@ namespace Spices {
 		*/
 		VkImage m_Image{};
 
-#ifdef VMA_ALLOCATOR
+		/**
+		* @brief True if image is created from bin file.
+		*/
+		bool m_IsBin = false;
 
 		/**
 		* @brief VMA allocation.
 		*/
 		VmaAllocation m_Alloc{};
 
-#else
-
 		/**
 		* @brief The image video memory.
 		*/
 		VkDeviceMemory m_ImageMemory{};
-
-#endif
 
 		/**
 		* @brief The image view.
@@ -303,8 +303,9 @@ namespace Spices {
 		VkDescriptorSet m_DescriptorSet{};
 
 		/**
-		* @brief Allow TextureLoader access all data.
+		* @brief Allow access all data.
 		*/
 		friend class TextureLoader;
+		friend class Transcoder;
 	};
 }

@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Debugger/Tracy/TracyProfiler.hpp"
-#include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
+
 #include "TimeStep.h"
 #include "Log/Log.h"
 
