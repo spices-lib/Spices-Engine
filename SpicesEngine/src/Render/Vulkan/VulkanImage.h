@@ -129,6 +129,23 @@ namespace Spices {
 		) const;
 
 		/**
+		* @brief Copy the Buffer's data to this VkImage.
+		* Used to create image data (include mipmaps), which owns a compressed format.
+		* @param[in] buffer The buffer we want copy from.
+		* @param[in] image The image we want copy to, usually this VkImage Object.
+		* @param[in] width The image's width.
+		* @param[in] height The image's height.
+		* @param[in] regions Specific Regions.
+		*/
+		void CopyBufferToImage(
+			VkBuffer   buffer   , 
+			VkImage    image    , 
+			uint32_t   width    , 
+			uint32_t   height   ,
+			const std::vector<VkBufferImageCopy>& regions
+		) const;
+
+		/**
 		* @breif Copy one texel data from a VkImage.
 		* @param[in] x The sampled position x.
 		* @param[in] y The sampled position y.
@@ -138,6 +155,16 @@ namespace Spices {
 			uint32_t x        , 
 			uint32_t y        , 
 			void*    out_rgba
+		);
+
+		/**
+		* @breif Copy one texel data from a VkImage.
+		* @param[in] buffer The Dst Buffer.
+		* @param[in] regions Specific Regions.
+		*/
+		void CopyImageToBuffer(
+			VkBuffer dstBuffer,
+			const std::vector<VkBufferImageCopy>& regions
 		);
 
 		/**

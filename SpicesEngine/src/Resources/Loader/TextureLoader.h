@@ -48,9 +48,35 @@ namespace Spices {
 
 	private:
 
-		static bool SearchFile(const std::string& fileName, std::function<void(const std::string&)> binF, std::function<void(const std::string&)> srcF);
+		/**
+		* @brief Search texture file and load.
+		* @param[in] fileName .
+		* @param[in] binF Load ktx file function.
+		* @param[in] srcF Load src file function.
+		* @return Returns true if load file succeed.
+		*/
+		static bool SearchFile(
+			const std::string& fileName, 
+			std::function<void(const std::string&)> binF, 
+			std::function<void(const std::string&)> srcF
+		);
 
+		/**
+		* @brief Function of load a ktx file.
+		* @param[in] fileName ktx filenme.
+		* @param[in] it file directfolder.
+		* @param[in] outTexture Pointer of texture.
+		* @return Returns true if load file succeed.
+		*/
 		static bool LoadBin(const std::string& fileName, const std::string& it, Texture2D* outTexture);
+
+		/**
+		* @brief Function of load a src file.
+		* @param[in] fileName src filenme.
+		* @param[in] it file directfolder.
+		* @param[in] outTexture Pointer of texture.
+		* @return Returns true if load file succeed.
+		*/
 		static bool LoadSrc(const std::string& fileName, const std::string& it, Texture2D* outTexture);
 
 	};

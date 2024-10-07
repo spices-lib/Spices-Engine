@@ -30,13 +30,13 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		SearchFile(
-			fileName, 
-			[&](const std::string& it) {
-				LoadBin(fileName, it, outTexture);
-			}, 
-			[&](const std::string& it) {
-				LoadSrc(fileName, it, outTexture);
-			}
+		fileName, 
+		[&](const std::string& it) {
+			LoadBin(fileName, it, outTexture);
+		}, 
+		[&](const std::string& it) {
+			LoadSrc(fileName, it, outTexture);
+		}
 		);
 	}
 
@@ -45,7 +45,11 @@ namespace Spices {
 
 	}
 
-	bool TextureLoader::SearchFile(const std::string& fileName, std::function<void(const std::string&)> binF, std::function<void(const std::string&)> srcF)
+	bool TextureLoader::SearchFile(
+		const std::string& fileName, 
+		std::function<void(const std::string&)> binF, 
+		std::function<void(const std::string&)> srcF
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -84,27 +88,105 @@ namespace Spices {
 		std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
 		std::string binPath = it + binTexturePath + splitString[0] + ".ktx";
 
-		ktxVulkanTexture vkTexture;
-		Transcoder::LoadFromKTX(binPath, &vkTexture);
+		ktxTexture2* texture = nullptr;
+		Transcoder::LoadFromKTX(binPath, texture);
 
-		outTexture->m_Resource       = std::make_shared<VulkanImage>(VulkanRenderBackend::GetState());
-		auto resourceptr             = outTexture->GetResource<VulkanImage>();
+		/**
+		* @brief Instance the VulkanImage as Texture2D Resource.
+		*/
+		outTexture->m_Resource = std::make_shared<VulkanImage>(VulkanRenderBackend::GetState());
+		auto resourceptr = outTexture->GetResource<VulkanImage>();
 
-		resourceptr->m_IsBin         = true;
-		resourceptr->m_Image         = vkTexture.image;
-		resourceptr->m_Format        = vkTexture.imageFormat;
-		resourceptr->m_ImageMemory   = vkTexture.deviceMemory;
-		resourceptr->m_Height        = vkTexture.height;
-		resourceptr->m_Width         = vkTexture.width;
-		resourceptr->m_Layers        = vkTexture.layerCount;
-		resourceptr->m_MipLevels     = vkTexture.levelCount;
+		/**
+		* @brief Instance a staginBuffer.
+		*/
+		VulkanBuffer stagingBuffer(
+			resourceptr->m_VulkanState,
+			"StagingBuffer"                     ,
+			texture->dataSize                   ,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT    ,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
+
+		/**
+		* @brief Copy the data from texture bytes to staginBuffer.
+		*/
+		stagingBuffer.WriteToBuffer(texture->pData);
+
+		/**
+		* @brief Instance the Resource.
+		*/
+		resourceptr->m_IsBin = true;
+		resourceptr->CreateImage(
+			resourceptr->m_VulkanState                          ,
+			fileName                                            ,
+			static_cast<VkImageType>(texture->numDimensions - 1),
+			texture->baseWidth                                  ,
+			texture->baseHeight                                 ,
+			texture->baseDepth                                  ,  // 1 layers.
+			VK_SAMPLE_COUNT_1_BIT                               ,  // No MASS.
+			static_cast<VkFormat>(texture->vkFormat)            ,  // Compress Format.
+			VK_IMAGE_TILING_OPTIMAL                             ,  // Tiling Optimal.
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT                     |  // Can be Used for Transfer_src
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT                     |  // Can be Used for Transfer_dst
+			VK_IMAGE_USAGE_SAMPLED_BIT                          ,  // Can be Used for Sample
+			0                                                   ,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT                 ,
+			texture->numLevels
+		);
+
+		/**
+		* @brief Transform Image Layout from undefined to transfer_dst.
+		*/
+		resourceptr->TransitionImageLayout(
+			resourceptr->m_Format               ,
+			VK_IMAGE_LAYOUT_UNDEFINED           ,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+		);
+
+		std::vector<VkBufferImageCopy> regions;
+		for (uint32_t mip_level = 0; mip_level < texture->numLevels; mip_level++)
+		{
+			VkBufferImageCopy                        region {};
+			region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+			region.imageSubresource.mipLevel       = mip_level;
+			region.imageSubresource.baseArrayLayer = 0;
+			region.imageSubresource.layerCount     = 1;
+			region.imageExtent.width               = std::max((uint32_t)1, texture->baseWidth  >> mip_level);
+			region.imageExtent.height              = std::max((uint32_t)1, texture->baseHeight >> mip_level);
+			region.imageExtent.depth               = 1;
+			region.bufferOffset                    = Transcoder::GetMipmapOffset(texture, mip_level);
+
+			regions.push_back(region);
+		}
+
+		/**
+		* @brief Copy the data from staginBuffer to Image.
+		*/
+		resourceptr->CopyBufferToImage(
+			stagingBuffer.Get()                         ,
+			resourceptr->m_Image                        ,
+			static_cast<uint32_t>(resourceptr->m_Width) ,
+			static_cast<uint32_t>(resourceptr->m_Height),
+			regions
+		);
+		
+		/**
+		* @brief Transform Image Layout from transfer_dst to shaderread.
+		*/
+		resourceptr->TransitionImageLayout(
+			resourceptr->m_Format                   ,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL    ,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		);
 
 		/**
 		* @brief Create Image View.
 		*/
 		resourceptr->CreateImageView(
-			VK_FORMAT_R8G8B8A8_UNORM,
-			VK_IMAGE_VIEW_TYPE_2D,
+			resourceptr->m_Format    ,
+			VK_IMAGE_VIEW_TYPE_2D    ,
 			VK_IMAGE_ASPECT_COLOR_BIT
 		);
 
@@ -112,6 +194,11 @@ namespace Spices {
 		* @brief Create Image Sampler.
 		*/
 		resourceptr->CreateSampler();
+
+		/**
+		* @brief Release ktx image data.
+		*/
+		Transcoder::DestroyktxTexture2(texture);
 
 		return true;
 	}
@@ -137,11 +224,6 @@ namespace Spices {
 		}
 
 		/**
-		* @brief Save to disk.
-		*/
-		Transcoder::SaveSrcToKTX(binPath, pixels, width, height);
-
-		/**
 		* @brief Instance the VulkanImage as Texture2D Resource.
 		*/
 		outTexture->m_Resource = std::make_shared<VulkanImage>(VulkanRenderBackend::GetState());
@@ -164,11 +246,11 @@ namespace Spices {
 		* @brief Instance a staginBuffer.
 		*/
 		VulkanBuffer stagingBuffer(
-			resourceptr->m_VulkanState, 
-			"StagingBuffer",
-			imageSize, 
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 
+			resourceptr->m_VulkanState           , 
+			"StagingBuffer"                      ,
+			imageSize                            , 
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT     ,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT  | 
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
@@ -187,18 +269,18 @@ namespace Spices {
 		*/
 		resourceptr->CreateImage(
 			resourceptr->m_VulkanState,
-			fileName,
-			VK_IMAGE_TYPE_2D,
-			resourceptr->m_Width,
-			resourceptr->m_Height,
-			1,                                         // 1 layers.
-			VK_SAMPLE_COUNT_1_BIT,                     // No MASS.
-			VK_FORMAT_R8G8B8A8_UNORM,                  // RGBA8 Format.
-			VK_IMAGE_TILING_OPTIMAL,                   // Tiling Optimal.
-			VK_IMAGE_USAGE_TRANSFER_SRC_BIT |          // Can be Used for Transfer_src
-			VK_IMAGE_USAGE_TRANSFER_DST_BIT |          // Can be Used for Transfer_dst
-			VK_IMAGE_USAGE_SAMPLED_BIT,                // Can be Used for Sample
-			0,
+			fileName                           ,
+			VK_IMAGE_TYPE_2D                   ,
+			resourceptr->m_Width               ,
+			resourceptr->m_Height              ,
+			1                                  ,          // 1 layers.
+			VK_SAMPLE_COUNT_1_BIT              ,          // No MASS.
+			VK_FORMAT_R8G8B8A8_UNORM           ,          // RGBA8 Format.
+			VK_IMAGE_TILING_OPTIMAL            ,          // Tiling Optimal.
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT    |          // Can be Used for Transfer_src
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT    |          // Can be Used for Transfer_dst
+			VK_IMAGE_USAGE_SAMPLED_BIT         ,          // Can be Used for Sample
+			0                                  ,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			resourceptr->m_MipLevels
 		);
@@ -207,8 +289,8 @@ namespace Spices {
 		* @brief Transform Image Layout from undefined to transfer_dst.
 		*/
 		resourceptr->TransitionImageLayout(
-			VK_FORMAT_R8G8B8A8_UNORM, 
-			VK_IMAGE_LAYOUT_UNDEFINED, 
+			resourceptr->m_Format               ,
+			VK_IMAGE_LAYOUT_UNDEFINED           , 
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
 		);
 
@@ -216,9 +298,9 @@ namespace Spices {
 		* @brief Copy the data from staginBuffer to Image.
 		*/
 		resourceptr->CopyBufferToImage(
-			stagingBuffer.Get(), 
-			resourceptr->m_Image, 
-			static_cast<uint32_t>(resourceptr->m_Width), 
+			stagingBuffer.Get()                         , 
+			resourceptr->m_Image                        , 
+			static_cast<uint32_t>(resourceptr->m_Width) , 
 			static_cast<uint32_t>(resourceptr->m_Height)
 		);
 
@@ -226,8 +308,8 @@ namespace Spices {
 		* @brief Generate Image Mipmaps.
 		*/
 		resourceptr->GenerateMipmaps(
-			VK_FORMAT_R8G8B8A8_UNORM, 
-			resourceptr->m_Width, 
+			resourceptr->m_Format ,
+			resourceptr->m_Width  , 
 			resourceptr->m_Height
 		);
 
@@ -235,8 +317,8 @@ namespace Spices {
 		* @brief Create Image View.
 		*/
 		resourceptr->CreateImageView(
-			VK_FORMAT_R8G8B8A8_UNORM, 
-			VK_IMAGE_VIEW_TYPE_2D,
+			resourceptr->m_Format     ,
+			VK_IMAGE_VIEW_TYPE_2D     ,
 			VK_IMAGE_ASPECT_COLOR_BIT
 		);
 
@@ -244,6 +326,59 @@ namespace Spices {
 		* @brief Create Image Sampler.
 		*/
 		resourceptr->CreateSampler();
+
+		ktxTexture2* ktxTexture = Transcoder::CreateKTX2Texture(resourceptr->m_Width, resourceptr->m_Height);
+		for (int i = 0; i < resourceptr->m_MipLevels; i++)
+		{
+			uint32_t w = std::max(1, resourceptr->m_Width  >> resourceptr->m_MipLevels - 1 - i);
+			uint32_t h = std::max(1, resourceptr->m_Height >> resourceptr->m_MipLevels - 1 - i);
+		
+			/**
+			* @brief Instance a VkBufferImageCopy.
+			*/
+			VkBufferImageCopy region{};
+			region.bufferOffset                    = 0;
+			region.bufferRowLength                 = 0;
+			region.bufferImageHeight               = 0;
+		
+			region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+			region.imageSubresource.mipLevel       = resourceptr->m_MipLevels - 1 - i;
+			region.imageSubresource.baseArrayLayer = 0;
+			region.imageSubresource.layerCount     = resourceptr->m_Layers;
+		
+			region.imageOffset.x                   = 0;
+			region.imageOffset.y                   = 0;
+			region.imageExtent                     = { w, h, 1 };
+		
+			uint32_t size = w * h * 4;
+		
+			/**
+			* @brief The temp buffer image date copy to.
+			*/
+			VulkanBuffer stagingbuffer(
+				resourceptr->m_VulkanState,
+				"StagingBuffer",
+				size,
+				VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			);
+			
+			resourceptr->CopyImageToBuffer(stagingbuffer.Get(), { region });
+			
+			std::vector<unsigned char> data;
+			data.resize(size);
+			stagingbuffer.WriteFromBuffer(reinterpret_cast<void*>(data.data()));
+			
+			/**
+			* @brief Write mipmap data to ktxTexture.
+			*/
+			Transcoder::WriteData(ktxTexture, resourceptr->m_MipLevels - 1 - i, data.data(), size);
+		}
+
+		/**
+		* @brief Save to disk.
+		*/
+		Transcoder::SaveToDisk(ktxTexture, binPath);
 
 		return true;
 	}

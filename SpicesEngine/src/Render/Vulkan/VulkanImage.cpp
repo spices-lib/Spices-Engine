@@ -276,7 +276,8 @@ namespace Spices {
 		VkImage  image   , 
 		uint32_t width   , 
 		uint32_t height
-	) const
+	) 
+		const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -307,6 +308,32 @@ namespace Spices {
 				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
 				1, 
 				&region
+			);
+		});
+	}
+
+	void VulkanImage::CopyBufferToImage(
+		VkBuffer buffer , 
+		VkImage  image  , 
+		uint32_t width  , 
+		uint32_t height , 
+		const std::vector<VkBufferImageCopy>& regions
+	)
+		const
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Use Custom Cmd.
+		*/
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+			vkCmdCopyBufferToImage(
+				commandBuffer,
+				buffer,
+				image,
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				static_cast<uint32_t>(regions.size()),
+				regions.data()
 			);
 		});
 	}
@@ -397,6 +424,39 @@ namespace Spices {
 		stagingbuffer.WriteFromBuffer(out_rgba);
 	}
 
+	void VulkanImage::CopyImageToBuffer(VkBuffer dstBuffer, const std::vector<VkBufferImageCopy>& regions)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/*
+		* @brief Transfer image layout from whatever to trasfer src.
+		*/
+		TransitionImageLayout(
+			m_Format,
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+		);
+
+		/**
+		* @brief Use Custom Cmd.
+		*/
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+			vkCmdCopyImageToBuffer(commandBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer, regions.size(), regions.data());
+		});
+
+		/*
+		* @brief Transfer image layout from transfer src to shader read.
+		* means only can get data from a shader read layout image.
+		* @note In SpicesEngine, we need transform layout to shader read in scenecomposerenderer first,
+		* and after that, you can do this here.
+		*/
+		TransitionImageLayout(
+			m_Format,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		);
+	}
+
 	void VulkanImage::GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight) const
 	{
 		SPICES_PROFILE_ZONE;
@@ -410,7 +470,9 @@ namespace Spices {
 		/**
 		* @brief Must require VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT.
 		*/
-		if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) 
+		if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) &&
+			 (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) &&
+			 (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT))
 		{
 			SPICES_CORE_ERROR("texture image format does not support linear blitting!");
 		}
@@ -428,9 +490,6 @@ namespace Spices {
 		barrier.subresourceRange.layerCount          = m_Layers;
 		barrier.subresourceRange.levelCount          = 1;
 
-		int32_t mipWidth = texWidth;
-		int32_t mipHeight = texHeight;
-
 		/**
 		* @brief Use Custom Cmd.
 		*/
@@ -441,11 +500,17 @@ namespace Spices {
 			*/
 			for (uint32_t i = 1; i < m_MipLevels; i++) 
 			{
-				barrier.subresourceRange.baseMipLevel = i - 1;
-				barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-				barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-				barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-				barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+				int pw = std::max(1, m_Width  >> i - 1);
+				int ph = std::max(1, m_Height >> i - 1);
+
+				int w  = std::max(1, m_Width  >> i);
+				int h  = std::max(1, m_Height >> i);
+
+				barrier.subresourceRange.baseMipLevel  = i - 1;
+				barrier.oldLayout                      = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+				barrier.newLayout                      = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+				barrier.srcAccessMask                  = VK_ACCESS_TRANSFER_WRITE_BIT;
+				barrier.dstAccessMask                  = VK_ACCESS_TRANSFER_READ_BIT;
 
 				/**
 				* @breif Pipeline Barrier.
@@ -454,20 +519,21 @@ namespace Spices {
 					VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
 					0, nullptr,
 					0, nullptr,
-					1, &barrier);
+					1, &barrier
+				);
 
 				/**
 				* @brief Instance a VkImageBlit.
 				*/
 				VkImageBlit blit{};
 				blit.srcOffsets[0]                       = { 0, 0, 0 };
-				blit.srcOffsets[1]                       = { mipWidth, mipHeight, 1 };
+				blit.srcOffsets[1]                       = { pw, ph, 1 };
 				blit.srcSubresource.aspectMask           = VK_IMAGE_ASPECT_COLOR_BIT;
 				blit.srcSubresource.mipLevel             = i - 1;
 				blit.srcSubresource.baseArrayLayer       = 0;
 				blit.srcSubresource.layerCount           = m_Layers;
 				blit.dstOffsets[0]                       = { 0, 0, 0 };
-				blit.dstOffsets[1]                       = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 };
+				blit.dstOffsets[1]                       = { w, h, 1 };
 				blit.dstSubresource.aspectMask           = VK_IMAGE_ASPECT_COLOR_BIT;
 				blit.dstSubresource.mipLevel             = i;
 				blit.dstSubresource.baseArrayLayer       = 0;
@@ -480,7 +546,8 @@ namespace Spices {
 					m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 					m_Image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 					1, &blit,
-					VK_FILTER_LINEAR);
+					VK_FILTER_LINEAR
+				);
 
 				barrier.oldLayout                        = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 				barrier.newLayout                        = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -494,10 +561,8 @@ namespace Spices {
 					VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
 					0, nullptr,
 					0, nullptr,
-					1, &barrier);
-
-				if (mipWidth > 1)  mipWidth  /= 2;
-				if (mipHeight > 1) mipHeight /= 2;
+					1, &barrier
+				);
 			}
 
 			barrier.subresourceRange.baseMipLevel        = m_MipLevels - 1;
@@ -513,7 +578,8 @@ namespace Spices {
 				VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
 				0, nullptr,
 				0, nullptr,
-				1, &barrier);
+				1, &barrier
+			);
 		});
 	}
 
@@ -600,8 +666,12 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		m_Width     = static_cast<int>(width);
+		m_Height    = static_cast<int>(height);
+		m_Layers    = layers;
+		m_ImageType = type;
+		m_Format    = format;
 		m_MipLevels = mipLevels;
-		m_Format = format;
 
 		/**
 		* @brief Instance a VkImageCreateInfo.
