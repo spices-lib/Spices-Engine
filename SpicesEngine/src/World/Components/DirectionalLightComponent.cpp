@@ -34,7 +34,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("DirectionalLightComponent Color");
 			
-			ImGuiH::DrawPropertyItem("Color", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Color", columeWidth, nullptr, [&]() {
 			
 				float itemWidth = (ImGui::GetContentRegionAvail().x - 8.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
 
@@ -140,7 +140,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("DirectionalLightComponent Intensity");
 
-			ImGuiH::DrawPropertyItem("Intensity", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Intensity", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_DirectionalLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{

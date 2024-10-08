@@ -120,7 +120,7 @@ namespace Spices {
                 
                 ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 4.0f);
                 char text[128] = "";
-                if (ImGui::InputTextWithHint("##", material->GetName().c_str(), text, 128)) {}
+                if (ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", material->GetName().c_str()), text, 128)) {}
                 ImGui::PopItemWidth();
 
                 ImGui::Columns(1);
@@ -138,7 +138,7 @@ namespace Spices {
                 ss << "/" << material->GetName();
                 ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 4.0f);
                 char textpath[128] = "";
-                if (ImGui::InputTextWithHint("##", ss.str().c_str(), textpath, 128)) {}
+                if (ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ss.str().c_str()), textpath, 128)) {}
                 ImGui::PopItemWidth();
 
                 ImGui::Columns(1);
@@ -172,11 +172,11 @@ namespace Spices {
                 ImGuiH::DrawTreeTitle("Shader", nullptr, [&](){
                     for(auto& pair : material->GetShaderPath())
                     {
-						ImGuiH::DrawPropertyItem(pair.first, columeWidth, [&](){
+						ImGuiH::DrawPropertyItem(pair.first, columeWidth, nullptr, [&](){
 
 						    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 						    char buffer[128] = {};
-						    ImGui::InputTextWithHint("##", pair.second[0].c_str(), buffer, sizeof(buffer));
+						    ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", pair.second[0].c_str()), buffer, sizeof(buffer));
 						    ImGui::PopItemWidth();
 
 						    ImGui::SameLine();
@@ -192,11 +192,11 @@ namespace Spices {
                 ImGuiH::DrawTreeTitle("Texture", nullptr, [&](){
                     material->GetTextureParams().for_each([&](const auto& k, const auto& v) {
   
-                        ImGuiH::DrawPropertyItem(k, columeWidth, [&](){
+                        ImGuiH::DrawPropertyItem(k, columeWidth, nullptr, [&](){
 
                             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                             char buffer[128] = {};
-                            ImGui::InputTextWithHint("##", v.texturePath.c_str(), buffer, sizeof(buffer));
+                            ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", v.texturePath.c_str()), buffer, sizeof(buffer));
                             ImGui::PopItemWidth();
 
                             ImGui::SameLine();
@@ -212,7 +212,7 @@ namespace Spices {
 
                 ImGuiH::DrawTreeTitle("Parameter", nullptr, [&](){
                     material->GetConstantParams().for_each([&](const std::string& k, ConstantParams& v){
-                        ImGuiH::DrawPropertyItem(k, columeWidth, [&](){
+                        ImGuiH::DrawPropertyItem(k, columeWidth, nullptr, [&](){
                             if (v.value.paramType == "float")
                             {
                                 ImGuiH::DrawMaterialConstParams<float>(material, ImGuiDataType_Float, 1, k, v);

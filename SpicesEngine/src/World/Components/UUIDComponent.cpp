@@ -30,10 +30,10 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("UUIDComponent UUID");
 
-			ImGuiH::DrawPropertyItem("UUID", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("UUID", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				char buffer[256] = {};
-				ImGui::InputTextWithHint("##", std::to_string(m_uuid).c_str(), buffer, sizeof(buffer));
+				ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", std::to_string(m_uuid).c_str()), buffer, sizeof(buffer));
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 				ImGuiH::DrawResetIcon(false);

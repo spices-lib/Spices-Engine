@@ -31,7 +31,7 @@ namespace Spices {
             ImGuiH::DrawTreeTitle("Grid", nullptr, [&]() { 
 
                 material->GetConstantParams().for_each([&](const std::string& k, ConstantParams& v){
-                    ImGuiH::DrawPropertyItem(k, columeWidth, [&](){
+                    ImGuiH::DrawPropertyItem(k, columeWidth, nullptr, [&](){
                         if(v.value.paramType == "float")
                         {
                             ImGuiH::DrawMaterialConstParams<float>(material, ImGuiDataType_Float, 1, k, v);

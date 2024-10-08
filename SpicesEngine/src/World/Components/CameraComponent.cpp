@@ -36,7 +36,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("CameraComponent FOV");
 
-			ImGuiH::DrawPropertyItem("FOV", columeWidth, [&](){
+			ImGuiH::DrawPropertyItem("FOV", columeWidth, nullptr, [&](){
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_Camera->GetPerspectiveParam().fov, 0.1f, 1.0f, 179.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
@@ -55,7 +55,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("CameraComponent Near Plane");
 
-			ImGuiH::DrawPropertyItem("Near Plane", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Near Plane", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if (ImGui::DragFloat("##", &m_Camera->GetPerspectiveParam().nearPlane, 0.1f, 0.01f, 1000.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp))
 				{
@@ -74,7 +74,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("CameraComponent AspectRatio");
 
-			ImGuiH::DrawPropertyItem("AspectRatio", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("AspectRatio", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				float aspectRatio = m_Camera->GetPerspectiveParam().aspectRatio;
 				ImGui::DragFloat("##", &aspectRatio, 10.0f, 0.0f, 100.0f, "%.3f", ImGuiSliderFlags_AlwaysClamp);

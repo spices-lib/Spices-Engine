@@ -85,7 +85,7 @@ namespace Spices {
 									ImGui::SameLine(2.0f * ImGuiH::GetLineItemSize().x);
 									char buffer0[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-									ImGui::InputTextWithHint("##_0", ss0.str().c_str(), buffer0, sizeof(buffer0));
+									ImGui::InputTextWithHint("##_0", ICON_TEXT_ROW(" ", ss0.str().c_str()), buffer0, sizeof(buffer0));
 									ImGui::PopItemWidth();
 								}
 								
@@ -96,7 +96,7 @@ namespace Spices {
 									ss1 << "/World/MeshComponent/" << ss.str();
 									char buffer1[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-									ImGui::InputTextWithHint("##_2", ss1.str().c_str(), buffer1, sizeof(buffer1));
+									ImGui::InputTextWithHint("##_2", ICON_TEXT_ROW(" ", ss1.str().c_str()), buffer1, sizeof(buffer1));
 									ImGui::PopItemWidth();
 								}
 								
@@ -109,7 +109,7 @@ namespace Spices {
 									ImGui::SameLine(2.0f * ImGuiH::GetLineItemSize().x);
 									char buffer2[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-									ImGui::InputTextWithHint("##_1", type.c_str(), buffer2, sizeof(buffer2));
+									ImGui::InputTextWithHint("##_1", ICON_TEXT_ROW(" ", type.c_str()), buffer2, sizeof(buffer2));
 									ImGui::PopItemWidth();
 								}
 								ImGui::EndGroup();
@@ -125,7 +125,7 @@ namespace Spices {
 							{
 								SPICES_PROFILE_ZONEN("MeshComponent Mesh Pack Shadows");
 
-								ImGuiH::DrawPropertyItem("Cast Shadows", columnWidth, [&]() {
+								ImGuiH::DrawPropertyItem("Cast Shadows", columnWidth, nullptr, [&]() {
 									static bool isCastShadow = true;
 									ImGuiH::Checkbox(&isCastShadow);
 									ImGui::SameLine();
@@ -144,7 +144,7 @@ namespace Spices {
 							{
 								SPICES_PROFILE_ZONEN("MeshComponent Mesh Pack Visible");
 
-								ImGuiH::DrawPropertyItem("Visible", columnWidth, [&]() {
+								ImGuiH::DrawPropertyItem("Visible", columnWidth, nullptr, [&]() {
 									static bool isVisible = true;
 									ImGuiH::Checkbox(&isVisible);
 									ImGui::SameLine();
@@ -224,7 +224,7 @@ namespace Spices {
 									ImGui::SameLine(2.0f * ImGuiH::GetLineItemSize().x);
 									char buffer0[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-									ImGui::InputTextWithHint("##_0", ss0.str().c_str(), buffer0, sizeof(buffer0));
+									ImGui::InputTextWithHint("##_0", ICON_TEXT_ROW(" ", ss0.str().c_str()), buffer0, sizeof(buffer0));
 									ImGui::PopItemWidth();
 								}
 								
@@ -234,7 +234,7 @@ namespace Spices {
 									char buffer1[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 									auto meshPack = *m_Mesh->GetPacks().find_value(static_cast<uint32_t>(i));
-									ImGui::InputTextWithHint("##_2", meshPack->GetMaterial()->GetName().c_str(), buffer1, sizeof(buffer1));
+									ImGui::InputTextWithHint("##_2", ICON_TEXT_ROW(" ", meshPack->GetMaterial()->GetName().c_str()), buffer1, sizeof(buffer1));
 									ImGui::PopItemWidth();
 								}
 								
@@ -245,7 +245,7 @@ namespace Spices {
 									ImGui::SameLine(2.0f * ImGuiH::GetLineItemSize().x);
 									char buffer2[256] = {};
 									ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-									ImGui::InputTextWithHint("##_1", "PathTracing Material", buffer2, sizeof(buffer2));
+									ImGui::InputTextWithHint("##_1", ICON_TEXT_ROW(" ", "PathTracing Material"), buffer2, sizeof(buffer2));
 									ImGui::PopItemWidth();
 								}
 								ImGui::EndGroup();

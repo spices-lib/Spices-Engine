@@ -22,6 +22,7 @@
 namespace Spices {
 
 #define ICON_TEXT(icon, text) std::string(icon).append(" ").append(#text).c_str()
+#define ICON_TEXT_ROW(icon, text) std::string(icon).append(" ").append(text).c_str()
 #define ICON_EMPTY "     "
 
 	/**
@@ -101,9 +102,10 @@ namespace Spices {
 		* @brief Draw a single property.
 		* @param[in] itemName Property name.
 		* @param[in] columeWidth .
-		* @param[in] func second column function.
+		* @param[in] nameFunc first colume function.
+		* @param[in] valFunc second column function.
 		*/
-		static void DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> func);
+		static void DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> nameFunc, std::function<void()> valFunc);
 
 		/**
 		* @brief Draw a stylized tree title bar.

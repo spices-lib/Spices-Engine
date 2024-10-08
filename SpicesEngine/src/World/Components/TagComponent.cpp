@@ -41,7 +41,7 @@ namespace Spices {
 			{
 				std::stringstream ss;
 				ss << "Tag[" << i << "]";
-				ImGuiH::DrawPropertyItem(ss.str(), columeWidth, [&]() {
+				ImGuiH::DrawPropertyItem(ss.str(), columeWidth, nullptr, [&]() {
 					ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 					char buffer[256] = {};
 					strcpy_s(buffer, sizeof(buffer), tagBuffer[i].c_str());

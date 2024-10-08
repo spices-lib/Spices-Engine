@@ -86,7 +86,7 @@ namespace Spices {
                 ss = *m_FrameInfo.m_PickEntityID.end();
                 ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 4.0f);
                 char text[128] = "";
-                if (ImGui::InputTextWithHint("##", ss.c_str(), text, 128)) {}
+                if (ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ss.c_str()), text, 128)) {}
                 ImGui::PopItemWidth();
 
                 ImGui::Columns(1);
@@ -104,7 +104,7 @@ namespace Spices {
                 ss << "/" << *m_FrameInfo.m_PickEntityID.end();
                 ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 4.0f);
                 char textpath[128] = "";
-                if (ImGui::InputTextWithHint("##", ss.str().c_str(), textpath, 128)) {}
+                if (ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ss.str().c_str()), textpath, 128)) {}
                 ImGui::PopItemWidth();
 
                 ImGui::Columns(1);

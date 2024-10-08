@@ -299,7 +299,7 @@ namespace Spices {
         ImGui::SetWindowFontScale(1.0f);
     }
 
-    void ImGuiH::DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> func)
+    void ImGuiH::DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> nameFunc, std::function<void()> valFunc)
     {
         SPICES_PROFILE_ZONEN("DrawPropertyItem");
 
@@ -307,10 +307,19 @@ namespace Spices {
         ImGui::Columns(2, 0, false);
 
         ImGui::SetColumnWidth(0, columeWidth);
-        ImGui::Text(itemName.c_str());
+
+        if (nameFunc)
+        {
+            nameFunc();
+        }
+        else
+        {
+            ImGui::Text(itemName.c_str());
+        }
+
         ImGui::NextColumn();
 
-        func();
+        valFunc();
 
         ImGui::Columns(1);
         ImGui::PopID();

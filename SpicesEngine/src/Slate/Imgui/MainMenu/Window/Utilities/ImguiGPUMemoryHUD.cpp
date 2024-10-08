@@ -96,26 +96,26 @@ namespace Spices {
             SPICES_PROFILE_ZONEN("ImguiGPUMemoryHUD::Total");
 
             ImGuiH::DrawTreeTitle("Memory Total", nullptr, [&]() { 
-                ImGuiH::DrawPropertyItem("Usage:", columeWidth, [&]() {
+                ImGuiH::DrawPropertyItem("Usage:", columeWidth, nullptr, [&]() {
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                     char buffer[256] = {};
-                    ImGui::InputTextWithHint("##", ConvertBytestoString(usage).c_str(), buffer, sizeof(buffer));
+                    ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ConvertBytestoString(usage).c_str()), buffer, sizeof(buffer));
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
                     ImGuiH::DrawResetIcon(false);
                 });
-                ImGuiH::DrawPropertyItem("Budget:", columeWidth, [&]() {
+                ImGuiH::DrawPropertyItem("Budget:", columeWidth, nullptr, [&]() {
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                     char buffer[256] = {};
-                    ImGui::InputTextWithHint("##", ConvertBytestoString(budget).c_str(), buffer, sizeof(buffer));
+                    ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ConvertBytestoString(budget).c_str()), buffer, sizeof(buffer));
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
                     ImGuiH::DrawResetIcon(false);
                 });
-                ImGuiH::DrawPropertyItem("Heap Count:", columeWidth, [&]() {
+                ImGuiH::DrawPropertyItem("Heap Count:", columeWidth, nullptr, [&]() {
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                     char buffer[256] = {};
-                    ImGui::InputTextWithHint("##", std::to_string(nHeaps).c_str(), buffer, sizeof(buffer));
+                    ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", std::to_string(nHeaps).c_str()), buffer, sizeof(buffer));
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
                     ImGuiH::DrawResetIcon(false);
@@ -132,26 +132,26 @@ namespace Spices {
                 s << "Memory Heap Index: " << i;
 
                 ImGuiH::DrawTreeTitle(s.str(), nullptr, [&]() {
-                    ImGuiH::DrawPropertyItem("Usage:", columeWidth, [&]() {
+                    ImGuiH::DrawPropertyItem("Usage:", columeWidth, nullptr, [&]() {
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                         char buffer[256] = {};
-                        ImGui::InputTextWithHint("##", ConvertBytestoString(memoryBudgetProperties.heapUsage[i]).c_str(), buffer, sizeof(buffer));
+                        ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ConvertBytestoString(memoryBudgetProperties.heapUsage[i]).c_str()), buffer, sizeof(buffer));
                         ImGui::PopItemWidth();
                         ImGui::SameLine();
                         ImGuiH::DrawResetIcon(false);
                     });
-                    ImGuiH::DrawPropertyItem("Budget:", columeWidth, [&]() {
+                    ImGuiH::DrawPropertyItem("Budget:", columeWidth, nullptr, [&]() {
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                         char buffer[256] = {};
-                        ImGui::InputTextWithHint("##", ConvertBytestoString(memoryBudgetProperties.heapBudget[i]).c_str(), buffer, sizeof(buffer));
+                        ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ConvertBytestoString(memoryBudgetProperties.heapBudget[i]).c_str()), buffer, sizeof(buffer));
                         ImGui::PopItemWidth();
                         ImGui::SameLine();
                         ImGuiH::DrawResetIcon(false);
                     });
-                    ImGuiH::DrawPropertyItem("Heap Count:", columeWidth, [&]() {
+                    ImGuiH::DrawPropertyItem("Heap Count:", columeWidth, nullptr, [&]() {
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
                         char buffer[256] = {};
-                        ImGui::InputTextWithHint("##", ConvertMemoryFlagtoString(memoryProperties.memoryProperties.memoryHeaps[i].flags).c_str(), buffer, sizeof(buffer));
+                        ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", ConvertMemoryFlagtoString(memoryProperties.memoryProperties.memoryHeaps[i].flags).c_str()), buffer, sizeof(buffer));
                         ImGui::PopItemWidth();
                         ImGui::SameLine();
                         ImGuiH::DrawResetIcon(false);

@@ -33,7 +33,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("PointLightComponent Color");
 			
-			ImGuiH::DrawPropertyItem("Color", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Color", columeWidth, nullptr, [&]() {
 
 				float itemWidth = (ImGui::GetContentRegionAvail().x - 8.0f * ImGuiH::GetLineItemSize().x) / 3.0f;
 
@@ -139,7 +139,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("PointLightComponent Intensity");
 
-			ImGuiH::DrawPropertyItem("Intensity", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Intensity", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.intensity, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
@@ -158,7 +158,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("PointLightComponent Constantf");
 
-			ImGuiH::DrawPropertyItem("Constantf", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Constantf", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.constantf, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
@@ -177,7 +177,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("PointLightComponent Linear");
 
-			ImGuiH::DrawPropertyItem("Linear", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Linear", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.linear, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{
@@ -196,7 +196,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("PointLightComponent Quadratic");
 
-			ImGuiH::DrawPropertyItem("Linear", columeWidth, [&]() {
+			ImGuiH::DrawPropertyItem("Linear", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.quadratic, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{

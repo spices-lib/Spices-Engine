@@ -18,6 +18,7 @@
 
 #include "NvPerfHudRenderer.h"
 #include "IconsMaterialDesign.h"
+#include "Slate/Imgui/ImguiHelper.h"
 
 #include <imgui.h>
 #include <implot.h>
@@ -125,174 +126,251 @@ protected:
 #error ImGui versions 1.79 or below do not support tables
 #endif
 
-        if (ImGui::BeginTable(tableId.c_str(), columnCount, tableFlags))
+        const float columeWidth = Spices::ImGuiH::GetLineItemSize().x * 6.5f;
+        for (size_t index = 0; index < block.size(); ++index)
         {
-            for (size_t index = 0; index < block.size(); ++index)
+            const auto& scalarText = *block[index];
+
+            auto showValue = scalarText.showValue;
+
+            if (showValue == ScalarText::ShowValue::Hide)
             {
-                const auto& scalarText = *block[index];
-
-                auto showValue = scalarText.showValue;
-
-                if (showValue == ScalarText::ShowValue::Hide)
-                {
-                    continue;
-                }
-
-                ImGui::TableNextRow();
-
-                double value = scalarText.signal.valBuffer.Size() > 0 ? scalarText.signal.valBuffer.Front() : 0.0;
-                double max = scalarText.signal.maxValue;
-                auto color = scalarText.signal.color.IsValid() ? scalarText.signal.color.Abgr() : m_defaultTextColor.Abgr();
-                auto unit = scalarText.signal.unit;
-                auto description = scalarText.signal.description;
-                auto tooltip = description;
-                std::string decimalPlacesFormat = "%." + std::to_string(scalarText.decimalPlaces) + "lf";
-
-                auto formatIntegerPart = [](double value) -> std::string
-                {
-                    if (std::isnan(value))
-                    {
-                        return "nan";
-                    }
-                    else if (std::isinf(value))
-                    {
-                        return "inf";
-                    }
-
-                    static const std::locale locale("en_US.UTF-8");
-                    std::ostringstream os;
-                    os.imbue(locale);
-                    os.precision(0);
-                    os.setf(std::ios::fixed);
-                    os << value;
-                    return os.str();
-                };
-
-                auto formatDecimalPlaces = [&](double value) -> std::string
-                {
-                    if (std::isnan(value) || std::isinf(value))
-                    {
-                        return std::string(); // if value is nan or inf, we don't want to print anything else in the decimalplaces column
-                    }
-                    double decimals = value - std::floor(value);
-                    char buf[32] = "";
-                    snprintf(buf, 32, decimalPlacesFormat.c_str(), decimals);
-                    return std::string(&(buf[1]));
-                };
-
-                // draw label
-                {
-                    ImGui::TableSetColumnIndex(0);
-
-                    auto labelColor = scalarText.label.color.IsValid() ? scalarText.label.color.Abgr() : m_defaultTextColor.Abgr();
-                    auto labelText = scalarText.label.text + "   "; // manual spacing, because the table does none
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, labelColor);
-                    ImGui::TextUnformatted(labelText.c_str());
-                    ImGui::PopStyleColor();
-                    if (ImGui::IsItemHovered() && !tooltip.empty())
-                    {
-                        ImGui::BeginTooltip();
-                        ImGui::TextUnformatted(tooltip.c_str());
-                        ImGui::EndTooltip();
-                    }
-                }
-
-                // draw number in front of decimal point
-                {
-                    ImGui::TableSetColumnIndex(1);
-
-                    const std::string text = formatIntegerPart(value);
-
-                    // https://stackoverflow.com/questions/58044749/how-to-right-align-text-in-imgui-columns
-                    // https://twitter.com/ocornut/status/1401775254696083456
-                    auto posX = (ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(text.c_str()).x);
-                    if (posX > ImGui::GetCursorPosX())
-                    {
-                        ImGui::SetCursorPosX(posX);
-                    }
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                    ImGui::TextUnformatted(text.c_str());
-                    ImGui::PopStyleColor();
-                }
-
-                // draw decimal places
-                {
-                    ImGui::TableSetColumnIndex(2);
-
-                    const std::string text = formatDecimalPlaces(value);
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                    ImGui::TextUnformatted(text.c_str());
-                    ImGui::PopStyleColor();
-                }
-
-                // draw unit of JustValue/ValueWithMax or percent sign
-                {
-                    ImGui::TableSetColumnIndex(3);
-
-                    const std::string text = unit.empty() || unit == MetricSignal::HideUnit() ? "" : " " + unit;
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                    ImGui::TextUnformatted(text.c_str());
-                    ImGui::PopStyleColor();
-                }
-
-                if (showValue != ScalarText::ShowValue::ValueWithMax)
-                {
-                    continue;
-                }
-
-                // draw " / " for max
-                {
-                    ImGui::TableSetColumnIndex(4);
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                    ImGui::TextUnformatted(" / ");
-                    ImGui::PopStyleColor();
-                }
-                
-                // draw integer portion of max
-                {
-                    ImGui::TableSetColumnIndex(5);
-
-                    const std::string text = formatIntegerPart(max);
-
-                    // https://stackoverflow.com/questions/58044749/how-to-right-align-text-in-imgui-columns
-                    // https://twitter.com/ocornut/status/1401775254696083456
-                    auto posX = (ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(text.c_str()).x);
-                    if (posX > ImGui::GetCursorPosX())
-                    {
-                        ImGui::SetCursorPosX(posX);
-                    }
-
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                    ImGui::TextUnformatted(text.c_str());
-                    ImGui::PopStyleColor();
-                }
-
-                // draw decimal places of max
-                {
-                    ImGui::TableSetColumnIndex(6);
-
-                    const std::string text = formatDecimalPlaces(max);
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                    ImGui::TextUnformatted(text.c_str());
-                    ImGui::PopStyleColor();
-                }
-
-                // draw unit again after max
-                {
-                    ImGui::TableSetColumnIndex(7);
-
-                    std::string text = unit.empty() || unit == MetricSignal::HideUnit() ? "" : " " + unit;
-                    ImGui::PushStyleColor(ImGuiCol_Text, color);
-                    ImGui::TextUnformatted(text.c_str());
-                    ImGui::PopStyleColor();
-                }
+                continue;
             }
-            ImGui::EndTable();
 
-            ImGui::PopStyleVar(2);
+            double value     = scalarText.signal.valBuffer.Size() > 0 ? scalarText.signal.valBuffer.Front() : 0.0;
+            double max       = scalarText.signal.maxValue;
+            auto color       = scalarText.signal.color.IsValid() ? scalarText.signal.color.Abgr() : m_defaultTextColor.Abgr();
+            auto unit        = scalarText.signal.unit;
+            auto description = scalarText.signal.description;
+            auto tooltip     = description;
+            std::string decimalPlacesFormat = "%." + std::to_string(scalarText.decimalPlaces) + "lf";
+
+            auto formatIntegerPart = [](double value)->std::string
+            {
+                if (std::isnan(value))
+                {
+                    return "nan";
+                }
+                else if (std::isinf(value))
+                {
+                    return "inf";
+                }
+
+                static const std::locale locale("en_US.UTF-8");
+                std::ostringstream os;
+                os.imbue(locale);
+                os.precision(0);
+                os.setf(std::ios::fixed);
+                os << value;
+                return os.str();
+            };
+
+            auto formatDecimalPlaces = [&](double value) -> std::string
+            {
+                if (std::isnan(value) || std::isinf(value))
+                {
+                    return std::string(); // if value is nan or inf, we don't want to print anything else in the decimalplaces column
+                }
+                double decimals = value - std::floor(value);
+                char buf[32] = "";
+                snprintf(buf, 32, decimalPlacesFormat.c_str(), decimals);
+                return std::string(&(buf[1]));
+            };
+
+            auto labelColor = scalarText.label.color.IsValid() ? scalarText.label.color.Abgr() : m_defaultTextColor.Abgr();
+            auto labelText = scalarText.label.text; // manual spacing, because the table does none
+
+            Spices::ImGuiH::DrawPropertyItem(labelText, columeWidth, 
+            [&]() {
+                ImGui::Text(labelText.c_str());
+                ImGui::SetItemTooltip(tooltip.c_str());
+            }, 
+            [&]() {
+                const std::string valueText = formatIntegerPart(value) + formatDecimalPlaces(value);
+                const std::string unitText = unit.empty() || unit == MetricSignal::HideUnit() ? "" : " " + unit;
+                const std::string text = valueText + unitText;
+
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - Spices::ImGuiH::GetLineItemSize().x);
+                char buffer[128] = {};
+                ImGui::InputTextWithHint("##", ICON_TEXT_ROW(" ", text), buffer, sizeof(buffer));
+                ImGui::PopItemWidth();
+
+                ImGui::SameLine();
+                Spices::ImGuiH::DrawResetIcon(false);
+            });
         }
+
+        ImGui::PopStyleVar(2);
+
+        //if (ImGui::BeginTable(tableId.c_str(), columnCount, tableFlags))
+        //{
+        //    for (size_t index = 0; index < block.size(); ++index)
+        //    {
+        //        const auto& scalarText = *block[index];
+
+        //        auto showValue = scalarText.showValue;
+
+        //        if (showValue == ScalarText::ShowValue::Hide)
+        //        {
+        //            continue;
+        //        }
+
+        //        ImGui::TableNextRow();
+
+        //        double value = scalarText.signal.valBuffer.Size() > 0 ? scalarText.signal.valBuffer.Front() : 0.0;
+        //        double max = scalarText.signal.maxValue;
+        //        auto color = scalarText.signal.color.IsValid() ? scalarText.signal.color.Abgr() : m_defaultTextColor.Abgr();
+        //        auto unit = scalarText.signal.unit;
+        //        auto description = scalarText.signal.description;
+        //        auto tooltip = description;
+        //        std::string decimalPlacesFormat = "%." + std::to_string(scalarText.decimalPlaces) + "lf";
+
+        //        auto formatIntegerPart = [](double value) -> std::string
+        //        {
+        //            if (std::isnan(value))
+        //            {
+        //                return "nan";
+        //            }
+        //            else if (std::isinf(value))
+        //            {
+        //                return "inf";
+        //            }
+
+        //            static const std::locale locale("en_US.UTF-8");
+        //            std::ostringstream os;
+        //            os.imbue(locale);
+        //            os.precision(0);
+        //            os.setf(std::ios::fixed);
+        //            os << value;
+        //            return os.str();
+        //        };
+
+        //        auto formatDecimalPlaces = [&](double value) -> std::string
+        //        {
+        //            if (std::isnan(value) || std::isinf(value))
+        //            {
+        //                return std::string(); // if value is nan or inf, we don't want to print anything else in the decimalplaces column
+        //            }
+        //            double decimals = value - std::floor(value);
+        //            char buf[32] = "";
+        //            snprintf(buf, 32, decimalPlacesFormat.c_str(), decimals);
+        //            return std::string(&(buf[1]));
+        //        };
+
+        //        // draw label
+        //        {
+        //            ImGui::TableSetColumnIndex(0);
+
+        //            auto labelColor = scalarText.label.color.IsValid() ? scalarText.label.color.Abgr() : m_defaultTextColor.Abgr();
+        //            auto labelText = scalarText.label.text + "   "; // manual spacing, because the table does none
+
+        //            ImGui::PushStyleColor(ImGuiCol_Text, labelColor);
+        //            ImGui::TextUnformatted(labelText.c_str());
+        //            ImGui::PopStyleColor();
+        //            if (ImGui::IsItemHovered() && !tooltip.empty())
+        //            {
+        //                ImGui::BeginTooltip();
+        //                ImGui::TextUnformatted(tooltip.c_str());
+        //                ImGui::EndTooltip();
+        //            }
+        //        }
+
+        //        // draw number in front of decimal point
+        //        {
+        //            ImGui::TableSetColumnIndex(1);
+
+        //            const std::string text = formatIntegerPart(value);
+
+        //            // https://stackoverflow.com/questions/58044749/how-to-right-align-text-in-imgui-columns
+        //            // https://twitter.com/ocornut/status/1401775254696083456
+        //            auto posX = (ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(text.c_str()).x);
+        //            if (posX > ImGui::GetCursorPosX())
+        //            {
+        //                ImGui::SetCursorPosX(posX);
+        //            }
+
+        //            ImGui::PushStyleColor(ImGuiCol_Text, color);
+        //            ImGui::TextUnformatted(text.c_str());
+        //            ImGui::PopStyleColor();
+        //        }
+
+        //        // draw decimal places
+        //        {
+        //            ImGui::TableSetColumnIndex(2);
+
+        //            const std::string text = formatDecimalPlaces(value);
+        //            ImGui::PushStyleColor(ImGuiCol_Text, color);
+        //            ImGui::TextUnformatted(text.c_str());
+        //            ImGui::PopStyleColor();
+        //        }
+
+        //        // draw unit of JustValue/ValueWithMax or percent sign
+        //        {
+        //            ImGui::TableSetColumnIndex(3);
+
+        //            const std::string text = unit.empty() || unit == MetricSignal::HideUnit() ? "" : " " + unit;
+        //            ImGui::PushStyleColor(ImGuiCol_Text, color);
+        //            ImGui::TextUnformatted(text.c_str());
+        //            ImGui::PopStyleColor();
+        //        }
+
+        //        if (showValue != ScalarText::ShowValue::ValueWithMax)
+        //        {
+        //            continue;
+        //        }
+
+        //        // draw " / " for max
+        //        {
+        //            ImGui::TableSetColumnIndex(4);
+        //            ImGui::PushStyleColor(ImGuiCol_Text, color);
+        //            ImGui::TextUnformatted(" / ");
+        //            ImGui::PopStyleColor();
+        //        }
+        //        
+        //        // draw integer portion of max
+        //        {
+        //            ImGui::TableSetColumnIndex(5);
+
+        //            const std::string text = formatIntegerPart(max);
+
+        //            // https://stackoverflow.com/questions/58044749/how-to-right-align-text-in-imgui-columns
+        //            // https://twitter.com/ocornut/status/1401775254696083456
+        //            auto posX = (ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(text.c_str()).x);
+        //            if (posX > ImGui::GetCursorPosX())
+        //            {
+        //                ImGui::SetCursorPosX(posX);
+        //            }
+
+        //            ImGui::PushStyleColor(ImGuiCol_Text, color);
+        //            ImGui::TextUnformatted(text.c_str());
+        //            ImGui::PopStyleColor();
+        //        }
+
+        //        // draw decimal places of max
+        //        {
+        //            ImGui::TableSetColumnIndex(6);
+
+        //            const std::string text = formatDecimalPlaces(max);
+        //            ImGui::PushStyleColor(ImGuiCol_Text, color);
+        //            ImGui::TextUnformatted(text.c_str());
+        //            ImGui::PopStyleColor();
+        //        }
+
+        //        // draw unit again after max
+        //        {
+        //            ImGui::TableSetColumnIndex(7);
+
+        //            std::string text = unit.empty() || unit == MetricSignal::HideUnit() ? "" : " " + unit;
+        //            ImGui::PushStyleColor(ImGuiCol_Text, color);
+        //            ImGui::TextUnformatted(text.c_str());
+        //            ImGui::PopStyleColor();
+        //        }
+        //    }
+        //    ImGui::EndTable();
+
+        //    ImGui::PopStyleVar(2);
+        //}
 
         return true;
     }

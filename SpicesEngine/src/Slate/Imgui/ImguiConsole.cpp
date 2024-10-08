@@ -344,7 +344,7 @@ namespace Spices {
 					ImGuiInputTextFlags_CallbackCharFilter ;
 				ImGui::InputTextWithHint(
 					"Cmd", 
-					"Cmd", 
+					ICON_TEXT_ROW(" ", "Cmd"),
 					InputBuf, 
 					IM_ARRAYSIZE(InputBuf), 
 					input_text_flags, 
