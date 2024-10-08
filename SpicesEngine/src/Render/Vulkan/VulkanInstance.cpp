@@ -87,7 +87,6 @@ namespace Spices {
 		*/
 		std::vector<VkValidationFeatureEnableEXT> validationFeatureEnable;
 		validationFeatureEnable.push_back(VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT);
-		validationFeatureEnable.push_back(VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT);
 		
 		VkValidationFeaturesEXT                               validationFeatures{};
 		validationFeatures.sType                            = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;

@@ -81,7 +81,7 @@ Parameters:
   # @brief Usage: yAxisColor.
   - Name: yAxisColor
     # @brief [Parameter Type, Parameter Value]
-    Value: [float3, [0.0, 1.0, 0.0]]
+    Value: [float3, [0.0, 0.0, 1.0]]
     MinValue: [float3, [0.0, 0.0, 0.0]]
     MaxValue: [float3, [1.0, 1.0, 1.0]]
     
