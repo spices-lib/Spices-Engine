@@ -22,11 +22,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief Init Texture Resource Transcoder.
-		*/
-		Transcoder::Init();
-
-		/**
 		* @brief Create Default Resource in different ResourccePool.
 		*/
 		ResourcePool<Texture>::Load<Texture2D>("default.jpg", "default.jpg");

@@ -285,11 +285,6 @@ namespace Spices {
 		VkImage m_Image{};
 
 		/**
-		* @brief True if image is created from bin file.
-		*/
-		bool m_IsBin = false;
-
-		/**
 		* @brief VMA allocation.
 		*/
 		VmaAllocation m_Alloc{};

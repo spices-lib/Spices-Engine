@@ -117,7 +117,6 @@ namespace Spices {
 		/**
 		* @brief Instance the Resource.
 		*/
-		resourceptr->m_IsBin = true;
 		resourceptr->CreateImage(
 			resourceptr->m_VulkanState                          ,
 			fileName                                            ,

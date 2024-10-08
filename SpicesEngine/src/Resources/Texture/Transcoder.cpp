@@ -80,15 +80,24 @@ namespace Spices {
 
 		/**
 		* @brief Instance a ktxBasisParams.
+		* etc1s: unlosslessly compressed, host memory << device memory.
+		* uastc: losslessly compressed, host memory == device memory.
 		*/
 		ktxBasisParams                     params{0};
 		params.structSize                = sizeof(params);
-		params.uastc                     = KTX_FALSE;
+		params.uastc                     = KTX_TRUE;
 		params.verbose                   = KTX_FALSE;
 		params.noSSE                     = KTX_TRUE;
+
+		// etc1s
 		params.threadCount               = std::thread::hardware_concurrency();
-		params.compressionLevel          = 2;
+		params.compressionLevel          = 0;
 		params.qualityLevel              = 128;
+		
+		// uastc
+		params.uastcFlags                = KTX_PACK_UASTC_LEVEL_FASTEST;
+		params.uastcRDO                  = KTX_TRUE;
+		params.uastcRDONoMultithreading  = KTX_TRUE;
 
 		/**
 		* @brief Set other BasisLZ / ETC1S or UASTC params to change default quality settings.
