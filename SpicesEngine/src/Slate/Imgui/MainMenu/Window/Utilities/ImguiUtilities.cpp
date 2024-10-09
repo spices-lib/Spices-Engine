@@ -6,7 +6,7 @@
 
 #include "Pchheader.h"
 #include "ImguiUtilities.h"
-#include "Debugger/Perf/NsightPerfReportGenerator.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 
 #include "Systems/SlateSystem.h"
 #include "Core/Library/ProcessLibrary.h"
@@ -50,7 +50,7 @@ namespace Spices {
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Console))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, CPU Profiler), "F8")) { ProcessLibrary::OpenProcess(m_ProfileProcessName.c_str()); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Profiler HUD), "F9"))  { m_ImguiGPUProfilerHUD->SetWindowState(true); }
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Frame Capture), "F10")) { PERFREPORT_CAPTUREFRAME }
+            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Frame Capture), "F10")) { NSIGHTPERF_GPUPROFILERREPORT_CAPTUREFRAME }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Memory HUD), "F11")) { m_ImguiGPUMemoryHUD->SetWindowState(true); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Scene Optimizer))) {}
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Statistics))) {}

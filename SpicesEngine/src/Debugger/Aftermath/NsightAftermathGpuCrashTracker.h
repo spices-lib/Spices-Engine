@@ -301,23 +301,23 @@ namespace Spices {
 
 #ifdef SPICES_DEBUG
 
-#define AFTERMATH_INIT                                                    { ::Spices::GpuCrashTracker::Init(); }
-#define AFTERMATH_DEVICELOSECHECK(val)                                    { if (val == VK_ERROR_DEVICE_LOST){ GpuCrashTracker::AftermathDeviceLostCheck(); } }
-#define AFTERMATH_SETFRAMECUT(...)                                        { ::Spices::GpuCrashTracker::Get().SetFrameCut(__VA_ARGS__); }
-#define AFTERMATH_SETCHECKPOINT(commandBuffer, funcLibrary, string)       { uint64_t markId; ::Spices::GpuCrashTracker::Get().SetMarker(markId, string);  funcLibrary.vkCmdSetCheckpointNV(commandBuffer, (const void*)markId); }
-#define AFTERMATH_ADDSHADERBINARY(...)                                    { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinary(__VA_ARGS__); }
-#define AFTERMATH_ADDSHADERBINARY_WITHDEBUGINFO(...)                      { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinaryWithDebugInfo(__VA_ARGS__); }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_INIT                                                                        { ::Spices::GpuCrashTracker::Init(); }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(val)                                                        { if (val == VK_ERROR_DEVICE_LOST){ GpuCrashTracker::AftermathDeviceLostCheck(); } }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_SETFRAMECUT(...)                                                            { ::Spices::GpuCrashTracker::Get().SetFrameCut(__VA_ARGS__); }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(commandBuffer, funcLibrary, string)                           { uint64_t markId; ::Spices::GpuCrashTracker::Get().SetMarker(markId, string);  funcLibrary.vkCmdSetCheckpointNV(commandBuffer, (const void*)markId); }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY(...)                                                        { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinary(__VA_ARGS__); }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(...)                                          { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinaryWithDebugInfo(__VA_ARGS__); }
 
 #endif
 
 #ifdef SPICES_RELEASE
 
-#define AFTERMATH_INIT         
-#define AFTERMATH_DEVICELOSECHECK(val)
-#define AFTERMATH_SETFRAMECUT(...)                    
-#define AFTERMATH_SETCHECKPOINT(commandBuffer, string)             
-#define AFTERMATH_ADDSHADERBINARY(...)
-#define AFTERMATH_ADDSHADERBINARY_WITHDEBUGINFO(...)
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_INIT                                             
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(val)                             
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_SETFRAMECUT(...)                                 
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(commandBuffer, funcLibrary, string)
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY(...)                             
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(...)               
 
 #endif
 

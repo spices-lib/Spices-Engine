@@ -113,7 +113,7 @@ namespace Spices {
 			/**
 			* @brief Update Aftermath frame cut.
 			*/
-			AFTERMATH_SETFRAMECUT(ts.fs())
+			NSIGHTAFTERMATH_GPUCRASHTRACKER_SETFRAMECUT(ts.fs())
 
 			/**
 			* @brief Activete Our Specific World.

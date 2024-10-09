@@ -71,8 +71,8 @@ namespace Spices {
 		/**
 		* @brief Add to Aftermath.
 		*/
-		AFTERMATH_ADDSHADERBINARY(filePath.c_str())
-		AFTERMATH_ADDSHADERBINARY_WITHDEBUGINFO(filePath.c_str(), filePath.c_str())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY(filePath.c_str())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(filePath.c_str(), filePath.c_str())
 	}
 
 	VulkanShaderModule::~VulkanShaderModule()

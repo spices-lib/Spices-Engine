@@ -7,7 +7,7 @@
 #include "Pchheader.h"
 #include "SlateRenderer.h"
 #include "Systems/SlateSystem.h"
-#include "Debugger/Perf/NsightGPUProfilerHUD.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
 
 namespace Spices {
 
@@ -124,7 +124,7 @@ namespace Spices {
 		/**
 		* @brief Init NsightPerf HUD Renderer.
 		*/
-		PERF_INITHUDRENDERER;
+		NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER;
 
 		vkDeviceWaitIdle(m_VulkanState.m_Device);
 	}
@@ -133,8 +133,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		PERFREPORT_RESET(m_VulkanState)
-		PERF_RESET
+		NSIGHTPERF_GPUPROFILERREPORT_RESET(m_VulkanState)
+		NSIGHTPERF_GPUPROFILERHUD_RESET
 
 		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -174,7 +174,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("NvPerf::Consume");
 
-			PERF_FRAMECONSUME
+			NSIGHTPERF_GPUPROFILERHUD_FRAMECONSUME
 		}
 	}
 

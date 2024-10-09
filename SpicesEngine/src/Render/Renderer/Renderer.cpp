@@ -519,18 +519,18 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		PERFREPORF_PUSHRANGE(m_CommandBuffer, caption)
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, caption)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, caption)
-		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
 	void Renderer::RenderBehaveBuilder::Endrecording()
 	{
 		SPICES_PROFILE_ZONE;
 
-		PERFREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
-		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
 	void Renderer::RenderBehaveBuilder::Async(std::function<void(VkCommandBuffer& cmdBuffer)> func)
@@ -666,8 +666,8 @@ namespace Spices {
 		++m_SubpassIndex;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
 
-		PERFREPORT_POPRANGE(m_CommandBuffer)
-		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -683,8 +683,8 @@ namespace Spices {
 		++m_SubpassIndex;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
 
-		PERFREPORT_POPRANGE(m_CommandBuffer)
-		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -726,13 +726,13 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
-		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
-		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
-		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -771,13 +771,13 @@ namespace Spices {
 		renderPassInfo.clearValueCount          = static_cast<uint32_t>(m_Renderer->m_Pass->GetClearValues().size());
 		renderPassInfo.pClearValues             = m_Renderer->m_Pass->GetClearValues().data();
 
-		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
-		PERFREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 			
-		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 
 		/**
 		* @brief This command not allow async.
@@ -791,13 +791,13 @@ namespace Spices {
 
 		vkCmdEndRenderPass(m_CommandBuffer);
 
-		PERFREPORT_POPRANGE(m_CommandBuffer)
-		PERFREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 
-		AFTERMATH_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
 	Renderer::RayTracingRenderBehaveBuilder::RayTracingRenderBehaveBuilder(

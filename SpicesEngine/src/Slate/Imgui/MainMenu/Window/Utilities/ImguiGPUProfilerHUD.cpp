@@ -6,7 +6,7 @@
 
 #include "Pchheader.h"
 #include "ImguiGPUProfilerHUD.h"
-#include "Debugger/Perf/NsightGPUProfilerHUD.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
 
 namespace Spices {
 
@@ -65,7 +65,7 @@ namespace Spices {
         ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
 
-        PERF_RENDERHUD;
+        NSIGHTPERF_GPUPROFILERHUD_RENDERHUD
 
         ImGui::PopStyleColor(4);
         ImGui::PopStyleVar();

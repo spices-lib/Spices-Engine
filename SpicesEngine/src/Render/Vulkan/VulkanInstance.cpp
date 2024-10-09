@@ -7,7 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanInstance.h"
 #include "Core/Library/StringLibrary.h"
-#include "Debugger/Perf/NsightGPUProfilerHUD.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
 
 namespace Spices {
 
@@ -187,7 +187,7 @@ namespace Spices {
 		/**
 		* @brief Add Nsight Perf Extensions.
 		*/
-		PERF_QUERYINSTANCEEXTENSION(m_ExtensionProperties, VK_API_VERSION_1_3)
+		NSIGHTPERF_GPUPROFILERHUD_QUERYINSTANCEEXTENSION(m_ExtensionProperties, VK_API_VERSION_1_3)
 
 	}
 

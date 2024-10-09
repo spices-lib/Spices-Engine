@@ -13,7 +13,7 @@
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
-#include "Debugger/Perf/NsightPerfReportGenerator.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/

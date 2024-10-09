@@ -41,10 +41,10 @@ namespace Spices {
 * @brief Vulkan Check macro.
 * Verify Vulkan API Effectiveness.
 */
-#define VK_CHECK(expr)                        \
-    {                                         \
-        auto value = expr;                    \
-        AFTERMATH_DEVICELOSECHECK(value);     \
-        ASSERT(value == VK_SUCCESS);          \
+#define VK_CHECK(expr)                                              \
+    {                                                               \
+        auto value = expr;                                          \
+        NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(value);     \
+        ASSERT(value == VK_SUCCESS);                                \
     }
 }

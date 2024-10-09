@@ -6,7 +6,7 @@
 
 #include "Pchheader.h"
 #include "VulkanDevice.h"
-#include "Debugger/Perf/NsightGPUProfilerHUD.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
 
 namespace Spices {
 
@@ -549,7 +549,7 @@ namespace Spices {
 		* @brief Get NvperfDeviceExtensions.
 		*/
 		std::vector<const char*> nvperfDeviceExtensions;
-		PERF_QUERYDEVICEEXTENSION(m_VulkanState.m_Instance, device, nvperfDeviceExtensions)
+		NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(m_VulkanState.m_Instance, device, nvperfDeviceExtensions)
 
 		for (auto& e : nvperfDeviceExtensions)
 		{

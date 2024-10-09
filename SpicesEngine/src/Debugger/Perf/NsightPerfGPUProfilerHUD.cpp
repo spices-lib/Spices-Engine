@@ -1,11 +1,11 @@
 /**
-* @file NsightGPUProfilerHUD.cpp
-* @brief The NsightGPUProfilerHUD Class Implementation.
+* @file NsightPerfGPUProfilerHUD.cpp
+* @brief The NsightPerfGPUProfilerHUD Class Implementation.
 * @author Spices
 */
 
 #include "Pchheader.h"
-#include "NsightGPUProfilerHUD.h"
+#include "NsightPerfGPUProfilerHUD.h"
 #include "Render/FrameInfo.h"
 
 #include <NvPerfMiniTraceVulkan.h>
@@ -21,9 +21,9 @@
 
 namespace Spices {
 
-	std::shared_ptr<NsightGPUProfilerHUD> NsightGPUProfilerHUD::m_NsightPerf;
+	std::shared_ptr<NsightPerfGPUProfilerHUD> NsightPerfGPUProfilerHUD::m_NsightPerfGPUProfilerHUD;
 
-	NsightGPUProfilerHUD::NsightGPUProfilerHUD(VulkanState& state)
+	NsightPerfGPUProfilerHUD::NsightPerfGPUProfilerHUD(VulkanState& state)
 		: m_VulkanState(state)
 	{
 		SPICES_PROFILE_ZONE;
@@ -43,8 +43,8 @@ namespace Spices {
 		* @todo There remains a bug about off screen frames still fill in buffer,
 		* That will cause buffer is fulled useage.
 		*/
-		uint32_t samplingIntervalInNs = 1000 * 1000 * 1000 / samplingFrequencyInHz;
-		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000 * 60;
+		uint32_t samplingIntervalInNs = 1000 * 1000 * 1000 / samplingFrequencyInHz; // 1 / 60 s.
+		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000;                         // 1 s.
 		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
 		m_Sampler.BeginSession(
 			state.m_GraphicQueue          ,
@@ -79,17 +79,17 @@ namespace Spices {
 		m_HudDataModel.PrepareSampleProcessing(m_Sampler.GetCounterData());
 	}
 
-	void NsightGPUProfilerHUD::CreateInstance(VulkanState& state)
+	void NsightPerfGPUProfilerHUD::CreateInstance(VulkanState& state)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (!m_NsightPerf)
+		if (!m_NsightPerfGPUProfilerHUD)
 		{
-			m_NsightPerf = std::make_shared<NsightGPUProfilerHUD>(state);
+			m_NsightPerfGPUProfilerHUD = std::make_shared<NsightPerfGPUProfilerHUD>(state);
 		}
 	}
 
-	void NsightGPUProfilerHUD::InitHUDRenderer()
+	void NsightPerfGPUProfilerHUD::InitHUDRenderer()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -104,14 +104,14 @@ namespace Spices {
 		m_HudRenderer.Initialize(m_HudDataModel);
 	}
 
-	void NsightGPUProfilerHUD::RenderHUD()
+	void NsightPerfGPUProfilerHUD::RenderHUD()
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_HudRenderer.Render();
 	}
 
-	void NsightGPUProfilerHUD::ConsumeSample()
+	void NsightPerfGPUProfilerHUD::ConsumeSample()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -125,14 +125,14 @@ namespace Spices {
 			stop = false;
 			return m_HudDataModel.AddSample(pCounterDataImage, counterDataImageSize, rangeIndex);
 		});
-		
+
 		for (auto& frameDelimiter : m_Sampler.GetFrameDelimiters())
 		{
 			m_HudDataModel.AddFrameDelimiter(frameDelimiter.frameEndTime);
 		}
 	}
 
-	void NsightGPUProfilerHUD::QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames)
+	void NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -150,7 +150,7 @@ namespace Spices {
 		}
 	}
 
-	void NsightGPUProfilerHUD::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
+	void NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -177,14 +177,14 @@ namespace Spices {
 		}
 	}
 
-	void NsightGPUProfilerHUD::EndFrame()
+	void NsightPerfGPUProfilerHUD::EndFrame()
 	{
 		SPICES_PROFILE_ZONE;
 		
 		m_Sampler.OnFrameEnd();
 	}
 
-	void NsightGPUProfilerHUD::Reset()
+	void NsightPerfGPUProfilerHUD::Reset()
 	{
 		SPICES_PROFILE_ZONE;
 
