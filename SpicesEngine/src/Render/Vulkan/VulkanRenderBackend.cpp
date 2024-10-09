@@ -7,8 +7,8 @@
 #include "Pchheader.h"
 #include "VulkanRenderBackend.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
-#include "Debugger/Perf/NsightGPUProfilerHUD.h"
-#include "Debugger/Perf/NsightPerfReportGenerator.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 #include "Core/Timer/ScopeTimer.h"
 
 #include "Render/RendererResource/RendererResourcePool.h"
@@ -47,7 +47,7 @@ namespace Spices {
 		* @brief Init NsightAftermath GpuCrashTracker.
 		*/
 		{
-			AFTERMATH_INIT;
+			NSIGHTAFTERMATH_GPUCRASHTRACKER_INIT
 		}
 
 		/**
@@ -67,8 +67,8 @@ namespace Spices {
 		* @brief Init Nsight Perf
 		*/
 		{
-			PERF_CREATEINSTANCE(m_VulkanState)
-			PERFREPORT_CREATEINSTANCE(m_VulkanState)
+			NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(m_VulkanState)
+			NSIGHTPERF_GPUPROFILERREPORT_CREATEINSTANCE(m_VulkanState)
 		}
 
 		/**
@@ -235,10 +235,9 @@ namespace Spices {
 		}
 
 		{
-			SPICES_PROFILE_ZONEN("StartFrame::PerfFrameStart");
+			SPICES_PROFILE_ZONEN("StartFrame::NsightPerfFrameStart");
 
-			PERFREPORT_ENDFRAME
-			PERFREPORT_BEGINFRAME(m_VulkanState.m_GraphicQueue, m_VulkanState.m_GraphicQueueFamily)
+			NSIGHTPERF_GPUPROFILERREPORT_BEGINFRAME(m_VulkanState.m_GraphicQueue, m_VulkanState.m_GraphicQueueFamily)
 		}
 
 		{
@@ -261,8 +260,8 @@ namespace Spices {
 			/**
 			* @brief Checkpoint of start primary commandBuffers.
 			*/
-			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryComputeCommandBuffer")
-			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryGraphicCommandBuffer")
+			NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryComputeCommandBuffer")
+			NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryGraphicCommandBuffer")
 		}
 	}
 
@@ -276,8 +275,8 @@ namespace Spices {
 			/**
 			* @brief Checkpoint of end primary commandBuffers.
 			*/
-			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "EndPrimaryGraphicCommandBuffer")
-			AFTERMATH_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryGraphicCommandBuffer")
+			NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "EndPrimaryGraphicCommandBuffer")
+			NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryGraphicCommandBuffer")
 
 			/**
 			* @brief End recording the CommandBuffer.
@@ -347,6 +346,13 @@ namespace Spices {
 		}
 
 		{
+			SPICES_PROFILE_ZONEN("EndFrame::NsightPerfFrameEnd");
+
+			NSIGHTPERF_GPUPROFILERREPORT_ENDFRAME(m_VulkanState)
+			NSIGHTPERF_GPUPROFILERHUD_ENDFRAME
+		}
+
+		{
 			SPICES_PROFILE_ZONEN("EndFrame::QueuePresent");
 			
 			DEBUGUTILS_BEGINQUEUELABEL(m_VulkanState.m_PresentQueue, "PresentQueue")
@@ -378,12 +384,6 @@ namespace Spices {
 			}
 
 			DEBUGUTILS_ENDQUEUELABEL(m_VulkanState.m_PresentQueue)
-		}
-
-		{
-			SPICES_PROFILE_ZONEN("EndFrame::PerfFrameEnd");
-
-			PERF_ENDFRAME
 		}
 	}
 
