@@ -26,8 +26,8 @@ namespace Spices {
         * good time to decide whether a frame-level range is desirable.
 		*/
 		m_NvPerf.additionalMetrics = { 
-			"zrop_cycles_elapsed",
-			"lts_t_sector_hit_rate",
+			"zrop__cycles_elapsed",
+			"lts__t_sector_hit_rate",
 			"crop__write_throughput" 
 		};
 		m_NvPerf.InitializeReportGenerator(state.m_Instance, state.m_PhysicalDevice, state.m_Device);
