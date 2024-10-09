@@ -25,6 +25,18 @@ namespace Spices {
 
 	NsightPerfGPUProfilerHUD::NsightPerfGPUProfilerHUD(VulkanState& state)
 		: m_VulkanState(state)
+		, m_IsReachBufferBound(false)
+		, m_IsInSession(false)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Create this in construct.
+		*/
+		Create(state);
+	}
+
+	void NsightPerfGPUProfilerHUD::Create(VulkanState& state)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -42,9 +54,10 @@ namespace Spices {
 		/**
 		* @todo There remains a bug about off screen frames still fill in buffer,
 		* That will cause buffer is fulled useage.
+		* @attention we set Buffer size can hold 1 h data with 60 HZ.
 		*/
 		uint32_t samplingIntervalInNs = 1000 * 1000 * 1000 / samplingFrequencyInHz; // 1 / 60 s.
-		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000;                         // 1 s.
+		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000 * 10;                    // 10 s.
 		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
 		m_Sampler.BeginSession(
 			state.m_GraphicQueue          ,
@@ -93,15 +106,13 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Thouse API needs be called before this.
-		* ImGui::CreateContext();
-		* ImPlot::CreateContext();
-		* ImGui_ImplGlfw_InitForVulkan(...);
-		* ImGui_ImplVulkan_Init(...);
-		*/
-		//nv::perf::hud::HudImPlotRenderer::SetStyle();
 		m_HudRenderer.Initialize(m_HudDataModel);
+
+		/**
+		* @brief End Session after HudRenderer initalized,
+		* for Session can not be owned by multiple instance.
+		*/
+		Reset();
 	}
 
 	void NsightPerfGPUProfilerHUD::RenderHUD()
@@ -115,8 +126,10 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Sampler.DecodeCounters();
-		m_Sampler.ConsumeSamples([&](
+		if (!m_IsInSession) return;
+
+		bool decoded  = m_Sampler.DecodeCounters();
+		bool consumed = m_Sampler.ConsumeSamples([&](
 		const uint8_t* pCounterDataImage    , 
 		size_t         counterDataImageSize , 
 		uint32_t       rangeIndex           , 
@@ -130,6 +143,8 @@ namespace Spices {
 		{
 			m_HudDataModel.AddFrameDelimiter(frameDelimiter.frameEndTime);
 		}
+
+		m_IsReachBufferBound = !decoded || !consumed;
 	}
 
 	void NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames)
@@ -177,11 +192,42 @@ namespace Spices {
 		}
 	}
 
-	void NsightPerfGPUProfilerHUD::EndFrame()
+	void NsightPerfGPUProfilerHUD::EndFrame(VulkanState& state)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		m_Sampler.OnFrameEnd();
+		if (m_IsInSession)
+		{
+			m_Sampler.OnFrameEnd();
+		}
+
+		/**
+		* @brief Last time state.
+		*/
+		static bool lastInSession = false;
+
+		/**
+		* @brief false -> true => BeginSession.
+		* true -> false => EndSession.
+		*/
+		if (!lastInSession && m_IsInSession)
+		{
+			Create(state);
+		}
+		if (lastInSession && !m_IsInSession)
+		{
+			Reset();
+		}
+		lastInSession = m_IsInSession;
+	
+		/**
+		* @brief Reset and Create.
+		*/
+		if (m_IsReachBufferBound && m_IsInSession)
+		{
+			Reset();
+			Create(state);
+		}
 	}
 
 	void NsightPerfGPUProfilerHUD::Reset()

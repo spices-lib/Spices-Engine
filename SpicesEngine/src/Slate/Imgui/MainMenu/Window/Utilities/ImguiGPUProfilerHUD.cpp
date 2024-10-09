@@ -21,6 +21,8 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
+        NSIGHTPERF_GPUPROFILERHUD_SETINSESSION(m_IsSlateOn)
+
         if (!m_IsSlateOn) return;
 
         /**

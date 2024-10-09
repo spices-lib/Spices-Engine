@@ -34,6 +34,11 @@ namespace Spices {
 		virtual ~NsightPerfGPUProfilerHUD() = default;
 
 		/**
+		* @brief Create this.
+		*/
+		void Create(VulkanState& state);
+
+		/**
 		* @brief Create this Single Instance.
 		* @param[in] state VulkanState.
 		*/
@@ -55,6 +60,12 @@ namespace Spices {
 		* data model.
 		*/
 		void RenderHUD();
+
+		/**
+		* @brief Set if is needed in session.
+		* @param[in] inSession True if is needed in session.
+		*/
+		void SetInSession(bool inSession) { m_IsInSession = inSession; }
 
 		/**
 		* @brief Samples to be periodically fetched and processed by the sampler utility classes. Caveat: If this
@@ -82,7 +93,7 @@ namespace Spices {
 		/**
 		* @brief End Sampler Frame.
 		*/
-		void EndFrame();
+		void EndFrame(VulkanState& state);
 
 		/**
 		* @brief Reset Sampler.
@@ -115,7 +126,20 @@ namespace Spices {
 		* @brief HUD imgui renderer.
 		*/
 		nv::perf::hud::HudImPlotRenderer m_HudRenderer;
+
+		/**
+		* @brief True if Decode and Consume failed.
+		*/
+		bool m_IsReachBufferBound;
+
+		/**
+		* @brief True if in a Session.
+		*/
+		bool m_IsInSession;
 	};
+
+#define NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERHUD_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequerment(__VA_ARGS__); }
 
 #ifdef SPICES_DEBUG
 
@@ -123,23 +147,21 @@ namespace Spices {
 #define NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER                                                       { ::Spices::NsightPerfGPUProfilerHUD::Get().InitHUDRenderer(); }
 #define NSIGHTPERF_GPUPROFILERHUD_FRAMECONSUME                                                          { ::Spices::NsightPerfGPUProfilerHUD::Get().ConsumeSample(); }
 #define NSIGHTPERF_GPUPROFILERHUD_RENDERHUD                                                             { ::Spices::NsightPerfGPUProfilerHUD::Get().RenderHUD(); }
-#define NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(__VA_ARGS__); }
-#define NSIGHTPERF_GPUPROFILERHUD_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequerment(__VA_ARGS__); }
-#define NSIGHTPERF_GPUPROFILERHUD_ENDFRAME                                                              { ::Spices::NsightPerfGPUProfilerHUD::Get().EndFrame(); }
+#define NSIGHTPERF_GPUPROFILERHUD_SETINSESSION(...)                                                     { ::Spices::NsightPerfGPUProfilerHUD::Get().SetInSession(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERHUD_ENDFRAME(...)                                                         { ::Spices::NsightPerfGPUProfilerHUD::Get().EndFrame(__VA_ARGS__); }
 #define NSIGHTPERF_GPUPROFILERHUD_RESET                                                                 { ::Spices::NsightPerfGPUProfilerHUD::Get().Reset(); }
 
 #endif
 
 #ifdef SPICES_RELEASE
 
-#define NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(...)         
-#define NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER             
-#define NSIGHTPERF_GPUPROFILERHUD_FRAMECONSUME                
-#define NSIGHTPERF_GPUPROFILERHUD_RENDERHUD                   
-#define NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(...)   
-#define NSIGHTPERF_GPUPROFILERHUD_QUERYINSTANCEEXTENSION(...) 
-#define NSIGHTPERF_GPUPROFILERHUD_ENDFRAME                    
-#define NSIGHTPERF_GPUPROFILERHUD_RESET                              
+#define NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(...) 
+#define NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER     
+#define NSIGHTPERF_GPUPROFILERHUD_FRAMECONSUME        
+#define NSIGHTPERF_GPUPROFILERHUD_RENDERHUD           
+#define NSIGHTPERF_GPUPROFILERHUD_SETINSESSION(...)   
+#define NSIGHTPERF_GPUPROFILERHUD_ENDFRAME(...)       
+#define NSIGHTPERF_GPUPROFILERHUD_RESET                                         
 
 #endif
 
