@@ -15,8 +15,8 @@ namespace Spices {
 		* @brief Initiate collection with the following call.
 		*/
 		m_NvPerf.outputOptions.directoryName            = SPICES_GPUPROFILEREPORT_PATH;
-		m_NvPerf.outputOptions.writeCounterConfigImage  = false;
-		m_NvPerf.outputOptions.writeCounterDataImage    = false;
+		m_NvPerf.outputOptions.writeCounterConfigImage  = true;
+		m_NvPerf.outputOptions.writeCounterDataImage    = true;
 		m_NvPerf.outputOptions.appendDateTimeToDirName  = nv::perf::AppendDateTime::yes;
 		m_NvPerf.outputOptions.enableCsvReport          = false;
 
