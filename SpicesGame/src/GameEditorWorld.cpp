@@ -54,8 +54,8 @@ namespace Spices {
 		}
 
 		// CornellBox
-		/*{
-			for(int i = 0; i < 1; i++)
+		{
+			for(int i = 0; i < 3; i++)
 			{
 				std::stringstream ss;
 				ss << "CornellBox_" << i;
@@ -73,31 +73,31 @@ namespace Spices {
 				std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 				meshComp.SetMesh(mesh);
 			}
-		}*/
+		}
 
 		// sphere
-		//{
-		//	for(int i = 0; i < 1; i++)  // range in albedo
-		//	{
-		//		for(int j = 0; j < 1; j++)  // range in roughness
-		//		{
-		//			std::stringstream ss;
-		//			ss << "Sphere_" << 10 * i + j;
-		//			Entity meshentity = CreateEntity(ss.str());
-		//			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-		//			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-		//			transformComp1.SetPosition({3.0f * i, 0.0f, 3.0f * j});
+		{
+			for(int i = 0; i < 4; i++)  // range in albedo
+			{
+				for(int j = 0; j < 10; j++)  // range in roughness
+				{
+					std::stringstream ss;
+					ss << "Sphere_" << 10 * i + j;
+					Entity meshentity = CreateEntity(ss.str());
+					MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
+					TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
+					transformComp1.SetPosition({3.0f * i, 0.0f, 3.0f * j});
 
-		//			std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
+					std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
 
-		//			std::stringstream mss;
-		//			mss << "BasePassRenderer.Mesh." << 10 * i + j;
-		//			pack1->SetMaterial(mss.str());
-		//			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-		//			meshComp.SetMesh(mesh);
-		//		}
-		//	}
-		//}
+					std::stringstream mss;
+					mss << "BasePassRenderer.Mesh." << 10 * i + j;
+					pack1->SetMaterial(mss.str());
+					std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
+					meshComp.SetMesh(mesh);
+				}
+			}
+		}
 
 		// testsphere
 		//{

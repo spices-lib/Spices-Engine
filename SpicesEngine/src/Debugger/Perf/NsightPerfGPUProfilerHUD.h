@@ -103,6 +103,14 @@ namespace Spices {
 	private:
 
 		/**
+		* @brief Select a SamplingFrequency (Hz) by ImGui::IO.
+		* @return Returns SamplingFrequency.
+		*/
+		uint32_t SelectSamplingFrequency();
+
+	private:
+
+		/**
 		* @brief VulkanState.
 		*/
 		VulkanState& m_VulkanState;
@@ -136,6 +144,11 @@ namespace Spices {
 		* @brief True if in a Session.
 		*/
 		bool m_IsInSession;
+
+		/**
+		* @brief True id HUD is initialized.
+		*/
+		bool m_IsHUDInitialized;
 	};
 
 #define NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(__VA_ARGS__); }

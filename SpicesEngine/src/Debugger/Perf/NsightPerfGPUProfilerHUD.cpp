@@ -27,6 +27,7 @@ namespace Spices {
 		: m_VulkanState(state)
 		, m_IsReachBufferBound(false)
 		, m_IsInSession(false)
+		, m_IsHUDInitialized(false)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -49,8 +50,8 @@ namespace Spices {
 		* @brief start a recording session and specify the sampling frequency, maximum decoding latency
 		* (explained below) and the number of concurrently unfinished frames (maxFrameLatency).
 		*/
-		uint32_t samplingFrequencyInHz = 60;
-		
+		uint32_t samplingFrequencyInHz = SelectSamplingFrequency();
+
 		/**
 		* @todo There remains a bug about off screen frames still fill in buffer,
 		* That will cause buffer is fulled useage.
@@ -105,6 +106,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_HudRenderer.Initialize(m_HudDataModel);
+		m_IsHUDInitialized = true;
 
 		/**
 		* @brief End Session after HudRenderer initalized,
@@ -233,5 +235,39 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_Sampler.Reset();
+	}
+
+	uint32_t NsightPerfGPUProfilerHUD::SelectSamplingFrequency()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Stable set 60Hz if ImGui is still not initialzied yet.
+		*/
+		if (!m_IsHUDInitialized)
+		{
+			return 60;
+		}
+
+		/**
+		* @brief Determaine frequency by ImGui framerate.
+		*/
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.Framerate >= 60.0f)
+		{
+			return 60;
+		}
+		else if(io.Framerate >= 30.0f)
+		{
+			return 120;
+		}
+		else if (io.Framerate >= 10.0f)
+		{
+			return 160;
+		}
+		else
+		{
+			return 200;
+		}
 	}
 }

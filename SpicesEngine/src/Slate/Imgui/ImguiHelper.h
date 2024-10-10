@@ -135,16 +135,27 @@ namespace Spices {
 
 		T f    = std::any_cast<T>(value.value.paramValue);
 		T df   = std::any_cast<T>(value.defaultValue.paramValue);
+
 		T minf = T();
 		if (value.hasMinValue) minf = std::any_cast<T>(value.min.paramValue);
 		T maxf = T();
 		if (value.hasMaxValue) maxf = std::any_cast<T>(value.max.paramValue);
 
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
-		if (ImGuiH::S_DragScalarN("##", data_type, &f, components, 0.01f, (const void*)&minf, (const void*)&maxf, "%.2f"))
+		if (ImGuiH::S_DragScalarN(
+			"##", 
+			data_type, 
+			&f, 
+			components, 
+			0.01f, 
+			value.hasMinValue ? (const void*)&minf : &minf,
+			value.hasMaxValue ? (const void*)&maxf : &minf,
+			"%.2f"
+		))
 		{
 			value.value.paramValue = f;
 			material->UpdateMaterial();
+			FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
 		}
 
 		ImGui::PopItemWidth();
@@ -153,6 +164,7 @@ namespace Spices {
 		{
 			value.value.paramValue = df;
 			material->UpdateMaterial();
+			FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
 		}
 	}
 }

@@ -399,7 +399,7 @@ namespace Spices {
             p_data = (void*)((char*)p_data + type_size);
         }
         PopID();
-        
+
         const char* label_end = FindRenderedTextEnd(label);
         if (label != label_end)
         {
