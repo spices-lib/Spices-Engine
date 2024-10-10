@@ -299,7 +299,12 @@ namespace Spices {
         ImGui::SetWindowFontScale(1.0f);
     }
 
-    void ImGuiH::DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> nameFunc, std::function<void()> valFunc)
+    void ImGuiH::DrawPropertyItem(
+        const std::string&    itemName    , 
+        float                 columeWidth , 
+        std::function<void()> nameFunc    , 
+        std::function<void()> valFunc
+    )
     {
         SPICES_PROFILE_ZONEN("DrawPropertyItem");
 
@@ -325,7 +330,11 @@ namespace Spices {
         ImGui::PopID();
     }
 
-    void ImGuiH::DrawTreeTitle(const std::string& treeName, std::function<void()> optionFunc, std::function<void()> treeFunc)
+    void ImGuiH::DrawTreeTitle(
+        const std::string&    treeName   ,
+        std::function<void()> optionFunc , 
+        std::function<void()> treeFunc
+    )
     {
         SPICES_PROFILE_ZONE;
 
@@ -372,7 +381,17 @@ namespace Spices {
         ImGui::PopStyleColor(4);
     }
 
-    bool ImGuiH::S_DragScalarN(const char* label, ImGuiDataType data_type, void* p_data, int components, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
+    bool ImGuiH::S_DragScalarN(
+        const char*      label      , 
+        ImGuiDataType    data_type  , 
+        void*            p_data     , 
+        int              components , 
+        float            v_speed    , 
+        const void*      p_min      , 
+        const void*      p_max      , 
+        const char*      format     , 
+        ImGuiSliderFlags flags
+    )
     {
         using namespace ImGui;
 

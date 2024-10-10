@@ -105,7 +105,12 @@ namespace Spices {
 		* @param[in] nameFunc first colume function.
 		* @param[in] valFunc second column function.
 		*/
-		static void DrawPropertyItem(const std::string& itemName, float columeWidth, std::function<void()> nameFunc, std::function<void()> valFunc);
+		static void DrawPropertyItem(
+			const std::string&    itemName    , 
+			float                 columeWidth , 
+			std::function<void()> nameFunc    , 
+			std::function<void()> valFunc
+		);
 
 		/**
 		* @brief Draw a stylized tree title bar.
@@ -113,23 +118,72 @@ namespace Spices {
 		* @param[in] optionFunc Function of draw option.
 		* @param[in] treeFunc Function of draw tree.
 		*/
-		static void DrawTreeTitle(const std::string& treeName, std::function<void()> optionFunc, std::function<void()> treeFunc);
+		static void DrawTreeTitle(
+			const std::string&    treeName   , 
+			std::function<void()> optionFunc , 
+			std::function<void()> treeFunc
+		);
 
-		static bool S_DragScalarN(const char* label, ImGuiDataType data_type, void* p_data, int components, float v_speed = 1.0f, const void* p_min = NULL, const void* p_max = NULL, const char* format = NULL, ImGuiSliderFlags flags = 0);
+		/**
+		* @brief Draw Drag Scale with different p_min p_max.
+		* @param[in] label Name.
+		* @param[in] data_type ImGuiDataType.
+		* @param[in] p_data .
+		* @param[in] components .
+		* @param[in] v_speed .
+		* @param[in] p_min .
+		* @param[in] p_max .
+		* @param[in] format .
+		* @param[in] flags .
+		* @return Returns true if draged.
+		*/
+		static bool S_DragScalarN(
+			const char*      label         , 
+			ImGuiDataType    data_type      , 
+			void*            p_data         , 
+			int              components     , 
+			float            v_speed = 1.0f ,
+			const void*      p_min   = NULL , 
+			const void*      p_max   = NULL , 
+			const char*      format  = NULL , 
+			ImGuiSliderFlags flags   = 0
+		);
 
+		/**
+		* @brief Draw ConstantParams.
+		* @param[in] material .
+		* @param[in] data_type ImGuiDataType.
+		* @param[in] components Determined by ConstantParams Type(float: 1, float2: 2 ...).
+		* @param[in] format float/int.
+		* @param[in] value ConstantParams.
+		* @return Returns true if value moved.
+		*/
 		template<typename T>
-		static void DrawMaterialConstParams(std::shared_ptr<Material> material, ImGuiDataType data_type, int components, const std::string& name, ConstantParams& value);
+		static bool DrawMaterialConstParams(
+			std::shared_ptr<Material> material   , 
+			ImGuiDataType             data_type  , 
+			int                       components , 
+			const char*               format     ,
+			ConstantParams&           value
+		);
 
 	private:
 
 		/**
-		* @brief If GLFW has been initialized, returns the DPI scale of the primary monitor. Otherwise, returns 1.
+		* @brief Get GLFW DPI Scale.
+		* @return If GLFW has been initializedreturns the DPI scale of the primary monitor. Otherwise, returns 1.
 		*/
 		static float GetDPIScale();
 	};
 
 	template<typename T>
-	inline void ImGuiH::DrawMaterialConstParams(std::shared_ptr<Material> material, ImGuiDataType data_type, int components, const std::string& name, ConstantParams& value)
+	inline bool ImGuiH::DrawMaterialConstParams(
+		std::shared_ptr<Material> material   , 
+		ImGuiDataType             data_type  , 
+		int                       components ,
+		const char*               format     ,
+		ConstantParams&           value
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -141,6 +195,7 @@ namespace Spices {
 		T maxf = T();
 		if (value.hasMaxValue) maxf = std::any_cast<T>(value.max.paramValue);
 
+		bool moved = false;
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 		if (ImGuiH::S_DragScalarN(
 			"##", 
@@ -148,14 +203,14 @@ namespace Spices {
 			&f, 
 			components, 
 			0.01f, 
-			value.hasMinValue ? (const void*)&minf : &minf,
-			value.hasMaxValue ? (const void*)&maxf : &minf,
-			"%.2f"
+			(const void*)&minf,
+			(const void*)&maxf,
+			format
 		))
 		{
 			value.value.paramValue = f;
 			material->UpdateMaterial();
-			FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
+			moved = true;
 		}
 
 		ImGui::PopItemWidth();
@@ -164,8 +219,10 @@ namespace Spices {
 		{
 			value.value.paramValue = df;
 			material->UpdateMaterial();
-			FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
+			moved = true;
 		}
+
+		return moved;
 	}
 }
 

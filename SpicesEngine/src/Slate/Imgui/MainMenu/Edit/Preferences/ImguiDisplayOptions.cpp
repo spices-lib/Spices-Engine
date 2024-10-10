@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "ImguiDisplayOptions.h"
+#include "World/World/World.h"
 
 namespace Spices {
 
@@ -34,23 +35,38 @@ namespace Spices {
                     ImGuiH::DrawPropertyItem(k, columeWidth, nullptr, [&](){
                         if(v.value.paramType == "float")
                         {
-                            ImGuiH::DrawMaterialConstParams<float>(material, ImGuiDataType_Float, 1, k, v);
+                            if (ImGuiH::DrawMaterialConstParams<float>(material, ImGuiDataType_Float, 1, "%.3f", v))
+                            {
+                                FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
+                            }
                         }
                         else if(v.value.paramType == "float2")
                         {
-                            ImGuiH::DrawMaterialConstParams<glm::vec2>(material, ImGuiDataType_Float, 2, k, v);
+                            if (ImGuiH::DrawMaterialConstParams<glm::vec2>(material, ImGuiDataType_Float, 2, "%.3f", v))
+                            {
+                                FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
+                            }
                         }
                         else if(v.value.paramType == "float3")
                         {
-                            ImGuiH::DrawMaterialConstParams<glm::vec3>(material, ImGuiDataType_Float, 3, k, v);
+                            if (ImGuiH::DrawMaterialConstParams<glm::vec3>(material, ImGuiDataType_Float, 3, "%.3f", v))
+                            {
+                                FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
+                            }
                         }
                         else if(v.value.paramType == "float4")
                         {
-                            ImGuiH::DrawMaterialConstParams<glm::vec4>(material, ImGuiDataType_Float, 4, k, v);
+                            if (ImGuiH::DrawMaterialConstParams<glm::vec4>(material, ImGuiDataType_Float, 4, "%.3f", v))
+                            {
+                                FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
+                            }
                         }
                         else if(v.value.paramType == "int")
                         {
-                            ImGuiH::DrawMaterialConstParams<int>(material, ImGuiDataType_S32, 1, k, v);
+                            if (ImGuiH::DrawMaterialConstParams<int>(material, ImGuiDataType_S32, 1, "%d", v))
+                            {
+                                FrameInfo::Get().m_World->Mark(World::NeedUpdateTLAS | World::FrushStableFrame);
+                            }
                         }
                         else if (v.value.paramType == "bool")
                         {
