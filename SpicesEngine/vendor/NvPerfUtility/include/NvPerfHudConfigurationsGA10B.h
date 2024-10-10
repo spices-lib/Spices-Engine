@@ -1,18 +1,3 @@
-/*
-* Copyright 2021-2024 NVIDIA Corporation.  All rights reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
 
 #pragma once
 
@@ -28,14 +13,14 @@ namespace nv { namespace perf { namespace hud { namespace ga10b { namespace HudC
     inline const char** GetHudConfigurationsFileNames()
     {
         static const char* yamlFileNames[] = {
-            "NvPerfUtility/build/HudConfigurations/pub/ga10b/graphics-low-speed-1.yaml"
+            "pub/ga10b/graphics-low-speed-1.yaml"
         };
         return yamlFileNames;
     }
     
     inline const char** GetHudConfigurations()
     {
-        // NvPerfUtility/build/HudConfigurations/pub/ga10b/graphics-low-speed-1.yaml
+        // pub/ga10b/graphics-low-speed-1.yaml
         static const unsigned char yamlContents0[] = {
             0x70, 0x61, 0x6e, 0x65, 0x6c, 0x73, 0x3a, 0x0a, 0x20, 0x20, 0x2d, 0x20, 0x6e, 0x61, 0x6d, 0x65, 0x3a, 0x20, 0x46, 0x72, 
             0x61, 0x6d, 0x65, 0x20, 0x4c, 0x65, 0x76, 0x65, 0x6c, 0x20, 0x53, 0x74, 0x61, 0x74, 0x73, 0x0a, 0x20, 0x20, 0x20, 0x20, 

@@ -68,14 +68,12 @@ namespace Spices {
 		);
 
 		/**
-		* @brief Select a HUD configuration to record via the HudPresets class. Here we select Graphics
-		* General Triage.
+		* @brief Select a HUD configuration to record via the HudPresets class¡£
 		*/
 		nv::perf::hud::HudPresets hudPressets;
 		auto deviceIdentifiers = m_Sampler.GetGpuDeviceIdentifiers();
 		hudPressets.Initialize(deviceIdentifiers.pChipName);
-		m_HudDataModel.Load(hudPressets.GetPreset("Graphics General Triage"));
-		//m_HudDataModel.Load(hudPressets.GetPreset("Graphics High Speed Triage"));
+		m_HudDataModel.Load(hudPressets.GetPreset("SpicesEngineDefault"));
 		
 		/**
 		* @brief Initialize the data model, choose a window of time to store in the TimePlots, and specify the
