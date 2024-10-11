@@ -36,7 +36,7 @@ namespace Spices {
         */
         if (m_Initialized)
         {
-            GFSDK_Aftermath_DisableGpuCrashDumps();
+            AFTERMATH_CHECK_ERROR(GFSDK_Aftermath_DisableGpuCrashDumps());
         }
     }
 

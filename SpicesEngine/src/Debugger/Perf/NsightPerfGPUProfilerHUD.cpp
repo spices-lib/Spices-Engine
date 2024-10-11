@@ -5,6 +5,7 @@
 */
 
 #include "Pchheader.h"
+#include "NsightPerfHelpers.h"
 #include "NsightPerfGPUProfilerHUD.h"
 #include "Render/FrameInfo.h"
 
@@ -44,7 +45,7 @@ namespace Spices {
 		/**
 		* @brief Initialize the sampler any time after VkDevice initialization.
 		*/
-		m_Sampler.Initialize(state.m_Instance, state.m_PhysicalDevice, state.m_Device);
+		NSPERF_CHECK(m_Sampler.Initialize(state.m_Instance, state.m_PhysicalDevice, state.m_Device))
 
 		/**
 		* @brief start a recording session and specify the sampling frequency, maximum decoding latency
@@ -60,35 +61,35 @@ namespace Spices {
 		uint32_t samplingIntervalInNs = 1000 * 1000 * 1000 / samplingFrequencyInHz; // 1 / 60 s.
 		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000 * 10;                    // 10 s.
 		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
-		m_Sampler.BeginSession(
+		NSPERF_CHECK(m_Sampler.BeginSession(
 			state.m_GraphicQueue          ,
 			state.m_GraphicQueueFamily    , 
 			samplingIntervalInNs          ,
 			maxDecodeLatencyInNs          , 
 			maxFrameLatency
-		);
+		))
 
 		/**
 		* @brief Select a HUD configuration to record via the HudPresets class¡£
 		*/
 		nv::perf::hud::HudPresets hudPressets;
 		auto deviceIdentifiers = m_Sampler.GetGpuDeviceIdentifiers();
-		hudPressets.Initialize(deviceIdentifiers.pChipName);
-		m_HudDataModel.Load(hudPressets.GetPreset("SpicesEngineDefault"));
+		NSPERF_CHECK(hudPressets.Initialize(deviceIdentifiers.pChipName))
+		NSPERF_CHECK(m_HudDataModel.Load(hudPressets.GetPreset("SpicesEngineDefault")))
 		
 		/**
 		* @brief Initialize the data model, choose a window of time to store in the TimePlots, and specify the
 		* sampling interval.
 		*/
 		double plotTimeWidthInSeconds = 4.0;
-		m_HudDataModel.Initialize(1.0 / samplingFrequencyInHz, plotTimeWidthInSeconds);
+		NSPERF_CHECK(m_HudDataModel.Initialize(1.0 / samplingFrequencyInHz, plotTimeWidthInSeconds))
 		
 		/**
 		* @brief Pass the newly created counter configuration to the sampler, and prepare the sample-to-frame
 		* data processing pipeline.
 		*/
-		m_Sampler.SetConfig(&m_HudDataModel.GetCounterConfiguration());
-		m_HudDataModel.PrepareSampleProcessing(m_Sampler.GetCounterData());
+		NSPERF_CHECK(m_Sampler.SetConfig(&m_HudDataModel.GetCounterConfiguration()))
+		NSPERF_CHECK(m_HudDataModel.PrepareSampleProcessing(m_Sampler.GetCounterData()))
 	}
 
 	void NsightPerfGPUProfilerHUD::CreateInstance(VulkanState& state)
@@ -105,7 +106,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HudRenderer.Initialize(m_HudDataModel);
+		NSPERF_CHECK(m_HudRenderer.Initialize(m_HudDataModel))
 		m_IsHUDInitialized = true;
 
 		/**
@@ -119,7 +120,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HudRenderer.Render();
+		NSPERF_CHECK(m_HudRenderer.Render())
 	}
 
 	void NsightPerfGPUProfilerHUD::ConsumeSample()
@@ -147,12 +148,16 @@ namespace Spices {
 		m_IsReachBufferBound = !decoded || !consumed;
 	}
 
-	void NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames)
+	void NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(
+		VkInstance                instance            , 
+		VkPhysicalDevice          physicalDevice      , 
+		std::vector<const char*>& deviceExtensionNames
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::vector<const char*> deviceExtensionNamesTemp;
-		nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNamesTemp);
+		NSPERF_CHECK(nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNamesTemp))
 
 		/**
 		* @brief This method returens null extensions back, so do not use it.
@@ -183,8 +188,8 @@ namespace Spices {
 #endif
 
 		std::vector<const char*> instanceExtensions;
-		nv::perf::InitializeNvPerf();
-		nv::perf::VulkanAppendInstanceRequiredExtensions(instanceExtensions, apiVersion);
+		NSPERF_CHECK(nv::perf::InitializeNvPerf())
+		NSPERF_CHECK(nv::perf::VulkanAppendInstanceRequiredExtensions(instanceExtensions, apiVersion))
 
 		for (const char* e : instanceExtensions)
 		{

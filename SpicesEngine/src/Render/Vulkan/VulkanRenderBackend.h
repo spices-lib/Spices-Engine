@@ -70,7 +70,7 @@ namespace Spices {
 		* @brief Wait for sync.
 		* Used in render stage.
 		*/
-		static void WaitIdle() { vkDeviceWaitIdle(m_VulkanState.m_Device); }
+		static void WaitIdle() { VK_CHECK(vkDeviceWaitIdle(m_VulkanState.m_Device)) }
 
 		/**
 		* @brief Start record a new frame with vulkan render backend.

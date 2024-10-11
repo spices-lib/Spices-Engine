@@ -81,7 +81,11 @@ namespace Spices {
 		* @param[in] physicalDevice VkPhysicalDevice.
 		* @param[in,out] deviceExtensionNames Extensions.
 		*/
-		static void QueryDeviceExtensionRequerment(VkInstance instance, VkPhysicalDevice physicalDevice, std::vector<const char*>& deviceExtensionNames);
+		static void QueryDeviceExtensionRequerment(
+			VkInstance                instance            , 
+			VkPhysicalDevice          physicalDevice      , 
+			std::vector<const char*>& deviceExtensionNames
+		);
 
 		/**
 		* @brief Query Instance Extension Requerments.

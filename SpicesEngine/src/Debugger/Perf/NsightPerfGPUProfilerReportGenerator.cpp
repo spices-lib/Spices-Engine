@@ -1,4 +1,5 @@
 #include "Pchheader.h"
+#include "NsightPerfHelpers.h"
 #include "NsightPerfGPUProfilerReportGenerator.h"
 
 namespace Spices {
@@ -30,7 +31,7 @@ namespace Spices {
 			"lts__t_sector_hit_rate",
 			"crop__write_throughput" 
 		};
-		m_NvPerf.InitializeReportGenerator(state.m_Instance, state.m_PhysicalDevice, state.m_Device);
+		NSPERF_CHECK(m_NvPerf.InitializeReportGenerator(state.m_Instance, state.m_PhysicalDevice, state.m_Device))
 		m_NvPerf.SetFrameLevelRangeName("Frame");
 		m_NvPerf.SetNumNestingLevels(10);
 		m_NvPerf.SetMaxNumRanges(100);
@@ -45,12 +46,12 @@ namespace Spices {
 			state.m_Device
 		);
 
-		nv::perf::VulkanSetDeviceClockState(
+		NSPERF_CHECK(nv::perf::VulkanSetDeviceClockState(
 			state.m_Instance       , 
 			state.m_PhysicalDevice , 
 			state.m_Device         , 
 			NVPW_DEVICE_CLOCK_SETTING_LOCK_TO_RATED_TDP
-		);
+		))
 	}
 
 	void NsightPerfGPUProfilerReportGenerator::CreateInstance(VulkanState& state)
@@ -67,7 +68,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_NvPerf.OnFrameEnd();
+		NSPERF_CHECK(m_NvPerf.OnFrameEnd())
 
 		if (m_NvPerf.IsCollectingReport())
 		{
@@ -76,7 +77,7 @@ namespace Spices {
 			* @note take frmame counts: 98 * SetNumNestingLevels().
 			* @todo slate infobar.
 			*/
-			vkDeviceWaitIdle(state.m_Device);
+			VK_CHECK(vkDeviceWaitIdle(state.m_Device))
 		}
 		else if (m_NvPerf.GetInitStatus() != nv::perf::profiler::ReportGeneratorInitStatus::Succeeded)
 		{
@@ -89,21 +90,21 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		CollectionNextFrame();
-		m_NvPerf.OnFrameStart(queue, queueFamilyIndex);
+		NSPERF_CHECK(m_NvPerf.OnFrameStart(queue, queueFamilyIndex))
 	}
 
 	void NsightPerfGPUProfilerReportGenerator::PushRange(VkCommandBuffer commandBuffer, const std::string& pRangeName)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_NvPerf.rangeCommands.PushRange(commandBuffer, pRangeName.c_str());
+		NSPERF_CHECK(m_NvPerf.rangeCommands.PushRange(commandBuffer, pRangeName.c_str()))
 	}
 
 	void NsightPerfGPUProfilerReportGenerator::PopRange(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_NvPerf.rangeCommands.PopRange(commandBuffer);
+		NSPERF_CHECK(m_NvPerf.rangeCommands.PopRange(commandBuffer))
 	}
 
 	void NsightPerfGPUProfilerReportGenerator::Reset(VulkanState& state)
@@ -111,7 +112,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_NvPerf.Reset();
-		nv::perf::VulkanSetDeviceClockState(state.m_Instance, state.m_PhysicalDevice, state.m_Device, m_ClockStatus);
+		NSPERF_CHECK(nv::perf::VulkanSetDeviceClockState(state.m_Instance, state.m_PhysicalDevice, state.m_Device, m_ClockStatus))
 	}
 
 	void NsightPerfGPUProfilerReportGenerator::CollectionNextFrame()
@@ -120,7 +121,7 @@ namespace Spices {
 
 		if (m_CapturedThisFrame)
 		{
-			m_NvPerf.StartCollectionOnNextFrame();
+			NSPERF_CHECK(m_NvPerf.StartCollectionOnNextFrame())
 			m_CapturedThisFrame = false;
 		}
 	}
