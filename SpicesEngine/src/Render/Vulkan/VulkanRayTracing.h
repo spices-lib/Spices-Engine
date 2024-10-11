@@ -6,6 +6,11 @@
 
 namespace Spices {
 
+	/**
+	* @brief Forward Declare.
+	*/
+	class VulkanQueryPool;
+
 	class VulkanRayTracing : public VulkanObject
 	{
 	public:
@@ -121,11 +126,12 @@ namespace Spices {
 		* indices limits the number of BLAS to create at once. This limits the amount of
 		* memory needed when compacting the BLAS.
 		*/
-		void CmdCreateBLAS(VkCommandBuffer           cmdBuf,
-		                   const std::vector<uint32_t>& indices,
-			std::vector<BuildAccelerationStructure>& buildAs,
-			VkDeviceAddress                          scratchAddress,
-			VkQueryPool                              queryPool
+		void CmdCreateBLAS(
+			VkCommandBuffer                          cmdBuf         ,
+		    const std::vector<uint32_t>&             indices        ,
+			std::vector<BuildAccelerationStructure>& buildAs        ,
+			VkDeviceAddress                          scratchAddress ,
+			std::shared_ptr<VulkanQueryPool>         queryPool
 		) const;
 
 		/**
@@ -134,10 +140,10 @@ namespace Spices {
 		* This is the reason why we used m_cmdPool.submitAndWait(cmdBuf) before calling this function.
 		*/
 		void CmdCompactBLAS(
-			VkCommandBuffer                          cmdBuf,
-			const std::vector<uint32_t>& indices,
-			std::vector<BuildAccelerationStructure>& buildAs,
-			VkQueryPool                              queryPool
+			VkCommandBuffer                          cmdBuf   ,
+			const std::vector<uint32_t>&             indices  ,
+			std::vector<BuildAccelerationStructure>& buildAs  ,
+			std::shared_ptr<VulkanQueryPool>         queryPool
 		) const;
 
 		void DestroyNonCompacted(const std::vector<uint32_t>& indices, std::vector<BuildAccelerationStructure>& buildAs) const;

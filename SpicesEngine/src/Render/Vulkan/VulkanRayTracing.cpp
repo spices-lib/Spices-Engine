@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "VulkanRayTracing.h"
 #include "VulkanMemoryAllocator.h"
+#include "VulkanQueryPool.h"
 
 namespace Spices {
 
@@ -132,23 +133,15 @@ namespace Spices {
 		/**
 		* @brief Allocate a query pool for storing the needed size for every BLAS compaction.
 		*/ 
-		VkQueryPool queryPool{ VK_NULL_HANDLE };
+		std::shared_ptr<VulkanQueryPool> queryPool = nullptr;
 		if (nbCompactions > 0)                // Is compaction requested?
 		{
 			assert(nbCompactions == nbBlas);  // Don't allow mix of on/off compaction
 
 			/**
-			* @brief Instance a VkQueryPoolCreateInfo.
-			*/
-			VkQueryPoolCreateInfo qpci{};
-			qpci.sType                          = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
-			qpci.queryCount                     = nbBlas;
-			qpci.queryType                      = VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR;
-
-			/**
 			* @brief Create Query Pool.
 			*/
-			vkCreateQueryPool(m_VulkanState.m_Device, &qpci, nullptr, &queryPool);
+			queryPool = std::make_shared<VulkanQueryPool>(m_VulkanState, VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR, nbBlas);
 		}
 
 		/**
@@ -199,11 +192,6 @@ namespace Spices {
 		{
 			m_blas.emplace_back(b.as);
 		}
-
-		/**
-		* @brief Clean up.
-		*/ 
-		vkDestroyQueryPool(m_VulkanState.m_Device, queryPool, nullptr);
 	}
 
 	void VulkanRayTracing::UpdateBlas(uint32_t blasIdx, const BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags) const
@@ -408,7 +396,7 @@ namespace Spices {
 		const std::vector<uint32_t>&               indices         , 
 		std::vector<BuildAccelerationStructure>&   buildAs         , 
 		VkDeviceAddress                            scratchAddress  , 
-		VkQueryPool                                queryPool
+		std::shared_ptr<VulkanQueryPool>           queryPool
 	) const
 	{
 		SPICES_PROFILE_ZONE;
@@ -418,12 +406,7 @@ namespace Spices {
 		*/
 		if (queryPool)  
 		{
-			vkResetQueryPool(
-				m_VulkanState.m_Device, 
-				queryPool, 
-				0, 
-				static_cast<uint32_t>(indices.size())
-			);
+			queryPool.reset();
 		}
 
 		uint32_t queryCnt{ 0 };
@@ -489,7 +472,7 @@ namespace Spices {
 					1,
 					&buildAs[idx].buildInfo.dstAccelerationStructure,
 					VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR, 
-					queryPool, 
+					queryPool->Get(),
 					queryCnt++
 				);
 			}
@@ -500,8 +483,9 @@ namespace Spices {
 		VkCommandBuffer                          cmdBuf    ,
 		const std::vector<uint32_t>&             indices   , 
 		std::vector<BuildAccelerationStructure>& buildAs   , 
-		VkQueryPool                              queryPool
-	) const
+		std::shared_ptr<VulkanQueryPool>         queryPool
+	) 
+		const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -512,16 +496,10 @@ namespace Spices {
 		*/
 		std::vector<VkDeviceSize> compactSizes(static_cast<uint32_t>(indices.size()));
 
-		vkGetQueryPoolResults(
-			m_VulkanState.m_Device, 
-			queryPool, 
-			0, 
-			static_cast<uint32_t>(compactSizes.size()), 
-			compactSizes.size() * sizeof(VkDeviceSize),
-			compactSizes.data(), 
-			sizeof(VkDeviceSize), 
-			VK_QUERY_RESULT_WAIT_BIT
-		);
+		/**
+		* @brief Get Query Pool results.
+		*/
+		queryPool->QueryResults(compactSizes.data());
 
 		for (const auto idx : indices)
 		{
