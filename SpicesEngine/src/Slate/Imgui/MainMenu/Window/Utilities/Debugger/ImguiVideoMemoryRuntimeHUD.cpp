@@ -1,24 +1,24 @@
 /**
-* @file ImguiGPUMemoryHUD.cpp.
-* @brief The ImguiGPUMemoryHUD Class Implementation.
+* @file ImguiVideoMemoryRuntimeHUD.cpp.
+* @brief The ImguiVideoMemoryRuntimeHUD Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "ImguiGPUMemoryHUD.h"
+#include "ImguiVideoMemoryRuntimeHUD.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spices {
 
-    ImguiGPUMemoryHUD::ImguiGPUMemoryHUD(
+    ImguiVideoMemoryRuntimeHUD::ImguiVideoMemoryRuntimeHUD(
         const std::string&  panelName ,
         FrameInfo&          frameInfo
     )
         : ImguiSlate(panelName, frameInfo)
     {}
 
-    void ImguiGPUMemoryHUD::OnRender()
+    void ImguiVideoMemoryRuntimeHUD::OnRender()
     {
         SPICES_PROFILE_ZONE;
 
@@ -70,7 +70,7 @@ namespace Spices {
         * @brief Begin render Search Input Text.
         */
         {
-            SPICES_PROFILE_ZONEN("ImguiGPUMemoryHUD::Search");
+            SPICES_PROFILE_ZONEN("ImguiVideoMemoryRuntimeHUD::Search");
 
             ImGui::Spacing();
             ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f - ImGui::GetStyle().WindowPadding.x);
@@ -93,7 +93,7 @@ namespace Spices {
         float columeWidth = ImGuiH::GetLineItemSize().x * 6.5f;
 
         {
-            SPICES_PROFILE_ZONEN("ImguiGPUMemoryHUD::Total");
+            SPICES_PROFILE_ZONEN("ImguiVideoMemoryRuntimeHUD::Total");
 
             ImGuiH::DrawTreeTitle("Memory Total", nullptr, [&]() { 
                 ImGuiH::DrawPropertyItem("Usage:", columeWidth, nullptr, [&]() {
@@ -124,7 +124,7 @@ namespace Spices {
         }
         
         {
-            SPICES_PROFILE_ZONEN("ImguiGPUMemoryHUD::Heaps");
+            SPICES_PROFILE_ZONEN("ImguiVideoMemoryRuntimeHUD::Heaps");
 
             for (int i = 0; i < nHeaps; i++)
             {
@@ -168,7 +168,7 @@ namespace Spices {
         End();
     }
 
-    std::string ImguiGPUMemoryHUD::ConvertBytestoString(uint64_t bytes)
+    std::string ImguiVideoMemoryRuntimeHUD::ConvertBytestoString(uint64_t bytes)
     {
         SPICES_PROFILE_ZONE;
 
@@ -209,7 +209,7 @@ namespace Spices {
         }
     }
 
-    std::string ImguiGPUMemoryHUD::ConvertMemoryFlagtoString(VkMemoryHeapFlags flag)
+    std::string ImguiVideoMemoryRuntimeHUD::ConvertMemoryFlagtoString(VkMemoryHeapFlags flag)
     {
         SPICES_PROFILE_ZONE;
 

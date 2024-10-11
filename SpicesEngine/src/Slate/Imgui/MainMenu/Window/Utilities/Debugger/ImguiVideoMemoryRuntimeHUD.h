@@ -1,6 +1,6 @@
 /**
-* @file ImguiGPUMemoryHUD.h
-* @brief The ImguiGPUMemoryHUD Class Definitions.
+* @file ImguiVideoMemoryRuntimeHUD.h
+* @brief The ImguiVideoMemoryRuntimeHUD Class Definitions.
 * @author Spices.
 */
 
@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/*
-	* @brief The ImguiGPUMemoryHUD Class.
+	* @brief The ImguiVideoMemoryRuntimeHUD Class.
 	* This class defines how to render GPU Memory Statics HUD.
 	*/
-	class ImguiGPUMemoryHUD : public ImguiSlate
+	class ImguiVideoMemoryRuntimeHUD : public ImguiSlate
 	{
 	public:
 
@@ -23,7 +23,7 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiGPUMemoryHUD(
+		ImguiVideoMemoryRuntimeHUD(
 			const std::string& panelName ,
 			FrameInfo&         frameInfo
 		);
@@ -31,7 +31,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiGPUMemoryHUD() override = default;
+		virtual ~ImguiVideoMemoryRuntimeHUD() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

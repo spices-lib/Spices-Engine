@@ -16,7 +16,7 @@ namespace Spices {
         {                                                                                                     \
             std::stringstream ss;                                                                             \
             ss << "Assert Failed \n    At File: " << __FILE__ << " \n   At Line: " << __LINE__ << "\n   ";    \
-            SPICES_CORE_ERROR(ss.str());                                                                      \
+            SPICES_CORE_WARN(ss.str());                                                                      \
         }                                                                                                     \
     }  
 }

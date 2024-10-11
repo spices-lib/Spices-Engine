@@ -81,20 +81,20 @@ namespace Spices {
 		nv::perf::MetricsEvaluator metricsEvaluator;
 	};
 
-#ifdef SPICES_DEBUG
-
-#define NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerfGPUProfilerContinuous::CreateInstance(__VA_ARGS__); }
-#define NSIGHTPERF_GPUPROFILERCONTINUOUS_FRAMECONSUME                                                          { ::Spices::NsightPerfGPUProfilerContinuous::Get().ConsumeSample(); }
-#define NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET                                                                 { ::Spices::NsightPerfGPUProfilerContinuous::Get().Reset(); }
-
-#endif
-
-#ifdef SPICES_RELEASE
+//#ifdef SPICES_DEBUG
+//
+//#define NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerfGPUProfilerContinuous::CreateInstance(__VA_ARGS__); }
+//#define NSIGHTPERF_GPUPROFILERCONTINUOUS_FRAMECONSUME                                                          { ::Spices::NsightPerfGPUProfilerContinuous::Get().ConsumeSample(); }
+//#define NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET                                                                 { ::Spices::NsightPerfGPUProfilerContinuous::Get().Reset(); }
+//
+//#endif
+//
+//#ifdef SPICES_RELEASE
 
 #define NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(...)
 #define NSIGHTPERF_GPUPROFILERCONTINUOUS_FRAMECONSUME             
 #define NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET                                                  
 
-#endif
+//#endif
 
 }

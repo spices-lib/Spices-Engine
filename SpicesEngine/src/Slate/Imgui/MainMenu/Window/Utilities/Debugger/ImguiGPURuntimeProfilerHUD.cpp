@@ -1,23 +1,23 @@
 /**
-* @file ImguiGPUProfilerHUD.cpp.
-* @brief The ImguiGPUProfilerHUD Class Implementation.
+* @file ImguiGPURuntimeProfilerHUD.cpp.
+* @brief The ImguiGPURuntimeProfilerHUD Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "ImguiGPUProfilerHUD.h"
+#include "ImguiGPURuntimeProfilerHUD.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
 
 namespace Spices {
 
-    ImguiGPUProfilerHUD::ImguiGPUProfilerHUD(
+    ImguiGPURuntimeProfilerHUD::ImguiGPURuntimeProfilerHUD(
         const std::string& panelName ,
         FrameInfo&         frameInfo
     )
         : ImguiSlate(panelName, frameInfo)
     {}
 
-    void ImguiGPUProfilerHUD::OnRender()
+    void ImguiGPURuntimeProfilerHUD::OnRender()
     {
         SPICES_PROFILE_ZONE;
 
@@ -42,7 +42,7 @@ namespace Spices {
         * @brief Begin render Search Input Text.
         */
         {
-            SPICES_PROFILE_ZONEN("ImguiGPUProfilerHUD::Search");
+            SPICES_PROFILE_ZONEN("ImguiGPURuntimeProfilerHUD::Search");
 
             ImGui::Spacing();
             ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f - ImGui::GetStyle().WindowPadding.x);

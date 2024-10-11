@@ -101,4 +101,27 @@ namespace Spices {
 		std::vector<size_t> m_FrameLevelTraceIndice;
 		std::string m_OutputDirectory;
 	};
+
+//#ifdef SPICES_DEBUG
+//
+//#define NSIGHTPERF_GPUPROFILERONESHOT_CREATEINSTANCE(...)                                                  { ::Spices::NsightPerfGPUProfilerOneshotCollection::CreateInstance(__VA_ARGS__); }
+//#define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME(...)                                                        { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndFrame(__VA_ARGS__); }
+//#define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)                                                      { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().BeginRange(__VA_ARGS__); }
+//#define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)                                                        { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndRange(__VA_ARGS__); }
+//#define NSIGHTPERF_GPUPROFILERONESHOT_RESET(...)                                                           { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().Reset(__VA_ARGS__); }
+//#define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME                                                         { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().CaptureFrame(); }
+//
+//#endif
+//
+//#ifdef SPICES_RELEASE
+
+#define NSIGHTPERF_GPUPROFILERONESHOT_CREATEINSTANCE(...)
+#define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME(...)      
+#define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)    
+#define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)      
+#define NSIGHTPERF_GPUPROFILERONESHOT_RESET(...)         
+#define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME          
+
+//#endif
+
 }

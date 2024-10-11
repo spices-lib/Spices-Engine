@@ -11,10 +11,9 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
-	class ImguiGPUProfilerHUD;
-	class ImguiGPUMemoryHUD;
+	class ImguiDebugger;
 
 	/**
 	* @brief The ImguiUtilities Class.
@@ -58,18 +57,8 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief The Path of tracy-profiler.
+		* @brief The shared pointer of ImguiDebugger.
 		*/
-		std::string m_ProfileProcessName = SPICES_EXTENT_PROCESS_PATH +  "tracy/tracy-profiler.exe";
-
-		/**
-		* @brief The shared pointer of ImguiPerfProfiler.
-		*/
-		std::shared_ptr<ImguiGPUProfilerHUD> m_ImguiGPUProfilerHUD;
-
-		/**
-		* @brief The shared pointer of ImguiGPUMemoryHUD.
-		*/
-		std::shared_ptr<ImguiGPUMemoryHUD> m_ImguiGPUMemoryHUD;
+		std::shared_ptr<ImguiDebugger> m_ImguiDebugger;
 	};
 }

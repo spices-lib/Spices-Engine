@@ -158,19 +158,19 @@ namespace Spices {
 #define NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(__VA_ARGS__); }
 #define NSIGHTPERF_GPUPROFILERHUD_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequerment(__VA_ARGS__); }
 
-//#ifdef SPICES_DEBUG
-//
-//#define NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerfGPUProfilerHUD::CreateInstance(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER                                                       { ::Spices::NsightPerfGPUProfilerHUD::Get().InitHUDRenderer(); }
-//#define NSIGHTPERF_GPUPROFILERHUD_FRAMECONSUME                                                          { ::Spices::NsightPerfGPUProfilerHUD::Get().ConsumeSample(); }
-//#define NSIGHTPERF_GPUPROFILERHUD_RENDERHUD                                                             { ::Spices::NsightPerfGPUProfilerHUD::Get().RenderHUD(); }
-//#define NSIGHTPERF_GPUPROFILERHUD_SETINSESSION(...)                                                     { ::Spices::NsightPerfGPUProfilerHUD::Get().SetInSession(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERHUD_ENDFRAME(...)                                                         { ::Spices::NsightPerfGPUProfilerHUD::Get().EndFrame(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERHUD_RESET                                                                 { ::Spices::NsightPerfGPUProfilerHUD::Get().Reset(); }
-//
-//#endif
-//
-//#ifdef SPICES_RELEASE
+#ifdef SPICES_DEBUG
+
+#define NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerfGPUProfilerHUD::CreateInstance(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER                                                       { ::Spices::NsightPerfGPUProfilerHUD::Get().InitHUDRenderer(); }
+#define NSIGHTPERF_GPUPROFILERHUD_FRAMECONSUME                                                          { ::Spices::NsightPerfGPUProfilerHUD::Get().ConsumeSample(); }
+#define NSIGHTPERF_GPUPROFILERHUD_RENDERHUD                                                             { ::Spices::NsightPerfGPUProfilerHUD::Get().RenderHUD(); }
+#define NSIGHTPERF_GPUPROFILERHUD_SETINSESSION(...)                                                     { ::Spices::NsightPerfGPUProfilerHUD::Get().SetInSession(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERHUD_ENDFRAME(...)                                                         { ::Spices::NsightPerfGPUProfilerHUD::Get().EndFrame(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERHUD_RESET                                                                 { ::Spices::NsightPerfGPUProfilerHUD::Get().Reset(); }
+
+#endif
+
+#ifdef SPICES_RELEASE
 
 #define NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(...) 
 #define NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER     
@@ -180,6 +180,6 @@ namespace Spices {
 #define NSIGHTPERF_GPUPROFILERHUD_ENDFRAME(...)       
 #define NSIGHTPERF_GPUPROFILERHUD_RESET                                         
 
-//#endif
+#endif
 
 }

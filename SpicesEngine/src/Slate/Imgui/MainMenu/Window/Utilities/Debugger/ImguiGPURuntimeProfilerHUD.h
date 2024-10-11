@@ -1,6 +1,6 @@
 /**
-* @file ImguiGPUProfilerHUD.h
-* @brief The ImguiGPUProfilerHUD Class Definitions.
+* @file ImguiGPURuntimeProfilerHUD.h
+* @brief The ImguiGPURuntimeProfilerHUD Class Definitions.
 * @author Spices.
 */
 
@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/*
-	* @brief The ImguiGPUProfilerHUD Class.
+	* @brief The ImguiGPURuntimeProfilerHUD Class.
 	* This class defines how to render GPU Profiler HUD.
 	*/
-	class ImguiGPUProfilerHUD : public ImguiSlate
+	class ImguiGPURuntimeProfilerHUD : public ImguiSlate
 	{
 	public:
 
@@ -23,7 +23,7 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiGPUProfilerHUD(
+		ImguiGPURuntimeProfilerHUD(
 			const std::string& panelName,
 			FrameInfo& frameInfo
 		);
@@ -31,7 +31,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiGPUProfilerHUD() override = default;
+		virtual ~ImguiGPURuntimeProfilerHUD() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
