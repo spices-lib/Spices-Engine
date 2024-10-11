@@ -600,7 +600,48 @@ namespace nv { namespace perf { namespace sampler {
             };
             std::string counterConfigName = (isNullOrEmpty(pCounterConfigFileName)) ? (pChipName + std::string(".config")) : pCounterConfigFileName;
             std::string counterDataPrefixName = (isNullOrEmpty(pCounterDataPrefixFileName)) ? (pChipName + std::string(".prefix")) : pCounterDataPrefixFileName;
-            success = LoadConfiguration(counterConfigName.c_str(), counterDataPrefixName.c_str(), m_counterConfiguration);
+
+            auto getFullPath = [&](const std::string& name) {
+                const char* pChipName = deviceIdentifiers.pChipName;
+
+                if (!strcmp(pChipName, "TU102") || !strcmp(pChipName, "TU104") || !strcmp(pChipName, "TU106"))
+                {
+                    return SPICES_PERFCONFIG_PATH + "turing/generated/" + name;
+                }
+                else if (!strcmp(pChipName, "TU116") || !strcmp(pChipName, "TU117"))
+                {
+                    return SPICES_PERFCONFIG_PATH + "turing/generated/" + name;
+                }
+                else if (!strcmp(pChipName, "GA102") || !strcmp(pChipName, "GA103") || !strcmp(pChipName, "GA104") || !strcmp(pChipName, "GA106") || !strcmp(pChipName, "GA107"))
+                {
+                    return SPICES_PERFCONFIG_PATH + "ga10x/generated/" + name;
+                }
+                else if (!strcmp(pChipName, "GA10B"))
+                {
+                    return SPICES_PERFCONFIG_PATH + "ga10b/generated/" + name;
+                }
+                else if (false
+                    || !strcmp(pChipName, "AD102")
+                    || !strcmp(pChipName, "AD103")
+                    || !strcmp(pChipName, "AD104")
+                    || !strcmp(pChipName, "AD106")
+                    || !strcmp(pChipName, "AD107")
+                    )
+                {
+                    return SPICES_PERFCONFIG_PATH + "ad10x/generated/" + name;
+                }
+                else
+                {
+                    NV_PERF_LOG_ERR(20, "Unknown chip \"%s\"\n", pChipName);
+                    return name;
+                }
+            };
+
+            std::string counterConfig = "C:/Users/spiecs/Downloads/NVIDIA_Nsight_Perf_SDK_2024.1_Public_Windows/Samples/Vulkan/SaschaWillems/build/bin/" + counterConfigName;
+            std::string counterDataPrefix = "C:/Users/spiecs/Downloads/NVIDIA_Nsight_Perf_SDK_2024.1_Public_Windows/Samples/Vulkan/SaschaWillems/build/bin/" + counterDataPrefixName;
+
+            //success = LoadConfiguration(getFullPath(counterConfigName).c_str(), getFullPath(counterDataPrefixName).c_str(), m_counterConfiguration);
+            success = LoadConfiguration(counterConfig.c_str(), counterDataPrefix.c_str(), m_counterConfiguration);
             if(!success)
             {
                 NV_PERF_LOG_ERR(20, "LoadConfiguration failed\n");

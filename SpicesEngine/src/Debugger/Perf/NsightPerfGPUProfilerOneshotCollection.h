@@ -38,15 +38,20 @@ namespace Spices {
 		static void CreateInstance(VulkanState& state);
 
 		/**
+		* @brief Create this.
+		*/
+		void Create(VulkanState& state);
+
+		/**
 		* @brief Get this Single Instance.
 		* @return Returns this Single Instance.
 		*/
 		static NsightPerfGPUProfilerOneshotCollection& Get() { return *m_NsightPerfGPUProfilerOneshotCollection; }
 
 		/**
-		* @brief Clear Frame Data.
+		* @brief Begin a Frame.
 		*/
-		void ClearFrame();
+		void BeginFrame(VkCommandBuffer commandBuffer);
 
 		/**
 		* @brief Begin recording a Oneshot Collection Range.
@@ -56,10 +61,10 @@ namespace Spices {
 		* @param[in] index Range index.
 		*/
 		void BeginRange(
-			VkCommandBuffer cmd          , 
-			const char*     name         , 
-			size_t          nestingLevel , 
-			size_t&         index
+			VkCommandBuffer      cmd          , 
+			const std::string&   name         ,
+			size_t               nestingLevel , 
+			uint32_t             index
 		);
 
 		/**
@@ -100,28 +105,35 @@ namespace Spices {
 		std::vector<nv::perf::mini_trace::APITracerVulkan> m_ApiTracers;
 		std::vector<size_t> m_FrameLevelTraceIndice;
 		std::string m_OutputDirectory;
+
+		/**
+		* @brief True if in Session.
+		*/
+		bool m_IsInSession;
 	};
 
-//#ifdef SPICES_DEBUG
-//
-//#define NSIGHTPERF_GPUPROFILERONESHOT_CREATEINSTANCE(...)                                                  { ::Spices::NsightPerfGPUProfilerOneshotCollection::CreateInstance(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME(...)                                                        { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndFrame(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)                                                      { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().BeginRange(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)                                                        { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndRange(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERONESHOT_RESET(...)                                                           { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().Reset(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME                                                         { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().CaptureFrame(); }
-//
-//#endif
-//
-//#ifdef SPICES_RELEASE
+#ifdef SPICES_DEBUG
+
+#define NSIGHTPERF_GPUPROFILERONESHOT_CREATEINSTANCE(...)                                                  { ::Spices::NsightPerfGPUProfilerOneshotCollection::CreateInstance(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERONESHOT_BEGINFRAME(...)                                                      { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().BeginFrame(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME                                                             { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndFrame(); }
+#define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)                                                      { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().BeginRange(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)                                                        { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndRange(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERONESHOT_RESET                                                                { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().Reset(); }
+#define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME                                                         { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().CaptureFrame(); }
+
+#endif
+
+#ifdef SPICES_RELEASE
 
 #define NSIGHTPERF_GPUPROFILERONESHOT_CREATEINSTANCE(...)
-#define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME(...)      
+#define NSIGHTPERF_GPUPROFILERONESHOT_BEGINFRAME(...)
+#define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME     
 #define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)    
 #define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)      
-#define NSIGHTPERF_GPUPROFILERONESHOT_RESET(...)         
+#define NSIGHTPERF_GPUPROFILERONESHOT_RESET        
 #define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME          
 
-//#endif
+#endif
 
 }

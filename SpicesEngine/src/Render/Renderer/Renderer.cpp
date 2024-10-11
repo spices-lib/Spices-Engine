@@ -520,6 +520,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, caption)
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, caption, 1, m_CurrentFrame)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, caption)
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 	}
@@ -529,6 +530,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 1)
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
@@ -669,8 +671,13 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
+		//NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 2)
+		//NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
+
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		//NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter SubPass:" + m_HandledSubPass->GetName())
 
 		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -686,8 +693,13 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
+		//NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 2)
+		//NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
+
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		//NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter SubPass:" + m_HandledSubPass->GetName())
 
 		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 	}
@@ -728,6 +740,9 @@ namespace Spices {
 
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName(), 1, m_CurrentFrame)
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
 
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -774,6 +789,9 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
 
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName(), 1, m_CurrentFrame)
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
+
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 			
@@ -791,13 +809,16 @@ namespace Spices {
 
 		vkCmdEndRenderPass(m_CommandBuffer);
 
-		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
-		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
-
-		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
-		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
-
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
+
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+
+		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 2)
+		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 1)
+
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 	}
 
 	Renderer::RayTracingRenderBehaveBuilder::RayTracingRenderBehaveBuilder(

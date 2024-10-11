@@ -14,6 +14,7 @@
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/

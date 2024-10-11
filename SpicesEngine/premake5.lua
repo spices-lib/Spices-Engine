@@ -68,11 +68,17 @@ project "SpicesEngine"
 		-- Define Engine Logs Folder.
 		'SPICES_CONSOLElOGFILE_PATH=std::string("saved/ConsoleLog/")',
 
+		-- Define Nsight Perf Config Folder.
+		'SPICES_PERFCONFIG_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/vendor/NvPerfUtility/HudConfigurations/pub/")',
+
 		-- Define Engine GPUCrashReport Folder.
 		'SPICES_GPUCRASHREPORT_PATH=std::string("saved/GPUCrashReport/")',
 
 		-- Define Engine GPUProfilerReport Folder.
 		'SPICES_GPUPROFILEREPORT_PATH=std::string("saved/GPUProfilerReport/")',
+
+		-- Define Engine GPUProfilerOneShot Folder.
+		'SPICES_GPUPROFILEONESHOT_PATH=std::string("saved/GPUProfilerOneShot/")',
 
 		-- Define Engine Extent Processes Folder.
 		'SPICES_EXTENT_PROCESS_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/../vendor/")',

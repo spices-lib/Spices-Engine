@@ -406,7 +406,7 @@ namespace Spices {
 		*/
 		if (queryPool)  
 		{
-			queryPool.reset();
+			queryPool->Reset(cmdBuf);
 		}
 
 		uint32_t queryCnt{ 0 };

@@ -239,7 +239,7 @@ namespace Spices {
 		}
 
 		{
-			SPICES_PROFILE_ZONEN("StartFrame::NsightPerfFrameStart");
+			SPICES_PROFILE_ZONEN("StartFrame::NsightPerfReportFrameStart");
 
 			NSIGHTPERF_GPUPROFILERREPORT_BEGINFRAME(m_VulkanState.m_GraphicQueue, m_VulkanState.m_GraphicQueueFamily)
 		}
@@ -267,11 +267,24 @@ namespace Spices {
 			NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryComputeCommandBuffer")
 			NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_VulkanState.m_VkFunc, "BeginPrimaryGraphicCommandBuffer")
 		}
+
+		{
+			SPICES_PROFILE_ZONEN("StartFrame::NsightPerfOneShotFrameStart");
+
+			NSIGHTPERF_GPUPROFILERONESHOT_BEGINFRAME(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex])
+			NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], "Frame", 0, frameInfo.m_FrameIndex)
+		}
 	}
 
 	void VulkanRenderBackend::EndFrame(FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;
+
+		{
+			SPICES_PROFILE_ZONEN("EndFrame::NsightPerfOneShotEndFrameRange");
+
+			NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], 0);
+		}
 
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::EndCommandBuffer");
@@ -355,7 +368,7 @@ namespace Spices {
 			NSIGHTPERF_GPUPROFILERHUD_ENDFRAME(m_VulkanState)
 			NSIGHTPERF_GPUPROFILERCONTINUOUS_FRAMECONSUME
 			NSIGHTPERF_GPUPROFILERREPORT_ENDFRAME(m_VulkanState)
-			NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME()
+			NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME
 		}
 
 		{

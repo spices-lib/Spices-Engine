@@ -1,3 +1,3 @@
 @echo off
-call Statistics.py --rootFolder %cd%/..
+call python Statistics.py --rootFolder %cd%/..
 PAUSE

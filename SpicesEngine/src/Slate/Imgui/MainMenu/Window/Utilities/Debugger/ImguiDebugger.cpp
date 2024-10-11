@@ -8,6 +8,7 @@
 #include "ImguiDebugger.h"
 #include "Systems/SlateSystem.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
 #include "Core/Library/ProcessLibrary.h"
 #include "ImguiVideoMemoryRuntimeHUD.h"
 #include "ImguiGPURuntimeProfilerHUD.h"
@@ -42,7 +43,7 @@ namespace Spices {
         ImGui::PopStyleColor();
         if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Runtime Profiler HUD), "F9")) { m_ImguiGPURuntimeProfilerHUD->SetWindowState(true); }
         if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Report Generate), "F10")) { NSIGHTPERF_GPUPROFILERREPORT_CAPTUREFRAME }
-        if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU One-Shot Collection), "F10")) { }
+        if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU One-Shot Collection), "F10")) { NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME }
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
         ImGui::SeparatorText("Video Memory Stage");
         ImGui::PopStyleColor();

@@ -12,6 +12,7 @@
 #include <NvPerfCounterConfiguration.h>
 #include <NvPerfCpuMarkerTrace.h>
 #include <NvPerfVulkan.h>
+#include <NvPerfReportGeneratorVulkan.h>
 
 namespace Spices {
 
@@ -19,6 +20,25 @@ namespace Spices {
 
     NsightPerfGPUProfilerOneshotCollection::NsightPerfGPUProfilerOneshotCollection(VulkanState& state)
         : m_VulkanState(state)
+        , m_IsInSession(false)
+    {
+        SPICES_PROFILE_ZONE;
+
+        Create(state);
+        //Reset();
+    }
+
+    void NsightPerfGPUProfilerOneshotCollection::CreateInstance(VulkanState& state)
+    {
+        SPICES_PROFILE_ZONE;
+
+        if (!m_NsightPerfGPUProfilerOneshotCollection)
+        {
+            m_NsightPerfGPUProfilerOneshotCollection = std::make_shared<NsightPerfGPUProfilerOneshotCollection>(state);
+        }
+    }
+
+    void NsightPerfGPUProfilerOneshotCollection::Create(VulkanState& state)
     {
         SPICES_PROFILE_ZONE;
 
@@ -26,7 +46,7 @@ namespace Spices {
         const size_t maxIntervalPerFrameInNanoSeconds = 100 * 1000 * 1000; // 100ms
         const size_t numFramesToSample = MaxFrameInFlight;
 
-        const size_t numRangesPerFrame = 5;
+        const size_t numRangesPerFrame = 50;
         auto onStopSampling = [this](const char* outputDirectory) {
             m_OutputDirectory = outputDirectory;
         };
@@ -40,7 +60,8 @@ namespace Spices {
             onStopSampling
         ))
 
-        m_PeriodicSamplerOneShot.m_outputOption.directoryName = "OneShot/deferredshadows";
+        m_PeriodicSamplerOneShot.m_outputOption.directoryName  = SPICES_GPUPROFILEONESHOT_PATH;
+        m_PeriodicSamplerOneShot.m_outputOption.appendDateTime = nv::perf::sampler::PeriodicSamplerOneShotVulkan::AppendDateTime::yes;
 
         m_FrameLevelTraceIndice.resize(numFramesToSample, 0);
         m_ApiTracers.resize(numFramesToSample);
@@ -50,34 +71,26 @@ namespace Spices {
         }
     }
 
-    void NsightPerfGPUProfilerOneshotCollection::CreateInstance(VulkanState& state)
+    void NsightPerfGPUProfilerOneshotCollection::BeginFrame(VkCommandBuffer commandBuffer)
     {
         SPICES_PROFILE_ZONE;
 
-        if (!m_NsightPerfGPUProfilerOneshotCollection)
-        {
-            m_NsightPerfGPUProfilerOneshotCollection = std::make_shared<NsightPerfGPUProfilerOneshotCollection>(state);
-        }
-    }
-
-    void NsightPerfGPUProfilerOneshotCollection::ClearFrame()
-    {
-        SPICES_PROFILE_ZONE;
-
-        m_ApiTracers[FrameInfo::Get().m_FrameIndex].ClearData();
+        auto& apiTracer = m_ApiTracers[FrameInfo::Get().m_FrameIndex];
+        apiTracer.ClearData();
+        apiTracer.ResetQueries(commandBuffer);
     }
 
     void NsightPerfGPUProfilerOneshotCollection::BeginRange(
-        VkCommandBuffer cmd          , 
-        const char*     name         , 
-        size_t          nestingLevel , 
-        size_t&         index
+        VkCommandBuffer        cmd          , 
+        const std::string&     name         , 
+        size_t                 nestingLevel , 
+        uint32_t               index
     )
     {
         SPICES_PROFILE_ZONE;
 
         auto& apiTracer = m_ApiTracers[FrameInfo::Get().m_FrameIndex];
-        NSPERF_CHECK(apiTracer.BeginRange(cmd, name, nestingLevel, m_FrameLevelTraceIndice[index]))
+        NSPERF_CHECK(apiTracer.BeginRange(cmd, name.c_str(), nestingLevel, m_FrameLevelTraceIndice[index]))
     }
 
     void NsightPerfGPUProfilerOneshotCollection::EndRange(VkCommandBuffer cmd, size_t index)
@@ -124,7 +137,7 @@ namespace Spices {
         {}
         else if (samplerStatus == nv::perf::sampler::PeriodicSamplerOneShotVulkan::SamplerStatus::Sampling)
         {
-            SPICES_CORE_ERROR("Nsight Perf: Currently sampling.");
+            SPICES_CORE_INFO("Nsight Perf: One-Shot is sampling.");
         }
     }
 
