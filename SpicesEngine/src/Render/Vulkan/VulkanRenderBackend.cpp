@@ -8,6 +8,7 @@
 #include "VulkanRenderBackend.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerContinuous.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 #include "Core/Timer/ScopeTimer.h"
 
@@ -69,6 +70,7 @@ namespace Spices {
 		{
 			NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(m_VulkanState)
 			NSIGHTPERF_GPUPROFILERREPORT_CREATEINSTANCE(m_VulkanState)
+			NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(m_VulkanState)
 		}
 
 		/**
@@ -348,6 +350,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::NsightPerfFrameEnd");
 
+			NSIGHTPERF_GPUPROFILERCONTINUOUS_FRAMECONSUME
 			NSIGHTPERF_GPUPROFILERREPORT_ENDFRAME(m_VulkanState)
 			NSIGHTPERF_GPUPROFILERHUD_ENDFRAME(m_VulkanState)
 		}

@@ -8,6 +8,7 @@
 #include "SlateRenderer.h"
 #include "Systems/SlateSystem.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
+#include "Debugger/Perf/NsightPerfGPUProfilerContinuous.h"
 
 namespace Spices {
 
@@ -133,6 +134,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET
 		NSIGHTPERF_GPUPROFILERREPORT_RESET(m_VulkanState)
 		NSIGHTPERF_GPUPROFILERHUD_RESET
 
