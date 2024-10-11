@@ -5,54 +5,61 @@
 '''
 
 import os
+import argparse
 from itertools import (takewhile, repeat)
 
 '''
 @brief Files basic root folder.
 '''
-rootfolder: str = 'D:/OpenGLProjects/Spices-Engine'
+rootFolder: str = ''
 
 '''
 @brief Files with those extensions can be counted.
 '''
 extensions: dict = {
-    'c': 1,
-    'h': 1,
-    'cpp': 1,
-    'hpp': 1,
-    'lua': 1,
-    'py': 1,
+    'c':        1,
+    'h':        1,
+    'cpp':      1,
+    'hpp':      1,
+    'lua':      1,
+    'py':       1,
     'material': 1,
-    'glsl': 1,
-    'mesh': 1,
-    'task': 1,
-    'vert': 1,
-    'geom': 1,
-    'frag': 1,
-    'comp': 1,
-    'rgen': 1,
-    'rchit': 1,
-    'rmiss': 1,
-    'bat': 1,
+    'glsl':     1,
+    'mesh':     1,
+    'task':     1,
+    'vert':     1,
+    'geom':     1,
+    'frag':     1,
+    'comp':     1,
+    'rgen':     1,
+    'rchit':    1,
+    'rmiss':    1,
+    'bat':      1,
 }
 
 '''
 @brief Files in those folders can not be counted.
 '''
-ignorefolders: dict = {
-    'vendor': 1,
-    '.git': 1,
-    '.idea': 1,
-    '.vs': 1,
-    'bin': 1,
-    'bin-int': 1,
-    'venv': 1
+ignoreFolders: dict = {
+    'spv':      1,
+    'vendor':   1,
+    '.git':     1,
+    '.idea':    1,
+    '.vs':      1,
+    'bin':      1,
+    'bin-int':  1,
+    'venv':     1,
 }
 
 '''
 @brief Counted rows.
 '''
-nrows: int = 0
+nRows: int = 0
+
+'''
+@brief Counted files.
+'''
+nFiles: int = 0
 
 def iter_count(file_name: str):
 
@@ -76,15 +83,16 @@ def iter_files(file_dir: str):
     '''
 
     global extensions
-    global ignorefolders
-    global nrows
+    global ignoreFolders
+    global nRows
+    global nFiles
 
     for filepath, dirnames, filenames in os.walk(file_dir):
         for filename in filenames:
 
             ignore = False
-            for ignorefolder in ignorefolders:
-                if filepath.find(ignorefolder) != -1:
+            for ignoreFolder in ignoreFolders:
+                if filepath.find(ignoreFolder) != -1:
                     ignore = True
                     break
 
@@ -93,7 +101,8 @@ def iter_files(file_dir: str):
 
             fullname = os.path.join(filepath, filename)
             if extensions.get(os.path.splitext(filename)[-1][1:]) is not None:
-                nrows += iter_count(os.path.join(filepath, filename))
+                nFiles += 1
+                nRows += iter_count(os.path.join(filepath, filename))
 
 def main():
 
@@ -101,10 +110,20 @@ def main():
     @brief Iter all files and count rows and print result.
     '''
 
-    global rootfolder
+    global rootFolder
 
-    iter_files(rootfolder)
-    print(nrows)
+    parser = argparse.ArgumentParser(description='Statistics Spices Project')
+    parser.add_argument('--rootFolder', type=str, required=True, help='root folder path, e.g. C:/')
+    args = parser.parse_args()
+
+    if not os.path.isdir(args.rootFolder):
+        raise Exception('Invalid argument for --rootFolder: {}'.format(args.rootFolder))
+
+    rootFolder = args.rootFolder
+    iter_files(rootFolder)
+    print("Spices Project Statistics:")
+    print("nRows : %d" % nRows)
+    print("nFiles: %d" % nFiles)
 
 if __name__ == '__main__':
     main()
