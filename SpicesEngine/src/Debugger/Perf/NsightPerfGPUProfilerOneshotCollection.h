@@ -86,19 +86,32 @@ namespace Spices {
 		void EndFrame();
 
 		/**
-		* @brief Reset Session.
-		*/
-		void Reset();
-
-		/**
-		* @brief Quit on quit application.
+		* @brief Quit application.
 		*/
 		void Quit();
+
+		/**
+		* @brief Destroy Query Pool.
+		*/
+		void DestroyQueryPool();
 
 		/**
 		* @brief Capture this frame.
 		*/
 		void CaptureFrame();
+
+	private:
+
+		/**
+		* @brief Init Api Tracer.
+		* @param[in] state VulkanState.
+		*/
+		void InitApiTracer(VulkanState& state);
+
+		/**
+		* @brief Reset Session.
+		*/
+		void Reset();
 
 	private:
 
@@ -162,7 +175,7 @@ namespace Spices {
 #define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME     
 #define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)    
 #define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)      
-#define NSIGHTPERF_GPUPROFILERONESHOT_QUIT        
+#define NSIGHTPERF_GPUPROFILERONESHOT_QUIT       
 #define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME          
 
 #endif

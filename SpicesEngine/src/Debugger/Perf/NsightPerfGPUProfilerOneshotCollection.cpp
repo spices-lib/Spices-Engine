@@ -19,6 +19,9 @@ namespace Spices {
 
     std::shared_ptr<NsightPerfGPUProfilerOneshotCollection> NsightPerfGPUProfilerOneshotCollection::m_NsightPerfGPUProfilerOneshotCollection;
 
+    const size_t numRangesPerFrame = 50;    // @brief Sampling max level depth.
+    const size_t numFramesToSample = MaxFrameInFlight;
+
     NsightPerfGPUProfilerOneshotCollection::NsightPerfGPUProfilerOneshotCollection(VulkanState& state)
         : m_VulkanState(state)
         , m_IsInSession(false)
@@ -30,6 +33,11 @@ namespace Spices {
         * @brief Create this in construct.
         */
         Create(state);
+
+        /**
+        * @brief Init Query Pool here.
+        */
+        InitApiTracer(state);
 
         /**
         * @brief End Session after initalized,
@@ -57,13 +65,7 @@ namespace Spices {
         */
         const size_t samplingIntervalInNanoSeconds = 1024 * 16;
         const size_t maxIntervalPerFrameInNanoSeconds = 100 * 1000 * 1000; // 100ms
-        const size_t numFramesToSample = MaxFrameInFlight;
-
-        /**
-        * @brief Sampling max level depth.
-        */
-        const size_t numRangesPerFrame = 50;
-
+        
         /**
         * @brief Get traces.yaml path on sampling finished.
         */
@@ -89,16 +91,6 @@ namespace Spices {
         */
         m_PeriodicSamplerOneShot.m_outputOption.directoryName  = SPICES_GPUPROFILEONESHOT_PATH;
         m_PeriodicSamplerOneShot.m_outputOption.appendDateTime = nv::perf::sampler::PeriodicSamplerOneShotVulkan::AppendDateTime::yes;
-
-        /**
-        * @brief Initialize apiTracer.
-        */
-        m_FrameLevelTraceIndice.resize(numFramesToSample, 0);
-        m_ApiTracers.resize(numFramesToSample);
-        for (auto& apiTracer : m_ApiTracers)
-        {
-            NSPERF_CHECK(apiTracer.Initialize(state.m_Instance, state.m_PhysicalDevice, state.m_Device, numRangesPerFrame))
-        }
 
         /**
         * @brief Set InSession true.
@@ -222,6 +214,21 @@ namespace Spices {
         }
     }
 
+    void NsightPerfGPUProfilerOneshotCollection::InitApiTracer(VulkanState& state)
+    {
+        SPICES_PROFILE_ZONE;
+
+        /**
+        * @brief Initialize apiTracer.
+        */
+        m_FrameLevelTraceIndice.resize(numFramesToSample, 0);
+        m_ApiTracers.resize(numFramesToSample);
+        for (auto& apiTracer : m_ApiTracers)
+        {
+            NSPERF_CHECK(apiTracer.Initialize(state.m_Instance, state.m_PhysicalDevice, state.m_Device, numRangesPerFrame))
+        }
+    }
+
     void NsightPerfGPUProfilerOneshotCollection::Reset()
     {
         SPICES_PROFILE_ZONE;
@@ -236,6 +243,12 @@ namespace Spices {
         SPICES_PROFILE_ZONE;
 
         Reset();
+        DestroyQueryPool();
+    }
+
+    void NsightPerfGPUProfilerOneshotCollection::DestroyQueryPool()
+    {
+        SPICES_PROFILE_ZONE;
 
         /**
         * @brief Destroy Query Pool.
