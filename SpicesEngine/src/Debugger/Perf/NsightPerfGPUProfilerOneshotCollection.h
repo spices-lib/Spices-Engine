@@ -20,6 +20,10 @@ namespace Spices {
 	{
 	public:
 
+		using SamplerStatus = nv::perf::sampler::PeriodicSamplerOneShotVulkan::SamplerStatus;
+
+	public:
+
 		/**
 		* @brief Constructor Function.
 		* @param[in] state VulkanState.
@@ -50,8 +54,10 @@ namespace Spices {
 
 		/**
 		* @brief Begin a Frame.
+		* @param[in] state VulkanState.
+		* @param[in] commandBuffer VkCommandBuffer.
 		*/
-		void BeginFrame(VkCommandBuffer commandBuffer);
+		void BeginFrame(VulkanState& state, VkCommandBuffer commandBuffer);
 
 		/**
 		* @brief Begin recording a Oneshot Collection Range.
@@ -101,15 +107,35 @@ namespace Spices {
 		*/
 		static std::shared_ptr<NsightPerfGPUProfilerOneshotCollection> m_NsightPerfGPUProfilerOneshotCollection;
 
+		/**
+		* @brief PeriodicSamplerOneShotVulkan.
+		*/
 		nv::perf::sampler::PeriodicSamplerOneShotVulkan m_PeriodicSamplerOneShot;
+
+		/**
+		* @brief APITracerVulkan Per FlightFrame.
+		*/
 		std::vector<nv::perf::mini_trace::APITracerVulkan> m_ApiTracers;
+
+		/**
+		* @brief FrameLevelTraceIndice.
+		*/
 		std::vector<size_t> m_FrameLevelTraceIndice;
+
+		/**
+		* @brief OutFile Directory.
+		*/
 		std::string m_OutputDirectory;
 
 		/**
 		* @brief True if in Session.
 		*/
 		bool m_IsInSession;
+
+		/**
+		* @brief True if want capture next frame.
+		*/
+		bool m_EnableCaptureNextFrame;
 	};
 
 #ifdef SPICES_DEBUG

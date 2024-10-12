@@ -37,6 +37,7 @@ namespace Spices {
 		* @brief Create Query Pool.
 		*/
 		VK_CHECK(vkCreateQueryPool(vulkanState.m_Device, &createInfo, nullptr, &m_QueryPool))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUERY_POOL, (uint64_t)m_QueryPool, m_VulkanState.m_Device, "Query Pool")
 	}
 
 	VulkanQueryPool::~VulkanQueryPool()

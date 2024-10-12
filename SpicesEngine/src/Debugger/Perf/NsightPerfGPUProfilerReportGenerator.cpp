@@ -78,10 +78,11 @@ namespace Spices {
 			* @todo slate infobar.
 			*/
 			VK_CHECK(vkDeviceWaitIdle(state.m_Device))
+			SPICES_CORE_INFO("Nsight Perf: Report Generator is sampling.");
 		}
 		else if (m_NvPerf.GetInitStatus() != nv::perf::profiler::ReportGeneratorInitStatus::Succeeded)
 		{
-			SPICES_CORE_ERROR("Nsight Perf: UnKnown failed.");
+			SPICES_CORE_ERROR("Nsight Perf: Report Generator UnKnown failed.");
 		}
 	}
 

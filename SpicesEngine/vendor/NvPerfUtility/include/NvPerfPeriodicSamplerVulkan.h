@@ -637,11 +637,7 @@ namespace nv { namespace perf { namespace sampler {
                 }
             };
 
-            std::string counterConfig = "C:/Users/spiecs/Downloads/NVIDIA_Nsight_Perf_SDK_2024.1_Public_Windows/Samples/Vulkan/SaschaWillems/build/bin/" + counterConfigName;
-            std::string counterDataPrefix = "C:/Users/spiecs/Downloads/NVIDIA_Nsight_Perf_SDK_2024.1_Public_Windows/Samples/Vulkan/SaschaWillems/build/bin/" + counterDataPrefixName;
-
-            //success = LoadConfiguration(getFullPath(counterConfigName).c_str(), getFullPath(counterDataPrefixName).c_str(), m_counterConfiguration);
-            success = LoadConfiguration(counterConfig.c_str(), counterDataPrefix.c_str(), m_counterConfiguration);
+            success = LoadConfiguration(getFullPath(counterConfigName).c_str(), getFullPath(counterDataPrefixName).c_str(), m_counterConfiguration);
             if(!success)
             {
                 NV_PERF_LOG_ERR(20, "LoadConfiguration failed\n");
