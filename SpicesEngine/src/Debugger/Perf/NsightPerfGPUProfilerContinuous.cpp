@@ -29,10 +29,38 @@ namespace Spices {
 
 	NsightPerfGPUProfilerContinuous::NsightPerfGPUProfilerContinuous(VulkanState& state)
 		: m_VulkanState(state)
+        , m_IsInSession(false)
+        , m_EnableCaptureNextFrame(false)
 	{
 		SPICES_PROFILE_ZONE;
 
-        NSPERF_CHECK(nv::perf::InitializeNvPerf())
+        /**
+        * @brief Create this in construct.
+        */
+        Create(state);
+
+        /**
+        * @brief End Session after initalized,
+        * for Session can not be owned by multiple instance.
+        */
+        Reset();
+	}
+
+    void NsightPerfGPUProfilerContinuous::CreateInstance(VulkanState& state)
+    {
+        SPICES_PROFILE_ZONE;
+
+        if (!m_NsightPerfGPUProfilerContinuous)
+        {
+            m_NsightPerfGPUProfilerContinuous = std::make_shared<NsightPerfGPUProfilerContinuous>(state);
+        }
+    }
+
+    void NsightPerfGPUProfilerContinuous::Create(VulkanState& state)
+    {
+        SPICES_PROFILE_ZONE;
+
+        //NSPERF_CHECK(nv::perf::InitializeNvPerf())
         NSPERF_CHECK(nv::perf::VulkanIsNvidiaDevice(state.m_PhysicalDevice))
         const size_t deviceIndex = nv::perf::VulkanGetNvperfDeviceIndex(state.m_Instance, state.m_PhysicalDevice, state.m_Device);
 
@@ -151,9 +179,9 @@ namespace Spices {
         /**
         * @brief Start a periodic sampler session.
         */
-        const uint32_t SamplingFrequency = 2; // 60 Hz
+        const uint32_t SamplingFrequency = 120; // 120 Hz
         const uint32_t samplingIntervalInNanoSeconds = 1000 * 1000 * 1000 / SamplingFrequency;
-        const uint32_t MaxDecodeLatencyInNanoSeconds = 1000 * 1000 * 1000; // tolerate maximum DecodeCounters() latency up to 1 second
+        const uint32_t MaxDecodeLatencyInNanoSeconds = 1000 * 1000 * 1000 * 10; // tolerate maximum DecodeCounters() latency up to 1 second
         const nv::perf::sampler::GpuPeriodicSampler::GpuPulseSamplingInterval samplingInterval = sampler.GetGpuPulseSamplingInterval(samplingIntervalInNanoSeconds);
         const uint32_t maxNumUndecodedSamples = MaxDecodeLatencyInNanoSeconds / samplingIntervalInNanoSeconds;
         size_t recordBufferSize = 0;
@@ -180,21 +208,32 @@ namespace Spices {
         * relies on clients manually pushing triggers through the command list. Furthermore, since the metric configuration used is for low-speed sampling, no "overflow prevention records" will be emitted.
         */
         NSPERF_CHECK(sampler.StartSampling())
-	}
 
-    void NsightPerfGPUProfilerContinuous::CreateInstance(VulkanState& state)
+        /**
+        * @brief Set InSession true.
+        */
+        m_IsInSession = true;
+    }
+
+    void NsightPerfGPUProfilerContinuous::BeginFrame(VulkanState& state)
     {
         SPICES_PROFILE_ZONE;
 
-        if (!m_NsightPerfGPUProfilerContinuous)
+        /**
+        * @brief Capture One frame.
+        */
+        if (m_EnableCaptureNextFrame)
         {
-            m_NsightPerfGPUProfilerContinuous = std::make_shared<NsightPerfGPUProfilerContinuous>(state);
+            Create(state);
+            m_EnableCaptureNextFrame = false;
         }
     }
 
-    void NsightPerfGPUProfilerContinuous::ConsumeSample()
+    void NsightPerfGPUProfilerContinuous::EndFrame()
     {
         SPICES_PROFILE_ZONE;
+
+        if (!m_IsInSession) return;
 
         nv::perf::sampler::GpuPeriodicSampler::GetRecordBufferStatusParams getRecordBufferStatusParams = {};
         getRecordBufferStatusParams.queryOverflow       = true;
@@ -302,6 +341,18 @@ namespace Spices {
                 SPICES_CORE_WARN("Counter data failed to update get pointer.");
             }
         }
+
+        /**
+        * @brief Reset after out.
+        */
+        Reset();
+    }
+
+    void NsightPerfGPUProfilerContinuous::CaptureFrame()
+    {
+        SPICES_PROFILE_ZONE;
+
+        m_EnableCaptureNextFrame = true;
     }
 
     void NsightPerfGPUProfilerContinuous::Reset()
@@ -311,5 +362,7 @@ namespace Spices {
         NSPERF_CHECK(sampler.StopSampling())
         NSPERF_CHECK(sampler.EndSession())
         sampler.Reset();
+
+        m_IsInSession = false;
     }
 }

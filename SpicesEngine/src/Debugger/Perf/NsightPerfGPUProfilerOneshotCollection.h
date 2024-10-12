@@ -86,9 +86,14 @@ namespace Spices {
 		void EndFrame();
 
 		/**
-		* @brief Reset on quit application.
+		* @brief Reset Session.
 		*/
 		void Reset();
+
+		/**
+		* @brief Quit on quit application.
+		*/
+		void Quit();
 
 		/**
 		* @brief Capture this frame.
@@ -145,7 +150,7 @@ namespace Spices {
 #define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME                                                             { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndFrame(); }
 #define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)                                                      { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().BeginRange(__VA_ARGS__); }
 #define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)                                                        { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().EndRange(__VA_ARGS__); }
-#define NSIGHTPERF_GPUPROFILERONESHOT_RESET                                                                { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().Reset(); }
+#define NSIGHTPERF_GPUPROFILERONESHOT_QUIT                                                                 { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().Quit(); }
 #define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME                                                         { ::Spices::NsightPerfGPUProfilerOneshotCollection::Get().CaptureFrame(); }
 
 #endif
@@ -157,7 +162,7 @@ namespace Spices {
 #define NSIGHTPERF_GPUPROFILERONESHOT_ENDFRAME     
 #define NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(...)    
 #define NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(...)      
-#define NSIGHTPERF_GPUPROFILERONESHOT_RESET        
+#define NSIGHTPERF_GPUPROFILERONESHOT_QUIT        
 #define NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME          
 
 #endif

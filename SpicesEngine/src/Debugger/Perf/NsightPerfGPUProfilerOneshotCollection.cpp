@@ -180,7 +180,9 @@ namespace Spices {
             }
             else
             {
-                NV_PERF_LOG_ERR(10, "Failed to open file: %s\n", filename.c_str());
+                std::stringstream ss;
+                ss << "Failed to open file: " << filename;
+                SPICES_CORE_WARN(ss.str());
             }
 
             /**
@@ -227,6 +229,21 @@ namespace Spices {
         NSPERF_CHECK(m_PeriodicSamplerOneShot.Reset())
 
         m_IsInSession = false;
+    }
+
+    void NsightPerfGPUProfilerOneshotCollection::Quit()
+    {
+        SPICES_PROFILE_ZONE;
+
+        Reset();
+
+        /**
+        * @brief Destroy Query Pool.
+        */
+        for (auto& apiTracer : m_ApiTracers)
+        {
+            apiTracer.Destroy();
+        }
     }
 
     void NsightPerfGPUProfilerOneshotCollection::CaptureFrame()

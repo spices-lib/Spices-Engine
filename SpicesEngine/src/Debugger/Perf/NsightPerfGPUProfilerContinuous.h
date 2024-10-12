@@ -39,13 +39,35 @@ namespace Spices {
 		static void CreateInstance(VulkanState& state);
 
 		/**
+		* @brief Begin this Session.
+		*/
+		void Create(VulkanState& state);
+
+		/**
 		* @brief Get this Single Instance.
 		* @return Returns this Single Instance.
 		*/
 		static NsightPerfGPUProfilerContinuous& Get() { return *m_NsightPerfGPUProfilerContinuous; }
 
-		void ConsumeSample();
+		/**
+		* @brief Begin a frame.
+		* @param[in] state VulkanState.
+		*/
+		void BeginFrame(VulkanState& state);
 
+		/**
+		* @brief ConsumeSample each frame.
+		*/
+		void EndFrame();
+
+		/**
+		* @brief Capture this frame.
+		*/
+		void CaptureFrame();
+
+		/**
+		* @brief Reset on quit application.
+		*/
 		void Reset();
 
 	private:
@@ -79,22 +101,36 @@ namespace Spices {
 		* @brief MetricsEvaluator.
 		*/
 		nv::perf::MetricsEvaluator metricsEvaluator;
+
+		/**
+		* @brief True if in session.
+		*/
+		bool m_IsInSession;
+
+		/**
+		* @brief True if want capture next frame.
+		*/
+		bool m_EnableCaptureNextFrame;
 	};
 
-//#ifdef SPICES_DEBUG
-//
-//#define NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerfGPUProfilerContinuous::CreateInstance(__VA_ARGS__); }
-//#define NSIGHTPERF_GPUPROFILERCONTINUOUS_FRAMECONSUME                                                          { ::Spices::NsightPerfGPUProfilerContinuous::Get().ConsumeSample(); }
-//#define NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET                                                                 { ::Spices::NsightPerfGPUProfilerContinuous::Get().Reset(); }
-//
-//#endif
-//
-//#ifdef SPICES_RELEASE
+#ifdef SPICES_DEBUG
+
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(...)                                                   { ::Spices::NsightPerfGPUProfilerContinuous::CreateInstance(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_BEGINFRAME(...)                                                       { ::Spices::NsightPerfGPUProfilerContinuous::Get().BeginFrame(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_ENDFRAME                                                              { ::Spices::NsightPerfGPUProfilerContinuous::Get().EndFrame(); }
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_CAPTUREFRAME                                                          //{ ::Spices::NsightPerfGPUProfilerContinuous::Get().CaptureFrame(); }
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET                                                                 { ::Spices::NsightPerfGPUProfilerContinuous::Get().Reset(); }
+
+#endif
+
+#ifdef SPICES_RELEASE
 
 #define NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(...)
-#define NSIGHTPERF_GPUPROFILERCONTINUOUS_FRAMECONSUME             
-#define NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET                                                  
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_BEGINFRAME(...)    
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_ENDFRAME   
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_CAPTUREFRAME
+#define NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET              
 
-//#endif
+#endif
 
 }
