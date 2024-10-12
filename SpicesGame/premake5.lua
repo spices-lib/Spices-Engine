@@ -50,6 +50,7 @@ project "SpicesGame"
 		"%{IncludeDir.NvAftermath}",           -- Library: NvAftermath Source Folder.
 		"%{IncludeDir.NvPerf}",                -- Library: NvPerf Source Folder.
 		"%{IncludeDir.NvPerfUtility}",         -- Library: NvPerfUtility Source Folder.
+		"%{IncludeDir.NVTX}",                  -- Library: NVTX Source Folder.
 		"%{IncludeDir.spdlog}",                -- Library: spdlog Source Folder.
 		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
 		"%{IncludeDir.tracy}",                 -- Library: tracy Source Folder.

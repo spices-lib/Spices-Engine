@@ -17,6 +17,7 @@ IncludeDir["ImPlot"]                      = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["NvAftermath"]                 = "%{wks.location}/SpicesEngine/vendor/NvAftermath/include"                         -- Include: NvAftermath version 2024.2.0.24200
 IncludeDir["NvPerf"]                      = "%{wks.location}/SpicesEngine/vendor/NvPerf/include"                              -- Include: NvPerf version 2024.1
 IncludeDir["NvPerfUtility"]               = "%{wks.location}/SpicesEngine/vendor/NvPerfUtility/include"                       -- Include: NvPerfUtility version 2024.1
+IncludeDir["NVTX"]                        = "%{wks.location}/SpicesEngine/vendor/NVTX/c/include"                              -- Include: NVTX
 IncludeDir["spdlog"]                      = "%{wks.location}/SpicesEngine/vendor/spdlog/include"                              -- Include: spdlog
 IncludeDir["ImGuizmo"]                    = "%{wks.location}/SpicesEngine/vendor/ImGuizmo"                                    -- Include: ImGuizmo
 IncludeDir["tracy"]                       = "%{wks.location}/SpicesEngine/vendor/tracy/public"                                -- Include: tracy

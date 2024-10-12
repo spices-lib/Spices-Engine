@@ -46,3 +46,6 @@
 [submodule "SpicesEngine/vendor/KTX-Software"]
 	path = SpicesEngine/vendor/KTX-Software
 	url = https://github.com/spices-lib/KTX-Software.git
+[submodule "SpicesEngine/vendor/NVTX"]
+	path = SpicesEngine/vendor/NVTX
+	url = https://github.com/NVIDIA/NVTX.git
