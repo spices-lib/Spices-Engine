@@ -177,7 +177,11 @@ namespace Spices {
 			glfwGetFramebufferSize(m_VulkanState.m_Windows, &width, &height);
 			glfwWaitEvents();
 		}
-		VK_CHECK(vkDeviceWaitIdle(m_VulkanState.m_Device))
+
+		/**
+		* @brief Might not needed?
+		*/
+		//VK_CHECK(vkDeviceWaitIdle(m_VulkanState.m_Device))
 
 		/**
 		* @brief Create an specific event.

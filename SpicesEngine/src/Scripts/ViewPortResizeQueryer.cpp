@@ -18,7 +18,10 @@ namespace Spices {
 
 		if (m_ViewPort->IsResizedThisFrame())
 		{
-			VK_CHECK(vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device))
+			/**
+			* @brief Might not needed?
+			*/
+			//VK_CHECK(vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device))
 
 			SlateResizeEvent event(static_cast<uint32_t>(m_ViewPort->GetPanelSize().x), static_cast<uint32_t>(m_ViewPort->GetPanelSize().y));
 
