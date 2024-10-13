@@ -23,7 +23,7 @@ namespace Spices {
 	Application::Application()
 	{
 		SPICES_PROFILE_ZONE;
-		
+
 		/**
 		* @brief Init Log Class.
 		*/

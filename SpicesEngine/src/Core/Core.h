@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Debugger/Tracy/TracyProfiler.hpp"
-
+#include "Debugger/NVTX/NvidiaToolExtensionLibrary.hpp"
 #include "TimeStep.h"
 #include "Log/Log.h"
 
