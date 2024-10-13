@@ -23,7 +23,7 @@
 * @brief Used if want profile on demand.
 * Enable profiling only when there¡¯s an established connection with the server.
 */
-//#define TRACY_ON_DEMAND
+#define TRACY_ON_DEMAND
 
 /**
 * @brief Disable announce its presence to the local network.
@@ -110,6 +110,8 @@
 #ifdef SPICES_DEBUG
 
 #define SPICES_PROFILE_FRAME                      FrameMark
+#define SPICES_PROFILE_FRAME_START                FrameMarkStart("Frame")
+#define SPICES_PROFILE_FRAME_END                  FrameMarkEnd("Frame")
 #define SPICES_PROFILE_ZONE                       ZoneScoped
 #define SPICES_PROFILE_ZONEN(...)                 ZoneScopedN(__VA_ARGS__)
 #define SPICES_PROFILE_ALLOC(...)                 TracySecureAllocS(__VA_ARGS__, 20)
