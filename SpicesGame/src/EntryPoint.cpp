@@ -3,7 +3,8 @@
 
 #include <new>
 
-#if TRACY_ENABLE && 0
+#ifdef TRACY_ENABLE
+#if 0
 
 void* operator new(size_t size)
 {
@@ -18,6 +19,7 @@ void operator delete(void* ptr) noexcept
 	free(ptr);
 }
 
+#endif
 #endif
 
 namespace Spices {

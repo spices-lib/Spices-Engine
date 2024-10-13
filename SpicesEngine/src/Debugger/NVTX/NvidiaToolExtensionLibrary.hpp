@@ -1,6 +1,6 @@
 /**
-* @file NvidiaToolExtensionLibrary.h file.
-* @brief The ShaderDataBase Class Definitions.
+* @file NvidiaToolExtensionLibrary.hpp file.
+* @brief The NvidiaToolExtensionLibrary Class Definitions.
 * @author Spices.
 * @see https://nvidia.github.io/NVTX/doxygen-cpp/index.html .
 */

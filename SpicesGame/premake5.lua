@@ -91,7 +91,6 @@ project "SpicesGame"
 		defines
 		{
 			"SPICES_DEBUG",                    -- Debug Symbol.
-			"TRACY_ENABLE"                     -- tracy Feature Enable.
 		}
 
 		runtime "Debug"
