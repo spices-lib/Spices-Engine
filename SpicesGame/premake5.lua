@@ -91,6 +91,8 @@ project "SpicesGame"
 		defines
 		{
 			"SPICES_DEBUG",                    -- Debug Symbol.
+			"TRACY_ENABLE",                    -- tracy Feature Enable.
+			"TRACY_ON_DEMAND",                 -- Used if want profile on demand.
 		}
 
 		runtime "Debug"
@@ -103,7 +105,8 @@ project "SpicesGame"
 		defines
 		{
 			"SPICES_RELEASE",                  -- Release Symbol.
-			"TRACY_ENABLE"                     -- tracy Feature Enable.
+			"TRACY_ENABLE",                    -- tracy Feature Enable.
+			"TRACY_ON_DEMAND",                 -- Used if want profile on demand.
 		}
 
 		runtime "Release"

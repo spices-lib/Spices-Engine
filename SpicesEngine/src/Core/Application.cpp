@@ -73,8 +73,6 @@ namespace Spices {
 
 	void Application::Run()
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Specify the current World, which created from Game.
 		* @todo Mult World Support.
@@ -98,7 +96,7 @@ namespace Spices {
 		*/
 		while (!glfwWindowShouldClose(VulkanRenderBackend::GetState().m_Windows))
 		{
-			SPICES_PROFILE_ZONE;
+			SPICES_PROFILE_ZONEN("MainLoop");
 
 			/**
 			* @brief Wait for glfw events.
@@ -120,7 +118,7 @@ namespace Spices {
 			*/
 			FrameInfo::Get().m_World->OnActivate(ts);
 
-			SPICES_PROFILE_FRAME;
+			//SPICES_PROFILE_FRAME;
 		}
 
 		/**
