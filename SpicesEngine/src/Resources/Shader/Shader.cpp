@@ -21,13 +21,20 @@ namespace Spices {
 		Deserialize();
 	}
 
-	Shader::~Shader()
+	Shader::Shader(std::string name, const std::string& stage)
+		: m_ShaderName(name)
+		, m_ShaderStage(ShaderHelper::ToStage(stage))
 	{
 		SPICES_PROFILE_ZONE;
 
-
-
+		/**
+		* @breif Call Dserialize() while in Constructor.
+		*/
+		Deserialize();
 	}
+
+	Shader::~Shader()
+	{}
 
 	void Shader::Deserialize()
 	{

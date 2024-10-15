@@ -32,6 +32,13 @@ namespace Spices {
 		Shader(std::string name, ShaderStage stage);
 		
 		/**
+		* @brief Constructor Function.
+		* @param[in] name Shader Name.
+		* @param[in] stage ShaderStage.
+		*/
+		Shader(std::string name, const std::string& stage);
+
+		/**
 		* @brief Destructor Function.
 		*/
 		virtual ~Shader();
@@ -40,6 +47,12 @@ namespace Spices {
 		* @brief Deserialize the data from a disk file to this class.
 		*/
 		void Deserialize();
+
+		/**
+		* @brief Get VulkanShaderModule.
+		* @return Returns VulkanShaderModule.
+		*/
+		std::shared_ptr<VulkanShaderModule>& GetShaderModule() { return m_ShaderModule; };
 
 	private:
 

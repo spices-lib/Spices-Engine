@@ -13,7 +13,7 @@
 #include "Core/Library/StringLibrary.h"
 #include "Render/Renderer/Renderer.h"
 #include "Render/Renderer/DescriptorSetManager/BindLessTextureManager.h"
-#include "Render/Renderer/ShaderManager/ShaderManager.h"
+#include "Resources/Shader/Shader.h"
 
 namespace Spices {
 
@@ -39,7 +39,10 @@ namespace Spices {
 		{
 			for (int i = 0; i < pair.second.size(); i++)
 			{
-				ShaderManager::UnLoad(pair.second[i], pair.first);
+				std::stringstream ss;
+				ss << pair.first << "." << pair.second[i];
+
+				ResourcePool<Shader>::UnLoad(ss.str());
 			}
 		}
 
@@ -105,7 +108,10 @@ namespace Spices {
 			{
 				for (int i = 0; i < pair.second.size(); i++)
 				{
-					ShaderManager::Registry(pair.second[i], pair.first);
+					std::stringstream ss;
+					ss << pair.first << "." << pair.second[i];
+
+					ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first);
 				}
 			}
 		}

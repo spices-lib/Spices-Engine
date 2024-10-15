@@ -68,6 +68,12 @@ namespace Spices {
 		static std::shared_ptr<T> Load(const std::string& path);
 
 		/**
+		* @brief UnLoad a resource by path.
+		* @param[in] path Resource file path in disk.
+		*/
+		static void UnLoad(const std::string& path);
+
+		/**
 		* @brief Determain if specific resource is exist.
 		* @param[in] name Resource Name.
 		* @return Returns true if exist.
@@ -123,6 +129,17 @@ namespace Spices {
 
 		if (m_Resources.find(path) == m_Resources.end()) return nullptr;
 		return m_Resources[path];
+	}
+
+	template<typename T>
+	inline void ResourcePool<T>::UnLoad(const std::string& path)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_Resources.find(path) != m_Resources.end())
+		{
+			m_Resources.erase(path);
+		}
 	}
 
 	template<typename T>

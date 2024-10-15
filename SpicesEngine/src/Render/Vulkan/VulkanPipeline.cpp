@@ -7,7 +7,8 @@
 #include "Pchheader.h"
 #include "VulkanPipeline.h"
 #include "Resources/Mesh/Mesh.h"
-#include "Render/Renderer/ShaderManager/ShaderManager.h"
+#include "Resources/ResourcePool/ResourcePool.h"
+#include "Resources/Shader/Shader.h"
 
 namespace Spices {
 
@@ -36,7 +37,10 @@ namespace Spices {
 
 			for (size_t i = 0; i < pair.second.size(); i++)
 			{
-				shaderModules.push_back(ShaderManager::Registry(pair.second[i], pair.first));
+				std::stringstream ss;
+				ss << pair.first << "." << pair.second[i];
+
+				shaderModules.push_back(ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first)->GetShaderModule());
 			}
 		}
 
@@ -230,7 +234,10 @@ namespace Spices {
 		{
 			for(size_t i = 0; i < pair.second.size(); i++)
 			{
-				shaderModules.push_back(ShaderManager::Registry(pair.second[i], pair.first));
+				std::stringstream ss;
+				ss << pair.first << "." << pair.second[i];
+
+				shaderModules.push_back(ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first)->GetShaderModule());
 			}
 		}
 
@@ -347,7 +354,11 @@ namespace Spices {
 		{
 			if (pair.first == "comp")
 			{
-				shaderModules.push_back(ShaderManager::Registry(pair.second[0], pair.first));
+				std::stringstream ss;
+				ss << pair.first << "." << pair.second[0];
+
+				shaderModules.push_back(ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[0], pair.first)->GetShaderModule());
+
 				break;
 			}
 		}
@@ -403,7 +414,10 @@ namespace Spices {
 
 			for (size_t i = 0; i < pair.second.size(); i++)
 			{
-				shaderModules.push_back(ShaderManager::Registry(pair.second[i], pair.first));
+				std::stringstream ss;
+				ss << pair.first << "." << pair.second[i];
+
+				shaderModules.push_back(ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first)->GetShaderModule());
 			}
 		}
 
@@ -470,7 +484,10 @@ namespace Spices {
 		*/
 		const auto material = ResourcePool<Material>::Load<Material>(materialName, materialName);
 
-		VkPipelineShaderStageCreateInfo stage = ShaderManager::Registry(material->GetShaderPath("vert")[0], "vert")->GetShaderStageCreateInfo();
+		std::stringstream ss;
+		ss << "vert" << "." << material->GetShaderPath("vert")[0];
+
+		VkPipelineShaderStageCreateInfo stage = ResourcePool<Shader>::Load<Shader>(ss.str(), material->GetShaderPath("vert")[0], ShaderStage::vert)->GetShaderModule()->GetShaderStageCreateInfo();
 
 		VkGraphicsShaderGroupCreateInfoNV group{};
 		group.sType                                     = VK_STRUCTURE_TYPE_GRAPHICS_SHADER_GROUP_CREATE_INFO_NV;
@@ -556,7 +573,11 @@ namespace Spices {
 		*/
 		const auto material = ResourcePool<Material>::Load<Material>(materialName, materialName);
 
-		VkPipelineShaderStageCreateInfo stage = ShaderManager::Registry(material->GetShaderPath("mesh")[0], "mesh")->GetShaderStageCreateInfo();
+		std::stringstream ss;
+		ss << "mesh" << "." << material->GetShaderPath("mesh")[0];
+
+		VkPipelineShaderStageCreateInfo stage = ResourcePool<Shader>::Load<Shader>(ss.str(), material->GetShaderPath("mesh")[0], ShaderStage::vert)->GetShaderModule()->GetShaderStageCreateInfo();
+
 
 		VkGraphicsShaderGroupCreateInfoNV group{};
 		group.sType                                     = VK_STRUCTURE_TYPE_GRAPHICS_SHADER_GROUP_CREATE_INFO_NV;
