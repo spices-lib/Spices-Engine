@@ -47,5 +47,6 @@ group "Dependencies"
 	include "SpicesEngine/vendor/GKlib"           -- Dependency GKlib.
 	include "SpicesEngine/vendor/METIS"           -- Dependency METIS.
 	include "SpicesEngine/vendor/KTX-Software"    -- Dependency ktx.
+	include "SpicesEngine/vendor/shaderc"         -- Dependency shaderc.
 	include "SpicesTest/vendor/googletest"        -- Dependency googletest.
 group ""

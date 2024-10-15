@@ -90,31 +90,34 @@ project "SpicesEngine"
 	-- The Solution Additional Include Folder.
 	includedirs
 	{
-		"src",                                 -- Engine Source Folder.
-		"%{IncludeDir.GLFW}",                  -- Library: GLFW Source Folder.
-		"%{IncludeDir.VulkanSDK}",             -- Library: VulkanSDK Source Folder.
-		"%{IncludeDir.stb_image}",             -- Library: stb_image Source Folder.
-		"%{IncludeDir.glm}",                   -- Library: glm Source Folder.
-		"%{IncludeDir.ImGui}",                 -- Library: ImGui Source Folder.
-		"%{IncludeDir.entt}",                  -- Library: entt Source Folder.
-		"%{IncludeDir.tinyobjloader}",         -- Library: tinyobjloader Source Folder.
-		"%{IncludeDir.yaml_cpp}",              -- Library: yaml_cpp Source Folder.
-		"%{IncludeDir.rapidyaml}",             -- Library: rapidyaml Source Folder.
-		"%{IncludeDir.ImPlot}",                -- Library: ImPlot Source Folder.
-		"%{IncludeDir.NvAftermath}",           -- Library: NvAftermath Source Folder.
-		"%{IncludeDir.NvPerf}",                -- Library: NvPerf Source Folder.
-		"%{IncludeDir.NvPerfUtility}",         -- Library: NvPerfUtility Source Folder.
-		"%{IncludeDir.NVTX}",                  -- Library: NVTX Source Folder.
-		"%{IncludeDir.spdlog}",                -- Library: spdlog Source Folder.
-		"%{IncludeDir.ImGuizmo}",              -- Library: ImGuizmo Source Folder.
-		"%{IncludeDir.tracy}",                 -- Library: tracy Source Folder.
-		"%{IncludeDir.IconFontCppHeaders}",    -- Library: IconFontCppHeaders Source Folder.
-		"%{IncludeDir.HoudiniEngine}",         -- Library: HoudiniEngine Dependency Folder.
-		"%{IncludeDir.taskflow}",              -- Library: taskflow Source Folder.
-		"%{IncludeDir.meshoptimizer}",         -- Library: meshoptimizer Source Folder.
-		"%{IncludeDir.VulkanMemoryAllocator}", -- Library: VulkanMemoryAllocator Header Folder.
-		"%{IncludeDir.METIS}/include",         -- Library: METIS Header Folder.
-		"%{IncludeDir.ktx}/include",           -- Library: ktx Header Folder.
+		"src",                                                -- Engine Source Folder.
+		"%{IncludeDir.GLFW}",                                 -- Library: GLFW Source Folder.
+		"%{IncludeDir.VulkanSDK}",                            -- Library: VulkanSDK Source Folder.
+		"%{IncludeDir.stb_image}",                            -- Library: stb_image Source Folder.
+		"%{IncludeDir.glm}",                                  -- Library: glm Source Folder.
+		"%{IncludeDir.ImGui}",                                -- Library: ImGui Source Folder.
+		"%{IncludeDir.entt}",                                 -- Library: entt Source Folder.
+		"%{IncludeDir.tinyobjloader}",                        -- Library: tinyobjloader Source Folder.
+		"%{IncludeDir.yaml_cpp}",                             -- Library: yaml_cpp Source Folder.
+		"%{IncludeDir.rapidyaml}",                            -- Library: rapidyaml Source Folder.
+		"%{IncludeDir.ImPlot}",                               -- Library: ImPlot Source Folder.
+		"%{IncludeDir.NvAftermath}",                          -- Library: NvAftermath Source Folder.
+		"%{IncludeDir.NvPerf}",                               -- Library: NvPerf Source Folder.
+		"%{IncludeDir.NvPerfUtility}",                        -- Library: NvPerfUtility Source Folder.
+		"%{IncludeDir.NVTX}",                                 -- Library: NVTX Source Folder.
+		"%{IncludeDir.spdlog}",                               -- Library: spdlog Source Folder.
+		"%{IncludeDir.ImGuizmo}",                             -- Library: ImGuizmo Source Folder.
+		"%{IncludeDir.tracy}",                                -- Library: tracy Source Folder.
+		"%{IncludeDir.IconFontCppHeaders}",                   -- Library: IconFontCppHeaders Source Folder.
+		"%{IncludeDir.HoudiniEngine}",                        -- Library: HoudiniEngine Dependency Folder.
+		"%{IncludeDir.taskflow}",                             -- Library: taskflow Source Folder.
+		"%{IncludeDir.meshoptimizer}",                        -- Library: meshoptimizer Source Folder.
+		"%{IncludeDir.VulkanMemoryAllocator}",                -- Library: VulkanMemoryAllocator Header Folder.
+		"%{IncludeDir.METIS}/include",                        -- Library: METIS Header Folder.
+		"%{IncludeDir.ktx}/include",                          -- Library: ktx Header Folder.
+		"%{IncludeDir.shaderc}",                              -- Library: shaderc Folder.
+		"%{IncludeDir.shaderc}/libshaderc/include",           -- Library: libshaderc Folder.
+		"%{IncludeDir.shaderc}/libshaderc_util/include",      -- Library: libshaderc_util Folder.
 	}
 
 	-- The Solution Dependency
@@ -130,6 +133,7 @@ project "SpicesEngine"
 		"%{Library.HoudiniEnginelib}",        -- Dependency: HoudiniEngine
 		"METIS",                              -- Dependency: METIS
 		"ktx",                                -- Dependency: ktx
+		"shaderc",                            -- Dependency: shaderc
 	}
 
 	-- Library: std_image is included this solution, do not use PreCompiler Header.

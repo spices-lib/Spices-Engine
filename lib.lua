@@ -29,6 +29,7 @@ IncludeDir["VulkanMemoryAllocator"]       = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["GKlib"]                       = "%{wks.location}/SpicesEngine/vendor/GKlib"                                       -- Include: GKlib
 IncludeDir["METIS"]                       = "%{wks.location}/SpicesEngine/vendor/METIS"                                       -- Include: METIS
 IncludeDir["ktx"]                         = "%{wks.location}/SpicesEngine/vendor/KTX-Software"                                -- Include: ktx
+IncludeDir["shaderc"]                     = "%{wks.location}/SpicesEngine/vendor/shaderc"                                     -- Include: shaderc
 IncludeDir["googletest"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googletest/include"                 -- Include: googletest
 IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googlemock/include"                 -- Include: googlemock
 
