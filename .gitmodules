@@ -49,3 +49,6 @@
 [submodule "SpicesEngine/vendor/NVTX"]
 	path = SpicesEngine/vendor/NVTX
 	url = https://github.com/NVIDIA/NVTX.git
+[submodule "SpicesEngine/vendor/shaderc"]
+	path = SpicesEngine/vendor/shaderc
+	url = https://github.com/spices-lib/shaderc.git
