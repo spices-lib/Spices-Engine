@@ -128,8 +128,6 @@
 #ifdef SPICES_DEBUG
 
 #define SPICES_PROFILE_FRAME                      FrameMark
-#define SPICES_PROFILE_FRAME_START                FrameMarkStart("Frame")
-#define SPICES_PROFILE_FRAME_END                  FrameMarkEnd("Frame")
 #define SPICES_PROFILE_ZONE                       ZoneScoped
 #define SPICES_PROFILE_ZONEN(...)                 ZoneScopedN(__VA_ARGS__)
 #define SPICES_PROFILE_ALLOC(ptr, size)           TracySecureAllocS(ptr, size, 20)
@@ -145,7 +143,7 @@
 #define SPICES_PROFILE_ZONE      
 #define SPICES_PROFILE_ZONEN(...)
 #define SPICES_PROFILE_ALLOC(ptr, size)
-#define SPICES_PROFILE_FREE(ptr, size) 
+#define SPICES_PROFILE_FREE(ptr) 
 #define SPICES_PROFILE_MARK(...) 
 #define SPICES_PROFILE_IMAGE(...)
 
