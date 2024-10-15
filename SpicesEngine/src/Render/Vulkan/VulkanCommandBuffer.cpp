@@ -27,7 +27,7 @@ namespace Spices {
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool));
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)vulkanState.m_GraphicCommandPool, vulkanState.m_Device, "GraphicCommandPool")
-
+		
 		poolInfo.queueFamilyIndex = vulkanState.m_ComputeQueueFamily;
 
 		/**
@@ -74,6 +74,9 @@ namespace Spices {
 		{
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_GraphicCommandBuffer[i], vulkanState.m_Device, "GraphicCommandBuffer")
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_ComputeCommandBuffer[i], vulkanState.m_Device, "ComputeCommandBuffer")
+
+			SPICES_PROFILE_VK_COLLECT(vulkanState.m_GraphicCommandBuffer[i])
+			SPICES_PROFILE_VK_COLLECT(vulkanState.m_ComputeCommandBuffer[i])
 		}
 	}
 }

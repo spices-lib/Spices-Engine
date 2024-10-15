@@ -86,5 +86,12 @@ namespace Spices {
 		* @brief Aftermath Function.
 		*/
 		VK_FUNCTION_POINTER(vkCmdSetCheckpointNV                            )
+
+		/**
+		* @brief Tracy Vulkan Context Collect Function
+		*/
+		VK_FUNCTION_POINTER(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT  )
+		VK_FUNCTION_POINTER(vkGetCalibratedTimestampsEXT                    )
+		VK_FUNCTION_POINTER(vkResetQueryPool                                )
 	};
 }

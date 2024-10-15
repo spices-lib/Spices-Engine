@@ -13,11 +13,11 @@ namespace Spices {
 	{
 		EXPLAIN_VK_FUNCTION_POINTER(vkCreateDebugUtilsMessengerEXT                  )
 		EXPLAIN_VK_FUNCTION_POINTER(vkDestroyDebugUtilsMessengerEXT                 )
-																                    
+
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdBeginDebugUtilsLabelEXT                    )
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdEndDebugUtilsLabelEXT                      )
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdInsertDebugUtilsLabelEXT                   )
-																                    
+
 		EXPLAIN_VK_FUNCTION_POINTER(vkQueueBeginDebugUtilsLabelEXT                  )
 		EXPLAIN_VK_FUNCTION_POINTER(vkQueueEndDebugUtilsLabelEXT                    )
 		EXPLAIN_VK_FUNCTION_POINTER(vkQueueInsertDebugUtilsLabelEXT                 )
@@ -46,5 +46,9 @@ namespace Spices {
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdPreprocessGeneratedCommandsNV              )
 
 		EXPLAIN_VK_FUNCTION_POINTER(vkCmdSetCheckpointNV                            )
+
+		EXPLAIN_VK_FUNCTION_POINTER(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT  )
+		EXPLAIN_VK_FUNCTION_POINTER(vkGetCalibratedTimestampsEXT                    )
+		EXPLAIN_VK_FUNCTION_POINTER(vkResetQueryPool                                )
 	}
 }

@@ -64,6 +64,7 @@ namespace Spices {
 				{
 					VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &m_CmdBuffers[j][i]));
 					DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)m_CmdBuffers[j][i], vulkanState.m_Device, "ParallelGraphicCommandBuffer")
+					SPICES_PROFILE_VK_COLLECT(m_CmdBuffers[j][i])
 				}
 			}
 		}

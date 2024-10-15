@@ -106,7 +106,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		if(frameInfo.m_RendererType != RendererType::Rasterization) return;
-		
+
 		RenderBehaveBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
 
 		builder.BeginRenderPass();

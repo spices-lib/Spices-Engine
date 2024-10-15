@@ -494,23 +494,25 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                        /* @brief Swapchain Extension.                      */
-		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /* @brief Negative Viewport Extension.              */
-		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /* @brief To build acceleration structures.         */
-		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /* @brief To use vkCmdTraceRaysKHR.                 */
-		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.         */
-		m_ExtensionProperties.push_back(VK_KHR_SHADER_CLOCK_EXTENSION_NAME);                     /* @brief Enable Shader Clock Extension.            */
-		m_ExtensionProperties.push_back(VK_KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME);         /* @brief Enable Shader Debug Print.                */
-		m_ExtensionProperties.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);                        /* @brief Enable Shader spirv1.4.                   */
-		m_ExtensionProperties.push_back(VK_EXT_MESH_SHADER_EXTENSION_NAME);                      /* @brief Enable Mesh Shader, Task Shader.          */
-		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.             */
-		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.            */
-		m_ExtensionProperties.push_back(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME);            /* @brief Enable Nested Command Buffer.             */
-		m_ExtensionProperties.push_back(VK_NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Generate Commands.      */
-		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);     /* @brief Enable Nvidia GPU Diagnostic Checkpoints. */
-		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Diagnostic Config.      */
-		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);      /* @brief Enable FragmentShaderBarycentric.         */
-		m_ExtensionProperties.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);                    /* @brief Enable GPU Memory Statics.                */
+		m_ExtensionProperties.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);                        /* @brief Swapchain Extension.                                                    */
+		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /* @brief Negative Viewport Extension.                                            */
+		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /* @brief To build acceleration structures.                                       */
+		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /* @brief To use vkCmdTraceRaysKHR.                                               */
+		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.                                       */
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_CLOCK_EXTENSION_NAME);                     /* @brief Enable Shader Clock Extension.                                          */
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME);         /* @brief Enable Shader Debug Print.                                              */
+		m_ExtensionProperties.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);                        /* @brief Enable Shader spirv1.4.                                                 */
+		m_ExtensionProperties.push_back(VK_EXT_MESH_SHADER_EXTENSION_NAME);                      /* @brief Enable Mesh Shader, Task Shader.                                        */
+		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.                                           */
+		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.                                          */
+		m_ExtensionProperties.push_back(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME);            /* @brief Enable Nested Command Buffer.                                           */
+		m_ExtensionProperties.push_back(VK_NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Generate Commands.                                    */
+		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);     /* @brief Enable Nvidia GPU Diagnostic Checkpoints.                               */
+		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Diagnostic Config.                                    */
+		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);      /* @brief Enable FragmentShaderBarycentric.                                       */
+		m_ExtensionProperties.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);                    /* @brief Enable GPU Memory Statics.                                              */
+		m_ExtensionProperties.push_back(VK_EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME);            /* @brief Enable calibrated timestamps(butter than query pool's timestamps).      */
+		m_ExtensionProperties.push_back(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME);                 /* @brief Enable reset query pool in host(without commandbuffer).                 */
 
 		/**
 		* @brief Those Extensions are enabled other place.

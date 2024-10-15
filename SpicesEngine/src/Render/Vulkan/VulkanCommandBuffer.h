@@ -96,6 +96,8 @@ namespace Spices {
 		*/
 		VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
+		SPICES_PROFILE_VK_ZONE(commandBuffer, "CustomCmd Command Buffer")
+
 		/**
 		* @brief Execute function pointer.
 		*/

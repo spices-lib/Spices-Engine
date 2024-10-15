@@ -59,20 +59,23 @@ namespace Spices {
 			m_VulkanWindows       = std::make_unique<VulkanWindows>        (m_VulkanState, initInfo);
 			m_VulkanInstance      = std::make_unique<VulkanInstance>       (m_VulkanState, "app", "engine");
 			m_VulkanDevice        = std::make_shared<VulkanDevice>         (m_VulkanState);
+
+			/**
+			* @brief Init Debuggers
+			*/
+			{
+
+				SPICES_PROFILE_GPU_CREATEINSTANCE(m_VulkanState)
+				NSIGHTPERF_GPUPROFILERREPORT_CREATEINSTANCE(m_VulkanState)
+				NSIGHTPERF_GPUPROFILERONESHOT_CREATEINSTANCE(m_VulkanState)
+				NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(m_VulkanState)
+				NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(m_VulkanState)
+			}
+
 			m_VmaAllocator        = std::make_shared<VulkanMemoryAllocator>(m_VulkanState);
 			m_VulkanCommandPool   = std::make_unique<VulkanCommandPool>    (m_VulkanState);
 			m_VulkanCommandBuffer = std::make_unique<VulkanCommandBuffer>  (m_VulkanState);
 			m_VulkanSwapChain     = std::make_unique<VulkanSwapChain>      (m_VulkanState, m_VulkanDevice);
-		}
-
-		/**
-		* @brief Init Nsight Perf
-		*/
-		{
-			NSIGHTPERF_GPUPROFILERREPORT_CREATEINSTANCE(m_VulkanState)
-			NSIGHTPERF_GPUPROFILERONESHOT_CREATEINSTANCE(m_VulkanState)
-			NSIGHTPERF_GPUPROFILERCONTINUOUS_CREATEINSTANCE(m_VulkanState)
-			NSIGHTPERF_GPUPROFILERHUD_CREATEINSTANCE(m_VulkanState)
 		}
 
 		/**
@@ -131,6 +134,14 @@ namespace Spices {
 	VulkanRenderBackend::~VulkanRenderBackend()
 	{
 		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Destroy Debuggers
+		*/
+		SPICES_PROFILE_VK_DESTROY
+		NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET
+		NSIGHTPERF_GPUPROFILERREPORT_RESET(m_VulkanState)
+		NSIGHTPERF_GPUPROFILERONESHOT_QUIT
 
 		/**
 		* @brief Release RendererResourcePool.
