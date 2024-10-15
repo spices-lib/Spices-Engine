@@ -9,10 +9,16 @@
 
 namespace Spices {
 
-	Shader::Shader()
+	Shader::Shader(std::string name, ShaderStage stage)
+		: m_ShaderName(name)
+		, m_ShaderStage(stage)
 	{
 		SPICES_PROFILE_ZONE;
 
+		/**
+		* @breif Call Dserialize() while in Constructor.
+		*/
+		Deserialize();
 	}
 
 	Shader::~Shader()
@@ -21,5 +27,18 @@ namespace Spices {
 
 
 
+	}
+
+	void Shader::Deserialize()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_ShaderName.empty())
+		{
+			SPICES_CORE_WARN("Shader::m_ShaderName is empty.");
+			return;
+		}
+
+		ShaderLoader::Load(m_ShaderName, m_ShaderStage, this);
 	}
 }

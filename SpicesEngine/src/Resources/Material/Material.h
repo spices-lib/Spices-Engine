@@ -87,7 +87,6 @@ namespace Spices {
 
 		/**
 		* @brief Deserialize the data from a disk file(.material) to this class.
-		* @todo Finish it.
 		*/
 		void Deserialize();
 

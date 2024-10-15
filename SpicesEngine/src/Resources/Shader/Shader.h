@@ -25,9 +25,21 @@ namespace Spices {
 		Shader() = default;
 
 		/**
+		* @brief Constructor Function.
+		* @param[in] name Shader Name.
+		* @param[in] stage ShaderStage.
+		*/
+		Shader(std::string name, ShaderStage stage);
+		
+		/**
 		* @brief Destructor Function.
 		*/
 		virtual ~Shader();
+
+		/**
+		* @brief Deserialize the data from a disk file to this class.
+		*/
+		void Deserialize();
 
 	private:
 

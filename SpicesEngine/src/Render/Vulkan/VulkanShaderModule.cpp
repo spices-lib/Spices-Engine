@@ -17,7 +17,7 @@ namespace Spices {
 		const std::string& shaderStage
 	)
 		: VulkanObject(vulkanState)
-		, m_ShaderStage(shaderStage)
+		, m_ShaderStage(ShaderHelper::ToStage(shaderStage))
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -75,6 +75,39 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(filePath.c_str(), filePath.c_str())
 	}
 
+	VulkanShaderModule::VulkanShaderModule(
+		VulkanState&                 vulkanState , 
+		const std::string&           shaderName  , 
+		const ShaderStage&           shaderStage ,
+		const std::vector<uint32_t>& spirv       ,
+		const std::string&           fullPath
+	)
+		: VulkanObject(vulkanState)
+		, m_ShaderStage(shaderStage)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkShaderModuleCreateInfo.
+		*/
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = spirv.size();
+		createInfo.pCode    = spirv.data();
+
+		/**
+		* @brief Create Shader Module.
+		*/
+		VK_CHECK(vkCreateShaderModule(vulkanState.m_Device, &createInfo, nullptr, &m_ShaderModule))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SHADER_MODULE, (uint64_t)m_ShaderModule, m_VulkanState.m_Device, shaderName)
+
+		/**
+		* @brief Add to Aftermath.
+		*/
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY(fullPath.c_str())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(fullPath.c_str(), fullPath.c_str())
+	}
+
 	VulkanShaderModule::~VulkanShaderModule()
 	{
 		SPICES_PROFILE_ZONE;
@@ -95,20 +128,7 @@ namespace Spices {
 		shaderStages.flags                                      = 0;
 		shaderStages.pNext                                      = nullptr;
 		shaderStages.pSpecializationInfo                        = nullptr;
-						   
-		if     (m_ShaderStage == "vert")  shaderStages.stage    = VK_SHADER_STAGE_VERTEX_BIT;
-		else if(m_ShaderStage == "frag")  shaderStages.stage    = VK_SHADER_STAGE_FRAGMENT_BIT;
-		else if(m_ShaderStage == "geom")  shaderStages.stage    = VK_SHADER_STAGE_GEOMETRY_BIT;
-		else if(m_ShaderStage == "rgen")  shaderStages.stage    = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
-		else if(m_ShaderStage == "rmiss") shaderStages.stage    = VK_SHADER_STAGE_MISS_BIT_KHR;
-		else if(m_ShaderStage == "rchit") shaderStages.stage    = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
-		else if(m_ShaderStage == "comp")  shaderStages.stage    = VK_SHADER_STAGE_COMPUTE_BIT;
-		else if(m_ShaderStage == "mesh")  shaderStages.stage    = VK_SHADER_STAGE_MESH_BIT_EXT;
-		else if(m_ShaderStage == "task")  shaderStages.stage    = VK_SHADER_STAGE_TASK_BIT_EXT;
-		else
-		{
-			SPICES_CORE_ERROR("Not Supported Sahder Stage from material.");
-		}
+		shaderStages.stage                                      = ShaderHelper::ToFlagBits(m_ShaderStage);
 
 		return shaderStages;
 	}

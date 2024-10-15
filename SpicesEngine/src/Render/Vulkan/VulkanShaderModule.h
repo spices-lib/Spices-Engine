@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
+#include "Resources/Shader/ShaderHelper.h"
 
 namespace Spices {
 
@@ -28,6 +29,23 @@ namespace Spices {
 			VulkanState&       vulkanState , 
 			const std::string& shaderName  , 
 			const std::string& shaderStage
+		);
+
+		/**
+		* @brief Constructor Function.
+		* Create VkShaderModule.
+		* @param[in] vulkanState The global VulkanState.
+		* @param[in] shaderName The Shader name.
+		* @param[in] shaderStage The Shader usage stage.
+		* @param[in] spirv Spirv Code.
+		* @param[in] fullPath Shader full Path.
+		*/
+		VulkanShaderModule(
+			VulkanState&                 vulkanState , 
+			const std::string&           shaderName  , 
+			const ShaderStage&           shaderStage ,
+			const std::vector<uint32_t>& spirv       ,
+			const std::string&           fullPath
 		);
 
 		/**
@@ -67,6 +85,6 @@ namespace Spices {
 		/**
 		*brief Shader Stage.
 		*/
-		std::string m_ShaderStage;
+		ShaderStage m_ShaderStage;
 	};
 }
