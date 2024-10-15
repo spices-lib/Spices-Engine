@@ -118,7 +118,7 @@ namespace Spices {
 			*/
 			FrameInfo::Get().m_World->OnActivate(ts);
 
-			//SPICES_PROFILE_FRAME;
+			SPICES_PROFILE_FRAME;
 		}
 
 		/**

@@ -4,7 +4,6 @@
 #include <new>
 
 #ifdef TRACY_ENABLE
-#if 0
 
 void* operator new(size_t size)
 {
@@ -20,13 +19,12 @@ void operator delete(void* ptr) noexcept
 }
 
 #endif
-#endif
 
 namespace Spices {
 
 	std::shared_ptr<World> CreateWorld()
 	{
-		SPICES_PROFILE_ZONE;;
+		SPICES_PROFILE_ZONE;
 
 		return std::make_shared<WhittedRTWorld>();
 	}
