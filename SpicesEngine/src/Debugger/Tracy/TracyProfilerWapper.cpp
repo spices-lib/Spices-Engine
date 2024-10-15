@@ -80,8 +80,13 @@ namespace Spices {
 		/**
 		* @brief Create Context and set name.
 		*/
+#ifdef TRACY_ENABLE
+
 		m_Context = SPICES_PROFILE_VK_CONTEXHOSTCALIBRATED(state.m_PhysicalDevice, state.m_Device, state.m_VkFunc.vkResetQueryPool, state.m_VkFunc.vkGetPhysicalDeviceCalibrateableTimeDomainsEXT, state.m_VkFunc.vkGetCalibratedTimestampsEXT);
 		SPICES_PROFILE_VK_CONTEXTNAME(m_Context, "SpicesEngineVulkanContext", 50);
+
+#endif
+
 	}
 
 	void TracyGPUContext::CreateInstance(VulkanState& state)

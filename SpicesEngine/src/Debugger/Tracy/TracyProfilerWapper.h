@@ -74,7 +74,7 @@ namespace Spices {
 		
 	};
 
-#ifdef SPICES_DEBUG
+#ifdef TRACY_ENABLE
 
 #define SPICES_PROFILE_GPU_CREATEINSTANCE(...)                           { TracyGPUContext::CreateInstance(__VA_ARGS__); } 
 #define SPICES_PROFILE_FRAME                                             FrameMark
@@ -91,9 +91,7 @@ namespace Spices {
 #define SPICES_PROFILE_VK_ZONE(cmdbuf, name)                             TracyVkZone(TracyGPUContext::Get().GetContext(), cmdbuf, name)
 #define SPICES_PROFILE_VK_COLLECT(cmdbuf)                                TracyVkCollect(TracyGPUContext::Get().GetContext(), cmdbuf)
 
-#endif
-
-#ifdef SPICES_RELEASE
+#else
 
 #define SPICES_PROFILE_GPU_CREATEINSTANCE(...)                     
 #define SPICES_PROFILE_FRAME                                       
@@ -112,7 +110,7 @@ namespace Spices {
 
 #endif
 
-#ifdef SPICES_DEBUG
+#ifdef TRACY_ENABLE
 
 /********************************************* Those Macros and enviroment must be defined in preprocesser ******************************************************/
 
