@@ -275,7 +275,8 @@ namespace Spices {
 		
 		VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT;  // Can be Used for Sample
 		bool hostCopy = VulkanImage::IsHostCopyable(resourceptr->m_VulkanState, VK_FORMAT_R8G8B8A8_UNORM);
-		usage |= hostCopy ? VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT : VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+		usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+		if (hostCopy) usage |= VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT;
 
 		/**
 		* @brief Instance the Resource.
@@ -300,53 +301,43 @@ namespace Spices {
 		* @brief Transform Image Layout from undefined to transfer_dst.
 		*/
 		resourceptr->TransitionImageLayout(
-			resourceptr->m_Format               ,
-			VK_IMAGE_LAYOUT_UNDEFINED           , 
+			resourceptr->m_Format,
+			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
 		);
 
-		if (hostCopy)
-		{
-			/**
-			* @brief Copy Memory to Image.
-			*/
-			resourceptr->CopyMemoryToImageHost(pixels);
-		}
-		else
-		{
-			/**
-			* @brief Get Texture bytes.
-			* @note 4 means 4 channels per texel, 1 means 1 bytes per texel channel.(RGBA8 Format support only)
-			*/
-			VkDeviceSize imageSize = static_cast<uint64_t>(resourceptr->m_Width * resourceptr->m_Height * 4 * 1);
+		/**
+		* @brief Get Texture bytes.
+		* @note 4 means 4 channels per texel, 1 means 1 bytes per texel channel.(RGBA8 Format support only)
+		*/
+		VkDeviceSize imageSize = static_cast<uint64_t>(resourceptr->m_Width * resourceptr->m_Height * 4 * 1);
 
-			/**
-			* @brief Instance a staginBuffer.
-			*/
-			VulkanBuffer stagingBuffer(
-				resourceptr->m_VulkanState,
-				"StagingBuffer",
-				imageSize,
-				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-			);
+		/**
+		* @brief Instance a staginBuffer.
+		*/
+		VulkanBuffer stagingBuffer(
+			resourceptr->m_VulkanState,
+			"StagingBuffer",
+			imageSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
 
-			/**
-			* @brief Copy the data from texture bytes to staginBuffer.
-			*/
-			stagingBuffer.WriteToBuffer(pixels);
+		/**
+		* @brief Copy the data from texture bytes to staginBuffer.
+		*/
+		stagingBuffer.WriteToBuffer(pixels);
 
-			/**
-			* @brief Copy the data from staginBuffer to Image.
-			*/
-			resourceptr->CopyBufferToImage(
-				stagingBuffer.Get()                         , 
-				resourceptr->m_Image                        , 
-				static_cast<uint32_t>(resourceptr->m_Width) , 
-				static_cast<uint32_t>(resourceptr->m_Height)
-			);
-		}
+		/**
+		* @brief Copy the data from staginBuffer to Image.
+		*/
+		resourceptr->CopyBufferToImage(
+			stagingBuffer.Get()                         , 
+			resourceptr->m_Image                        , 
+			static_cast<uint32_t>(resourceptr->m_Width) , 
+			static_cast<uint32_t>(resourceptr->m_Height)
+		);
 
 		/**
 		* @brief Release texture bytes.
@@ -421,9 +412,9 @@ namespace Spices {
 			VkImageToMemoryCopyEXT                           memoryCopy{};
 			memoryCopy.sType                               = VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY_EXT;
 			memoryCopy.imageSubresource.aspectMask         = VK_IMAGE_ASPECT_COLOR_BIT;
-			memoryCopy.imageSubresource.mipLevel           = mip;
+			memoryCopy.imageSubresource.mipLevel           = resourceptr->m_MipLevels - 1 - mip;
 			memoryCopy.imageSubresource.baseArrayLayer     = 0;
-			memoryCopy.imageSubresource.layerCount         = 1;
+			memoryCopy.imageSubresource.layerCount         = resourceptr->m_Layers;
 			memoryCopy.imageOffset                         = { 0, 0, 0 };
 			memoryCopy.imageExtent                         = { w, h, 1 };
 			memoryCopy.pHostPointer                        = data.data();
