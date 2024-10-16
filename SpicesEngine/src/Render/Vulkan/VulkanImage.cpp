@@ -165,6 +165,22 @@ namespace Spices {
 		}
 
 		/**
+		* @breif transform imagelayout from undefined to shaderread.
+		* Used during CopyImagetoBuffer.
+		*/
+		else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		{
+			barrier.srcAccessMask = 0;
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+			// Don't care what stage the pipeline is in at the start.
+			sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+			// Used for sampling.
+			destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+
+		/**
 		* @breif transform imagelayout from transferdst to shaderread.
 		* Used combine with CopyBuffertoImage.
 		*/
@@ -326,6 +342,54 @@ namespace Spices {
 		});
 	}
 
+	void VulkanImage::CopyMemoryToImageHost(const std::vector<VkMemoryToImageCopyEXT>& copys) const
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Issue the copy.
+		*/
+		VkCopyMemoryToImageInfoEXT                       copyInfo{};
+		copyInfo.sType                                 = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT;
+		copyInfo.dstImage                              = m_Image;
+		copyInfo.dstImageLayout                        = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		copyInfo.regionCount                           = static_cast<uint32_t>(copys.size());
+		copyInfo.pRegions                              = copys.data();
+		
+		m_VulkanState.m_VkFunc.vkCopyMemoryToImageEXT(m_VulkanState.m_Device, &copyInfo);
+	}
+
+	void VulkanImage::CopyMemoryToImageHost(const void* data) const
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkMemoryToImageCopyEXT.
+		*/
+		VkMemoryToImageCopyEXT                           memoryCopy{};
+		memoryCopy.sType                               = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT;
+		memoryCopy.imageSubresource.aspectMask         = VK_IMAGE_ASPECT_COLOR_BIT;
+		memoryCopy.imageSubresource.mipLevel           = 0;
+		memoryCopy.imageSubresource.baseArrayLayer     = 0;
+		memoryCopy.imageSubresource.layerCount         = 1;
+		memoryCopy.imageExtent.width                   = m_Width;
+		memoryCopy.imageExtent.height                  = m_Height;
+		memoryCopy.imageExtent.depth                   = m_Layers;
+		memoryCopy.pHostPointer                        = data;
+
+		/**
+		* @brief Issue the copy.
+		*/
+		VkCopyMemoryToImageInfoEXT                       copyInfo{};
+		copyInfo.sType                                 = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT;
+		copyInfo.dstImage                              = m_Image;
+		copyInfo.dstImageLayout                        = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		copyInfo.regionCount                           = 1;
+		copyInfo.pRegions                              = &memoryCopy;
+		
+		m_VulkanState.m_VkFunc.vkCopyMemoryToImageEXT(m_VulkanState.m_Device, &copyInfo);
+	}
+
 	void VulkanImage::CopyImageTexelToBuffer(uint32_t x, uint32_t y, void* out_rgba)
 	{
 		SPICES_PROFILE_ZONE;
@@ -445,6 +509,52 @@ namespace Spices {
 		);
 	}
 
+	void VulkanImage::CopyImageToMemoryHost(void* data)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkImageToMemoryCopyEXT                           memoryCopy{};
+		memoryCopy.sType                               = VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY_EXT;
+		memoryCopy.imageSubresource.aspectMask         = VK_IMAGE_ASPECT_COLOR_BIT;
+		memoryCopy.imageSubresource.mipLevel           = 0;
+		memoryCopy.imageSubresource.baseArrayLayer     = 0;
+		memoryCopy.imageSubresource.layerCount         = 1;
+		memoryCopy.imageOffset                         = { 0, 0, 0 };
+		memoryCopy.imageExtent.width                   = m_Width;
+		memoryCopy.imageExtent.height                  = m_Height;
+		memoryCopy.imageExtent.depth                   = m_Layers;
+		memoryCopy.pHostPointer                        = data;
+
+		/**
+		* @brief Instance a VkCopyImageToMemoryInfoEXT.
+		*/								              
+		VkCopyImageToMemoryInfoEXT                       copyInfo{};
+		copyInfo.sType                                 = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT;
+		copyInfo.srcImage                              = m_Image;
+		copyInfo.srcImageLayout                        = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		copyInfo.regionCount                           = 1;
+		copyInfo.pRegions                              = &memoryCopy;
+
+		m_VulkanState.m_VkFunc.vkCopyImageToMemoryEXT(m_VulkanState.m_Device, &copyInfo);
+	}
+
+	void VulkanImage::CopyImageToMemoryHost(const std::vector<VkImageToMemoryCopyEXT>& copys)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkCopyImageToMemoryInfoEXT.
+		*/								              
+		VkCopyImageToMemoryInfoEXT                       copyInfo{};
+		copyInfo.sType                                 = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT;
+		copyInfo.srcImage                              = m_Image;
+		copyInfo.srcImageLayout                        = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		copyInfo.regionCount                           = static_cast<uint32_t>(copys.size());
+		copyInfo.pRegions                              = copys.data();
+
+		m_VulkanState.m_VkFunc.vkCopyImageToMemoryEXT(m_VulkanState.m_Device, &copyInfo);
+	}
+
 	void VulkanImage::GenerateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight) const
 	{
 		SPICES_PROFILE_ZONE;
@@ -468,7 +578,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkImageMemoryBarrier.
 		*/
-		VkImageMemoryBarrier barrier{};
+		VkImageMemoryBarrier                           barrier{};
 		barrier.sType                                = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 		barrier.image                                = m_Image;
 		barrier.srcQueueFamilyIndex                  = VK_QUEUE_FAMILY_IGNORED;
@@ -821,6 +931,56 @@ namespace Spices {
 		* @brief Update DecriptorSet.
 		*/
 		vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &descriptorWrite, 0, nullptr);
+	}
+
+	bool VulkanImage::IsHostCopyable()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkFormatProperties3.
+		*/
+		VkFormatProperties3                                 formatProperties3{};
+		formatProperties3.sType                           = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR;
+
+		/**
+		* @brief Properties3 need to be chained into Properties2.
+		*/
+		VkFormatProperties2                                 formatProperties2{};
+		formatProperties2.sType                           = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
+		formatProperties2.pNext                           = &formatProperties3;
+
+		/**
+		* @brief Get format properties for the select image format.
+		*/
+		vkGetPhysicalDeviceFormatProperties2(m_VulkanState.m_PhysicalDevice, m_Format, &formatProperties2);
+
+		return formatProperties3.optimalTilingFeatures & VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT;
+	}
+
+	bool VulkanImage::IsHostCopyable(VulkanState& state, VkFormat format)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Instance a VkFormatProperties3.
+		*/
+		VkFormatProperties3                                 formatProperties3{};
+		formatProperties3.sType                           = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR;
+
+		/**
+		* @brief Properties3 need to be chained into Properties2.
+		*/
+		VkFormatProperties2                                 formatProperties2{};
+		formatProperties2.sType                           = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
+		formatProperties2.pNext                           = &formatProperties3;
+
+		/**
+		* @brief Get format properties for the select image format.
+		*/
+		vkGetPhysicalDeviceFormatProperties2(state.m_PhysicalDevice, format, &formatProperties2);
+
+		return formatProperties3.optimalTilingFeatures & VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT;
 	}
 
 	void VulkanImage::DestroyDescriptorSetLayout() const

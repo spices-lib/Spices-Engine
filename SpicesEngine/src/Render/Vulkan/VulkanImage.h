@@ -146,6 +146,21 @@ namespace Spices {
 		) const;
 
 		/**
+		* @brief Copy the Memory's data to this VkImage.
+		* Used to create image data (include mipmaps), which owns a compressed format.
+		* @param[in] copys The copy informations.
+		*/
+		void CopyMemoryToImageHost(
+			const std::vector<VkMemoryToImageCopyEXT>& copys
+		) const;
+
+		/**
+		* @brief Copy the Memory's data to this VkImage.
+		* @param[in] data Memory data.
+		*/
+		void CopyMemoryToImageHost(const void* data) const;
+
+		/**
 		* @breif Copy one texel data from a VkImage.
 		* @param[in] x The sampled position x.
 		* @param[in] y The sampled position y.
@@ -158,7 +173,7 @@ namespace Spices {
 		);
 
 		/**
-		* @breif Copy one texel data from a VkImage.
+		* @breif Copy data from a VkImage.
 		* @param[in] buffer The Dst Buffer.
 		* @param[in] regions Specific Regions.
 		*/
@@ -166,6 +181,18 @@ namespace Spices {
 			VkBuffer dstBuffer,
 			const std::vector<VkBufferImageCopy>& regions
 		);
+
+		/**
+		* @breif Copy memory from a VkImage.
+		* @param[in] data Outdata.
+		*/
+		void CopyImageToMemoryHost(void* data);
+
+		/**
+		* @breif Copy memory from a VkImage.
+		* @param[in] copys Copy Informations.
+		*/
+		void CopyImageToMemoryHost(const std::vector<VkImageToMemoryCopyEXT>& copys);
 
 		/**
 		* @brief Generate mipmaps with the VkImage.
@@ -239,6 +266,20 @@ namespace Spices {
 		* @return Returns the VkDescriptorSet.
 		*/
 		inline VkDescriptorSet& GetDescriptorSet() { return m_DescriptorSet; }
+
+		/**
+		* @brief Check if this image format can copy from host to gpu directly.
+		* @return Returns true if can do that.
+		*/
+		bool IsHostCopyable();
+
+		/**
+		* @brief Check if this image format can copy from host to gpu directly.
+		* @param[in] state VulkanState.
+		* @param[in] format VkFormat.
+		* @return Returns true if can do that.
+		*/
+		static bool IsHostCopyable(VulkanState& state, VkFormat format);
 
 	private:
 

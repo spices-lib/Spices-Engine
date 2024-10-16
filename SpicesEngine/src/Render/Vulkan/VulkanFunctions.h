@@ -93,5 +93,11 @@ namespace Spices {
 		VK_FUNCTION_POINTER(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT  )
 		VK_FUNCTION_POINTER(vkGetCalibratedTimestampsEXT                    )
 		VK_FUNCTION_POINTER(vkResetQueryPool                                )
+
+		/**
+		* @brief Copy data to image from host directly.
+		*/
+		VK_FUNCTION_POINTER(vkCopyMemoryToImageEXT                          )
+		VK_FUNCTION_POINTER(vkCopyImageToMemoryEXT                          )
 	};
 }

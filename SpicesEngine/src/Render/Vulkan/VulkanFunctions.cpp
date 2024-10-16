@@ -50,5 +50,8 @@ namespace Spices {
 		EXPLAIN_VK_FUNCTION_POINTER(vkGetPhysicalDeviceCalibrateableTimeDomainsEXT  )
 		EXPLAIN_VK_FUNCTION_POINTER(vkGetCalibratedTimestampsEXT                    )
 		EXPLAIN_VK_FUNCTION_POINTER(vkResetQueryPool                                )
+
+		EXPLAIN_VK_FUNCTION_POINTER(vkCopyMemoryToImageEXT                          )
+		EXPLAIN_VK_FUNCTION_POINTER(vkCopyImageToMemoryEXT                          )
 	}
 }
