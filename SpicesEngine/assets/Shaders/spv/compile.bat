@@ -1,3 +1,8 @@
+::@file compile.bat
+::@brief This file is used for compile shader source to spv.
+::Though we use internal shader compile, this file might be useless. 
+::@author Spices.
+
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.mesh  -o Shader.BasePassRenderer.Mesh.Default.mesh.spv  -g  --target-env=vulkan1.3
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.BasePassRenderer.Mesh.Default.task  -o Shader.BasePassRenderer.Mesh.Default.task.spv  -g  --target-env=vulkan1.3
 
@@ -37,9 +42,9 @@
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.TestRenderer.Test.Default.geom -o Shader.TestRenderer.Test.Default.geom.spv -g  --target-env=vulkan1.3
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.TestRenderer.Test.Default.frag -o Shader.TestRenderer.Test.Default.frag.spv -g  --target-env=vulkan1.3
 
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Default.rgen         -o Shader.RayTracingRenderer.RayTracing.Default.rgen.spv -g              --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.PBRTexture.rmiss        -o Shader.RayTracingRenderer.RayTracing.PBRTexture.rmiss.spv -g       --target-env=vulkan1.3
-%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Shadow.rmiss  -o Shader.RayTracingRenderer.RayTracing.Shadow.rmiss.spv -g                     --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Default.rgen -o Shader.RayTracingRenderer.RayTracing.Default.rgen.spv -g              --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.PBRTexture.rmiss -o Shader.RayTracingRenderer.RayTracing.PBRTexture.rmiss.spv -g      --target-env=vulkan1.3
+%VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingRenderer.RayTracing.Shadow.rmiss -o Shader.RayTracingRenderer.RayTracing.Shadow.rmiss.spv -g              --target-env=vulkan1.3
 
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingComposeRenderer.RayTracingCompose.Default.vert -o Shader.RayTracingComposeRenderer.RayTracingCompose.Default.vert.spv -g  --target-env=vulkan1.3
 %VULKAN_SDK%/Bin/glslc.exe ../src/Shader.RayTracingComposeRenderer.RayTracingCompose.Default.frag -o Shader.RayTracingComposeRenderer.RayTracingCompose.Default.frag.spv -g  --target-env=vulkan1.3
