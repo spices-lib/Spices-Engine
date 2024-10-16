@@ -69,6 +69,28 @@ namespace Spices {
         m_ShaderBinaries[shaderHash].swap(data);
     }
 
+    void ShaderDataBase::AddShaderSource(std::vector<uint8_t> spirv)
+    {
+        SPICES_PROFILE_ZONE;
+
+        /**
+        * @brief Create shader hash for the shader.
+        */
+        const GFSDK_Aftermath_SpirvCode shader{ spirv.data(), uint32_t(spirv.size()) };
+        GFSDK_Aftermath_ShaderBinaryHash shaderHash;
+        AFTERMATH_CHECK_ERROR(GFSDK_Aftermath_GetShaderHashSpirv(
+            GFSDK_Aftermath_Version_API ,
+            &shader                     ,
+            &shaderHash
+        ));
+
+        /**
+        * @brief Store the data for shader mapping when decoding GPU crash dumps.
+        * cf. FindShaderBinary()
+        */
+        m_ShaderBinaries[shaderHash].swap(spirv);
+    }
+
     void ShaderDataBase::AddShaderBinaryWithDebugInfo(const char* strippedShaderFilePath, const char* shaderFilePath)
     {
         SPICES_PROFILE_ZONE;
@@ -105,6 +127,30 @@ namespace Spices {
         * cf. FindShaderBinaryWithDebugData()
         */
         m_ShaderBinariesWithDebugInfo[debugName].swap(data);
+    }
+
+    void ShaderDataBase::AddShaderSourceWithDebugInfo(std::vector<uint8_t> strippedSpirv, std::vector<uint8_t> spirv)
+    {
+        SPICES_PROFILE_ZONE;
+
+        /**
+        * @brief Generate shader debug name.
+        */
+        GFSDK_Aftermath_ShaderDebugName debugName;
+        const GFSDK_Aftermath_SpirvCode shader{ spirv.data(), uint32_t(spirv.size()) };
+        const GFSDK_Aftermath_SpirvCode strippedShader{ strippedSpirv.data(), uint32_t(strippedSpirv.size()) };
+        AFTERMATH_CHECK_ERROR(GFSDK_Aftermath_GetShaderDebugNameSpirv(
+            GFSDK_Aftermath_Version_API ,
+            &shader                     ,
+            &strippedShader             ,
+            &debugName
+        ));
+
+        /**
+        * @brief Store the data for shader instruction address mapping when decoding GPU crash dumps.
+        * cf. FindShaderBinaryWithDebugData()
+        */
+        m_ShaderBinariesWithDebugInfo[debugName].swap(spirv);
     }
 
     bool ShaderDataBase::FindShaderBinary(const GFSDK_Aftermath_ShaderBinaryHash& shaderHash, std::vector<uint8_t>& shader) const

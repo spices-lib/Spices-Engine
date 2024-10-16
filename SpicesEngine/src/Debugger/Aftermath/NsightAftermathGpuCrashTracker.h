@@ -307,6 +307,8 @@ namespace Spices {
 #define NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(commandBuffer, funcLibrary, string)                           { uint64_t markId; ::Spices::GpuCrashTracker::Get().SetMarker(markId, string);  funcLibrary.vkCmdSetCheckpointNV(commandBuffer, (const void*)markId); }
 #define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY(...)                                                        { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinary(__VA_ARGS__); }
 #define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(...)                                          { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderBinaryWithDebugInfo(__VA_ARGS__); }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERSOURCE(...)                                                        { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderSource(__VA_ARGS__); }
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERSOURCE_WITHDEBUGINFO(...)                                          { ::Spices::GpuCrashTracker::Get().GetShaderDataBase().AddShaderSourceWithDebugInfo(__VA_ARGS__); }
 
 #endif
 
@@ -318,6 +320,8 @@ namespace Spices {
 #define NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(commandBuffer, funcLibrary, string)
 #define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY(...)                             
 #define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(...)               
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERSOURCE(...)              
+#define NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERSOURCE_WITHDEBUGINFO(...)
 
 #endif
 

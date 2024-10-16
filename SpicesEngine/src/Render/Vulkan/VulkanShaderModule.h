@@ -44,7 +44,7 @@ namespace Spices {
 			VulkanState&                 vulkanState , 
 			const std::string&           shaderName  , 
 			const ShaderStage&           shaderStage ,
-			const std::vector<uint32_t>& spirv       ,
+			const std::vector<uint8_t>&  spirv       ,
 			const std::string&           fullPath
 		);
 

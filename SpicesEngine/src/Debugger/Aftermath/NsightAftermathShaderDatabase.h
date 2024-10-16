@@ -63,11 +63,24 @@ namespace Spices {
         void AddShaderBinary(const char* shaderFilePath);
 
         /**
+        * @brief Add a shader source to m_ShaderBinaries.
+        * @param[in] spirv Spirv Code .
+        */
+        void AddShaderSource(std::vector<uint8_t> spirv);
+
+        /**
         * @brief Add a shader binary with debug info to m_ShaderBinariesWithDebugInfo.
         * @param[in] strippedShaderFilePath .
         * @param[in] shaderFilePath .
         */
         void AddShaderBinaryWithDebugInfo(const char* strippedShaderFilePath, const char* shaderFilePath);
+
+        /**
+        * @brief Add a shader Source with debug info to m_ShaderBinariesWithDebugInfo.
+        * @param[in] strippedSpirv .
+        * @param[in] spirv .
+        */
+        void AddShaderSourceWithDebugInfo(std::vector<uint8_t> strippedSpirv, std::vector<uint8_t> spirv);
 
     private:
 

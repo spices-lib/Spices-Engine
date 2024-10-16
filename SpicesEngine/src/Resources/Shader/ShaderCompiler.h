@@ -24,7 +24,12 @@ namespace Spices {
 		* @param[in] name Shader Name.
 		* @param[in,out] spirv spv data.
 		*/
-		static void CompileToSPV(const std::string& data, const ShaderStage& stage, const std::string& name, std::vector<uint32_t>& spirv);
+		static void CompileToSPV(
+			const std::string&    data  , 
+			const ShaderStage&    stage , 
+			const std::string&    name  , 
+			std::vector<uint8_t>& spirv
+		);
 	};
 
 }

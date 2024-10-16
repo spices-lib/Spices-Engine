@@ -79,7 +79,7 @@ namespace Spices {
 		VulkanState&                 vulkanState , 
 		const std::string&           shaderName  , 
 		const ShaderStage&           shaderStage ,
-		const std::vector<uint32_t>& spirv       ,
+		const std::vector<uint8_t>&  spirv       ,
 		const std::string&           fullPath
 	)
 		: VulkanObject(vulkanState)
@@ -92,8 +92,8 @@ namespace Spices {
 		*/
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = 4 * spirv.size();
-		createInfo.pCode    = spirv.data();
+		createInfo.codeSize = spirv.size();
+		createInfo.pCode    = reinterpret_cast<const uint32_t*>(spirv.data());
 
 		/**
 		* @brief Create Shader Module.
@@ -104,8 +104,8 @@ namespace Spices {
 		/**
 		* @brief Add to Aftermath.
 		*/
-		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY(fullPath.c_str())
-		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERBINARY_WITHDEBUGINFO(fullPath.c_str(), fullPath.c_str())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERSOURCE(spirv)
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_ADDSHADERSOURCE_WITHDEBUGINFO(spirv, spirv)
 	}
 
 	VulkanShaderModule::~VulkanShaderModule()
