@@ -92,7 +92,7 @@ namespace Spices {
 		*/
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = spirv.size();
+		createInfo.codeSize = 4 * spirv.size();
 		createInfo.pCode    = spirv.data();
 
 		/**

@@ -63,6 +63,7 @@ project "SpicesTest"
 		"%{IncludeDir.shaderc}",                              -- Library: shaderc Folder.
 		"%{IncludeDir.shaderc}/libshaderc/include",           -- Library: libshaderc Folder.
 		"%{IncludeDir.shaderc}/libshaderc_util/include",      -- Library: libshaderc_util Folder.
+		"%{IncludeDir.glslang}",                              -- Library: glslang Folder.
 	}
 
 	-- In Visual Studio, it only works when generated a new solution, remember update solution will not works.
@@ -72,7 +73,8 @@ project "SpicesTest"
 		-- Houdini dll Path.
 		-- NvAftermath dll Path.
 		-- NvPerf dll Path.
-		"PATH=%{LibraryDir.HoudiniEnginedll};%{LibraryDir.NvAftermath};%{LibraryDir.NvPerf}", 
+		-- Vulkan dll Path.
+		"PATH=%{LibraryDir.HoudiniEnginedll};%{LibraryDir.NvAftermath};%{LibraryDir.NvPerf};%{LibraryDir.VulkanSDKDLL}",  
 	}
 
 	-- The Solution Dependency

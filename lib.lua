@@ -30,12 +30,14 @@ IncludeDir["GKlib"]                       = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["METIS"]                       = "%{wks.location}/SpicesEngine/vendor/METIS"                                       -- Include: METIS
 IncludeDir["ktx"]                         = "%{wks.location}/SpicesEngine/vendor/KTX-Software"                                -- Include: ktx
 IncludeDir["shaderc"]                     = "%{wks.location}/SpicesEngine/vendor/shaderc"                                     -- Include: shaderc
+IncludeDir["glslang"]                     = "%{IncludeDir.VulkanSDK}/glslang"                                                 -- Include: glslang
 IncludeDir["googletest"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googletest/include"                 -- Include: googletest
 IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googlemock/include"                 -- Include: googlemock
 
 -- Library Directries Folder
 LibraryDir                                = {}
 LibraryDir["VulkanSDK"]                   = "C:/VulkanSDK/1.3.275.0/Lib"                                                      -- Library Directries: VulkanSDK Folder
+LibraryDir["VulkanSDKDLL"]                = "%{LibraryDir.VulkanSDK}/../Bin"                                                  -- Library Directries: VulkanSDK dll Folder
 LibraryDir["NvAftermath"]                 = "%{wks.location}/SpicesEngine/vendor/NvAftermath/lib/x64"                         -- Library Directries: NvAftermath Folder
 LibraryDir["NvPerf"]                      = "%{wks.location}/SpicesEngine/vendor/NvPerf/lib"                                  -- Library Directries: NvPerf Folder
 LibraryDir["HoudiniEnginedll"]            = "C:/Program Files/Side Effects Software/Houdini 20.5.278/bin"                     -- Library Directries: HoudiniEnginedll Folder
@@ -47,3 +49,9 @@ Library["VulkanSDK"]                      = "%{LibraryDir.VulkanSDK}/vulkan-1.li
 Library["NvAftermath"]                    = "%{LibraryDir.NvAftermath}/GFSDK_Aftermath_Lib.x64.lib"                           -- Library Directries: NvAftermath
 Library["NvPerf"]                         = "%{LibraryDir.NvPerf}/nvperf_grfx_host.lib"                                       -- Library Directries: NvPerf
 Library["HoudiniEnginelib"]               = "%{LibraryDir.HoudiniEnginelib}/libHAPIL.lib"                                     -- Library Directries: HoudiniEnginelib
+
+Library["shaderc_debug"]                  = "%{LibraryDir.VulkanSDK}/shaderc_sharedd.lib"                                     -- Library Directries: shaderc_debug
+Library["shaderc_utils_debug"]            = "%{LibraryDir.VulkanSDK}/shaderc_utild.lib"                                       -- Library Directries: shaderc_utils_debug
+
+Library["shaderc_release"]                = "%{LibraryDir.VulkanSDK}/shaderc_shared.lib"                                      -- Library Directries: shaderc_release
+Library["shaderc_utils_release"]          = "%{LibraryDir.VulkanSDK}/shaderc_util.lib"                                        -- Library Directries: shaderc_utils_release

@@ -118,6 +118,7 @@ project "SpicesEngine"
 		"%{IncludeDir.shaderc}",                              -- Library: shaderc Folder.
 		"%{IncludeDir.shaderc}/libshaderc/include",           -- Library: libshaderc Folder.
 		"%{IncludeDir.shaderc}/libshaderc_util/include",      -- Library: libshaderc_util Folder.
+		"%{IncludeDir.glslang}",                              -- Library: glslang Folder.
 	}
 
 	-- The Solution Dependency
@@ -187,6 +188,12 @@ project "SpicesEngine"
 			"TRACY_ON_DEMAND",               -- Used if want profile on demand.
 		}
 
+		links
+		{
+			"%{Library.shaderc_debug}",                 -- Dependency: shaderc_debug
+			"%{Library.shaderc_utils_debug}",           -- Dependency: shaderc_utils_debug
+		}
+
 		runtime "Debug"
 		symbols "On"
 
@@ -199,6 +206,12 @@ project "SpicesEngine"
 			"SPICES_RELEASE",                -- Release Symbol.
 			"TRACY_ENABLE",                  -- tracy Feature Enable.
 			"TRACY_ON_DEMAND",               -- Used if want profile on demand.
+		}
+
+		links
+		{
+			"%{Library.shaderc_release}",                 -- Dependency: shaderc_release
+			"%{Library.shaderc_utils_release}",           -- Dependency: shaderc_utils_release
 		}
 
 		runtime "Release"
