@@ -14,6 +14,7 @@
 #include "Core/Container/runtime_memory_block.h"
 #include "Core/Container/linked_unordered_map.h"
 #include "Render/Vulkan/VulkanBuffer.h"
+#include "MaterialProperties.h"
 #include <glm/glm.hpp>
 #include <unordered_map>
 
@@ -207,6 +208,11 @@ namespace Spices {
 		* @brief Buffer takes all textures index and all constant params buffer address. 
 		*/
 		std::unique_ptr<VulkanBuffer> m_MaterialParameterBuffer;
+
+		/**
+		* @brief Properties of render options.
+		*/
+		MaterialProperties m_Properties;
 
 		/**
 		* @brief True if this material needs to draw a window.
