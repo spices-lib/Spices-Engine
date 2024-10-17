@@ -34,7 +34,7 @@ namespace Spices {
 		/**
 		* @brief Create Timeline Semaphore.
 		*/
-		vkCreateSemaphore(vulkanState.m_Device, &createInfo, nullptr, &m_TimelineSemaphore);
+		VK_CHECK(vkCreateSemaphore(vulkanState.m_Device, &createInfo, nullptr, &m_TimelineSemaphore))
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_TimelineSemaphore, m_VulkanState.m_Device, "Timeline Semaphore")
 	}
 
@@ -66,7 +66,7 @@ namespace Spices {
 		/**
 		* @brief Call Wait.
 		*/
-		vkWaitSemaphores(m_VulkanState.m_Device, &waitInfo, UINT64_MAX);
+		VK_CHECK(vkWaitSemaphores(m_VulkanState.m_Device, &waitInfo, UINT64_MAX))
 	}
 
 	void VulkanTimelineSemaphore::Singal(uint64_t signalValue)
@@ -85,7 +85,7 @@ namespace Spices {
 		/**
 		* @brief Call Signal.
 		*/
-		vkSignalSemaphore(m_VulkanState.m_Device, &signalInfo);
+		VK_CHECK(vkSignalSemaphore(m_VulkanState.m_Device, &signalInfo))
 	}
 
 	uint64_t VulkanTimelineSemaphore::GetValue()
@@ -93,7 +93,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		uint64_t value;
-		vkGetSemaphoreCounterValue(m_VulkanState.m_Device, m_TimelineSemaphore, &value);
+		VK_CHECK(vkGetSemaphoreCounterValue(m_VulkanState.m_Device, m_TimelineSemaphore, &value))
 
 		return value;
 	}
