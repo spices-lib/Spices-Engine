@@ -78,7 +78,7 @@ namespace Spices {
 	template<typename T>
 	struct variable_traits<T*> : public internal::basic_variable_traits<T>
 	{
-		using pointer_type = T*;
+		using PointerType = T*;
 	};
 
 	/**
@@ -89,6 +89,6 @@ namespace Spices {
 	template<typename C, typename T>
 	struct variable_traits<T C::*> : public internal::basic_variable_traits<T C::*>
 	{
-		using pointer_type = T C::*;
+		using PointerType = T C::*;
 	};
 }
