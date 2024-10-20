@@ -9,7 +9,7 @@
 
 /* Container */
 //#include "Core/Container/directed_acyclic_graph_test.h"
-#include "Core/Container/kd_tree_test.h"
+//#include "Core/Container/kd_tree_test.h"
 //#include "Core/Container/linked_unordered_map_test.h"
 //#include "Core/Container/runtime_memory_block_test.h"
 //
@@ -26,7 +26,10 @@
 //
 ///* Delegate */
 //#include "Core/Delegate/Delegate_test.h"
-//
+
+/* Reflect */
+#include "Core/Reflect/StaticReflect/VariableTraits_test.h"
+
 ///* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"
 
