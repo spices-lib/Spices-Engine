@@ -1,11 +1,11 @@
 /**
-* @file directed_acyclic_graph.cpp.
-* @brief The directed_acyclic_graph Class Implementation.
+* @file DirectedAcyclicGraph.cpp.
+* @brief The DirectedAcyclicGraph Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "directed_acyclic_graph.h"
+#include "DirectedAcyclicGraph.h"
 
 namespace scl {
 

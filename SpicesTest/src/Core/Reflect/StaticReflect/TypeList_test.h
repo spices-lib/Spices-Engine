@@ -6,7 +6,7 @@
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Core/Reflect/StaticReflect/TypeList.hpp>
+#include <Core/Reflect/StaticReflect/TypeList.h>
 #include "Instrumentor.h"
 
 namespace SpicesTest {
@@ -18,9 +18,15 @@ namespace SpicesTest {
     };
 
     template<typename T>
-    struct change_to_float
+    struct change_int_to_float
     {
         using type = std::conditional_t<std::is_integral_v<T>, float, T>;
+    };
+
+    template<typename T>
+    struct is_not_float
+    {
+        static constexpr bool value = !std::is_same_v<T, float>;
     };
 
     /**
@@ -65,13 +71,32 @@ namespace SpicesTest {
         }
 
         {
-            constexpr bool v = std::is_same_v<Spices::map<TypeList, change_to_float>, Spices::type_list<float, float, float, float, float>>;
+            constexpr bool v = std::is_same_v<Spices::map<TypeList, change_int_to_float>, Spices::type_list<float, float, std::string, void*, void(*)(int)>>;
 
             EXPECT_EQ(v, true);
         }
 
         {
             constexpr bool v = std::is_same_v<Spices::cons<char, TypeList>, Spices::type_list<char, int, float, std::string, void*, void(*)(int)>>;
+
+            EXPECT_EQ(v, true);
+        }
+
+        {
+            using TypeList1 = Spices::type_list<char*, float>;
+            constexpr bool v = std::is_same_v<Spices::concat<TypeList, TypeList1>, Spices::type_list<int, float, std::string, void*, void(*)(int), char*, float>>;
+
+            EXPECT_EQ(v, true);
+        }
+
+        {
+            constexpr bool v = std::is_same_v<Spices::init<TypeList>, Spices::type_list<int, float, std::string, void*>>;
+
+            EXPECT_EQ(v, true);
+        }
+
+        {
+            constexpr bool v = std::is_same_v<Spices::filter<TypeList, is_not_float>, Spices::type_list<int, std::string, void*, void(*)(int)>>;
 
             EXPECT_EQ(v, true);
         }

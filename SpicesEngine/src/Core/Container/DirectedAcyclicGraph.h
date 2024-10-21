@@ -1,6 +1,6 @@
 /**
-* @file directed_acyclic_graph.h.
-* @brief The directed_acyclic_graph Class Definitions.
+* @file DirectedAcyclicGraph.h.
+* @brief The DirectedAcyclicGraph Class Definitions.
 * @author Spices.
 */
 

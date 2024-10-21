@@ -1,12 +1,12 @@
 /**
-* @file directed_acyclic_graph_test.h.
-* @brief The directed_acyclic_graph_test Definitions.
+* @file DirectedAcyclicGraph_test.h.
+* @brief The DirectedAcyclicGraph_test Definitions.
 * @author Spices.
 */
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Core/Container/directed_acyclic_graph.h>
+#include <Core/Container/DirectedAcyclicGraph.h>
 #include "Instrumentor.h"
 
 namespace SpicesTest {

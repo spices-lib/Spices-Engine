@@ -1,6 +1,6 @@
 ﻿/**
-* @file runtime_memory_block.h.
-* @brief The runtime_memory_block Class Definitions.
+* @file RuntimeMemoryBlock.h.
+* @brief The RuntimeMemoryBlock Class Definitions.
 * @author Spices.
 */
 

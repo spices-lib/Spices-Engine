@@ -1,5 +1,5 @@
 /**
-* @file kd_tree.h.
+* @file KDTree.h.
 * @brief The kd_tree Class Definitions and Implementation.
 * https://www.geeksforgeeks.org/kd-trees-in-cpp/
 * @author Spices.

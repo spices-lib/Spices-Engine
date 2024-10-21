@@ -1,11 +1,11 @@
 ﻿/**
-* @file runtime_memory_block.cpp.
-* @brief The runtime_memory_block Class Implementation.
+* @file RuntimeMemoryBlock.cpp.
+* @brief The RuntimeMemoryBlock Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "runtime_memory_block.h"
+#include "RuntimeMemoryBlock.h"
 #include "Core/Reflect/TypeReflect.h"
 
 namespace scl {

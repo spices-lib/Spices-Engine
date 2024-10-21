@@ -1,5 +1,5 @@
 /**
-* @file TypeList.hpp.
+* @file TypeList.h.
 * @brief The TypeList Class Definitions and Implementation.
 * @author VisualGMQ.
 */
@@ -297,7 +297,7 @@ namespace Spices {
 	using map = typename detail::map<TypeList, F>::type;
 
 	/**
-	* @brief Psuh a param to params first.
+	* @brief Psuh a element to elements first.
 	* @tparam TypeList type_list.
 	* @tparam T added Type.
 	*/

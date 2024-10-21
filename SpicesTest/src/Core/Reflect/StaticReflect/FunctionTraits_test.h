@@ -6,7 +6,7 @@
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Core/Reflect/StaticReflect/FunctionTraits.hpp>
+#include <Core/Reflect/StaticReflect/FunctionTraits.h>
 #include "Instrumentor.h"
 
 namespace SpicesTest {

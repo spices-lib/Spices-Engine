@@ -1,5 +1,5 @@
 /**
-* @file VariableTraits.hpp.
+* @file VariableTraits.h.
 * @brief The VariableTraits Class Definitions and Implementation.
 * @author VisualGMQ.
 */

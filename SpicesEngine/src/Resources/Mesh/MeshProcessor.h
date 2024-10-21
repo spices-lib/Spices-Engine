@@ -7,7 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Vertex.h"
-#include "Core/Container/kd_tree.h"
+#include "Core/Container/KDTree.h"
 
 namespace Spices {
 

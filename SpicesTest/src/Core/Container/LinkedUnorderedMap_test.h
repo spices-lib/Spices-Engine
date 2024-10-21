@@ -1,12 +1,12 @@
 /**
-* @file linked_unordered_map_test.h.
-* @brief The linked_unordered_map_test Definitions.
+* @file LinkedUnorderedMap_test.h.
+* @brief The LinkedUnorderedMap_test Definitions.
 * @author Spices.
 */
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Core/Container/linked_unordered_map.h>
+#include <Core/Container/LinkedUnorderedMap.h>
 #include "Instrumentor.h"
 
 namespace SpicesTest {

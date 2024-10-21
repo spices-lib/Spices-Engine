@@ -1,18 +1,18 @@
 /**
-* @file runtime_memory_block_test.h.
-* @brief The runtime_memory_block_test Definitions.
+* @file RuntimeMemoryBlock.h.
+* @brief The RuntimeMemoryBlock Definitions.
 * @author Spices.
 */
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Core/Container/runtime_memory_block.h>
+#include <Core/Container/RuntimeMemoryBlock.h>
 #include "Instrumentor.h"
 
 namespace SpicesTest {
 
 	/**
-	* @brief Unit Test for runtime_memory_block
+	* @brief Unit Test for RuntimeMemoryBlock
 	*/
 	class runtime_memory_block_test : public testing::Test
 	{

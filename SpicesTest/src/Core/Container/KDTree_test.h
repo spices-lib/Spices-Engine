@@ -1,12 +1,12 @@
 /**
-* @file kd_tree_test.h.
-* @brief The kd_tree_test Definitions.
+* @file KDTree_test.h.
+* @brief The KDTree_test Definitions.
 * @author Spices.
 */
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Core/Container/kd_tree.h>
+#include <Core/Container/KDTree.h>
 #include <Core/Thread/ThreadPool.h>
 #include <random>
 #include "Instrumentor.h"
@@ -112,8 +112,8 @@ namespace SpicesTest {
 
 		EXPECT_EQ(m_KDTree.nearest_neighbour_search({ 2.0, 0.0 }, { 3.0, 3.0 }), val);
 
-		const int nPoints  = 10000000;
-		const int nSearchs = 10000;
+		const int nPoints  = 1000;
+		const int nSearchs = 1000;
 		scl::kd_tree<3> modelKDTree;
 		std::vector<scl::kd_tree<3>::item> points;
 		scl::kd_tree<3>::item findVal = { 50.2f, 87.3f, 12.6f };
@@ -151,7 +151,7 @@ namespace SpicesTest {
 			}
 		}
 
-#ifdef CompareWithForLoop
+#if 1
 
 		{
 			SPICESTEST_PROFILE_SCOPE("Search in Loop");

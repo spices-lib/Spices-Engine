@@ -11,8 +11,8 @@
 #include "Render/Vulkan/VulkanShaderModule.h"
 #include "Resources/Texture/Texture.h"
 #include "Core/Math/Math.h"
-#include "Core/Container/runtime_memory_block.h"
-#include "Core/Container/linked_unordered_map.h"
+#include "Core/Container/RuntimeMemoryBlock.h"
+#include "Core/Container/LinkedUnorderedMap.h"
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "MaterialProperties.h"
 #include <glm/glm.hpp>

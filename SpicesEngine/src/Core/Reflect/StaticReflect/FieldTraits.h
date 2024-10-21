@@ -1,13 +1,13 @@
 /**
-* @file FieldTraits.hpp.
+* @file FieldTraits.h.
 * @brief The FieldTraits Class Definitions and Implementation.
 * @author VisualGMQ.
 */
 
 #pragma once
 
-#include "FunctionTraits.hpp"
-#include "VariableTraits.hpp"
+#include "FunctionTraits.h"
+#include "VariableTraits.h"
 
 #include <type_traits>
 #include <tuple>

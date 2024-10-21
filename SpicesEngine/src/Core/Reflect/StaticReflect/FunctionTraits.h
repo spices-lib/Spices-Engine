@@ -1,5 +1,5 @@
 /**
-* @file FunctionTraits.hpp.
+* @file FunctionTraits.h.
 * @brief The FunctionTraits Class Definitions and Implementation.
 * @author VisualGMQ.
 */
