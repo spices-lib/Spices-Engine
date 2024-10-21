@@ -119,6 +119,12 @@ namespace Spices {
 			VkDeviceSize offset = 0
 		) const;
 
+		/**
+		* @brief Get Buffer Size.
+		* @return Returns Buffer Size.
+		*/
+		uint64_t GetSize() const { return m_DeviceSize; }
+
 	private:
 
 		/**

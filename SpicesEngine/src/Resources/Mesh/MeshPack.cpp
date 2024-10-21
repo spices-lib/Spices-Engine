@@ -218,7 +218,7 @@ namespace Spices {
 		triangles.indexType                          = VK_INDEX_TYPE_UINT32;
 		triangles.indexData.deviceAddress            = indicesAddress;
 	  //triangles.transformData = {};
-		triangles.maxVertex                          = static_cast<uint32_t>(m_MeshResource.primitivePoints.attributes->size() * 3 - 1);
+		triangles.maxVertex                          = static_cast<uint32_t>(m_MeshResource.primitivePoints.buffer->GetSize() / sizeof(glm::uvec3) * 3 - 1);
 
 		/**
 		* @brief wrapper around the above with the geometry type enum (triangles in this case) plus flags for the AS builder.
@@ -268,6 +268,21 @@ namespace Spices {
 		m_Desc.UpdateprimitiveLocationsAddress (m_MeshResource.primitiveLocations.buffer         );
 		m_Desc.UpdatemeshletsAddress           (m_MeshResource.meshlets.buffer                   );
 		m_Desc.UpdatenMeshlets                 (m_MeshResource.meshlets.attributes       ->size());
+
+#if 1
+
+		m_MeshResource.positions.attributes           = nullptr; 
+		m_MeshResource.normals.attributes             = nullptr;
+		m_MeshResource.colors.attributes              = nullptr;
+		m_MeshResource.texCoords.attributes           = nullptr;
+		m_MeshResource.vertices.attributes            = nullptr;
+		m_MeshResource.primitivePoints.attributes     = nullptr;
+		m_MeshResource.primitiveVertices.attributes   = nullptr;
+		m_MeshResource.primitiveLocations.attributes  = nullptr;
+		m_MeshResource.meshlets.attributes            = nullptr;
+
+#endif
+
 	}
 
 	bool PlanePack::OnCreatePack(bool isCreateBuffer)
