@@ -1,7 +1,7 @@
 /**
 * @file VariableTraits.hpp.
 * @brief The VariableTraits Class Definitions and Implementation.
-* @author Spices & VisualGMQ.
+* @author VisualGMQ.
 */
 
 #pragma once
