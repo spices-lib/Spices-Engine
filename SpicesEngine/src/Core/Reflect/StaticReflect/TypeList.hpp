@@ -165,7 +165,7 @@ namespace Spices {
 		* @tparam Args All elements.
 		* @tparam T Added element.
 		*/
-		template<typename ...Args, typename T>
+		template<typename T, typename ...Args>
 		struct cons<T, type_list<Args...>>
 		{
 			using type = type_list<T, Args...>;
@@ -301,7 +301,7 @@ namespace Spices {
 	* @tparam TypeList type_list.
 	* @tparam T added Type.
 	*/
-	template<typename TypeList, typename T>
+	template<typename T, typename TypeList>
 	using cons = typename detail::cons<T, TypeList>::type;
 
 	/**
