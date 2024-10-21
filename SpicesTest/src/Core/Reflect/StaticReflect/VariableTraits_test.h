@@ -44,8 +44,8 @@ namespace SpicesTest {
         SPICESTEST_PROFILE_FUNCTION();
 
         {
-            using ca = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestClass::a)>;
-            using  a = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestN::a)>;
+            using ca = Spices::variable_traits<decltype(&VariableTraitsTestClass::a)>;
+            using  a = Spices::variable_traits<decltype(&VariableTraitsTestN::a)>;
 
             constexpr bool v0 = std::is_same_v<ca::Type, const int>;
             constexpr bool v1 = std::is_same_v<a::Type, const int>;
@@ -65,8 +65,8 @@ namespace SpicesTest {
             EXPECT_EQ(a::is_member, false);
         }
         {
-            using cb = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestClass::b)>;
-            using  b = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestN::b)>;
+            using cb = Spices::variable_traits<decltype(&VariableTraitsTestClass::b)>;
+            using  b = Spices::variable_traits<decltype(&VariableTraitsTestN::b)>;
 
             constexpr bool v0 = std::is_same_v<cb::Type, uint32_t>;
             constexpr bool v1 = std::is_same_v<b::Type, uint32_t>;
@@ -86,8 +86,8 @@ namespace SpicesTest {
             EXPECT_EQ(b::is_member, false);
         }
         {
-            using cc = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestClass::c)>;
-            using  c = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestN::c)>;
+            using cc = Spices::variable_traits<decltype(&VariableTraitsTestClass::c)>;
+            using  c = Spices::variable_traits<decltype(&VariableTraitsTestN::c)>;
 
             constexpr bool v0 = std::is_same_v<cc::Type, float>;
             constexpr bool v1 = std::is_same_v<c::Type, float>;
@@ -107,8 +107,8 @@ namespace SpicesTest {
             EXPECT_EQ(c::is_member, false);
         }
         {
-            using cd = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestClass::d)>;
-            using  d = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestN::d)>;
+            using cd = Spices::variable_traits<decltype(&VariableTraitsTestClass::d)>;
+            using  d = Spices::variable_traits<decltype(&VariableTraitsTestN::d)>;
 
             constexpr bool v0 = std::is_same_v<cd::Type, std::string>;
             constexpr bool v1 = std::is_same_v<d::Type, std::string>;
@@ -128,8 +128,8 @@ namespace SpicesTest {
             EXPECT_EQ(d::is_member, false);
         }
         {
-            using ce = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestClass::e)>;
-            using  e = Spices::variable_traits<VARIABLE_TYPE(VariableTraitsTestN::e)>;
+            using ce = Spices::variable_traits<decltype(&VariableTraitsTestClass::e)>;
+            using  e = Spices::variable_traits<decltype(&VariableTraitsTestN::e)>;
 
             constexpr bool v0 = std::is_same_v<ce::Type, void*>;
             constexpr bool v1 = std::is_same_v<e::Type, void*>;

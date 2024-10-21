@@ -29,6 +29,7 @@
 
 /* Reflect */
 #include "Core/Reflect/StaticReflect/VariableTraits_test.h"
+#include "Core/Reflect/StaticReflect/FunctionTraits_test.h"
 
 ///* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"

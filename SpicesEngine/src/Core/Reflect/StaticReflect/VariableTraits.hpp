@@ -9,8 +9,6 @@
 
 namespace Spices {
 
-#define VARIABLE_TYPE(v) decltype(&v)
-
 	namespace detail {
 	
 		/**
@@ -76,7 +74,7 @@ namespace Spices {
 	* @tparam T Variable Type.
 	*/
 	template<typename T>
-	struct variable_traits<T*> : public internal::basic_variable_traits<T>
+	struct variable_traits<T*> : internal::basic_variable_traits<T>
 	{
 		using PointerType = T*;
 	};
@@ -87,7 +85,7 @@ namespace Spices {
 	* @tparam C Variable Class.
 	*/
 	template<typename C, typename T>
-	struct variable_traits<T C::*> : public internal::basic_variable_traits<T C::*>
+	struct variable_traits<T C::*> : internal::basic_variable_traits<T C::*>
 	{
 		using PointerType = T C::*;
 	};
