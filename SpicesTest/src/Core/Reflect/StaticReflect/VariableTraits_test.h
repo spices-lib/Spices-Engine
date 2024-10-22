@@ -37,9 +37,9 @@ namespace SpicesTest {
     }
 
     /**
-    * @brief Testing Spices::VariableTraits.
+    * @brief Testing Spices::variable_traits.
     */
-    TEST(VariableTraitsTest, VariableTraits) {
+    TEST(VariableTraitsTest_test, variable_traits) {
 
         SPICESTEST_PROFILE_FUNCTION();
 

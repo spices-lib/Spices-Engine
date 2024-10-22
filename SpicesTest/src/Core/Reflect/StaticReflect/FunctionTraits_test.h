@@ -42,9 +42,9 @@ namespace SpicesTest {
     }
 
     /**
-    * @brief Testing Spices::FunctionTraits.
+    * @brief Testing Spices::function_traits.
     */
-    TEST(FunctionTraitsTest, FunctionTraits) {
+    TEST(FunctionTraitsTest_test, function_traits) {
 
         SPICESTEST_PROFILE_FUNCTION();
 
@@ -193,4 +193,44 @@ namespace SpicesTest {
             EXPECT_EQ(trait::is_member, false);
         }
     }
+
+    /**
+    * @brief Testing Spices::is_function_v.
+    */
+    TEST(FunctionTraitsTest_test, is_function_v) {
+
+        SPICESTEST_PROFILE_FUNCTION();
+
+        constexpr bool v0 = Spices::is_function_v<decltype(&FunctionTraitsTestClass::fc)>;
+        constexpr bool v1 = Spices::is_function_v<int>;
+
+        EXPECT_EQ(v0, true);
+        EXPECT_EQ(v1, false);
+
+    }
+
+    /**
+    * @brief Testing Spices::function_pointer_type_t.
+    */
+    TEST(FunctionTraitsTest_test, function_pointer_type_t) {
+
+        SPICESTEST_PROFILE_FUNCTION();
+
+        using t = Spices::function_pointer_type_t<(int(FunctionTraitsTestClass::*)(int, float, void*))&FunctionTraitsTestClass::f>;
+        constexpr bool v = std::is_same_v<t, int(FunctionTraitsTestClass::*)(int, float, void*)>;
+
+        EXPECT_EQ(v, true);
+    }
+
+    /**
+    * @brief Testing Spices::function_traits_t.
+    */
+    TEST(FunctionTraitsTest_test, function_traits_t) {
+
+        SPICESTEST_PROFILE_FUNCTION();
+
+        Spices::function_traits_t<&FunctionTraitsTestClass::fc>;
+        Spices::function_traits_t<(int(FunctionTraitsTestClass::*)(int, float, void*))&FunctionTraitsTestClass::f>;
+    }
+
 }

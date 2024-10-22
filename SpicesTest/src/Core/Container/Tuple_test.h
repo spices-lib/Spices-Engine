@@ -18,9 +18,10 @@ namespace Spices {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        auto t = std::make_tuple(1, 2.0, "Hello", nullptr);
+        auto t = std::make_tuple(1, 2.0f, "Hellp", nullptr);
 
         int index = 0;
+        
         Spices::IterTuple(t, [&](auto&& elem) {
 
             if (index == 0)
@@ -41,6 +42,6 @@ namespace Spices {
             }
 
             index++;
-        }, std::make_index_sequence<std::tuple_size_v<decltype(t)>>());
+        });
     }
 }

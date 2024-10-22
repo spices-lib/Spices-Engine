@@ -29,6 +29,42 @@ namespace Spices {
 			using Params     = std::tuple<Args...>;
 			using ReturnType = Ret;
 		};
+
+		/**
+		* @brief Determain if a given T is a function.
+		* @tparam T .
+		*/
+		template<typename T>
+		struct is_function
+		{
+			static constexpr bool value = std::is_function_v<std::remove_pointer_t<T>> || std::is_member_function_pointer_v<T>;
+		};
+
+		/**
+		* @brief Get function pointer type.
+		* @tparam Ret return valur type.
+		* @tparam Params params type.
+		*/
+		template<typename Ret, typename ...Params>
+		auto function_pointer_type(Ret(*)(Params...)) -> Ret(*)(Params...);
+
+		/**
+		* @brief Get class function pointer type.
+		* @tparam Ret return valur type.
+		* @tparam Class function class.
+		* @tparam Params params type.
+		*/
+		template<typename Ret, typename Class, typename ...Params>
+		auto function_pointer_type(Ret(Class::*)(Params...)) -> Ret(Class::*)(Params...);
+
+		/**
+		* @brief Get class const function pointer type.
+		* @tparam Ret return valur type.
+		* @tparam Class function class.
+		* @tparam Params params type.
+		*/
+		template<typename Ret, typename Class, typename ...Params>
+		auto function_pointer_type(Ret(Class::*)(Params...) const) -> Ret(Class::*)(Params...) const;
 	}
 
 	/**
@@ -86,5 +122,26 @@ namespace Spices {
 		static constexpr bool is_member = true;
 		static constexpr bool is_const  = true;
 	};
+
+	/**
+	* @brief Determain if a given T is a function.
+	* @tparam T .
+	*/
+	template<typename T>
+	constexpr bool is_function_v = detail::is_function<T>::value;
+
+	/**
+	* @brief Get class const function pointer type.
+	* @tparam F function.
+	*/
+	template<auto F>
+	using function_pointer_type_t = decltype(detail::function_pointer_type(F));
+
+	/**
+	* @brief traits of function.
+	* @tparam F function.
+	*/
+	template<auto F>
+	using function_traits_t = function_traits<function_pointer_type_t<F>>;
 
 }

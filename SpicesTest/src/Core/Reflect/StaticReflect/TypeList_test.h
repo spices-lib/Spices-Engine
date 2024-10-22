@@ -32,7 +32,7 @@ namespace SpicesTest {
     /**
     * @brief Testing Spices::TypeList.
     */
-    TEST(TypeListTest, TypeList) {
+    TEST(TypeListTest_test, TypeList) {
 
         SPICESTEST_PROFILE_FUNCTION();
 
@@ -100,5 +100,17 @@ namespace SpicesTest {
 
             EXPECT_EQ(v, true);
         }
+    }
+
+    /**
+    * @brief Testing Spices::size.
+    */
+    TEST(TypeListTest_test, size) {
+
+        SPICESTEST_PROFILE_FUNCTION();
+
+        using TypeList = Spices::type_list<int, float, std::string, void*, void(*)(int)>;
+
+        EXPECT_EQ(TypeList::size, 5);
     }
 }
