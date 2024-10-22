@@ -33,7 +33,7 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        Spices::field_traits field(&FieldTraitsTest::a, "a");
+        auto field = Spices::field_traits(&FieldTraitsTest::a, "a");
 
         EXPECT_EQ(field.pointer, &FieldTraitsTest::a);
         EXPECT_EQ(field.name, "a");

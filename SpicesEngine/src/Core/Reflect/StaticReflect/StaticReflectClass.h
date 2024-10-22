@@ -7,23 +7,35 @@
 #pragma once
 #include "FieldTraits.h"
 #include "Core/Container/Tuple.h"
-
+#include <string>
 namespace Spices {
 
 	template<typename T>
 	struct SRClass;
 
-#define BEGIN_CLASS(x)           \
-	template<>                   \
-	struct Spices::SRClass<x>    \
-	{
+#define BEGIN_CLASS(x)  template<> struct SRClass<x> {
+#define functions(...)  static constexpr auto functions = std::make_tuple(__VA_ARGS__);
+#define func(F)         field_traits{ F, #F }
+#define END_CLASS()     };
 
-#define functions(...)           \
-	static constexpr auto functions = std::make_tuple(__VA_ARGS__);
+    class FieldTraitsTest final
+    {
+    public:
 
-#define func(F)                  \
-	field_traits{ F, #F }
+        FieldTraitsTest(const std::string& name)
+            : m_Name(name)
+        {};
 
-#define END_CLASS()  };
+        ~FieldTraitsTest() = default;
 
+        bool a(int q, float w) { return true; };
+
+        std::string m_Name;
+    };
+
+    BEGIN_CLASS(FieldTraitsTest)
+        functions(
+            func(&FieldTraitsTest::a)
+        )
+    END_CLASS()
 }
