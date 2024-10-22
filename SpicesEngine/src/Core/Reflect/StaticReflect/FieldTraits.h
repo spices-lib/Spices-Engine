@@ -10,7 +10,6 @@
 #include "VariableTraits.h"
 
 #include <type_traits>
-#include <tuple>
 
 namespace Spices {
 
@@ -41,6 +40,11 @@ namespace Spices {
 		{
 			return false;
 		}
+
+		constexpr size_t param_count() const
+		{
+			return traits::Params::size;
+		}
 	};
 
 	template<typename T>
@@ -67,17 +71,12 @@ namespace Spices {
 		{
 			return true;
 		}
-
-		constexpr size_t param_count() const
-		{
-			return std::tuple_size_v<typename traits::args>;
-		}
 	};
 
 	template<typename T>
 	struct field_traits : public basic_field_traits<T, is_function_v<T>>
 	{
-		constexpr field_traits(T&& p, std::string n) 
+		constexpr field_traits(T&& p, std::string_view n)
 			: pointer{ p }
 			, name(n)
 		{
@@ -87,9 +86,9 @@ namespace Spices {
 				name = n.substr(pos);
 			}
 		}
-
+	
 		T pointer;
-		std::string name;
+		std::string_view name;
 	};
 
 }

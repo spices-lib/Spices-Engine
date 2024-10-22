@@ -10,7 +10,7 @@
 namespace Spices {
 
 	namespace detail {
-	
+
 		/**
 		* @brief Store Non Member Variable Type.
 		* @tparam T Variable Type.
@@ -49,7 +49,7 @@ namespace Spices {
 	using variable_class_t = typename detail::variable_type<T>::Class;
 
 	namespace internal {
-	
+
 		/**
 		* @brief Collection of Type and Class.
 		* @tparam T Variable Type with class.
@@ -60,6 +60,7 @@ namespace Spices {
 			using Type  = variable_type_t<T>;
 			using Class = variable_class_t<T>;
 			static constexpr bool is_member = std::is_member_pointer_v<T>;
+			static constexpr bool is_const  = std::is_const_v<T>;
 		};
 	}
 

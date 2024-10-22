@@ -63,6 +63,9 @@ namespace SpicesTest {
 
             EXPECT_EQ(ca::is_member, true);
             EXPECT_EQ(a::is_member, false);
+
+            EXPECT_EQ(ca::is_const, true);
+            EXPECT_EQ(a::is_const, true);
         }
         {
             using cb = Spices::variable_traits<decltype(&VariableTraitsTestClass::b)>;
@@ -84,6 +87,9 @@ namespace SpicesTest {
 
             EXPECT_EQ(cb::is_member, true);
             EXPECT_EQ(b::is_member, false);
+
+            EXPECT_EQ(cb::is_const, false);
+            EXPECT_EQ(b::is_const, false);
         }
         {
             using cc = Spices::variable_traits<decltype(&VariableTraitsTestClass::c)>;
@@ -105,6 +111,9 @@ namespace SpicesTest {
 
             EXPECT_EQ(cc::is_member, false);
             EXPECT_EQ(c::is_member, false);
+
+            EXPECT_EQ(cc::is_const, false);
+            EXPECT_EQ(c::is_const, false);
         }
         {
             using cd = Spices::variable_traits<decltype(&VariableTraitsTestClass::d)>;
@@ -126,6 +135,9 @@ namespace SpicesTest {
 
             EXPECT_EQ(cd::is_member, true);
             EXPECT_EQ(d::is_member, false);
+
+            EXPECT_EQ(cd::is_const, false);
+            EXPECT_EQ(d::is_const, false);
         }
         {
             using ce = Spices::variable_traits<decltype(&VariableTraitsTestClass::e)>;
@@ -147,6 +159,9 @@ namespace SpicesTest {
 
             EXPECT_EQ(ce::is_member, true);
             EXPECT_EQ(e::is_member, false);
+
+            EXPECT_EQ(ce::is_const, false);
+            EXPECT_EQ(e::is_const, false);
         }
     }
 }

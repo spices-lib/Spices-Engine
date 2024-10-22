@@ -33,7 +33,7 @@
 #include "Core/Reflect/StaticReflect/FunctionTraits_test.h"
 #include "Core/Reflect/StaticReflect/TypeList_test.h"
 #include "Core/Reflect/StaticReflect/FieldTraits_test.h"
-#include "Core/Reflect/StaticReflect/StaticReflectClass_test.h"
+#include "Core/Reflect/StaticReflect/ClassTraits_test.h"
 
 /* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"

@@ -51,9 +51,9 @@ namespace SpicesTest {
         {
             using trait = Spices::function_traits<decltype(static_cast<bool(FunctionTraitsTestClass::*)(int, float)>(&FunctionTraitsTestClass::f))>;
 
-            constexpr bool v0 = std::is_same_v<trait::Params, std::tuple<int, float>>;
+            constexpr bool v0 = std::is_same_v<trait::Params, Spices::type_list<int, float>>;
             constexpr bool v1 = std::is_same_v<trait::ReturnType, bool>;
-            constexpr bool v2 = std::is_same_v<trait::ParamsWithClass, std::tuple<FunctionTraitsTestClass*, int, float>>;
+            constexpr bool v2 = std::is_same_v<trait::ParamsWithClass, Spices::type_list<FunctionTraitsTestClass*, int, float>>;
             constexpr bool v3 = std::is_same_v<trait::Pointer, bool(FunctionTraitsTestClass::*)(int, float)>;
             constexpr bool v4 = std::is_same_v<trait::Type, bool(FunctionTraitsTestClass::*)(int, float)>;
 
@@ -70,10 +70,10 @@ namespace SpicesTest {
         {
             using trait = Spices::function_traits<decltype(static_cast<int(FunctionTraitsTestClass::*)(int, float, void*)>(&FunctionTraitsTestClass::f))>;
 
-            constexpr bool v0 = std::is_same_v<trait::Params, std::tuple<int, float, void*>>;
+            constexpr bool v0 = std::is_same_v<trait::Params, Spices::type_list<int, float, void*>>;
             constexpr bool v1 = std::is_same_v<trait::ReturnType, int>;
             constexpr bool v2 = std::is_same_v<trait::Class, FunctionTraitsTestClass>;
-            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, std::tuple<FunctionTraitsTestClass*, int, float, void*>>;
+            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, Spices::type_list<FunctionTraitsTestClass*, int, float, void*>>;
             constexpr bool v4 = std::is_same_v<trait::Pointer, int(FunctionTraitsTestClass::*)(int, float, void*)>;
             constexpr bool v5 = std::is_same_v<trait::Type, int(FunctionTraitsTestClass::*)(int, float, void*)>;
 
@@ -91,10 +91,10 @@ namespace SpicesTest {
         {
             using trait = Spices::function_traits<decltype(&FunctionTraitsTestClass::fc)>;
 
-            constexpr bool v0 = std::is_same_v<trait::Params, std::tuple<int, float, void*>>;
+            constexpr bool v0 = std::is_same_v<trait::Params, Spices::type_list<int, float, void*>>;
             constexpr bool v1 = std::is_same_v<trait::ReturnType, bool>;
             constexpr bool v2 = std::is_same_v<trait::Class, FunctionTraitsTestClass>;
-            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, std::tuple<FunctionTraitsTestClass*, int, float, void*>>;
+            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, Spices::type_list<FunctionTraitsTestClass*, int, float, void*>>;
             constexpr bool v4 = std::is_same_v<trait::Pointer, bool(FunctionTraitsTestClass::*)(int, float, void*) const>;
             constexpr bool v5 = std::is_same_v<trait::Type, bool(FunctionTraitsTestClass::*)(int, float, void*) const>;
 
@@ -112,10 +112,10 @@ namespace SpicesTest {
         {
             using trait = Spices::function_traits<decltype(&FunctionTraitsTestClass::sf)>;
 
-            constexpr bool v0 = std::is_same_v<trait::Params, std::tuple<int, float, void*>>;
+            constexpr bool v0 = std::is_same_v<trait::Params, Spices::type_list<int, float, void*>>;
             constexpr bool v1 = std::is_same_v<trait::ReturnType, bool>;
             constexpr bool v2 = std::is_same_v<trait::Class, void>;
-            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, std::tuple<int, float, void*>>;
+            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, Spices::type_list<int, float, void*>>;
             constexpr bool v4 = std::is_same_v<trait::Pointer, bool(*)(int, float, void*)>;
             constexpr bool v5 = std::is_same_v<trait::Type, bool(*)(int, float, void*)>;
 
@@ -133,10 +133,10 @@ namespace SpicesTest {
         {
             using trait = Spices::function_traits<int(FunctionTraitsTestClass::*)(int(*)(float, void*), float, void*)>;
 
-            constexpr bool v0 = std::is_same_v<trait::Params, std::tuple<int(*)(float, void*), float, void*>>;
+            constexpr bool v0 = std::is_same_v<trait::Params, Spices::type_list<int(*)(float, void*), float, void*>>;
             constexpr bool v1 = std::is_same_v<trait::ReturnType, int>;
             constexpr bool v2 = std::is_same_v<trait::Class, FunctionTraitsTestClass>;
-            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, std::tuple<FunctionTraitsTestClass*, int(*)(float, void*), float, void*>>;
+            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, Spices::type_list<FunctionTraitsTestClass*, int(*)(float, void*), float, void*>>;
             constexpr bool v4 = std::is_same_v<trait::Pointer, int(FunctionTraitsTestClass::*)(int(*)(float, void*), float, void*)>;
             constexpr bool v5 = std::is_same_v<trait::Type, int(FunctionTraitsTestClass::*)(int(*)(float, void*), float, void*)>;
 
@@ -154,10 +154,10 @@ namespace SpicesTest {
         {
             using trait = Spices::function_traits<decltype(static_cast<bool(*)(int, float)>(&FunctionTraitsTestN::f))>;
 
-            constexpr bool v0 = std::is_same_v<trait::Params, std::tuple<int, float>>;
+            constexpr bool v0 = std::is_same_v<trait::Params, Spices::type_list<int, float>>;
             constexpr bool v1 = std::is_same_v<trait::ReturnType, bool>;
             constexpr bool v2 = std::is_same_v<trait::Class, void>;
-            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, std::tuple<int, float>>;
+            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, Spices::type_list<int, float>>;
             constexpr bool v4 = std::is_same_v<trait::Pointer, bool(*)(int, float)>;
             constexpr bool v5 = std::is_same_v<trait::Type, bool(*)(int, float)>;
 
@@ -175,10 +175,10 @@ namespace SpicesTest {
         {
             using trait = Spices::function_traits<decltype(&FunctionTraitsTestN::sf)>;
 
-            constexpr bool v0 = std::is_same_v<trait::Params, std::tuple<int, float, void*>>;
+            constexpr bool v0 = std::is_same_v<trait::Params, Spices::type_list<int, float, void*>>;
             constexpr bool v1 = std::is_same_v<trait::ReturnType, bool>;
             constexpr bool v2 = std::is_same_v<trait::Class, void>;
-            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, std::tuple<int, float, void*>>;
+            constexpr bool v3 = std::is_same_v<trait::ParamsWithClass, Spices::type_list<int, float, void*>>;
             constexpr bool v4 = std::is_same_v<trait::Pointer, bool(*)(int, float, void*)>;
             constexpr bool v5 = std::is_same_v<trait::Type, bool(*)(int, float, void*)>;
 

@@ -5,8 +5,8 @@
 */
 
 #pragma once
+#include "TypeList.h"
 #include <type_traits>
-#include <tuple>
 
 namespace Spices {
 
@@ -26,7 +26,7 @@ namespace Spices {
 		template<typename Ret, typename ...Args>
 		struct basic_function_traits<Ret(Args...)>
 		{
-			using Params     = std::tuple<Args...>;
+			using Params     = type_list<Args...>;
 			using ReturnType = Ret;
 		};
 
@@ -83,7 +83,7 @@ namespace Spices {
 	{
 		using Type                      = Ret(*)(Args...);
 		using Class                     = void;
-		using ParamsWithClass           = std::tuple<Args...>;
+		using ParamsWithClass           = type_list<Args...>;
 		using Pointer                   = Ret(*)(Args...);
 		static constexpr bool is_member = false;
 		static constexpr bool is_const  = false;
@@ -100,7 +100,7 @@ namespace Spices {
 	{
 		using Type                      = Ret(C::*)(Args...);
 		using Class                     = C;
-		using ParamsWithClass           = std::tuple<Class*, Args...>;
+		using ParamsWithClass           = type_list<Class*, Args...>;
 		using Pointer                   = Ret(C::*)(Args...);
 		static constexpr bool is_member = true;
 		static constexpr bool is_const  = false;
@@ -117,7 +117,7 @@ namespace Spices {
 	{
 		using Type                      = Ret(C::*)(Args...) const;
 		using Class                     = C;
-		using ParamsWithClass           = std::tuple<C*, Args...>;
+		using ParamsWithClass           = type_list<C*, Args...>;
 		using Pointer                   = Ret(C::*)(Args...) const;
 		static constexpr bool is_member = true;
 		static constexpr bool is_const  = true;
