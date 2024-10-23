@@ -34,6 +34,9 @@
 #include "Core/Reflect/StaticReflect/TypeList_test.h"
 #include "Core/Reflect/StaticReflect/FieldTraits_test.h"
 #include "Core/Reflect/StaticReflect/ClassTraits_test.h"
+#include "Core/Reflect/StaticReflect/IsConst_test.h"
+#include "Core/Reflect/StaticReflect/RemovePointer_test.h"
+#include "Core/Reflect/StaticReflect/IsPointer_test.h"
 
 /* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"

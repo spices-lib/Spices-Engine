@@ -5,6 +5,7 @@
 */
 
 #pragma once
+#include "IsConst.h"
 #include <type_traits>
 
 namespace Spices {
@@ -60,7 +61,7 @@ namespace Spices {
 			using Type  = variable_type_t<T>;
 			using Class = variable_class_t<T>;
 			static constexpr bool is_member = std::is_member_pointer_v<T>;
-			static constexpr bool is_const  = std::is_pointer_v<T> ? std::is_const_v<std::remove_pointer_t<T>> : std::is_const_v<std::remove_reference_t<T>>;
+			static constexpr bool is_const  = is_const_v<T>;
 		};
 	}
 
