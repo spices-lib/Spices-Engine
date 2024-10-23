@@ -31,6 +31,8 @@ namespace SpicesTest {
         static std::string m_Name_c;
     };
 
+    std::string FieldTraitsTest::m_Name_c;
+
     /**
     * @brief Testing Spices::field_traits.
     */
@@ -108,15 +110,15 @@ namespace SpicesTest {
 
         {
             using traits = Spices::field_traits<decltype(&FieldTraitsTest::m_Name_c)>;
-            //auto field = traits(&FieldTraitsTest::m_Name_c, "m_Name_c");
+            auto field = traits(&FieldTraitsTest::m_Name_c, "m_Name_c");
 
-            //EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_c);
-            //EXPECT_EQ(field.name, "m_Name_c");
-            //
-            //EXPECT_EQ(field.is_member(), false);
-            //EXPECT_EQ(field.is_const(), false);
-            //EXPECT_EQ(field.is_function(), false);
-            //EXPECT_EQ(field.is_variable(), true);
+            EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_c);
+            EXPECT_EQ(field.name, "m_Name_c");
+            
+            EXPECT_EQ(field.is_member(), false);
+            EXPECT_EQ(field.is_const(), false);
+            EXPECT_EQ(field.is_function(), false);
+            EXPECT_EQ(field.is_variable(), true);
         }
     }
 }
