@@ -27,7 +27,7 @@ namespace SpicesTest {
         static bool c(int q, float w) { return true; };
 
         std::string m_Name_a;
-        const std::string m_Name_b;
+        const volatile std::string m_Name_b;
         static std::string m_Name_c;
     };
 
