@@ -76,9 +76,10 @@ namespace Spices {
 	template<typename T>
 	struct field_traits : public basic_field_traits<T, is_function_v<T>>
 	{
-		constexpr field_traits(T&& p, std::string_view n)
-			: pointer{ p }
-			, name(n)
+		constexpr field_traits(T&& p, std::string_view n, size_t offset = 0)
+			: name(n)
+			, pointer{ p }
+			, offset(offset)
 		{
 			size_t pos = n.find_last_of(":");
 			if (pos < n.length())
@@ -87,8 +88,9 @@ namespace Spices {
 			}
 		}
 	
-		T pointer;
 		std::string_view name;
+		T pointer;
+		size_t offset;
 	};
 
 }

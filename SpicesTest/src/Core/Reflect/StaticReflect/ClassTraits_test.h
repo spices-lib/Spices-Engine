@@ -11,21 +11,23 @@
 
 namespace Spices {
 
-    int i = 0;
-    int* ip = &i;
-    const int* cip = ip;
+    int ei = 5;
+    int* eip = &ei;
+    const int* ecip = eip;
 
     class ClassTraitsTest
     {
     public:
 
         ClassTraitsTest()
-            : ir(i)
-            , ipr(ip)
-            , ci(i)
-            , cir(i)
-            , cipr(cip)
-            , cicpcr(ip)
+            : ir(ei)
+            , ipr(eip)
+            , ci(ei)
+            , cir(ei)
+            , cipr(ecip)
+            , cicpcr(eip)
+            , i(150)
+            , vi(30)
         {};
 
         ~ClassTraitsTest() = default;
@@ -45,17 +47,17 @@ namespace Spices {
 
         int i;
         std::reference_wrapper<int> ir;
-        int* ip;
+        int* ip = nullptr;
         std::reference_wrapper<int*> ipr;
-        int** ipp;
+        int** ipp = nullptr;
 
         const int ci;
         std::reference_wrapper<const int> cir;
-        const int* cip;
+        const int* cip = nullptr;
         std::reference_wrapper<const int*> cipr;
-        const int** cipp;
+        const int** cipp = nullptr;
 
-        const int const* cicp;
+        const int const* cicp = nullptr;
         std::reference_wrapper<const int const* const> cicpcr;
 
         static int si;
@@ -71,13 +73,13 @@ namespace Spices {
 
     UCLASS()
     UFUNCTIONS(
-        //UFUNCTION(&ClassTraitsTest::ClassTraitsTest)),
-        //UFUNCTION(&ClassTraitsTest::~ClassTraitsTest)),
-        //UFUNCTION_T(bool(CLASS_SCOPE::*)(int, float), f),
-        //UFUNCTION_T(bool(CLASS_SCOPE::*)(int, float, void*, bool(CLASS_SCOPE::*)(int**, int&&)), f),
+        UCONSTRUCT(void(CLASS_SCOPE::*)(), CLASS_SCOPE),
+        UDECONSTRUCT(void(CLASS_SCOPE::*)(), ~CLASS_SCOPE),
+        UFUNCTION_T(bool(CLASS_SCOPE::*)(int, float), f),
+        UFUNCTION_T(bool(CLASS_SCOPE::*)(int, float, void*, bool(CLASS_SCOPE::*)(int**, int&&)), f),
         UFUNCTION(fc),
-        //UFUNCTION(fs),
-        //UFUNCTION(mf<int>),
+        UFUNCTION(fs),
+        UFUNCTION(mf<int>),
         //UFUNCTION(static_cast<bool(ClassTraitsTest::*)(bool(*)(int, char*), int, char*>)>(&ClassTraitsTest::mf<bool(*)(int, char*), int, char*>)),
         //UFUNCTION(mfc<void(*)()>),
         UFUNCTION(vf)
@@ -95,17 +97,43 @@ namespace Spices {
         UPROPERTY(cipp),
         UPROPERTY(cicp),
         UPROPERTY(cicpcr),
-        UPROPERTY(si),
+        UPROPERTY_S(si),
         UPROPERTY(vi)
     )
-    UCONSTRUCT(
-        IterTuple(functions, [&](auto& elem) {
-            std::cout << elem.name << " " << elem.pointer << std::endl;
-        });
+
+    template<typename T>
+    T& GetProperty(const std::string& property)
+    {
+        bool isStatic;
+        size_t offset;
+        //auto ptr;
         IterTuple(properties, [&](auto& elem) {
-            //std::cout << elem.name << " " << elem.pointer << std::endl;
+            if (property == elem.name)
+            {
+                if (elem.pointer == nullptr)
+                {
+                    isStatic = false;
+                    offset = elem.offset;
+                }
+                else
+                {
+                    isStatic = true;
+                    //ptr = const_cast<decltype(elem.pointer)>(elem.pointer);
+                }
+            }
         });
-    )
+
+        if (isStatic)
+        {
+        }
+        else
+        {
+            return *(T*)((char*)m_Instance + offset);
+        }
+    }
+
+    auto& GetInst() { return *m_Instance; }
+
     END_CLASS
 
 #undef CLASS_SCOPE
@@ -138,6 +166,13 @@ namespace SpicesTest {
         //
         //std::cout << "P " << &p << std::endl;
         //std::cout << "R " << &Spices::ClassTraitsTest::fc << std::endl;
+
+        int& ref = ClassTraitsTestTraits.GetProperty<int>("i");
+
+        std::cout << offsetof(Spices::ClassTraitsTest, i) << std::endl;
+        std::cout << &ref << std::endl;
+        std::cout << &test.i << std::endl;
+        std::cout << &test << std::endl;
     }
 
 }

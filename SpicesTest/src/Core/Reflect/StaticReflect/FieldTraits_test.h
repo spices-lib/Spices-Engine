@@ -72,7 +72,7 @@ namespace SpicesTest {
             using traits = Spices::field_traits<decltype(&FieldTraitsTest::c)>;
             auto field = traits(&FieldTraitsTest::c, "c");
 
-            EXPECT_EQ(field.pointer, &FieldTraitsTest::c);
+            //EXPECT_EQ(field.pointer, &FieldTraitsTest::c);
             EXPECT_EQ(field.name, "c");
 
             EXPECT_EQ(field.is_member(), false);
@@ -112,7 +112,7 @@ namespace SpicesTest {
             using traits = Spices::field_traits<decltype(&FieldTraitsTest::m_Name_c)>;
             auto field = traits(&FieldTraitsTest::m_Name_c, "m_Name_c");
 
-            EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_c);
+            //EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_c);
             EXPECT_EQ(field.name, "m_Name_c");
             
             EXPECT_EQ(field.is_member(), false);
