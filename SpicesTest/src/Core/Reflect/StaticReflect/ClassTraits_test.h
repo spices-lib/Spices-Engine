@@ -36,22 +36,27 @@ namespace Spices {
         static bool fs(int q, float w) { return true; }
 
         template<typename T>
-        void mf(int a) {}
+        void mf(T a) {}
+
+        template<typename F, typename ...Args>
+        auto mfc(F func, Args  ...args) -> decltype(f(std::forward<Args>(args)...)) { return f(std::forward<Args>(args)...); }
+
+        virtual void vf(int) {}
 
         int i;
-        int& ir;
+        std::reference_wrapper<int> ir;
         int* ip;
-        int*& ipr;
+        std::reference_wrapper<int*> ipr;
         int** ipp;
 
         const int ci;
-        const int& cir;
+        std::reference_wrapper<const int> cir;
         const int* cip;
-        const int*& cipr;
+        std::reference_wrapper<const int*> cipr;
         const int** cipp;
 
         const int const* cicp;
-        const int const* const& cicpcr;
+        std::reference_wrapper<const int const* const> cicpcr;
 
         static int si;
         volatile int vi;
@@ -59,30 +64,51 @@ namespace Spices {
 
     int ClassTraitsTest::si;
 
-    UCLASS(ClassTraitsTest)
+#ifdef CLASS_SCOPE
+#undef CLASS_SCOPE
+#endif
+#define CLASS_SCOPE ClassTraitsTest
+
+    UCLASS()
     UFUNCTIONS(
-        UFUNCTION(static_cast<bool(ClassTraitsTest::*)(int, float)>(&ClassTraitsTest::f)),
-        UFUNCTION(static_cast<bool(ClassTraitsTest::*)(int, float, void*, bool(ClassTraitsTest::*)(int**, int&&))>(&ClassTraitsTest::f)),
-        UFUNCTION(&ClassTraitsTest::fc),
-        UFUNCTION(&ClassTraitsTest::fs)
+        //UFUNCTION(&ClassTraitsTest::ClassTraitsTest)),
+        //UFUNCTION(&ClassTraitsTest::~ClassTraitsTest)),
+        //UFUNCTION_T(bool(CLASS_SCOPE::*)(int, float), f),
+        //UFUNCTION_T(bool(CLASS_SCOPE::*)(int, float, void*, bool(CLASS_SCOPE::*)(int**, int&&)), f),
+        UFUNCTION(fc),
+        //UFUNCTION(fs),
+        //UFUNCTION(mf<int>),
+        //UFUNCTION(static_cast<bool(ClassTraitsTest::*)(bool(*)(int, char*), int, char*>)>(&ClassTraitsTest::mf<bool(*)(int, char*), int, char*>)),
+        //UFUNCTION(mfc<void(*)()>),
+        UFUNCTION(vf)
     )
     UPROPERTYS(
-        UPROPERTY(&ClassTraitsTest::i),
-        UPROPERTY(&ClassTraitsTest::ir),
-        UPROPERTY(&ClassTraitsTest::ip),
-        UPROPERTY(&ClassTraitsTest::ipr),
-        UPROPERTY(&ClassTraitsTest::ipp),
-        UPROPERTY(&ClassTraitsTest::ci),
-        UPROPERTY(&ClassTraitsTest::cir),
-        UPROPERTY(&ClassTraitsTest::cip),
-        UPROPERTY(&ClassTraitsTest::cipr),
-        UPROPERTY(&ClassTraitsTest::cipp),
-        UPROPERTY(&ClassTraitsTest::cicp),
-        UPROPERTY(&ClassTraitsTest::cicpcr),
-        UPROPERTY(&ClassTraitsTest::si),
-        UPROPERTY(&ClassTraitsTest::vi)
+        UPROPERTY(i),
+        UPROPERTY(ir),
+        UPROPERTY(ip),
+        UPROPERTY(ipr),
+        UPROPERTY(ipp),
+        UPROPERTY(ci),
+        UPROPERTY(cir),
+        UPROPERTY(cip),
+        UPROPERTY(cipr),
+        UPROPERTY(cipp),
+        UPROPERTY(cicp),
+        UPROPERTY(cicpcr),
+        UPROPERTY(si),
+        UPROPERTY(vi)
+    )
+    UCONSTRUCT(
+        IterTuple(functions, [&](auto& elem) {
+            std::cout << elem.name << " " << elem.pointer << std::endl;
+        });
+        IterTuple(properties, [&](auto& elem) {
+            //std::cout << elem.name << " " << elem.pointer << std::endl;
+        });
     )
     END_CLASS
+
+#undef CLASS_SCOPE
 
 }
 
@@ -95,11 +121,23 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        //auto FieldTraitsTestTraits = Spices::class_traits<Spices::ClassTraitsTest>();
-        //
-        //Spices::IterTuple(FieldTraitsTestTraits.functions, [](auto&& elem) {
-        //
+        Spices::ClassTraitsTest test;
+        auto ClassTraitsTestTraits = Spices::class_traits_i(test);
+
+        //std::cout << " Functions: " << std::endl;
+        //Spices::IterTuple(ClassTraitsTestTraits.functions, [](auto&& elem) {
+        //    std::cout << "  " << elem.name << "  " << elem.pointer << std::endl;
         //});
+        //
+        //std::cout << " Properties: " << std::endl;
+        //Spices::IterTuple(ClassTraitsTestTraits.properties, [](auto&& elem) {
+        //    std::cout << "  " << elem.name << "  " << elem.pointer << std::endl;
+        //});
+
+        //std::_Mem_fn<bool(Spices::ClassTraitsTest::*)(int, float) const> p = std::mem_fn(&Spices::ClassTraitsTest::fc);
+        //
+        //std::cout << "P " << &p << std::endl;
+        //std::cout << "R " << &Spices::ClassTraitsTest::fc << std::endl;
     }
 
 }

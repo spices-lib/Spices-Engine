@@ -83,7 +83,7 @@ namespace Spices {
 			size_t pos = n.find_last_of(":");
 			if (pos < n.length())
 			{
-				name = n.substr(pos);
+				name = n.substr(pos + 1);
 			}
 		}
 	
