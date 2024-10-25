@@ -33,6 +33,8 @@ namespace SpicesTest {
 
     std::string FieldTraitsTest::m_Name_c;
 
+    
+
     /**
     * @brief Testing Spices::field_traits.
     */
@@ -45,6 +47,7 @@ namespace SpicesTest {
             auto field = traits(&FieldTraitsTest::a, "a");
 
             EXPECT_EQ(field.pointer, &FieldTraitsTest::a);
+            EXPECT_EQ(field.offset, 0);
             EXPECT_EQ(field.name, "a");
 
             EXPECT_EQ(field.is_member(), true);
@@ -59,6 +62,7 @@ namespace SpicesTest {
             auto field = traits(&FieldTraitsTest::b, "b");
 
             EXPECT_EQ(field.pointer, &FieldTraitsTest::b);
+            EXPECT_EQ(field.offset, 0);
             EXPECT_EQ(field.name, "b");
 
             EXPECT_EQ(field.is_member(), true);
@@ -72,7 +76,8 @@ namespace SpicesTest {
             using traits = Spices::field_traits<decltype(&FieldTraitsTest::c)>;
             auto field = traits(&FieldTraitsTest::c, "c");
 
-            //EXPECT_EQ(field.pointer, &FieldTraitsTest::c);
+            EXPECT_EQ(field.pointer, &FieldTraitsTest::c);
+            EXPECT_EQ(field.offset, 0);
             EXPECT_EQ(field.name, "c");
 
             EXPECT_EQ(field.is_member(), false);
@@ -84,9 +89,10 @@ namespace SpicesTest {
 
         {
             using traits = Spices::field_traits<decltype(&FieldTraitsTest::m_Name_a)>;
-            auto field = traits(&FieldTraitsTest::m_Name_a, "m_Name_a");
+            auto field = traits(&FieldTraitsTest::m_Name_a, "m_Name_a", offsetof(FieldTraitsTest, m_Name_a));
 
             EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_a);
+            EXPECT_EQ(field.offset, offsetof(FieldTraitsTest, m_Name_a));
             EXPECT_EQ(field.name, "m_Name_a");
 
             EXPECT_EQ(field.is_member(), true);
@@ -97,9 +103,10 @@ namespace SpicesTest {
 
         {
             using traits = Spices::field_traits<decltype(&FieldTraitsTest::m_Name_b)>;
-            auto field = traits(&FieldTraitsTest::m_Name_b, "m_Name_b");
+            auto field = traits(&FieldTraitsTest::m_Name_b, "m_Name_b", offsetof(FieldTraitsTest, m_Name_b));
 
             EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_b);
+            EXPECT_EQ(field.offset, offsetof(FieldTraitsTest, m_Name_b));
             EXPECT_EQ(field.name, "m_Name_b");
 
             EXPECT_EQ(field.is_member(), true);
@@ -112,7 +119,8 @@ namespace SpicesTest {
             using traits = Spices::field_traits<decltype(&FieldTraitsTest::m_Name_c)>;
             auto field = traits(&FieldTraitsTest::m_Name_c, "m_Name_c");
 
-            //EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_c);
+            EXPECT_EQ(field.pointer, &FieldTraitsTest::m_Name_c);
+            EXPECT_EQ(field.offset, 0);
             EXPECT_EQ(field.name, "m_Name_c");
             
             EXPECT_EQ(field.is_member(), false);

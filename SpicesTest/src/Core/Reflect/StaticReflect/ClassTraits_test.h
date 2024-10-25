@@ -64,7 +64,8 @@ namespace Spices {
         volatile int vi;
     };
 
-    int ClassTraitsTest::si;
+    int ClassTraitsTest::si = 500;
+    Spices::ClassTraitsTest inst;
 
 #ifdef CLASS_SCOPE
 #undef CLASS_SCOPE
@@ -100,40 +101,7 @@ namespace Spices {
         UPROPERTY_S(si),
         UPROPERTY(vi)
     )
-
-    template<typename T>
-    T& GetProperty(const std::string& property)
-    {
-        bool isStatic;
-        size_t offset;
-        //auto ptr;
-        IterTuple(properties, [&](auto& elem) {
-            if (property == elem.name)
-            {
-                if (elem.pointer == nullptr)
-                {
-                    isStatic = false;
-                    offset = elem.offset;
-                }
-                else
-                {
-                    isStatic = true;
-                    //ptr = const_cast<decltype(elem.pointer)>(elem.pointer);
-                }
-            }
-        });
-
-        if (isStatic)
-        {
-        }
-        else
-        {
-            return *(T*)((char*)m_Instance + offset);
-        }
-    }
-
-    auto& GetInst() { return *m_Instance; }
-
+    
     END_CLASS
 
 #undef CLASS_SCOPE
@@ -143,36 +111,150 @@ namespace Spices {
 namespace SpicesTest {
 
     /**
-    * @brief Testing Spices::class_traits.
+    * @brief Testing Spices::class_traits::GetProperty.
     */
-    TEST(ClassTraits_test, class_traits) {
+    TEST(ClassTraits_test, GetProperty) {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        Spices::ClassTraitsTest test;
-        auto ClassTraitsTestTraits = Spices::class_traits_i(test);
+        using namespace Spices;
 
-        //std::cout << " Functions: " << std::endl;
-        //Spices::IterTuple(ClassTraitsTestTraits.functions, [](auto&& elem) {
-        //    std::cout << "  " << elem.name << "  " << elem.pointer << std::endl;
-        //});
-        //
-        //std::cout << " Properties: " << std::endl;
-        //Spices::IterTuple(ClassTraitsTestTraits.properties, [](auto&& elem) {
-        //    std::cout << "  " << elem.name << "  " << elem.pointer << std::endl;
-        //});
+        auto ClassTraitsTestTraits = Spices::class_traits_i(inst);
 
-        //std::_Mem_fn<bool(Spices::ClassTraitsTest::*)(int, float) const> p = std::mem_fn(&Spices::ClassTraitsTest::fc);
-        //
-        //std::cout << "P " << &p << std::endl;
-        //std::cout << "R " << &Spices::ClassTraitsTest::fc << std::endl;
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<int>("i");
 
-        int& ref = ClassTraitsTestTraits.GetProperty<int>("i");
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
 
-        std::cout << offsetof(Spices::ClassTraitsTest, i) << std::endl;
-        std::cout << &ref << std::endl;
-        std::cout << &test.i << std::endl;
-        std::cout << &test << std::endl;
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<std::reference_wrapper<int>>("ir");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<int*>("ip");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<std::reference_wrapper<int*>>("ipr");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<int**>("ipp");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<const int>("ci");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<std::reference_wrapper<const int>>("cir");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<const int*>("cip");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<std::reference_wrapper<const int*>>("cipr");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<const int**>("cipp");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<const int const*>("cicp");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<std::reference_wrapper<const int const* const>>("cicpcr");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<int>("si");
+
+            EXPECT_EQ(type, ClassItemType::NonMember);
+            EXPECT_NE(ptr, nullptr);
+        }
+
+        {
+            auto [type, ptr] = ClassTraitsTestTraits.GetProperty<volatile int >("vi");
+
+            EXPECT_EQ(type, ClassItemType::Member);
+            EXPECT_NE(ptr, nullptr);
+        }
     }
 
+    /**
+    * @brief Testing Spices::class_traits::GetProperty_V.
+    */
+    TEST(ClassTraits_test, GetProperty_V) {
+
+        SPICESTEST_PROFILE_FUNCTION();
+
+        using namespace Spices;
+
+        auto ClassTraitsTestTraits = Spices::class_traits_i(inst);
+
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<int>("i"), &inst.i);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<std::reference_wrapper<int>>("ir"), &inst.ir);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<int*>("ip"), &inst.ip);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<std::reference_wrapper<int*>>("ipr"), &inst.ipr);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<int**>("ipp"), &inst.ipp);
+
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<const int>("ci"), &inst.ci);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<std::reference_wrapper<const int>>("cir"), &inst.cir);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<const int*>("cip"), &inst.cip);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<std::reference_wrapper<const int*>>("cipr"), &inst.cipr);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<const int**>("cipp"), &inst.cipp);
+
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<const int const*>("cicp"), &inst.cicp);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<std::reference_wrapper<const int const* const>>("cicpcr"), &inst.cicpcr);
+
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<int>("si"), &inst.si);
+        EXPECT_EQ(ClassTraitsTestTraits.GetProperty_V<volatile int >("vi"), &inst.vi);
+    }
+
+    /**
+    * @brief Testing Spices::class_traits::GetProperty_T.
+    */
+    TEST(ClassTraits_test, GetProperty_T) {
+
+    }
+    
 }
