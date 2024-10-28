@@ -1,11 +1,12 @@
 /**
 * @file ObjectPool.h
 * @brief The ObjectPool Class Definitions.
-* @author Spices.
+* @author tcmalloc.
 */
 
 #pragma once
 #include "Core/Core.h"
+#include "Memory.h"
 
 namespace Spices {
 
@@ -35,7 +36,7 @@ namespace Spices {
 
 			if (!m_Memory) return;
 
-			free(m_Memory);
+			//free(m_Memory);
 		}
 
 		/**
@@ -48,6 +49,9 @@ namespace Spices {
 
 			T* obj = nullptr;
 
+			/**
+			* @brief Reused space.
+			*/
 			if (m_FreeList)
 			{
 				void* next = *(void**)m_FreeList;
@@ -56,46 +60,93 @@ namespace Spices {
 			}
 			else
 			{
+				/**
+				* @brief Alloc 128k if there is no empty space.
+				*/
 				if (m_RemanentBytes < sizeof(T))
 				{
 					m_RemanentBytes = 128 * 1024;
-					m_Memory = (char*)malloc(m_RemanentBytes);
-					if (m_Memory = nullptr)
-					{
-						throw std::bad_alloc();
-					}
-				}
-				if (m_Memory == nullptr)
-				{
-					m_Memory = (char*)malloc(128 * 1024);
+
+					m_Memory = (char*)SystemAlloc(m_RemanentBytes >> 13);
 					if (m_Memory == nullptr)
 					{
-						throw std::bad_alloc();
+						SPICES_CORE_ERROR("Memory alloc failed");
+
+						return nullptr;
 					}
 				}
 
-				obj = (T*)m_Memory;
-				size_t objSize = sizeof(T) < sizeof(void*) ? sizeof(void*) : sizeof(T);
-				m_Memory += objSize;
-				m_RemanentBytes -= objSize;
+				/**
+				* @brief Min block size is 1 bytes.
+				*/
+				obj               = (T*)m_Memory;
+				size_t objSize    = std::max(size_t(1), sizeof(T));
+				m_Memory         += objSize;
+				m_RemanentBytes  -= objSize;
 			}
 
+			/**
+			* @brief Call Construct function of T.
+			*/
 			new(obj)T;
 
 			return obj;
 		}
 
-		void* Delete(T* obj)
+		/**
+		* @brief Free a obj of T.
+		* @param[in] obj Object to be free.
+		*/
+		void Delete(T* obj)
 		{
+			/**
+			* @brief Call Destructor manually.
+			*/
 			obj->~T();
 
+			/**
+			* @brief insert to head.
+			*/
 			*(void**)obj = m_FreeList;
 			m_FreeList = obj;
+
+			size_t objSize = std::max(size_t(1), sizeof(T));
+			m_RemanentBytes += objSize;
 		}
 
+		/**
+		* @brief Get Memory.
+		* @return Returns Memory.
+		*/
+		void* GetMemory() { return (void*)m_Memory; }
+
+		/**
+		* @brief Get FreeList.
+		* @return Returns FreeList.
+		*/
+		void* GetFreeList() { return m_FreeList; }
+
+		/**
+		* @brief Get RemainBytes.
+		* @return Returns RemainBytes.
+		*/
+		size_t GetRemainBytes() { return m_RemanentBytes; }
+
 	private:
+
+		/**
+		* @brief objectpool pointer.
+		*/
 		char* m_Memory;
+
+		/**
+		* @brief freelist.
+		*/
 		void* m_FreeList;
+
+		/**
+		* @brief Remains bytes of objectpool.
+		*/
 		size_t m_RemanentBytes;
 	};
 }

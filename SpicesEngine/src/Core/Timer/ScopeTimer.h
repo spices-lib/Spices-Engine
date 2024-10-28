@@ -45,4 +45,7 @@ namespace Spices {
 		*/
 		std::string m_Log;
 	};
+
+#define SCOPE_TIME_COUNTER(...)   ::Spices::ScopeTimer thisScopeTimeCounter(__VA_ARGS__);
+
 }

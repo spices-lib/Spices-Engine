@@ -14,12 +14,8 @@
 #include "Core/Container/RuntimeMemoryBlock_test.h"
 #include "Core/Container/Tuple_test.h"
 
-/* Memory */
-#include "Core/Memory/ObjectPool_test.h"
-
-/* Thread */
-//#include "Core/Thread/ThreadPoolFixed_test.h"
-//#include "Core/Thread/ThreadPoolCached_test.h"
+/* Delegate */
+#include "Core/Delegate/Delegate_test.h"
 
 /* Library */
 #include "Core/Library/ClassLibrary_test.h"
@@ -28,8 +24,8 @@
 #include "Core/Library/ProcessLibrary_test.h"
 #include "Core/Library/StringLibrary_test.h"
 
-/* Delegate */
-#include "Core/Delegate/Delegate_test.h"
+/* Memory */
+#include "Core/Memory/ObjectPool_test.h"
 
 /* Reflect */
 #include "Core/Reflect/StaticReflect/VariableTraits_test.h"
@@ -40,6 +36,13 @@
 #include "Core/Reflect/StaticReflect/IsConst_test.h"
 #include "Core/Reflect/StaticReflect/RemovePointer_test.h"
 #include "Core/Reflect/StaticReflect/IsPointer_test.h"
+
+/* Thread */
+//#include "Core/Thread/ThreadPoolFixed_test.h"
+//#include "Core/Thread/ThreadPoolCached_test.h"
+
+/* Timer */
+#include "Core/Timer/ScopeTimer_test.h"
 
 /* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"
