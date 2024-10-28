@@ -14,6 +14,9 @@
 #include "Core/Container/RuntimeMemoryBlock_test.h"
 #include "Core/Container/Tuple_test.h"
 
+/* Memory */
+#include "Core/Memory/ObjectPool_test.h"
+
 /* Thread */
 //#include "Core/Thread/ThreadPoolFixed_test.h"
 //#include "Core/Thread/ThreadPoolCached_test.h"
