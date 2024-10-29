@@ -9,7 +9,7 @@
 #include <Core/Container/Tuple.h>
 #include "Instrumentor.h"
 
-namespace Spices {
+namespace SpicesTest {
 
     /**
     * @brief Testing Spices::Tuple Helper Function.
