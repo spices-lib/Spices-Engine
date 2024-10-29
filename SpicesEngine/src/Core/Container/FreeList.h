@@ -1,6 +1,6 @@
 /**
 * @file FreeList.h.
-* @brief The FreeList Class Definitions.
+* @brief The free_list Class Definitions.
 * @author Spices.
 */
 
@@ -8,13 +8,18 @@
 
 namespace Spices {
 
-	class FreeList
+	class free_list
 	{
 	public:
 		void Push(void* obj);
 		void* Pop();
 		bool Empty() { return m_Freelist == nullptr; }
+		size_t& MaxSize() { return m_MaxSize; }
+		void PushRange(void* start, void* end, size_t size);
+		size_t Size() { return m_Size; }
 	private:
 		void* m_Freelist;
+		size_t m_MaxSize = 1;
+		size_t m_Size = 0;
 	};
 }

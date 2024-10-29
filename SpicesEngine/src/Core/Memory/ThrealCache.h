@@ -39,7 +39,7 @@ namespace Spices {
 		/**
 		* @brief FreeList Array.
 		*/
-		std::array<FreeList, MemoryHelper::FREE_LIST_NUM> m_FreeList;
+		std::array<free_list, MemoryHelper::FREE_LIST_NUM> m_FreeLists;
 	};
 
 	/**

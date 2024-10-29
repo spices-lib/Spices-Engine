@@ -54,6 +54,10 @@ namespace Spices {
 		*/
 		static const size_t MAX_BYTES = 256 * 1024;
 
+
+		static const size_t PAGE_NUM = 129;
+		static const size_t PAGE_SHIFT = 13;
+
 		/**
 		* @brief Get object address.
 		*/
@@ -68,5 +72,9 @@ namespace Spices {
 		* @return Returns index of freelist.
 		*/
 		static size_t Index(size_t size);
+
+		static size_t NumMoveSize(size_t size);
+
+		static size_t NumMovePage(size_t size);
 	};
 }

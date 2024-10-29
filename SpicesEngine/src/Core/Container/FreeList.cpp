@@ -1,6 +1,6 @@
 /**
 * @file FreeList.h.
-* @brief The FreeList Class Implementation.
+* @brief The free_list Class Implementation.
 * @author Spices.
 */
 
@@ -10,21 +10,33 @@
 
 namespace Spices {
 
-	void FreeList::Push(void* obj)
+	void free_list::Push(void* obj)
 	{
 		assert(obj);
 
 		MemoryHelper::ObjNext(obj) = m_Freelist;
 		m_Freelist   = obj;
+
+		++m_Size;
 	}
 
-	void* FreeList::Pop()
+	void* free_list::Pop()
 	{
 		assert(m_Freelist);
 
 		void* obj  = m_Freelist;
 		m_Freelist = MemoryHelper::ObjNext(obj);
 
+		--m_Size;
+
 		return obj;
+	}
+
+	void free_list::PushRange(void* start, void* end, size_t size)
+	{
+		MemoryHelper::ObjNext(end) = m_Freelist;
+		m_Freelist = start;
+
+		m_Size += size;
 	}
 }

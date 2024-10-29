@@ -75,4 +75,39 @@ namespace Spices {
 		}
 	}
 
+	size_t MemoryHelper::NumMoveSize(size_t size)
+	{
+		assert(size > 0);
+
+		int num = MAX_BYTES / size;
+
+		if (num > 512)
+		{
+			num = 512;
+		}
+
+		if (num < 2)
+		{
+			num = 2;
+		}
+
+		return num;
+	}
+
+	size_t MemoryHelper::NumMovePage(size_t size)
+	{
+		size_t num = NumMoveSize(size);
+
+		size_t npage = num * size;
+
+		npage >>= PAGE_SHIFT;
+
+		if (npage == 0)
+		{
+			npage = 1;
+		}
+
+		return npage;
+	}
+
 }
