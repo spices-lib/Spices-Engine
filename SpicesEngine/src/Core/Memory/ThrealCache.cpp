@@ -64,4 +64,14 @@ namespace Spices {
 		}
 	}
 
+	void ThreadCache::ListTooLong(free_list& list, size_t size)
+	{
+		void* start = nullptr;
+		void* end = nullptr;
+
+		list.PopRange(start, end, list.MaxSize());
+
+		CenteralCache::Get()->ReleaseListToSpans(start, size);
+	}
+
 }

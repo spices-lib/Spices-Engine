@@ -34,6 +34,8 @@ namespace Spices {
 		*/
 		void* FetchFromCentralCache(size_t index, size_t alignSize);
 
+		void ListTooLong(free_list& list, size_t size);
+
 	private:
 
 		/**

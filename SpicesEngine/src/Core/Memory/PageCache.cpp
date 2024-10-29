@@ -11,7 +11,14 @@ namespace Spices {
 
 		if (!m_SpanLists[k].Empty())
 		{
-			return m_SpanLists[k].PopFront();
+			span* s = m_SpanLists[k].PopFront();
+
+			for (size_t i = 0; i < s->n; ++i)
+			{
+				m_IdSpanMap[s->m_PageId + i] = s;
+			}
+
+			return s;
 		}
 
 		for (int i = k + 1; i < MemoryHelper::PAGE_NUM; ++i)
@@ -29,6 +36,12 @@ namespace Spices {
 				kSpan->n -= k;
 
 				m_SpanLists[nSpan->n].PushFront(nSpan);
+
+				for (size_t i = 0; i < kSpan->n; ++i)
+				{
+					m_IdSpanMap[kSpan->m_PageId + i] = kSpan;
+				}
+
 				return kSpan;
 			}
 		}
@@ -43,6 +56,28 @@ namespace Spices {
 		m_SpanLists[MemoryHelper::PAGE_NUM - 1].PushFront(bigSpan);
 
 		return NewSpan(k);
+	}
+
+	span* PageCache::MapObjectToSpan(void* obj)
+	{
+		size_t id = (((size_t)obj) >> MemoryHelper::PAGE_SHIFT);
+
+		auto ret = m_IdSpanMap.find(id);
+
+		if (ret != m_IdSpanMap.end())
+		{
+			return ret->second;
+		}
+		else
+		{
+			assert(false);
+			return nullptr;
+		}
+	}
+
+	void PageCache::ReleaseSpanToPageCache(span* s)
+	{
+
 	}
 
 }

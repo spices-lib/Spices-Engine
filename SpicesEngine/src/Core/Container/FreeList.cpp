@@ -39,4 +39,20 @@ namespace Spices {
 
 		m_Size += size;
 	}
+
+	void free_list::PopRange(void*& start, void*& end, size_t n)
+	{
+		assert(n <= m_Size);
+
+		start = end = m_Freelist;
+
+		for (size_t i = 0; i < n - 1; ++i)
+		{
+			end = MemoryHelper::ObjNext(end);
+		}
+
+		m_Freelist = MemoryHelper::ObjNext(end);
+		MemoryHelper::ObjNext(end) = nullptr;
+		m_Size -= n;
+	}
 }
