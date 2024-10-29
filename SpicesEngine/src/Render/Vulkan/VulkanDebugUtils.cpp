@@ -139,7 +139,7 @@ namespace Spices {
 		/**
 		* @brief Execute the function pointer.
 		*/
-		VulkanRenderBackend::GetState().m_VkFunc.vkSetDebugUtilsObjectNameEXT(device, &name_info);
+		VK_CHECK(VulkanRenderBackend::GetState().m_VkFunc.vkSetDebugUtilsObjectNameEXT(device, &name_info))
 	}
 
 	void VulkanDebugUtils::SetObjectTag(
@@ -165,6 +165,6 @@ namespace Spices {
 		/**
 		* @brief Execute the function pointer.
 		*/
-		VulkanRenderBackend::GetState().m_VkFunc.vkSetDebugUtilsObjectTagEXT(device, &tag_info);
+		VK_CHECK(VulkanRenderBackend::GetState().m_VkFunc.vkSetDebugUtilsObjectTagEXT(device, &tag_info))
 	}
 }

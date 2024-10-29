@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "Memory.h"
+#include "MemoryHelper.h"
 
 namespace Spices {
 

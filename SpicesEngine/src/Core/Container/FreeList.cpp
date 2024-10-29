@@ -6,7 +6,7 @@
 
 #include "Pchheader.h"
 #include "FreeList.h"
-#include "Core/Memory/Memory.h"
+#include "Core/Memory/MemoryHelper.h"
 
 namespace Spices {
 
@@ -14,7 +14,7 @@ namespace Spices {
 	{
 		assert(obj);
 
-		ObjNext(obj) = m_Freelist;
+		MemoryHelper::ObjNext(obj) = m_Freelist;
 		m_Freelist   = obj;
 	}
 
@@ -23,7 +23,7 @@ namespace Spices {
 		assert(m_Freelist);
 
 		void* obj  = m_Freelist;
-		m_Freelist = ObjNext(obj);
+		m_Freelist = MemoryHelper::ObjNext(obj);
 
 		return obj;
 	}

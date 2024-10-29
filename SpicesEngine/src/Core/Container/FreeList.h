@@ -13,7 +13,7 @@ namespace Spices {
 	public:
 		void Push(void* obj);
 		void* Pop();
-
+		bool Empty() { return m_Freelist == nullptr; }
 	private:
 		void* m_Freelist;
 	};
