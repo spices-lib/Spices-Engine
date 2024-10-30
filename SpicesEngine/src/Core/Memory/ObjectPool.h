@@ -236,6 +236,8 @@ namespace Spices {
 	template <typename T>
 	void ObjectPool<T>::Delete(T* obj)
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Call Destructor manually.
 		*/
@@ -258,6 +260,8 @@ namespace Spices {
 	template<typename T>
 	inline T* ObjectPool<T>::ThreadNew()
 	{
+		SPICES_PROFILE_ZONE;
+
 		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		return New();
@@ -266,6 +270,8 @@ namespace Spices {
 	template<typename T>
 	inline void ObjectPool<T>::ThreadDelete(T* obj)
 	{
+		SPICES_PROFILE_ZONE;
+
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		Delete(obj);

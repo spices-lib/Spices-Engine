@@ -52,20 +52,29 @@ namespace Spices {
 		}
 		else if (size <= 1024)
 		{
-			return _index(size - 128, 4) + group_array[0];
+			return _index(size - 128, 4) + 
+				group_array[0];
 		}
 		else if (size <= 8 * 1024)
 		{
-			return _index(size - 1024, 7) + group_array[1] + group_array[0];
+			return _index(size - 1024, 7) + 
+				group_array[1] + 
+				group_array[0];
 		}
 		else if (size <= 64 * 1024)
 		{
-			return _index(size - 8 * 1024, 10) + group_array[2] + group_array[1] + group_array[0];
+			return _index(size - 8 * 1024, 10) + 
+				group_array[2] + 
+				group_array[1] + 
+				group_array[0];
 		}
 		else if (size <= 256 * 1024)
 		{
-			return _index(size - 64 * 1024, 13) + group_array[3] + 
-				group_array[2] + group_array[1] + group_array[0];
+			return _index(size - 64 * 1024, 13) + 
+				group_array[3] + 
+				group_array[2] + 
+				group_array[1] + 
+				group_array[0];
 		}
 		else
 		{
@@ -76,6 +85,8 @@ namespace Spices {
 
 	size_t MemoryHelper::NumMoveSize(size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
 		assert(size > 0);
 
 		int num = MAX_BYTES / size;

@@ -26,6 +26,7 @@
 
 /* Memory */
 #include "Core/Memory/ObjectPool_test.h"
+#include "Core/Memory/ThreadCache_test.h"
 
 /* Reflect */
 #include "Core/Reflect/StaticReflect/VariableTraits_test.h"

@@ -83,6 +83,11 @@ namespace Spices {
 		*/
 		static size_t Index(size_t size);
 
+		/**
+		* @brief Get max blocks of tc alignup bytes.
+		* @param[in] size alignup bytes.
+		* @return Returns max blocks.
+		*/
 		static size_t NumMoveSize(size_t size);
 
 		static size_t NumMovePage(size_t size);

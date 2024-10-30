@@ -8,6 +8,8 @@ namespace Spices {
 
 	size_t CenteralCache::FetchRangeObj(void*& start, void*& end, size_t batchNum, size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
 		size_t index = MemoryHelper::Index(size);
 
 		m_SpanLists[index].GetMutex().lock();

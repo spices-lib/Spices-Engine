@@ -36,6 +36,8 @@ namespace Spices {
 		assert(ptr);
 
 		span* prev = pos->m_Prev;
+
+		prev->m_Next = ptr;
 		ptr->m_Prev = prev;
 
 		ptr->m_Next = pos;

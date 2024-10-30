@@ -11,12 +11,38 @@
 
 namespace Spices {
 
+	/**
+	* @brief Thread memory cache.
+	* First level of memory allocator.
+	*/
 	class ThreadCache
 	{
 	public:
 
 		/**
-		* @brief Alloc memory in this thread.
+		* @brief Constructor Function.
+		*/
+		ThreadCache() = default;
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~ThreadCache() = default;
+
+		/**
+		* @brief Copy Constructor Function.
+		* @note This Class not allowed copy behaves.
+		*/
+		ThreadCache(const ThreadCache&) = delete;
+
+		/**
+		* @brief Copy Assignment Operation.
+		* @note This Class not allowed copy behaves.
+		*/
+		ThreadCache& operator=(const ThreadCache&) = delete;
+
+		/**
+		* @brief Entry of Alloc memory.
 		* @param[in] size memory size.
 		* @return Returns memory pointer.
 		*/
@@ -29,12 +55,17 @@ namespace Spices {
 		*/
 		void Deallocate(void* obj, size_t size);
 		
+		void ListTooLong(free_list& list, size_t size);
+
+	private:
+
 		/**
 		* @brief Fetch memory from central cache if this is run out.
+		* @param[in] index freelist index.
+		* @param[in] alignSize alignup bytes.
+		* @return Returns memory pointer.
 		*/
 		void* FetchFromCentralCache(size_t index, size_t alignSize);
-
-		void ListTooLong(free_list& list, size_t size);
 
 	private:
 
@@ -45,7 +76,7 @@ namespace Spices {
 	};
 
 	/**
-	* @brief Thread Unique variable of TC.
+	* @brief Thread Unique TC.
 	*/
 	static _declspec(thread) ThreadCache* pTLSThreadCache = nullptr;
 }

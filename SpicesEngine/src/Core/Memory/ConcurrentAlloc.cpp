@@ -25,9 +25,8 @@ namespace Spices {
 			if (!pTLSThreadCache)
 			{
 				static ObjectPool<ThreadCache> objectPool;
-				//objectPool.GetMutex().lock();
-				pTLSThreadCache = objectPool.New();
-				//objectPool.GetMutex().unlock();
+
+				pTLSThreadCache = objectPool.ThreadNew();
 			}
 
 			return pTLSThreadCache->Allocate(size);

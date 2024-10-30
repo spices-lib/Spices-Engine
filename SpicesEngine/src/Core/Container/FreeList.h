@@ -11,6 +11,13 @@ namespace Spices {
 	class free_list
 	{
 	public:
+
+		free_list()
+			: m_Freelist(nullptr)
+			, m_MaxSize(1)
+			, m_Size(0)
+		{}
+
 		void Push(void* obj);
 		void* Pop();
 		bool Empty() { return m_Freelist == nullptr; }
@@ -20,7 +27,7 @@ namespace Spices {
 		size_t Size() { return m_Size; }
 	private:
 		void* m_Freelist;
-		size_t m_MaxSize = 1;
-		size_t m_Size = 0;
+		size_t m_MaxSize;
+		size_t m_Size;
 	};
 }
