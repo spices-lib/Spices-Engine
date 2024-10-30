@@ -56,6 +56,8 @@ namespace Spices {
 		size_t k = MemoryHelper::NumMovePage(size);
 		PageCache::Get()->GetMutex().lock();
 		span* s = PageCache::Get()->NewSpan(k);
+		s->m_IsUse = true;
+		s->m_ObjSize = size;
 		PageCache::Get()->GetMutex().unlock();
 
 		char* start = (char*)(s->m_PageId << MemoryHelper::PAGE_SHIFT);
@@ -66,8 +68,10 @@ namespace Spices {
 		void* tail = start;
 		start += size;
 
+		int i = 0;
 		while (start < end)
 		{
+			++i;
 			MemoryHelper::ObjNext(tail) = start;
 			start += size;
 			tail = MemoryHelper::ObjNext(tail);
@@ -80,7 +84,7 @@ namespace Spices {
 		return s;
 	}
 
-	void* CenteralCache::ReleaseListToSpans(void* start, size_t size)
+	void CenteralCache::ReleaseListToSpans(void* start, size_t size)
 	{
 		size_t index = MemoryHelper::Index(size);
 

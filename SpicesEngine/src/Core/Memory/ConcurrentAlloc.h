@@ -5,5 +5,5 @@ namespace Spices {
 
 	void* ConcurrentAlloc(size_t size);
 
-	void ConcurrentFree(void* obj);
+	void ConcurrentFree(void* ptr);
 }

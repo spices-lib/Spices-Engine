@@ -40,6 +40,16 @@ namespace Spices {
 		return ptr;
 	}
 
+	inline static void SystemFree(void* ptr)
+	{
+#ifdef _WIN32
+
+		VirtualFree(ptr, 0, MEM_RELEASE);
+#else
+
+#endif
+	}
+
 	class MemoryHelper
 	{
 	public:

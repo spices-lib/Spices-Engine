@@ -24,7 +24,9 @@ namespace Spices {
 		* @brief Constructor Function.
 		*/
 		ObjectPool() 
-			: m_Memory(nullptr), m_FreeList(nullptr), m_RemanentBytes(0)
+			: m_Memory(nullptr)
+			, m_FreeList(nullptr)
+			, m_RemanentBytes(0)
 		{}
 
 		/**
@@ -132,6 +134,8 @@ namespace Spices {
 		*/
 		size_t GetRemainBytes() { return m_RemanentBytes; }
 
+		std::mutex& GetMutex() { return m_Mutex; }
+
 	private:
 
 		/**
@@ -148,5 +152,7 @@ namespace Spices {
 		* @brief Remains bytes of objectpool.
 		*/
 		size_t m_RemanentBytes;
+
+		std::mutex m_Mutex;
 	};
 }

@@ -2,6 +2,7 @@
 #include "Core/Core.h"
 #include "MemoryHelper.h"
 #include "Core/Container/SpanList.h"
+#include "ObjectPool.h"
 
 namespace Spices {
 
@@ -25,6 +26,7 @@ namespace Spices {
 	private:
 		static PageCache m_PageCache;
 		std::array<span_list, MemoryHelper::PAGE_NUM> m_SpanLists;
+		ObjectPool<span> m_SpanPool;
 		std::mutex m_Mutex;
 		std::unordered_map<size_t, span*> m_IdSpanMap;
 	};

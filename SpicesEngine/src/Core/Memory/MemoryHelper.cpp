@@ -33,8 +33,7 @@ namespace Spices {
 		}
 		else
 		{
-			assert(false);
-			return -1;
+			return MemoryLibrary::align_up<size_t>(size, 1 << MemoryHelper::PAGE_SHIFT);
 		}
 	}
 
