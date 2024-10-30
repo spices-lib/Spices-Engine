@@ -7,9 +7,19 @@
 #pragma once
 #include "Core/Core.h"
 #include "MemoryHelper.h"
+#include "Core/Library/MemoryLibrary.h"
 
 namespace Spices {
 
+	/**
+	* @brief enum of ObjectPool expand mode
+	*/
+	enum class ObjectPoolSizeMode
+	{
+		FixedSize = 0,     // use fixed bytes.
+		FixedObjects = 1,  // use fixed bytes of given number of object type.
+	};
+	
 	/**
 	* @brief ObjectPool Class.
 	* Specific situation(Fixed size of block) of MemoryPool.
@@ -20,32 +30,24 @@ namespace Spices {
 	{
 	public:
 
+	/**
+	* @brief use 128KB as default expand bytes.
+	*/
+	static constexpr size_t DefaultExpandKBytes = 128;
+	
+	public:
+
 		/**
 		* @brief Constructor Function.
+		* @param[in] mode ObjectPoolSizeMode.
+		* @param[in] size FixedSize: Expanded bytes(KB); FixedObjects: Expanded number of objects.
 		*/
-		ObjectPool() 
-			: m_pointer(nullptr)
-			, m_FreeList(nullptr)
-			, m_SpareBytes(0)
-		{}
-
+		ObjectPool(ObjectPoolSizeMode mode = ObjectPoolSizeMode::FixedSize, size_t size = DefaultExpandKBytes);
+		
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ObjectPool()
-		{
-			SPICES_PROFILE_ZONE;
-
-			if (m_Memories.empty()) return;
-
-			/**
-			* @brief Free all memory blocks.
-			*/
-			for(const auto& memoryBlock : m_Memories)
-			{
-				SystemFree(memoryBlock);
-			}
-		}
+		virtual ~ObjectPool();
 
 		/**
 		* @brief Copy Constructor Function.
@@ -63,81 +65,13 @@ namespace Spices {
 		* @brief Alloc a memory block to store T.
 		* @return Returns T pointer.
 		*/
-		T* New()
-		{
-			SPICES_PROFILE_ZONE;
-
-			T* obj = nullptr;
-
-			/**
-			* @brief Reused space.
-			*/
-			if (m_FreeList)
-			{
-				void* next = MemoryHelper::ObjNext(m_FreeList);
-				obj        = static_cast<T*>(m_FreeList);
-				m_FreeList = next;
-			}
-			else
-			{
-				/**
-				* @brief Alloc 128KB if there is no enough space.
-				*/
-				if (m_SpareBytes < sizeof(T))
-				{
-					m_SpareBytes = static_cast<size_t>(128 * 1024);
-
-					/**
-					* @brief Alloc 128 KB / 8KB = 16pages memory. 
-					*/
-					void* memoryBlock = SystemAlloc(m_SpareBytes >> 13);
-					if (!memoryBlock)
-					{
-						SPICES_CORE_ERROR("Memory alloc failed")
-
-						return nullptr;
-					}
-
-					m_pointer = static_cast<char*>(memoryBlock);
-					m_Memories.push_back(memoryBlock);
-				}
-
-				/**
-				* @brief Pop current memoryblock as T.
-				*/
-				obj               = reinterpret_cast<T*>(m_pointer);
-				
-				m_pointer        += sizeof(T);
-				m_SpareBytes     -= sizeof(T);
-			}
-
-			/**
-			* @brief Call Construct function of T in place.
-			*/
-			new(obj)T;
-
-			return obj;
-		}
+		T* New();
 
 		/**
 		* @brief Free a obj of T.
 		* @param[in] obj Object to be free.
 		*/
-		void Delete(T* obj)
-		{
-			/**
-			* @brief Call Destructor manually.
-			*/
-			obj->~T();
-
-			/**
-			* @brief insert to head.
-			*/
-			MemoryHelper::ObjNext(obj) = m_FreeList;
-			m_FreeList                 = obj;
-			
-			m_SpareBytes              += sizeof(T);
-		}
+		void Delete(T* obj);
 
 		/**
 		* @brief Get objectPool current memory pointer.
@@ -164,10 +98,16 @@ namespace Spices {
 		size_t GetSpareBytes() const { return m_SpareBytes; }
 
 		/**
-		* @brief Get this mutex. 
-		* @return Returns this mutex.
+		* @brief Thread Safe Version of New.
+		* @return Returns T pointer.
 		*/
-		std::mutex& GetMutex() { return m_Mutex; }
+		T* ThreadNew();
+
+		/**
+		* @brief Thread Safe Version of Delete.
+		* @param[in] obj Object to be free.
+		*/
+		void ThreadDelete(T* obj);
 
 	private:
 
@@ -195,5 +135,139 @@ namespace Spices {
 		* @brief Mutex for thread safety.
 		*/
 		std::mutex m_Mutex;
+
+		/**
+		* @brief Expand bytes.
+		*/
+		size_t m_ExpandBytes;
 	};
+
+	template <typename T>
+	ObjectPool<T>::ObjectPool(ObjectPoolSizeMode mode, size_t size)
+		: m_pointer(nullptr)
+		, m_FreeList(nullptr)
+		, m_SpareBytes(0)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		if(mode == ObjectPoolSizeMode::FixedSize)
+		{
+			m_ExpandBytes = size * 1024;
+		}
+		else
+		{
+			m_ExpandBytes = MemoryLibrary::align_up<size_t>(size * sizeof(T), 8 * 1024);
+		}
+	}
+
+	template <typename T>
+	ObjectPool<T>::~ObjectPool()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_Memories.empty()) return;
+
+		/**
+		* @brief Free all memory blocks.
+		*/
+		for(const auto& memoryBlock : m_Memories)
+		{
+			SystemFree(memoryBlock);
+		}
+	}
+
+	template <typename T>
+	T* ObjectPool<T>::New()
+	{
+		SPICES_PROFILE_ZONE;
+
+		T* obj = nullptr;
+
+		/**
+		* @brief Reused space.
+		*/
+		if (m_FreeList)
+		{
+			void* next = MemoryHelper::ObjNext(m_FreeList);
+			obj        = static_cast<T*>(m_FreeList);
+			m_FreeList = next;
+		}
+		else
+		{
+			/**
+			* @brief Alloc memory if there is no enough space.
+			*/
+			if (m_SpareBytes < sizeof(T))
+			{
+				m_SpareBytes = m_ExpandBytes;
+
+				/**
+				* @brief Alloc 128 KB / 8KB = 16pages memory. 
+				*/
+				void* memoryBlock = SystemAlloc(m_ExpandBytes >> 13);
+				if (!memoryBlock)
+				{
+					SPICES_CORE_ERROR("Memory alloc failed")
+
+					return nullptr;
+				}
+
+				m_pointer = static_cast<char*>(memoryBlock);
+				m_Memories.push_back(memoryBlock);
+			}
+
+			/**
+			* @brief Pop current memoryblock as T.
+			*/
+			obj               = reinterpret_cast<T*>(m_pointer);
+				
+			m_pointer        += sizeof(T);
+			m_SpareBytes     -= sizeof(T);
+		}
+
+		/**
+		* @brief Call Construct function of T in place.
+		*/
+		new(obj)T;
+
+		return obj;
+	}
+
+	template <typename T>
+	void ObjectPool<T>::Delete(T* obj)
+	{
+		/**
+		* @brief Call Destructor manually.
+		*/
+		obj->~T();
+
+		/**
+		* @brief Set memory to 0.
+		*/
+		memset(obj, 0, sizeof(T));
+			
+		/**
+		* @brief insert to head.
+		*/
+		MemoryHelper::ObjNext(obj) = m_FreeList;
+		m_FreeList                 = obj;
+			
+		m_SpareBytes              += sizeof(T);
+	}
+
+	template<typename T>
+	inline T* ObjectPool<T>::ThreadNew()
+	{
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		
+		return New();
+	}
+
+	template<typename T>
+	inline void ObjectPool<T>::ThreadDelete(T* obj)
+	{
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		Delete(obj);
+	}
 }
