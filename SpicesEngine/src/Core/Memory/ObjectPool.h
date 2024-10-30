@@ -24,9 +24,9 @@ namespace Spices {
 		* @brief Constructor Function.
 		*/
 		ObjectPool() 
-			: m_Memory(nullptr)
+			: m_pointer(nullptr)
 			, m_FreeList(nullptr)
-			, m_RemanentBytes(0)
+			, m_SpareBytes(0)
 		{}
 
 		/**
@@ -36,11 +36,29 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONE;
 
-			if (!m_Memory) return;
+			if (m_Memories.empty()) return;
 
-			//free(m_Memory);
+			/**
+			* @brief Free all memory blocks.
+			*/
+			for(const auto& memoryBlock : m_Memories)
+			{
+				SystemFree(memoryBlock);
+			}
 		}
 
+		/**
+		* @brief Copy Constructor Function.
+		* @note This Class not allowed copy behaves.
+		*/
+		ObjectPool(const ObjectPool&) = delete;
+
+		/**
+		* @brief Copy Assignment Operation.
+		* @note This Class not allowed copy behaves.
+		*/
+		ObjectPool& operator=(const ObjectPool&) = delete;
+		
 		/**
 		* @brief Alloc a memory block to store T.
 		* @return Returns T pointer.
@@ -56,39 +74,45 @@ namespace Spices {
 			*/
 			if (m_FreeList)
 			{
-				void* next = *(void**)m_FreeList;
-				obj = (T*)m_FreeList;
+				void* next = MemoryHelper::ObjNext(m_FreeList);
+				obj        = static_cast<T*>(m_FreeList);
 				m_FreeList = next;
 			}
 			else
 			{
 				/**
-				* @brief Alloc 128k if there is no empty space.
+				* @brief Alloc 128KB if there is no enough space.
 				*/
-				if (m_RemanentBytes < sizeof(T))
+				if (m_SpareBytes < sizeof(T))
 				{
-					m_RemanentBytes = 128 * 1024;
+					m_SpareBytes = static_cast<size_t>(128 * 1024);
 
-					m_Memory = (char*)SystemAlloc(m_RemanentBytes >> 13);
-					if (m_Memory == nullptr)
+					/**
+					* @brief Alloc 128 KB / 8KB = 16pages memory. 
+					*/
+					void* memoryBlock = SystemAlloc(m_SpareBytes >> 13);
+					if (!memoryBlock)
 					{
-						SPICES_CORE_ERROR("Memory alloc failed");
+						SPICES_CORE_ERROR("Memory alloc failed")
 
 						return nullptr;
 					}
+
+					m_pointer = static_cast<char*>(memoryBlock);
+					m_Memories.push_back(memoryBlock);
 				}
 
 				/**
-				* @brief Min block size is 1 bytes.
+				* @brief Pop current memoryblock as T.
 				*/
-				obj               = (T*)m_Memory;
-				size_t objSize    = std::max(size_t(1), sizeof(T));
-				m_Memory         += objSize;
-				m_RemanentBytes  -= objSize;
+				obj               = reinterpret_cast<T*>(m_pointer);
+				
+				m_pointer        += sizeof(T);
+				m_SpareBytes     -= sizeof(T);
 			}
 
 			/**
-			* @brief Call Construct function of T.
+			* @brief Call Construct function of T in place.
 			*/
 			new(obj)T;
 
@@ -109,50 +133,67 @@ namespace Spices {
 			/**
 			* @brief insert to head.
 			*/
-			*(void**)obj = m_FreeList;
-			m_FreeList = obj;
-
-			size_t objSize = std::max(size_t(1), sizeof(T));
-			m_RemanentBytes += objSize;
+			MemoryHelper::ObjNext(obj) = m_FreeList;
+			m_FreeList                 = obj;
+			
+			m_SpareBytes              += sizeof(T);
 		}
 
 		/**
-		* @brief Get Memory.
-		* @return Returns Memory.
+		* @brief Get objectPool current memory pointer.
+		* @return Returns objectPool current memory pointer.
 		*/
-		void* GetMemory() { return (void*)m_Memory; }
+		void* GetPointer() const { return static_cast<void*>(m_pointer); }
 
+		/**
+		* @brief Get number of memory blocks allocated to this objectPool.
+		* @return Returns number of memory blocks allocated to this objectPool.
+		*/
+		size_t GetNMemoryBlocks() const { return m_Memories.size(); }
+		
 		/**
 		* @brief Get FreeList.
 		* @return Returns FreeList.
 		*/
-		void* GetFreeList() { return m_FreeList; }
+		void* GetFreeList() const { return m_FreeList; }
 
 		/**
-		* @brief Get RemainBytes.
-		* @return Returns RemainBytes.
+		* @brief Get SpareBytes.
+		* @return Returns SpareBytes.
 		*/
-		size_t GetRemainBytes() { return m_RemanentBytes; }
+		size_t GetSpareBytes() const { return m_SpareBytes; }
 
+		/**
+		* @brief Get this mutex. 
+		* @return Returns this mutex.
+		*/
 		std::mutex& GetMutex() { return m_Mutex; }
 
 	private:
 
 		/**
-		* @brief objectpool pointer.
+		* @brief objectPool current memory pointer.
 		*/
-		char* m_Memory;
+		char* m_pointer;
 
+		/**
+		* @brief This objectPoll allocated memories.
+		*/
+		std::vector<void*> m_Memories;
+		
 		/**
 		* @brief freelist.
 		*/
 		void* m_FreeList;
 
 		/**
-		* @brief Remains bytes of objectpool.
+		* @brief Spare bytes of this objectPool.
 		*/
-		size_t m_RemanentBytes;
+		size_t m_SpareBytes;
 
+		/**
+		* @brief Mutex for thread safety.
+		*/
 		std::mutex m_Mutex;
 	};
 }

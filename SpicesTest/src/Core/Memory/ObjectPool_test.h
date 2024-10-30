@@ -55,9 +55,9 @@ namespace SpicesTest {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		EXPECT_EQ(m_ObjectPool.GetMemory(), nullptr);
+		EXPECT_EQ(m_ObjectPool.GetPointer(), nullptr);
 		EXPECT_EQ(m_ObjectPool.GetFreeList(), nullptr);
-		EXPECT_EQ(m_ObjectPool.GetRemainBytes(), 0);
+		EXPECT_EQ(m_ObjectPool.GetSpareBytes(), 0);
 	}
 
     /**
@@ -73,11 +73,11 @@ namespace SpicesTest {
 		EXPECT_EQ(std::get<1>(o.tuple), 2);
 		EXPECT_EQ(std::get<2>(o.tuple), nullptr);
 
-		EXPECT_EQ(m_ObjectPool.GetRemainBytes(), 128 * 1024 - sizeof(Object));
+		EXPECT_EQ(m_ObjectPool.GetSpareBytes(), 128 * 1024 - sizeof(Object));
 
 		m_ObjectPool.Delete(&o);
 
-		EXPECT_EQ(m_ObjectPool.GetRemainBytes(), 128 * 1024);
+		EXPECT_EQ(m_ObjectPool.GetSpareBytes(), 128 * 1024);
     }
 
 	/**
@@ -90,7 +90,7 @@ namespace SpicesTest {
 		size_t n = 1000000;
 
 		{
-			SCOPE_TIME_COUNTER("Malloc Cost.");
+			SCOPE_TIME_COUNTER("Malloc Cost.")
 
 			for (size_t i = 0; i < n; i++)
 			{
@@ -100,7 +100,7 @@ namespace SpicesTest {
 		}
 
 		{
-			SCOPE_TIME_COUNTER("ObjectPool Cost.");
+			SCOPE_TIME_COUNTER("ObjectPool Cost.")
 
 			for (size_t i = 0; i < n; i++)
 			{
