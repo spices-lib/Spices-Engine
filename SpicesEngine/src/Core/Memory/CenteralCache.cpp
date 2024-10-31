@@ -22,16 +22,16 @@ namespace Spices {
 		size_t acturalNum = 1;
 
 		size_t i = 0;
-		while (i < batchNum - 1 && MemoryHelper::ObjNext(end) != nullptr)
+		while (i < batchNum - 1 && MemoryHelper::PointerSpace(end) != nullptr)
 		{
-			end = MemoryHelper::ObjNext(end);
+			end = MemoryHelper::PointerSpace(end);
 			++acturalNum;
 			++i;
 		}
 
-		s->m_FreeList = MemoryHelper::ObjNext(end);
+		s->m_FreeList = MemoryHelper::PointerSpace(end);
 		s->m_UseCount += acturalNum;
-		MemoryHelper::ObjNext(end) = nullptr;
+		MemoryHelper::PointerSpace(end) = nullptr;
 
 		m_SpanLists[index].GetMutex().unlock();
 
@@ -74,11 +74,11 @@ namespace Spices {
 		while (start < end)
 		{
 			++i;
-			MemoryHelper::ObjNext(tail) = start;
+			MemoryHelper::PointerSpace(tail) = start;
 			start += size;
-			tail = MemoryHelper::ObjNext(tail);
+			tail = MemoryHelper::PointerSpace(tail);
 		}
-		MemoryHelper::ObjNext(tail) = nullptr;
+		MemoryHelper::PointerSpace(tail) = nullptr;
 
 		list.GetMutex().lock();
 		list.PushFront(s);
@@ -94,11 +94,11 @@ namespace Spices {
 
 		while (start)
 		{
-			void* next = MemoryHelper::ObjNext(start);
+			void* next = MemoryHelper::PointerSpace(start);
 
 			span* s = PageCache::Get()->MapObjectToSpan(start);
 
-			MemoryHelper::ObjNext(start) = s->m_FreeList;
+			MemoryHelper::PointerSpace(start) = s->m_FreeList;
 			s->m_FreeList = start;
 
 			s->m_UseCount--;

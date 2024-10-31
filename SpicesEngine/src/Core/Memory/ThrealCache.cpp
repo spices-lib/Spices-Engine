@@ -82,7 +82,7 @@ namespace Spices {
 		*/
 		if (actualNum > 1)
 		{
-			m_FreeLists[index].PushRange(MemoryHelper::ObjNext(start), end, actualNum - 1);
+			m_FreeLists[index].PushRange(MemoryHelper::PointerSpace(start), end, actualNum - 1);
 		}
 
 		return start;

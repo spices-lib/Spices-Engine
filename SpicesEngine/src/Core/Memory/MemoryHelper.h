@@ -69,10 +69,11 @@ namespace Spices {
 		static const size_t PAGE_SHIFT = 13;
 
 		/**
-		* @brief Get object address.
+		* @brief Get object first 4/8 bytes as a pointer.
+		* @param[in] obj object pointer.
+		* @return Returns object first 4/8 bytes.
 		*/
-		static void*& ObjNext(void* obj);
-
+		static void*& PointerSpace(void* obj);
 
 		static size_t AlignUp(size_t size);
 

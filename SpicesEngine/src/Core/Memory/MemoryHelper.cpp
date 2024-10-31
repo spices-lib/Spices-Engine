@@ -4,13 +4,17 @@
 
 namespace Spices {
 
-	void*& MemoryHelper::ObjNext(void* obj)
+	void*& MemoryHelper::PointerSpace(void* obj)
 	{
+		SPICES_PROFILE_ZONE;
+
 		return *(void**)obj;
 	}
 
 	size_t MemoryHelper::AlignUp(size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (size <= 128)
 		{
 			return MemoryLibrary::align_up<size_t>(size, 8);
@@ -39,6 +43,8 @@ namespace Spices {
 
 	size_t MemoryHelper::Index(size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
 		assert(size <= MAX_BYTES);
 
 		auto _index = [&](size_t s, size_t align_shift) {
@@ -106,6 +112,8 @@ namespace Spices {
 
 	size_t MemoryHelper::NumMovePage(size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
 		size_t num = NumMoveSize(size);
 
 		size_t npage = num * size;

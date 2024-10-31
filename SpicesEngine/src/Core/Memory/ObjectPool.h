@@ -188,7 +188,7 @@ namespace Spices {
 		*/
 		if (m_FreeList)
 		{
-			void* next = MemoryHelper::ObjNext(m_FreeList);
+			void* next = MemoryHelper::PointerSpace(m_FreeList);
 			obj        = static_cast<T*>(m_FreeList);
 			m_FreeList = next;
 		}
@@ -251,7 +251,7 @@ namespace Spices {
 		/**
 		* @brief insert to head.
 		*/
-		MemoryHelper::ObjNext(obj) = m_FreeList;
+		MemoryHelper::PointerSpace(obj) = m_FreeList;
 		m_FreeList                 = obj;
 			
 		m_SpareBytes              += sizeof(T);
