@@ -6,7 +6,7 @@ namespace Spices {
 
 	CenteralCache CenteralCache::m_CenteralCache;
 
-	size_t CenteralCache::FetchRangeObj(void*& start, void*& end, size_t batchNum, size_t size)
+	size_t CenteralCache::FetchRange(void*& start, void*& end, size_t batchNum, size_t size)
 	{
 		SPICES_PROFILE_ZONE;
 

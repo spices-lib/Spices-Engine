@@ -42,8 +42,8 @@ namespace Spices {
 		ThreadCache& operator=(const ThreadCache&) = delete;
 
 		/**
-		* @brief Entry of Alloc memory.
-		* @param[in] size memory size.
+		* @brief Allocate memory.
+		* @param[in] size memory bytes.
 		* @return Returns memory pointer.
 		*/
 		void* Allocate(size_t size);

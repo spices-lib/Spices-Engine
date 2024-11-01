@@ -15,30 +15,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (size <= 128)
-		{
-			return MemoryLibrary::align_up<size_t>(size, 8);
-		}
-		else if (size <= 1024)
-		{
-			return MemoryLibrary::align_up<size_t>(size, 16);
-		}
-		else if (size <= 8 * 1024)
-		{
-			return MemoryLibrary::align_up<size_t>(size, 128);
-		}
-		else if (size <= 64 * 1024)
-		{
-			return MemoryLibrary::align_up<size_t>(size, 1024);
-		}
-		else if (size <= 256 * 1024)
-		{
-			return MemoryLibrary::align_up<size_t>(size, 8 * 1024);
-		}
-		else
-		{
-			return MemoryLibrary::align_up<size_t>(size, 1 << MemoryHelper::PAGE_SHIFT);
-		}
+		assert(size <= MAX_BYTES);
+
+		if      (size <= 128)          return MemoryLibrary::align_up<size_t>(size, 8);                              /* @brief align up to 8B  , if size is less than 128B. (16)  */
+		else if (size <= 1 *   1024)   return MemoryLibrary::align_up<size_t>(size, 16);                             /* @brief align up to 16B , if size is less than 1KB.  (56)  */
+		else if (size <= 8   * 1024)   return MemoryLibrary::align_up<size_t>(size, 128);                            /* @brief align up to 128B, if size is less than 8KB.  (56)  */
+		else if (size <= 64  * 1024)   return MemoryLibrary::align_up<size_t>(size, 1024);                           /* @brief align up to 1KB , if size is less than 64KB. (56)  */
+		else if (size <= 256 * 1024)   return MemoryLibrary::align_up<size_t>(size, 8 * 1024);                       /* @brief align up to 8KB , if size is less than 256KB.(24)  */
+		else                           return MemoryLibrary::align_up<size_t>(size, 1 << MemoryHelper::PAGE_SHIFT);  /* @brief will not enter here.                               */
 	}
 
 	size_t MemoryHelper::Index(size_t size)
@@ -47,11 +31,12 @@ namespace Spices {
 
 		assert(size <= MAX_BYTES);
 
-		auto _index = [&](size_t s, size_t align_shift) {
-			return ((s + (1 << align_shift) - 1) >> align_shift) - 1;
+		auto _index = [&](size_t size, size_t align_shift) {
+			return ((size + (1 << align_shift) - 1) >> align_shift) - 1;
 		};
 
-		static int group_array[4] = { 16, 56, 56, 56 };
+		static constexpr int group_array[4] = { 16, 56, 56, 56 };
+
 		if (size <= 128)
 		{
 			return _index(size, 3);

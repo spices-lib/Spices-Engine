@@ -49,6 +49,9 @@ namespace Spices {
 		assert(obj);
 		assert(size <= MemoryHelper::MAX_BYTES);
 
+		/**
+		* @brief Push object memory to free list.
+		*/
 		size_t index = MemoryHelper::Index(size);
 		m_FreeLists[index].Push(obj);
 	}
@@ -71,9 +74,9 @@ namespace Spices {
 		void* end   = nullptr;
 
 		/**
-		* @brief Get actural obtained blocks.
+		* @brief Obtain actural blocks.
 		*/
-		size_t actualNum = CenteralCache::Get()->FetchRangeObj(start, end, batchNum, alignSize);
+		size_t actualNum = CenteralCache::Get()->FetchRange(start, end, batchNum, alignSize);
 
 		assert(actualNum >= 1);
 

@@ -56,6 +56,7 @@ namespace Spices {
 
 		/**
 		* @brief Number of freelist.
+		* equals to 16 + 56 + 56 + 56 + 24
 		*/
 		static const size_t FREE_LIST_NUM = 208;
 
@@ -75,11 +76,16 @@ namespace Spices {
 		*/
 		static void*& PointerSpace(void* obj);
 
+		/**
+		* @brief Align up memory bytes.
+		* @param[in] size memory block bytes.
+		* @return Returns Align up size.
+		*/
 		static size_t AlignUp(size_t size);
 
 		/**
-		* @brief Get index of freelist.
-		* @param[in] size object butes.
+		* @brief Determine which freelist should process the memory blcok with given bytes.
+		* @param[in] size memory block bytes.
 		* @return Returns index of freelist.
 		*/
 		static size_t Index(size_t size);

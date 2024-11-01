@@ -17,7 +17,7 @@ namespace Spices {
 		CenteralCache(const CenteralCache& copy) = delete;
 		CenteralCache& operator =(const CenteralCache& copy) = delete;
 
-		size_t FetchRangeObj(void*& start, void*& end, size_t batchNum, size_t size);
+		size_t FetchRange(void*& start, void*& end, size_t batchNum, size_t size);
 		scl::span* GetOneSpan(scl::span_list& list, size_t size);
 		void ReleaseListToSpans(void* start, size_t size);
 

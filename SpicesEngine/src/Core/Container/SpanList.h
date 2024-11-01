@@ -14,7 +14,7 @@ namespace scl {
 
 		void* m_FreeList = nullptr;
 		size_t m_UseCount = 0;
-
+		
 		bool m_IsUse = false;
 		size_t m_ObjSize = 0;
 	};
