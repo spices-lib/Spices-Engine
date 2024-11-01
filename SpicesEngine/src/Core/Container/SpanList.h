@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Spices {
+namespace scl {
 
 	class span
 	{

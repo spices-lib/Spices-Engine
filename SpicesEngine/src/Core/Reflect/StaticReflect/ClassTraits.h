@@ -73,7 +73,7 @@ namespace Spices {
             field_traits<T CLASS_SCOPE::*>* member_trait;                                                                                              \
             field_traits<T*>* nonmember_trait;                                                                                                         \
                                                                                                                                                        \
-            IterTuple(properties, [&](auto& elem) {                                                                                                    \
+            scl::IterTuple(properties, [&](auto& elem) {                                                                                               \
                 if (elem.name == name)                                                                                                                 \
                 {                                                                                                                                      \
                     if (elem.is_member())                                                                                                              \

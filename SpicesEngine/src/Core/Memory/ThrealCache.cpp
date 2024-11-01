@@ -88,7 +88,7 @@ namespace Spices {
 		return start;
 	}
 
-	void ThreadCache::ListTooLong(free_list& list, size_t size)
+	void ThreadCache::ListTooLong(scl::free_list& list, size_t size)
 	{
 		SPICES_PROFILE_ZONE;
 

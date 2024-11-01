@@ -8,7 +8,7 @@
 #include "FreeList.h"
 #include "Core/Memory/MemoryHelper.h"
 
-namespace Spices {
+namespace scl {
 
 	void free_list::Push(void* obj)
 	{
@@ -19,7 +19,7 @@ namespace Spices {
 		/**
 		* @brief Insert to begin.
 		*/
-		MemoryHelper::PointerSpace(obj) = m_Freelist;
+		Spices::MemoryHelper::PointerSpace(obj) = m_Freelist;
 		m_Freelist   = obj;
 
 		/**
@@ -43,7 +43,7 @@ namespace Spices {
 		* @brief Pop from begin.
 		*/
 		void* obj  = m_Freelist;
-		m_Freelist = MemoryHelper::PointerSpace(obj);
+		m_Freelist = Spices::MemoryHelper::PointerSpace(obj);
 
 		--m_Size;
 
@@ -65,7 +65,7 @@ namespace Spices {
 		/**
 		* @brief Insert to begin.
 		*/
-		MemoryHelper::PointerSpace(end) = m_Freelist;
+		Spices::MemoryHelper::PointerSpace(end) = m_Freelist;
 		m_Freelist = start;
 
 		m_Size += size;
@@ -84,11 +84,11 @@ namespace Spices {
 		*/
 		for (size_t i = 0; i < size - 1; ++i)
 		{
-			end = MemoryHelper::PointerSpace(end);
+			end = Spices::MemoryHelper::PointerSpace(end);
 		}
 
-		m_Freelist = MemoryHelper::PointerSpace(end);
-		MemoryHelper::PointerSpace(end) = nullptr;
+		m_Freelist = Spices::MemoryHelper::PointerSpace(end);
+		Spices::MemoryHelper::PointerSpace(end) = nullptr;
 		m_Size -= size;
 	}
 }

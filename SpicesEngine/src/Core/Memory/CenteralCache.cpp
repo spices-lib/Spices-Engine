@@ -14,7 +14,7 @@ namespace Spices {
 
 		m_SpanLists[index].GetMutex().lock();
 
-		span* s = GetOneSpan(m_SpanLists[index], size);
+		scl::span* s = GetOneSpan(m_SpanLists[index], size);
 		assert(s);
 		assert(s->m_FreeList);
 
@@ -38,9 +38,9 @@ namespace Spices {
 		return acturalNum;
 	}
 
-	span* CenteralCache::GetOneSpan(span_list& list, size_t size)
+	scl::span* CenteralCache::GetOneSpan(scl::span_list& list, size_t size)
 	{
-		span* it = list.Begin();
+		scl::span* it = list.Begin();
 		while (it != list.End())
 		{
 			if (it->m_FreeList != nullptr)
@@ -57,7 +57,7 @@ namespace Spices {
 
 		size_t k = MemoryHelper::NumMovePage(size);
 		PageCache::Get()->GetMutex().lock();
-		span* s = PageCache::Get()->NewSpan(k);
+		scl::span* s = PageCache::Get()->NewSpan(k);
 		s->m_IsUse = true;
 		s->m_ObjSize = size;
 		PageCache::Get()->GetMutex().unlock();
@@ -96,7 +96,7 @@ namespace Spices {
 		{
 			void* next = MemoryHelper::PointerSpace(start);
 
-			span* s = PageCache::Get()->MapObjectToSpan(start);
+			scl::span* s = PageCache::Get()->MapObjectToSpan(start);
 
 			MemoryHelper::PointerSpace(start) = s->m_FreeList;
 			s->m_FreeList = start;

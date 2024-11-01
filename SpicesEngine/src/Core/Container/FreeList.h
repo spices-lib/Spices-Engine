@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace Spices {
+namespace scl {
 
 	/**
 	* @brief Free list for memory pool.

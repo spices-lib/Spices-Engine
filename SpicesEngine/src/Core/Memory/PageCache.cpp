@@ -5,21 +5,21 @@ namespace Spices {
 
 	PageCache PageCache::m_PageCache;
 
-	span* PageCache::NewSpan(size_t k)
+	scl::span* PageCache::NewSpan(size_t k)
 	{
 		assert(k > 0);
 
 		if (k > MemoryHelper::PAGE_NUM - 1)
 		{
 			void* ptr = SystemAlloc(k);
-			span* s = m_SpanPool.New();
+			scl::span* s = m_SpanPool.New();
 
 			return s;
 		}
 
 		if (!m_SpanLists[k].Empty())
 		{
-			span* s = m_SpanLists[k].PopFront();
+			scl::span* s = m_SpanLists[k].PopFront();
 
 			for (size_t i = 0; i < s->n; ++i)
 			{
@@ -33,9 +33,9 @@ namespace Spices {
 		{
 			if (!m_SpanLists[i].Empty())
 			{
-				span* nSpan = m_SpanLists[i].PopFront();
+				scl::span* nSpan = m_SpanLists[i].PopFront();
 
-				span* kSpan = m_SpanPool.New();
+				scl::span* kSpan = m_SpanPool.New();
 
 				kSpan->m_PageId = nSpan->m_PageId;
 				kSpan->n = k;
@@ -59,7 +59,7 @@ namespace Spices {
 
 		void* ptr = SystemAlloc(MemoryHelper::PAGE_NUM - 1);
 
-		span* bigSpan = m_SpanPool.New();
+		scl::span* bigSpan = m_SpanPool.New();
 
 		bigSpan->m_PageId = ((size_t)ptr) >> MemoryHelper::PAGE_SHIFT;
 		bigSpan->n = MemoryHelper::PAGE_NUM - 1;
@@ -69,7 +69,7 @@ namespace Spices {
 		return NewSpan(k);
 	}
 
-	span* PageCache::MapObjectToSpan(void* obj)
+	scl::span* PageCache::MapObjectToSpan(void* obj)
 	{
 		size_t id = (((size_t)obj) >> MemoryHelper::PAGE_SHIFT);
 
@@ -88,7 +88,7 @@ namespace Spices {
 		}
 	}
 
-	void PageCache::ReleaseSpanToPageCache(span* s)
+	void PageCache::ReleaseSpanToPageCache(scl::span* s)
 	{
 		if (s->n > MemoryHelper::PAGE_NUM - 1)
 		{
@@ -109,7 +109,7 @@ namespace Spices {
 				break;
 			}
 
-			span* leftSpan = ret->second;
+			scl::span* leftSpan = ret->second;
 
 			if (leftSpan->m_IsUse)
 			{
@@ -138,7 +138,7 @@ namespace Spices {
 				break;
 			}
 
-			span* rightSpan = it->second;
+			scl::span* rightSpan = it->second;
 			if (rightSpan->m_IsUse)
 			{
 				break;

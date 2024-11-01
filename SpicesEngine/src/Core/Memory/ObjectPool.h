@@ -263,7 +263,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		std::unique_lock<std::mutex> lock(m_Mutex);
-		
+
 		return New();
 	}
 

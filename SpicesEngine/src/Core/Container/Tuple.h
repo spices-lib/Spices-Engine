@@ -7,7 +7,7 @@
 #pragma once
 #include <tuple>
 
-namespace Spices {
+namespace scl {
 
 	namespace detail {
 

@@ -1,7 +1,7 @@
 #include "Pchheader.h"
 #include "SpanList.h"
 
-namespace Spices {
+namespace scl {
 
 	span_list::span_list()
 	{

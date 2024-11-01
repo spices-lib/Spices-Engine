@@ -55,7 +55,7 @@ namespace Spices {
 		*/
 		void Deallocate(void* obj, size_t size);
 		
-		void ListTooLong(free_list& list, size_t size);
+		void ListTooLong(scl::free_list& list, size_t size);
 
 	private:
 
@@ -72,7 +72,7 @@ namespace Spices {
 		/**
 		* @brief FreeList Array.
 		*/
-		std::array<free_list, MemoryHelper::FREE_LIST_NUM> m_FreeLists;
+		std::array<scl::free_list, MemoryHelper::FREE_LIST_NUM> m_FreeLists;
 	};
 
 	/**

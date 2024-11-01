@@ -22,7 +22,7 @@ namespace SpicesTest {
 
         int index = 0;
         
-        Spices::IterTuple(t, [&](auto&& elem) {
+        scl::IterTuple(t, [&](auto&& elem) {
 
             if (index == 0)
             {

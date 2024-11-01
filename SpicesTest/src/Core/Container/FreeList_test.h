@@ -31,7 +31,7 @@ namespace SpicesTest {
 		*/
 		void TearDown() override {}
 
-		Spices::free_list m_FreeList;
+		scl::free_list m_FreeList;
 	};
 
 	/**
@@ -100,7 +100,7 @@ namespace SpicesTest {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		Spices::free_list list;
+		scl::free_list list;
 
 		std::array<int, 2> a;
 		uint64_t b = 0;
@@ -138,7 +138,7 @@ namespace SpicesTest {
 		}
 
 		{
-			Spices::free_list list2;
+			scl::free_list list2;
 			m_FreeList.PopRange(list2.Begin(), list2.End(), list.Size());
 
 			{

@@ -14,7 +14,7 @@ namespace Spices {
 			size_t k = alignSize >> MemoryHelper::PAGE_SHIFT;
 
 			PageCache::Get()->GetMutex().lock();
-			span* s = PageCache::Get()->NewSpan(k);
+			scl::span* s = PageCache::Get()->NewSpan(k);
 			PageCache::Get()->GetMutex().unlock();
 
 			void* ptr = (void*)(s->m_PageId >> MemoryHelper::PAGE_SHIFT);
@@ -37,12 +37,12 @@ namespace Spices {
 	{
 		assert(ptr);
 
-		span* s = PageCache::Get()->MapObjectToSpan(ptr);
+		scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
 		size_t size = s->m_ObjSize;
 
 		if (size > MemoryHelper::MAX_BYTES)
 		{
-			span* s = PageCache::Get()->MapObjectToSpan(ptr);
+			scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
 
 			PageCache::Get()->GetMutex().lock();
 			PageCache::Get()->ReleaseSpanToPageCache(s);
