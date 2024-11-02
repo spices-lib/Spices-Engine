@@ -8,18 +8,25 @@ namespace Spices {
 
 	void* ConcurrentAlloc(size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief allocate from pc.
+		*/
 		if (size > MemoryHelper::MAX_BYTES)
 		{
 			size_t alignSize = MemoryHelper::AlignUp(size);
 			size_t k = alignSize >> MemoryHelper::PAGE_SHIFT;
 
-			PageCache::Get()->GetMutex().lock();
 			scl::span* s = PageCache::Get()->NewSpan(k);
-			PageCache::Get()->GetMutex().unlock();
 
 			void* ptr = (void*)(s->m_PageId >> MemoryHelper::PAGE_SHIFT);
 			return ptr;
 		}
+
+		/**
+		* @brief allocate from tc.
+		*/
 		else
 		{
 			if (!pTLSThreadCache)
@@ -35,19 +42,26 @@ namespace Spices {
 
 	void ConcurrentFree(void* ptr)
 	{
+		SPICES_PROFILE_ZONE;
+
 		assert(ptr);
 
 		scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
-		size_t size = s->m_ObjSize;
+		size_t size = s->m_BlockSize;
 
+		/**
+		* @brief release from pc.
+		*/
 		if (size > MemoryHelper::MAX_BYTES)
 		{
 			scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
 
-			PageCache::Get()->GetMutex().lock();
 			PageCache::Get()->ReleaseSpanToPageCache(s);
-			PageCache::Get()->GetMutex().unlock();
 		}
+
+		/**
+		* @brief release from tc.
+		*/
 		else
 		{
 			pTLSThreadCache->Deallocate(ptr, size);

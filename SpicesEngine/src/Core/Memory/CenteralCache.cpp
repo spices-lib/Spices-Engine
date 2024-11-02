@@ -1,3 +1,9 @@
+/**
+* @file CenteralCache.cpp.
+* @brief The CenteralCache Class Implementation.
+* @author tcmalloc.
+*/
+
 #include "Pchheader.h"
 #include "CenteralCache.h"
 #include "PageCache.h"
@@ -11,35 +17,43 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		size_t index = MemoryHelper::Index(size);
-
-		m_SpanLists[index].GetMutex().lock();
-
-		scl::span* s = GetOneSpan(m_SpanLists[index], size);
-		assert(s);
-		assert(s->m_FreeList);
-
-		start = end = s->m_FreeList;
 		size_t acturalNum = 1;
 
-		size_t i = 0;
-		while (i < batchNum - 1 && MemoryHelper::PointerSpace(end) != nullptr)
 		{
-			end = MemoryHelper::PointerSpace(end);
-			++acturalNum;
-			++i;
+			std::unique_lock<std::mutex> lock(m_SpanLists[index].GetMutex());
+
+			scl::span* s = GetOneSpan(m_SpanLists[index], size);
+			assert(s);
+			assert(s->m_FreeList);
+
+			start = end = s->m_FreeList;
+			
+			/**
+			* @brief fetch spare memory.
+			*/
+			size_t i = 0;
+			while (i < batchNum - 1 && MemoryHelper::PointerSpace(end) != nullptr)
+			{
+				end = MemoryHelper::PointerSpace(end);
+				++acturalNum;
+				++i;
+			}
+
+			s->m_FreeList = MemoryHelper::PointerSpace(end);
+			s->m_UseCount += acturalNum;
+			MemoryHelper::PointerSpace(end) = nullptr;
 		}
-
-		s->m_FreeList = MemoryHelper::PointerSpace(end);
-		s->m_UseCount += acturalNum;
-		MemoryHelper::PointerSpace(end) = nullptr;
-
-		m_SpanLists[index].GetMutex().unlock();
 
 		return acturalNum;
 	}
 
 	scl::span* CenteralCache::GetOneSpan(scl::span_list& list, size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Find span in cc.
+		*/
 		scl::span* it = list.Begin();
 		while (it != list.End())
 		{
@@ -53,34 +67,57 @@ namespace Spices {
 			}
 		}
 
+		/**
+		* @brief Release mutex.
+		*/
 		list.GetMutex().unlock();
 
-		size_t k = MemoryHelper::NumMovePage(size);
-		PageCache::Get()->GetMutex().lock();
-		scl::span* s = PageCache::Get()->NewSpan(k);
-		s->m_IsUse = true;
-		s->m_ObjSize = size;
-		PageCache::Get()->GetMutex().unlock();
+		/**
+		* @brief get pages count.
+		*/
+		size_t k = MemoryHelper::GetPages(size);
 
-		char* start = (char*)(s->m_PageId << MemoryHelper::PAGE_SHIFT);
-		char* end = (char*)(start + (s->n << MemoryHelper::PAGE_SHIFT));
+		/**
+		* @brief get a new span.
+		*/
+		scl::span* s   = PageCache::Get()->NewSpan(k);
+		s->m_IsUse     = true;
+		s->m_BlockSize = size;
+
+		/**
+		* @brief get start/end pointer.
+		*/
+		char* start = (char*)(         s->m_PageId << MemoryHelper::PAGE_SHIFT );
+		char* end   = (char*)(start + (s->m_NPages << MemoryHelper::PAGE_SHIFT));
 
 		s->m_FreeList = start;
 
-		void* tail = start;
-		start += size;
-
-		int i = 0;
-		while (start < end)
+		/**
+		* @brief split pages to blocks.
+		*/
 		{
-			++i;
-			MemoryHelper::PointerSpace(tail) = start;
+			void* tail = start;
 			start += size;
-			tail = MemoryHelper::PointerSpace(tail);
-		}
-		MemoryHelper::PointerSpace(tail) = nullptr;
 
+			int i = 0;
+			while (start < end)
+			{
+				++i;
+				MemoryHelper::PointerSpace(tail) = start;
+				start += size;
+				tail = MemoryHelper::PointerSpace(tail);
+			}
+			MemoryHelper::PointerSpace(tail) = nullptr;
+		}
+
+		/**
+		* @brief Get mutex.
+		*/
 		list.GetMutex().lock();
+
+		/**
+		* @brief Push to list.
+		*/
 		list.PushFront(s);
 
 		return s;
@@ -88,39 +125,60 @@ namespace Spices {
 
 	void CenteralCache::ReleaseListToSpans(void* start, size_t size)
 	{
+		SPICES_PROFILE_ZONE;
+
 		size_t index = MemoryHelper::Index(size);
 
-		m_SpanLists[index].GetMutex().lock();
-
-		while (start)
 		{
-			void* next = MemoryHelper::PointerSpace(start);
+			std::unique_lock<std::mutex> lock(m_SpanLists[index].GetMutex());
 
-			scl::span* s = PageCache::Get()->MapObjectToSpan(start);
-
-			MemoryHelper::PointerSpace(start) = s->m_FreeList;
-			s->m_FreeList = start;
-
-			s->m_UseCount--;
-			if (s->m_UseCount == 0)
+			/**
+			* @brief Iter all blocks and insert to span.
+			*/
+			while (start)
 			{
-				m_SpanLists[index].Erase(s);
-				s->m_FreeList = nullptr;
-				s->m_Next = nullptr;
-				s->m_Prev = nullptr;
+				void* next = MemoryHelper::PointerSpace(start);
 
-				m_SpanLists[index].GetMutex().unlock();
+				/**
+				* @brief Find span.
+				*/
+				scl::span* s = PageCache::Get()->MapObjectToSpan(start);
 
-				PageCache::Get()->GetMutex().lock();
-				PageCache::Get()->ReleaseSpanToPageCache(s);
-				PageCache::Get()->GetMutex().unlock();
+				/**
+				* @brief Insert from head to span.
+				*/
+				MemoryHelper::PointerSpace(start) = s->m_FreeList;
+				s->m_FreeList = start;
+				s->m_UseCount--;
 
-				m_SpanLists[index].GetMutex().lock();
+				/**
+				* @brief if span is not in use, than release to pc.
+				*/
+				if (s->m_UseCount == 0)
+				{
+					m_SpanLists[index].Erase(s);
+					s->m_FreeList = nullptr;
+					s->m_Next     = nullptr;
+					s->m_Prev     = nullptr;
+
+					/**
+					* @brief unlock span mutex.
+					*/
+					m_SpanLists[index].GetMutex().unlock();
+
+					/**
+					* @brief release to pc.
+					*/
+					PageCache::Get()->ReleaseSpanToPageCache(s);
+
+					/**
+					* @brief get span mutex.
+					*/
+					m_SpanLists[index].GetMutex().lock();
+				}
+
+				start = next;
 			}
-
-			start = next;
 		}
-
-		m_SpanLists[index].GetMutex().unlock();
 	}
 }

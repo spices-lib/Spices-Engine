@@ -15,41 +15,6 @@
 
 namespace Spices {
 
-	/**
-	* @brief Alloc memory from system.
-	* @param[in] kpage pages.
-	* @return Returns alloced memory pointer.
-	*/
-	inline static void* SystemAlloc(size_t kpage)
-	{
-#ifdef _WIN32
-
-		/**
-		* @brief alloc bytes = kpage * 8KB.
-		*/
-		void* ptr = VirtualAlloc(0, kpage << 13, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-#else
-
-#endif
-
-		if (ptr == nullptr)
-		{
-			SPICES_CORE_ERROR("Memory alloc failed.");
-		}
-
-		return ptr;
-	}
-
-	inline static void SystemFree(void* ptr)
-	{
-#ifdef _WIN32
-
-		VirtualFree(ptr, 0, MEM_RELEASE);
-#else
-
-#endif
-	}
-
 	class MemoryHelper
 	{
 	public:
@@ -58,16 +23,22 @@ namespace Spices {
 		* @brief Number of freelist.
 		* equals to 16 + 56 + 56 + 56 + 24
 		*/
-		static const size_t FREE_LIST_NUM = 208;
+		static constexpr size_t FREE_LIST_NUM = 208;
 
 		/**
-		* @brief Only allowed 256KB alloced memory one time.
+		* @brief Only allowed 256KB alloced memory one time in tc.
 		*/
-		static const size_t MAX_BYTES = 256 * 1024;
+		static constexpr size_t MAX_BYTES = 256 * 1024;
 
+		/**
+		* @brief number of pages in pc (1M).
+		*/
+		static constexpr size_t PAGE_NUM = 129;
 
-		static const size_t PAGE_NUM = 129;
-		static const size_t PAGE_SHIFT = 13;
+		/**
+		* @brief 8KB in a page.
+		*/
+		static constexpr size_t PAGE_SHIFT = 13;
 
 		/**
 		* @brief Get object first 4/8 bytes as a pointer.
@@ -91,12 +62,52 @@ namespace Spices {
 		static size_t Index(size_t size);
 
 		/**
-		* @brief Get max blocks of tc alignup bytes.
+		* @brief Get count of blocks limit by tc alignup bytes.
 		* @param[in] size alignup bytes.
-		* @return Returns max blocks.
+		* @return Returns blocks limit.
 		*/
-		static size_t NumMoveSize(size_t size);
+		static size_t GetNBlocksLimit(size_t size);
 
-		static size_t NumMovePage(size_t size);
+		/**
+		* @brief Get pages count by given bytes.
+		* @param[in] size bytes.
+		* @return Returns pages count
+		*/
+		static size_t GetPages(size_t size);
 	};
+
+	/**
+	* @brief Alloc memory from system.
+	* @param[in] kpage pages.
+	* @return Returns allocated memory pointer.
+	*/
+	inline static void* SystemAlloc(size_t kpage)
+	{
+#ifdef _WIN32
+
+		/**
+		* @brief alloc bytes = kpage * 8KB.
+		*/
+		void* ptr = VirtualAlloc(0, kpage << MemoryHelper::PAGE_SHIFT, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+#else
+
+#endif
+
+		if (ptr == nullptr)
+		{
+			SPICES_CORE_ERROR("Memory alloc failed.");
+		}
+
+		return ptr;
+	}
+
+	inline static void SystemFree(void* ptr)
+	{
+#ifdef _WIN32
+
+		VirtualFree(ptr, 0, MEM_RELEASE);
+#else
+
+#endif
+	}
 }

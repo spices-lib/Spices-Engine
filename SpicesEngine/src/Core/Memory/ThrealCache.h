@@ -55,9 +55,14 @@ namespace Spices {
 		*/
 		void Deallocate(void* obj, size_t size);
 		
-		void ListTooLong(scl::free_list& list, size_t size);
-
 	private:
+
+		/**
+		* @brief Release memory to cc.
+		* @param[in] list free_list.
+		* @param[in] size object bytes.
+		*/
+		void ListTooLong(scl::free_list& list, size_t size);
 
 		/**
 		* @brief Fetch memory from central cache if this is run out.

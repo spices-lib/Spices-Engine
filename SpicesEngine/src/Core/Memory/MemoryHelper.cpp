@@ -22,7 +22,7 @@ namespace Spices {
 		else if (size <= 8   * 1024)   return MemoryLibrary::align_up<size_t>(size, 128);                            /* @brief align up to 128B, if size is less than 8KB.  (56)  */
 		else if (size <= 64  * 1024)   return MemoryLibrary::align_up<size_t>(size, 1024);                           /* @brief align up to 1KB , if size is less than 64KB. (56)  */
 		else if (size <= 256 * 1024)   return MemoryLibrary::align_up<size_t>(size, 8 * 1024);                       /* @brief align up to 8KB , if size is less than 256KB.(24)  */
-		else                           return MemoryLibrary::align_up<size_t>(size, 1 << MemoryHelper::PAGE_SHIFT);  /* @brief will not enter here.                               */
+		else                           return MemoryLibrary::align_up<size_t>(size, 1 << MemoryHelper::PAGE_SHIFT);  /* @brief align up to page                                   */
 	}
 
 	size_t MemoryHelper::Index(size_t size)
@@ -74,43 +74,37 @@ namespace Spices {
 		}
 	}
 
-	size_t MemoryHelper::NumMoveSize(size_t size)
+	size_t MemoryHelper::GetNBlocksLimit(size_t size)
 	{
 		SPICES_PROFILE_ZONE;
 
 		assert(size > 0);
 
+		/**
+		* @brief [2 - 512].
+		*/
 		int num = MAX_BYTES / size;
-
-		if (num > 512)
-		{
-			num = 512;
-		}
-
-		if (num < 2)
-		{
-			num = 2;
-		}
+		num = std::max(std::min(512, num), 2);
 
 		return num;
 	}
 
-	size_t MemoryHelper::NumMovePage(size_t size)
+	size_t MemoryHelper::GetPages(size_t size)
 	{
 		SPICES_PROFILE_ZONE;
 
-		size_t num = NumMoveSize(size);
+		/**
+		* @brief get blocks count.
+		*/
+		size_t num = GetNBlocksLimit(size);
 
+		/**
+		* @brief get pages count.
+		*/
 		size_t npage = num * size;
-
 		npage >>= PAGE_SHIFT;
-
-		if (npage == 0)
-		{
-			npage = 1;
-		}
+		npage = std::min(npage, static_cast<size_t>(1));
 
 		return npage;
 	}
-
 }

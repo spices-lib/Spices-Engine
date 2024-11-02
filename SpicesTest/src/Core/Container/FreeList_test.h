@@ -47,7 +47,7 @@ namespace SpicesTest {
 		std::tuple<int, void* (*)(int)> d { 1, nullptr };
 
 		EXPECT_EQ(m_FreeList.Empty(), true);
-		EXPECT_EQ(m_FreeList.MaxSize(), 1);
+		EXPECT_EQ(m_FreeList.ApplyforNBlocks(), 1);
 		EXPECT_EQ(m_FreeList.Size(), 0);
 		EXPECT_EQ(m_FreeList.Begin(), nullptr);
 		EXPECT_EQ(m_FreeList.End(), nullptr);
@@ -59,7 +59,7 @@ namespace SpicesTest {
 			m_FreeList.Push(&d);
 
 			EXPECT_EQ(m_FreeList.Empty(), false);
-			EXPECT_EQ(m_FreeList.MaxSize(), 1);
+			EXPECT_EQ(m_FreeList.ApplyforNBlocks(), 1);
 			EXPECT_EQ(m_FreeList.Size(), 4);
 			EXPECT_EQ(m_FreeList.End(), &a);
 
@@ -86,7 +86,7 @@ namespace SpicesTest {
 			EXPECT_EQ(m_FreeList.Pop(), &a);
 
 			EXPECT_EQ(m_FreeList.Empty(), true);
-			EXPECT_EQ(m_FreeList.MaxSize(), 1);
+			EXPECT_EQ(m_FreeList.ApplyforNBlocks(), 1);
 			EXPECT_EQ(m_FreeList.Size(), 0);
 			EXPECT_EQ(m_FreeList.Begin(), nullptr);
 			EXPECT_EQ(m_FreeList.End(), nullptr);
@@ -117,7 +117,7 @@ namespace SpicesTest {
 			m_FreeList.PushRange(list.Begin(), list.End(), list.Size());
 
 			EXPECT_EQ(m_FreeList.Empty(), false);
-			EXPECT_EQ(m_FreeList.MaxSize(), 1);
+			EXPECT_EQ(m_FreeList.ApplyforNBlocks(), 1);
 			EXPECT_EQ(m_FreeList.Size(), 4);
 			EXPECT_EQ(m_FreeList.End(), &a);
 
@@ -143,7 +143,7 @@ namespace SpicesTest {
 
 			{
 				EXPECT_EQ(m_FreeList.Empty(), false);
-				EXPECT_EQ(m_FreeList.MaxSize(), 1);
+				EXPECT_EQ(m_FreeList.ApplyforNBlocks(), 1);
 				EXPECT_EQ(m_FreeList.Size(), 2);
 				EXPECT_EQ(m_FreeList.End(), &a);
 
@@ -159,7 +159,7 @@ namespace SpicesTest {
 
 			{
 				EXPECT_EQ(list2.Empty(), false);
-				EXPECT_EQ(list2.MaxSize(), 1);
+				EXPECT_EQ(list2.ApplyforNBlocks(), 1);
 				EXPECT_EQ(list2.Size(), 0);
 				EXPECT_EQ(list2.End(), &c);
 

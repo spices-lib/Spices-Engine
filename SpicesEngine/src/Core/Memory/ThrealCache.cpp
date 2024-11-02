@@ -54,6 +54,14 @@ namespace Spices {
 		*/
 		size_t index = MemoryHelper::Index(size);
 		m_FreeLists[index].Push(obj);
+
+		/**
+		* @brief Release memory to cc.
+		*/
+		if (m_FreeLists[index].Size() >= m_FreeLists[index].ApplyforNBlocks())
+		{
+			ListTooLong(m_FreeLists[index], size);
+		}
 	}
 
 	void* ThreadCache::FetchFromCentralCache(size_t index, size_t alignSize)
@@ -63,18 +71,18 @@ namespace Spices {
 		/**
 		* @brief Slow-Start Threshold Dynamic Adjustment Algorithm.
 		*/
-		size_t batchNum = std::min(m_FreeLists[index].MaxSize(), MemoryHelper::NumMoveSize(alignSize));
+		size_t batchNum = std::min(m_FreeLists[index].ApplyforNBlocks(), MemoryHelper::GetNBlocksLimit(alignSize));
 
-		if (batchNum == m_FreeLists[index].MaxSize())
+		if (batchNum == m_FreeLists[index].ApplyforNBlocks())
 		{
-			m_FreeLists[index].MaxSize()++;
+			m_FreeLists[index].IncreaseInNextApplyFor();
 		}
 		
 		void* start = nullptr;
 		void* end   = nullptr;
 
 		/**
-		* @brief Obtain actural blocks.
+		* @brief Obtain actural blocks form cc.
 		*/
 		size_t actualNum = CenteralCache::Get()->FetchRange(start, end, batchNum, alignSize);
 
@@ -96,9 +104,9 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		void* start = nullptr;
-		void* end = nullptr;
+		void* end   = nullptr;
 
-		list.PopRange(start, end, list.MaxSize());
+		list.PopRange(start, end, list.ApplyforNBlocks());
 
 		CenteralCache::Get()->ReleaseListToSpans(start, size);
 	}

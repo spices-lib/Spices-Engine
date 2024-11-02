@@ -22,7 +22,7 @@ namespace scl {
 		free_list()
 			: m_EndPointer(nullptr)
 			, m_Freelist(nullptr)
-			, m_MaxSize(1)
+			, m_NBlocksAppliedFor(1)
 			, m_Size(0)
 		{}
 
@@ -50,14 +50,14 @@ namespace scl {
 		bool Empty() { return m_Freelist == nullptr; }
 
 		/**
-		* @brief Get 
+		* @brief Get m_NBlocksAppliedFor reference.
 		*/
-		const size_t MaxSize() const { return m_MaxSize; }
+		const size_t ApplyforNBlocks() const { return m_NBlocksAppliedFor; }
 
 		/**
-		* @brief Get
+		* @brief Increase count of blocks in next apply for.
 		*/
-		size_t& MaxSize() { return m_MaxSize; }
+		void IncreaseInNextApplyFor() { m_NBlocksAppliedFor++; }
 
 		/**
 		* @brief Get this freelist spare size.
@@ -110,7 +110,11 @@ namespace scl {
 		* @brief current pointer.
 		*/
 		void* m_Freelist;
-		size_t m_MaxSize;
+
+		/**
+		* @brief count of blocks applied for in next time.
+		*/
+		size_t m_NBlocksAppliedFor;
 
 		/**
 		* @brief freelist spare size.
