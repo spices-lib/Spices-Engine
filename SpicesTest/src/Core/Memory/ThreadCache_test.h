@@ -26,28 +26,58 @@ namespace SpicesTest {
 	};
 
 	/**
-	* @brief Testing Spices::ThrealCache::Allocate.
+	* @brief The interface is inherited from testing::Test.
+	* Registry on Initialize.
 	*/
-	TEST(ThrealCache_test, Allocate) {
+	class ThrealCache_test : public testing::Test
+	{
+	protected:
+
+		/**
+		* @brief The interface is inherited from testing::Test.
+		* Registry on Initialize.
+		*/
+		void SetUp() override {}
+
+		/**
+		* @brief The interface is inherited from testing::Test.
+		* Call before Destructor.
+		*/
+		void TearDown() override {}
+
+		/**
+		* @brief ThreadCache.
+		*/
+		Spices::ThreadCache tc;
+
+		/**
+		* @brief Iter counts.
+		*/
+		static constexpr size_t n = 10000;
+	};
+
+	/**
+	* @brief Testing Spices::ThrealCache::Allocate/Deallocate.
+	*/
+	TEST_F(ThrealCache_test, AllocateDeallocate) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		Spices::ThreadCache tc;
-
-		for (int i = 0; i < 10000; i++)
+		std::array<ThrealCacheTest*, n> objects;
+		for (int i = 0; i < n; i++)
 		{
-			int* a = new(tc.Allocate(sizeof(int)))int;
+			ThrealCacheTest* a = new(tc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
 
-			EXPECT_EQ(*a, 0);
+			EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
+			EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
+			EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
+
+			objects[i] = a;
 		}
 
-		for (int i = 0; i < 10000; i++)
+		for (int i = 0; i < n; i++)
 		{
-			ThrealCacheTest* b = new(tc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
-
-			EXPECT_EQ(std::get<0>(b->m_Tuple), 1.0f);
-			EXPECT_EQ(std::get<1>(b->m_Tuple), 2);
-			EXPECT_EQ(std::get<2>(b->m_Tuple), nullptr);
+			tc.Deallocate(objects[i], sizeof(ThrealCacheTest));
 		}
 	}
 }

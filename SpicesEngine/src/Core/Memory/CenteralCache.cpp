@@ -16,7 +16,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		size_t index = MemoryHelper::Index(size);
+		size_t index = MemoryPool::Index(size);
 		size_t acturalNum = 1;
 
 		{
@@ -32,16 +32,16 @@ namespace Spices {
 			* @brief fetch spare memory.
 			*/
 			size_t i = 0;
-			while (i < batchNum - 1 && MemoryHelper::PointerSpace(end) != nullptr)
+			while (i < batchNum - 1 && MemoryPool::PointerSpace(end) != nullptr)
 			{
-				end = MemoryHelper::PointerSpace(end);
+				end = MemoryPool::PointerSpace(end);
 				++acturalNum;
 				++i;
 			}
 
-			s->m_FreeList = MemoryHelper::PointerSpace(end);
+			s->m_FreeList = MemoryPool::PointerSpace(end);
 			s->m_UseCount += acturalNum;
-			MemoryHelper::PointerSpace(end) = nullptr;
+			MemoryPool::PointerSpace(end) = nullptr;
 		}
 
 		return acturalNum;
@@ -75,7 +75,7 @@ namespace Spices {
 		/**
 		* @brief get pages count.
 		*/
-		size_t k = MemoryHelper::GetPages(size);
+		size_t k = MemoryPool::GetPages(size);
 
 		/**
 		* @brief get a new span.
@@ -87,8 +87,8 @@ namespace Spices {
 		/**
 		* @brief get start/end pointer.
 		*/
-		char* start = (char*)(         s->m_PageId << MemoryHelper::PAGE_SHIFT );
-		char* end   = (char*)(start + (s->m_NPages << MemoryHelper::PAGE_SHIFT));
+		char* start = (char*)(         s->m_PageId << MemoryPool::PAGE_SHIFT );
+		char* end   = (char*)(start + (s->m_NPages << MemoryPool::PAGE_SHIFT));
 
 		s->m_FreeList = start;
 
@@ -103,11 +103,11 @@ namespace Spices {
 			while (start < end)
 			{
 				++i;
-				MemoryHelper::PointerSpace(tail) = start;
+				MemoryPool::PointerSpace(tail) = start;
 				start += size;
-				tail = MemoryHelper::PointerSpace(tail);
+				tail = MemoryPool::PointerSpace(tail);
 			}
-			MemoryHelper::PointerSpace(tail) = nullptr;
+			MemoryPool::PointerSpace(tail) = nullptr;
 		}
 
 		/**
@@ -127,7 +127,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		size_t index = MemoryHelper::Index(size);
+		size_t index = MemoryPool::Index(size);
 
 		{
 			std::unique_lock<std::mutex> lock(m_SpanLists[index].GetMutex());
@@ -137,7 +137,7 @@ namespace Spices {
 			*/
 			while (start)
 			{
-				void* next = MemoryHelper::PointerSpace(start);
+				void* next = MemoryPool::PointerSpace(start);
 
 				/**
 				* @brief Find span.
@@ -147,7 +147,7 @@ namespace Spices {
 				/**
 				* @brief Insert from head to span.
 				*/
-				MemoryHelper::PointerSpace(start) = s->m_FreeList;
+				MemoryPool::PointerSpace(start) = s->m_FreeList;
 				s->m_FreeList = start;
 				s->m_UseCount--;
 

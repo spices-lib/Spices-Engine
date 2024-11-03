@@ -1,6 +1,6 @@
 /**
-* @file MemoryHelper.h
-* @brief The MemoryHelper Class Definitions.
+* @file MemoryPool.h
+* @brief The MemoryPool Class Definitions.
 * @author tcmalloc.
 */
 
@@ -15,7 +15,10 @@
 
 namespace Spices {
 
-	class MemoryHelper
+	/**
+	* @brief MemoryPool Class.
+	*/
+	class MemoryPool
 	{
 	public:
 
@@ -39,6 +42,19 @@ namespace Spices {
 		* @brief 8KB in a page.
 		*/
 		static constexpr size_t PAGE_SHIFT = 13;
+
+		/**
+		* @brief Alloc memory entry point.
+		* @param[in] size memory bytes.
+		* @return Returns memory pointer.
+		*/
+		static void* Alloc(size_t size);
+
+		/**
+		* @brief Free memory entry point.
+		* @param[in] ptr memory pointer.
+		*/
+		static void Free(void* ptr);
 
 		/**
 		* @brief Get object first 4/8 bytes as a pointer.
@@ -88,7 +104,7 @@ namespace Spices {
 		/**
 		* @brief alloc bytes = kpage * 8KB.
 		*/
-		void* ptr = VirtualAlloc(0, kpage << MemoryHelper::PAGE_SHIFT, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		void* ptr = VirtualAlloc(0, kpage << MemoryPool::PAGE_SHIFT, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #else
 
 #endif
@@ -101,6 +117,10 @@ namespace Spices {
 		return ptr;
 	}
 
+	/**
+	* @brief Free memory to system.
+	* @param[in] ptr memory pointer.
+	*/
 	inline static void SystemFree(void* ptr)
 	{
 #ifdef _WIN32

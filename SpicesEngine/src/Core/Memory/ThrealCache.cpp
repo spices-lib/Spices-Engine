@@ -17,13 +17,13 @@ namespace Spices {
 		/**
 		* @brief Only allowed allocate 258KB one tme.
 		*/
-		assert(size <= MemoryHelper::MAX_BYTES);
+		assert(size <= MemoryPool::MAX_BYTES);
 
 		/**
 		* @brief Determain aligned size and freelist index.
 		*/
-		size_t alignSize = MemoryHelper::AlignUp(size);
-		size_t index     = MemoryHelper::Index(size);
+		size_t alignSize = MemoryPool::AlignUp(size);
+		size_t index     = MemoryPool::Index(size);
 
 		/**
 		* @brief Fetch memory from freelist.
@@ -47,12 +47,12 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		assert(obj);
-		assert(size <= MemoryHelper::MAX_BYTES);
+		assert(size <= MemoryPool::MAX_BYTES);
 
 		/**
 		* @brief Push object memory to free list.
 		*/
-		size_t index = MemoryHelper::Index(size);
+		size_t index = MemoryPool::Index(size);
 		m_FreeLists[index].Push(obj);
 
 		/**
@@ -71,7 +71,7 @@ namespace Spices {
 		/**
 		* @brief Slow-Start Threshold Dynamic Adjustment Algorithm.
 		*/
-		size_t batchNum = std::min(m_FreeLists[index].ApplyforNBlocks(), MemoryHelper::GetNBlocksLimit(alignSize));
+		size_t batchNum = std::min(m_FreeLists[index].ApplyforNBlocks(), MemoryPool::GetNBlocksLimit(alignSize));
 
 		if (batchNum == m_FreeLists[index].ApplyforNBlocks())
 		{
@@ -93,7 +93,7 @@ namespace Spices {
 		*/
 		if (actualNum > 1)
 		{
-			m_FreeLists[index].PushRange(MemoryHelper::PointerSpace(start), end, actualNum - 1);
+			m_FreeLists[index].PushRange(MemoryPool::PointerSpace(start), end, actualNum - 1);
 		}
 
 		return start;

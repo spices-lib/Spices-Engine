@@ -1,0 +1,176 @@
+/**
+* @file MemoryPool.h
+* @brief The MemoryPool Class Implementation.
+* @author tcmalloc.
+*/
+
+#include "Pchheader.h"
+#include "MemoryPool.h"
+#include "Core/Library/MemoryLibrary.h"
+#include "PageCache.h"
+#include "ThrealCache.h"
+
+namespace Spices {
+
+	void* MemoryPool::Alloc(size_t size)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief allocate from pc.
+		*/
+		if (size > MAX_BYTES)
+		{
+			size_t alignSize = AlignUp(size);
+			size_t k = alignSize >> PAGE_SHIFT;
+
+			scl::span* s = PageCache::Get()->NewSpan(k);
+
+			void* ptr = (void*)(s->m_PageId >> PAGE_SHIFT);
+			return ptr;
+		}
+
+		/**
+		* @brief allocate from tc.
+		*/
+		else
+		{
+			if (!pTLSThreadCache)
+			{
+				static ObjectPool<ThreadCache> objectPool;
+
+				pTLSThreadCache = objectPool.ThreadNew();
+			}
+
+			return pTLSThreadCache->Allocate(size);
+		}
+	}
+
+	void MemoryPool::Free(void* ptr)
+	{
+		SPICES_PROFILE_ZONE;
+
+		assert(ptr);
+
+		scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
+		size_t size = s->m_BlockSize;
+
+		/**
+		* @brief release from pc.
+		*/
+		if (size > MAX_BYTES)
+		{
+			scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
+
+			PageCache::Get()->ReleaseSpanToPageCache(s);
+		}
+
+		/**
+		* @brief release from tc.
+		*/
+		else
+		{
+			pTLSThreadCache->Deallocate(ptr, size);
+		}
+	}
+
+	void*& MemoryPool::PointerSpace(void* obj)
+	{
+		SPICES_PROFILE_ZONE;
+
+		return *(void**)obj;
+	}
+
+	size_t MemoryPool::AlignUp(size_t size)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if      (size <= 128)          return MemoryLibrary::align_up<size_t>(size, 8);                /* @brief align up to 8B  , if size is less than 128B. (16)  */
+		else if (size <= 1 *   1024)   return MemoryLibrary::align_up<size_t>(size, 16);               /* @brief align up to 16B , if size is less than 1KB.  (56)  */
+		else if (size <= 8   * 1024)   return MemoryLibrary::align_up<size_t>(size, 128);              /* @brief align up to 128B, if size is less than 8KB.  (56)  */
+		else if (size <= 64  * 1024)   return MemoryLibrary::align_up<size_t>(size, 1024);             /* @brief align up to 1KB , if size is less than 64KB. (56)  */
+		else if (size <= 256 * 1024)   return MemoryLibrary::align_up<size_t>(size, 8 * 1024);         /* @brief align up to 8KB , if size is less than 256KB.(24)  */
+		else                           return MemoryLibrary::align_up<size_t>(size, 1 << PAGE_SHIFT);  /* @brief align up to page                                   */
+	}
+
+	size_t MemoryPool::Index(size_t size)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto _index = [&](size_t size, size_t align_shift) {
+			return ((size + (1 << align_shift) - 1) >> align_shift) - 1;
+		};
+
+		static constexpr int group_array[4] = { 16, 56, 56, 56 };
+
+		if (size <= 128)
+		{
+			return _index(size, 3);
+		}
+		else if (size <= 1024)
+		{
+			return _index(size - 128, 4) + 
+				group_array[0];
+		}
+		else if (size <= 8 * 1024)
+		{
+			return _index(size - 1024, 7) + 
+				group_array[1] + 
+				group_array[0];
+		}
+		else if (size <= 64 * 1024)
+		{
+			return _index(size - 8 * 1024, 10) + 
+				group_array[2] + 
+				group_array[1] + 
+				group_array[0];
+		}
+		else if (size <= 256 * 1024)
+		{
+			return _index(size - 64 * 1024, 13) + 
+				group_array[3] + 
+				group_array[2] + 
+				group_array[1] + 
+				group_array[0];
+		}
+		else
+		{
+			assert(false);
+			return -1;
+		}
+	}
+
+	size_t MemoryPool::GetNBlocksLimit(size_t size)
+	{
+		SPICES_PROFILE_ZONE;
+
+		assert(size > 0);
+
+		/**
+		* @brief [2 - 512].
+		*/
+		int num = MAX_BYTES / size;
+		num = std::max(std::min(512, num), 2);
+
+		return num;
+	}
+
+	size_t MemoryPool::GetPages(size_t size)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief get blocks count.
+		*/
+		size_t num = GetNBlocksLimit(size);
+
+		/**
+		* @brief get pages count.
+		*/
+		size_t npage = num * size;
+		npage >>= PAGE_SHIFT;
+		npage = std::max(npage, static_cast<size_t>(1));
+
+		return npage;
+	}
+}

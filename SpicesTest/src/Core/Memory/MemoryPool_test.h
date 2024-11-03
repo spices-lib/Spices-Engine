@@ -1,0 +1,175 @@
+/**
+* @file MemoryPool_test.h.
+* @brief The MemoryPool_test Definitions.
+* @author Spices.
+*/
+
+#pragma once
+#include <gmock/gmock.h>
+#include <Core/Memory/MemoryPool.h>
+#include "Instrumentor.h"
+
+namespace SpicesTest {
+
+	class MemoryPoolTest
+	{
+	public:
+
+		MemoryPoolTest()
+			: m_Tuple{ 1.0f, 2, nullptr }
+		{}
+
+		MemoryPoolTest(const MemoryPoolTest&) = delete;
+		MemoryPoolTest& operator=(const MemoryPoolTest&) = delete;
+
+		std::tuple<int, float, void*> m_Tuple;
+	};
+
+	class MemoryPoolTest2
+	{
+	public:
+
+		MemoryPoolTest2(){}
+		MemoryPoolTest2(const MemoryPoolTest2&) = delete;
+		MemoryPoolTest2& operator=(const MemoryPoolTest2&) = delete;
+
+		static constexpr size_t x = 1024;
+		static constexpr size_t y = 1024;
+		std::array<std::array<int, x>, y> datas;  // 4M
+	};
+
+	/**
+	* @brief The interface is inherited from testing::Test.
+	* Registry on Initialize.
+	*/
+	class MemoryPool_test : public testing::Test
+	{
+	protected:
+
+		/**
+		* @brief The interface is inherited from testing::Test.
+		* Registry on Initialize.
+		*/
+		void SetUp() override {}
+
+		/**
+		* @brief The interface is inherited from testing::Test.
+		* Call before Destructor.
+		*/
+		void TearDown() override {}
+
+		/**
+		* @brief Iter counts.
+		*/
+		static constexpr size_t n = 10000;
+
+		/**
+		* @brief Iter counts 2.
+		*/
+		static constexpr size_t n2 = 256;
+	};
+
+	/**
+	* @brief Testing Spices::MemoryPool::PointerSpace.
+	*/
+	TEST_F(MemoryPool_test, PointerSpace) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		uint64_t a = 1;
+		uint64_t b = 10;
+		uint64_t c = 100;
+
+		Spices::MemoryPool::PointerSpace(&a) = &b;
+		uint64_t* d0 = (uint64_t*)a;
+		EXPECT_EQ(d0, &b);
+		EXPECT_EQ(*d0, b);
+
+		Spices::MemoryPool::PointerSpace(&a) = &c;
+		uint64_t* d1 = (uint64_t*)a;
+		EXPECT_EQ(d1, &c);
+		EXPECT_EQ(*d1, c);
+
+		Spices::MemoryPool::PointerSpace(&a) = nullptr;
+		uint64_t* d2 = (uint64_t*)a;
+		EXPECT_EQ(d2, nullptr);
+	}
+
+	/**
+	* @brief Testing Spices::MemoryPool::AlignUp.
+	*/
+	TEST_F(MemoryPool_test, AlignUp) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(1), 8);
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(127), 128);
+
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(129), 144);
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(1023), 1024);
+
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(1025), 1152);
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(8 * 1024 - 1), 8 * 1024);
+
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(8 * 1024 + 1), 9 * 1024);
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(64 * 1024 - 1), 64 * 1024);
+
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(64 * 1024 + 1), 72 * 1024);
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(256 * 1024 - 1), 256 * 1024);
+
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(257 * 1024 + 1), 264 * 1024);
+
+		EXPECT_EQ(Spices::MemoryPool::AlignUp(1024 * 1024 + 1), 1032 * 1024);
+	}
+
+	/**
+	* @brief Testing Spices::MemoryPool::Index.
+	*/
+	TEST_F(MemoryPool_test, Index) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		EXPECT_EQ(Spices::MemoryPool::Index(1), 0);
+		EXPECT_EQ(Spices::MemoryPool::Index(16), 1);
+		EXPECT_EQ(Spices::MemoryPool::Index(128), 15);
+		EXPECT_EQ(Spices::MemoryPool::Index(256 * 1024), 207);
+	}
+
+	/**
+	* @brief Testing Spices::MemoryPool::Alloc/Free.
+	*/
+	TEST_F(MemoryPool_test, AllocFree) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		std::array<MemoryPoolTest*, n> objects;
+		for (int i = 0; i < n; i++)
+		{
+			MemoryPoolTest* a = new(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)))MemoryPoolTest;
+
+			EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
+			EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
+			EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
+
+			objects[i] = a;
+		}
+
+		std::array<MemoryPoolTest2*, n2> object2s;
+		for (int i = 0; i < n2; i++)
+		{
+			MemoryPoolTest2* b = new(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest2)))MemoryPoolTest2;
+
+			object2s[i] = b;
+		}
+
+		for (int i = 0; i < n; i++)
+		{
+			Spices::MemoryPool::Free(objects[i]);
+		}
+
+		for (int i = 0; i < n2; i++)
+		{
+			Spices::MemoryPool::Free(object2s[i]);
+		}
+	}
+}

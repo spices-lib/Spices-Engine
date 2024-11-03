@@ -6,7 +6,7 @@
 
 #include "Pchheader.h"
 #include "FreeList.h"
-#include "Core/Memory/MemoryHelper.h"
+#include "Core/Memory/MemoryPool.h"
 
 namespace scl {
 
@@ -19,7 +19,7 @@ namespace scl {
 		/**
 		* @brief Insert to begin.
 		*/
-		Spices::MemoryHelper::PointerSpace(obj) = m_Freelist;
+		Spices::MemoryPool::PointerSpace(obj) = m_Freelist;
 		m_Freelist   = obj;
 
 		/**
@@ -43,7 +43,7 @@ namespace scl {
 		* @brief Pop from begin.
 		*/
 		void* obj  = m_Freelist;
-		m_Freelist = Spices::MemoryHelper::PointerSpace(obj);
+		m_Freelist = Spices::MemoryPool::PointerSpace(obj);
 
 		--m_Size;
 
@@ -65,7 +65,7 @@ namespace scl {
 		/**
 		* @brief Insert to begin.
 		*/
-		Spices::MemoryHelper::PointerSpace(end) = m_Freelist;
+		Spices::MemoryPool::PointerSpace(end) = m_Freelist;
 		m_Freelist = start;
 
 		m_Size += size;
@@ -84,11 +84,11 @@ namespace scl {
 		*/
 		for (size_t i = 0; i < size - 1; ++i)
 		{
-			end = Spices::MemoryHelper::PointerSpace(end);
+			end = Spices::MemoryPool::PointerSpace(end);
 		}
 
-		m_Freelist = Spices::MemoryHelper::PointerSpace(end);
-		Spices::MemoryHelper::PointerSpace(end) = nullptr;
+		m_Freelist = Spices::MemoryPool::PointerSpace(end);
+		Spices::MemoryPool::PointerSpace(end) = nullptr;
 		m_Size -= size;
 	}
 }

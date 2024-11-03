@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "MemoryHelper.h"
+#include "MemoryPool.h"
 #include "Core/Container/SpanList.h"
 #include "ObjectPool.h"
 
@@ -87,7 +87,11 @@ namespace Spices {
 		/**
 		* @brief FreeList Array.
 		*/
-		std::array<scl::span_list, MemoryHelper::PAGE_NUM> m_SpanLists;
+		std::array<scl::span_list, MemoryPool::PAGE_NUM> m_SpanLists;
+
+		/**
+		* @brief ObjectPool for span.
+		*/
 		ObjectPool<scl::span> m_SpanPool;
 
 		/**

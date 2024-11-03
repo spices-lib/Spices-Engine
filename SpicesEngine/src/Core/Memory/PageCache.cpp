@@ -29,7 +29,7 @@ namespace Spices {
 		/**
 		* @brief Get page id by memory.
 		*/
-		size_t id = (((size_t)obj) >> MemoryHelper::PAGE_SHIFT);
+		size_t id = (((size_t)obj) >> MemoryPool::PAGE_SHIFT);
 
 		/**
 		* @brief Find span in map.
@@ -44,7 +44,7 @@ namespace Spices {
 			return nullptr;
 		}
 	}
-
+	
 	void PageCache::ReleaseSpanToPageCache(scl::span* s)
 	{
 		SPICES_PROFILE_ZONE;
@@ -54,9 +54,9 @@ namespace Spices {
 		/**
 		* @brief Release to system.
 		*/
-		if (s->m_NPages > MemoryHelper::PAGE_NUM - 1)
+		if (s->m_NPages > MemoryPool::PAGE_NUM - 1)
 		{
-			void* ptr = (void*)(s->m_PageId << MemoryHelper::PAGE_SHIFT);
+			void* ptr = (void*)(s->m_PageId << MemoryPool::PAGE_SHIFT);
 			SystemFree(ptr);
 			m_SpanPool.Delete(s);
 
@@ -82,7 +82,7 @@ namespace Spices {
 				break;
 			}
 
-			if (leftSpan->m_NPages + s->m_NPages > MemoryHelper::PAGE_NUM - 1)
+			if (leftSpan->m_NPages + s->m_NPages > MemoryPool::PAGE_NUM - 1)
 			{
 				break;
 			}
@@ -113,7 +113,7 @@ namespace Spices {
 				break;
 			}
 
-			if (rightSpan->m_NPages + s->m_NPages > MemoryHelper::PAGE_NUM - 1)
+			if (rightSpan->m_NPages + s->m_NPages > MemoryPool::PAGE_NUM - 1)
 			{
 				break;
 			}
@@ -143,11 +143,12 @@ namespace Spices {
 		/**
 		* @brief Allocate from system.
 		*/
-		if (k > MemoryHelper::PAGE_NUM - 1)
+		if (k > MemoryPool::PAGE_NUM - 1)
 		{
 			void* ptr = SystemAlloc(k);
 			scl::span* s = m_SpanPool.New();
-			s->m_PageId = ((size_t)ptr) >> MemoryHelper::PAGE_SHIFT;
+			s->m_PageId = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
+			void* p = (void*)(s->m_PageId >> MemoryPool::PAGE_SHIFT);
 			s->m_NPages = k;
 
 			m_IdSpanMap[s->m_PageId] = s;
@@ -176,7 +177,7 @@ namespace Spices {
 		/**
 		* @brief Iter begger span, try find spare pages in pc.
 		*/
-		for (int i = k + 1; i < MemoryHelper::PAGE_NUM; ++i)
+		for (int i = k + 1; i < MemoryPool::PAGE_NUM; ++i)
 		{
 			if (!m_SpanLists[i].Empty())
 			{
@@ -193,7 +194,7 @@ namespace Spices {
 				kSpan->m_NPages  = k;
 
 				nSpan->m_PageId += k;
-				kSpan->m_NPages -= k;
+				nSpan->m_NPages -= k;
 
 				/**
 				* @brief Push splited span to list.
@@ -215,19 +216,19 @@ namespace Spices {
 		/**
 		* @brief Allocate memory from system if no spare pages in pc.
 		*/
-		void* ptr = SystemAlloc(MemoryHelper::PAGE_NUM - 1);
+		void* ptr = SystemAlloc(MemoryPool::PAGE_NUM - 1);
 
 		/**
 		* @brief New a span to mamage this memory.
 		*/
 		scl::span* bigSpan = m_SpanPool.New();
-		bigSpan->m_PageId = ((size_t)ptr) >> MemoryHelper::PAGE_SHIFT;
-		bigSpan->m_NPages = MemoryHelper::PAGE_NUM - 1;
+		bigSpan->m_PageId  = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
+		bigSpan->m_NPages  = MemoryPool::PAGE_NUM - 1;
 
 		/**
 		* @brief Push span to list.
 		*/
-		m_SpanLists[MemoryHelper::PAGE_NUM - 1].PushFront(bigSpan);
+		m_SpanLists[MemoryPool::PAGE_NUM - 1].PushFront(bigSpan);
 
 		return InternalNewSpan(k);
 	}

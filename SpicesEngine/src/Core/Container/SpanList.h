@@ -81,7 +81,7 @@ namespace scl {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~span_list() = default;
+		virtual ~span_list();
 
 		/**
 		* @brief Get begin pointer.

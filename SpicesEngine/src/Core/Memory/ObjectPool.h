@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "MemoryHelper.h"
+#include "MemoryPool.h"
 #include "Core/Library/MemoryLibrary.h"
 
 namespace Spices {
@@ -188,7 +188,7 @@ namespace Spices {
 		*/
 		if (m_FreeList)
 		{
-			void* next = MemoryHelper::PointerSpace(m_FreeList);
+			void* next = MemoryPool::PointerSpace(m_FreeList);
 			obj        = static_cast<T*>(m_FreeList);
 			m_FreeList = next;
 		}
@@ -251,7 +251,7 @@ namespace Spices {
 		/**
 		* @brief insert to head.
 		*/
-		MemoryHelper::PointerSpace(obj) = m_FreeList;
+		MemoryPool::PointerSpace(obj) = m_FreeList;
 		m_FreeList                 = obj;
 			
 		m_SpareBytes              += sizeof(T);

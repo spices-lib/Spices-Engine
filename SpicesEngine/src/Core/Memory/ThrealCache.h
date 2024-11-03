@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "MemoryHelper.h"
+#include "MemoryPool.h"
 #include "Core/Container/FreeList.h"
 
 namespace Spices {
@@ -77,7 +77,7 @@ namespace Spices {
 		/**
 		* @brief FreeList Array.
 		*/
-		std::array<scl::free_list, MemoryHelper::FREE_LIST_NUM> m_FreeLists;
+		std::array<scl::free_list, MemoryPool::FREE_LIST_NUM> m_FreeLists;
 	};
 
 	/**

@@ -24,14 +24,21 @@ namespace scl {
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Init span.
-		* @todo new / delete.
-		*/
 		m_Head = new span;
 
 		m_Head->m_Next = m_Head;
 		m_Head->m_Prev = m_Head;
+	}
+
+	span_list::~span_list()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_Head)
+		{
+			delete m_Head;
+			m_Head = nullptr;
+		}
 	}
 
 	void span_list::PushFront(span* s)
@@ -101,5 +108,8 @@ namespace scl {
 
 		prev->m_Next = next;
 		next->m_Prev = prev;
+
+		pos->m_Next = nullptr;
+		pos->m_Prev = nullptr;
 	}
 }

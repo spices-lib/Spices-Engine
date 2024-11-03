@@ -144,6 +144,12 @@ namespace scl {
 		*/
 		void print_recursive(Node* node, int depth) const;
 
+		/**
+		* @brief Delete all node created by this ke_tree.
+		* @param[in] node recursive node.
+		*/
+		void deletenode_recursive(Node* node);
+
 	public:
 
 		/**
@@ -555,6 +561,23 @@ namespace scl {
 	}
 
 	template<uint32_t K>
+	inline void kd_tree<K>::deletenode_recursive(Node* node)
+	{
+		if (!node) return;
+
+		if (!node->m_Left && !node->m_Right)
+		{
+			delete node;
+			node = nullptr;
+
+			return;
+		}
+
+		if(node->m_Left) deletenode_recursive(node->m_Left);
+		if(node->m_Right) deletenode_recursive(node->m_Right);
+	}
+
+	template<uint32_t K>
 	inline kd_tree<K>::Node::~Node()
 	{
 		SPICES_PROFILE_ZONE;
@@ -577,11 +600,7 @@ namespace scl {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Root)
-		{
-			delete m_Root;
-			m_Root = nullptr;
-		}
+		deletenode_recursive(m_Root);
 	}
 
 	template<uint32_t K>
