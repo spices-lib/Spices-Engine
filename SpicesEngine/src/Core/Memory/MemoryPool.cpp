@@ -26,7 +26,7 @@ namespace Spices {
 
 			scl::span* s = PageCache::Get()->NewSpan(k);
 
-			void* ptr = (void*)(s->m_PageId >> PAGE_SHIFT);
+			void* ptr = (void*)(s->m_PageId << PAGE_SHIFT);
 			return ptr;
 		}
 

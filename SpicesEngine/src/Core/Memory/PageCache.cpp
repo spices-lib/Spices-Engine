@@ -145,11 +145,11 @@ namespace Spices {
 		*/
 		if (k > MemoryPool::PAGE_NUM - 1)
 		{
-			void* ptr = SystemAlloc(k);
-			scl::span* s = m_SpanPool.New();
-			s->m_PageId = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
-			void* p = (void*)(s->m_PageId >> MemoryPool::PAGE_SHIFT);
-			s->m_NPages = k;
+			void* ptr      = SystemAlloc(k);
+			scl::span* s   = m_SpanPool.New();
+			s->m_PageId    = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
+			s->m_NPages    = k;
+			s->m_BlockSize = k * (1 << MemoryPool::PAGE_SHIFT);
 
 			m_IdSpanMap[s->m_PageId] = s;
 
@@ -184,17 +184,19 @@ namespace Spices {
 				/**
 				* @brief Pop a span.
 				*/
-				scl::span* nSpan = m_SpanLists[i].PopFront();
+				scl::span* nSpan   = m_SpanLists[i].PopFront();
 
 				/**
 				* @brief New a span to split bigger span.
 				*/
-				scl::span* kSpan = m_SpanPool.New();
-				kSpan->m_PageId  = nSpan->m_PageId;
-				kSpan->m_NPages  = k;
+				scl::span* kSpan   = m_SpanPool.New();
+				kSpan->m_PageId    = nSpan->m_PageId;
+				kSpan->m_NPages    = k;
+				kSpan->m_BlockSize = (1 << MemoryPool::PAGE_SHIFT) * k;
 
-				nSpan->m_PageId += k;
-				nSpan->m_NPages -= k;
+				nSpan->m_PageId   += k;
+				nSpan->m_NPages   -= k;
+				nSpan->m_BlockSize = (1 << MemoryPool::PAGE_SHIFT) * nSpan->m_NPages;
 
 				/**
 				* @brief Push splited span to list.
@@ -221,9 +223,10 @@ namespace Spices {
 		/**
 		* @brief New a span to mamage this memory.
 		*/
-		scl::span* bigSpan = m_SpanPool.New();
-		bigSpan->m_PageId  = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
-		bigSpan->m_NPages  = MemoryPool::PAGE_NUM - 1;
+		scl::span* bigSpan   = m_SpanPool.New();
+		bigSpan->m_PageId    = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
+		bigSpan->m_NPages    = MemoryPool::PAGE_NUM - 1;
+		bigSpan->m_BlockSize = (1 << MemoryPool::PAGE_SHIFT) * bigSpan->m_NPages;
 
 		/**
 		* @brief Push span to list.

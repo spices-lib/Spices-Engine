@@ -8,6 +8,7 @@
 #include <gmock/gmock.h>
 #include <Core/Memory/MemoryPool.h>
 #include "Instrumentor.h"
+#include "Core/Timer/ScopeTimer.h"
 
 namespace SpicesTest {
 
@@ -170,6 +171,68 @@ namespace SpicesTest {
 		for (int i = 0; i < n2; i++)
 		{
 			Spices::MemoryPool::Free(object2s[i]);
+		}
+	}
+
+	/**
+	* @brief Testing Spices::MemoryPool Performance.
+	*/
+	TEST_F(MemoryPool_test, Performance) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		static constexpr int nThread = 1;
+		static constexpr int nCount = 1000000;
+
+		{
+			SPICESTEST_PROFILE_SCOPE("new / delete");
+
+			SCOPE_TIME_COUNTER("new / delete");
+
+			std::vector<std::thread> threads;
+			for (int i = 0; i < nThread; i++)
+			{
+				std::thread t1([&]() {
+					for (int j = 0; j < nCount; j++)
+					{
+						MemoryPoolTest* ptr = new MemoryPoolTest;
+						delete ptr;
+					}
+				});
+
+				threads.push_back(std::move(t1));
+			}
+
+			for (int i = 0; i < nThread; i++)
+			{
+				threads[i].join();
+			}
+		}
+
+		{
+			SPICESTEST_PROFILE_SCOPE("MemoryPool::Alloc / MemoryPool::Free");
+
+			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
+
+			std::vector<std::thread> threads;
+			for (int i = 0; i < nThread; i++)
+			{
+				std::thread t1([&]() {
+					for (int j = 0; j < nCount; j++)
+					{
+						void* ptr = Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest));
+						new(static_cast<MemoryPoolTest*>(ptr))MemoryPoolTest;
+						Spices::MemoryPool::Free(ptr);
+					}
+				});
+
+				threads.push_back(std::move(t1));
+			}
+
+			for (int i = 0; i < nThread; i++)
+			{
+				threads[i].join();
+			}
 		}
 	}
 }

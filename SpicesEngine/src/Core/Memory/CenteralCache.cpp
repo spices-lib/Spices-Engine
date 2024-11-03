@@ -176,7 +176,7 @@ namespace Spices {
 					*/
 					m_SpanLists[index].GetMutex().lock();
 				}
-
+				
 				start = next;
 			}
 		}

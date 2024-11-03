@@ -28,7 +28,7 @@ namespace SpicesTest {
 			EXPECT_EQ(s->m_FreeList, nullptr);
 			EXPECT_EQ(s->m_Next, nullptr);
 			EXPECT_EQ(s->m_Prev, nullptr);
-			EXPECT_EQ(s->m_BlockSize, 0);
+			EXPECT_EQ(s->m_BlockSize, i * ( 1 << Spices::MemoryPool::PAGE_SHIFT));
 			EXPECT_EQ(s->m_IsUse, false);
 			EXPECT_EQ(s->m_NPages, i);
 			EXPECT_EQ(s->m_UseCount, 0);
