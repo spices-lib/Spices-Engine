@@ -17,7 +17,7 @@ namespace SpicesTest {
 	public:
 
 		MemoryPoolTest()
-			: m_Tuple{ 1.0f, 2, nullptr }
+			: m_Tuple{ 1, 2.0f, nullptr }
 		{}
 
 		MemoryPoolTest(const MemoryPoolTest&) = delete;
@@ -193,10 +193,58 @@ namespace SpicesTest {
 			for (int i = 0; i < nThread; i++)
 			{
 				std::thread t1([&]() {
+					std::vector<MemoryPoolTest*> objects;
+					objects.resize(nCount);
+
 					for (int j = 0; j < nCount; j++)
 					{
-						MemoryPoolTest* ptr = new MemoryPoolTest;
-						delete ptr;
+						MemoryPoolTest* p = new MemoryPoolTest;
+
+						objects[j] = std::move(p);
+					}
+
+					for (int j = 0; j < nCount; j++)
+					{
+						MemoryPoolTest*& p = objects[j];
+						delete p;
+					}
+				});
+
+				threads.push_back(std::move(t1));
+			}
+
+			for (int i = 0; i < nThread; i++)
+			{
+				threads[i].join();
+			}
+		}
+
+		{
+			SPICESTEST_PROFILE_SCOPE("malloc / free");
+
+			SCOPE_TIME_COUNTER("malloc / free");
+
+			std::vector<std::thread> threads;
+			for (int i = 0; i < nThread; i++)
+			{
+				std::thread t1([&]() {
+					std::vector<MemoryPoolTest*> objects;
+					objects.resize(nCount);
+
+					for (int j = 0; j < nCount; j++)
+					{
+						MemoryPoolTest* p = static_cast<MemoryPoolTest*>(malloc(sizeof(MemoryPoolTest)));
+						new(p)MemoryPoolTest;
+
+						objects[j] = std::move(p);
+					}
+
+					for (int j = 0; j < nCount; j++)
+					{
+						MemoryPoolTest*& p = objects[j];
+
+						p->~MemoryPoolTest();
+						free(p);
 					}
 				});
 
@@ -218,14 +266,26 @@ namespace SpicesTest {
 			for (int i = 0; i < nThread; i++)
 			{
 				std::thread t1([&]() {
+					std::vector<MemoryPoolTest*> objects;
+					objects.resize(nCount);
+
 					for (int j = 0; j < nCount; j++)
 					{
-						void* ptr = Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest));
-						new(static_cast<MemoryPoolTest*>(ptr))MemoryPoolTest;
-						Spices::MemoryPool::Free(ptr);
+						MemoryPoolTest* p = static_cast<MemoryPoolTest*>(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)));
+						new(p)int;
+
+						objects[j] = std::move(p);
+					}
+
+					for (int j = 0; j < nCount; j++)
+					{
+						MemoryPoolTest*& p = objects[j];
+					
+						p->~MemoryPoolTest();
+						Spices::MemoryPool::Free(p);
 					}
 				});
-
+			
 				threads.push_back(std::move(t1));
 			}
 
