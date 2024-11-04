@@ -1,7 +1,7 @@
 /**
 * @file SpanList.h.
 * @brief The span_list Class Implementation.
-* @author Spices.
+* @author tcmalloc.
 */
 
 #include "Pchheader.h"

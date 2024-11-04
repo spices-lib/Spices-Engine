@@ -1,7 +1,7 @@
 /**
 * @file FreeList.h.
 * @brief The free_list Class Implementation.
-* @author Spices.
+* @author tcmalloc.
 */
 
 #include "Pchheader.h"

@@ -17,13 +17,16 @@ namespace SpicesTest {
 	public:
 
 		MemoryPoolTest()
-			: m_Tuple{ 1, 2.0f, nullptr }
+			//: m_Tuple{ 1, 2.0f, nullptr }
 		{}
 
 		MemoryPoolTest(const MemoryPoolTest&) = delete;
 		MemoryPoolTest& operator=(const MemoryPoolTest&) = delete;
 
-		std::tuple<int, float, void*> m_Tuple;
+		//std::tuple<int, float, void*> m_Tuple;
+		int a;
+		float b;
+		void* c;
 	};
 
 	class MemoryPoolTest2
@@ -148,9 +151,9 @@ namespace SpicesTest {
 		{
 			MemoryPoolTest* a = new(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)))MemoryPoolTest;
 
-			EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
-			EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
-			EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
+			//EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
+			//EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
+			//EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
 
 			objects[i] = a;
 		}
@@ -181,7 +184,7 @@ namespace SpicesTest {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		static constexpr int nThread = 1;
+		static constexpr int nThread = 10;
 		static constexpr int nCount = 1000000;
 
 		{

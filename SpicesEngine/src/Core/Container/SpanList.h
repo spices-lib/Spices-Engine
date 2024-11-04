@@ -1,7 +1,7 @@
 /**
 * @file SpanList.h.
 * @brief The span_list Class Definitions.
-* @author Spices.
+* @author tcmalloc.
 */
 
 #pragma once

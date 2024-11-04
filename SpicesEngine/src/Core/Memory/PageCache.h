@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "MemoryPool.h"
 #include "Core/Container/SpanList.h"
+#include "Core/Container/RadixTrie.h"
 #include "ObjectPool.h"
 
 namespace Spices {

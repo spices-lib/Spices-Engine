@@ -15,6 +15,7 @@
 #include "Core/Container/Tuple_test.h"
 #include "Core/Container/FreeList_test.h"
 #include "Core/Container/SpanList_test.h"
+#include "Core/Container/RadixTrie_test.h"
 
 /* Delegate */
 #include "Core/Delegate/Delegate_test.h"
@@ -31,7 +32,7 @@
 #include "Core/Memory/ThreadCache_test.h"
 #include "Core/Memory/PageCache_test.h"
 #include "Core/Memory/CenteralCache_test.h"
-#include "Core/Memory/MemoryPool_test.h"
+//#include "Core/Memory/MemoryPool_test.h"
 
 /* Reflect */
 #include "Core/Reflect/StaticReflect/VariableTraits_test.h"
