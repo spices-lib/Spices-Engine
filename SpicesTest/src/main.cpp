@@ -32,7 +32,7 @@
 #include "Core/Memory/ThreadCache_test.h"
 #include "Core/Memory/PageCache_test.h"
 #include "Core/Memory/CenteralCache_test.h"
-//#include "Core/Memory/MemoryPool_test.h"
+#include "Core/Memory/MemoryPool_test.h"
 
 /* Reflect */
 #include "Core/Reflect/StaticReflect/VariableTraits_test.h"

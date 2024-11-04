@@ -17,16 +17,13 @@ namespace SpicesTest {
 	public:
 
 		MemoryPoolTest()
-			//: m_Tuple{ 1, 2.0f, nullptr }
+			: m_Tuple{ 1, 2.0f, nullptr }
 		{}
 
 		MemoryPoolTest(const MemoryPoolTest&) = delete;
 		MemoryPoolTest& operator=(const MemoryPoolTest&) = delete;
 
-		//std::tuple<int, float, void*> m_Tuple;
-		int a;
-		float b;
-		void* c;
+		std::tuple<int, float, void*> m_Tuple;
 	};
 
 	class MemoryPoolTest2
@@ -151,9 +148,9 @@ namespace SpicesTest {
 		{
 			MemoryPoolTest* a = new(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)))MemoryPoolTest;
 
-			//EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
-			//EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
-			//EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
+			EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
+			EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
+			EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
 
 			objects[i] = a;
 		}
@@ -184,7 +181,7 @@ namespace SpicesTest {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		static constexpr int nThread = 10;
+		static constexpr int nThread = 1;
 		static constexpr int nCount = 1000000;
 
 		{
@@ -208,7 +205,7 @@ namespace SpicesTest {
 
 					for (int j = 0; j < nCount; j++)
 					{
-						MemoryPoolTest*& p = objects[j];
+						MemoryPoolTest* p = objects[j];
 						delete p;
 					}
 				});
@@ -244,7 +241,7 @@ namespace SpicesTest {
 
 					for (int j = 0; j < nCount; j++)
 					{
-						MemoryPoolTest*& p = objects[j];
+						MemoryPoolTest* p = objects[j];
 
 						p->~MemoryPoolTest();
 						free(p);
@@ -265,37 +262,37 @@ namespace SpicesTest {
 
 			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
 
-			std::vector<std::thread> threads;
-			for (int i = 0; i < nThread; i++)
-			{
-				std::thread t1([&]() {
+			//std::vector<std::thread> threads;
+			//for (int i = 0; i < nThread; i++)
+			//{
+			//	std::thread t1([&]() {
 					std::vector<MemoryPoolTest*> objects;
 					objects.resize(nCount);
 
 					for (int j = 0; j < nCount; j++)
 					{
 						MemoryPoolTest* p = static_cast<MemoryPoolTest*>(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)));
-						new(p)int;
+						new(p)MemoryPoolTest;
 
 						objects[j] = std::move(p);
 					}
 
 					for (int j = 0; j < nCount; j++)
 					{
-						MemoryPoolTest*& p = objects[j];
+						MemoryPoolTest* p = objects[j];
 					
 						p->~MemoryPoolTest();
 						Spices::MemoryPool::Free(p);
 					}
-				});
-			
-				threads.push_back(std::move(t1));
-			}
-
-			for (int i = 0; i < nThread; i++)
-			{
-				threads[i].join();
-			}
+			//	});
+			//
+			//	threads.push_back(std::move(t1));
+			//}
+			//
+			//for (int i = 0; i < nThread; i++)
+			//{
+			//	threads[i].join();
+			//}
 		}
 	}
 }

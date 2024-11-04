@@ -18,7 +18,7 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        static constexpr uint64_t n = 524287;
+        static constexpr uint64_t n = 1 << 19;
 
         std::vector<uint64_t> vs;
         vs.resize(n);
@@ -62,7 +62,7 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        static constexpr uint64_t n = 524287;
+        static constexpr uint64_t n = 1 << 19;
 
         std::vector<uint64_t> vs;
         vs.resize(n);
@@ -94,7 +94,9 @@ namespace SpicesTest {
 
             for (uint64_t i = 0; i < n; i++)
             {
-                EXPECT_EQ(rt.get(i), &vs[i]);
+                void* p = rt.get(i);
+
+                EXPECT_EQ(p, &vs[i]);
             }
         }
     }
@@ -106,7 +108,7 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        /*static constexpr uint64_t n = 20000000;
+        static constexpr uint64_t n = 1 << 19;
 
         std::vector<uint64_t> vs;
         vs.resize(n);
@@ -117,10 +119,10 @@ namespace SpicesTest {
             map[i] = &vs[i];
         }
 
-        scl::radix_trie<19, 3> rt;
+        scl::radix_trie<51, 3> rt;
         for (uint64_t i = 0; i < n; i++)
         {
-            rt.set(n, &vs[i]);
+            rt.set(i, &vs[i]);
         }
 
         {
@@ -140,6 +142,6 @@ namespace SpicesTest {
             {
                 EXPECT_EQ(rt.get(i), &vs[i]);
             }
-        }*/
+        }
     }
 }

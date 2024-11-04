@@ -101,8 +101,8 @@ namespace Spices {
 		std::mutex m_Mutex;
 
 		/**
-		* @brief hash map for [pageid - span]
+		* @brief radix trie for [pageid - span]
 		*/
-		std::unordered_map<size_t, scl::span*> m_IdSpanMap;
+		scl::radix_trie<64 - MemoryPool::PAGE_SHIFT, 3> m_IdSpanMap;
 	};
 }

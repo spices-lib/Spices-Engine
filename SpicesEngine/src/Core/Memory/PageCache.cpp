@@ -20,8 +20,6 @@ namespace Spices {
 
 	scl::span* PageCache::MapObjectToSpan(void* obj)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
-
 		/**
 		* @brief Get page id by memory.
 		*/
@@ -30,9 +28,11 @@ namespace Spices {
 		/**
 		* @brief Find span in map.
 		*/
-		if (m_IdSpanMap.find(id) != m_IdSpanMap.end())
+		void* s = m_IdSpanMap.get(id);
+
+		if (s)
 		{
-			return m_IdSpanMap[id];
+			return static_cast<scl::span*>(s);
 		}
 		else
 		{
@@ -64,12 +64,12 @@ namespace Spices {
 		{
 			size_t leftId = s->m_PageId - 1;
 
-			if (m_IdSpanMap.find(leftId) == m_IdSpanMap.end())
+			scl::span* leftSpan = static_cast<scl::span*>(m_IdSpanMap.get(leftId));
+
+			if (!leftSpan)
 			{
 				break;
 			}
-
-			scl::span* leftSpan = m_IdSpanMap[leftId];
 
 			if (leftSpan->m_IsUse)
 			{
@@ -95,12 +95,12 @@ namespace Spices {
 		{
 			size_t rightId = s->m_PageId + s->m_NPages;
 
-			if (m_IdSpanMap.find(rightId) == m_IdSpanMap.end())
+			scl::span* rightSpan = static_cast<scl::span*>(m_IdSpanMap.get(rightId));
+
+			if (!rightSpan)
 			{
 				break;
 			}
-
-			scl::span* rightSpan = m_IdSpanMap[rightId];
 
 			if (rightSpan->m_IsUse)
 			{
@@ -124,8 +124,8 @@ namespace Spices {
 		m_SpanLists[s->m_NPages].PushFront(s);
 		s->m_IsUse = false;
 
-		m_IdSpanMap[s->m_PageId] = s;
-		m_IdSpanMap[s->m_PageId + s->m_NPages - 1] = s;
+		m_IdSpanMap.set(s->m_PageId, s);
+		m_IdSpanMap.set(s->m_PageId + s->m_NPages - 1, s);
 	}
 
 	scl::span* PageCache::InternalNewSpan(size_t k)
@@ -143,7 +143,7 @@ namespace Spices {
 			s->m_NPages    = k;
 			s->m_BlockSize = k * (1 << MemoryPool::PAGE_SHIFT);
 
-			m_IdSpanMap[s->m_PageId] = s;
+			m_IdSpanMap.set(s->m_PageId, s);
 
 			return s;
 		}
@@ -160,7 +160,7 @@ namespace Spices {
 
 			for (size_t i = 0; i < s->m_NPages; ++i)
 			{
-				m_IdSpanMap[s->m_PageId + i] = s;
+				m_IdSpanMap.set(s->m_PageId + i, s);
 			}
 
 			return s;
@@ -195,12 +195,12 @@ namespace Spices {
 				*/
 				m_SpanLists[nSpan->m_NPages].PushFront(nSpan);
 
-				m_IdSpanMap[nSpan->m_PageId] = nSpan;
-				m_IdSpanMap[nSpan->m_PageId + nSpan->m_NPages - 1] = nSpan;
+				m_IdSpanMap.set(nSpan->m_PageId, nSpan);
+				m_IdSpanMap.set(nSpan->m_PageId + nSpan->m_NPages - 1, nSpan);
 
 				for (size_t i = 0; i < kSpan->m_NPages; ++i)
 				{
-					m_IdSpanMap[kSpan->m_PageId + i] = kSpan;
+					m_IdSpanMap.set(kSpan->m_PageId + i, kSpan);
 				}
 
 				return kSpan;

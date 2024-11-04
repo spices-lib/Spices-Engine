@@ -37,7 +37,7 @@ namespace scl {
 		*/
 		struct Leaf
 		{
-			std::array<void*, LENGTH> values{ nullptr };
+			std::array<void*, LENGTH> values { nullptr };
 		};
 
 		/**
@@ -155,6 +155,7 @@ namespace scl {
 		* @brief Constructor Function.
 		*/
 		explicit radix_trie()
+			: m_LeafPool{ Spices::ObjectPoolSizeMode::FixedObjects, 20 }
 		{
 			m_Root = new Node;
 		};
@@ -178,7 +179,7 @@ namespace scl {
 		void* get(size_t k) const
 		{
 			const size_t i1 = k >> LEAF_BITS;
-			const size_t i2 = k & ( LEAF_BITS - 1 );
+			const size_t i2 = k & (LEAF_LENGTH - 1 );
 
 			if ((k >> BITS) > 0 || m_Root->ptrs[i1] == nullptr)
 			{
@@ -198,7 +199,7 @@ namespace scl {
 			assert(k >> BITS == 0);
 
 			const size_t i1 = k >> LEAF_BITS;
-			const size_t i2 = k & (LEAF_BITS - 1);
+			const size_t i2 = k & (LEAF_LENGTH - 1);
 
 			assert(i1 < ROOT_LENGTH);
 			assert(i2 < LEAF_LENGTH);
@@ -246,7 +247,7 @@ namespace scl {
 		*/
 		struct Node
 		{
-			std::array<Node*, INTERIOR_LENGTH> ptrs;
+			std::array<Node*, INTERIOR_LENGTH> ptrs { nullptr };
 		};
 
 		/**
@@ -254,13 +255,13 @@ namespace scl {
 		*/
 		struct Leaf
 		{
-			std::array<void*, LEAF_LENGTH> values;
+			std::array<void*, LEAF_LENGTH> values { nullptr };
 		};
 
 		/**
-		* @brief interior index layer.
+		* @brief Root Node.
 		*/
-		Node m_Root;
+		Node* m_Root;
 
 		/**
 		* @brief ObjectPool of Node.
@@ -277,7 +278,12 @@ namespace scl {
 		/**
 		* @brief Constructor Function.
 		*/
-		explicit radix_trie() = default;
+		explicit radix_trie()
+			: m_NodePool{ Spices::ObjectPoolSizeMode::FixedObjects, 20 }
+			, m_LeafPool{ Spices::ObjectPoolSizeMode::FixedObjects, 20 }
+		{
+			m_Root = m_NodePool.New();
+		}
 
 		/**
 		* @brief Decpnstruct Function.
@@ -292,15 +298,15 @@ namespace scl {
 		void* get(size_t k) const
 		{
 			const size_t i1 = k >> (LEAF_BITS + INTERIOR_BITS);
-			const size_t i2 = (k >> LEAF_BITS) & (INTERIOR_BITS - 1);
-			const size_t i3 = k & (INTERIOR_BITS - 1);
+			const size_t i2 = (k >> LEAF_BITS) & (INTERIOR_LENGTH - 1);
+			const size_t i3 = k & (LEAF_LENGTH - 1);
 
-			if((k >> BITS) || m_Root.ptrs[i1] == nullptr || m_Root.ptrs[i1]->ptrs[i2] == nullptr)
+			if((k >> BITS) || m_Root->ptrs[i1] == nullptr || m_Root->ptrs[i1]->ptrs[i2] == nullptr)
 			{
 				return nullptr;
 			}
 
-			return reinterpret_cast<Leaf*>(m_Root.ptrs[i1]->ptrs[i2])->values[i3];
+			return reinterpret_cast<Leaf*>(m_Root->ptrs[i1]->ptrs[i2])->values[i3];
 		}
 
 		/**
@@ -313,24 +319,24 @@ namespace scl {
 			assert(k >> BITS == 0);
 
 			const size_t i1 = k >> (LEAF_BITS + INTERIOR_BITS);
-			const size_t i2 = (k >> LEAF_BITS) & (INTERIOR_BITS - 1);
-			const size_t i3 = k & (INTERIOR_BITS - 1);
+			const size_t i2 = (k >> LEAF_BITS) & (INTERIOR_LENGTH - 1);
+			const size_t i3 = k & (LEAF_LENGTH - 1);
 
 			assert(i1 < INTERIOR_LENGTH);
 			assert(i2 < INTERIOR_LENGTH);
 			assert(i3 < LEAF_LENGTH);
 
-			if (!m_Root.ptrs[i1])
+			if (!m_Root->ptrs[i1])
 			{
-				m_Root.ptrs[i1] = m_NodePool.New();
+				m_Root->ptrs[i1] = m_NodePool.New();
 			}
 
-			if (!m_Root.ptrs[i1]->ptrs[i2])
+			if (!m_Root->ptrs[i1]->ptrs[i2])
 			{
-				m_Root.ptrs[i1]->ptrs[i2] = reinterpret_cast<Node*>(m_LeafPool.New());
+				m_Root->ptrs[i1]->ptrs[i2] = reinterpret_cast<Node*>(m_LeafPool.New());
 			}
 
-			reinterpret_cast<Leaf*>(m_Root.ptrs[i1]->ptrs[i2])->values[i3] = v;
+			reinterpret_cast<Leaf*>(m_Root->ptrs[i1]->ptrs[i2])->values[i3] = v;
 		}
 	};
 }
