@@ -13,8 +13,6 @@ namespace Spices {
 
 	scl::span* PageCache::NewSpan(size_t k)
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		return InternalNewSpan(k);
@@ -22,8 +20,6 @@ namespace Spices {
 
 	scl::span* PageCache::MapObjectToSpan(void* obj)
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		/**
@@ -47,8 +43,6 @@ namespace Spices {
 	
 	void PageCache::ReleaseSpanToPageCache(scl::span* s)
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		/**
@@ -136,8 +130,6 @@ namespace Spices {
 
 	scl::span* PageCache::InternalNewSpan(size_t k)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(k > 0);
 
 		/**

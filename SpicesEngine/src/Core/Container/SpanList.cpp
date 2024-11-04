@@ -22,8 +22,6 @@ namespace scl {
 
 	span_list::span_list()
 	{
-		SPICES_PROFILE_ZONE;
-
 		m_Head = new span;
 
 		m_Head->m_Next = m_Head;
@@ -32,8 +30,6 @@ namespace scl {
 
 	span_list::~span_list()
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (m_Head)
 		{
 			delete m_Head;
@@ -43,15 +39,11 @@ namespace scl {
 
 	void span_list::PushFront(span* s)
 	{
-		SPICES_PROFILE_ZONE;
-
 		Insert(Begin(), s);
 	}
 
 	span* span_list::PopFront()
 	{
-		SPICES_PROFILE_ZONE;
-
 		span* front = m_Head->m_Next;
 
 		Erase(front);
@@ -61,29 +53,21 @@ namespace scl {
 
 	bool span_list::Empty()
 	{
-		SPICES_PROFILE_ZONE;
-
 		return Begin() == End();
 	}
 
 	span* span_list::Begin()
 	{
-		SPICES_PROFILE_ZONE;
-
 		return m_Head->m_Next;
 	}
 
 	span* span_list::End()
 	{
-		SPICES_PROFILE_ZONE;
-
 		return m_Head;
 	}
 
 	void span_list::Insert(span* pos, span* ptr)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(pos);
 		assert(ptr);
 
@@ -98,8 +82,6 @@ namespace scl {
 
 	void span_list::Erase(span* pos)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(pos);
 		assert(pos != m_Head);
 

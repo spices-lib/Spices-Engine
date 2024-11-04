@@ -12,8 +12,6 @@ namespace Spices {
 
 	void* ThreadCache::Allocate(size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Only allowed allocate 258KB one tme.
 		*/
@@ -44,8 +42,6 @@ namespace Spices {
 
 	void ThreadCache::Deallocate(void* obj, size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(obj);
 		assert(size <= MemoryPool::MAX_BYTES);
 
@@ -66,8 +62,6 @@ namespace Spices {
 
 	void* ThreadCache::FetchFromCentralCache(size_t index, size_t alignSize)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Slow-Start Threshold Dynamic Adjustment Algorithm.
 		*/
@@ -101,8 +95,6 @@ namespace Spices {
 
 	void ThreadCache::ListTooLong(scl::free_list& list, size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		void* start = nullptr;
 		void* end   = nullptr;
 

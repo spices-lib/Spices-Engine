@@ -135,8 +135,6 @@ namespace scl {
 	template<typename K, typename V>
 	inline void linked_unordered_map<K, V>::clear()
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Clear list.
 		*/
@@ -151,8 +149,6 @@ namespace scl {
 	template<typename K, typename V>
 	inline size_t linked_unordered_map<K, V>::size()
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Though we already does unit test, 
 		* So not use map_.size() here.
@@ -163,16 +159,12 @@ namespace scl {
 	template<typename K, typename V>
 	inline bool linked_unordered_map<K, V>::has_equal_size()
 	{
-		SPICES_PROFILE_ZONE;
-
 		return keys_.size() == map_.size();
 	}
 
 	template<typename K, typename V>
 	inline void linked_unordered_map<K, V>::push_back(const K& key, const V& value)
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (!has_key(key))
 		{
 			/**
@@ -190,8 +182,6 @@ namespace scl {
 	template<typename K, typename V>
 	inline V* linked_unordered_map<K, V>::find_value(const K& key)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Get V from map_ only while it does has the key.
 		* Otherwise return a new V.
@@ -203,8 +193,6 @@ namespace scl {
 	template<typename K, typename V>
 	inline bool linked_unordered_map<K, V>::has_key(const K& key)
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (map_.find(key) != map_.end()) return true;
 		else return false;
 	}
@@ -212,8 +200,6 @@ namespace scl {
 	template<typename K, typename V>
 	inline void linked_unordered_map<K, V>::erase(const K& key)
 	{
-		SPICES_PROFILE_ZONE;
-
 		auto it = map_.find(key);
 		if (it != map_.end())
 		{
@@ -233,8 +219,6 @@ namespace scl {
 	template<typename F>
 	inline void linked_unordered_map<K, V>::for_each(F fn)
 	{
-		SPICES_PROFILE_ZONE;
-
 		for (const K& key : keys_)
 		{
 			/**
@@ -250,8 +234,6 @@ namespace scl {
 	template<typename K, typename V>
 	inline V* linked_unordered_map<K, V>::prev_value(const K& key)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @breif Returns nullptr if not find key.
 		*/
@@ -279,8 +261,6 @@ namespace scl {
 	template<typename K, typename V>
 	inline V* linked_unordered_map<K, V>::next_value(const K& key)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @breif Returns nullptr if not find key.
 		*/
@@ -308,8 +288,6 @@ namespace scl {
 	template<typename K, typename V>
 	V* linked_unordered_map<K, V>::first()
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (size() == 0) return nullptr;
 
 		return &map_[keys_.front()];
@@ -318,8 +296,6 @@ namespace scl {
 	template<typename K, typename V>
 	V* linked_unordered_map<K, V>::end()
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (size() == 0) return nullptr;
 
 		return &map_[keys_.back()];
@@ -328,8 +304,6 @@ namespace scl {
 	template<typename K, typename V>
 	K* linked_unordered_map<K, V>::end_k()
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (size() == 0) return nullptr;
 
 		return &keys_.back();

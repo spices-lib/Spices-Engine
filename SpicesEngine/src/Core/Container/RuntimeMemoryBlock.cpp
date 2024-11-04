@@ -12,8 +12,6 @@ namespace scl {
     
     runtime_memory_block::~runtime_memory_block()
     {
-        SPICES_PROFILE_ZONE;
-
         /**
         * @brief Free the memoty that handled.
         */
@@ -22,8 +20,6 @@ namespace scl {
 
     void runtime_memory_block::add_element(const std::string& name, const std::string& type)
     {
-        SPICES_PROFILE_ZONE;
-
         /**
         * @brief Only allow add to object_ with parameter that has not added.
         */
@@ -49,8 +45,6 @@ namespace scl {
 
     void runtime_memory_block::build()
     {
-        SPICES_PROFILE_ZONE;
-
         /**
         * @brief Free the memory if begin_ has mallocked.
         */
@@ -64,8 +58,6 @@ namespace scl {
 
     void runtime_memory_block::for_each(std::function<bool(const std::string& name, void* pt)> fn) const
     {
-        SPICES_PROFILE_ZONE;
-
         /**
         * @brief Iter without order.
         */
@@ -87,8 +79,6 @@ namespace scl {
 
     size_t runtime_memory_block::item_location(const std::string& name)
     {
-        SPICES_PROFILE_ZONE;
-
         /**
         * @brief Return location if finded.
         */
@@ -98,8 +88,6 @@ namespace scl {
 
     bool runtime_memory_block::has_value(const std::string& name)
     {
-        SPICES_PROFILE_ZONE;
-
         /**
         * @brief Return true if finded.
         */

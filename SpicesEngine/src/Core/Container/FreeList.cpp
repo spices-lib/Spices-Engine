@@ -12,8 +12,6 @@ namespace scl {
 
 	void free_list::Push(void* obj)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(obj);
 
 		/**
@@ -35,8 +33,6 @@ namespace scl {
 
 	void* free_list::Pop()
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(m_Freelist);
 
 		/**
@@ -60,8 +56,6 @@ namespace scl {
 
 	void free_list::PushRange(void* start, void* end, size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Insert to begin.
 		*/
@@ -73,8 +67,6 @@ namespace scl {
 
 	void free_list::PopRange(void*& start, void*& end, size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(size <= m_Size);
 
 		start = end = m_Freelist;

@@ -422,8 +422,6 @@ namespace scl {
 	) 
 		const
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Base case: If node is null, the point is not found.
 		*/
@@ -527,8 +525,6 @@ namespace scl {
 	template<uint32_t K>
 	inline void kd_tree<K>::print_recursive(Node* node, int depth) const
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Base case: If node is null, return.
 		*/
@@ -580,8 +576,6 @@ namespace scl {
 	template<uint32_t K>
 	inline kd_tree<K>::Node::~Node()
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (m_Left)
 		{
 			delete m_Left;
@@ -598,24 +592,18 @@ namespace scl {
 	template<uint32_t K>
 	inline kd_tree<K>::~kd_tree()
 	{
-		SPICES_PROFILE_ZONE;
-
 		deletenode_recursive(m_Root);
 	}
 
 	template<uint32_t K>
 	inline void kd_tree<K>::insert(const std::vector<item>& points)
 	{
-		SPICES_PROFILE_ZONE;
-
 		insert_recursive(m_Root, std::make_shared<std::vector<item>>(points), 0);
 	}
 
 	template<uint32_t K>
 	inline void kd_tree<K>::insert_async(const std::vector<item>& points, Spices::ThreadPool* threadPool)
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::future<bool> rval = threadPool->SubmitPoolTask([&]() {
 			insert_recursive_async(m_Root, std::make_shared<std::vector<item>>(points), threadPool, 0);
 			return true;
@@ -631,8 +619,6 @@ namespace scl {
 	template<uint32_t K>
 	inline bool kd_tree<K>::search(const item& point) const
 	{
-		SPICES_PROFILE_ZONE;
-
 		return search_recursive(m_Root, point, 0);
 	}
 
@@ -643,8 +629,6 @@ namespace scl {
 	)
 		const -> kd_tree<K>::item
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::vector<kd_tree<K>::item> rangePoints;
 		range_search_recursive(m_Root, point, condition, rangePoints, 0);
 
@@ -676,8 +660,6 @@ namespace scl {
 	) 
 		const -> std::vector<kd_tree<K>::item>
 	{
-		SPICES_PROFILE_ZONE;
-		
 		std::vector<kd_tree<K>::item> rangePoints;
 		range_search_recursive(m_Root, point, condition, rangePoints, 0);
 		return rangePoints;
@@ -686,8 +668,6 @@ namespace scl {
 	template<uint32_t K>
 	inline void kd_tree<K>::print() const
 	{
-		SPICES_PROFILE_ZONE;
-
 		print_recursive(m_Root, 0);
 	}
 }

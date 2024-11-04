@@ -14,8 +14,6 @@ namespace Spices {
 
 	void* MemoryPool::Alloc(size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief allocate from pc.
 		*/
@@ -48,8 +46,6 @@ namespace Spices {
 
 	void MemoryPool::Free(void* ptr)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(ptr);
 
 		scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
@@ -76,15 +72,11 @@ namespace Spices {
 
 	void*& MemoryPool::PointerSpace(void* obj)
 	{
-		SPICES_PROFILE_ZONE;
-
 		return *(void**)obj;
 	}
 
 	size_t MemoryPool::AlignUp(size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		if      (size <= 128)          return MemoryLibrary::align_up<size_t>(size, 8);                /* @brief align up to 8B  , if size is less than 128B. (16)  */
 		else if (size <= 1 *   1024)   return MemoryLibrary::align_up<size_t>(size, 16);               /* @brief align up to 16B , if size is less than 1KB.  (56)  */
 		else if (size <= 8   * 1024)   return MemoryLibrary::align_up<size_t>(size, 128);              /* @brief align up to 128B, if size is less than 8KB.  (56)  */
@@ -95,8 +87,6 @@ namespace Spices {
 
 	size_t MemoryPool::Index(size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		auto _index = [&](size_t size, size_t align_shift) {
 			return ((size + (1 << align_shift) - 1) >> align_shift) - 1;
 		};
@@ -142,8 +132,6 @@ namespace Spices {
 
 	size_t MemoryPool::GetNBlocksLimit(size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		assert(size > 0);
 
 		/**
@@ -157,8 +145,6 @@ namespace Spices {
 
 	size_t MemoryPool::GetPages(size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief get blocks count.
 		*/

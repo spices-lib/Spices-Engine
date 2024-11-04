@@ -148,8 +148,6 @@ namespace Spices {
 		, m_FreeList(nullptr)
 		, m_SpareBytes(0)
 	{
-		SPICES_PROFILE_ZONE;
-		
 		if(mode == ObjectPoolSizeMode::FixedSize)
 		{
 			m_ExpandBytes = size * 1024;
@@ -163,8 +161,6 @@ namespace Spices {
 	template <typename T>
 	ObjectPool<T>::~ObjectPool()
 	{
-		SPICES_PROFILE_ZONE;
-
 		if (m_Memories.empty()) return;
 
 		/**
@@ -179,8 +175,6 @@ namespace Spices {
 	template <typename T>
 	T* ObjectPool<T>::New()
 	{
-		SPICES_PROFILE_ZONE;
-
 		T* obj = nullptr;
 
 		/**
@@ -236,8 +230,6 @@ namespace Spices {
 	template <typename T>
 	void ObjectPool<T>::Delete(T* obj)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Call Destructor manually.
 		*/
@@ -260,18 +252,14 @@ namespace Spices {
 	template<typename T>
 	inline T* ObjectPool<T>::ThreadNew()
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::unique_lock<std::mutex> lock(m_Mutex);
-
+		
 		return New();
 	}
 
 	template<typename T>
 	inline void ObjectPool<T>::ThreadDelete(T* obj)
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		Delete(obj);

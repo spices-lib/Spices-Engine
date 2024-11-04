@@ -14,8 +14,6 @@ namespace Spices {
 
 	size_t CenteralCache::FetchRange(void*& start, void*& end, size_t batchNum, size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		size_t index = MemoryPool::Index(size);
 		size_t acturalNum = 1;
 
@@ -49,8 +47,6 @@ namespace Spices {
 
 	scl::span* CenteralCache::GetOneSpan(scl::span_list& list, size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		/**
 		* @brief Find span in cc.
 		*/
@@ -125,8 +121,6 @@ namespace Spices {
 
 	void CenteralCache::ReleaseListToSpans(void* start, size_t size)
 	{
-		SPICES_PROFILE_ZONE;
-
 		size_t index = MemoryPool::Index(size);
 
 		{

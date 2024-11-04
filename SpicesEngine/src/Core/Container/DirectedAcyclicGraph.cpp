@@ -11,15 +11,11 @@ namespace scl {
 
 	void directed_acyclic_graph::add_node(directed_acyclic_node* node)
 	{
-		SPICES_PROFILE_ZONE;
-
 		m_Nodes[node->m_Name] = node;
 	}
 
 	void directed_acyclic_graph::execute()
 	{
-		SPICES_PROFILE_ZONE;
-
 		std::unordered_map<std::string, bool> visited;
 		for (auto& node : m_Nodes)
 		{
@@ -32,8 +28,6 @@ namespace scl {
 
 	void directed_acyclic_graph::execute_internal(directed_acyclic_node* node, std::unordered_map<std::string, bool>& visited)
 	{
-		SPICES_PROFILE_ZONE;
-
 		visited[node->m_Name] = true;
 		for (auto& dep : node->m_Dependencies)
 		{
