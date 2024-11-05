@@ -93,10 +93,12 @@ namespace SpicesTest {
 		for(int i = 0; i < 2; i++)
 		{
 			std::thread t([&]() {
+				Spices::ThreadCache internalTc;
+
 				std::unique_ptr<std::array<ThrealCacheTest*, n>> objects = std::make_unique<std::array<ThrealCacheTest*, n>>();
 				for (int i = 0; i < n; i++)
 				{
-					ThrealCacheTest* a = new(tc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
+					ThrealCacheTest* a = new(internalTc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
 
 					EXPECT_EQ(std::get<0>(a->m_Tuple), 1);
 					EXPECT_EQ(std::get<1>(a->m_Tuple), 2.0f);
@@ -107,7 +109,7 @@ namespace SpicesTest {
 
 				for (int i = 0; i < n; i++)
 				{
-					tc.Deallocate((*objects)[i], sizeof(ThrealCacheTest));
+					internalTc.Deallocate((*objects)[i], sizeof(ThrealCacheTest));
 				}
 			});
 
