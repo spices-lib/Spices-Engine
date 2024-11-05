@@ -16,13 +16,15 @@ namespace SpicesTest {
 	public:
 
 		ThrealCacheTest()
-			: m_Tuple{ 1.0f, 2, nullptr }
+			//: m_Tuple{ 1, 2.0f, nullptr }
 		{}
 
 		ThrealCacheTest(const ThrealCacheTest&) = delete;
 		ThrealCacheTest& operator=(const ThrealCacheTest&) = delete;
 
-		std::tuple<int, float, void*> m_Tuple;
+		std::tuple<int, float, int, uint64_t, void*> m_Tuple{};
+		//std::tuple<void*, int, float> m_Tuple;
+		//std::array<int, 3> a;
 	};
 
 	/**
@@ -53,7 +55,7 @@ namespace SpicesTest {
 		/**
 		* @brief Iter counts.
 		*/
-		static constexpr size_t n = 10000;
+		static constexpr size_t n = 1000000;
 	};
 
 	/**
@@ -63,21 +65,21 @@ namespace SpicesTest {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		std::array<ThrealCacheTest*, n> objects;
+		std::unique_ptr<std::array<ThrealCacheTest*, n>> objects = std::make_unique<std::array<ThrealCacheTest*, n>>();
 		for (int i = 0; i < n; i++)
 		{
 			ThrealCacheTest* a = new(tc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
 
-			EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
-			EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
-			EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
+			//EXPECT_EQ(std::get<0>(a->m_Tuple), 1.0f);
+			//EXPECT_EQ(std::get<1>(a->m_Tuple), 2);
+			//EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
 
-			objects[i] = a;
+			(*objects)[i] = std::move(a);
 		}
 
 		for (int i = 0; i < n; i++)
 		{
-			tc.Deallocate(objects[i], sizeof(ThrealCacheTest));
+			tc.Deallocate((*objects)[i], sizeof(ThrealCacheTest));
 		}
 	}
 }

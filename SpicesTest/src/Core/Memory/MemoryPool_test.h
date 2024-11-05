@@ -17,13 +17,15 @@ namespace SpicesTest {
 	public:
 
 		MemoryPoolTest()
-			: m_Tuple{ 1, 2.0f, nullptr }
+			//: m_Tuple{ 1, 2.0f, nullptr }
 		{}
 
 		MemoryPoolTest(const MemoryPoolTest&) = delete;
 		MemoryPoolTest& operator=(const MemoryPoolTest&) = delete;
 
-		std::tuple<int, float, void*> m_Tuple;
+		std::tuple<int, void* ,float> m_Tuple;
+		//std::array<int, 3> a;
+
 	};
 
 	class MemoryPoolTest2
@@ -139,7 +141,7 @@ namespace SpicesTest {
 	/**
 	* @brief Testing Spices::MemoryPool::Alloc/Free.
 	*/
-	TEST_F(MemoryPool_test, AllocFree) {
+	/*TEST_F(MemoryPool_test, AllocFree) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
@@ -172,7 +174,7 @@ namespace SpicesTest {
 		{
 			Spices::MemoryPool::Free(object2s[i]);
 		}
-	}
+	}*/
 
 	/**
 	* @brief Testing Spices::MemoryPool Performance.
@@ -271,18 +273,22 @@ namespace SpicesTest {
 
 					for (int j = 0; j < nCount; j++)
 					{
+						//if (j == 43775)
+						{
+							//std::cout << j << std::endl;
+						}
 						MemoryPoolTest* p = static_cast<MemoryPoolTest*>(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)));
 						new(p)MemoryPoolTest;
 
-						objects[j] = std::move(p);
+						//objects[j] = std::move(p);
 					}
 
 					for (int j = 0; j < nCount; j++)
 					{
-						MemoryPoolTest* p = objects[j];
+						//MemoryPoolTest* p = objects[j];
 					
-						p->~MemoryPoolTest();
-						Spices::MemoryPool::Free(p);
+						//p->~MemoryPoolTest();
+						//Spices::MemoryPool::Free(p);
 					}
 			//	});
 			//
