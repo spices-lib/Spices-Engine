@@ -17,15 +17,13 @@ namespace SpicesTest {
 	public:
 
 		MemoryPoolTest()
-			//: m_Tuple{ 1, 2.0f, nullptr }
+			: m_Tuple{ 1, 2.0f, nullptr }
 		{}
 
 		MemoryPoolTest(const MemoryPoolTest&) = delete;
 		MemoryPoolTest& operator=(const MemoryPoolTest&) = delete;
 
-		std::tuple<int, void* ,float> m_Tuple;
-		//std::array<int, 3> a;
-
+		std::tuple<int, float, void*> m_Tuple;
 	};
 
 	class MemoryPoolTest2
@@ -141,7 +139,7 @@ namespace SpicesTest {
 	/**
 	* @brief Testing Spices::MemoryPool::Alloc/Free.
 	*/
-	/*TEST_F(MemoryPool_test, AllocFree) {
+	TEST_F(MemoryPool_test, AllocFree) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
@@ -174,7 +172,7 @@ namespace SpicesTest {
 		{
 			Spices::MemoryPool::Free(object2s[i]);
 		}
-	}*/
+	}
 
 	/**
 	* @brief Testing Spices::MemoryPool Performance.
@@ -264,41 +262,37 @@ namespace SpicesTest {
 
 			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
 
-			//std::vector<std::thread> threads;
-			//for (int i = 0; i < nThread; i++)
-			//{
-			//	std::thread t1([&]() {
+			std::vector<std::thread> threads;
+			for (int i = 0; i < nThread; i++)
+			{
+				std::thread t1([&]() {
 					std::vector<MemoryPoolTest*> objects;
 					objects.resize(nCount);
 
 					for (int j = 0; j < nCount; j++)
 					{
-						//if (j == 43775)
-						{
-							//std::cout << j << std::endl;
-						}
 						MemoryPoolTest* p = static_cast<MemoryPoolTest*>(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)));
 						new(p)MemoryPoolTest;
 
-						//objects[j] = std::move(p);
+						objects[j] = std::move(p);
 					}
 
 					for (int j = 0; j < nCount; j++)
 					{
-						//MemoryPoolTest* p = objects[j];
+						MemoryPoolTest* p = objects[j];
 					
-						//p->~MemoryPoolTest();
-						//Spices::MemoryPool::Free(p);
+						p->~MemoryPoolTest();
+						Spices::MemoryPool::Free(p);
 					}
-			//	});
-			//
-			//	threads.push_back(std::move(t1));
-			//}
-			//
-			//for (int i = 0; i < nThread; i++)
-			//{
-			//	threads[i].join();
-			//}
+				});
+			
+				threads.push_back(std::move(t1));
+			}
+			
+			for (int i = 0; i < nThread; i++)
+			{
+				threads[i].join();
+			}
 		}
 	}
 }

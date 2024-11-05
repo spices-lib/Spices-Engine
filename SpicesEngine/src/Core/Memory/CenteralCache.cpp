@@ -96,7 +96,7 @@ namespace Spices {
 			start += size;
 
 			int i = 0;
-			while (start < end)
+			while (start + size <= end)
 			{
 				++i;
 				MemoryPool::PointerSpace(tail) = start;

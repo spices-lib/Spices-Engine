@@ -62,6 +62,14 @@ namespace scl {
 		Spices::MemoryPool::PointerSpace(end) = m_Freelist;
 		m_Freelist = start;
 
+		/**
+		* @brief Recoring end pointer.
+		*/
+		if (m_Size == 0)
+		{
+			m_EndPointer = end;
+		}
+
 		m_Size += size;
 	}
 
@@ -82,5 +90,13 @@ namespace scl {
 		m_Freelist = Spices::MemoryPool::PointerSpace(end);
 		Spices::MemoryPool::PointerSpace(end) = nullptr;
 		m_Size -= size;
+
+		/**
+		* @brief Unrecoring end pointer.
+		*/
+		if (m_Size == 0)
+		{
+			m_EndPointer = nullptr;
+		}
 	}
 }
