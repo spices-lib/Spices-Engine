@@ -1,5 +1,6 @@
 #include <EntryPoint.h>
 #include "GameEditorWorld.h"
+#include <Core/Memory/MemoryPool.h>
 
 #include <new>
 
@@ -7,15 +8,13 @@
 
 void* operator new(size_t size)
 {
-    void* ptr = malloc(size);
-	SPICES_PROFILE_ALLOC(ptr, size);
+    void* ptr = Spices::MemoryPool::Alloc(size);
     return ptr;
 }
 
 void operator delete(void* ptr) noexcept
 {
-	SPICES_PROFILE_FREE(ptr);
-	free(ptr);
+	Spices::MemoryPool::Free(ptr);
 }
 
 #endif

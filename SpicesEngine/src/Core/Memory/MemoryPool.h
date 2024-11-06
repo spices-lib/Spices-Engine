@@ -114,6 +114,8 @@ namespace Spices {
 			SPICES_CORE_ERROR("Memory alloc failed.");
 		}
 
+		SPICES_PROFILE_ALLOC(ptr, kpage << MemoryPool::PAGE_SHIFT);
+
 		return ptr;
 	}
 
@@ -123,6 +125,8 @@ namespace Spices {
 	*/
 	inline static void SystemFree(void* ptr)
 	{
+		SPICES_PROFILE_FREE(ptr);
+
 #ifdef _WIN32
 
 		VirtualFree(ptr, 0, MEM_RELEASE);

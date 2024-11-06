@@ -90,7 +90,7 @@ namespace SpicesTest {
 
 		std::vector<std::thread> threads;
 
-		for(int i = 0; i < 2; i++)
+		for(int i = 0; i < 10; i++)
 		{
 			std::thread t([&]() {
 				Spices::ThreadCache internalTc;

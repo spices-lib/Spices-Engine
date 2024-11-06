@@ -71,6 +71,11 @@ namespace Spices {
 				break;
 			}
 
+			if (leftSpan->m_NPages == 0)
+			{
+				break;
+			}
+
 			if (leftSpan->m_IsUse)
 			{
 				break;
@@ -98,6 +103,11 @@ namespace Spices {
 			scl::span* rightSpan = static_cast<scl::span*>(m_IdSpanMap.get(rightId));
 
 			if (!rightSpan)
+			{
+				break;
+			}
+
+			if (rightSpan->m_NPages == 0)
 			{
 				break;
 			}

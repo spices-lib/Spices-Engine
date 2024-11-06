@@ -182,9 +182,10 @@ namespace Spices {
 		*/
 		if (m_FreeList)
 		{
-			void* next = MemoryPool::PointerSpace(m_FreeList);
-			obj        = static_cast<T*>(m_FreeList);
-			m_FreeList = next;
+			void* next    = MemoryPool::PointerSpace(m_FreeList);
+			obj           = static_cast<T*>(m_FreeList);
+			m_FreeList    = next;
+			m_SpareBytes -= sizeof(T);
 		}
 		else
 		{

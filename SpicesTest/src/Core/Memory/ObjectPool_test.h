@@ -144,7 +144,6 @@ namespace SpicesTest {
 				m_ObjectPool->Delete(o);
 			}
 		}
-
 	}
 
 	/**
@@ -200,4 +199,78 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ObjectPool->GetSpareBytes(), allBytes);
 	}
 
+	/**
+	* @brief Testing Spices::ObjectPool::AllocAfterDeAlloc.
+	*/
+	TEST_F(ObjectPool_test, AllocAfterDeAlloc) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		std::vector<Object*> objects;
+		objects.resize(n);
+
+		for (int j = 0; j < 5; j++)
+		{
+			for (size_t i = 0; i < n; i++)
+			{
+				Object* o = m_ObjectPool->New();
+				objects[i] = o;
+			}
+
+			for (size_t i = 0; i < n; i++)
+			{
+				m_ObjectPool->Delete(objects[i]);
+			}
+		}
+	}
+
+	/**
+	* @brief Testing Spices::ObjectPool::ThreadAllocAfterDeAlloc.
+	*/
+	TEST_F(ObjectPool_test, ThreadAllocAfterDeAlloc) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		std::vector<Object*> objects1;
+		std::vector<Object*> objects2;
+
+		objects1.resize(n);
+		objects2.resize(n);
+
+		auto internalThreadNew = [&](std::vector<Object*>& objects) {
+			for (int i = 0; i < n; i++)
+			{
+				objects[i] = m_ObjectPool->ThreadNew();
+			}
+		};
+
+		auto internalThreadDelete = [&](std::vector<Object*>& objects) {
+			for (int i = 0; i < n; i++)
+			{
+				m_ObjectPool->ThreadDelete(objects[i]);
+			}
+		};
+
+		for (int k = 0; k < 3; k++)
+		{
+			std::thread t1([&]() { 
+				for (int j = 0; j < 3; j++)
+				{
+					internalThreadNew(objects1);
+					internalThreadDelete(objects1);
+				}
+			});
+
+			std::thread t2([&]() {
+				for (int j = 0; j < 3; j++)
+				{
+					internalThreadNew(objects2);
+					internalThreadDelete(objects2);
+				}
+			});
+		
+			t1.join();
+			t2.join();
+		}
+	}
 }
