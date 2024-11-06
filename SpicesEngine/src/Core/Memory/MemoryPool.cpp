@@ -24,7 +24,9 @@ namespace Spices {
 			size_t alignSize = AlignUp(size);
 			size_t k = alignSize >> PAGE_SHIFT;
 
-			scl::span* s = PageCache::Get()->NewSpan(k);
+			scl::span* s   = PageCache::Get()->NewSpan(k);
+			s->m_IsUse     = true;
+			s->m_BlockSize = alignSize;
 
 			void* ptr = (void*)(s->m_PageId << PAGE_SHIFT);
 			return ptr;
@@ -65,8 +67,6 @@ namespace Spices {
 		*/
 		if (size > MAX_BYTES)
 		{
-			scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
-
 			PageCache::Get()->ReleaseSpanToPageCache(s);
 		}
 
