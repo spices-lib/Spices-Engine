@@ -12,6 +12,8 @@
 
 namespace Spices {
 
+	bool MemoryPool::m_Initialized = false;
+
 	void* MemoryPool::Alloc(size_t size)
 	{
 		/**
@@ -49,6 +51,13 @@ namespace Spices {
 		assert(ptr);
 
 		scl::span* s = PageCache::Get()->MapObjectToSpan(ptr);
+
+		if (!s)
+		{
+			free(ptr);
+			return;
+		}
+
 		size_t size = s->m_BlockSize;
 
 		/**

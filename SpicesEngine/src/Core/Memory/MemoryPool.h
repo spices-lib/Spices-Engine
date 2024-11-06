@@ -90,6 +90,31 @@ namespace Spices {
 		* @return Returns pages count
 		*/
 		static size_t GetPages(size_t size);
+
+		/**
+		* @brief Get m_Initialized.
+		* @return Returns m_Initialized.
+		*/
+		static bool IsInitialized() { return m_Initialized; };
+
+		/**
+		* @brief Set m_Initialized be true.
+		*/
+		static void SetInitialized() 
+		{ 
+
+			void* p = Alloc(8);
+			Free(p);
+
+			m_Initialized = true; 
+		};
+
+	private:
+
+		/**
+		* @brief True if MemoryPool is initialized.
+		*/
+		static bool m_Initialized;
 	};
 
 	/**

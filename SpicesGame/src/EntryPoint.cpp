@@ -4,7 +4,7 @@
 
 #include <new>
 
-#ifdef TRACY_ENABLE
+#if 0
 
 void* operator new(size_t size)
 {

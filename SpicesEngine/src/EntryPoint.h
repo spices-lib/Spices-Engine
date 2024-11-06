@@ -6,7 +6,34 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "core/Application.h"
+#include "Core/Application.h"
+#include "Core/Memory/MemoryPool.h"
+
+void* operator new(size_t size)
+{
+	if (!Spices::MemoryPool::IsInitialized())
+	{
+		void* ptr = malloc(size);
+		return ptr;
+	}
+	else
+	{
+		void* ptr = Spices::MemoryPool::Alloc(size);
+		return ptr;
+	}
+}
+
+void operator delete(void* ptr) noexcept
+{
+	if (!Spices::MemoryPool::IsInitialized())
+	{
+		free(ptr);
+	}
+	else
+	{
+		Spices::MemoryPool::Free(ptr);
+	}
+}
 
 /**
 * @brief Main Function.

@@ -36,7 +36,6 @@ namespace Spices {
 		}
 		else
 		{
-			assert(false);
 			return nullptr;
 		}
 	}

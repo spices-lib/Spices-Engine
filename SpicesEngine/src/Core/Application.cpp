@@ -17,12 +17,15 @@
 #include "Systems/ResourceSystem.h"
 #include "Systems/SlateSystem.h"
 #include "Core/Thread/ThreadPool.h"
+#include "Core/Memory/MemoryPool.h"
 
 namespace Spices {
 
 	Application::Application()
 	{
 		SPICES_PROFILE_ZONE;
+
+		MemoryPool::SetInitialized();
 
 		/**
 		* @brief Init Log Class.
