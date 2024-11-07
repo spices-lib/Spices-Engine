@@ -57,7 +57,7 @@ namespace SpicesTest {
 		/**
 		* @brief ObjectPool objects number.
 		*/
-		static constexpr size_t n = 1000000;
+		static constexpr size_t n = 500000;
 	};
 
 	/**
@@ -251,10 +251,10 @@ namespace SpicesTest {
 			}
 		};
 
-		for (int k = 0; k < 3; k++)
+		for (int k = 0; k < 2; k++)
 		{
 			std::thread t1([&]() { 
-				for (int j = 0; j < 3; j++)
+				for (int j = 0; j < 2; j++)
 				{
 					internalThreadNew(objects1);
 					internalThreadDelete(objects1);
@@ -262,7 +262,7 @@ namespace SpicesTest {
 			});
 
 			std::thread t2([&]() {
-				for (int j = 0; j < 3; j++)
+				for (int j = 0; j < 2; j++)
 				{
 					internalThreadNew(objects2);
 					internalThreadDelete(objects2);

@@ -15,7 +15,7 @@ namespace SpicesTest {
 	* @brief The interface is inherited from testing::Test.
 	* Registry on Initialize.
 	*/
-	class FreeList_test : public testing::Test
+	class free_list_test : public testing::Test
 	{
 	protected:
 
@@ -35,9 +35,9 @@ namespace SpicesTest {
 	};
 
 	/**
-	* @brief Testing Spices::free_list::Push/Pop.
+	* @brief Testing scl::free_list::Push/Pop.
 	*/
-	TEST_F(FreeList_test, PushPop) {
+	TEST_F(free_list_test, PushPop) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
@@ -94,9 +94,9 @@ namespace SpicesTest {
 	}
 
 	/**
-	* @brief Testing Spices::free_list::PushRange/PopRange.
+	* @brief Testing scl::free_list::PushRange/PopRange.
 	*/
-	TEST_F(FreeList_test, PushRangePopRange) {
+	TEST_F(free_list_test, PushRangePopRange) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 

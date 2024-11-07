@@ -12,9 +12,9 @@
 namespace SpicesTest {
 
     /**
-    * @brief Testing Spices::radix_trie<BITS, 1>
+    * @brief Testing scl::radix_trie<BITS, 1>
     */
-    TEST(RadixTrieTest, Layer1) {
+    TEST(radix_trie_test, Layer1) {
 
         SPICESTEST_PROFILE_FUNCTION();
 
@@ -56,9 +56,9 @@ namespace SpicesTest {
     }
 
     /**
-    * @brief Testing Spices::radix_trie<BITS, 2>
+    * @brief Testing scl::radix_trie<BITS, 2>
     */
-    TEST(RadixTrieTest, Layer2) {
+    TEST(radix_trie_test, Layer2) {
 
         SPICESTEST_PROFILE_FUNCTION();
 
@@ -102,9 +102,9 @@ namespace SpicesTest {
     }
 
     /**
-    * @brief Testing Spices::radix_trie<BITS, 3>
+    * @brief Testing scl::radix_trie<BITS, 3>
     */
-    TEST(RadixTrieTest, Layer3) {
+    TEST(radix_trie_test, Layer3) {
 
         SPICESTEST_PROFILE_FUNCTION();
 

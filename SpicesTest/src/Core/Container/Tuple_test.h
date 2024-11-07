@@ -12,9 +12,9 @@
 namespace SpicesTest {
 
     /**
-    * @brief Testing Spices::Tuple Helper Function.
+    * @brief Testing std::tuple Helper Function.
     */
-    TEST(TupleTest, IterTuple) {
+    TEST(tuple_test, IterTuple) {
 
         SPICESTEST_PROFILE_FUNCTION();
 

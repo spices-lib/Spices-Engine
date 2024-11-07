@@ -15,7 +15,7 @@ namespace SpicesTest {
     * @brief The interface is inherited from testing::Test.
     * Registry on Initialize.
     */
-    class SpanList_test : public testing::Test
+    class span_list_test : public testing::Test
     {
     protected:
 
@@ -35,9 +35,9 @@ namespace SpicesTest {
     };
 
     /**
-    * @brief Testing Spices::SpanList Initialize.
+    * @brief Testing scl::span_list::Initialize.
     */
-    TEST_F(SpanList_test, Initialize) {
+    TEST_F(span_list_test, Initialize) {
 
         SPICESTEST_PROFILE_FUNCTION();
 
@@ -45,9 +45,9 @@ namespace SpicesTest {
     }
 
     /**
-    * @brief Testing Spices::SpanList Insert/Erase.
+    * @brief Testing scl::span_list::Insert/Erase.
     */
-    TEST_F(SpanList_test, InsertErase) {
+    TEST_F(span_list_test, InsertErase) {
 
         SPICESTEST_PROFILE_FUNCTION();
 
@@ -92,9 +92,9 @@ namespace SpicesTest {
     }
 
     /**
-    * @brief Testing Spices::SpanList PushFront/PopFront.
+    * @brief Testing scl::span_list::PushFront/PopFront.
     */
-    TEST_F(SpanList_test, PushFrontPopFront) {
+    TEST_F(span_list_test, PushFrontPopFront) {
 
         SPICESTEST_PROFILE_FUNCTION();
 

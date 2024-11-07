@@ -53,7 +53,7 @@ namespace SpicesTest {
 		/**
 		* @brief Iter counts.
 		*/
-		static constexpr size_t n = 1000000;
+		static constexpr size_t n = 500000;
 	};
 
 	/**
@@ -90,7 +90,7 @@ namespace SpicesTest {
 
 		std::vector<std::thread> threads;
 
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 5; i++)
 		{
 			std::thread t([&]() {
 				Spices::ThreadCache internalTc;

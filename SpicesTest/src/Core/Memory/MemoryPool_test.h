@@ -8,7 +8,6 @@
 #include <gmock/gmock.h>
 #include <Core/Memory/MemoryPool.h>
 #include "Instrumentor.h"
-#include "Core/Timer/ScopeTimer.h"
 
 namespace SpicesTest {
 
@@ -187,8 +186,6 @@ namespace SpicesTest {
 		{
 			SPICESTEST_PROFILE_SCOPE("new / delete");
 
-			SCOPE_TIME_COUNTER("new / delete");
-
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
 			{
@@ -221,8 +218,6 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("malloc / free");
-
-			SCOPE_TIME_COUNTER("malloc / free");
 
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
@@ -259,8 +254,6 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("MemoryPool::Alloc / MemoryPool::Free");
-
-			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
 
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
@@ -309,8 +302,6 @@ namespace SpicesTest {
 		{
 			SPICESTEST_PROFILE_SCOPE("new / delete");
 
-			SCOPE_TIME_COUNTER("new / delete");
-
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
 			{
@@ -343,8 +334,6 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("malloc / free");
-
-			SCOPE_TIME_COUNTER("malloc / free");
 
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
@@ -381,8 +370,6 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("MemoryPool::Alloc / MemoryPool::Free");
-
-			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
 
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
@@ -432,8 +419,6 @@ namespace SpicesTest {
 		{
 			SPICESTEST_PROFILE_SCOPE("malloc / free");
 
-			SCOPE_TIME_COUNTER("malloc / free");
-
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
 			{
@@ -468,8 +453,6 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("MemoryPool::Alloc / MemoryPool::Free");
-
-			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
 
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
@@ -519,8 +502,6 @@ namespace SpicesTest {
 		{
 			SPICESTEST_PROFILE_SCOPE("malloc / free");
 
-			SCOPE_TIME_COUNTER("malloc / free");
-
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)
 			{
@@ -555,8 +536,6 @@ namespace SpicesTest {
 
 		{
 			SPICESTEST_PROFILE_SCOPE("MemoryPool::Alloc / MemoryPool::Free");
-
-			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
 
 			std::vector<std::thread> threads;
 			for (int i = 0; i < nThread; i++)

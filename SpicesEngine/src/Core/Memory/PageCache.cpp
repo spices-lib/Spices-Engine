@@ -13,9 +13,11 @@ namespace Spices {
 
 	scl::span* PageCache::NewSpan(size_t k)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
-
-		return InternalNewSpan(k);
+		//std::unique_lock<std::mutex> lock(m_Mutex);
+		m_Mutex.lock();
+		scl::span* s = InternalNewSpan(k);
+		m_Mutex.unlock();
+		return s;
 	}
 
 	scl::span* PageCache::MapObjectToSpan(void* obj)

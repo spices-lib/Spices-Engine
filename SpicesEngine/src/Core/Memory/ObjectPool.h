@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "MemoryPool.h"
 #include "Core/Library/MemoryLibrary.h"
+#include "Core/Container/Vector.h"
 
 namespace Spices {
 
@@ -119,7 +120,7 @@ namespace Spices {
 		/**
 		* @brief This objectPoll allocated memories.
 		*/
-		std::vector<void*> m_Memories;
+		scl::vector<void*> m_Memories;
 		
 		/**
 		* @brief freelist.
@@ -166,9 +167,9 @@ namespace Spices {
 		/**
 		* @brief Free all memory blocks.
 		*/
-		for(const auto& memoryBlock : m_Memories)
+		for (size_t i = 0; i < m_Memories.size(); i++)
 		{
-			SystemFree(memoryBlock);
+			SystemFree(m_Memories.get(i));
 		}
 	}
 
