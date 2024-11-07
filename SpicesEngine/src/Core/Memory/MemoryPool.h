@@ -100,14 +100,7 @@ namespace Spices {
 		/**
 		* @brief Set m_Initialized be true.
 		*/
-		static void SetInitialized() 
-		{ 
-
-			void* p = Alloc(8);
-			Free(p);
-
-			m_Initialized = true; 
-		};
+		static void SetInitialized() { m_Initialized = true; };
 
 	private:
 

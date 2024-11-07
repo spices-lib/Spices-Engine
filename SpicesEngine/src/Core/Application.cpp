@@ -25,6 +25,9 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		/**
+		* @brief initialzie MemoryPool.
+		*/
 		MemoryPool::SetInitialized();
 
 		/**
