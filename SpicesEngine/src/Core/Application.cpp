@@ -26,11 +26,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
-		* @brief initialzie MemoryPool.
-		*/
-		MemoryPool::SetInitialized();
-
-		/**
 		* @brief Init Log Class.
 		*/
 		Log::Init();

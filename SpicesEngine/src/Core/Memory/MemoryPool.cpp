@@ -12,8 +12,6 @@
 
 namespace Spices {
 
-	bool MemoryPool::m_Initialized = false;
-
 	void* MemoryPool::Alloc(size_t size)
 	{
 		/**
