@@ -95,7 +95,7 @@ namespace Spices {
 		* @brief Get m_Initialized.
 		* @return Returns m_Initialized.
 		*/
-		static bool IsInitialized() { return m_Initialized; };
+		static const bool& IsInitialized() { return m_Initialized; };
 
 		/**
 		* @brief Set m_Initialized be true.

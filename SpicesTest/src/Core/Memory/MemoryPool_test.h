@@ -421,6 +421,93 @@ namespace SpicesTest {
 	/**
 	* @brief Testing Spices::MemoryPool Performance.
 	*/
+	TEST_F(MemoryPool_test, Performance_RandomSize_OneThread) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		static constexpr int nThread  = 1;
+		static constexpr int nCount   = 500000;
+		static constexpr int maxBytes = 1024;
+
+		{
+			SPICESTEST_PROFILE_SCOPE("malloc / free");
+
+			SCOPE_TIME_COUNTER("malloc / free");
+
+			std::vector<std::thread> threads;
+			for (int i = 0; i < nThread; i++)
+			{
+				std::thread t1([&]() {
+					std::vector<void*> objects;
+					objects.resize(nCount);
+
+					for (int j = 0; j < nCount; j++)
+					{
+						size_t bytes = maxBytes * std::rand() / float(RAND_MAX);
+						void* p = malloc(bytes);
+
+						objects[j] = std::move(p);
+					}
+
+					for (int j = 0; j < nCount; j++)
+					{
+						void* p = objects[j];
+
+						free(p);
+					}
+				});
+
+				threads.push_back(std::move(t1));
+			}
+
+			for (int i = 0; i < nThread; i++)
+			{
+				threads[i].join();
+			}
+		}
+
+		{
+			SPICESTEST_PROFILE_SCOPE("MemoryPool::Alloc / MemoryPool::Free");
+
+			SCOPE_TIME_COUNTER("MemoryPool::Alloc / MemoryPool::Free");
+
+			std::vector<std::thread> threads;
+			for (int i = 0; i < nThread; i++)
+			{
+				std::thread t1([&]() {
+					std::vector<void*> objects;
+					objects.resize(nCount);
+
+					for (int j = 0; j < nCount; j++)
+					{
+						size_t bytes = maxBytes * std::rand() / float(RAND_MAX);
+						bytes = std::max((size_t)8, bytes);
+						void* p = Spices::MemoryPool::Alloc(bytes);
+
+						objects[j] = std::move(p);
+					}
+
+					for (int j = 0; j < nCount; j++)
+					{
+						void* p = objects[j];
+
+						Spices::MemoryPool::Free(p);
+					}
+				});
+			
+				threads.push_back(std::move(t1));
+			}
+			
+			for (int i = 0; i < nThread; i++)
+			{
+				threads[i].join();
+			}
+		}
+	}
+
+	/**
+	* @brief Testing Spices::MemoryPool Performance.
+	*/
 	TEST_F(MemoryPool_test, Performance_RandomSize_MultiThread) {
 
 		SPICESTEST_PROFILE_FUNCTION();

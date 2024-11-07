@@ -51,8 +51,10 @@ namespace Spices {
 		{
 			void* ptr = (void*)(s->m_PageId << MemoryPool::PAGE_SHIFT);
 			SystemFree(ptr);
-			m_SpanPool.Delete(s);
 
+			m_IdSpanMap.set(s->m_PageId, nullptr);
+			m_SpanPool.Delete(s);
+			
 			return;
 		}
 

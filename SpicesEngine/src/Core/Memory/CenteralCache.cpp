@@ -152,8 +152,6 @@ namespace Spices {
 				{
 					m_SpanLists[index].Erase(s);
 					s->m_FreeList = nullptr;
-					s->m_Next     = nullptr;
-					s->m_Prev     = nullptr;
 
 					/**
 					* @brief unlock span mutex.

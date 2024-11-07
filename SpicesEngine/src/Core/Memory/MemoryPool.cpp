@@ -26,7 +26,6 @@ namespace Spices {
 
 			scl::span* s   = PageCache::Get()->NewSpan(k);
 			s->m_IsUse     = true;
-			s->m_BlockSize = alignSize;
 
 			void* ptr = (void*)(s->m_PageId << PAGE_SHIFT);
 			return ptr;
