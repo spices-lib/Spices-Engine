@@ -20,12 +20,12 @@ namespace Spices {
 		return s;
 	}
 
-	scl::span* PageCache::MapObjectToSpan(void* obj)
+	scl::span* PageCache::MapObjectToSpan(void* obj) const
 	{
 		/**
 		* @brief Get page id by memory.
 		*/
-		size_t id = (((size_t)obj) >> MemoryPool::PAGE_SHIFT);
+		const size_t id = (reinterpret_cast<size_t>(obj) >> MemoryPool::PAGE_SHIFT);
 
 		/**
 		* @brief Find span in map.
@@ -51,7 +51,7 @@ namespace Spices {
 		*/
 		if (s->m_NPages > MemoryPool::PAGE_NUM - 1)
 		{
-			void* ptr = (void*)(s->m_PageId << MemoryPool::PAGE_SHIFT);
+			void* ptr = reinterpret_cast<void*>(s->m_PageId << MemoryPool::PAGE_SHIFT);
 			SystemFree(ptr);
 
 			m_IdSpanMap.set(s->m_PageId, nullptr);
@@ -63,9 +63,9 @@ namespace Spices {
 		/**
 		* @brief Merge to left.
 		*/
-		while (1)
+		for(;;)
 		{
-			size_t leftId = s->m_PageId - 1;
+			const size_t leftId = s->m_PageId - 1;
 
 			scl::span* leftSpan = static_cast<scl::span*>(m_IdSpanMap.get(leftId));
 
@@ -96,7 +96,7 @@ namespace Spices {
 		*/
 		while (1)
 		{
-			size_t rightId = s->m_PageId + s->m_NPages;
+			const size_t rightId = s->m_PageId + s->m_NPages;
 
 			scl::span* rightSpan = static_cast<scl::span*>(m_IdSpanMap.get(rightId));
 
@@ -142,7 +142,7 @@ namespace Spices {
 		{
 			void* ptr      = SystemAlloc(k);
 			scl::span* s   = m_SpanPool.New();
-			s->m_PageId    = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
+			s->m_PageId    = reinterpret_cast<size_t>(ptr) >> MemoryPool::PAGE_SHIFT;
 			s->m_NPages    = k;
 			s->m_BlockSize = k * (1 << MemoryPool::PAGE_SHIFT);
 
@@ -172,7 +172,7 @@ namespace Spices {
 		/**
 		* @brief Iter begger span, try find spare pages in pc.
 		*/
-		for (int i = k + 1; i < MemoryPool::PAGE_NUM; ++i)
+		for (size_t i = k + 1; i < MemoryPool::PAGE_NUM; ++i)
 		{
 			if (!m_SpanLists[i].Empty())
 			{
@@ -201,9 +201,9 @@ namespace Spices {
 				m_IdSpanMap.set(nSpan->m_PageId, nSpan);
 				m_IdSpanMap.set(nSpan->m_PageId + nSpan->m_NPages - 1, nSpan);
 
-				for (size_t i = 0; i < kSpan->m_NPages; ++i)
+				for (size_t j = 0; j < kSpan->m_NPages; ++j)
 				{
-					m_IdSpanMap.set(kSpan->m_PageId + i, kSpan);
+					m_IdSpanMap.set(kSpan->m_PageId + j, kSpan);
 				}
 
 				return kSpan;
@@ -219,7 +219,7 @@ namespace Spices {
 		* @brief New a span to mamage this memory.
 		*/
 		scl::span* bigSpan   = m_SpanPool.New();
-		bigSpan->m_PageId    = ((size_t)ptr) >> MemoryPool::PAGE_SHIFT;
+		bigSpan->m_PageId    = reinterpret_cast<size_t>(ptr) >> MemoryPool::PAGE_SHIFT;
 		bigSpan->m_NPages    = MemoryPool::PAGE_NUM - 1;
 		bigSpan->m_BlockSize = (1 << MemoryPool::PAGE_SHIFT) * bigSpan->m_NPages;
 

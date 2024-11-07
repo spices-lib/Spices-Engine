@@ -26,6 +26,17 @@ namespace Spices {
 */
 #define VMA_ALLOCATOR
 
+/**
+* @brief Vulkan Check macro.
+* Verify Vulkan API Effectiveness.
+*/
+#define VK_CHECK(expr)                                                   \
+    {                                                                    \
+        auto expr_value = expr;                                          \
+        NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(expr_value);     \
+        ASSERT(expr_value == VK_SUCCESS);                                \
+    }
+
 	/**
 	* @brief This struct contains all Vulkan object in used golbal.
 	*/

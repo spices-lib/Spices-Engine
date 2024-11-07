@@ -21,13 +21,13 @@ namespace Spices {
 		*/
 		if (size > MAX_BYTES)
 		{
-			size_t alignSize = AlignUp(size);
+			const size_t alignSize = AlignUp(size);
 			size_t k = alignSize >> PAGE_SHIFT;
 
 			scl::span* s   = PageCache::Get()->NewSpan(k);
 			s->m_IsUse     = true;
 
-			void* ptr = (void*)(s->m_PageId << PAGE_SHIFT);
+			void* ptr = reinterpret_cast<void*>(s->m_PageId << PAGE_SHIFT);
 			return ptr;
 		}
 
@@ -59,7 +59,7 @@ namespace Spices {
 			return;
 		}
 
-		size_t size = s->m_BlockSize;
+		const size_t size = s->m_BlockSize;
 
 		/**
 		* @brief release from pc.
@@ -80,23 +80,24 @@ namespace Spices {
 
 	void*& MemoryPool::PointerSpace(void* obj)
 	{
-		return *(void**)obj;
+		return *(static_cast<void**>(obj));
 	}
 
 	size_t MemoryPool::AlignUp(size_t size)
 	{
-		if      (size <= 128)          return MemoryLibrary::align_up<size_t>(size, 8);                /* @brief align up to 8B  , if size is less than 128B. (16)  */
-		else if (size <= 1 *   1024)   return MemoryLibrary::align_up<size_t>(size, 16);               /* @brief align up to 16B , if size is less than 1KB.  (56)  */
-		else if (size <= 8   * 1024)   return MemoryLibrary::align_up<size_t>(size, 128);              /* @brief align up to 128B, if size is less than 8KB.  (56)  */
-		else if (size <= 64  * 1024)   return MemoryLibrary::align_up<size_t>(size, 1024);             /* @brief align up to 1KB , if size is less than 64KB. (56)  */
-		else if (size <= 256 * 1024)   return MemoryLibrary::align_up<size_t>(size, 8 * 1024);         /* @brief align up to 8KB , if size is less than 256KB.(24)  */
-		else                           return MemoryLibrary::align_up<size_t>(size, 1 << PAGE_SHIFT);  /* @brief align up to page                                   */
+		if      (size <= static_cast<size_t>(       128))   return MemoryLibrary::align_up<size_t>(size, 8);                /* @brief align up to 8B  , if size is less than 128B. (16)  */
+		else if (size <= static_cast<size_t>(1 *   1024))   return MemoryLibrary::align_up<size_t>(size, 16);               /* @brief align up to 16B , if size is less than 1KB.  (56)  */
+		else if (size <= static_cast<size_t>(8   * 1024))   return MemoryLibrary::align_up<size_t>(size, 128);              /* @brief align up to 128B, if size is less than 8KB.  (56)  */
+		else if (size <= static_cast<size_t>(64  * 1024))   return MemoryLibrary::align_up<size_t>(size, 1024);             /* @brief align up to 1KB , if size is less than 64KB. (56)  */
+		else if (size <= static_cast<size_t>(256 * 1024))   return MemoryLibrary::align_up<size_t>(size, 8 * 1024);         /* @brief align up to 8KB , if size is less than 256KB.(24)  */
+		else                                                return MemoryLibrary::align_up<size_t>(size, 1 << PAGE_SHIFT);  /* @brief align up to page                                   */
 	}
 
 	size_t MemoryPool::Index(size_t size)
 	{
-		auto _index = [&](size_t size, size_t align_shift) {
-			return ((size + (1 << align_shift) - 1) >> align_shift) - 1;
+		auto _index = [&](size_t bytes, size_t align_shift) -> size_t
+		{
+			return ((bytes + (1 << align_shift) - 1) >> align_shift) - 1;
 		};
 
 		static constexpr int group_array[4] = { 16, 56, 56, 56 };
@@ -110,22 +111,22 @@ namespace Spices {
 			return _index(size - 128, 4) + 
 				group_array[0];
 		}
-		else if (size <= 8 * 1024)
+		else if (size <= static_cast<size_t>(8 * 1024))
 		{
 			return _index(size - 1024, 7) + 
 				group_array[1] + 
 				group_array[0];
 		}
-		else if (size <= 64 * 1024)
+		else if (size <= static_cast<size_t>(64 * 1024))
 		{
-			return _index(size - 8 * 1024, 10) + 
+			return _index(size - static_cast<size_t>(8 * 1024), 10) + 
 				group_array[2] + 
 				group_array[1] + 
 				group_array[0];
 		}
-		else if (size <= 256 * 1024)
+		else if (size <= static_cast<size_t>(256 * 1024))
 		{
-			return _index(size - 64 * 1024, 13) + 
+			return _index(size - static_cast<size_t>(64 * 1024), 13) + 
 				group_array[3] + 
 				group_array[2] + 
 				group_array[1] + 
@@ -156,7 +157,7 @@ namespace Spices {
 		/**
 		* @brief get blocks count.
 		*/
-		size_t num = GetNBlocksLimit(size);
+		const size_t num = GetNBlocksLimit(size);
 
 		/**
 		* @brief get pages count.

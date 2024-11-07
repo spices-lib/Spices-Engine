@@ -29,7 +29,7 @@ namespace SpicesTest {
 	{
 	public:
 
-		MemoryPoolTest2(){}
+		MemoryPoolTest2() = default;
 		MemoryPoolTest2(const MemoryPoolTest2&) = delete;
 		MemoryPoolTest2& operator=(const MemoryPoolTest2&) = delete;
 
@@ -81,17 +81,17 @@ namespace SpicesTest {
 		uint64_t c = 100;
 
 		Spices::MemoryPool::PointerSpace(&a) = &b;
-		uint64_t* d0 = (uint64_t*)a;
+		uint64_t* d0 = reinterpret_cast<uint64_t*>(a);
 		EXPECT_EQ(d0, &b);
 		EXPECT_EQ(*d0, b);
 
 		Spices::MemoryPool::PointerSpace(&a) = &c;
-		uint64_t* d1 = (uint64_t*)a;
+		uint64_t* d1 = reinterpret_cast<uint64_t*>(a);
 		EXPECT_EQ(d1, &c);
 		EXPECT_EQ(*d1, c);
 
 		Spices::MemoryPool::PointerSpace(&a) = nullptr;
-		uint64_t* d2 = (uint64_t*)a;
+		uint64_t* d2 = reinterpret_cast<uint64_t*>(a);
 		EXPECT_EQ(d2, nullptr);
 	}
 

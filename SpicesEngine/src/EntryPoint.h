@@ -22,7 +22,7 @@ void* operator new(size_t size)
 	if (!Spices::MemoryPool::IsInitialized())
 	{
 		void* ptr = malloc(size);
-		SPICES_PROFILE_ALLOC(ptr, size);
+		SPICES_PROFILE_ALLOC_N(ptr, size, Spices::memoryPoolNames[0]);
 		return ptr;
 	}
 
@@ -31,7 +31,9 @@ void* operator new(size_t size)
 	*/
 	else
 	{
-		return Spices::MemoryPool::Alloc(size);
+		void* ptr = Spices::MemoryPool::Alloc(size);
+		SPICES_PROFILE_ALLOC_N(ptr, size, Spices::memoryPoolNames[2]);
+		return ptr;
 	}
 }
 
@@ -46,7 +48,7 @@ void operator delete(void* ptr) noexcept
 	*/
 	if (!Spices::MemoryPool::IsInitialized())
 	{
-		SPICES_PROFILE_FREE(ptr);
+		SPICES_PROFILE_FREE_N(ptr, Spices::memoryPoolNames[0]);
 		free(ptr);
 	}
 
@@ -55,6 +57,7 @@ void operator delete(void* ptr) noexcept
 	*/
 	else
 	{
+		SPICES_PROFILE_FREE_N(ptr, Spices::memoryPoolNames[2]);
 		Spices::MemoryPool::Free(ptr);
 	}
 }

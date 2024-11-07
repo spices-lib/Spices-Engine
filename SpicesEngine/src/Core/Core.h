@@ -37,14 +37,12 @@ namespace Spices {
         }                                                                                                     \
     }                                                                                                         \
 
-/**
-* @brief Vulkan Check macro.
-* Verify Vulkan API Effectiveness.
-*/
-#define VK_CHECK(expr)                                                   \
-    {                                                                    \
-        auto expr_value = expr;                                          \
-        NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(expr_value);     \
-        ASSERT(expr_value == VK_SUCCESS);                                \
-    }
+    /**
+    * @brief MemoryPool's name.
+    */
+    static constexpr char* memoryPoolNames[3] = {
+        "System Memory Allocator",
+        "Main MemoryPool Page Allocator",
+        "Main MemoryPool Detail Allocator",
+    };
 }

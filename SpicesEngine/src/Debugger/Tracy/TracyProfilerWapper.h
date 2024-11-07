@@ -82,6 +82,8 @@ namespace Spices {
 #define SPICES_PROFILE_ZONEN(...)                                        ZoneScopedN(__VA_ARGS__)
 #define SPICES_PROFILE_ALLOC(ptr, size)                                  TracySecureAllocS(ptr, size, 20)
 #define SPICES_PROFILE_FREE(ptr)                                         TracySecureFreeS(ptr, 20)
+#define SPICES_PROFILE_ALLOC_N(ptr, size, name)                          TracySecureAllocNS(ptr, size, 20, name)
+#define SPICES_PROFILE_FREE_N(ptr, name)                                 TracySecureFreeNS(ptr, 20, name)
 #define SPICES_PROFILE_MARK(...)                                         TracyMessageL(__VA_ARGS__)
 #define SPICES_PROFILE_IMAGE(...)                                        FrameImage(__VA_ARGS__)
 
@@ -98,7 +100,9 @@ namespace Spices {
 #define SPICES_PROFILE_ZONE                                        
 #define SPICES_PROFILE_ZONEN(...)                                  
 #define SPICES_PROFILE_ALLOC(ptr, size)                            
-#define SPICES_PROFILE_FREE(ptr)                                   
+#define SPICES_PROFILE_FREE(ptr)           
+#define SPICES_PROFILE_ALLOC_N(ptr, size, name)
+#define SPICES_PROFILE_FREE_N(ptr, name)        
 #define SPICES_PROFILE_MARK(...)                                   
 #define SPICES_PROFILE_IMAGE(...)                                  
 

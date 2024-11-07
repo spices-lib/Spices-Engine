@@ -1,6 +1,6 @@
 /**
 * @file ThrealCache.cpp.
-* @brief The ThrealCache Class Definitions.
+* @brief The ThreadCache Class Definitions.
 * @author tcmalloc.
 */
 
@@ -62,12 +62,12 @@ namespace Spices {
 		* @param[in] list free_list.
 		* @param[in] size object bytes.
 		*/
-		void ListTooLong(scl::free_list& list, size_t size);
+		static void ListTooLong(scl::free_list& list, size_t size);
 
 		/**
 		* @brief Fetch memory from central cache if this is run out.
 		* @param[in] index freelist index.
-		* @param[in] alignSize alignup bytes.
+		* @param[in] alignSize align up bytes.
 		* @return Returns memory pointer.
 		*/
 		void* FetchFromCentralCache(size_t index, size_t alignSize);

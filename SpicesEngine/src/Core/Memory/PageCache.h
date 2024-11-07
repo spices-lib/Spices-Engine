@@ -61,7 +61,7 @@ namespace Spices {
 		* @param[in] obj object memory pointer.
 		* @return Returns span.
 		*/
-		scl::span* MapObjectToSpan(void* obj);
+		scl::span* MapObjectToSpan(void* obj) const;
 
 		/**
 		* @brief Release span from cc to pc,
@@ -101,7 +101,7 @@ namespace Spices {
 		std::mutex m_Mutex;
 
 		/**
-		* @brief radix trie for [pageid - span]
+		* @brief radix trie for [pageId - span]
 		*/
 		scl::radix_trie<64 - MemoryPool::PAGE_SHIFT, 3> m_IdSpanMap;
 	};

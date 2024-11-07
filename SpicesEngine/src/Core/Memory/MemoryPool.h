@@ -29,7 +29,7 @@ namespace Spices {
 		static constexpr size_t FREE_LIST_NUM = 208;
 
 		/**
-		* @brief Only allowed 256KB alloced memory one time in tc.
+		* @brief Only allowed 256KB allocated memory one time in tc.
 		*/
 		static constexpr size_t MAX_BYTES = 256 * 1024;
 
@@ -71,15 +71,15 @@ namespace Spices {
 		static size_t AlignUp(size_t size);
 
 		/**
-		* @brief Determine which freelist should process the memory blcok with given bytes.
+		* @brief Determine which freelist should process the memory block with given bytes.
 		* @param[in] size memory block bytes.
 		* @return Returns index of freelist.
 		*/
 		static size_t Index(size_t size);
 
 		/**
-		* @brief Get count of blocks limit by tc alignup bytes.
-		* @param[in] size alignup bytes.
+		* @brief Get count of blocks limit by tc align up bytes.
+		* @param[in] size align up bytes.
 		* @return Returns blocks limit.
 		*/
 		static size_t GetNBlocksLimit(size_t size);
@@ -95,12 +95,12 @@ namespace Spices {
 		* @brief Get m_Initialized.
 		* @return Returns m_Initialized.
 		*/
-		static const bool& IsInitialized() { return m_Initialized; };
+		static const bool& IsInitialized() { return m_Initialized; }
 
 		/**
 		* @brief Set m_Initialized be true.
 		*/
-		static void SetInitialized() { m_Initialized = true; };
+		static void SetInitialized() { m_Initialized = true; }
 
 	private:
 
@@ -129,10 +129,10 @@ namespace Spices {
 
 		if (ptr == nullptr)
 		{
-			SPICES_CORE_ERROR("Memory alloc failed.");
+			SPICES_CORE_ERROR("Memory alloc failed.")
 		}
 
-		SPICES_PROFILE_ALLOC(ptr, kpage << MemoryPool::PAGE_SHIFT);
+		SPICES_PROFILE_ALLOC_N(ptr, kpage << MemoryPool::PAGE_SHIFT, memoryPoolNames[1]);
 
 		return ptr;
 	}
@@ -143,7 +143,7 @@ namespace Spices {
 	*/
 	inline static void SystemFree(void* ptr)
 	{
-		SPICES_PROFILE_FREE(ptr);
+		SPICES_PROFILE_FREE_N(ptr, memoryPoolNames[1]);
 
 #ifdef _WIN32
 

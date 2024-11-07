@@ -1,6 +1,6 @@
 /**
-* @file CenteralCache.cpp.
-* @brief The CenteralCache Class Definitions.
+* @file CentralCache.cpp.
+* @brief The CentralCache Class Definitions.
 * @author tcmalloc.
 */
 
@@ -12,40 +12,40 @@
 namespace Spices {
 
 	/**
-	* @brief Centeral memory cache.
+	* @brief Central memory cache.
 	* Second level of memory allocator.
 	*/
-	class CenteralCache
+	class CentralCache
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		CenteralCache() = default;
+		CentralCache() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~CenteralCache() = default;
+		virtual ~CentralCache() = default;
 
 		/**
 		* @brief Copy Constructor Function.
 		* @note This Class not allowed copy behaves.
 		*/
-		CenteralCache(const CenteralCache&) = delete;
+		CentralCache(const CentralCache&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
 		* @note This Class not allowed copy behaves.
 		*/
-		CenteralCache& operator =(const CenteralCache&) = delete;
+		CentralCache& operator =(const CentralCache&) = delete;
 
 		/**
 		* @brief Get this single Instance.
 		* @return Returns this pointer.
 		*/
-		static CenteralCache* Get() { return &m_CenteralCache; }
+		static CentralCache* Get() { return &m_CentralCache; }
 
 		/**
 		* @brief Fetch range memory to tc.
@@ -53,7 +53,7 @@ namespace Spices {
 		* @param[in,out] end memory end block pointer.
 		* @param[in] batchNum block count.
 		* @param[in] size aligned bytes.
-		* @return Returns actural block count.
+		* @return Returns actual block count.
 		*/ 
 		size_t FetchRange(void*& start, void*& end, size_t batchNum, size_t size);
 
@@ -72,7 +72,7 @@ namespace Spices {
 		* @param[in] size aligned bytes.
 		* @return Returns span.
 		*/
-		scl::span* GetOneSpan(scl::span_list& list, size_t size);
+		static scl::span* GetOneSpan(scl::span_list& list, size_t size);
 
 	private:
 
@@ -84,6 +84,6 @@ namespace Spices {
 		/**
 		* @brief Single instance of this.
 		*/
-		static CenteralCache m_CenteralCache;
+		static CentralCache m_CentralCache;
 	};
 }

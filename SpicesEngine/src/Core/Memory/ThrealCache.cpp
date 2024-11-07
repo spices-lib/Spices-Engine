@@ -1,12 +1,12 @@
 /**
 * @file ThrealCache.cpp.
-* @brief The ThrealCache Class Implementation.
+* @brief The ThreadCache Class Implementation.
 * @author tcmalloc.
 */
 
 #include "Pchheader.h"
 #include "ThrealCache.h"
-#include "CenteralCache.h"
+#include "CentralCache.h"
 
 namespace Spices {
 
@@ -20,8 +20,8 @@ namespace Spices {
 		/**
 		* @brief Determain aligned size and freelist index.
 		*/
-		size_t alignSize = MemoryPool::AlignUp(size);
-		size_t index     = MemoryPool::Index(size);
+		const size_t alignSize = MemoryPool::AlignUp(size);
+		const size_t index     = MemoryPool::Index(size);
 
 		/**
 		* @brief Fetch memory from freelist.
@@ -48,7 +48,7 @@ namespace Spices {
 		/**
 		* @brief Push object memory to free list.
 		*/
-		size_t index = MemoryPool::Index(size);
+		const size_t index = MemoryPool::Index(size);
 		m_FreeLists[index].Push(obj);
 
 		/**
@@ -65,7 +65,7 @@ namespace Spices {
 		/**
 		* @brief Slow-Start Threshold Dynamic Adjustment Algorithm.
 		*/
-		size_t batchNum = std::min(m_FreeLists[index].ApplyforNBlocks(), MemoryPool::GetNBlocksLimit(alignSize));
+		const size_t batchNum = std::min(m_FreeLists[index].ApplyforNBlocks(), MemoryPool::GetNBlocksLimit(alignSize));
 
 		if (batchNum == m_FreeLists[index].ApplyforNBlocks())
 		{
@@ -78,7 +78,7 @@ namespace Spices {
 		/**
 		* @brief Obtain actural blocks form cc.
 		*/
-		size_t actualNum = CenteralCache::Get()->FetchRange(start, end, batchNum, alignSize);
+		const size_t actualNum = CentralCache::Get()->FetchRange(start, end, batchNum, alignSize);
 
 		assert(actualNum >= 1);
 
@@ -100,7 +100,7 @@ namespace Spices {
 
 		list.PopRange(start, end, list.ApplyforNBlocks());
 
-		CenteralCache::Get()->ReleaseListToSpans(start, size);
+		CentralCache::Get()->ReleaseListToSpans(start, size);
 	}
 
 }

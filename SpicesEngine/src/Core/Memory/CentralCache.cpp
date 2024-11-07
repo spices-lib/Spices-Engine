@@ -1,21 +1,21 @@
 /**
-* @file CenteralCache.cpp.
-* @brief The CenteralCache Class Implementation.
+* @file CentralCache.cpp.
+* @brief The CentralCache Class Implementation.
 * @author tcmalloc.
 */
 
 #include "Pchheader.h"
-#include "CenteralCache.h"
+#include "CentralCache.h"
 #include "PageCache.h"
 
 namespace Spices {
 
-	CenteralCache CenteralCache::m_CenteralCache;
+	CentralCache CentralCache::m_CentralCache;
 
-	size_t CenteralCache::FetchRange(void*& start, void*& end, size_t batchNum, size_t size)
+	size_t CentralCache::FetchRange(void*& start, void*& end, size_t batchNum, size_t size)
 	{
-		size_t index = MemoryPool::Index(size);
-		size_t acturalNum = 1;
+		const size_t index = MemoryPool::Index(size);
+		size_t actualNum = 1;
 
 		{
 			std::unique_lock<std::mutex> lock(m_SpanLists[index].GetMutex());
@@ -33,19 +33,19 @@ namespace Spices {
 			while (i < batchNum - 1 && MemoryPool::PointerSpace(end) != nullptr)
 			{
 				end = MemoryPool::PointerSpace(end);
-				++acturalNum;
+				++actualNum;
 				++i;
 			}
 
 			s->m_FreeList = MemoryPool::PointerSpace(end);
-			s->m_UseCount += acturalNum;
+			s->m_UseCount += actualNum;
 			MemoryPool::PointerSpace(end) = nullptr;
 		}
 
-		return acturalNum;
+		return actualNum;
 	}
 
-	scl::span* CenteralCache::GetOneSpan(scl::span_list& list, size_t size)
+	scl::span* CentralCache::GetOneSpan(scl::span_list& list, size_t size)
 	{
 		/**
 		* @brief Find span in cc.
@@ -83,8 +83,8 @@ namespace Spices {
 		/**
 		* @brief get start/end pointer.
 		*/
-		char* start = (char*)(         s->m_PageId << MemoryPool::PAGE_SHIFT );
-		char* end   = (char*)(start + (s->m_NPages << MemoryPool::PAGE_SHIFT));
+		char* start = reinterpret_cast<char*>(         s->m_PageId << MemoryPool::PAGE_SHIFT );
+		char* end   = reinterpret_cast<char*>(start + (s->m_NPages << MemoryPool::PAGE_SHIFT));
 
 		s->m_FreeList = start;
 
@@ -119,9 +119,9 @@ namespace Spices {
 		return s;
 	}
 
-	void CenteralCache::ReleaseListToSpans(void* start, size_t size)
+	void CentralCache::ReleaseListToSpans(void* start, size_t size)
 	{
-		size_t index = MemoryPool::Index(size);
+		const size_t index = MemoryPool::Index(size);
 
 		{
 			std::unique_lock<std::mutex> lock(m_SpanLists[index].GetMutex());
