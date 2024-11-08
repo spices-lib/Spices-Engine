@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class Console;
 
@@ -38,7 +38,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiConsole() {};
+		virtual ~ImguiConsole() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

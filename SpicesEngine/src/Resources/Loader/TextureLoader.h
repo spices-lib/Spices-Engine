@@ -30,18 +30,18 @@ namespace Spices {
 		/**
 		* @brief Load image to a Texture2D object.
 		* @param[in] fileName Image path.
-		* @param[in out] outTexture Textrue2D pointer, only pass this to it.
+		* @param[in,out] outTexture Texture2D pointer, only pass this to it.
 		* Feel free for using row pointer here, it's very safe, for this API only called during Material.
-		* @return Returns true if load data succssfully.
+		* @return Returns true if load data successfully.
 		*/
 		static void Load(const std::string& fileName, Texture2D* outTexture);
 
 		/**
 		* @brief Load image to a Texture2DCube object.
 		* @param[in] fileName Image path.
-		* @param[in out] outTexture Texture2DCube pointer, only pass this to it.
+		* @param[in,out] outTexture Texture2DCube pointer, only pass this to it.
 		* Feel free for using row pointer here, it's very safe, for this API only called during Material.
-		* @return Returns true if load data succssfully.
+		* @return Returns true if load data successfully.
 		* @todo finish it.
 		*/
 		static void Load(const std::string& fileName, Texture2DCube* outTexture);

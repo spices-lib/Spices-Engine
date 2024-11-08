@@ -11,27 +11,27 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiFile;
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiEdit;
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiWindow;
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiCreateEntity;
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiHelp;
 
@@ -56,7 +56,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiMainMenu() {};
+		virtual ~ImguiMainMenu() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

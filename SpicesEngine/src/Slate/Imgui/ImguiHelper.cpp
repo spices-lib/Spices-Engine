@@ -1,6 +1,6 @@
 /**
-* @file ImguiGizmos.cpp.
-* @brief The ImguiGizmos Class Implementation.
+* @file ImguiHelper.cpp.
+* @brief The ImguiHelper Class Implementation.
 * @author Spices.
 */
 

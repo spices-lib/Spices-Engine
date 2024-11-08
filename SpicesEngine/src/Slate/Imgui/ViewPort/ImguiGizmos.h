@@ -36,7 +36,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiGizmos() {};
+		virtual ~ImguiGizmos() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
@@ -60,12 +60,12 @@ namespace Spices {
 		* @brief Is mouse is over gizmo.
 		* @return Returns true if it does.
 		*/
-		bool IsOver() { return ImGuizmo::IsOver(); };
+		bool IsOver() const { return ImGuizmo::IsOver(); };
 
 	private:
 
 		/**
-		* @brief Event Dispatcher target. Registy on Key Resized.
+		* @brief Event Dispatcher target. Registry on Key Resized.
 		* @param[in] e KeyPressedEvent.
 		* @return Returns true if need block the event.
 		*/

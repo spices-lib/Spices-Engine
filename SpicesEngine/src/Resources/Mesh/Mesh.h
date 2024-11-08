@@ -70,7 +70,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		* Init member variables.
-		* @param[in] meshPacks The meshpack that used for create mesh.
+		* @param[in] meshPacks The mesh pack that used for create mesh.
 		*/
 		Mesh(scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPacks);
 
@@ -80,7 +80,7 @@ namespace Spices {
 		virtual ~Mesh() = default;
 
 		/**
-		* @brief Call meshpacks Draw().
+		* @brief Call mesh packs Draw().
 		* @param[in] commandBuffer Which command buffer we want submit command.
 		* @param[in] func the function pointer used for bind material parameters.
 		*/
@@ -88,7 +88,7 @@ namespace Spices {
 		void Draw(VkCommandBuffer& commandBuffer, F func);
 
 		/**
-		* @brief Call meshpacks MeshDraw().
+		* @brief Call mesh packs MeshDraw().
 		* @param[in] commandBuffer Which command buffer we want submit command.
 		* @param[in] func the function pointer used for bind material parameters.
 		*/
@@ -102,8 +102,8 @@ namespace Spices {
 		inline scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; }
 
 		/**
-		* @brief Create all meshpack AS Input and return it.
-		* @return Returns all  meshpack AS Input.
+		* @brief Create all mesh pack AS Input and return it.
+		* @return Returns all  mesh pack AS Input.
 		*/
 		std::vector<VulkanRayTracing::BlasInput> CreateMeshPackASInput();
 

@@ -27,7 +27,7 @@ namespace Spices {
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImGui::GetStyle().Colors[ImGuiCol_WindowBg]);
 
-		ImGuiWindowFlags window_flags =
+		const ImGuiWindowFlags window_flags =
 			ImGuiWindowFlags_NoDecoration |
 			ImGuiWindowFlags_NoDocking |
 			ImGuiWindowFlags_AlwaysAutoResize |
@@ -36,7 +36,7 @@ namespace Spices {
 			ImGuiWindowFlags_NoNav |
 			ImGuiWindowFlags_NoMove;
 
-		ImVec2 StartPos = ImVec2(m_Owner->GetPanelPos().x + 5.0f, m_Owner->GetPanelPos().y + 5.0f);
+		const ImVec2 StartPos = ImVec2(m_Owner->GetPanelPos().x + 5.0f, m_Owner->GetPanelPos().y + 5.0f);
 		ImGui::SetNextWindowPos(StartPos);
 
 		bool open = true;
@@ -44,7 +44,7 @@ namespace Spices {
 
 		ImVec2 ItemSize = ImGuiH::GetLineItemSize() * 1.5f;
 		ItemSize.x *= 4.0f;
-		float offest = ImGui::GetStyle().WindowPadding.y;
+		const float offset = ImGui::GetStyle().WindowPadding.y;
 
 		if (ImGui::Button(ICON_MD_TUNE, ImGuiH::GetLineItemSize() * 1.5f))
 		{
@@ -157,7 +157,7 @@ namespace Spices {
 
 		if (m_OptionMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(offset, ItemSize.y + 2.0f + offset));
 
 			bool open;
 			
@@ -269,7 +269,7 @@ namespace Spices {
 	
 		if (m_RenderMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + offset, ItemSize.y + 2.0f + offset));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
@@ -368,7 +368,7 @@ namespace Spices {
 
 		if (m_ViewMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + ItemSize.x + 2.0f * offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(ItemSize.y + ItemSize.x + 2.0f * offset, ItemSize.y + 2.0f + offset));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
@@ -489,7 +489,7 @@ namespace Spices {
 
 		if (m_CameraMenuOn)
 		{
-			ImGui::SetNextWindowPos(StartPos + ImVec2(2.0f * ItemSize.y + ItemSize.x + 3.0f * offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(StartPos + ImVec2(2.0f * ItemSize.y + ItemSize.x + 3.0f * offset, ItemSize.y + 2.0f + offset));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);
@@ -515,7 +515,7 @@ namespace Spices {
 
 		if (m_LightMenuOn)
 		{
-			ImGui::SetNextWindowPos(NextPos + ImVec2(offest, ItemSize.y + 2.0f + offest));
+			ImGui::SetNextWindowPos(NextPos + ImVec2(offset, ItemSize.y + 2.0f + offset));
 
 			bool open;
 			ImGui::Begin("##", &open, window_flags);

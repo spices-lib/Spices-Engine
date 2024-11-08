@@ -14,7 +14,7 @@
 #include "Slate/Imgui/ImguiStage.h"
 #include "Slate/Imgui/ViewPort/ImguiViewport.h"
 #include "Slate/Imgui/MainMenu/ImguiMainMenu.h"
-#include "Slate/Imgui/ViewPort/ImguiFloattingInfo.h"
+#include "Imgui\ViewPort\ImguiFloatingInfo.h"
 #include "Slate/Imgui/ViewPort/ImguiGizmos.h"
 #include "Slate/Imgui/ImguiOperation.h"
 #include "Slate/Imgui/ImguiInfoBar.h"
@@ -47,13 +47,13 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		SlateRegister(const SlateRegister&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		SlateRegister& operator=(const SlateRegister&) = delete;
 
@@ -71,18 +71,18 @@ namespace Spices {
 		* @note This function is not in use now.
 		* @param[in] ts TimeStep.
 		*/
-		void OnUpdate(TimeStep& ts);
+		void OnUpdate(TimeStep& ts) const;
 
 		/**
 		*  @brief This function is called on SlateRenderer::Render.
 		*/
-		void OnRender();
+		void OnRender() const;
 
 		/**
 		* @brief This function will be called on global Event function pointer is called.
 		* @param[in] event The Specific Event Type.
 		*/
-		void OnEvent(Event& event);
+		void OnEvent(Event& event) const;
 
 		/**
 		* @breif Get Viewport Slate.
@@ -114,7 +114,7 @@ namespace Spices {
 		if (m_SlatesEventContainer.find(panelName) != m_SlatesEventContainer.end())
 		{
 			std::stringstream ss;
-			ss << panelName << " Slate already registed, please check your code again.";
+			ss << panelName << " Slate already register, please check your code again.";
 
 			SPICES_CORE_ERROR(ss.str());
 		}

@@ -34,12 +34,12 @@ namespace Spices {
 	/**
 	* @brief Const variable: Mesh File Confirm header staer.
 	*/
-	const char MeshLoaderSignSatrt[100] = "#ItisSpicesMeshSign: DataStart";
+	constexpr char MeshLoaderSignStart[100] = "#ItisSpicesMeshSign: DataStart";
 
 	/**
 	* @brief Const variable: Mesh File Confirm header over.
 	*/
-	const char MeshLoaderSignOver[100] = "#ItisSpicesMeshSign: DateOver";
+	constexpr char MeshLoaderSignOver[100] = "#ItisSpicesMeshSign: DateOver";
 
 	bool MeshLoader::Load(const std::string& fileName, MeshPack* outMeshPack)
 	{
@@ -91,7 +91,7 @@ namespace Spices {
 			(*outMeshPack->m_MeshResource.positions.attributes)[i].y =  attrib.vertices[3 * i + 1];
 			(*outMeshPack->m_MeshResource.positions.attributes)[i].z = -attrib.vertices[3 * i + 2];
 		}
-		if (attrib.vertices.size() == 0)
+		if (attrib.vertices.empty())
 		{
 			outMeshPack->m_MeshResource.positions.attributes->resize(1);
 
@@ -107,7 +107,7 @@ namespace Spices {
 			(*outMeshPack->m_MeshResource.normals.attributes)[i].y =  attrib.normals[3 * i + 1];
 			(*outMeshPack->m_MeshResource.normals.attributes)[i].z = -attrib.normals[3 * i + 2];
 		}
-		if (attrib.normals.size() == 0)
+		if (attrib.normals.empty())
 		{
 			outMeshPack->m_MeshResource.normals.attributes->resize(1);
 
@@ -123,7 +123,7 @@ namespace Spices {
 			(*outMeshPack->m_MeshResource.colors.attributes)[i].y = attrib.colors[3 * i + 1];
 			(*outMeshPack->m_MeshResource.colors.attributes)[i].z = attrib.colors[3 * i + 2];
 		}
-		if (attrib.colors.size() == 0)
+		if (attrib.colors.empty())
 		{
 			outMeshPack->m_MeshResource.colors.attributes->resize(1);
 
@@ -138,7 +138,7 @@ namespace Spices {
 			(*outMeshPack->m_MeshResource.texCoords.attributes)[i].x =        attrib.texcoords[2 * i + 0];
 			(*outMeshPack->m_MeshResource.texCoords.attributes)[i].y = 1.0f - attrib.texcoords[2 * i + 1];
 		}
-		if (attrib.texcoords.size() == 0)
+		if (attrib.texcoords.empty())
 		{
 			outMeshPack->m_MeshResource.texCoords.attributes->resize(1);
 
@@ -154,16 +154,16 @@ namespace Spices {
 
 			for (uint32_t i = 0; i < shape.mesh.indices.size() / 3; i++)
 			{
-				std::array<glm::uvec4, 3> vertexArray;
+				std::array<glm::uvec4, 3> vertexArray{};
 				for (uint32_t j = 0; j < 3; j++)
 				{
-					const auto& index = shape.mesh.indices[3 * i + j];
+					const auto& ind = shape.mesh.indices[3 * i + j];
 
 					vertexArray[j] = glm::uvec4(
-						index.vertex_index   == -1 ? 0 : index.vertex_index,
-						index.normal_index   == -1 ? 0 : index.normal_index,
-						index.vertex_index   == -1 ? 0 : index.vertex_index,
-						index.texcoord_index == -1 ? 0 : index.texcoord_index
+						ind.vertex_index   == -1 ? 0 : ind.vertex_index,
+						ind.normal_index   == -1 ? 0 : ind.normal_index,
+						ind.vertex_index   == -1 ? 0 : ind.vertex_index,
+						ind.texcoord_index == -1 ? 0 : ind.texcoord_index
 					);
 
 					if (verticesMap.count(vertexArray[j]) == 0)
@@ -206,7 +206,7 @@ namespace Spices {
 		return false;
 	}
 
-	bool MeshLoader::LoadFromSASSET(const std::string& fileName, MeshPack* outMeshPack)
+	bool MeshLoader::LoadFromSASSET(const std::string& fileName, const MeshPack* outMeshPack)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -235,7 +235,7 @@ namespace Spices {
 		char startSign[100];
 		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &startSign, &readed);
 
-		if (!StringLibrary::StringsEqual(startSign, MeshLoaderSignSatrt))
+		if (!StringLibrary::StringsEqual(startSign, MeshLoaderSignStart))
 		{
 			FileLibrary::FileLibrary_Close(&f);
 			return false;
@@ -306,7 +306,7 @@ namespace Spices {
 		return true;
 	}
 
-	bool MeshLoader::WriteSASSET(int folderIndex, const std::string& fileName, MeshPack* outMeshPack)
+	bool MeshLoader::WriteSASSET(int folderIndex, const std::string& fileName, const MeshPack* outMeshPack)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -321,36 +321,36 @@ namespace Spices {
 
 		uint64_t written = 0;
 
-		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignSatrt, &written);
+		FileLibrary::FileLibrary_Write(&f, sizeof(char) * 100, &MeshLoaderSignStart, &written);
 
-		uint32_t positionsCount = (uint32_t)outMeshPack->m_MeshResource.positions.attributes->size();
+		const uint32_t positionsCount = (uint32_t)outMeshPack->m_MeshResource.positions.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &positionsCount, &written);
 		
-		uint32_t normalsCount = (uint32_t)outMeshPack->m_MeshResource.normals.attributes->size();
+		const uint32_t normalsCount = (uint32_t)outMeshPack->m_MeshResource.normals.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &normalsCount, &written);
 
-		uint32_t colorsCount = (uint32_t)outMeshPack->m_MeshResource.colors.attributes->size();
+		const uint32_t colorsCount = (uint32_t)outMeshPack->m_MeshResource.colors.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &colorsCount, &written);
 
-		uint32_t texCoordsCount = (uint32_t)outMeshPack->m_MeshResource.texCoords.attributes->size();
+		const uint32_t texCoordsCount = (uint32_t)outMeshPack->m_MeshResource.texCoords.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &texCoordsCount, &written);
 
-		uint32_t verticesCount = (uint32_t)outMeshPack->m_MeshResource.vertices.attributes->size();
+		const uint32_t verticesCount = (uint32_t)outMeshPack->m_MeshResource.vertices.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &verticesCount, &written);
 
-		uint32_t primitivePointsCount = (uint32_t)outMeshPack->m_MeshResource.primitivePoints.attributes->size();
+		const uint32_t primitivePointsCount = (uint32_t)outMeshPack->m_MeshResource.primitivePoints.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &primitivePointsCount, &written);
 
-		uint32_t primitiveVerticesCount = (uint32_t)outMeshPack->m_MeshResource.primitiveVertices.attributes->size();
+		const uint32_t primitiveVerticesCount = (uint32_t)outMeshPack->m_MeshResource.primitiveVertices.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &primitiveVerticesCount, &written);
 		
-		uint32_t primitiveLocationsCount = (uint32_t)outMeshPack->m_MeshResource.primitiveLocations.attributes->size();
+		const uint32_t primitiveLocationsCount = (uint32_t)outMeshPack->m_MeshResource.primitiveLocations.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &primitiveLocationsCount, &written);
 
-		uint32_t meshletsCount = (uint32_t)outMeshPack->m_MeshResource.meshlets.attributes->size();
+		const uint32_t meshletsCount = (uint32_t)outMeshPack->m_MeshResource.meshlets.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &meshletsCount, &written);
 		
-		uint32_t lodsCount = (uint32_t)outMeshPack->m_MeshResource.lods.attributes->size();
+		const uint32_t lodsCount = (uint32_t)outMeshPack->m_MeshResource.lods.attributes->size();
 		FileLibrary::FileLibrary_Write(&f, sizeof(uint32_t), &lodsCount, &written);
 
 		FileLibrary::FileLibrary_Write(&f, sizeof(glm::vec3)  * positionsCount          , outMeshPack->m_MeshResource.positions.attributes          ->data(), &written);

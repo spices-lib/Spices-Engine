@@ -70,7 +70,7 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief Event Dispatcher target. Registy on Slate(Viewport) Resized.
+		* @brief Event Dispatcher target. Registry on Slate(Viewport) Resized.
 		* @param[in] event SlateResizeEvent.
 		* @return Returns true if need block the event.
 		*/

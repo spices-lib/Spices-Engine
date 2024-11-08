@@ -41,9 +41,9 @@ namespace Spices {
 			if (stages.empty())
 			{
 				std::stringstream ss;
-				ss << "Material: " << v->GetMaterial()->GetName() << " do not has vaild rchit shader.";
+				ss << "Material: " << v->GetMaterial()->GetName() << " do not has valid rchit shader.";
 
-				SPICES_CORE_ERROR(ss.str());
+				SPICES_CORE_ERROR(ss.str())
 			}
 
 			if (hitGroup.find(stages[0]) == hitGroup.end())

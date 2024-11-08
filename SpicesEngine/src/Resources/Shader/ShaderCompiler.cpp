@@ -52,7 +52,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << "Error compiling module - " << module.GetErrorMessage();
 
-			SPICES_CORE_ERROR(ss.str());
+			SPICES_CORE_ERROR(ss.str())
 		}
 		
 		/**

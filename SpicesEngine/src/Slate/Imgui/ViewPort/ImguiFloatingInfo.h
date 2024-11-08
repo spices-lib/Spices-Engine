@@ -1,6 +1,6 @@
 /**
-* @file ImguiFloattingInfo.h
-* @brief The ImguiFloattingInfo Class Definitions.
+* @file ImguiFloatingInfo.h
+* @brief The ImguiFloatingInfo Class Definitions.
 * @author Spices.
 */
 
@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/**
-	* @brief The ImguiFloattingInfo Class.
+	* @brief The ImguiFloatingInfo Class.
 	* This class defines how to render a viewport info.
 	*/
-	class ImguiFloattingInfo : public ImguiSlate
+	class ImguiFloatingInfo : public ImguiSlate
 	{
 	public:
 
@@ -24,7 +24,7 @@ namespace Spices {
 		* @param[in] frameInfo The Frame Date that in use.
 		* @param[in] owner The slate Owner.
 		*/
-		ImguiFloattingInfo(
+		ImguiFloatingInfo(
 			const std::string& panelName, 
 			FrameInfo&         frameInfo, 
 			ImguiSlate*        owner
@@ -36,7 +36,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiFloattingInfo() {};
+		virtual ~ImguiFloatingInfo() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

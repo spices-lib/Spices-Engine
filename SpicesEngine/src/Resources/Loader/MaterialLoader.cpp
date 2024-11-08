@@ -32,15 +32,15 @@ namespace Spices {
 	/**
 	* @brief Const variable: Material File Confirm header start.
 	*/
-	const char LoaderSignSatrt[100] = "#ItisSpicesMaterialSign: DataStart";
+	constexpr char LoaderSignStart[100] = "#ItisSpicesMaterialSign: DataStart";
 
 	/**
 	* @brief Const variable: Material File Confirm header over.
 	*/
-	const char LoaderSignOver[100] = "#ItisSpicesMaterialSign: DateOver";
+	constexpr char LoaderSignOver[100] = "#ItisSpicesMaterialSign: DateOver";
 
 	/**
-	* @brief Serialze Shader Config.
+	* @brief Serialize Shader Config.
 	* @param[in,out] out YAML Emitter.
 	* @param[in] shaderStage What Stage shader use.
 	* @param[in] shaderPath Shader path(short path).
@@ -52,7 +52,7 @@ namespace Spices {
 	);
 
 	/**
-	* @brief Serialze Texture Config.
+	* @brief Serialize Texture Config.
 	* @param[in,out] out YAML Emitter.
 	* @param[in] name Texture name.
 	* @param[in] param Texture parameter.
@@ -122,7 +122,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << filePath << ":  Not find a Material Node.";
 			
-			SPICES_CORE_ERROR(ss.str());
+			SPICES_CORE_ERROR(ss.str())
 			return false;
 		}
 
@@ -131,7 +131,7 @@ namespace Spices {
 		/**
 		 * @breif Try get shaders this material used.
 		 */
-		auto& shaders = data["Shaders"];
+		auto shaders = data["Shaders"];
 		if (shaders)
 		{
 			for (auto& shader : shaders)
@@ -144,8 +144,8 @@ namespace Spices {
 				else
 				{
 					std::stringstream ss;
-					ss << "Stage/Path not finded in " << fileName;
-					SPICES_CORE_ERROR(ss.str());
+					ss << "Stage/Path not found in " << fileName;
+					SPICES_CORE_ERROR(ss.str())
 				}
 			}
 		}
@@ -154,14 +154,14 @@ namespace Spices {
 			std::stringstream ss;
 			ss << filePath << ":  Not find a Shaders Node.";
 			
-			SPICES_CORE_ERROR(ss.str());
+			SPICES_CORE_ERROR(ss.str())
 			return false;
 		}
 
 		/**
 		 * @breif Try get textures this material used.
 		 */
-		auto& textures = data["Textures"];
+		auto textures = data["Textures"];
 		if (textures)
 		{
 			for (auto& texture : textures)
@@ -174,8 +174,8 @@ namespace Spices {
 				else
 				{
 					std::stringstream ss;
-					ss << "Name/Value not finded in " << fileName;
-					SPICES_CORE_ERROR(ss.str());
+					ss << "Name/Value not found in " << fileName;
+					SPICES_CORE_ERROR(ss.str())
 				}
 			}
 		}
@@ -183,7 +183,7 @@ namespace Spices {
 		/**
 		 * @brief Try get parameters this material used.
 		 */
-		auto& parameters = data["Parameters"];
+		auto parameters = data["Parameters"];
 		if(parameters)
 		{
 			for (auto& parameter : parameters)
@@ -198,8 +198,8 @@ namespace Spices {
 				else
 				{
 					std::stringstream ss;
-					ss << "Name/Value not finded in " << fileName;
-					SPICES_CORE_ERROR(ss.str());
+					ss << "Name/Value not found in " << fileName;
+					SPICES_CORE_ERROR(ss.str())
 				}
 
 				if (parameter["MinValue"].IsDefined())
@@ -240,12 +240,12 @@ namespace Spices {
 		FileHandle f;
 		FileLibrary::FileLibrary_Open(filePath.c_str(), FILE_MODE_READ, true, &f);
 
-		uint64_t readed = 0;
+		uint64_t read = 0;
 
 		char startSign[100];
-		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &startSign, &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &startSign, &read);
 
-		if (!StringLibrary::StringsEqual(startSign, LoaderSignSatrt))
+		if (!StringLibrary::StringsEqual(startSign, LoaderSignStart))
 		{
 			FileLibrary::FileLibrary_Close(&f);
 			return false;
@@ -254,7 +254,7 @@ namespace Spices {
 		// TODO: ReadData
 
 		char overSign[100];
-		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &readed);
+		FileLibrary::FileLibrary_Read(&f, sizeof(char) * 100, &overSign, &read);
 
 		if (!StringLibrary::StringsEqual(overSign, LoaderSignOver))
 		{

@@ -1,5 +1,5 @@
 /**
-* @file ImguiGizmos.cpp.
+* @file ImguiGBufferVisualizer.cpp.
 * @brief The ImguiGizmos Class Implementation.
 * @author Spices.
 */
@@ -139,11 +139,11 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
-        VkDescriptorImageInfo* albedoInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Albedo"     });
-        VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal"     });
-        VkDescriptorImageInfo* roughnessInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Roughness"  });
-        VkDescriptorImageInfo* metallicInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Metallic"   });
+        const VkDescriptorImageInfo* sceneColorInfo = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
+        const VkDescriptorImageInfo* albedoInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Albedo"     });
+        const VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal"     });
+        const VkDescriptorImageInfo* roughnessInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Roughness"  });
+        const VkDescriptorImageInfo* metallicInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Metallic"   });
 
         m_GBufferID.SceneColorID  = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
         m_GBufferID.AlbedoID      = ImGui_ImplVulkan_AddTexture(albedoInfo->sampler     , albedoInfo->imageView     , albedoInfo->imageLayout      );

@@ -26,7 +26,7 @@ namespace Spices {
         {
             SPICES_PROFILE_ZONEN("ImguiDisplayOptions::Grid");
 
-            auto material = ResourcePool<Material>::Load<Material>("ViewportGridRenderer.ViewportGrid.Default");
+            const auto material = ResourcePool<Material>::Load<Material>("ViewportGridRenderer.ViewportGrid.Default");
             const float columeWidth = ImGuiH::GetLineItemSize().x * 10.0f;
 
             ImGuiH::DrawTreeTitle("Grid", nullptr, [&]() { 

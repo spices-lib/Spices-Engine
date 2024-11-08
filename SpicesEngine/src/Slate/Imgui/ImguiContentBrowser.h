@@ -12,7 +12,7 @@ namespace Spices {
 
 	/**
 	* @brief The ImguiContentBrowser Class.
-	* This class defines how to render a ContentBroswer.
+	* This class defines how to render a Content Browser.
 	*/
 	class ImguiContentBrowser : public ImguiSlate
 	{
@@ -49,6 +49,6 @@ namespace Spices {
 		/**
 		* @brief This interface is called On Global Event Function Pointer is called.
 		*/
-		virtual void OnEvent(Event& event) override {};
+		virtual void OnEvent(Event& event) override {}
 	};
 }

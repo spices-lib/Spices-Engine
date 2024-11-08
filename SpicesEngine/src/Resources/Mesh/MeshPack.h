@@ -162,7 +162,7 @@ namespace Spices {
 		/**
 		* @brief Copy a MeshDesc from this.
 		*/
-		MeshDesc Copy();
+		MeshDesc Copy() const;
 
 		/**
 		* @brief Get m_Buffer's Address.
@@ -278,19 +278,19 @@ namespace Spices {
 		* @brief Bind VBO and EBO.
 		* @param[in] commandBuffer Which command buffer we will submit commands.
 		*/
-		void OnBind(VkCommandBuffer& commandBuffer) const;
+		void OnBind(const VkCommandBuffer& commandBuffer) const;
 
 		/**
 		* @brief Draw indexed.
 		* @param[in] commandBuffer Which command buffer we will submit commands.
 		*/
-		void OnDraw(VkCommandBuffer& commandBuffer) const;
+		void OnDraw(const VkCommandBuffer& commandBuffer) const;
 
 		/**
 		* @brief Draw Mesh Tasks.
 		* @param[in] commandBuffer Which command buffer we will submit commands.
 		*/
-		void OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const;
+		void OnDrawMeshTasks(const VkCommandBuffer& commandBuffer) const;
 
 		/**
 		* @brief Get Meshlets array.

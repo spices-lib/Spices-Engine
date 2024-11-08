@@ -10,7 +10,7 @@
 
 namespace Spices {
 
-	void SlateRegister::OnUpdate(TimeStep& ts)
+	void SlateRegister::OnUpdate(TimeStep& ts) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -23,7 +23,7 @@ namespace Spices {
 		}
 	}
 
-	void SlateRegister::OnRender()
+	void SlateRegister::OnRender() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -36,7 +36,7 @@ namespace Spices {
 		}
 	}
 
-	void SlateRegister::OnEvent(Event& event)
+	void SlateRegister::OnEvent(Event& event) const
 	{
 		SPICES_PROFILE_ZONE;
 

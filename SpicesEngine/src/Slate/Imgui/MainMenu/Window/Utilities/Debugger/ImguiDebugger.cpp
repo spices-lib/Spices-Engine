@@ -1,6 +1,6 @@
 /**
-* @file ImguiGPUProfilerHUD.cpp.
-* @brief The ImguiGPUProfilerHUD Class Implementation.
+* @file ImguiDebugger.cpp.
+* @brief The ImguiDebugger Class Implementation.
 * @author Spices.
 */
 

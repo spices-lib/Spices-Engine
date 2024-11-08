@@ -81,7 +81,7 @@ namespace Spices {
 		m_Buffer->WriteToBuffer(this);
 	}
 
-	MeshDesc MeshDesc::Copy()
+	MeshDesc MeshDesc::Copy() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -92,13 +92,13 @@ namespace Spices {
 	}
 
 	MeshPack::MeshPack(const std::string& name, bool instanced)
-		: m_UUID(UUID())
-		, m_MeshPackName(name)
+		: m_MeshPackName(name)
 		, m_Instanced(instanced)
 		, m_NTasks(0)
+		, m_UUID(UUID())
 	{}
 
-	void MeshPack::OnBind(VkCommandBuffer& commandBuffer) const
+	void MeshPack::OnBind(const VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -108,12 +108,12 @@ namespace Spices {
 		vkCmdBindIndexBuffer(commandBuffer, m_MeshResource.primitivePoints.buffer->Get(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
-	void MeshPack::OnDraw(VkCommandBuffer& commandBuffer) const
+	void MeshPack::OnDraw(const VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		int lodLevel = 0;
-		auto ptr = m_Material->GetConstantParams().find_value("lod");
+		const auto ptr = m_Material->GetConstantParams().find_value("lod");
 		if (ptr)
 		{
 			lodLevel = std::any_cast<int>(ptr->value.paramValue);
@@ -124,7 +124,7 @@ namespace Spices {
 		vkCmdDrawIndexed(commandBuffer, lod0.nPrimitives * 3, 1, lod0.primVertexOffset * 3, 0, 0);
 	}
 	
-	void MeshPack::OnDrawMeshTasks(VkCommandBuffer& commandBuffer) const
+	void MeshPack::OnDrawMeshTasks(const VkCommandBuffer& commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -135,7 +135,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		auto ptr = ResourcePool<MeshPack>::Load(m_MeshPackName);
+		const auto ptr = ResourcePool<MeshPack>::Load(m_MeshPackName);
 
 		if (m_Instanced || !ptr) return false;
 
@@ -170,9 +170,9 @@ namespace Spices {
 		if(!m_HitShaderHandle.has_value())
 		{
 			std::stringstream ss;
-			ss << "MeshPack do not has a vaild material handle.";
+			ss << "MeshPack do not has a valid material handle.";
 			
-			SPICES_CORE_ERROR(ss.str());
+			SPICES_CORE_ERROR(ss.str())
 		}
 		
 		return m_HitShaderHandle.value();
@@ -185,9 +185,9 @@ namespace Spices {
 		if (!m_ShaderGroupHandle.has_value())
 		{
 			std::stringstream ss;
-			ss << "MeshPack do not has a vaild material handle.";
+			ss << "MeshPack do not has a valid material handle.";
 
-			SPICES_CORE_ERROR(ss.str());
+			SPICES_CORE_ERROR(ss.str())
 		}
 
 		return m_ShaderGroupHandle.value();
@@ -335,7 +335,7 @@ namespace Spices {
 
 		if (MeshPack::OnCreatePack(isCreateBuffer)) return true;
 
-		auto ApplyMatrixInPositions = [&](auto& positions, const glm::mat4 matrix) {
+		auto ApplyMatrixInPositions = [&](auto& positions, const glm::mat4& matrix) {
 			
 			for (uint64_t i = 0; i < positions.size(); i++)
 			{
@@ -344,7 +344,7 @@ namespace Spices {
 			}
 		};
 
-		auto ApplyMatrixInNormals = [&](auto& normals, const glm::mat4 matrix) {
+		auto ApplyMatrixInNormals = [&](auto& normals, const glm::mat4& matrix) {
 
 			for (uint64_t i = 0; i < normals.size(); i++)
 			{
@@ -409,14 +409,14 @@ namespace Spices {
 		{
 			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
+			const glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f));
 
 			auto& resources = pack.GetResource();
 
-			auto positions = resources.positions.attributes;
+			const auto positions = resources.positions.attributes;
 			ApplyMatrixInPositions(*positions, tran);
 
-			auto normals = resources.normals.attributes;
+			const auto normals = resources.normals.attributes;
 			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
 
 			CopyToVertices(resources);
@@ -426,15 +426,15 @@ namespace Spices {
 		{
 			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
-			glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
+			const glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
+			const glm::mat4 rot = glm::toMat4(glm::quat({0.0f, glm::radians(180.0f), 0.0f}));
 
 			auto& resources = pack.GetResource();
 
-			auto positions = resources.positions.attributes;
+			const auto positions = resources.positions.attributes;
 			ApplyMatrixInPositions(*positions, tran * rot);
 
-			auto normals = resources.normals.attributes;
+			const auto normals = resources.normals.attributes;
 			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
 
 			CopyToVertices(resources);			
@@ -444,15 +444,15 @@ namespace Spices {
 		{
 			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
+			const glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+			const glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(-90.0f), 0.0f }));
 
 			auto& resources = pack.GetResource();
 
-			auto positions = resources.positions.attributes;
+			const auto positions = resources.positions.attributes;
 			ApplyMatrixInPositions(*positions, tran * rot);
 
-			auto normals = resources.normals.attributes;
+			const auto normals = resources.normals.attributes;
 			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
 
 			CopyToVertices(resources);			
@@ -462,15 +462,15 @@ namespace Spices {
 		{
 			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
+			const glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f));
+			const glm::mat4 rot = glm::toMat4(glm::quat({ 0.0f, glm::radians(90.0f), 0.0f }));
 
 			auto& resources = pack.GetResource();
 
-			auto positions = resources.positions.attributes;
+			const auto positions = resources.positions.attributes;
 			ApplyMatrixInPositions(*positions, tran * rot);
 
-			auto normals = resources.normals.attributes;
+			const auto normals = resources.normals.attributes;
 			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
 
 			CopyToVertices(resources);
@@ -480,15 +480,15 @@ namespace Spices {
 		{
 			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
+			const glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
+			const glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(-90.0f), 0.0f, 0.0f }));
 
 			auto& resources = pack.GetResource();
 
-			auto positions = resources.positions.attributes;
+			const auto positions = resources.positions.attributes;
 			ApplyMatrixInPositions(*positions, tran * rot);
 
-			auto normals = resources.normals.attributes;
+			const auto normals = resources.normals.attributes;
 			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
 
 			CopyToVertices(resources);
@@ -498,15 +498,15 @@ namespace Spices {
 		{
 			PlanePack pack(m_Rows, m_Columns);
 			pack.OnCreatePack(false);
-			glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
-			glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
+			const glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+			const glm::mat4 rot = glm::toMat4(glm::quat({ glm::radians(90.0f), 0.0f, 0.0f }));
 
 			auto& resources = pack.GetResource();
 
-			auto positions = resources.positions.attributes;
+			const auto positions = resources.positions.attributes;
 			ApplyMatrixInPositions(*positions, tran * rot);
 
-			auto normals = resources.normals.attributes;
+			const auto normals = resources.normals.attributes;
 			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
 
 			CopyToVertices(resources);

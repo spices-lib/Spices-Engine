@@ -5,7 +5,7 @@
 */
 
 #include "Pchheader.h"
-#include "ImguiFloattingInfo.h"
+#include "ImguiFloatingInfo.h"
 
 #include "Systems/SlateSystem.h"
 #include "World/World/World.h"
@@ -14,18 +14,18 @@
 
 namespace Spices {
 
-    void ImguiFloattingInfo::OnRender()
+    void ImguiFloatingInfo::OnRender()
     {
         SPICES_PROFILE_ZONE;
 
-        ImVec2 work_pos  = m_Owner->GetPanelPos();
-        ImVec2 work_size = m_Owner->GetPanelSize();
+        const ImVec2 work_pos  = m_Owner->GetPanelPos();
+        const ImVec2 work_size = m_Owner->GetPanelSize();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
         static int location = 1;
-        ImGuiIO& io = ImGui::GetIO();
+        const ImGuiIO& io = ImGui::GetIO();
         ImGuiWindowFlags window_flags =
             ImGuiWindowFlags_NoDecoration        | 
             ImGuiWindowFlags_NoDocking           | 

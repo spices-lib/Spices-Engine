@@ -36,7 +36,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiPreferences() = default;
+		virtual ~ImguiPreferences() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

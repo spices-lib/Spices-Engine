@@ -19,7 +19,7 @@ namespace Spices {
 	{
 		/**
 		* @brief Constructor Function.
-		* Load the icon file immdeiatelly.
+		* Load the icon file immediately.
 		* @param[in] iconPath The file path of icon.
 		*/
 		WindowIcon(const std::string& iconPath)

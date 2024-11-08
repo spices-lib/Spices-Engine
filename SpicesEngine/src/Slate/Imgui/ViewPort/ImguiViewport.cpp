@@ -9,7 +9,7 @@
 
 #include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Systems/SlateSystem.h"
-#include "ImguiFloattingInfo.h"
+#include "ImguiFloatingInfo.h"
 #include "ImGuizmo.h"
 #include "ImguiViewportToolBar.h"
 
@@ -40,7 +40,7 @@ namespace Spices {
         /**
         * @brief Instance a FloattingInfo.
         */
-        m_FloattingInfo = SlateSystem::GetRegister()->Register<ImguiFloattingInfo>(false, "FloattingInfo", this);
+        m_FloatingInfo = SlateSystem::GetRegister()->Register<ImguiFloatingInfo>(false, "FloatingInfo", this);
 
 
         /**
@@ -81,7 +81,7 @@ namespace Spices {
         /**
         * @brief Render FloatingInfo.
         */
-        m_FloattingInfo->OnRender();
+        m_FloatingInfo->OnRender();
 
         /**
         * @brief Render Gizmos.

@@ -16,6 +16,7 @@ namespace Spices {
         FrameInfo&         frameInfo
     )
         : ImguiSlate(panelName, frameInfo)
+        , m_ViewportVisible()
     {}
 
     void ImguiViewportMenu::OnRender()

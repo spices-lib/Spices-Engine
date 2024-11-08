@@ -23,7 +23,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiViewportToolBar() {};
+		virtual ~ImguiViewportToolBar() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
@@ -39,7 +39,7 @@ namespace Spices {
 		/**
 		* @brief This interface is called On Global Event Function Pointer is called.
 		*/
-		virtual void OnEvent(Event& event) {};
+		virtual void OnEvent(Event& event) override {}
 
 	private:
 

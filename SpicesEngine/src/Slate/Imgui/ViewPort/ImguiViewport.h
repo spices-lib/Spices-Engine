@@ -11,17 +11,17 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
-	class ImguiFloattingInfo;
+	class ImguiFloatingInfo;
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiGizmos;
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiViewportToolBar;
 
@@ -46,13 +46,13 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiViewport() {};
+		virtual ~ImguiViewport() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnUpdate(TimeStep& ts) override {};
+		virtual void OnUpdate(TimeStep& ts) override {}
 
 		/**
 		* @brief This interface is called On SlateRenderer Render.
@@ -77,7 +77,7 @@ namespace Spices {
 
 		/**
 		* @brief Get Mouse Position Relative Viewport(Might be negative value).
-		* @return Returns the pair of PostionX, PostionY.
+		* @return Returns the pair of Position X, Position Y.
 		*/
 		std::pair<uint32_t, uint32_t> GetMousePosInViewport();
 
@@ -85,19 +85,19 @@ namespace Spices {
 		* @brief Get Gizmo Shared Pointer.
 		* @return Returns the Gizmo Shared Pointer.
 		*/
-		inline std::shared_ptr<ImguiGizmos> GetGizmo() { return m_Gizmos; };
+		inline std::shared_ptr<ImguiGizmos> GetGizmo() { return m_Gizmos; }
 
 	private:
 
 		/**
-		* @brief Event Dispatcher target. Registy on Slate(Viewport) Resized.
+		* @brief Event Dispatcher target. Registry on Slate(Viewport) Resized.
 		* @param[in] event SlateResizeEvent.
 		* @return Returns true if need block the event.
 		*/
 		bool OnSlateResize(SlateResizeEvent& event);
 
 		/**
-		* @brief Event Dispatcher target. Registy on Windows Resized.
+		* @brief Event Dispatcher target. Registry on Windows Resized.
 		* @param[in] event WindowResizeOverEvent.
 		* @return Returns true if need block the event.
 		*/
@@ -111,9 +111,9 @@ namespace Spices {
 		ImTextureID m_ViewportID;
 
 		/**
-		* @brief The shared pointer of ImguiFloattingInfo.
+		* @brief The shared pointer of ImguiFloatingInfo.
 		*/
-		std::shared_ptr<ImguiFloattingInfo> m_FloattingInfo;
+		std::shared_ptr<ImguiFloatingInfo> m_FloatingInfo;
 
 		/**
 		* @brief The shared pointer of ImguiGizmos.

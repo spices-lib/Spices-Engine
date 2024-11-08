@@ -10,7 +10,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of material render options.
+	* @brief Wrapper of material render options.
 	*/
 	class MaterialProperties
 	{
@@ -26,7 +26,7 @@ namespace Spices {
 		*/
 		virtual ~MaterialProperties() = default;
 
-		bool bTwoSided;            // Enablerender two sides.
+		bool bTwoSided;            // Enable render two sides.
 		bool bCastShadow;          // Enable cast shadow.
 		bool bReceiveShadow;       // Enable receive shadow.
 		bool bWireFrame;           // Enable wireframe render.

@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiVideoMemoryRuntimeHUD;
 	class ImguiGPURuntimeProfilerHUD;

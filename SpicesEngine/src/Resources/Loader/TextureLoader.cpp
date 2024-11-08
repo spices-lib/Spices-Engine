@@ -53,7 +53,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
+		const std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
 
 		for (auto& it : ResourceSystem::GetSearchFolder())
 		{
@@ -131,7 +131,7 @@ namespace Spices {
 				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 			);
 
-			std::vector<VkMemoryToImageCopyEXT> copys;
+			std::vector<VkMemoryToImageCopyEXT> copies;
 			for (uint32_t mip_level = 0; mip_level < texture->numLevels; mip_level++)
 			{
 				VkMemoryToImageCopyEXT                       memoryCopy{};
@@ -145,13 +145,13 @@ namespace Spices {
 				memoryCopy.imageExtent.depth               = 1;
 				memoryCopy.pHostPointer                    = texture->pData + Transcoder::GetMipmapOffset(texture, mip_level);
 
-				copys.push_back(memoryCopy);
+				copies.push_back(memoryCopy);
 			}
 
 			/**
 			* @brief Copy Memory to Image.
 			*/
-			resourceptr->CopyMemoryToImageHost(copys);
+			resourceptr->CopyMemoryToImageHost(copies);
 		}
 		else
 		{
@@ -244,9 +244,9 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
-		std::string filePath = it + defaultTexturePath + fileName;
-		std::string binPath  = it + binTexturePath + splitString[0] + ".ktx";
+		const std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
+		const std::string filePath = it + defaultTexturePath + fileName;
+		const std::string binPath  = it + binTexturePath + splitString[0] + ".ktx";
 
 		/**
 		* @brief Load Texture data.
@@ -274,7 +274,7 @@ namespace Spices {
 		resourceptr->m_MipLevels   = static_cast<uint32_t>(std::floor(std::log2(std::max(resourceptr->m_Width, resourceptr->m_Height)))) + 1;	
 		
 		VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT;  // Can be Used for Sample
-		bool hostCopy = VulkanImage::IsHostCopyable(resourceptr->m_VulkanState, VK_FORMAT_R8G8B8A8_UNORM);
+		const bool hostCopy = VulkanImage::IsHostCopyable(resourceptr->m_VulkanState, VK_FORMAT_R8G8B8A8_UNORM);
 		usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 		if (hostCopy) usage |= VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT;
 
@@ -310,7 +310,7 @@ namespace Spices {
 		* @brief Get Texture bytes.
 		* @note 4 means 4 channels per texel, 1 means 1 bytes per texel channel.(RGBA8 Format support only)
 		*/
-		VkDeviceSize imageSize = static_cast<uint64_t>(resourceptr->m_Width * resourceptr->m_Height * 4 * 1);
+		const VkDeviceSize imageSize = static_cast<uint64_t>(resourceptr->m_Width * resourceptr->m_Height * 4 * 1);
 
 		/**
 		* @brief Instance a staginBuffer.
@@ -385,13 +385,13 @@ namespace Spices {
 			region.imageOffset.x                   = 0;
 			region.imageOffset.y                   = 0;
 			region.imageExtent                     = { w, h, 1 };
-		
-			uint32_t size = w * h * 4;
+
+			const uint32_t size = w * h * 4;
 		
 			/**
 			* @brief The temp buffer image date copy to.
 			*/
-			VulkanBuffer stagingbuffer(
+			VulkanBuffer copyStagingBuffer(
 				resourceptr->m_VulkanState,
 				"StagingBuffer",
 				size,
@@ -399,9 +399,9 @@ namespace Spices {
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 			);
 			
-			resourceptr->CopyImageToBuffer(stagingbuffer.Get(), { region });
+			resourceptr->CopyImageToBuffer(copyStagingBuffer.Get(), { region });
 	
-			stagingbuffer.WriteFromBuffer(reinterpret_cast<void*>(data.data()));
+			copyStagingBuffer.WriteFromBuffer(reinterpret_cast<void*>(data.data()));
 		};
 
 		auto hostCopyF = [&](uint32_t w, uint32_t h, int mip, std::vector<unsigned char>& data) {
@@ -423,11 +423,11 @@ namespace Spices {
 		};
 
 		ktxTexture2* ktxTexture = Transcoder::CreateKTX2Texture(resourceptr->m_Width, resourceptr->m_Height);
-		for (int i = 0; i < resourceptr->m_MipLevels; i++)
+		for (uint32_t i = 0; i < resourceptr->m_MipLevels; i++)
 		{
-			uint32_t w      = std::max(1, resourceptr->m_Width  >> resourceptr->m_MipLevels - 1 - i);
-			uint32_t h      = std::max(1, resourceptr->m_Height >> resourceptr->m_MipLevels - 1 - i);
-			uint32_t size   = w * h * 4;
+			const uint32_t w      = std::max(1, resourceptr->m_Width  >> resourceptr->m_MipLevels - 1 - i);
+			const uint32_t h      = std::max(1, resourceptr->m_Height >> resourceptr->m_MipLevels - 1 - i);
+			const uint32_t size   = w * h * 4;
 
 			std::vector<unsigned char> data;
 			data.resize(size);

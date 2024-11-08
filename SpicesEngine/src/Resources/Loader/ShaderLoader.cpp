@@ -39,7 +39,7 @@ namespace Spices {
 		if (!isFind)
 		{
 			std::stringstream ss;
-			ss << "Shader: " << fileName << "file is not finded";
+			ss << "Shader: " << fileName << "file is not found";
 
 			SPICES_CORE_WARN(ss.str());
 

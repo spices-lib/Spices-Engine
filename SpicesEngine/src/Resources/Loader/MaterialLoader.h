@@ -17,7 +17,7 @@ namespace Spices {
 	/**
 	* @brief This enum defines tree types of material file.
 	* @note But not in use now.
-	* @todo If enable this enum, cuse a conflict.
+	* @todo If enable this enum, cause a conflict.
 	*/
 	
 	//enum MaterialExtension

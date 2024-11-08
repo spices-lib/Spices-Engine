@@ -146,7 +146,7 @@ namespace Spices {
 		uint64_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.get_bytes();
 		if (size == 0)
 		{
-			std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
+			const std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
 			auto renderer = RendererManager::GetRenderer(sv[0]);
 			renderer->RegistryMaterial(m_MaterialPath, sv[1]);
 
@@ -184,10 +184,10 @@ namespace Spices {
 				*/
 				if (v.textureType == "Texture2D")
 				{
-					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
+					const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
 					v.index = BindLessTextureManager::Registry(v.texturePath);
 
-					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
+					const auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
 
 					/**
 					* @brief Instance a VkWriteDescriptorSet.

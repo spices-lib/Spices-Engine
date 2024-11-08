@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class ImguiGBufferVisualizer;
 	class ImguiVirtualGeometryVisualizer;
@@ -37,7 +37,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiVisualizer() {};
+		virtual ~ImguiVisualizer() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
