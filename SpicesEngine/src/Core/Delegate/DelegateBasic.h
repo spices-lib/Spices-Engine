@@ -8,9 +8,7 @@
 #include "Core/Core.h"
 #include "Core/Container/LinkedUnorderedMap.h"
 
-#include <queue>
 #include <functional>
-#include <future>
 
 namespace Spices {
 
@@ -42,13 +40,13 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Delegate_Basic(const Delegate_Basic&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Delegate_Basic& operator=(const Delegate_Basic&) = delete;
 
@@ -70,7 +68,7 @@ namespace Spices {
 		* @brief Get size of Agents.
 		* @return Returns the size of Agents.
 		*/
-		uint32_t size() { return m_Agents.size(); }
+		size_t size() { return m_Agents.size(); }
 
 		/**
 		* @brief Execute all function pointer. 
@@ -120,6 +118,8 @@ namespace Spices {
 		* @brief Erase from map.
 		*/
 		m_Agents.erase(*addr);
+
+		return true;
 	}
 
 	template<typename ...Args>

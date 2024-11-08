@@ -76,7 +76,7 @@ namespace Spices {
         /**
         * @brief Create shader hash for the shader.
         */
-        const GFSDK_Aftermath_SpirvCode shader{ spirv.data(), uint32_t(spirv.size()) };
+        const GFSDK_Aftermath_SpirvCode shader{ spirv.data(), static_cast<uint32_t>(spirv.size()) };
         GFSDK_Aftermath_ShaderBinaryHash shaderHash;
         AFTERMATH_CHECK_ERROR(GFSDK_Aftermath_GetShaderHashSpirv(
             GFSDK_Aftermath_Version_API ,
@@ -113,8 +113,8 @@ namespace Spices {
         * @brief Generate shader debug name.
         */
         GFSDK_Aftermath_ShaderDebugName debugName;
-        const GFSDK_Aftermath_SpirvCode shader{ data.data(), uint32_t(data.size()) };
-        const GFSDK_Aftermath_SpirvCode strippedShader{ strippedData.data(), uint32_t(strippedData.size()) };
+        const GFSDK_Aftermath_SpirvCode shader{ data.data(), static_cast<uint32_t>(data.size()) };
+        const GFSDK_Aftermath_SpirvCode strippedShader{ strippedData.data(), static_cast<uint32_t>(strippedData.size()) };
         AFTERMATH_CHECK_ERROR(GFSDK_Aftermath_GetShaderDebugNameSpirv(
             GFSDK_Aftermath_Version_API ,
             &shader                     ,
@@ -137,8 +137,8 @@ namespace Spices {
         * @brief Generate shader debug name.
         */
         GFSDK_Aftermath_ShaderDebugName debugName;
-        const GFSDK_Aftermath_SpirvCode shader{ spirv.data(), uint32_t(spirv.size()) };
-        const GFSDK_Aftermath_SpirvCode strippedShader{ strippedSpirv.data(), uint32_t(strippedSpirv.size()) };
+        const GFSDK_Aftermath_SpirvCode shader{ spirv.data(), static_cast<uint32_t>(spirv.size()) };
+        const GFSDK_Aftermath_SpirvCode strippedShader{ strippedSpirv.data(), static_cast<uint32_t>(strippedSpirv.size()) };
         AFTERMATH_CHECK_ERROR(GFSDK_Aftermath_GetShaderDebugNameSpirv(
             GFSDK_Aftermath_Version_API ,
             &shader                     ,
@@ -160,7 +160,7 @@ namespace Spices {
         /**
         * @brief Find shader binary data for the shader hash.
         */
-        auto i_shader = m_ShaderBinaries.find(shaderHash);
+        const auto i_shader = m_ShaderBinaries.find(shaderHash);
         if (i_shader == m_ShaderBinaries.end())
         {
             /**
@@ -180,7 +180,7 @@ namespace Spices {
         /**
         * @brief Find shader binary for the shader debug name.
         */
-        auto i_shader = m_ShaderBinariesWithDebugInfo.find(shaderDebugName);
+        const auto i_shader = m_ShaderBinariesWithDebugInfo.find(shaderDebugName);
         if (i_shader == m_ShaderBinariesWithDebugInfo.end())
         {
             /**

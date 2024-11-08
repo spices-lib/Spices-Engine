@@ -10,7 +10,6 @@
 
 #include <unordered_map>
 #include <list>
-#include <functional>
 
 namespace scl {
 

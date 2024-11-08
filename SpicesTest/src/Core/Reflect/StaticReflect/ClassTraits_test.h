@@ -28,9 +28,9 @@ namespace Spices {
             , cicpcr(eip)
             , i(150)
             , vi(30)
-        {};
+        {}
 
-        ~ClassTraitsTest() = default;
+        virtual ~ClassTraitsTest() = default;
 
         bool f(int q, float w) { return true; }
         bool f(int q, float w, void* c, bool(ClassTraitsTest::*)(int**, int&&)) { return true; }

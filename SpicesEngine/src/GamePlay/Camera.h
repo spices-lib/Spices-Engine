@@ -105,7 +105,7 @@ namespace Spices {
 		void IncreaseStableFrames() { m_StableFrames++; }
 		
 		/**
-		* @brief Get camera reversez projection matrix.
+		* @brief Get camera reverse z projection matrix.
 		* @return Returns the camera projection matrix.
 		*/
 		const glm::mat4& GetPMatrixReverseZ() { CalculatePMatrixReverseZ(); return m_ProjectionMatrix; }
@@ -115,7 +115,7 @@ namespace Spices {
 		* @return Returns the camera projection matrix.
 		* @note only use in ImguiGizmos.
 		*/
-		const glm::mat4 GetPMatrix();
+		const glm::mat4 GetPMatrix() const;
 
 		/**
 		* @brief Get camera projection type.

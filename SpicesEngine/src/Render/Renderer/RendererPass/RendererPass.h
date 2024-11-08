@@ -21,7 +21,7 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
-		* @param[in] passName The name of rendererpass.
+		* @param[in] passName The name of renderer pass.
 		* @param[in] vulkanDevice VulkanDevice.
 		*/
 		RendererPass(
@@ -41,10 +41,10 @@ namespace Spices {
 		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; }
 
 		/**
-		* @brief Add a subpass to this renderer pass.
-		* @param[in] subPassName The name of subpass.
-		* @param[in] index The index of subpass.
-		* @return Return the subpass.
+		* @brief Add a subp ass to this renderer pass.
+		* @param[in] subPassName The name of sub pass.
+		* @param[in] index The index of sub pass.
+		* @return Return the sub pass.
 		*/
 		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName, uint32_t index);
 

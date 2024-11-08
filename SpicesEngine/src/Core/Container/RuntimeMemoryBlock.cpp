@@ -56,7 +56,7 @@ namespace scl {
         begin_ = malloc(bytes_);
     }
 
-    void runtime_memory_block::for_each(std::function<bool(const std::string& name, void* pt)> fn) const
+    void runtime_memory_block::for_each(const std::function<bool(const std::string& name, void* pt)>& fn) const
     {
         /**
         * @brief Iter without order.

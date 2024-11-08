@@ -71,7 +71,7 @@ namespace scl {
         * @param[in] fn The function pointer of how to fill in data.
         * @noto Not Unit Test, so do not use it.
         */
-        void for_each(std::function<bool(const std::string& name, void* pt)> fn) const;
+        void for_each(const std::function<bool(const std::string& name, void* pt)>& fn) const;
 
         /**
         * @brief Get value that explained by name.
@@ -108,7 +108,7 @@ namespace scl {
         size_t item_location(const std::string& name);
 
         /**
-        * @brief Determain is item inside this container.
+        * @brief Determine is item inside this container.
         * @param[in] name Item Name.
         * @return Returns true if item inside this container.
         */

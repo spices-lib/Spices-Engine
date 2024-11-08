@@ -27,10 +27,10 @@ namespace scl {
 		* @param[in] dependencies Node dependencies name.
 		* @param[in] func Node function.
 		*/
-		directed_acyclic_node(std::string name, std::vector<std::string> dependencies, std::function<void()> func)
-			: m_Name(name)
-			, m_Dependencies(dependencies)
-			, m_Func(func)
+		directed_acyclic_node(const std::string& name, const std::vector<std::string>& dependencies, const std::function<void()>& func)
+			: m_Name(std::move(name))
+			, m_Dependencies(std::move(dependencies))
+			, m_Func(std::move(func))
 		{}
 
 		/**
@@ -93,7 +93,7 @@ namespace scl {
 		* @brief Get Node size.
 		* @return Returns Node size.
 		*/
-		uint32_t size() const { return m_Nodes.size(); }
+		size_t size() const { return m_Nodes.size(); }
 
 	private:
 

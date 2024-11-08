@@ -15,7 +15,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Nvidia Nsight Perfermance Metrics.
+	* @brief Wrapper of Nvidia Nsight Performance Metrics.
 	*/
 	class NsightPerfGPUProfilerContinuous
 	{

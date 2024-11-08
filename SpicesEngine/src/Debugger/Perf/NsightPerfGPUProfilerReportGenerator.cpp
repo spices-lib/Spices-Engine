@@ -1,3 +1,9 @@
+/**
+* @file NsightPerfGPUProfilerReportGenerator.h
+* @brief The NsightPerfGPUProfilerReportGenerator Class Definitions.
+* @author Spices
+*/
+
 #include "Pchheader.h"
 #include "NsightPerfHelpers.h"
 #include "NsightPerfGPUProfilerReportGenerator.h"
@@ -94,14 +100,14 @@ namespace Spices {
 		NSPERF_CHECK(m_NvPerf.OnFrameStart(queue, queueFamilyIndex))
 	}
 
-	void NsightPerfGPUProfilerReportGenerator::PushRange(VkCommandBuffer commandBuffer, const std::string& pRangeName)
+	void NsightPerfGPUProfilerReportGenerator::PushRange(VkCommandBuffer commandBuffer, const std::string& pRangeName) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		NSPERF_CHECK(m_NvPerf.rangeCommands.PushRange(commandBuffer, pRangeName.c_str()))
 	}
 
-	void NsightPerfGPUProfilerReportGenerator::PopRange(VkCommandBuffer commandBuffer)
+	void NsightPerfGPUProfilerReportGenerator::PopRange(VkCommandBuffer commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 

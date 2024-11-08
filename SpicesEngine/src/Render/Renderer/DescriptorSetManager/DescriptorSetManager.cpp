@@ -49,7 +49,7 @@ namespace Spices {
 			}
 			else
 			{
-				auto descriptorSet = m_DescriptorSets[name][BINDLESS_TEXTURE_SET];
+				const auto descriptorSet = m_DescriptorSets[name][BINDLESS_TEXTURE_SET];
 				m_DescriptorSets.erase(name);
 				m_DescriptorSets[name][BINDLESS_TEXTURE_SET] = descriptorSet;
 			}

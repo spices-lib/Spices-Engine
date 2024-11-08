@@ -1,3 +1,9 @@
+/**
+* @file RendererPass.cpp
+* @brief The RendererPass Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "RendererPass.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
@@ -160,7 +166,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << m_PassName << ": RendererPss Create Failed: Not enough imageview for attachment.";
 
-			SPICES_CORE_ERROR(ss.str());
+			SPICES_CORE_ERROR(ss.str())
 		}
 
 		m_RenderPass = std::make_unique<VulkanRenderPass>(

@@ -56,12 +56,12 @@ namespace scl {
 		return Begin() == End();
 	}
 
-	span* span_list::Begin()
+	span* span_list::Begin() const
 	{
 		return m_Head->m_Next;
 	}
 
-	span* span_list::End()
+	span* span_list::End() const
 	{
 		return m_Head;
 	}
@@ -80,7 +80,7 @@ namespace scl {
 		pos->m_Prev = ptr;
 	}
 
-	void span_list::Erase(span* pos)
+	void span_list::Erase(span* pos) const
 	{
 		assert(pos);
 		assert(pos != m_Head);

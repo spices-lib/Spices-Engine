@@ -13,7 +13,7 @@ namespace scl {
 
 		/**
 		* @brief Iter a tuple.
-		* @tparam Idx Size of typle.
+		* @tparam Idx Size of tuple.
 		* @tparam Tuple tuple.
 		* @tparam Function Iter Function.
 		*/

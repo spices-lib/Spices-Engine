@@ -4,6 +4,7 @@
 * @author Spices.
 */
 
+#pragma once
 #include "Core/Core.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "Core/Math/Math.h"
@@ -11,7 +12,7 @@
 namespace Spices {
 	
 	/**
-	* @brief This Class Helps registry a texture to bindless texture descriptor set.
+	* @brief This Class Helps registry a texture to bind less texture descriptor set.
 	*/
 	class BindLessTextureManager
 	{
@@ -28,12 +29,12 @@ namespace Spices {
 		virtual ~BindLessTextureManager() = default;
 
 		/**
-		* @brief Registry a texture to bindless texture descriptor set array index.
+		* @brief Registry a texture to bind less texture descriptor set array index.
 		*/
 		static uint32_t Registry(const std::string& name);
 
 		/**
-		* @brief UnRegistry a texture from bindless texture descriptor set array index.
+		* @brief UnRegistry a texture from bind less texture descriptor set array index.
 		*/
 		static void UnRegistry(const std::string& name);
 

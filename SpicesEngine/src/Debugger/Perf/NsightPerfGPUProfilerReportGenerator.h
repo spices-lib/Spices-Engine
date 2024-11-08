@@ -16,7 +16,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Nvidia NsightPerf GPU Perfermance ReportGenerator.
+	* @brief Wrapper of Nvidia NsightPerf GPU Performance ReportGenerator.
 	*/
 	class NsightPerfGPUProfilerReportGenerator
 	{
@@ -46,14 +46,14 @@ namespace Spices {
 		static NsightPerfGPUProfilerReportGenerator& Get() { return *m_NsightPerfGPUProfilerReportGenerator; }
 
 		/**
-		* @brief End a Frmae.
+		* @brief End a Frame.
 		* The vkQueueWaitIdle() call in the code sequence above is a workaround for a driver/OS issue.
 		* @param[in] state VulkanState.
 		*/
 		void EndFrame(VulkanState& state);
 
 		/**
-		* @brief Begin a Frmae.
+		* @brief Begin a Frame.
 		* OnFrameStart and OnFrameEnd will not perform any operation until collection is initiated.
 		* @param[in] queue VkQueue.
 		* @param[in] queueFamilyIndex .
@@ -67,13 +67,13 @@ namespace Spices {
 		* @param[in] commandBuffer VkCommandBuffer.
 		* @param[in] pRangeName .
 		*/
-		void PushRange(VkCommandBuffer commandBuffer, const std::string& pRangeName);
+		void PushRange(VkCommandBuffer commandBuffer, const std::string& pRangeName) const;
 
 		/**
 		* @brief Pop Range.
 		* @param[in] commandBuffer VkCommandBuffer.
 		*/
-		void PopRange(VkCommandBuffer commandBuffer);
+		void PopRange(VkCommandBuffer commandBuffer) const;
 
 		/**
 		* @brief Reset Reporter.
@@ -99,7 +99,7 @@ namespace Spices {
 		static std::shared_ptr<NsightPerfGPUProfilerReportGenerator> m_NsightPerfGPUProfilerReportGenerator;
 
 		/**
-		* @brief Nvidia Nsight Perfermance ReportGenerator.
+		* @brief Nvidia Nsight Performance ReportGenerator.
 		*/
 		nv::perf::profiler::ReportGeneratorVulkan m_NvPerf;
 

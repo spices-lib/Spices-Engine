@@ -14,7 +14,7 @@
 */
 enum class EngineState
 {
-	BeforeEntry = 0,  // beforeentry
+	BeforeEntry = 0,  // before entry
 	Run         = 1,  // run
 	Exit        = 2   // exit
 };
@@ -30,6 +30,10 @@ static EngineState engineState = EngineState::BeforeEntry;
 #define ENGINE_INSTANCE_ENTRY  { engineState = EngineState::Run; }
 #define ENGINE_INSTANCE_EXIT   { engineState = EngineState::Exit; }
 
+#define ENABLE_MAIN_MEMORY_POOL
+
+#ifdef ENABLE_MAIN_MEMORY_POOL
+
 /**
 * @brief override new operation.
 * @param[in] size memory bytes.
@@ -44,7 +48,7 @@ void* operator new(size_t size)
 	{
 		void* ptr = malloc(size);
 		SPICES_PROFILE_ALLOC_N(ptr, size, Spices::memoryPoolNames[0]);
-		return ptr;
+		return std::move(ptr);
 	}
 
 	/**
@@ -54,7 +58,7 @@ void* operator new(size_t size)
 	{
 		void* ptr = Spices::MemoryPool::Alloc(size);
 		SPICES_PROFILE_ALLOC_N(ptr, size, Spices::memoryPoolNames[2]);
-		return ptr;
+		return std::move(ptr);
 	}
 }
 
@@ -91,6 +95,34 @@ void operator delete(void* ptr) noexcept
 	}
 }
 
+#else
+
+/**
+* @brief override new operation.
+* Allocate memory using malloc.
+* @param[in] size memory bytes.
+* @return Returns memory pointer.
+*/
+void* operator new(size_t size)
+{
+	void* ptr = malloc(size);
+	SPICES_PROFILE_ALLOC_N(ptr, size, Spices::memoryPoolNames[0]);
+	return std::move(ptr);
+}
+
+/**
+* @brief override delete operator.
+* Free memory using free.
+* @param[in] ptr memory pointer.
+*/
+void operator delete(void* ptr) noexcept
+{
+	SPICES_PROFILE_FREE_N(ptr, Spices::memoryPoolNames[0]);
+	free(ptr);
+}
+
+#endif
+
 /**
 * @brief Main Function.
 */
@@ -112,6 +144,8 @@ int main() {
 	}
 	catch (const spdlog::spdlog_ex& ex) 
 	{
+		SPICES_CORE_ERROR(ex.what())
+		
 		return EXIT_FAILURE;
 	}
 

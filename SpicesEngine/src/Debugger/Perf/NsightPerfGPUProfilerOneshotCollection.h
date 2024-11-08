@@ -14,7 +14,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Nvidia Nsight Perfermance OneshotCollection.
+	* @brief Wrapper of Nvidia Nsight Performance OneshotCollection.
 	*/
 	class NsightPerfGPUProfilerOneshotCollection
 	{

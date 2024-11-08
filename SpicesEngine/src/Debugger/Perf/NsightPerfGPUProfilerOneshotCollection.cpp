@@ -19,8 +19,8 @@ namespace Spices {
 
     std::shared_ptr<NsightPerfGPUProfilerOneshotCollection> NsightPerfGPUProfilerOneshotCollection::m_NsightPerfGPUProfilerOneshotCollection;
 
-    const size_t numRangesPerFrame = 50;    // @brief Sampling max level depth.
-    const size_t numFramesToSample = MaxFrameInFlight;
+    constexpr size_t numRangesPerFrame = 50;    // @brief Sampling max level depth.
+    constexpr size_t numFramesToSample = MaxFrameInFlight;
 
     NsightPerfGPUProfilerOneshotCollection::NsightPerfGPUProfilerOneshotCollection(VulkanState& state)
         : m_VulkanState(state)
@@ -63,8 +63,8 @@ namespace Spices {
         /**
         * @brief Sampling Frequence.
         */
-        const size_t samplingIntervalInNanoSeconds = 1024 * 16;
-        const size_t maxIntervalPerFrameInNanoSeconds = 100 * 1000 * 1000; // 100ms
+        constexpr size_t samplingIntervalInNanoSeconds = 1024 * 16;
+        constexpr size_t maxIntervalPerFrameInNanoSeconds = 100 * 1000 * 1000; // 100ms
         
         /**
         * @brief Get traces.yaml path on sampling finished.

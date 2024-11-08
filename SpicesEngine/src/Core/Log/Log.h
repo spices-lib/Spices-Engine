@@ -19,7 +19,7 @@
 namespace Spices {
 
 	/**
-	* brief Log Class defines log behaver.
+	* brief Log Class defines log behaves.
 	*/
 	class Log
 	{
@@ -50,7 +50,7 @@ namespace Spices {
 	public:
 
 		/**
-		* @brief using format_string_t instand of fmt::format_string<Args...>;
+		* @brief using format_string_t instanced of fmt::format_string<Args...>;
 		*/
 		template <typename... Args>
 		using format_string_t = fmt::format_string<Args...>;

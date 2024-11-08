@@ -80,7 +80,7 @@ namespace Spices {
 		virtual void CreateDeviceGeneratedCommandsLayout() override;
 
 		/**
-		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
+		* @breif This interface is called on world mark queryer tick (registry by MeshComponent).
 		*/
 		virtual void OnMeshAddedWorld() override;
 

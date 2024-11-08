@@ -41,7 +41,9 @@ namespace Spices {
 				}
 			}
 
-			SPICES_CORE_ERROR("Up to Maxium Bindless Texture Number : 65536");
+			SPICES_CORE_ERROR("Up to Maxium Bindless Texture Number : 65536")
+
+			return 0;
 		}
 	}
 

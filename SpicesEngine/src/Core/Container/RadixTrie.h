@@ -56,7 +56,7 @@ namespace scl {
 		}
 
 		/**                           
-	    * @brief Decpnstruct Function.
+	    * @brief Deconstruct Function.
 	    */                            
 		virtual ~radix_trie()
 		{
@@ -158,10 +158,10 @@ namespace scl {
 			: m_LeafPool{ Spices::ObjectPoolSizeMode::FixedObjects, 20 }
 		{
 			m_Root = new Node;
-		};
+		}
 
 		/**
-		* @brief Decpnstruct Function.
+		* @brief Deconstruct Function.
 		*/
 		virtual ~radix_trie()
 		{
@@ -169,7 +169,7 @@ namespace scl {
 			{
 				delete m_Root;
 			}
-		};
+		}
 
 		/**
 		* @brief Get item by key.
@@ -286,7 +286,7 @@ namespace scl {
 		}
 
 		/**
-		* @brief Decpnstruct Function.
+		* @brief Deconstruct Function.
 		*/
 		virtual ~radix_trie() = default;
 

@@ -87,13 +87,13 @@ namespace scl {
 		* @brief Get begin pointer.
 		* @return Returns begin pointer.
 		*/
-		span* Begin();
+		span* Begin() const;
 
 		/**
 		* @brief Get end pointer.
 		* @return Returns end pointer.
 		*/
-		span* End();
+		span* End() const;
 
 		/**
 		* @brief Push a span to this list.
@@ -114,17 +114,17 @@ namespace scl {
 		bool Empty();
 
 		/**
-		* @brief Insert a span brfore in given position.
+		* @brief Insert a span before in given position.
 		* @param[in] pos inserted position.
 		* @param[in] ptr inserted span.
 		*/
-		void Insert(span* pos, span* ptr);
+		static void Insert(span* pos, span* ptr);
 
 		/**
 		* @brief Erase a span form this list.
 		* @param[in] pos erased position.
 		*/
-		void Erase(span* pos);
+		void Erase(span* pos) const;
 
 		/**
 		* @brief Get mutex.

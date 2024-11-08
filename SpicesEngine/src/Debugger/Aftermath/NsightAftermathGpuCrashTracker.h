@@ -25,7 +25,7 @@ namespace Spices {
         /**
         * @brief keep four frames worth of marker history.
         */
-        const static unsigned int c_MarkerFrameHistory = 4;
+        constexpr static unsigned int c_MarkerFrameHistory = 4;
         typedef std::array<std::map<uint64_t, std::string>, c_MarkerFrameHistory> MarkerMap;
 
     public:
@@ -70,7 +70,7 @@ namespace Spices {
         /**
         * @brief Set Marker.
         * @param[in] markerId Marker Id.
-        * @param[in] info Marker informations.
+        * @param[in] info Marker information.
         */
         void SetMarker(uint64_t& markerId, const std::string& info);
 
@@ -100,7 +100,7 @@ namespace Spices {
         * @brief Handler for GPU crash dump description callbacks.
         * @param[in] addDescription PFN_GFSDK_Aftermath_AddGpuCrashDumpDescription.
         */
-        void OnDescription(PFN_GFSDK_Aftermath_AddGpuCrashDumpDescription addDescription);
+        static void OnDescription(PFN_GFSDK_Aftermath_AddGpuCrashDumpDescription addDescription);
 
         /**
         * @brief Handler for app-managed marker resolve callback.
@@ -133,7 +133,7 @@ namespace Spices {
             GFSDK_Aftermath_ShaderDebugInfoIdentifier identifier          ,
             const void*                               pShaderDebugInfo    ,
             const uint32_t                            shaderDebugInfoSize
-        );
+        ) const;
 
         /**
         * @brief Handler for shader debug information lookup callbacks.

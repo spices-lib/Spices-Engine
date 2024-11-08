@@ -40,7 +40,7 @@ namespace Spices {
 		/**
 		* @brief Submit a task to task queue, and wait for a idle thread to execute it.
 		* @tparam Func Task Function.
-		* @tparam Args Task Funcion Parameter.
+		* @tparam Args Task Function Parameter.
 		* @return Returns task function return value as a future.
 		*/
 		template<typename Func, typename... Args>

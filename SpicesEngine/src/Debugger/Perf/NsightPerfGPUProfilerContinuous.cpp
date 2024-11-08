@@ -109,7 +109,7 @@ namespace Spices {
             * @brief By setting "keepInstances" to false, the counter data will only store GPU-level values, reducing its size and improving the performance of metric evaluation.
             * However, this option has the drawback of making max/min submetrics non-evaluable.
             */
-            const bool keepInstances = false;
+            constexpr bool keepInstances = false;
             NSPERF_CHECK(configBuilder.AddMetrics(&request, 1, keepInstances))
             metricEvalRequests.emplace_back(std::move(request));
         }
@@ -131,8 +131,8 @@ namespace Spices {
         * when the put pointer reaches the end, it will start from the beginning and overwrite previous data even if it hasn't been read yet.
         * Therefore, the size specified here must be sufficient to cover the latency.
         */
-        const uint32_t MaxSamples = 1024;
-        const bool Validate = true; // Setting this to true enables extra validation, which is useful for debugging. In production environments, it can be set to false for improved performance.
+        constexpr uint32_t MaxSamples = 1024;
+        constexpr bool Validate = true; // Setting this to true enables extra validation, which is useful for debugging. In production environments, it can be set to false for improved performance.
         NSPERF_CHECK(counterData.Initialize(
         MaxSamples , 
         Validate   , 
@@ -179,11 +179,11 @@ namespace Spices {
         /**
         * @brief Start a periodic sampler session.
         */
-        const uint32_t SamplingFrequency = 120; // 120 Hz
-        const uint32_t samplingIntervalInNanoSeconds = 1000 * 1000 * 1000 / SamplingFrequency;
-        const uint32_t MaxDecodeLatencyInNanoSeconds = 1000 * 1000 * 1000 * 10; // tolerate maximum DecodeCounters() latency up to 1 second
+        constexpr size_t SamplingFrequency = 120; // 120 Hz
+        constexpr size_t samplingIntervalInNanoSeconds = 1000 * 1000 * 1000 / SamplingFrequency;
+        constexpr size_t MaxDecodeLatencyInNanoSeconds = 1000 * 1000 * 1000 * 10; // tolerate maximum DecodeCounters() latency up to 1 second
         const nv::perf::sampler::GpuPeriodicSampler::GpuPulseSamplingInterval samplingInterval = sampler.GetGpuPulseSamplingInterval(samplingIntervalInNanoSeconds);
-        const uint32_t maxNumUndecodedSamples = MaxDecodeLatencyInNanoSeconds / samplingIntervalInNanoSeconds;
+        const size_t maxNumUndecodedSamples = MaxDecodeLatencyInNanoSeconds / samplingIntervalInNanoSeconds;
         size_t recordBufferSize = 0;
         NSPERF_CHECK(nv::perf::sampler::GpuPeriodicSamplerCalculateRecordBufferSize(deviceIndex, counterConfiguration.configImage, maxNumUndecodedSamples, recordBufferSize))
 
@@ -198,7 +198,7 @@ namespace Spices {
         /**
         * @brief Apply the previously generated counter configuration to the periodic sampler.
         */
-        const size_t passIndex = 0; // This is a single-pass configuration, so the pass index is fixed at 0.
+        constexpr size_t passIndex = 0; // This is a single-pass configuration, so the pass index is fixed at 0.
         NSPERF_CHECK(sampler.SetConfig(counterConfiguration.configImage, passIndex))
 
         /**
@@ -238,14 +238,14 @@ namespace Spices {
         nv::perf::sampler::GpuPeriodicSampler::GetRecordBufferStatusParams getRecordBufferStatusParams = {};
         getRecordBufferStatusParams.queryOverflow       = true;
         getRecordBufferStatusParams.queryNumUnreadBytes = true;
-        bool success = sampler.GetRecordBufferStatus(getRecordBufferStatusParams);
+        const bool success = sampler.GetRecordBufferStatus(getRecordBufferStatusParams);
         if (!success)
         {
             return;
         }
         if (getRecordBufferStatusParams.overflow)
         {
-            SPICES_CORE_ERROR("Record buffer has overflowed. Please ensure that the value of `maxNumUndecodedSamples` is sufficiently large.");
+            SPICES_CORE_ERROR("Record buffer has overflowed. Please ensure that the value of `maxNumUndecodedSamples` is sufficiently large.")
         }
 
         if (getRecordBufferStatusParams.numUnreadBytes == 0)
@@ -319,7 +319,7 @@ namespace Spices {
                 }
                 {
                     std::cout << std::fixed << std::setprecision(0) << timestamp.start << ", " << timestamp.end << ", " << (timestamp.end - timestamp.start);
-                    for (double metricValue : metricValues)
+                    for (const double& metricValue : metricValues)
                     {
                         std::cout << ", " << metricValue;
                     }

@@ -40,7 +40,7 @@ namespace Spices {
     /**
     * @brief MemoryPool's name.
     */
-    static constexpr char* memoryPoolNames[3] = {
+    static const char* memoryPoolNames[3] = {
         "System Memory Allocator",
         "Main MemoryPool Page Allocator",
         "Main MemoryPool Detail Allocator",

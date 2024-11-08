@@ -144,8 +144,8 @@ namespace Spices {
 		/**
 		* @brief [2 - 512].
 		*/
-		int num = MAX_BYTES / size;
-		num = std::max(std::min(512, num), 2);
+		size_t num = MAX_BYTES / size;
+		num = std::max(std::min(static_cast<size_t>(512), num), static_cast<size_t>(2));
 
 		return num;
 	}

@@ -124,12 +124,12 @@ namespace Spices {
 		* @breif Create PipelineLayout.
 		*/
 		const auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
-		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts, subPass);
+		VkPipelineLayout pipelineLayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
 		* @brief Create Pipeline.
 		*/
-		const auto pipeline = CreatePipeline(material, pipelinelayout, subPass);
+		const auto pipeline = CreatePipeline(material, pipelineLayout, subPass);
 		m_Pipelines[materialName] = pipeline;
 	}
 
@@ -181,14 +181,14 @@ namespace Spices {
 		* @breif Create PipelineLayout.
 		*/
 		const auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
-		VkPipelineLayout pipelinelayout = CreatePipelineLayout(rowSetLayouts, subPass);
+		VkPipelineLayout pipelineLayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
 		* @brief Create Pipeline.
 		*/
 		std::stringstream ss;
 		ss << materialName << ".DGC";
-		m_Pipelines[ss.str()] = CreateDGCPipeline(ss.str(), materialName, pipelinelayout, subPass);
+		m_Pipelines[ss.str()] = CreateDGCPipeline(ss.str(), materialName, pipelineLayout, subPass);
 	}
 
 	std::shared_ptr<Material> Renderer::GetDefaultMaterial(const std::string& subpassName) const
@@ -268,7 +268,7 @@ namespace Spices {
 		*/
 		VkPipelineLayout pipelineLayout;
 		VK_CHECK(vkCreatePipelineLayout(m_VulkanState.m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE_LAYOUT, (uint64_t)pipelineLayout, m_VulkanState.m_Device, "PipelineLayout")
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE_LAYOUT, reinterpret_cast<uint64_t>(pipelineLayout), m_VulkanState.m_Device, "PipelineLayout")
 
 		return pipelineLayout;
 	}
@@ -515,7 +515,7 @@ namespace Spices {
 		pLightBuffer[index].intensity = -1000.0f;
 	}
 	
-	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption)
+	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -525,7 +525,7 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
-	void Renderer::RenderBehaveBuilder::Endrecording()
+	void Renderer::RenderBehaveBuilder::Endrecording() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -535,7 +535,7 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
-	void Renderer::RenderBehaveBuilder::Async(std::function<void(VkCommandBuffer& cmdBuffer)> func)
+	void Renderer::RenderBehaveBuilder::Async(std::function<void(VkCommandBuffer& cmdBuffer)> func) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -880,7 +880,7 @@ namespace Spices {
 		const VkStridedDeviceAddressRegionKHR* missRegion ,
 		const VkStridedDeviceAddressRegionKHR* hitRegion  ,
 		const VkStridedDeviceAddressRegionKHR* callRegion
-	)
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -908,7 +908,7 @@ namespace Spices {
 		const VkStridedDeviceAddressRegionKHR* missRegion , 
 		const VkStridedDeviceAddressRegionKHR* hitRegion  , 
 		const VkStridedDeviceAddressRegionKHR* callRegion
-	)
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1045,7 +1045,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::PreprocessDGC_NV(VkCommandBuffer cmdBuffer)
+	void Renderer::RenderBehaveBuilder::PreprocessDGC_NV(VkCommandBuffer cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1058,7 +1058,7 @@ namespace Spices {
 		m_HandledIndirectData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 	}
 
-	void Renderer::RenderBehaveBuilder::PreprocessDGCAsync_NV()
+	void Renderer::RenderBehaveBuilder::PreprocessDGCAsync_NV() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1073,7 +1073,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::ExecuteDGC_NV(VkCommandBuffer cmdBuffer)
+	void Renderer::RenderBehaveBuilder::ExecuteDGC_NV(VkCommandBuffer cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1086,7 +1086,7 @@ namespace Spices {
 		m_HandledIndirectData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 	}
 
-	void Renderer::RenderBehaveBuilder::ExecuteDGCAsync_NV()
+	void Renderer::RenderBehaveBuilder::ExecuteDGCAsync_NV() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1101,7 +1101,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangle(VkCommandBuffer cmdBuffer)
+	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangle(VkCommandBuffer cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1111,7 +1111,7 @@ namespace Spices {
 		vkCmdDraw(cmdBuffer ? cmdBuffer : m_CommandBuffer, 3, 1, 0, 0);
 	}
 
-	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangleAsync()
+	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangleAsync() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1400,9 +1400,9 @@ namespace Spices {
 		*/
 		for (size_t i = 0; i < inputAttachmentNames.size(); i++)
 		{
-			RendererResourceCreateInfo resinfo;
-			resinfo.name = inputAttachmentNames[i];
-			const auto info = m_Renderer->m_RendererResourcePool->AccessResource(resinfo);
+			RendererResourceCreateInfo resInfo;
+			resInfo.name = inputAttachmentNames[i];
+			const auto info = m_Renderer->m_RendererResourcePool->AccessResource(resInfo);
 
 			m_ImageInfos[set][binding].push_back(*info);
 		}
@@ -1548,7 +1548,7 @@ namespace Spices {
 		RenderBehaveBuilder::BindDescriptorSet(infos, name, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::Dispatch(uint32_t x, uint32_t y, uint32_t z)
+	void Renderer::ComputeRenderBehaveBuilder::Dispatch(uint32_t x, uint32_t y, uint32_t z) const
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -1813,7 +1813,7 @@ namespace Spices {
 		return *this;
 	}
 
-	void Renderer::DGCLayoutBuilder::Build()
+	void Renderer::DGCLayoutBuilder::Build() const
 	{
 		SPICES_PROFILE_ZONE;
 

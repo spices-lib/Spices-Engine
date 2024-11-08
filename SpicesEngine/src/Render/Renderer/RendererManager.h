@@ -118,7 +118,7 @@ namespace Spices {
 				std::stringstream ss;
 				ss << rendererName << " has been popped ";
 
-				SPICES_CORE_ERROR(ss.str());
+				SPICES_CORE_ERROR(ss.str())
 			}
 
 			/**

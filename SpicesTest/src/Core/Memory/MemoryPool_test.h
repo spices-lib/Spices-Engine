@@ -143,7 +143,7 @@ namespace SpicesTest {
 		SPICESTEST_PROFILE_FUNCTION();
 
 		std::array<MemoryPoolTest*, n> objects;
-		for (int i = 0; i < n; i++)
+		for (size_t i = 0; i < n; i++)
 		{
 			MemoryPoolTest* a = new(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest)))MemoryPoolTest;
 
@@ -155,19 +155,19 @@ namespace SpicesTest {
 		}
 
 		std::array<MemoryPoolTest2*, n2> object2s;
-		for (int i = 0; i < n2; i++)
+		for (size_t i = 0; i < n2; i++)
 		{
 			MemoryPoolTest2* b = new(Spices::MemoryPool::Alloc(sizeof(MemoryPoolTest2)))MemoryPoolTest2;
 
 			object2s[i] = b;
 		}
 
-		for (int i = 0; i < n; i++)
+		for (size_t i = 0; i < n; i++)
 		{
 			Spices::MemoryPool::Free(objects[i]);
 		}
 
-		for (int i = 0; i < n2; i++)
+		for (size_t i = 0; i < n2; i++)
 		{
 			Spices::MemoryPool::Free(object2s[i]);
 		}
@@ -428,7 +428,7 @@ namespace SpicesTest {
 
 					for (int j = 0; j < nCount; j++)
 					{
-						size_t bytes = maxBytes * std::rand() / float(RAND_MAX);
+						const size_t bytes = maxBytes * std::rand() / float(RAND_MAX);
 						void* p = malloc(bytes);
 
 						objects[j] = std::move(p);
@@ -511,7 +511,7 @@ namespace SpicesTest {
 
 					for (int j = 0; j < nCount; j++)
 					{
-						size_t bytes = maxBytes * std::rand() / float(RAND_MAX);
+						const size_t bytes = maxBytes * std::rand() / float(RAND_MAX);
 						void* p = malloc(bytes);
 
 						objects[j] = std::move(p);

@@ -60,7 +60,7 @@ namespace Spices {
 		*/
 		uint32_t samplingIntervalInNs = 1000 * 1000 * 1000 / samplingFrequencyInHz; // 1 / 60 s.
 		uint32_t maxDecodeLatencyInNs = 1000 * 1000 * 1000 * 10;                    // 10 s.
-		uint32_t maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
+		size_t   maxFrameLatency = MaxFrameInFlight + 1;  // requires +1 due to this sample's synchronization model
 		NSPERF_CHECK(m_Sampler.BeginSession(
 			state.m_GraphicQueue          ,
 			state.m_GraphicQueueFamily    , 
@@ -72,10 +72,10 @@ namespace Spices {
 		/**
 		* @brief Select a HUD configuration to record via the HudPresets class¡£
 		*/
-		nv::perf::hud::HudPresets hudPressets;
+		nv::perf::hud::HudPresets hudPresents;
 		auto deviceIdentifiers = m_Sampler.GetGpuDeviceIdentifiers();
-		NSPERF_CHECK(hudPressets.Initialize(deviceIdentifiers.pChipName))
-		NSPERF_CHECK(m_HudDataModel.Load(hudPressets.GetPreset("SpicesEngineDefault")))
+		NSPERF_CHECK(hudPresents.Initialize(deviceIdentifiers.pChipName))
+		NSPERF_CHECK(m_HudDataModel.Load(hudPresents.GetPreset("SpicesEngineDefault")))
 		
 		/**
 		* @brief Initialize the data model, choose a window of time to store in the TimePlots, and specify the
@@ -129,8 +129,8 @@ namespace Spices {
 
 		if (!m_IsInSession) return;
 
-		bool decoded  = m_Sampler.DecodeCounters();
-		bool consumed = m_Sampler.ConsumeSamples([&](
+		const bool decoded  = m_Sampler.DecodeCounters();
+		const bool consumed = m_Sampler.ConsumeSamples([&](
 		const uint8_t* pCounterDataImage    , 
 		size_t         counterDataImageSize , 
 		uint32_t       rangeIndex           , 
@@ -140,7 +140,7 @@ namespace Spices {
 			return m_HudDataModel.AddSample(pCounterDataImage, counterDataImageSize, rangeIndex);
 		});
 
-		for (auto& frameDelimiter : m_Sampler.GetFrameDelimiters())
+		for (const auto& frameDelimiter : m_Sampler.GetFrameDelimiters())
 		{
 			m_HudDataModel.AddFrameDelimiter(frameDelimiter.frameEndTime);
 		}
@@ -148,7 +148,7 @@ namespace Spices {
 		m_IsReachBufferBound = !decoded || !consumed;
 	}
 
-	void NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(
+	void NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequirement(
 		VkInstance                instance            , 
 		VkPhysicalDevice          physicalDevice      , 
 		std::vector<const char*>& deviceExtensionNames
@@ -157,7 +157,13 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		std::vector<const char*> deviceExtensionNamesTemp;
-		NSPERF_CHECK(nv::perf::VulkanAppendDeviceRequiredExtensions(instance, physicalDevice, (void*)vkGetInstanceProcAddr, deviceExtensionNamesTemp))
+		NSPERF_CHECK(
+			nv::perf::VulkanAppendDeviceRequiredExtensions(
+				instance,
+				physicalDevice,
+				(void*)vkGetInstanceProcAddr,
+				deviceExtensionNamesTemp
+		))
 
 		/**
 		* @brief This method returens null extensions back, so do not use it.
@@ -170,7 +176,7 @@ namespace Spices {
 		}
 	}
 
-	void NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
+	void NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequirement(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -242,7 +248,7 @@ namespace Spices {
 		m_Sampler.Reset();
 	}
 
-	uint32_t NsightPerfGPUProfilerHUD::SelectSamplingFrequency()
+	uint32_t NsightPerfGPUProfilerHUD::SelectSamplingFrequency() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -257,7 +263,7 @@ namespace Spices {
 		/**
 		* @brief Determaine frequency by ImGui framerate.
 		*/
-		ImGuiIO& io = ImGui::GetIO();
+		const ImGuiIO& io = ImGui::GetIO();
 		if (io.Framerate >= 60.0f)
 		{
 			return 60;

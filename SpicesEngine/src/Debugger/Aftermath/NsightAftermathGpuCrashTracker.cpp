@@ -87,8 +87,8 @@ namespace Spices {
         // Device lost notification is asynchronous to the NVIDIA display
         // driver's GPU crash handling. Give the Nsight Aftermath GPU crash dump
         // thread some time to do its work before terminating the process.
-        auto tdrTerminationTimeout = std::chrono::seconds(3);
-        auto tStart = std::chrono::steady_clock::now();
+        constexpr auto tdrTerminationTimeout = std::chrono::seconds(3);
+        const auto tStart = std::chrono::steady_clock::now();
         auto tElapsed = std::chrono::milliseconds::zero();
 
         GFSDK_Aftermath_CrashDump_Status status = GFSDK_Aftermath_CrashDump_Status_Unknown;
@@ -216,7 +216,7 @@ namespace Spices {
         */
         for (auto& map : m_MarkerMap)
         {
-            const auto& foundMarker = map.find((uint64_t)pMarkerData);
+            const auto& foundMarker = map.find(reinterpret_cast<uint64_t>(pMarkerData));
             if (foundMarker != map.end())
             {
                 const std::string& foundMarkerData = foundMarker->second;
@@ -365,7 +365,7 @@ namespace Spices {
         GFSDK_Aftermath_ShaderDebugInfoIdentifier identifier          ,
         const void*                               pShaderDebugInfo    ,
         const uint32_t                            shaderDebugInfoSize
-    )
+    ) const
     {
         SPICES_PROFILE_ZONE;
 
@@ -394,7 +394,7 @@ namespace Spices {
         std::ofstream f(ss.str() + filePath, std::ios::out | std::ios::binary);
         if (f)
         {
-            f.write((const char*)pShaderDebugInfo, shaderDebugInfoSize);
+            f.write(static_cast<const char*>(pShaderDebugInfo), shaderDebugInfoSize);
             f.close();
         }
     }
@@ -410,7 +410,7 @@ namespace Spices {
         /**
         * @brief Search the list of shader debug information blobs received earlier.
         */
-        auto i_debugInfo = m_ShaderDebugInfo.find(identifier);
+        const auto i_debugInfo = m_ShaderDebugInfo.find(identifier);
         if (i_debugInfo == m_ShaderDebugInfo.end())
         {
             /**
@@ -423,7 +423,7 @@ namespace Spices {
         * @brief Let the GPU crash dump decoder know about the shader debug information
         * that was found.
         */
-        setShaderDebugInfo(i_debugInfo->second.data(), uint32_t(i_debugInfo->second.size()));
+        setShaderDebugInfo(i_debugInfo->second.data(), static_cast<uint32_t>(i_debugInfo->second.size()));
     }
 
     void GpuCrashTracker::OnShaderLookup(
@@ -450,7 +450,7 @@ namespace Spices {
         * @brief Let the GPU crash dump decoder know about the shader data
         * that was found.
         */
-        setShaderBinary(shaderBinary.data(), uint32_t(shaderBinary.size()));
+        setShaderBinary(shaderBinary.data(), static_cast<uint32_t>(shaderBinary.size()));
     }
 
     void GpuCrashTracker::OnShaderSourceDebugInfoLookup(
@@ -477,7 +477,7 @@ namespace Spices {
         * @brief Let the GPU crash dump decoder know about the shader debug data that was
         * found.
         */
-        setShaderBinary(shaderBinary.data(), uint32_t(shaderBinary.size()));
+        setShaderBinary(shaderBinary.data(), static_cast<uint32_t>(shaderBinary.size()));
     }
 
     void GpuCrashTracker::GpuCrashDumpCallback(
@@ -488,7 +488,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        GpuCrashTracker* pGpuCrashTracker = reinterpret_cast<GpuCrashTracker*>(pUserData);
+        GpuCrashTracker* pGpuCrashTracker = static_cast<GpuCrashTracker*>(pUserData);
         pGpuCrashTracker->OnCrashDump(pGpuCrashDump, gpuCrashDumpSize);
     }
 
@@ -500,7 +500,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        GpuCrashTracker* pGpuCrashTracker = reinterpret_cast<GpuCrashTracker*>(pUserData);
+        GpuCrashTracker* pGpuCrashTracker = static_cast<GpuCrashTracker*>(pUserData);
         pGpuCrashTracker->OnShaderDebugInfo(pShaderDebugInfo, shaderDebugInfoSize);
     }
 
@@ -511,7 +511,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        GpuCrashTracker* pGpuCrashTracker = reinterpret_cast<GpuCrashTracker*>(pUserData);
+        const GpuCrashTracker* pGpuCrashTracker = static_cast<GpuCrashTracker*>(pUserData);
         pGpuCrashTracker->OnDescription(addDescription);
     }
 
@@ -525,7 +525,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        GpuCrashTracker* pGpuCrashTracker = reinterpret_cast<GpuCrashTracker*>(pUserData);
+        GpuCrashTracker* pGpuCrashTracker = static_cast<GpuCrashTracker*>(pUserData);
         pGpuCrashTracker->OnResolveMarker(pMarkerData, markerDataSize, ppResolvedMarkerData, pResolvedMarkerDataSize);
     }
 
@@ -537,7 +537,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        GpuCrashTracker* pGpuCrashTracker = reinterpret_cast<GpuCrashTracker*>(pUserData);
+        const GpuCrashTracker* pGpuCrashTracker = static_cast<GpuCrashTracker*>(pUserData);
         pGpuCrashTracker->OnShaderDebugInfoLookup(*pIdentifier, setShaderDebugInfo);
     }
 
@@ -549,7 +549,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        GpuCrashTracker* pGpuCrashTracker = reinterpret_cast<GpuCrashTracker*>(pUserData);
+        const GpuCrashTracker* pGpuCrashTracker = static_cast<GpuCrashTracker*>(pUserData);
         pGpuCrashTracker->OnShaderLookup(*pShaderHash, setShaderBinary);
     }
 
@@ -561,7 +561,7 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        GpuCrashTracker* pGpuCrashTracker = reinterpret_cast<GpuCrashTracker*>(pUserData);
+        const GpuCrashTracker* pGpuCrashTracker = static_cast<GpuCrashTracker*>(pUserData);
         pGpuCrashTracker->OnShaderSourceDebugInfoLookup(*pShaderDebugName, setShaderBinary);
     }
 

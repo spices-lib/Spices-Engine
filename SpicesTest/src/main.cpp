@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     /**
     * @brief Execute all unit tests.
     */
-    int result = RUN_ALL_TESTS();
+    const int result = RUN_ALL_TESTS();
 
     SPICESTEST_PROFILE_END_SESSION();
 

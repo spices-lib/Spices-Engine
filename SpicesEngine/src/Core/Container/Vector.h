@@ -9,9 +9,9 @@
 namespace scl {
 
 	/**
-	* @brief This Class is samiler to std::vector,
+	* @brief This Class is similar to std::vector,
 	* the difference between that is this one allocates memory by malloc rather that new.
-	* This is imporent is ObjectPool.
+	* This is important is ObjectPool.
 	*/
 	template<typename T>
 	class vector
@@ -32,13 +32,13 @@ namespace scl {
 		* @brief Get vector Begin Pointer.
 		* @return Return vector Begin Pointer.
 		*/
-		void** Begin() const { return m_Begin; }
+		T* Begin() const { return m_Begin; }
 
 		/**
 		* @brief Get vector End Pointer.
 		* @return Return vector End Pointer.
 		*/
-		void** End() const { return m_End; }
+		T* End() const { return m_End; }
 
 		/**
 		* @brief Get vector size.
@@ -50,7 +50,7 @@ namespace scl {
 		* @brief Determine if vector is empty.
 		* @retrun Returns true if empty.
 		*/
-		bool empty() { return m_UseCount == 0; }
+		bool empty() const { return m_UseCount == 0; }
 
 		/**
 		* @brief Push a element in the end of vector.
@@ -128,7 +128,7 @@ namespace scl {
 		{
 			if (m_UseCount == 0)
 			{
-				size_t bytes = sizeof(T) * m_ExpandRate;
+				const size_t bytes = sizeof(T) * m_ExpandRate;
 
 				m_UseCount   = 1;
 				m_SpareCount = m_ExpandRate - 1;
@@ -141,18 +141,18 @@ namespace scl {
 			}
 			else
 			{
-				T*    om     = m_Begin;
-				size_t oc    = m_UseCount;
-				size_t ob    = sizeof(T) * m_UseCount;
-				size_t nb    = sizeof(T) * m_UseCount * m_ExpandRate;
-				m_SpareCount = (nb - ob) / sizeof(T);
-
-				m_Begin      = static_cast<T*>(malloc(nb));
+				T*    om           = m_Begin;
+				size_t oc          = m_UseCount;
+				const size_t ob    = sizeof(T) * m_UseCount;
+				const size_t nb    = sizeof(T) * m_UseCount * m_ExpandRate;
+				m_SpareCount       = (nb - ob) / sizeof(T);
+      
+				m_Begin            = static_cast<T*>(malloc(nb));
 				memset(m_Begin, 0, nb);
 				memcpy(m_Begin, om, ob);
 
-				m_End        = (T*)((char*)m_Begin + ob);
-				*m_End       = std::move(element);
+				m_End              = reinterpret_cast<T*>(reinterpret_cast<char*>(m_Begin) + ob);
+				*m_End             = std::move(element);
 
 				++m_UseCount;
 				--m_SpareCount;
@@ -168,6 +168,6 @@ namespace scl {
 	{
 		assert(index < m_UseCount);
 
-		return *(T*)((char*)m_Begin + sizeof(T) * index);
+		return *(reinterpret_cast<T*>(reinterpret_cast<char*>(m_Begin) + sizeof(T) * index));
 	}
 }

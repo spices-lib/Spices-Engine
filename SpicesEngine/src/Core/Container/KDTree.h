@@ -28,14 +28,14 @@ namespace scl {
 	public:
 
 		/**
-		* @brief using item reperest point in k d.
+		* @brief using item instead of point in k d.
 		*/
 		using item = std::array<float, K>;
 
 		/**
 		* @brief Structure representing a node in the kd tree.
 		*/
-		struct Node
+		struct Node final
 		{
 			/**
 			* @brief Constructor Function.
@@ -113,7 +113,7 @@ namespace scl {
 		* @param[in] node recursive node.
 		* @param[in] point Searched point in k d.
 		* @param[in] depth recursive depth.
-		* @return Returns true if finded.
+		* @return Returns true if found.
 		*/
 		bool search_recursive(
 			Node*       node  , 
@@ -167,8 +167,8 @@ namespace scl {
 
 		/**
 		* @brief Insert a point into the kd_tree.
-		* Start at the root, comparing the new point¡¯s first dimension with the root¡¯s first dimension.
-		* If the new point¡¯s value is less than the root¡¯s, go to the left child; otherwise, go to the right child.
+		* Start at the root, comparing the new pointâ€™s first dimension with the rootâ€™s first dimension.
+		* If the new pointâ€™s value is less than the rootâ€™s, go to the left child; otherwise, go to the right child.
 		* At the next level, compare the second dimension. Continue this process, cycling through dimensions.
 		* When a leaf is reached, create a new node and insert the new point.
 		* @param[in] points Inserted points in k d.
@@ -177,8 +177,8 @@ namespace scl {
 
 		/**
 		* @brief Insert a point into the kd_tree async.
-		* Start at the root, comparing the new point¡¯s first dimension with the root¡¯s first dimension.
-		* If the new point¡¯s value is less than the root¡¯s, go to the left child; otherwise, go to the right child.
+		* Start at the root, comparing the new pointâ€™s first dimension with the rootâ€™s first dimension.
+		* If the new pointâ€™s value is less than the rootâ€™s, go to the left child; otherwise, go to the right child.
 		* At the next level, compare the second dimension. Continue this process, cycling through dimensions.
 		* When a leaf is reached, create a new node and insert the new point.
 		* @param[in] points Inserted points in k d.
@@ -188,11 +188,12 @@ namespace scl {
 
 		/**
 		* @brief Search for a point in the kd_tree.
-		* Start at the root, comparing the search point¡¯s first dimension with the root¡¯s first dimension.
-		* If the search point¡¯s value is less than the root¡¯s, go to the left child; otherwise, go to the right child.
+		* Start at the root, comparing the search pointâ€™s first dimension with the rootâ€™s first dimension.
+		* If the search pointâ€™s value is less than the rootâ€™s, go to the left child; otherwise, go to the right child.
 		* At the next level, compare the second dimension. Continue this process, cycling through dimensions.
 		* If an exact match is found, return true. If a leaf is reached without finding a match, return false.
 		* @param[in] point Searched point in k d.
+		* @return Returns true if found.
 		*/
 		bool search(const item& point) const;
 
@@ -215,8 +216,10 @@ namespace scl {
 		* @brief Search for all points within given range.
 		* Start at the root. If the current node is within the range, add it to the result.
 		* Recursively search the left and/or right subtrees if the range intersects their respective spaces.
-		* Prune the search if the current node¡¯s space does not intersect the query range.
-		* @todo Implement it.
+		* Prune the search if the current nodeâ€™s space does not intersect the query range.
+		* @param[in] point Searched point in k d.
+		* @param[in] condition allowed distance for neighbours.
+		* @return Returns near points.
 		*/
 		auto range_search(
 			const item& point     , 
@@ -263,7 +266,7 @@ namespace scl {
 		{
 			for (int i = 0; i < 512; i++)
 			{
-				uint32_t index = static_cast<uint32_t>((points->size() - 1) * std::rand() / float(RAND_MAX));
+				uint32_t index = static_cast<uint32_t>((points->size() - 1) * std::rand() / static_cast<float>(RAND_MAX));
 				sorted.emplace((*points)[index][cd], index);
 			}
 		}
@@ -272,7 +275,7 @@ namespace scl {
 		* @brief Get Center iterator.
 		*/
 		auto centerit = sorted.begin();
-		for (int i = 0; i < std::floor(sorted.size() * 0.5); i++) centerit++;
+		for (int i = 0; i < std::floor(sorted.size() * 0.5); i++) ++centerit;
 
 		/**
 		* @brief Base case: If node is null, create a new node.
@@ -321,13 +324,13 @@ namespace scl {
 		int                                depth
 	)
 	{
-		const int nPointsWithoutSplitTask = 30000;
+		constexpr int nPointsWithoutSplitTask = 30000;
 
 		if (points->size() <= nPointsWithoutSplitTask)
 		{
-			auto in = std::chrono::high_resolution_clock::now();
+			const auto in = std::chrono::high_resolution_clock::now();
 			insert_recursive(node, points, depth);
-			auto out = std::chrono::high_resolution_clock::now();
+			const auto out = std::chrono::high_resolution_clock::now();
 			std::cout << "    Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(out - in).count() << "    " << points->size() << std::endl;
 			return;
 		}
@@ -366,7 +369,7 @@ namespace scl {
 		* @brief Get Center iterator.
 		*/
 		auto centerit = sorted.begin();
-		for(int i = 0; i < std::floor(sorted.size() * 0.5); i++) centerit++;
+		for(int i = 0; i < std::floor(sorted.size() * 0.5); i++) ++centerit;
 
 		/**
 		* @brief Base case: If node is null, create a new node.

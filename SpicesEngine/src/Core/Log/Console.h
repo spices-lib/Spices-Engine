@@ -85,7 +85,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		* @param[in] filePath Console output file.
-		* @param[in] maxInfos Maxiumn Num of Informations.
+		* @param[in] maxInfos Maximum Num of Information.
 		*/
 		Console(const std::string& filePath, uint32_t maxInfos = 50);
 
@@ -98,7 +98,7 @@ namespace Spices {
 		* @brief Registry a console to ConsolePool.
 		* @param[in] name ConsoleName.
 		* @param[in] filePath Console output file.
-		* @return Returns Registried Console form Pool.
+		* @return Returns Registered Console form Pool.
 		*/
 		static std::shared_ptr<Console> Registry(
 			const std::string& name, 
@@ -119,7 +119,7 @@ namespace Spices {
 		/**
 		* @brief Push a Command to Console.
 		* @param[in] cmd Command.
-		* @todo Implementate it.
+		* @todo Implemented it.
 		*/
 		void Push(const std::string& cmd);
 
@@ -150,7 +150,7 @@ namespace Spices {
 		std::string m_FilePath;
 
 		/**
-		* @brief Maxiumn Num of Informations.
+		* @brief Maximum Num of Information's.
 		*/
 		uint32_t m_MaxInfos;
 

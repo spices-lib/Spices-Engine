@@ -460,7 +460,7 @@ namespace Spices {
 
 			/**
 			* @brief Set VkPushConstantRange by a specific push constant struct.
-			* @param[in] size pushconstant size.
+			* @param[in] size push constant size.
 			* @return Returns this reference.
 			*/
 			DescriptorSetBuilder& AddPushConstant(uint64_t size);
@@ -705,7 +705,7 @@ namespace Spices {
 			/**
 			* @brief Create GDC Layout.
 			*/
-			void Build();
+			void Build() const;
 
 		private:
 
@@ -770,18 +770,18 @@ namespace Spices {
 			* @brief Recording all this behaver does.
 			* @param[in] caption Recording Name
 			*/
-			void Recording(const std::string& caption);
+			void Recording(const std::string& caption) const;
 
 			/**
 			* @brief Endrecording all this behaver does.
 			*/
-			void Endrecording();
+			void Endrecording() const;
 
 			/**
 			* @brief Async Commands.
 			* @param[in] func In Function Pointer
 			*/
-			void Async(std::function<void(VkCommandBuffer& cmdBuffer)> func);
+			void Async(std::function<void(VkCommandBuffer& cmdBuffer)> func) const;
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
@@ -886,36 +886,36 @@ namespace Spices {
 			* @brief Preprocess Device Generated CommandsBuffer.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void PreprocessDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+			void PreprocessDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief Preprocess Device Generated CommandsBuffer Async.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void PreprocessDGCAsync_NV();
+			void PreprocessDGCAsync_NV() const;
 
 			/**
 			* @brief Execute Device Generated CommandsBuffer.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void ExecuteDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+			void ExecuteDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief Execute Device Generated CommandsBuffer Async.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void ExecuteDGCAsync_NV();
+			void ExecuteDGCAsync_NV() const;
 
 			/**
 			* @brief Draw a Triangle full screen.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void DrawFullScreenTriangle(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+			void DrawFullScreenTriangle(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief Draw a Triangle full screen Async.
 			*/
-			void DrawFullScreenTriangleAsync();
+			void DrawFullScreenTriangleAsync() const;
 
 			/**
 			* @brief Add a memory Barrier.
@@ -1222,7 +1222,7 @@ namespace Spices {
 				const VkStridedDeviceAddressRegionKHR* missRegion,
 				const VkStridedDeviceAddressRegionKHR* hitRegion,
 				const VkStridedDeviceAddressRegionKHR* callRegion
-			);
+			) const;
 
 			/**
 			* @brief Call vkCmdTraceRaysKHR here Async.
@@ -1236,7 +1236,7 @@ namespace Spices {
 				const VkStridedDeviceAddressRegionKHR* missRegion,
 				const VkStridedDeviceAddressRegionKHR* hitRegion,
 				const VkStridedDeviceAddressRegionKHR* callRegion
-			);
+			) const;
 		};
 		
 		/**
@@ -1313,7 +1313,7 @@ namespace Spices {
 			* @param[in] y Y group.
 			* @param[in] z Z group.
 			*/
-			void Dispatch(uint32_t x, uint32_t y, uint32_t z);
+			void Dispatch(uint32_t x, uint32_t y, uint32_t z) const;
 
 			/*void AddBarriers(
 				VkBuffer              buffer         , 

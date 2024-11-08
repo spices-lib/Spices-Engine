@@ -47,7 +47,7 @@ namespace scl {
 		* @brief Determine if this list is empty.
 		* @return Returns true if is empty.
 		*/
-		bool Empty() { return m_Freelist == nullptr; }
+		bool Empty() const { return m_Freelist == nullptr; }
 
 		/**
 		* @brief Get m_NBlocksAppliedFor reference.

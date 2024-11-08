@@ -16,7 +16,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Nvidia Nsight Perfermance HUD.
+	* @brief Wrapper of Nvidia Nsight Performance HUD.
 	*/
 	class NsightPerfGPUProfilerHUD
 	{
@@ -76,23 +76,23 @@ namespace Spices {
 		void ConsumeSample();
 
 		/***
-		* @brief Query Device Extensions Requerments.
+		* @brief Query Device Extensions Requirements.
 		* @param[in] instance VkInstance.
 		* @param[in] physicalDevice VkPhysicalDevice.
 		* @param[in,out] deviceExtensionNames Extensions.
 		*/
-		static void QueryDeviceExtensionRequerment(
+		static void QueryDeviceExtensionRequirement(
 			VkInstance                instance            , 
 			VkPhysicalDevice          physicalDevice      , 
 			std::vector<const char*>& deviceExtensionNames
 		);
 
 		/**
-		* @brief Query Instance Extension Requerments.
+		* @brief Query Instance Extension Requirements.
 		* @param[in,out] instanceExtensionNames Extensions.
 		* @param[in] apiVersion Vulkan API Version.
 		*/
-		static void QueryInstanceExtensionRequerment(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion);
+		static void QueryInstanceExtensionRequirement(std::vector<const char*>& instanceExtensionNames, uint32_t apiVersion);
 
 		/**
 		* @brief End Sampler Frame.
@@ -110,7 +110,7 @@ namespace Spices {
 		* @brief Select a SamplingFrequency (Hz) by ImGui::IO.
 		* @return Returns SamplingFrequency.
 		*/
-		uint32_t SelectSamplingFrequency();
+		uint32_t SelectSamplingFrequency() const;
 
 	private:
 
@@ -155,8 +155,8 @@ namespace Spices {
 		bool m_IsHUDInitialized;
 	};
 
-#define NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequerment(__VA_ARGS__); }
-#define NSIGHTPERF_GPUPROFILERHUD_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequerment(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERHUD_QUERYDEVICEEXTENSION(...)                                             { ::Spices::NsightPerfGPUProfilerHUD::QueryDeviceExtensionRequirement(__VA_ARGS__); }
+#define NSIGHTPERF_GPUPROFILERHUD_QUERYINSTANCEEXTENSION(...)                                           { ::Spices::NsightPerfGPUProfilerHUD::QueryInstanceExtensionRequirement(__VA_ARGS__); }
 
 #ifdef SPICES_DEBUG
 

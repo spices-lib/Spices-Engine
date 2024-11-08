@@ -6,7 +6,7 @@ project "SpicesEngine"
 	kind "StaticLib"          -- Use Lib as Dependency.
 	language "C++"            -- Use C++.
 	cppdialect "C++17"        -- Use C++17.
-	staticruntime "On"        -- Use Runtime Linrary: MTD.
+	staticruntime "On"        -- Use Runtime Library: MTD.
 
 	-- Building Output Folder.
 	targetdir("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")

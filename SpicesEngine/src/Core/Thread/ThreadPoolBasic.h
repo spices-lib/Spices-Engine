@@ -12,8 +12,8 @@
 
 namespace Spices {
 
-	const uint32_t THREAD_MAX_THRESHHOLD = std::thread::hardware_concurrency();
-	const uint32_t THREAD_MAX_IDLE_TIME  = 60;
+	const     uint32_t THREAD_MAX_THRESHHOLD = std::thread::hardware_concurrency();
+	constexpr uint32_t THREAD_MAX_IDLE_TIME  = 60;
 
 	/**
 	* @brief Thread Function Object.
@@ -54,13 +54,13 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Thread(const Thread&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Thread& operator=(const Thread&) = delete;
 
@@ -75,7 +75,7 @@ namespace Spices {
 		uint32_t GetId() const { return m_ThreadId; }
 
 		/**
-		* @brief Recevice a task must execute by this thread.
+		* @brief Receive a task must execute by this thread.
 		* @param[in] func Function Pointer.
 		*/
 		void ReceiveThreadTask(std::function<void(Params...)> func);
@@ -88,7 +88,7 @@ namespace Spices {
 		/**
 		* @brief Wait for all thread tasks finished.
 		*/
-		void Wait();
+		void Wait() const;
 
 		/**
 		* @brief Set this Thread is in task or not.
@@ -99,7 +99,7 @@ namespace Spices {
 		* @brief Get this Thread is in task or not.
 		* @return Returns true if in task.
 		*/
-		bool GetThreadInTask() { return m_IsInTask.load(); }
+		bool GetThreadInTask() const { return m_IsInTask.load(); }
 
 	public:
 
@@ -107,7 +107,7 @@ namespace Spices {
 		* @brief Get Thread Tasks Count.
 		* @reutrn Returns the Thread Tasks Count.
 		*/
-		int GetThreadTasksCount() { return m_ThreadTasks.load(); }
+		int GetThreadTasksCount() const { return m_ThreadTasks.load(); }
 
 	private:
 
@@ -179,13 +179,13 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		ThreadPool_Basic(const ThreadPool_Basic&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		ThreadPool_Basic& operator=(const ThreadPool_Basic&) = delete;
 		
@@ -385,7 +385,7 @@ namespace Spices {
 	}
 
 	template<typename ...Params>
-	inline void Thread<Params...>::Wait()
+	inline void Thread<Params...>::Wait() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -412,10 +412,10 @@ namespace Spices {
 	template<typename ...Params>
 	inline ThreadPool_Basic<Params...>::ThreadPool_Basic()
 		: m_InitThreadSize(0)
+		, m_ThreadIdleTimeOut(THREAD_MAX_IDLE_TIME)
 		, m_IdleThreadSize(0)
 		, m_PoolMode(PoolMode::MODE_FIXED)
 		, m_IsPoolRunning(false)
-		, m_ThreadIdleTimeOut(THREAD_MAX_IDLE_TIME)
 	{}
 
 	template<typename ...Params>

@@ -57,14 +57,14 @@ namespace SpicesTest {
 	};
 
 	/**
-	* @brief Testing Spices::ThrealCache::Allocate/Deallocate.
+	* @brief Testing Spices::ThreadCache::Allocate/Deallocate.
 	*/
 	TEST_F(ThrealCache_test, AllocateDeallocate) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
 		std::unique_ptr<std::array<ThrealCacheTest*, n>> objects = std::make_unique<std::array<ThrealCacheTest*, n>>();
-		for (int i = 0; i < n; i++)
+		for (size_t i = 0; i < n; i++)
 		{
 			ThrealCacheTest* a = new(tc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
 
@@ -75,7 +75,7 @@ namespace SpicesTest {
 			(*objects)[i] = std::move(a);
 		}
 
-		for (int i = 0; i < n; i++)
+		for (size_t i = 0; i < n; i++)
 		{
 			tc.Deallocate((*objects)[i], sizeof(ThrealCacheTest));
 		}
@@ -96,7 +96,7 @@ namespace SpicesTest {
 				Spices::ThreadCache internalTc;
 
 				std::unique_ptr<std::array<ThrealCacheTest*, n>> objects = std::make_unique<std::array<ThrealCacheTest*, n>>();
-				for (int i = 0; i < n; i++)
+				for (size_t i = 0; i < n; i++)
 				{
 					ThrealCacheTest* a = new(internalTc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
 
@@ -107,7 +107,7 @@ namespace SpicesTest {
 					(*objects)[i] = std::move(a);
 				}
 
-				for (int i = 0; i < n; i++)
+				for (size_t i = 0; i < n; i++)
 				{
 					internalTc.Deallocate((*objects)[i], sizeof(ThrealCacheTest));
 				}
