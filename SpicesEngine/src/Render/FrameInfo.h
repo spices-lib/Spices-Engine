@@ -63,20 +63,20 @@ namespace Spices {
 	public:
 
 		/**
-		* @brief FrameIndex, varing during 0 - (MaxFrameInFlight - 1).
+		* @brief FrameIndex, varying during 0 - (MaxFrameInFlight - 1).
 		* Used almost anywhere.
 		*/
 		uint32_t m_FrameIndex = 0;
 
 		/**
-		* @brief ImageIndex, varing during 0 - (MaxFrameInFlight - 1).
+		* @brief ImageIndex, varying during 0 - (MaxFrameInFlight - 1).
 		* Used in swapchain index and framebuffer index.
 		*/
-		uint32_t m_Imageindex = 0;
+		uint32_t m_ImageIndex = 0;
 
 		/**
-		* @breif A container of mouse picked entityid.
-		* key means entityid.
+		* @breif A container of mouse picked entity id.
+		* key means entity id.
 		* value entity tag 0
 		*/
 		scl::linked_unordered_map<int, std::string> m_PickEntityID{};

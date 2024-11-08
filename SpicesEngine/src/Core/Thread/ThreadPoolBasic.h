@@ -143,7 +143,7 @@ namespace Spices {
 	};
 
 	/**
-	* @brief ThrealPool Run Mode
+	* @brief ThreadPool Run Mode
 	*/
 	enum class PoolMode
 	{

@@ -148,10 +148,10 @@ namespace Spices {
 		/**
 		* @brief Copy the Memory's data to this VkImage.
 		* Used to create image data (include mipmaps), which owns a compressed format.
-		* @param[in] copys The copy informations.
+		* @param[in] copies The copy information.
 		*/
 		void CopyMemoryToImageHost(
-			const std::vector<VkMemoryToImageCopyEXT>& copys
+			const std::vector<VkMemoryToImageCopyEXT>& copies
 		) const;
 
 		/**
@@ -174,7 +174,7 @@ namespace Spices {
 
 		/**
 		* @breif Copy data from a VkImage.
-		* @param[in] buffer The Dst Buffer.
+		* @param[in] dstBuffer The Dst Buffer.
 		* @param[in] regions Specific Regions.
 		*/
 		void CopyImageToBuffer(
@@ -184,15 +184,15 @@ namespace Spices {
 
 		/**
 		* @breif Copy memory from a VkImage.
-		* @param[in] data Outdata.
+		* @param[in] data Out data.
 		*/
-		void CopyImageToMemoryHost(void* data);
+		void CopyImageToMemoryHost(void* data) const;
 
 		/**
 		* @breif Copy memory from a VkImage.
-		* @param[in] copys Copy Informations.
+		* @param[in] copies Copy Information.
 		*/
-		void CopyImageToMemoryHost(const std::vector<VkImageToMemoryCopyEXT>& copys);
+		void CopyImageToMemoryHost(const std::vector<VkImageToMemoryCopyEXT>& copies) const;
 
 		/**
 		* @brief Generate mipmaps with the VkImage.
@@ -271,7 +271,7 @@ namespace Spices {
 		* @brief Check if this image format can copy from host to gpu directly.
 		* @return Returns true if can do that.
 		*/
-		bool IsHostCopyable();
+		bool IsHostCopyable() const;
 
 		/**
 		* @brief Check if this image format can copy from host to gpu directly.

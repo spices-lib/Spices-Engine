@@ -10,7 +10,7 @@
 namespace Spices {
 
 /**
-* @brief Macro for declear function pointer variable in VulkanFunctions.
+* @brief Macro for declare function pointer variable in VulkanFunctions.
 */
 #define VK_FUNCTION_POINTER(function)          \
 	PFN_##function function;

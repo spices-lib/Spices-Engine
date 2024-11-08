@@ -72,7 +72,7 @@ namespace Spices {
 		* @brief Create a VkDescriptorPool.
 		*/
 		VK_CHECK(vkCreateDescriptorPool(vulkanState.m_Device, &descriptorPoolInfo, nullptr, &m_DescriptorPool));
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_POOL, (uint64_t)m_DescriptorPool, vulkanState.m_Device, "SpicesEngineDescriptorPool")
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_POOL, reinterpret_cast<uint64_t>(m_DescriptorPool), vulkanState.m_Device, "SpicesEngineDescriptorPool")
 	}
 
 	VulkanDescriptorPool::~VulkanDescriptorPool()
@@ -156,7 +156,7 @@ namespace Spices {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, reinterpret_cast<uint64_t>(m_Layout), m_VulkanState.m_Device, "DescriptorSetLayout" + caption)
 	}
 
 	void VulkanDescriptorSetLayout::BuildBindLessTextureDescriptorSetLayout(
@@ -182,7 +182,7 @@ namespace Spices {
 				setBindingFlags.push_back(VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT);
 				break;
 			default:
-				SPICES_CORE_ERROR("BindLess only support COMBINED_IMAGE_SAMPLER type binding");
+				SPICES_CORE_ERROR("BindLess only support COMBINED_IMAGE_SAMPLER type binding")
 				break;
 			}
 		}
@@ -210,7 +210,7 @@ namespace Spices {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &descriptorSetLayoutCreateInfo, nullptr, &m_Layout))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)m_Layout, m_VulkanState.m_Device, "DescriptorSetLayout" + caption)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, reinterpret_cast<uint64_t>(m_Layout), m_VulkanState.m_Device, "DescriptorSetLayout" + caption)
 	}
 
 	VulkanDescriptorSet::~VulkanDescriptorSet()
@@ -244,14 +244,14 @@ namespace Spices {
 		m_Bindings[binding]            = layoutBinding;
 	}
 
-	void VulkanDescriptorSet::BuildDescriptorSet(const std::string& createrName)
+	void VulkanDescriptorSet::BuildDescriptorSet(const std::string& creatorName)
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Build DescriptorSetLayout.
 		*/
-		m_Layout.BuildDescriptorSetLayout(m_Bindings, createrName);
+		m_Layout.BuildDescriptorSetLayout(m_Bindings, creatorName);
 
 		/**
 		* @brief Instance a VkDescriptorSetAllocateInfo.
@@ -266,22 +266,22 @@ namespace Spices {
 		* @brief Allocate DescriptorSet.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET, reinterpret_cast<uint64_t>(m_DescriptorSet), m_VulkanState.m_Device, "DescriptorSet" + creatorName)
 	}
 
-	void VulkanDescriptorSet::BuildBindLessTextureDescriptorSet(const std::string& createrName)
+	void VulkanDescriptorSet::BuildBindLessTextureDescriptorSet(const std::string& creatorName)
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Build DescriptorSetLayout.
 		*/
-		m_Layout.BuildBindLessTextureDescriptorSetLayout(m_Bindings, createrName);
+		m_Layout.BuildBindLessTextureDescriptorSetLayout(m_Bindings, creatorName);
 
 		/**
 		* @brief Instance a VkDescriptorSetVariableDescriptorCountAllocateInfo.
 		*/
-		uint32_t maxBinding = BINDLESS_TEXTURE_MAXNUM;
+		constexpr uint32_t maxBinding = BINDLESS_TEXTURE_MAXNUM;
 		VkDescriptorSetVariableDescriptorCountAllocateInfo     countInfo{};
 		countInfo.sType                                      = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
 		countInfo.descriptorSetCount                         = 1;
@@ -301,7 +301,7 @@ namespace Spices {
 		* @brief Allocate DescriptorSet.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSet" + createrName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET, reinterpret_cast<uint64_t>(m_DescriptorSet), m_VulkanState.m_Device, "DescriptorSet" + creatorName)
 	}
 
 	void VulkanDescriptorSet::UpdateDescriptorSet(

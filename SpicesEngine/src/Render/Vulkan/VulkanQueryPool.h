@@ -68,7 +68,7 @@ namespace Spices {
 		* @brief Get VkQueryPool Handler.
 		* @return Returns VkQueryPool Handler.
 		*/
-		VkQueryPool Get() { return m_QueryPool; };
+		VkQueryPool Get() const { return m_QueryPool; }
 
 	private:
 

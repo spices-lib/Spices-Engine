@@ -93,8 +93,8 @@ namespace Spices {
 		/**
 		* @brief Create Pipeline.
 		*/
-		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName)
+		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, reinterpret_cast<uint64_t>(m_Pipeline), m_VulkanState.m_Device, pipelineName)
 	}
 
 	VulkanPipeline::~VulkanPipeline()
@@ -328,7 +328,7 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(m_VulkanState.m_VkFunc.vkCreateRayTracingPipelinesKHR(m_VulkanState.m_Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_Pipeline))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, reinterpret_cast<uint64_t>(m_Pipeline), m_VulkanState.m_Device, pipelineName)
 	}
 
 	VulkanComputePipeline::VulkanComputePipeline(
@@ -385,8 +385,8 @@ namespace Spices {
 		/**
 		* @brief Create Pipeline.
 		*/
-		VK_CHECK(vkCreateComputePipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName)
+		VK_CHECK(vkCreateComputePipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, reinterpret_cast<uint64_t>(m_Pipeline), m_VulkanState.m_Device, pipelineName)
 	}
 
 	VulkanMeshPipeline::VulkanMeshPipeline(
@@ -458,7 +458,7 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, reinterpret_cast<uint64_t>(m_Pipeline), m_VulkanState.m_Device, pipelineName)
 	}
 
 	VulkanIndirectPipelineNV::VulkanIndirectPipelineNV(
@@ -547,7 +547,7 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, reinterpret_cast<uint64_t>(m_Pipeline), m_VulkanState.m_Device, pipelineName)
 	}
 
 	VulkanIndirectMeshPipelineNV::VulkanIndirectMeshPipelineNV(
@@ -624,6 +624,6 @@ namespace Spices {
 		* @brief Create Pipeline.
 		*/
 		VK_CHECK(vkCreateGraphicsPipelines(m_VulkanState.m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, (uint64_t)m_Pipeline, m_VulkanState.m_Device, pipelineName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE, reinterpret_cast<uint64_t>(m_Pipeline), m_VulkanState.m_Device, pipelineName)
 	}
 }

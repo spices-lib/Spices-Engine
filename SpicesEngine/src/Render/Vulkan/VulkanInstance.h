@@ -12,8 +12,8 @@ namespace Spices {
 
 	/**
 	* @brief VulkanInstance Class.
-	* This class defines the VulkanInstance behaver.
-	* This class is just a wapper of vkinstance and vksurface.
+	* This class defines the VulkanInstance behaves.
+	* This class is just a wrapper of vkInstance and vkSurface.
 	*/
 	class VulkanInstance : public VulkanObject
 	{
@@ -21,7 +21,7 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
-		* Create vkinstance and vksurface.
+		* Create vkInstance and vkSurface.
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] name Application name.
 		* @param[in] engineName Engine name.
@@ -40,7 +40,7 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief Get all instance extension requirements our engine needede.
+		* @brief Get all instance extension requirements our engine needed.
 		* Source 1 : glfw requirements.
 		* Source 2 : user Setting.
 		* Source 3 : validation layer requirements.
@@ -116,7 +116,7 @@ namespace Spices {
 
 		/**
 		* @brief Debug Utils Messages used to execute message callback function.
-		* Also debug vkinstance create.
+		* Also debug vkInstance create.
 		*/
 		VkDebugUtilsMessengerCreateInfoEXT m_DebugMessengerCreateInfo{};
 	};

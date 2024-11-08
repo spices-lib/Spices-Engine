@@ -35,7 +35,7 @@ namespace Spices {
 		* @brief Create Timeline Semaphore.
 		*/
 		VK_CHECK(vkCreateSemaphore(vulkanState.m_Device, &createInfo, nullptr, &m_TimelineSemaphore))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)m_TimelineSemaphore, m_VulkanState.m_Device, "Timeline Semaphore")
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, reinterpret_cast<uint64_t>(m_TimelineSemaphore), m_VulkanState.m_Device, "Timeline Semaphore")
 	}
 
 	VulkanTimelineSemaphore::~VulkanTimelineSemaphore()
@@ -48,7 +48,7 @@ namespace Spices {
 		vkDestroySemaphore(m_VulkanState.m_Device, m_TimelineSemaphore, nullptr);
 	}
 
-	void VulkanTimelineSemaphore::Wait(uint64_t waitValue)
+	void VulkanTimelineSemaphore::Wait(uint64_t waitValue) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -69,7 +69,7 @@ namespace Spices {
 		VK_CHECK(vkWaitSemaphores(m_VulkanState.m_Device, &waitInfo, UINT64_MAX))
 	}
 
-	void VulkanTimelineSemaphore::Singal(uint64_t signalValue)
+	void VulkanTimelineSemaphore::Singal(uint64_t signalValue) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -88,7 +88,7 @@ namespace Spices {
 		VK_CHECK(vkSignalSemaphore(m_VulkanState.m_Device, &signalInfo))
 	}
 
-	uint64_t VulkanTimelineSemaphore::GetValue()
+	uint64_t VulkanTimelineSemaphore::GetValue() const
 	{
 		SPICES_PROFILE_ZONE;
 

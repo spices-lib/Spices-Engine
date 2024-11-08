@@ -1615,7 +1615,7 @@ namespace Spices {
 		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		inheritanceInfo.renderPass           = m_Pass->Get();
 		inheritanceInfo.subpass              = subpass;
-		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::Get().m_Imageindex);
+		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::Get().m_ImageIndex);
      
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
 		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;

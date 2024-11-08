@@ -117,7 +117,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkImageMemoryBarrier.
 		*/
-		VkImageMemoryBarrier barrier{};
+		VkImageMemoryBarrier                        barrier{};
 		barrier.sType                             = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 		barrier.oldLayout                         = oldLayout;
 		barrier.newLayout                         = newLayout;
@@ -288,7 +288,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkBufferImageCopy.
 		*/
-		VkBufferImageCopy region{};
+		VkBufferImageCopy                        region{};
 		region.bufferOffset                    = 0;
 		region.bufferRowLength                 = 0;
 		region.bufferImageHeight               = 0;
@@ -304,7 +304,7 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 			vkCmdCopyBufferToImage(
 				commandBuffer, 
 				buffer, 
@@ -330,7 +330,7 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 			vkCmdCopyBufferToImage(
 				commandBuffer,
 				buffer,
@@ -342,7 +342,7 @@ namespace Spices {
 		});
 	}
 
-	void VulkanImage::CopyMemoryToImageHost(const std::vector<VkMemoryToImageCopyEXT>& copys) const
+	void VulkanImage::CopyMemoryToImageHost(const std::vector<VkMemoryToImageCopyEXT>& copies) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -353,8 +353,8 @@ namespace Spices {
 		copyInfo.sType                                 = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT;
 		copyInfo.dstImage                              = m_Image;
 		copyInfo.dstImageLayout                        = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		copyInfo.regionCount                           = static_cast<uint32_t>(copys.size());
-		copyInfo.pRegions                              = copys.data();
+		copyInfo.regionCount                           = static_cast<uint32_t>(copies.size());
+		copyInfo.pRegions                              = copies.data();
 		
 		m_VulkanState.m_VkFunc.vkCopyMemoryToImageEXT(m_VulkanState.m_Device, &copyInfo);
 	}
@@ -417,7 +417,7 @@ namespace Spices {
 		/**
 		* @brief The temp buffer image date copy to.
 		*/
-		VulkanBuffer stagingbuffer(
+		VulkanBuffer stagingBuffer(
 			m_VulkanState, 
 			"StagingBuffer",
 			channelize,
@@ -426,7 +426,7 @@ namespace Spices {
 		);
 
 		/*
-		* @brief Transfer image layout from whatever to trasfer src.
+		* @brief Transfer image layout from whatever to transfer src.
 		*/
 		TransitionImageLayout(
 			m_Format,
@@ -437,7 +437,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkBufferImageCopy.
 		*/
-		VkBufferImageCopy region{};
+		VkBufferImageCopy                        region{};
 		region.bufferOffset                    = 0;
 		region.bufferRowLength                 = 0;
 		region.bufferImageHeight               = 0;
@@ -454,14 +454,14 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
-			vkCmdCopyImageToBuffer(commandBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, stagingbuffer.Get(), 1, &region);
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
+			vkCmdCopyImageToBuffer(commandBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, stagingBuffer.Get(), 1, &region);
 		});
 
 		/*
 		* @brief Transfer image layout from transfer src to shader read.
 		* means only can get data from a shader read layout image.
-		* @note In SpicesEngine, we need transform layout to shader read in scenecomposerenderer first,
+		* @note In SpicesEngine, we need transform layout to shader read in scene compose renderer first,
 		* and after that, you can do this here.
 		*/
 		TransitionImageLayout(
@@ -473,7 +473,7 @@ namespace Spices {
 		/**
 		* @brief Write data to stagingbuffer.
 		*/
-		stagingbuffer.WriteFromBuffer(out_rgba);
+		stagingBuffer.WriteFromBuffer(out_rgba);
 	}
 
 	void VulkanImage::CopyImageToBuffer(VkBuffer dstBuffer, const std::vector<VkBufferImageCopy>& regions)
@@ -481,7 +481,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/*
-		* @brief Transfer image layout from whatever to trasfer src.
+		* @brief Transfer image layout from whatever to transfer src.
 		*/
 		TransitionImageLayout(
 			m_Format,
@@ -492,14 +492,14 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 			vkCmdCopyImageToBuffer(commandBuffer, m_Image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer, regions.size(), regions.data());
 		});
 
 		/*
 		* @brief Transfer image layout from transfer src to shader read.
 		* means only can get data from a shader read layout image.
-		* @note In SpicesEngine, we need transform layout to shader read in scenecomposerenderer first,
+		* @note In SpicesEngine, we need transform layout to shader read in scene compose renderer first,
 		* and after that, you can do this here.
 		*/
 		TransitionImageLayout(
@@ -509,7 +509,7 @@ namespace Spices {
 		);
 	}
 
-	void VulkanImage::CopyImageToMemoryHost(void* data)
+	void VulkanImage::CopyImageToMemoryHost(void* data) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -538,7 +538,7 @@ namespace Spices {
 		m_VulkanState.m_VkFunc.vkCopyImageToMemoryEXT(m_VulkanState.m_Device, &copyInfo);
 	}
 
-	void VulkanImage::CopyImageToMemoryHost(const std::vector<VkImageToMemoryCopyEXT>& copys)
+	void VulkanImage::CopyImageToMemoryHost(const std::vector<VkImageToMemoryCopyEXT>& copies) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -549,8 +549,8 @@ namespace Spices {
 		copyInfo.sType                                 = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT;
 		copyInfo.srcImage                              = m_Image;
 		copyInfo.srcImageLayout                        = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		copyInfo.regionCount                           = static_cast<uint32_t>(copys.size());
-		copyInfo.pRegions                              = copys.data();
+		copyInfo.regionCount                           = static_cast<uint32_t>(copies.size());
+		copyInfo.pRegions                              = copies.data();
 
 		m_VulkanState.m_VkFunc.vkCopyImageToMemoryEXT(m_VulkanState.m_Device, &copyInfo);
 	}
@@ -572,7 +572,7 @@ namespace Spices {
 			 (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) &&
 			 (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT))
 		{
-			SPICES_CORE_ERROR("texture image format does not support linear blitting!");
+			SPICES_CORE_ERROR("texture image format does not support linear blitting!")
 		}
 
 		/**
@@ -591,18 +591,18 @@ namespace Spices {
 		/**
 		* @brief Use Custom Cmd.
 		*/
-		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 
 			/**
 			* @brief Iter all mips.
 			*/
 			for (uint32_t i = 1; i < m_MipLevels; i++) 
 			{
-				int pw = std::max(1, m_Width  >> i - 1);
-				int ph = std::max(1, m_Height >> i - 1);
+				const int pw = std::max(1, (m_Width  >> i) - 1);
+				const int ph = std::max(1, (m_Height >> i) - 1);
 
-				int w  = std::max(1, m_Width  >> i);
-				int h  = std::max(1, m_Height >> i);
+				const int w  = std::max(1, m_Width  >> i);
+				const int h  = std::max(1, m_Height >> i);
 
 				barrier.subresourceRange.baseMipLevel  = i - 1;
 				barrier.oldLayout                      = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
@@ -623,7 +623,7 @@ namespace Spices {
 				/**
 				* @brief Instance a VkImageBlit.
 				*/
-				VkImageBlit blit{};
+				VkImageBlit                                blit{};
 				blit.srcOffsets[0]                       = { 0, 0, 0 };
 				blit.srcOffsets[1]                       = { pw, ph, 1 };
 				blit.srcSubresource.aspectMask           = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -688,7 +688,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkImageViewCreateInfo.
 		*/
-		VkImageViewCreateInfo viewInfo{};
+		VkImageViewCreateInfo                        viewInfo{};
 		viewInfo.sType                             = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image                             = m_Image;
 		viewInfo.viewType                          = viewType;
@@ -702,8 +702,8 @@ namespace Spices {
 		/**
 		* @brief Create ImageView. 
 		*/
-		VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &viewInfo, nullptr, &m_ImageView));
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)m_ImageView, m_VulkanState.m_Device, "ImageView")
+		VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &viewInfo, nullptr, &m_ImageView))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE_VIEW, reinterpret_cast<uint64_t>(m_ImageView), m_VulkanState.m_Device, "ImageView")
 	}
 
 	void VulkanImage::CreateSampler()
@@ -742,8 +742,8 @@ namespace Spices {
 		/**
 		* @brief Create Sampler.
 		*/
-		VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_TextureSampler));
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SAMPLER, (uint64_t)m_TextureSampler, m_VulkanState.m_Device, "ImageSampler")
+		VK_CHECK(vkCreateSampler(m_VulkanState.m_Device, &samplerInfo, nullptr, &m_TextureSampler))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SAMPLER, reinterpret_cast<uint64_t>(m_TextureSampler), m_VulkanState.m_Device, "ImageSampler")
 	}
 
 	void VulkanImage::CreateImage(
@@ -802,7 +802,7 @@ namespace Spices {
 		* @brief Create Image.
 		*/
 		VK_CHECK(vmaCreateImage(vulkanState.m_VmaAllocator, &imageInfo, &createInfo, &m_Image, &m_Alloc, nullptr))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE, (uint64_t)m_Image, m_VulkanState.m_Device, name)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE, reinterpret_cast<uint64_t>(m_Image), m_VulkanState.m_Device, name)
 
 #else
 
@@ -871,7 +871,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkDescriptorSetLayoutBinding.
 		*/
-		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+		VkDescriptorSetLayoutBinding                        samplerLayoutBinding{};
 		samplerLayoutBinding.binding                      = binding;
 		samplerLayoutBinding.descriptorCount              = 1;
 		samplerLayoutBinding.descriptorType               = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -881,7 +881,7 @@ namespace Spices {
 		/**
 		* @brief Instance a VkDescriptorSetLayoutCreateInfo.
 		*/
-		VkDescriptorSetLayoutCreateInfo layoutInfo{};
+		VkDescriptorSetLayoutCreateInfo                     layoutInfo{};
 		layoutInfo.sType                                  = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.bindingCount                           = 1;
 		layoutInfo.pBindings                              = &samplerLayoutBinding;
@@ -890,7 +890,7 @@ namespace Spices {
 		* @brief Create DescriptorSetLayout.
 		*/
 		VK_CHECK(vkCreateDescriptorSetLayout(m_VulkanState.m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)m_DescriptorSetLayout, m_VulkanState.m_Device, "DescriptorSetLayoutImage")
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, reinterpret_cast<uint64_t>(m_DescriptorSetLayout), m_VulkanState.m_Device, "DescriptorSetLayoutImage")
 
 		/**
 		* @brief Instance a VkDescriptorSetAllocateInfo.
@@ -905,7 +905,7 @@ namespace Spices {
 		* @brief Allocate DescriptorSets.
 		*/
 		VK_CHECK(vkAllocateDescriptorSets(m_VulkanState.m_Device, &allocInfo, &m_DescriptorSet))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)m_DescriptorSet, m_VulkanState.m_Device, "DescriptorSetImage")
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_DESCRIPTOR_SET, reinterpret_cast<uint64_t>(m_DescriptorSet), m_VulkanState.m_Device, "DescriptorSetImage")
 		
 		/**
 		* @brief Instance a VkDescriptorImageInfo.
@@ -933,7 +933,7 @@ namespace Spices {
 		vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &descriptorWrite, 0, nullptr);
 	}
 
-	bool VulkanImage::IsHostCopyable()
+	bool VulkanImage::IsHostCopyable() const
 	{
 		SPICES_PROFILE_ZONE;
 

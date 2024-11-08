@@ -33,19 +33,19 @@ namespace Spices {
 		* @brief Wait on this VkSemaphore using specific value.
 		* @param[in] waitValue .
 		*/
-		void Wait(uint64_t waitValue = 1);
+		void Wait(uint64_t waitValue = 1) const;
 
 		/**
 		* @brief Signal this VkSemaphore using specific value.
 		* @param[in] signalValue .
 		*/
-		void Singal(uint64_t signalValue = 1);
+		void Singal(uint64_t signalValue = 1) const;
 
 		/**
 		* @brief Get what Counter this VkSemaphore is now.
 		* @return Returns Counter this VkSemaphore is now
 		*/
-		uint64_t GetValue();
+		uint64_t GetValue() const;
 
 	private:
 

@@ -228,15 +228,15 @@ namespace Spices {
 
         /**
         * @brief Build this.
-        * @param[in] createrName The object this descriptor set belongs to.
+        * @param[in] creatorName The object this descriptor set belongs to.
         */
-        void BuildDescriptorSet(const std::string& createrName);
+        void BuildDescriptorSet(const std::string& creatorName);
         
         /**
-        * @brief Build this bindless.
-        * @param[in] createrName The object this descriptor set belongs to.
+        * @brief Build this bind less.
+        * @param[in] creatorName The object this descriptor set belongs to.
         */
-        void BuildBindLessTextureDescriptorSet(const std::string& createrName);
+        void BuildBindLessTextureDescriptorSet(const std::string& creatorName);
 
         /**
         * @brief Update this descriptor set.
@@ -267,7 +267,7 @@ namespace Spices {
         ) const;
         
         /**
-        * @brief Update this bindless descriptor set.
+        * @brief Update this bind less descriptor set.
         * @param[in] imageInfo ImageInfo.
         */
         void UpdateBindLessTextureDescriptorSet(

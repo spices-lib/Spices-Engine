@@ -50,7 +50,7 @@ namespace Spices {
 		* @brief Thread Function.
 		* @param[in] thread Thread Entity.
 		*/
-		void ThreadPool::ThreadFunc(Thread<>* thread);
+		void ThreadFunc(Thread<>* thread);
 
 		/*************************************************************************************************************/
 

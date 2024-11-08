@@ -16,8 +16,8 @@ namespace Spices {
 
 	/**
 	* @brief VulkanRenderPass Class.
-	* This class defines the VulkanRenderPass behaver.
-	* This class is just a wapper of VkRenderPass, VkFramebuffer.
+	* This class defines the VulkanRenderPass behaves.
+	* This class is just a wrapper of VkRenderPass, VkFramebuffer.
 	*/
 	class VulkanRenderPass : public VulkanObject
 	{
@@ -32,7 +32,7 @@ namespace Spices {
 		* @param[in] createInfo The information helps to create a VkRenderPass.
 		* @param[in] imageViews All attachments except swapchain image view that in used.
 		* @param[in] layers The max layers of all attachments.
-		* @param[in] isUseSwapChianImage True if need apped a swpachain image view.
+		* @param[in] isUseSwapChianImage True if need append a swapchain image view.
 		*/
 		VulkanRenderPass(
 			VulkanState&                  vulkanState           ,
@@ -57,7 +57,7 @@ namespace Spices {
 
 		/**
 		* @brief Get Framebuffer by index.
-		* @param[in] index Frameindex in FrameInfo.
+		* @param[in] index Frame index in FrameInfo.
 		* @return Returns the indexed Framebuffer.
 		*/
 		inline VkFramebuffer& GetFramebuffer(uint32_t index) { return m_SwapChainFramebuffers[index]; };

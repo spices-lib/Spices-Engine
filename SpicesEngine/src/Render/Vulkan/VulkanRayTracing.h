@@ -47,7 +47,7 @@ namespace Spices {
 
 		VulkanRayTracing(VulkanState& vulkanState);
 
-		virtual ~VulkanRayTracing();
+		virtual ~VulkanRayTracing() override;
 
 		void Destroy();
 
@@ -202,7 +202,7 @@ namespace Spices {
 		* @brief Command buffer to create the TLAS.
 		*/
 		std::unique_ptr<VulkanBuffer> scratchBuffer = nullptr;
-		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 
 			/**
 			* @brief Make sure the copy of the instance buffer are copied before triggering the acceleration structure build.

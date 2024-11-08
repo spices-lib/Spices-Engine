@@ -90,7 +90,7 @@ namespace Spices {
 
 		if(frameInfo.m_RendererType != RendererType::PathTracing) return;
 		
-		RenderBehaveBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+		RenderBehaveBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
 
 		builder.BeginRenderPass();
 

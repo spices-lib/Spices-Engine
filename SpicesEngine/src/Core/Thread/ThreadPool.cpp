@@ -40,7 +40,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto lastTime = std::chrono::high_resolution_clock().now();
+		auto lastTime = std::chrono::high_resolution_clock::now();
 
 		for(;;)
 		{
@@ -65,7 +65,7 @@ namespace Spices {
 					{
 						if (m_NotEmpty.wait_for(lock, std::chrono::seconds(1)) == std::cv_status::timeout)
 						{
-							auto now = std::chrono::high_resolution_clock().now();
+							auto now = std::chrono::high_resolution_clock::now();
 							auto dur = std::chrono::duration_cast<std::chrono::seconds>(now - lastTime);
 
 							/**
@@ -126,7 +126,7 @@ namespace Spices {
 				++m_IdleThreadSize;
 			}
 			
-			lastTime = std::chrono::high_resolution_clock().now();
+			lastTime = std::chrono::high_resolution_clock::now();
 		}
 	}
 }

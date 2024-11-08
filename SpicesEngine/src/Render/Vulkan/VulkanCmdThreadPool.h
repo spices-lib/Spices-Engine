@@ -39,7 +39,9 @@ namespace Spices {
 
 		/**
 		* @brief Submit a part commands task to task queue, and wait for a idle thread to execute it.
-		* @tparam func Task Function.
+		* @tparam Func Task Function.
+		* @tparam Args Task Parameters.
+		* @tparam  RType Task Return Type.
 		*/
 		template<typename RType, typename Func, typename ...Args>
 		auto SubmitPoolTask(Func&& func, Args && ...args) -> std::future<RType>;
@@ -60,7 +62,7 @@ namespace Spices {
 
 		/**
 		* @brief GetCommandBuffers.
-		* @param[in] FrameIndex in FrameInfo
+		* @param[in] frameIndex in FrameInfo
 		* @return Return all CommandBuffers.
 		*/
 		std::vector<VkCommandBuffer>& GetCommandBuffers(int frameIndex) { return m_CmdBuffers[frameIndex]; }

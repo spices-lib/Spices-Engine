@@ -18,30 +18,30 @@ namespace Spices {
 
 		/**
 		* @brief Start Record Commands with a Label.
-		* @param[in] cmdbuffer The VkCommandBuffer in use this frame.
+		* @param[in] cmdBuffer The VkCommandBuffer in use this frame.
 		* @param[in] caption The label be captured.
 		* @param[in] color The label color.
 		*/
 		static void BeginLabel(
-			VkCommandBuffer    cmdbuffer              , 
+			VkCommandBuffer    cmdBuffer              , 
 			const std::string& caption                , 
 			glm::vec4          color = glm::vec4(1.0f)
 		);
 
 		/**
 		* @brief End Record Commands with a Label.
-		* @param[in] cmdbuffer The VkCommandBuffer in use this frame.
+		* @param[in] cmdBuffer The VkCommandBuffer in use this frame.
 		*/
-		static void EndLabel(VkCommandBuffer cmdbuffer);
+		static void EndLabel(VkCommandBuffer cmdBuffer);
 
 		/**
 		* @brief Insert Record Commands with a Label.
-		* @param[in] cmdbuffer The VkCommandBuffer in use this frame.
+		* @param[in] cmdBuffer The VkCommandBuffer in use this frame.
 		* @param[in] caption The label be captured.
 		* @param[in] color The label color.
 		*/
 		static void InsertLabel(
-			VkCommandBuffer    cmdbuffer               , 
+			VkCommandBuffer    cmdBuffer               , 
 			const std::string& caption                 , 
 			glm::vec4          color = glm::vec4(1.0f)
 		);
@@ -98,10 +98,10 @@ namespace Spices {
 		* @param[in] captions The Vulkan Object tags.
 		*/
 		static void SetObjectTag(
-			VkObjectType       type     , 
-			uint64_t           handle   , 
-			VkDevice&          device   , 
-			std::vector<char*> captions
+			VkObjectType              type     , 
+			uint64_t                  handle   , 
+			VkDevice&                 device   ,
+			const std::vector<char*>& captions
 		);
 	};
 

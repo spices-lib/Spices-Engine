@@ -27,12 +27,12 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class RendererResourcePool;
 
 	/**
-	* @brief This class defines the renderbackend behaver of Vulkan.
+	* @brief This class defines the render backend behaves of Vulkan.
 	*/
 	class VulkanRenderBackend
 	{
@@ -50,18 +50,18 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		VulkanRenderBackend(const VulkanRenderBackend&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		VulkanRenderBackend& operator=(const VulkanRenderBackend&) = delete;
 
 		/**
-		* @brief Determin whether window is closed.
+		* @brief Determine whether window is closed.
 		* @return Returns True if closed.
 		*/
 		bool isWindowClosed() { return glfwWindowShouldClose(m_VulkanState.m_Windows); }
@@ -121,7 +121,7 @@ namespace Spices {
 		* @brief This function is called on window is resized over.
 		* @param[in] event WindowResizeOverEvent.
 		* @return Returns true if need block event.
-		* @attention: Minimize Window registy OnWindowResizeOver, OnSlateResize will not be registy.
+		* @attention: Minimize Window registry OnWindowResizeOver, OnSlateResize will not be registry.
 		*/
 		bool OnWindowResizeOver(WindowResizeOverEvent& event);
 
@@ -133,7 +133,7 @@ namespace Spices {
 		bool OnSlateResize(SlateResizeEvent& event);
 
 		/**
-		* @brief This function is called on worldmarkqueryer tick.
+		* @brief This function is called on world mark query tick.
 		* @param[in] event WorldEvent.
 		* @return Returns true if need block event.
 		*/

@@ -142,7 +142,6 @@ namespace scl {
 			else
 			{
 				T*    om           = m_Begin;
-				size_t oc          = m_UseCount;
 				const size_t ob    = sizeof(T) * m_UseCount;
 				const size_t nb    = sizeof(T) * m_UseCount * m_ExpandRate;
 				m_SpareCount       = (nb - ob) / sizeof(T);

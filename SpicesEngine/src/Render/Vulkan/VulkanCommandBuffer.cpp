@@ -25,16 +25,16 @@ namespace Spices {
 		/**
 		* @brief Create commandpool and set it global. 
 		*/
-		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool));
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)vulkanState.m_GraphicCommandPool, vulkanState.m_Device, "GraphicCommandPool")
+		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_GraphicCommandPool), vulkanState.m_Device, "GraphicCommandPool")
 		
 		poolInfo.queueFamilyIndex = vulkanState.m_ComputeQueueFamily;
 
 		/**
 		* @brief Create commandpool and set it global.
 		*/
-		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_ComputeCommandPool));
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)vulkanState.m_ComputeCommandPool, vulkanState.m_Device, "ComputeCommandPool")
+		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_ComputeCommandPool))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_ComputeCommandPool), vulkanState.m_Device, "ComputeCommandPool")
 	}
 
 	VulkanCommandPool::~VulkanCommandPool()
@@ -65,15 +65,15 @@ namespace Spices {
 		/**
 		* @brief  Create commandbuffer and set it global.
 		*/
-		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_GraphicCommandBuffer.data()));
+		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_GraphicCommandBuffer.data()))
 
 		allocInfo.commandPool = vulkanState.m_ComputeCommandPool;
-		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_ComputeCommandBuffer.data()));
+		VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, vulkanState.m_ComputeCommandBuffer.data()))
 
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_GraphicCommandBuffer[i], vulkanState.m_Device, "GraphicCommandBuffer")
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)vulkanState.m_ComputeCommandBuffer[i], vulkanState.m_Device, "ComputeCommandBuffer")
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, reinterpret_cast<uint64_t>(vulkanState.m_GraphicCommandBuffer[i]), vulkanState.m_Device, "GraphicCommandBuffer")
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, reinterpret_cast<uint64_t>(vulkanState.m_ComputeCommandBuffer[i]), vulkanState.m_Device, "ComputeCommandBuffer")
 
 			SPICES_PROFILE_VK_COLLECT(vulkanState.m_GraphicCommandBuffer[i])
 			SPICES_PROFILE_VK_COLLECT(vulkanState.m_ComputeCommandBuffer[i])

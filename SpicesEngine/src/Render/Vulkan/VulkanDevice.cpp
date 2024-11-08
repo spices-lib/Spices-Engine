@@ -201,10 +201,10 @@ namespace Spices {
 
 #endif
 
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_GraphicQueue , vulkanState.m_Device, "GraphicQueue" );
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_PresentQueue , vulkanState.m_Device, "PresentQueue" );
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_ComputeQueue , vulkanState.m_Device, "ComputeQueue" );
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, (uint64_t)vulkanState.m_TransferQueue, vulkanState.m_Device, "TransferQueue");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_GraphicQueue) , vulkanState.m_Device, "GraphicQueue" );
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_PresentQueue) , vulkanState.m_Device, "PresentQueue" );
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_ComputeQueue) , vulkanState.m_Device, "ComputeQueue" );
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_TransferQueue), vulkanState.m_Device, "TransferQueue");
 		}
 	}
 
@@ -514,7 +514,7 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);                        /* @brief Enable Shader spirv1.4.                                                 */
 		m_ExtensionProperties.push_back(VK_EXT_MESH_SHADER_EXTENSION_NAME);                      /* @brief Enable Mesh Shader, Task Shader.                                        */
 		m_ExtensionProperties.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);            /* @brief Enable Shader float controls.                                           */
-		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shadeing rate.                                          */
+		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME);            /* @brief Enable Fragment Shading rate.                                           */
 		m_ExtensionProperties.push_back(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME);            /* @brief Enable Nested Command Buffer.                                           */
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME);         /* @brief Enable Nvidia GPU Generate Commands.                                    */
 		m_ExtensionProperties.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);     /* @brief Enable Nvidia GPU Diagnostic Checkpoints.                               */
@@ -522,7 +522,7 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);      /* @brief Enable FragmentShaderBarycentric.                                       */
 		m_ExtensionProperties.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);                    /* @brief Enable GPU Memory Statics.                                              */
 		m_ExtensionProperties.push_back(VK_EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME);            /* @brief Enable calibrated timestamps(butter than query pool's timestamps).      */
-		m_ExtensionProperties.push_back(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME);                 /* @brief Enable reset query pool in host(without commandbuffer).                 */
+		m_ExtensionProperties.push_back(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME);                 /* @brief Enable reset query pool in host(without commandBuffer).                 */
 		m_ExtensionProperties.push_back(VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME);                  /* @brief Enable image copy from host directly.                                   */
 
 		/**
@@ -618,7 +618,7 @@ namespace Spices {
 		/**
 		* @brief Check queue identify.
 		*/
-		for (int i = 0; i < queueFamilies.size(); i++) {
+		for (uint32_t i = 0; i < queueFamilies.size(); i++) {
 			const auto& queueFamily = queueFamilies[i];
 
 			/**

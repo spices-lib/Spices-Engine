@@ -112,7 +112,7 @@ namespace Spices {
 
 		UpdateTopLevelAS(frameInfo);
 		
-		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_Imageindex };
+		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
 
 		builder.Recording("RayTracing");
 

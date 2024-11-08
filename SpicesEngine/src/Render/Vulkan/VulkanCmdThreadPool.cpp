@@ -62,7 +62,7 @@ namespace Spices {
 
 				for (int j = 0; j < MaxFrameInFlight; j++)
 				{
-					VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &m_CmdBuffers[j][i]));
+					VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &m_CmdBuffers[j][i]))
 					DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)m_CmdBuffers[j][i], vulkanState.m_Device, "ParallelGraphicCommandBuffer")
 					SPICES_PROFILE_VK_COLLECT(m_CmdBuffers[j][i])
 				}
@@ -103,7 +103,7 @@ namespace Spices {
 		for (uint32_t i = 0; i < m_InitThreadSize; i++)
 		{
 			auto ptr = std::make_unique<Thread<VkCommandBuffer>>(std::bind(&VulkanCmdThreadPool::ThreadFunc, this, std::placeholders::_1), i);
-			int threadId = ptr->GetId();
+			uint32_t threadId = ptr->GetId();
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
@@ -113,7 +113,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto lastTime = std::chrono::high_resolution_clock().now();
+		auto lastTime = std::chrono::high_resolution_clock::now();
 
 		for (;;)
 		{
@@ -138,7 +138,7 @@ namespace Spices {
 					{
 						if (m_NotEmpty.wait_for(lock, std::chrono::seconds(1)) == std::cv_status::timeout)
 						{
-							auto now = std::chrono::high_resolution_clock().now();
+							auto now = std::chrono::high_resolution_clock::now();
 							auto dur = std::chrono::duration_cast<std::chrono::seconds>(now - lastTime);
 
 							/**
@@ -199,7 +199,7 @@ namespace Spices {
 				++m_IdleThreadSize;
 			}
 
-			lastTime = std::chrono::high_resolution_clock().now();
+			lastTime = std::chrono::high_resolution_clock::now();
 		}
 	}
 }

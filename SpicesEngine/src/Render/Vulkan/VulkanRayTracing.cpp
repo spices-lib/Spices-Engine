@@ -161,13 +161,13 @@ namespace Spices {
 			*/ 
 			if (batchSize >= batchLimit || idx == nbBlas - 1)
 			{
-				VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+				VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 					CmdCreateBLAS(commandBuffer, indices, buildAs, scratchAddress, queryPool);				
 				});
 
 				if (queryPool)
 				{
-					VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+					VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 						CmdCompactBLAS(commandBuffer, indices, buildAs, queryPool);
 					});
 
@@ -252,7 +252,7 @@ namespace Spices {
 		}
 
 		// Update the instance buffer on the device side and build the TLAS
-		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](VkCommandBuffer& commandBuffer) {
+		VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 			// Update the acceleration structure. Note the VK_TRUE parameter to trigger the update,
 			// and the existing BLAS being passed and updated in place
 			m_VulkanState.m_VkFunc.vkCmdBuildAccelerationStructuresKHR(commandBuffer, 1, &buildInfos, pBuildOffset.data());

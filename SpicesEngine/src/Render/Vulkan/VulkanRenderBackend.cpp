@@ -236,9 +236,9 @@ namespace Spices {
 			m_VulkanState.m_Device                                        , 
 			m_VulkanState.m_SwapChain                                     , 
 			UINT64_MAX                                                    , 
-			m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex] ,   // Singal Semaphore.
+			m_VulkanState.m_GraphicImageSemaphore[frameInfo.m_FrameIndex] ,   // Signal Semaphore.
 			VK_NULL_HANDLE                                                , 
-			&frameInfo.m_Imageindex
+			&frameInfo.m_ImageIndex
 		);
 
 		/**
@@ -299,7 +299,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("EndFrame::NsightPerfOneShotEndFrameRange");
 
-			NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], 0);
+			NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], 0)
 		}
 
 		{
@@ -401,7 +401,7 @@ namespace Spices {
 			presentInfo.pWaitSemaphores         = &m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex];
 			presentInfo.swapchainCount          = 1;
 			presentInfo.pSwapchains             = &m_VulkanState.m_SwapChain;
-			presentInfo.pImageIndices           = &frameInfo.m_Imageindex;
+			presentInfo.pImageIndices           = &frameInfo.m_ImageIndex;
 			presentInfo.pResults                = nullptr;
 
 			/**
@@ -415,7 +415,7 @@ namespace Spices {
 			}
 			else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
 			{
-				SPICES_CORE_ERROR("Failed to present swap chain image!");
+				SPICES_CORE_ERROR("Failed to present swap chain image!")
 			}
 
 			DEBUGUTILS_ENDQUEUELABEL(m_VulkanState.m_PresentQueue)

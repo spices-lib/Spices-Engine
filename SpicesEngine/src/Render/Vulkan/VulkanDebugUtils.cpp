@@ -11,7 +11,7 @@
 namespace Spices {
 
 	void VulkanDebugUtils::BeginLabel(
-		VkCommandBuffer    cmdbuffer , 
+		VkCommandBuffer    cmdBuffer , 
 		const std::string& caption   , 
 		glm::vec4          color
 	)
@@ -30,11 +30,11 @@ namespace Spices {
 		/**
 		* @brief Execute the function pointer.
 		*/
-		VulkanRenderBackend::GetState().m_VkFunc.vkCmdBeginDebugUtilsLabelEXT(cmdbuffer, &labelInfo);
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdBeginDebugUtilsLabelEXT(cmdBuffer, &labelInfo);
 	}
 
 	void VulkanDebugUtils::InsertLabel(
-		VkCommandBuffer    cmdbuffer , 
+		VkCommandBuffer    cmdBuffer , 
 		const std::string& caption   , 
 		glm::vec4          color
 	)
@@ -53,17 +53,17 @@ namespace Spices {
 		/**
 		* @brief Execute the function pointer.
 		*/
-		VulkanRenderBackend::GetState().m_VkFunc.vkCmdInsertDebugUtilsLabelEXT(cmdbuffer, &labelInfo);
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdInsertDebugUtilsLabelEXT(cmdBuffer, &labelInfo);
 	}
 
-	void VulkanDebugUtils::EndLabel(VkCommandBuffer cmdbuffer)
+	void VulkanDebugUtils::EndLabel(VkCommandBuffer cmdBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Execute the function pointer.
 		*/
-		VulkanRenderBackend::GetState().m_VkFunc.vkCmdEndDebugUtilsLabelEXT(cmdbuffer);
+		VulkanRenderBackend::GetState().m_VkFunc.vkCmdEndDebugUtilsLabelEXT(cmdBuffer);
 	}
 
 	void VulkanDebugUtils::BeginQueueLabel(
@@ -143,10 +143,10 @@ namespace Spices {
 	}
 
 	void VulkanDebugUtils::SetObjectTag(
-		VkObjectType       type      , 
-		uint64_t           handle    , 
-		VkDevice&          device    , 
-		std::vector<char*> captions
+		VkObjectType              type      , 
+		uint64_t                  handle    , 
+		VkDevice&                 device    ,
+		const std::vector<char*>& captions
 	)
 	{
 		SPICES_PROFILE_ZONE;

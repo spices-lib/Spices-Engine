@@ -64,7 +64,7 @@ namespace Spices {
 		* @brief Create Shader Module.
 		*/
 		VK_CHECK(vkCreateShaderModule(vulkanState.m_Device, &createInfo, nullptr, &m_ShaderModule))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SHADER_MODULE, (uint64_t)m_ShaderModule, m_VulkanState.m_Device, shaderName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SHADER_MODULE, reinterpret_cast<uint64_t>(m_ShaderModule), m_VulkanState.m_Device, shaderName)
 
 		FileLibrary::FileLibrary_Close(&fileHandle);
 
@@ -99,7 +99,7 @@ namespace Spices {
 		* @brief Create Shader Module.
 		*/
 		VK_CHECK(vkCreateShaderModule(vulkanState.m_Device, &createInfo, nullptr, &m_ShaderModule))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SHADER_MODULE, (uint64_t)m_ShaderModule, m_VulkanState.m_Device, shaderName)
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SHADER_MODULE, reinterpret_cast<uint64_t>(m_ShaderModule), m_VulkanState.m_Device, shaderName)
 
 		/**
 		* @brief Add to Aftermath.

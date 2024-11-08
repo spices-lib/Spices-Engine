@@ -14,8 +14,8 @@ namespace Spices {
 
 	/**
 	* @brief VulkanSwapChain Class.
-	* This class defines the VulkanSwapChain behaver.
-	* This class is just a wapper of VkSwapchainKHR.
+	* This class defines the VulkanSwapChain behaves.
+	* This class is just a wrapper of VkSwapchainKHR.
 	*/
 	class VulkanSwapChain : public VulkanObject
 	{
@@ -23,7 +23,7 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
-		* Create vkinstance and vksurface.
+		* Create vkInstance and vkSurface.
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] vulkanDevice The shared pointer of VulkanDevice.
 		*/
@@ -38,14 +38,14 @@ namespace Spices {
 		virtual ~VulkanSwapChain();
 
 		/**
-		* @brief Check whether Depth Image's Format is supported by physicaldevice.
+		* @brief Check whether Depth Image's Format is supported by physical device.
 		* @param[in] physicalDevice VkPhysicalDevice.
 		* @return Returns the Depth Image's Format
 		*/
 		static VkFormat FindDepthFormat(const VkPhysicalDevice& physicalDevice);
 
 		/**
-		* @brief Check whether specific formats is supported by physicaldevice.
+		* @brief Check whether specific formats is supported by physical device.
 		* @param[in] physicalDevice VkPhysicalDevice.
 		* @param[in] candidates The VkFormats Container we need query.
 		* @param[in] tiling VkImageTiling.
