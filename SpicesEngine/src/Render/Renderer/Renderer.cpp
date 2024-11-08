@@ -76,7 +76,7 @@ namespace Spices {
 		CreateDescriptorSet();
 	}
 
-	void Renderer::RegistryMaterial(const std::string& materialName, const std::string& subpassName)
+	void Renderer::RegistryMaterial(const std::string& materialName, const std::string& subPassName)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -98,7 +98,7 @@ namespace Spices {
 		/**
 		* @brief SpecificRenderer's DescriptorSetInfo.
 		*/
-		const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subpassName});
+		const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subPassName});
 		for (auto& pair : specificRendererSetInfo)
 		{
 			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
@@ -123,7 +123,7 @@ namespace Spices {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		const auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
+		const auto& subPass = *m_Pass->GetSubPasses().find_value(subPassName);
 		VkPipelineLayout pipelineLayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
@@ -133,7 +133,7 @@ namespace Spices {
 		m_Pipelines[materialName] = pipeline;
 	}
 
-	void Renderer::RegistryDGCPipeline(const std::string& materialName, const std::string& subpassName)
+	void Renderer::RegistryDGCPipeline(const std::string& materialName, const std::string& subPassName)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -155,7 +155,7 @@ namespace Spices {
 		/**
 		* @brief SpecificRenderer's DescriptorSetInfo.
 		*/
-		const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subpassName});
+		const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subPassName});
 		for (auto& pair : specificRendererSetInfo)
 		{
 			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
@@ -180,7 +180,7 @@ namespace Spices {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		const auto& subPass = *m_Pass->GetSubPasses().find_value(subpassName);
+		const auto& subPass = *m_Pass->GetSubPasses().find_value(subPassName);
 		VkPipelineLayout pipelineLayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
@@ -191,12 +191,12 @@ namespace Spices {
 		m_Pipelines[ss.str()] = CreateDGCPipeline(ss.str(), materialName, pipelineLayout, subPass);
 	}
 
-	std::shared_ptr<Material> Renderer::GetDefaultMaterial(const std::string& subpassName) const
+	std::shared_ptr<Material> Renderer::GetDefaultMaterial(const std::string& subPassName) const
 	{
 		SPICES_PROFILE_ZONE;
 		
 		std::stringstream ss;
-		ss << m_RendererName << "." << subpassName << ".Default";
+		ss << m_RendererName << "." << subPassName << ".Default";
 
 		/**
 		* @brief Real Material.
@@ -423,8 +423,8 @@ namespace Spices {
 		IterWorldCompWithBreak<DirectionalLightComponent>(
 			frameInfo, 
 			[&](
-			int                          entityId, 
-			TransformComponent&          transComp, 
+			int                          entityId,
+			const TransformComponent&    transComp, 
 			DirectionalLightComponent&   dirlightComp
 			) {
 
@@ -445,7 +445,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (int i = 0; i < MAX_DIRECTIONALLIGHT_NUM; i++)
+		for (uint32_t i = 0; i < MAX_DIRECTIONALLIGHT_NUM; i++)
 		{
 			directionalLight[i] = glm::mat4(1.0f);
 		}
@@ -515,7 +515,7 @@ namespace Spices {
 		pLightBuffer[index].intensity = -1000.0f;
 	}
 	
-	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption) const
+	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -525,7 +525,7 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
-	void Renderer::RenderBehaveBuilder::Endrecording() const
+	void Renderer::RenderBehaveBuilder::EndRecording()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -535,14 +535,14 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 	}
 
-	void Renderer::RenderBehaveBuilder::Async(std::function<void(VkCommandBuffer& cmdBuffer)> func) const
+	void Renderer::RenderBehaveBuilder::Async(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Submit Cmds to Thread Pool.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			func(cmdBuffer);
 		});
 	}
@@ -551,19 +551,31 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		vkCmdBindPipeline(cmdBuffer ? cmdBuffer : m_CommandBuffer, bindPoint, m_Renderer->m_Pipelines[materialName]->GetPipeline());
+		vkCmdBindPipeline(
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
+			bindPoint,
+			m_Renderer->m_Pipelines[materialName]->GetPipeline()
+		);
 	}
 
 	void Renderer::RenderBehaveBuilder::BindPipelineAsync(const std::string& materialName, VkPipelineBindPoint bindPoint)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
-			vkCmdBindPipeline(cmdBuffer, bindPoint, m_Renderer->m_Pipelines[materialName]->GetPipeline());
+		m_Renderer->SubmitCmdsParallel(
+		m_CommandBuffer,
+		m_SubPassIndex,
+		[&](const VkCommandBuffer& cmdBuffer)
+		{
+			vkCmdBindPipeline(
+				cmdBuffer,
+				bindPoint,
+				m_Renderer->m_Pipelines[materialName]->GetPipeline()
+			);
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::SetViewPort(VkCommandBuffer cmdBuffer) const
+	void Renderer::RenderBehaveBuilder::SetViewPort(const VkCommandBuffer& cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -593,7 +605,7 @@ namespace Spices {
 		}
 
 		/**
-		* @brief Instance a VkRect2D
+		* @brief Instance a VkRect2D.
 		*/
 		VkRect2D                      scissor{};
 		scissor.offset              = { 0, 0 };
@@ -646,7 +658,7 @@ namespace Spices {
 		scissor.offset              = { 0, 0 };
 		scissor.extent              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			
 			/**
 			* @brief Set VkViewport with viewport slate.
@@ -660,13 +672,13 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::BeginNextSubPass(const std::string& subpassName)
+	void Renderer::RenderBehaveBuilder::BeginNextSubPass(const std::string& subPassName)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
-		++m_SubpassIndex;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		++m_SubPassIndex;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
 
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -682,13 +694,13 @@ namespace Spices {
 		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void Renderer::RenderBehaveBuilder::BeginNextSubPassAsync(const std::string& subpassName)
+	void Renderer::RenderBehaveBuilder::BeginNextSubPassAsync(const std::string& subPassName)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subpassName);
-		++m_SubpassIndex;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[subpassName];
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		++m_SubPassIndex;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
 
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -709,7 +721,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
-		m_SubpassIndex = 0;
+		m_SubPassIndex = 0;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
 
 		/**
@@ -757,7 +769,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
-		m_SubpassIndex = 0;
+		m_SubPassIndex = 0;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
 
 		/**
@@ -919,7 +931,7 @@ namespace Spices {
 		* @attention Vulkan not allow dynamic state in mixing raytracing pipeline and custom graphic pipeline.
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			m_Renderer->m_VulkanState.m_VkFunc.vkCmdTraceRaysKHR(
 				cmdBuffer,
 				rgenRegion,
@@ -988,7 +1000,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& secCmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& secCmdBuffer) {
 
 			/**
 			* @brief Iter all desctiptorsets.
@@ -1030,7 +1042,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			PreprocessDGC_NV(cmdBuffer);
 
 			PipelineMemoryBarrier(
@@ -1068,12 +1080,12 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			m_HandledIndirectData->PreprocessDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::ExecuteDGC_NV(VkCommandBuffer cmdBuffer) const
+	void Renderer::RenderBehaveBuilder::ExecuteDGC_NV(const VkCommandBuffer& cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1096,12 +1108,12 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			m_HandledIndirectData->ExecuteDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangle(VkCommandBuffer cmdBuffer) const
+	void Renderer::RenderBehaveBuilder::DrawFullScreenTriangle(const VkCommandBuffer& cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1118,7 +1130,7 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdDraw.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
 		});
 	}
@@ -1175,7 +1187,7 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdPipelineBarrier.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			vkCmdPipelineBarrier(
 				cmdBuffer,
 				srcStageMask,
@@ -1200,7 +1212,7 @@ namespace Spices {
 		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 
-	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant(uint64_t size)
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddPushConstant(uint32_t size)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1373,9 +1385,9 @@ namespace Spices {
 		*/
 		for (size_t i = 0; i < textureNames.size(); i++)
 		{
-			RendererResourceCreateInfo resinfo;
-			resinfo.name = textureNames[i];
-			const auto info = m_Renderer->m_RendererResourcePool->AccessResource(resinfo);
+			RendererResourceCreateInfo resInfo;
+			resInfo.name = textureNames[i];
+			const auto info = m_Renderer->m_RendererResourcePool->AccessResource(resInfo);
 
 			m_ImageInfos[set][binding].push_back(*info);
 		}
@@ -1650,7 +1662,7 @@ namespace Spices {
 		Renderer*          renderer
 	)
 		: m_Renderer(renderer)
-		, m_SubpassName(subPassName)
+		, m_SubPassName(subPassName)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1741,7 +1753,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		std::stringstream ss;
-		ss << m_Renderer->m_RendererName << "." << m_SubpassName << ".Default";
+		ss << m_Renderer->m_RendererName << "." << m_SubPassName << ".Default";
 
 		/**
 		* @brief Instance a VkIndirectCommandsLayoutTokenNV.

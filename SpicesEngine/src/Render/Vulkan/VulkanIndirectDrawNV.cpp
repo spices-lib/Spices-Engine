@@ -114,10 +114,10 @@ namespace Spices {
 		/**
 		* @brief Create IndirectCommandsLayout.
 		*/
-		m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_VulkanState.m_Device, &genInfo, NULL, &m_IndirectCmdsLayout);
+		m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_VulkanState.m_Device, &genInfo, nullptr, &m_IndirectCmdsLayout);
 	}
 
-	void VulkanIndirectDrawNV::PreprocessDGC(VkCommandBuffer cmdBuffer, VkPipeline pipeline)
+	void VulkanIndirectDrawNV::PreprocessDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -143,7 +143,7 @@ namespace Spices {
 		m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(cmdBuffer, &info);
 	}
 
-	void VulkanIndirectDrawNV::ExecuteDGC(VkCommandBuffer cmdBuffer, VkPipeline pipeline)
+	void VulkanIndirectDrawNV::ExecuteDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const
 	{
 		SPICES_PROFILE_ZONE;
 

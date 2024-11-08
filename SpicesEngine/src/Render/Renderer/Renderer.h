@@ -7,7 +7,6 @@
 #pragma once
 /******************************Core Header**********************************************************/
 #include "Core/Core.h"
-#include "RendererManager.h"
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
@@ -32,10 +31,6 @@
 #include "World/World/World.h"
 #include "World/Components/MeshComponent.h"
 #include "World/Components/TransformComponent.h"
-#include "World/Components/CameraComponent.h"
-#include "World/Components/UUIDComponent.h"
-#include "World/Components/SkyBoxComponent.h"
-#include "World/Components/SpriteComponent.h"
 /***************************************************************************************************/
 
 /******************************STL Header***********************************************************/
@@ -43,8 +38,8 @@
 #include <unordered_map>
 /***************************************************************************************************/
 
-#define MAX_DIRECTIONALLIGHT_NUM 10
-#define MAX_POINTLIGHT_MUN 100
+static constexpr uint32_t MAX_DIRECTIONALLIGHT_NUM = 10;
+static constexpr uint32_t MAX_POINTLIGHT_MUN = 100;
 
 namespace Spices {
 
@@ -146,30 +141,30 @@ namespace Spices {
 		/**
 		* @brief Registry material to Specific Renderer.
 		* @param[in] materialName Material Name.
-		* @param[in] subpassName SubPass Name.
+		* @param[in] subPassName SubPass Name.
 		*/
 		void RegistryMaterial(
 			const std::string& materialName , 
-			const std::string& subpassName
+			const std::string& subPassName
 		);
 
 		/**
 		* @brief Registry dgc pipeline to Specific Renderer.
 		* @param[in] materialName Material Name.
-		* @param[in] subpassName SubPass Name.
+		* @param[in] subPassName SubPass Name.
 		*/
 		void RegistryDGCPipeline(
 			const std::string& materialName,
-			const std::string& subpassName
+			const std::string& subPassName
 		);
 
 		/**
-		* @brief Fill in World Renderable data to IndirectBuffer.
+		* @brief Fill in World RenderAble data to IndirectBuffer.
 		* @tparam T Specific Component.
-		* @param[in] subpassName .
+		* @param[in] subPassName .
 		*/
 		template<typename T>
-		void FillIndirectRenderData(const std::string& subpassName);
+		void FillIndirectRenderData(const std::string& subPassName);
 
 		/**
 		* @brief Get RendererPass.
@@ -179,10 +174,10 @@ namespace Spices {
 
 		/**
 		* @brief Get default material using sub pass Name.
-		* @param subpassName sub pass Name.
+		* @param subPassName sub pass Name.
 		* @return default material.
 		*/
-		std::shared_ptr<Material> GetDefaultMaterial(const std::string& subpassName) const;
+		std::shared_ptr<Material> GetDefaultMaterial(const std::string& subPassName) const;
 		
 	private:
 
@@ -202,7 +197,7 @@ namespace Spices {
 		* @brief This interface is called during OnSystemInitialize().
 		* Create Device Generated Commands Layout.
 		*/
-		virtual void CreateDeviceGeneratedCommandsLayout() {};
+		virtual void CreateDeviceGeneratedCommandsLayout() {}
 
 		/**
 		* @brief Create Specific Renderer Default Material. 
@@ -215,7 +210,7 @@ namespace Spices {
 		* @param[in] subPass material used sub pass.
 		*/
 		VkPipelineLayout CreatePipelineLayout(
-			const std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
+			const std::vector<VkDescriptorSetLayout>& rowSetLayouts ,
 			std::shared_ptr<RendererSubPass>          subPass
 		) const;
 
@@ -255,21 +250,21 @@ namespace Spices {
 		/**
 		* @brief Submit a group of commands to secondary command buffer, and execute all of them.
 		* @param[in] primaryCmdBuffer The main Command Buffer.
-		* @param[in] subpass subpass index.
+		* @param[in] subPass subPass index.
 		* @param func Specific Commands.
 		*/
 		template<typename F>
-		void SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subpass, F&& func);
+		void SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func);
 
 		/**
 		* @brief Iterator the specific Component in World Parallel.
 		* @tparam T The specific Component class.
 		* @param[in] frameInfo The current frame data.
-		* @param[in] subpass subpass index.
+		* @param[in] subPass subPass index.
 		* @param[in] func The function pointer that need to execute during this function.
 		*/
 		template<typename T, typename F>
-		inline void IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subpass, F func);
+		inline void IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subPass, F func);
 
 		/**
 		* @brief Iterator the specific Component in World With break.
@@ -392,7 +387,7 @@ namespace Spices {
 			);
 
 			/**
-			* @brief Add subpass Self Dependency.
+			* @brief Add subPass Self Dependency.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -463,11 +458,10 @@ namespace Spices {
 			* @param[in] size push constant size.
 			* @return Returns this reference.
 			*/
-			DescriptorSetBuilder& AddPushConstant(uint64_t size);
+			DescriptorSetBuilder& AddPushConstant(uint32_t size);
 
 			/**
 			* @brief Create local buffer object in collection, and add it's set binding to descriptorsetlayout, and sets descriptorwriter using it's buffer info.
-			* @tparam T Buffer struct.
 			* @param[in] set Which set this buffer wil use.
 			* @param[in] binding Which binding this buffer will use.
 			* @param[in] size ubo size.
@@ -512,10 +506,11 @@ namespace Spices {
 			);
 
 			/**
-			* @brief Init the Bindless texture set binding to descriptor set layout.
+			* @brief Init the BindLess texture set binding to descriptor set layout.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
 			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @param[in] textureNames Texture Debug Name.
 			* @return Returns this reference.
 			*/
 			template<typename T>
@@ -531,6 +526,7 @@ namespace Spices {
 			* @tparam T Texture Type.
 			* @param[in] set Which set this texture wil use.
 			* @param[in] binding Which binding this texture wil use.
+			* @param[in] stageFlags Texture shader usage flags.
 			* @param[in] textureNames All Texture's Name.
 			* @return Returns this reference.
 			*/
@@ -716,10 +712,10 @@ namespace Spices {
 			Renderer* m_Renderer;
 
 			/**
-			* @brief Specific Subpass Name.
+			* @brief Specific SubPass Name.
 			* Passed while this class instanced.
 			*/
-			std::string m_SubpassName;
+			std::string m_SubPassName;
 
 			/**
 			* @brief Stores command inputs.
@@ -727,7 +723,7 @@ namespace Spices {
 			std::vector<VkIndirectCommandsLayoutTokenNV> m_InputInfos;
 
 			/**
-			* @brief Current Subpass IndirectData.
+			* @brief Current SubPass IndirectData.
 			*/
 			std::shared_ptr<VulkanIndirectDrawNV> m_HandledIndirectData;
 		};
@@ -767,21 +763,21 @@ namespace Spices {
 			virtual ~RenderBehaveBuilder() = default;
 
 			/**
-			* @brief Recording all this behaver does.
+			* @brief Recording all this behaves does.
 			* @param[in] caption Recording Name
 			*/
-			void Recording(const std::string& caption) const;
+			static void Recording(const std::string& caption);
 
 			/**
-			* @brief Endrecording all this behaver does.
+			* @brief End recording all this behaveS does.
 			*/
-			void Endrecording() const;
+			static void EndRecording();
 
 			/**
 			* @brief Async Commands.
 			* @param[in] func In Function Pointer
 			*/
-			void Async(std::function<void(VkCommandBuffer& cmdBuffer)> func) const;
+			void Async(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const;
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
@@ -811,7 +807,7 @@ namespace Spices {
 			* @brief DynamicState Set Viewport and Scissor.
 			* @param[in] cmdBuffer VkCommandBuffer
 			*/
-			void SetViewPort(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
+			void SetViewPort(const VkCommandBuffer& cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief DynamicState Set Viewport and Scissor Async.
@@ -878,7 +874,6 @@ namespace Spices {
 
 			/**
 			* @brief Run DGC Buffer Async.
-			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
 			void RunDGCAsync();
 
@@ -890,7 +885,6 @@ namespace Spices {
 
 			/**
 			* @brief Preprocess Device Generated CommandsBuffer Async.
-			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
 			void PreprocessDGCAsync_NV() const;
 
@@ -898,11 +892,10 @@ namespace Spices {
 			* @brief Execute Device Generated CommandsBuffer.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void ExecuteDGC_NV(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
+			void ExecuteDGC_NV(const VkCommandBuffer& cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief Execute Device Generated CommandsBuffer Async.
-			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
 			void ExecuteDGCAsync_NV() const;
 
@@ -910,7 +903,7 @@ namespace Spices {
 			* @brief Draw a Triangle full screen.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void DrawFullScreenTriangle(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
+			void DrawFullScreenTriangle(const VkCommandBuffer& cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief Draw a Triangle full screen Async.
@@ -1031,15 +1024,15 @@ namespace Spices {
 
 			/**
 			* @brief End a preview sub pass and stat next sub pass.
-			* @param[in] subpassName The name of next sub pass.
+			* @param[in] subPassName The name of next sub pass.
 			*/
-			void BeginNextSubPass(const std::string& subpassName);
+			void BeginNextSubPass(const std::string& subPassName);
 
 			/**
 			* @brief End a preview sub pass and stat next sub pass.
-			* @param[in] subpassName The name of next sub pass.
+			* @param[in] subPassName The name of next sub pass.
 			*/
-			void BeginNextSubPassAsync(const std::string& subpassName);
+			void BeginNextSubPassAsync(const std::string& subPassName);
 
 			/**
 			* @brief Begin this Renderer's RenderPass.
@@ -1059,10 +1052,10 @@ namespace Spices {
 		public:
 
 			/**
-			* @brief Get current subpass index in renderpass.
-			* @return Returns index of subpass.
+			* @brief Get current subPass index in renderPass.
+			* @return Returns index of subPass.
 			*/
-			uint32_t GetSubpassIndex() const { return m_SubpassIndex; }
+			uint32_t GetSubPassIndex() const { return m_SubPassIndex; }
 
 		protected:
 
@@ -1087,9 +1080,9 @@ namespace Spices {
 			uint32_t m_CurrentImage;
 
 			/**
-			* @brief Current subpass Index.
+			* @brief Current subPass Index.
 			*/
-			uint32_t m_SubpassIndex = 0;
+			uint32_t m_SubPassIndex = 0;
 
 			/**
 			* @brief Current CommandBuffer.
@@ -1102,7 +1095,7 @@ namespace Spices {
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 
 			/**
-			* @brief Current Subpass IndirectData.
+			* @brief Current subPass IndirectData.
 			*/
 			std::shared_ptr<VulkanIndirectDrawNV> m_HandledIndirectData;
 		};
@@ -1411,11 +1404,11 @@ namespace Spices {
 	};
 
 	template<typename T>
-	inline void Renderer::FillIndirectRenderData(const std::string& subpassName)
+	inline void Renderer::FillIndirectRenderData(const std::string& subPassName)
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto indirectPtr = m_IndirectData[subpassName];
+		auto indirectPtr = m_IndirectData[subPassName];
 		indirectPtr->ResetInput();
 
 		/**
@@ -1447,11 +1440,11 @@ namespace Spices {
 			}
 			indirectPtr->SetSequenceCount(nSequences);
 
-			m_PipelinesRef[subpassName].resize(pipelineMap.size());
+			m_PipelinesRef[subPassName].resize(pipelineMap.size());
 
 			for (auto& pair : pipelineMap)
 			{
-				m_PipelinesRef[subpassName][pair.second] = m_Pipelines[pair.first]->GetPipeline();
+				m_PipelinesRef[subPassName][pair.second] = m_Pipelines[pair.first]->GetPipeline();
 			}
 		}
 
@@ -1459,11 +1452,11 @@ namespace Spices {
 		* @brief Fill in Input Buffer
 		*/
 		std::vector<size_t> offset;
-		size_t totalSize = 0;
 		std::shared_ptr<VulkanBuffer> inputBuffer = nullptr;
 		{
 			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Fill in Input Buffer");
 
+			size_t totalSize         = 0;
 			size_t alignSeqIndexMask = m_Device->GetDGCProperties().minSequencesIndexBufferOffsetAlignment - 1;
 			size_t alignMask         = m_Device->GetDGCProperties().minIndirectCommandsBufferOffsetAlignment - 1;
 
@@ -1607,14 +1600,14 @@ namespace Spices {
 	}
 
 	template<typename F>
-	inline void Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subpass, F&& func)
+	inline void Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func)
 	{
 		SPICES_PROFILE_ZONE;
 
 		VkCommandBufferInheritanceInfo         inheritanceInfo {};
 		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		inheritanceInfo.renderPass           = m_Pass->Get();
-		inheritanceInfo.subpass              = subpass;
+		inheritanceInfo.subpass              = subPass;
 		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::Get().m_ImageIndex);
      
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
@@ -1622,31 +1615,31 @@ namespace Spices {
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
-		std::future<VkCommandBuffer> cmdBuffer = m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
+		std::future<VkCommandBuffer> futureCmdBuffer = m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
 
-			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
+			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo))
 
 			func(cmdBuffer);
 
-			VK_CHECK(vkEndCommandBuffer(cmdBuffer));
+			VK_CHECK(vkEndCommandBuffer(cmdBuffer))
 
 			return cmdBuffer;
 		});
 
-		VkCommandBuffer buffer = cmdBuffer.get();
+		const VkCommandBuffer buffer = futureCmdBuffer.get();
 		vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
 	}
 
 	template<typename T, typename F>
-	inline void Renderer::IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subpass, F func)
+	inline void Renderer::IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subPass, F func)
 	{
 		SPICES_PROFILE_ZONE;
 
 		VkCommandBufferInheritanceInfo         inheritanceInfo {};
 		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		inheritanceInfo.renderPass           = m_Pass->Get();
-		inheritanceInfo.subpass              = subpass;
-		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(frameInfo.m_Imageindex);
+		inheritanceInfo.subpass              = subPass;
+		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(frameInfo.m_ImageIndex);
 						     
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
 		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1781,7 +1774,7 @@ namespace Spices {
 		/**
 		* @breif Update PushConstants
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubpassIndex, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			vkCmdPushConstants(
 				cmdBuffer,
 				m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
@@ -1869,7 +1862,7 @@ namespace Spices {
 		/**
 		* @breif Update PushConstants
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](VkCommandBuffer& cmdBuffer) {
+		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, [&](const VkCommandBuffer& cmdBuffer) {
 			vkCmdPushConstants(
 				cmdBuffer,
 				m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),

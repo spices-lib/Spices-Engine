@@ -127,6 +127,6 @@ namespace Spices {
 		
 		//builder.ReleaseBarriers(buffer->Get(), VK_ACCESS_SHADER_WRITE_BIT, 0, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
 
-		builder.Endrecording();
+		builder.EndRecording();
 	}
 }

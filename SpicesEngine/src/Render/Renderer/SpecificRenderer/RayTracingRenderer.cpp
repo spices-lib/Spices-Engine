@@ -141,7 +141,7 @@ namespace Spices {
 		
 		builder.TraceRays(&m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion);
 
-		builder.Endrecording();
+		builder.EndRecording();
 	}
 
 	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo)

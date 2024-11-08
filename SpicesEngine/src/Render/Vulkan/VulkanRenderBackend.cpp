@@ -11,8 +11,7 @@
 #include "Debugger/Perf/NsightPerfGPUProfilerContinuous.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
-#include "Core/Timer/ScopeTimer.h"
-
+#include "Render/Renderer/RendererManager.h"
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
 
@@ -226,7 +225,7 @@ namespace Spices {
 			/**
 			* @brief Reset Fences.
 			*/
-			VK_CHECK(vkResetFences(m_VulkanState.m_Device, 2, fence));
+			VK_CHECK(vkResetFences(m_VulkanState.m_Device, 2, fence))
 		}
 		
 		/**

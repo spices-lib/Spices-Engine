@@ -180,7 +180,7 @@ namespace Spices {
 		
 		builder.BeginRenderPassAsync();
 
-		builder.Async([&](VkCommandBuffer& cmdBuffer) {
+		builder.Async([&](const VkCommandBuffer& cmdBuffer) {
 
 			builder.SetViewPort(cmdBuffer);
 			

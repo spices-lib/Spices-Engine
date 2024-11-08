@@ -107,14 +107,14 @@ namespace Spices {
 		* @param[in] cmdBuffer VkCommandBuffer.
 		* @param[in] pipeline VkPipeline.
 		*/
-		void PreprocessDGC(VkCommandBuffer cmdBuffer, VkPipeline pipeline);
+		void PreprocessDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const;
 
 		/**
 		* @brief Execute Commands in Indirect Command Buffer.
 		* @param[in] cmdBuffer VkCommandBuffer.
 		* @param[in] pipeline VkPipeline.
 		*/
-		void ExecuteDGC(VkCommandBuffer cmdBuffer, VkPipeline pipeline);
+		void ExecuteDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const;
 
 	private:
 
