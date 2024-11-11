@@ -29,10 +29,10 @@
 #include "Core/Library/StringLibrary_test.h"
 
 /* Memory */
-//#include "Core/Memory/ObjectPool_test.h"
-//#include "Core/Memory/ThreadCache_test.h"
-//#include "Core/Memory/PageCache_test.h"
-//#include "Core/Memory/CentralCache_test.h"
+#include "Core/Memory/ObjectPool_test.h"
+#include "Core/Memory/ThreadCache_test.h"
+#include "Core/Memory/PageCache_test.h"
+#include "Core/Memory/CentralCache_test.h"
 #include "Core/Memory/MemoryPool_test.h"
 
 /* Reflect */
