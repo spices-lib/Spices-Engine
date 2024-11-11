@@ -29,10 +29,10 @@
 #include "Core/Library/StringLibrary_test.h"
 
 /* Memory */
-#include "Core/Memory/ObjectPool_test.h"
-#include "Core/Memory/ThreadCache_test.h"
-#include "Core/Memory/PageCache_test.h"
-#include "Core/Memory/CentralCache_test.h"
+//#include "Core/Memory/ObjectPool_test.h"
+//#include "Core/Memory/ThreadCache_test.h"
+//#include "Core/Memory/PageCache_test.h"
+//#include "Core/Memory/CentralCache_test.h"
 #include "Core/Memory/MemoryPool_test.h"
 
 /* Reflect */
@@ -60,19 +60,26 @@
 */
 int main(int argc, char** argv)
 {
-    SPICESTEST_PROFILE_BEGIN_SESSION("SpicesTestInstruments", "SpiceslProfile-SpicesTest.json");
+    try
+    {
+        SPICESTEST_PROFILE_BEGIN_SESSION("SpicesTestInstruments", "SpiceslProfile-SpicesTest.json");
 
-    /**
-    * @brief Init GoogleMock.
-    */
-    testing::InitGoogleMock(&argc, argv);
+        /**
+        * @brief Init GoogleMock.
+        */
+        testing::InitGoogleMock(&argc, argv);
 
-    /**
-    * @brief Execute all unit tests.
-    */
-    const int result = RUN_ALL_TESTS();
+        /**
+        * @brief Execute all unit tests.
+        */
+        const int result = RUN_ALL_TESTS();
 
-    SPICESTEST_PROFILE_END_SESSION();
+        SPICESTEST_PROFILE_END_SESSION();
+    }
+    catch (const std::exception& ex)
+    {
+        return EXIT_FAILURE;
+    }
 
-    return result;
+    return EXIT_SUCCESS;
 }

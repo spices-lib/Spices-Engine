@@ -13,11 +13,9 @@ namespace Spices {
 
 	scl::span* PageCache::NewSpan(size_t k)
 	{
-		//std::unique_lock<std::mutex> lock(m_Mutex);
-		m_Mutex.lock();
-		scl::span* s = InternalNewSpan(k);
-		m_Mutex.unlock();
-		return s;
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		return InternalNewSpan(k);
 	}
 
 	scl::span* PageCache::MapObjectToSpan(void* obj) const
@@ -94,7 +92,7 @@ namespace Spices {
 		/**
 		* @brief Merge to right.
 		*/
-		while (1)
+		for (;;)
 		{
 			const size_t rightId = s->m_PageId + s->m_NPages;
 
@@ -159,7 +157,8 @@ namespace Spices {
 			/**
 			* @brief Pop a span.
 			*/
-			scl::span* s = m_SpanLists[k].PopFront();
+			scl::span* s   = m_SpanLists[k].PopFront();
+			s->m_BlockSize = k * (1 << MemoryPool::PAGE_SHIFT);
 
 			for (size_t i = 0; i < s->m_NPages; ++i)
 			{
