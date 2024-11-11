@@ -11,7 +11,7 @@
 #include <memory>
 
 namespace Spices {
-
+	
 	/**
 	* @brief Application Class.
     * Our Engine Start here.
@@ -32,13 +32,13 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Application(const Application&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behaves.
 		*/
 		Application& operator=(const Application&) = delete;
 

@@ -766,12 +766,12 @@ namespace Spices {
 			* @brief Recording all this behaves does.
 			* @param[in] caption Recording Name
 			*/
-			static void Recording(const std::string& caption);
+			void Recording(const std::string& caption);
 
 			/**
 			* @brief End recording all this behaveS does.
 			*/
-			static void EndRecording();
+			void EndRecording();
 
 			/**
 			* @brief Async Commands.
