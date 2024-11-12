@@ -145,6 +145,26 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
 }
 
 /**
+* @brief Transform a Vertex to World.
+* @param[in] vertex Vertex.
+* @param[in] model model matrix.
+* @return Returns Transformed Vertex.
+*/
+Vertex TransformVertexToWorld(in Vertex vertex, in mat4 model)
+{
+    mat3 m3model       = mat3(transpose(inverse(model)));
+    
+    Vertex trVertex;
+    
+    trVertex.position = vec3(model * vec4(vertex.position, 1.0f));
+    trVertex.normal   = normalize(m3model * vertex.normal);
+    trVertex.color    = vertex.color;
+    trVertex.texCoord = vertex.texCoord;
+
+    return trVertex;
+}
+
+/**
 * @brief Get Vertices from PrimitiveVerteces.
 * @param[in] primitiveID Primitive index.
 * @return Returns Primitive Vertices.
@@ -184,6 +204,7 @@ Vertex[3] GetVerticesUsingPrimitive(in uint primitiveID)
 * @brief Sort PrimLocation from min to max.
 * @param[in] primLocation Primitive Location.
 * @return Returns PrimLocation Order.
+* @attention Not in use right now.
 */
 uvec3 GetPrimLocationOrder(in uvec3 primLocation)
 {
@@ -213,6 +234,7 @@ uvec3 GetPrimLocationOrder(in uvec3 primLocation)
 * @param[in] primitiveID Primitive index.
 * @param[in] baryCoord Barycentric Coord.
 * @return Returns Barycentric Pxiel.
+* @attention Not in use right now.
 */
 Pixel GetPixelUsingPrimitiveBarycentric(in uint primitiveID, in vec3 baryCoord)
 {

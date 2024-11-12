@@ -188,7 +188,7 @@ namespace Spices {
 			
 			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
 
-#if 1    // Use DGC or not
+#if 0    // Use DGC or not
 
 			IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 

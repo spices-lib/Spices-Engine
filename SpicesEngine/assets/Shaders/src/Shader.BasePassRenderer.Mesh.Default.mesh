@@ -48,6 +48,7 @@ layout(triangles, max_vertices = MESHLET_NVERTICES, max_primitives = MESHLET_NPR
 */
 layout(location = 0) out flat uint primitiveId[];            /* @brief Primitive ID.            */
 layout(location = 1) out flat uint meshletId[];              /* @brief Meshlet ID.              */
+layout(location = 2) out Pixel pixel[];                      /* @brief Pixel.                   */
 
 /*****************************************************************************************/
 
@@ -68,38 +69,49 @@ push;
 
 void main()
 {
-    uint id = task.meshletIndex[gl_WorkGroupID.x];
+    const uint id = task.meshletIndex[gl_WorkGroupID.x];
     ExplainMeshDesciption(push.descAddress);
-    
-    Meshlet meshlet     = meshlets.i[id];
-    
-    mat4 mvp = view.projection * view.view * model;
-    mat3 m3model = mat3(transpose(inverse(model)));
+        
+    /**
+    * @brief Get current handle meshlet and primitiveIndex.
+    */
+    const Meshlet meshlet        = meshlets.i[id];
+    const uint localId           = gl_LocalInvocationIndex;
+    const uint primitiveIndex    = meshlet.primitiveOffset + localId;
 
-    const uint localId = gl_LocalInvocationIndex;
-
+    /**
+    * @brief Return if sumbit all primitives.
+    */
     if(localId >= meshlet.nPrimitives) return;
-    
-    uvec3 primLocation = primitiveLocations.i[meshlet.primitiveOffset + localId];
 
-    primLocation -= ivec3(meshlet.vertexOffset);
-    uint arrayIndices[3] = { primLocation.x, primLocation.y, primLocation.z };
+    /**
+    * @brief Get used mesh descriptions.
+    */
+    const mat4 mvp             = view.projection * view.view * model;
+    const Vertex[3] vertices   = GetVerticesUsingPrimitive(primitiveIndex);
+    const uvec3 primLocation   = primitiveLocations.i[primitiveIndex] - ivec3(meshlet.vertexOffset);
+    const uint indicesList[3]  = { primLocation.x, primLocation.y, primLocation.z };
 
-    gl_PrimitiveTriangleIndicesEXT[localId] =  uvec3(primLocation.x, primLocation.y, primLocation.z);
-
-    Vertex[3] vts = GetVerticesUsingPrimitive(meshlet.primitiveOffset + localId);
-
+    /**
+    * @brief Submit Vertex.
+    */
     [[unroll]]
-    for(int j = 0; j < 3; j++)
+    for(int it = 0; it < 3; it++)
     {   
-        Vertex vt = vts[j];
+        const Vertex vertex = vertices[it];
+        const uint index = indicesList[it];
 
-        gl_MeshVerticesEXT[arrayIndices[j]].gl_Position = mvp * vec4(vt.position, 1.0f);
+        gl_MeshVerticesEXT[index].gl_Position = mvp * vec4(vertex.position, 1.0f);
 
-        primitiveId[arrayIndices[j]]      = localId + meshlet.primitiveOffset;
-        meshletId[arrayIndices[j]]        = id;
+        primitiveId[index]      = primitiveIndex;
+        meshletId[index]        = id;
+        pixel[index]            = TransformVertexToWorld(vertex, model);
     }
-    
+
+    /**
+    * @brief Submit Primitive.
+    */
+    gl_PrimitiveTriangleIndicesEXT[localId] =  primLocation;
     SetMeshOutputsEXT(meshlet.nVertices, meshlet.nPrimitives);
 }
 

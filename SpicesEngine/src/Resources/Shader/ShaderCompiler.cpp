@@ -50,7 +50,7 @@ namespace Spices {
 		if (module.GetCompilationStatus() != shaderc_compilation_status_success) 
 		{
 			std::stringstream ss;
-			ss << "Error compiling module - " << module.GetErrorMessage();
+			ss << "Error compiling module: " << module.GetErrorMessage();
 
 			SPICES_CORE_ERROR(ss.str())
 		}

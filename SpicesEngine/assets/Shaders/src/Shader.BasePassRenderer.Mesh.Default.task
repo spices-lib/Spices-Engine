@@ -67,7 +67,7 @@ uint glGlobalInvocationIndex();
 
 void main()
 {
-    uint meshletIndex = glGlobalInvocationIndex();
+    const uint meshletIndex = glGlobalInvocationIndex();
     ExplainMeshDesciption(push.descAddress);
 
     /**
@@ -77,30 +77,30 @@ void main()
 
     if(!cull)
     {
-        Meshlet meshlet     = meshlets.i[meshletIndex];
-        mat4 mvp            = view.projection * view.view * model;
-        
-        vec4 ro             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        vec4 worldCenter    = model * vec4(meshlet.boundSphere.c, 1.0f);
-        vec3 dis            = worldCenter.xyz - ro.xyz;
+        const Meshlet meshlet     = meshlets.i[meshletIndex];
+        const mat4 mvp            = view.projection * view.view * model;
+
+        const vec4 ro             = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        const vec4 worldCenter    = model * vec4(meshlet.boundSphere.c, 1.0f);
+        const vec3 dis            = worldCenter.xyz - ro.xyz;
 
         /**
         * @brief cull by view frustum.
         */
         vec4 frustumPlanes[5];
         ExtractFrustumPlanes(mvp, frustumPlanes);
-        bool frustumCulled = !IsInsideFrustum_Sphere(frustumPlanes, meshlet.boundSphere.c, meshlet.boundSphere.r);
+        const bool frustumCulled = !IsInsideFrustum_Sphere(frustumPlanes, meshlet.boundSphere.c, meshlet.boundSphere.r);
         
         /**
         * @brief cull by cone normal.
         */
-        vec4 modelRo = inverse(view.view * model)[3];
-        bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, -meshlet.coneAxis, meshlet.coneCutoff, modelRo.xyz);
+        const vec4 modelRo = inverse(view.view * model)[3];
+        const bool normalConeCulled = IsConeBackfacing(meshlet.coneApex, -meshlet.coneAxis, meshlet.coneCutoff, modelRo.xyz);
 
         /**
         * @brief cull by lod.
         */
-        bool lodCulled = !IsRenderSuchLodCluster(meshlet, view, model);
+        const bool lodCulled = !IsRenderSuchLodCluster(meshlet, view, model);
 
         if(frustumCulled || normalConeCulled || lodCulled) cull = true;
     }

@@ -91,6 +91,17 @@ namespace Spices {
         }
 
         /**
+        * @brief Render Position.
+        */
+        {
+            SPICES_PROFILE_ZONEN("Render Position");
+
+            ImGui::Text("Position");
+            ImGui::Image(m_GBufferID.PositionID, size);
+            ImGui::Separator();
+        }
+
+        /**
         * @brief End render GBuffer Visualizer.
         */
         End();
@@ -144,11 +155,13 @@ namespace Spices {
         const VkDescriptorImageInfo* normalInfo     = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Normal"     });
         const VkDescriptorImageInfo* roughnessInfo  = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Roughness"  });
         const VkDescriptorImageInfo* metallicInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Metallic"   });
+        const VkDescriptorImageInfo* positionInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Position"   });
 
         m_GBufferID.SceneColorID  = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
         m_GBufferID.AlbedoID      = ImGui_ImplVulkan_AddTexture(albedoInfo->sampler     , albedoInfo->imageView     , albedoInfo->imageLayout      );
         m_GBufferID.NormalID      = ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      );
         m_GBufferID.RoughnessID   = ImGui_ImplVulkan_AddTexture(roughnessInfo->sampler  , roughnessInfo->imageView  , roughnessInfo->imageLayout   );
         m_GBufferID.MetallicID    = ImGui_ImplVulkan_AddTexture(metallicInfo->sampler   , metallicInfo->imageView   , metallicInfo->imageLayout    );
+        m_GBufferID.PositionID    = ImGui_ImplVulkan_AddTexture(positionInfo->sampler   , positionInfo->imageView   , positionInfo->imageLayout    );
     }
 }

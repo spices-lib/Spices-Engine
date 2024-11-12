@@ -43,7 +43,8 @@ struct MaterialParameter
 */
 layout(location = 0) in flat uint primitiveId;         /* @brief Primitive ID.            */
 layout(location = 1) in flat uint meshletId;           /* @brief Meshlet ID.              */
-
+layout(location = 2) in Pixel pixel;                   /* @brief Pixel.                   */
+        
 /*****************************************************************************************/
 
 /************************************Fragment Output**************************************/
@@ -80,7 +81,6 @@ push;
 void main()
 {
     ExplainMeshDesciption(push.descAddress);
-    Pixel pixel = GetPixelUsingPrimitiveBarycentric(primitiveId, gl_BaryCoordEXT);
 
     uint  primitiveSeed  = primitiveId;
     float primitiverand0 = rnd(primitiveSeed);

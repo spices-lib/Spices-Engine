@@ -67,7 +67,7 @@ uint glGlobalInvocationIndex();
 
 void main()
 {
-    uint meshletIndex = glGlobalInvocationIndex();
+    const uint meshletIndex = glGlobalInvocationIndex();
     ExplainMeshDesciption(push.descAddress);
     
     /**
