@@ -28,7 +28,7 @@ int main() {
 		*/
 		engine.Run();
 	}
-	catch (const spdlog::spdlog_ex& ex) 
+	catch (const std::exception& ex) 
 	{
 		SPICES_CORE_ERROR(ex.what())
 		

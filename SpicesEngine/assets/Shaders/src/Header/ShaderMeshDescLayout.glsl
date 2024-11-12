@@ -181,6 +181,34 @@ Vertex[3] GetVerticesUsingPrimitive(in uint primitiveID)
 }
 
 /**
+* @brief Sort PrimLocation from min to max.
+* @param[in] primLocation Primitive Location.
+* @return Returns PrimLocation Order.
+*/
+uvec3 GetPrimLocationOrder(in uvec3 primLocation)
+{
+    uvec3 order;
+    
+    uint max = max(max(primLocation.x, primLocation.y), primLocation.z);
+    uint min = min(min(primLocation.x, primLocation.y), primLocation.z);
+
+    if(primLocation.x == max) order.z = 0;
+    if(primLocation.y == max) order.z = 1;
+    if(primLocation.z == max) order.z = 2;
+    
+    if(primLocation.x == min) order.x = 0;
+    if(primLocation.y == min) order.x = 1;
+    if(primLocation.z == min) order.x = 2;
+    
+    if(primLocation.x != max && primLocation.x != min) order.y = 0;
+    if(primLocation.y != max && primLocation.y != min) order.y = 1;
+    if(primLocation.z != max && primLocation.z != min) order.y = 2;
+    
+    //return order;
+    return uvec3(0, 1, 2);
+}
+
+/**
 * @brief Get Pixel from Primitive Barycentric.
 * @param[in] primitiveID Primitive index.
 * @param[in] baryCoord Barycentric Coord.
@@ -190,11 +218,14 @@ Pixel GetPixelUsingPrimitiveBarycentric(in uint primitiveID, in vec3 baryCoord)
 {
     Vertex[3] vertices = GetVerticesUsingPrimitive(primitiveID);
 
+    uvec3 primLocation = primitiveLocations.i[primitiveID];
+    uvec3 order        = GetPrimLocationOrder(primLocation);
+
     Pixel pixel;
-    vec3 p             = vertices[0].position * baryCoord.x + vertices[1].position * baryCoord.y + vertices[2].position * baryCoord.z;
-    vec3 n             = vertices[0].normal   * baryCoord.x + vertices[1].normal   * baryCoord.y + vertices[2].normal   * baryCoord.z;
-    pixel.color        = vertices[0].color    * baryCoord.x + vertices[1].color    * baryCoord.y + vertices[2].color    * baryCoord.z;
-    pixel.texCoord     = vertices[0].texCoord * baryCoord.x + vertices[1].texCoord * baryCoord.y + vertices[2].texCoord * baryCoord.z;
+    vec3 p             = vertices[order.x].position * baryCoord.x + vertices[order.y].position * baryCoord.y + vertices[order.z].position * baryCoord.z;
+    vec3 n             = vertices[order.x].normal   * baryCoord.x + vertices[order.y].normal   * baryCoord.y + vertices[order.z].normal   * baryCoord.z;
+    pixel.color        = vertices[order.x].color    * baryCoord.x + vertices[order.y].color    * baryCoord.y + vertices[order.z].color    * baryCoord.z;
+    pixel.texCoord     = vertices[order.x].texCoord * baryCoord.x + vertices[order.y].texCoord * baryCoord.y + vertices[order.z].texCoord * baryCoord.z;
 
     pixel.position     = vec3(model * vec4(p, 1.0f));
 

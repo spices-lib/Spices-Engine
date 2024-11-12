@@ -98,7 +98,7 @@ void main()
     outPosition         = vec4(pixel.position, 1.0f);
     outEntityID         = desc.entityID;
     outTriangleID       = vec4(primitiverand0, primitiverand1, primitiverand2, 1.0f);
-    outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
+    outMeshletID        = vec4(pixel.texCoord, 0.0f, 1.0f);
 }
 
 /*****************************************************************************************/

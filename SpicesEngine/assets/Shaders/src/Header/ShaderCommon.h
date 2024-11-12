@@ -33,9 +33,9 @@ using uint = unsigned int;
 /**
 * @brief Macros for Variable Constant.
 */
-#define BINDLESS_TEXTURE_MAXNUM        65536                     /* @brief Maximum number of Bindless Texture Array.             */
-#define BINDLESS_TEXTURE_SET           1                         /* @brief Bindless Texture Descriptor Set.                      */
-#define BINDLESS_TEXTURE_BINDING       0                         /* @brief Bindless Texture Descriptor Set Binding.              */
+#define BINDLESS_TEXTURE_MAXNUM        65536                     /* @brief Maximum number of BindLess Texture Array.             */
+#define BINDLESS_TEXTURE_SET           1                         /* @brief BindLess Texture Descriptor Set.                      */
+#define BINDLESS_TEXTURE_BINDING       0                         /* @brief BindLess Texture Descriptor Set Binding.              */
 #define MESH_BUFFER_MAXNUM             100000                    /* @brief Ray Tracing Renderer Maximum mesh desc buffer count.  */
 #define DIRECTIONALLIGHT_BUFFER_MAXNUM 100                       /* @brief Maximum number of Directional lights.                 */
 #define POINTLIGHT_BUFFER_MAXNUM       10000                     /* @brief Maximum number of Point lights.                       */
@@ -48,7 +48,7 @@ using uint = unsigned int;
 #define SUBGROUP_SIZE                  NV_SUBGROUP_SIZE          /* @brief Use Nvidia Hardware.                                  */
 
 /**
-* @brief  Macros for Calauclate Constant.
+* @brief  Macros for Calculate Constant.
 */
 #define invAtan                      vec2(0.1591, 0.3183)      /* @brief inverse arctan.                                       */
 #define PI                           3.14159265f               /* @brief PI.                                                   */
@@ -76,7 +76,7 @@ struct Vertex
 struct HalfEdge
 {
 	uint first;               /* @brief Half Edge first Vertex index.        */
-	uint second;              /* @brief Half Edge secone Vertex index.       */
+	uint second;              /* @brief Half Edge second Vertex index.       */
 };
 
 /**
@@ -86,7 +86,7 @@ struct HalfEdge
 #define Pixel Vertex
 
 /**
-* @brief Gbuffer Data per pixel, for SceneCompose Renderer Fragment Shader use.
+* @brief GBuffer Data per pixel, for SceneCompose Renderer Fragment Shader use.
 */
 struct GBufferPixel
 {

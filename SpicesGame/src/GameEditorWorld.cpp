@@ -28,7 +28,7 @@ namespace Spices {
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);*/
 		}
-
+		/*
 		// bridge pbr model
 		{
 			Entity meshentity = CreateEntity("DefaultMesh");
@@ -49,10 +49,10 @@ namespace Spices {
 			pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			pack5->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
-			//std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack2).Build();
+			//std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
 			meshComp.SetMesh(mesh);
 		}
-
+		
 		// CornellBox
 		{
 			for(int i = 0; i < 3; i++)
@@ -97,7 +97,7 @@ namespace Spices {
 					meshComp.SetMesh(mesh);
 				}
 			}
-		}
+		}*/
 
 		// testsphere
 		//{
@@ -136,7 +136,7 @@ namespace Spices {
 			transformComp1.SetRotation({90.0f, 0.0f, 0.0f});
 			transformComp1.SetScale({500.0f, 500.0f, 500.0f});
 		
-			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(1000, 1000);
+			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(3, 3);
 		
 			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
 			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
@@ -146,7 +146,7 @@ namespace Spices {
 		//WorldFunctions::CreateCubeEntity(this);
 
 		// pointlight
-		{
+		/*{
 			Entity plightentity = CreateEntity("PointLight");
 			PointLightComponent& plightComp = plightentity.AddComponent<PointLightComponent>();
 			plightComp.SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
@@ -175,7 +175,7 @@ namespace Spices {
 			sprite.SetMaterial("SpriteRenderer.Sprite.S_LightPoint");
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPosition({ -7.0f, 5.0f, 25.0f });
-		}
+		}*/
 
 	}
 

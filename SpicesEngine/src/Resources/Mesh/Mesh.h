@@ -93,7 +93,7 @@ namespace Spices {
 		* @param[in] func the function pointer used for bind material parameters.
 		*/
 		template<typename F>
-		void DrawMeshTasks(VkCommandBuffer& commandBuffer, F func);
+		void DrawMeshTasks(const VkCommandBuffer& commandBuffer, F func);
 		
 		/**
 		* @brief Get m_Pack.
@@ -141,7 +141,7 @@ namespace Spices {
 	}
 
 	template <typename F>
-	void Mesh::DrawMeshTasks(VkCommandBuffer& commandBuffer, F func)
+	void Mesh::DrawMeshTasks(const VkCommandBuffer& commandBuffer, F func)
 	{
 		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 

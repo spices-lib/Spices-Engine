@@ -201,10 +201,10 @@ namespace Spices {
 
 #endif
 
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_GraphicQueue) , vulkanState.m_Device, "GraphicQueue" );
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_PresentQueue) , vulkanState.m_Device, "PresentQueue" );
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_ComputeQueue) , vulkanState.m_Device, "ComputeQueue" );
-			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_TransferQueue), vulkanState.m_Device, "TransferQueue");
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_TransferQueue), vulkanState.m_Device, "TransferQueue")
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_ComputeQueue) , vulkanState.m_Device, "ComputeQueue" )
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_PresentQueue) , vulkanState.m_Device, "PresentQueue" )
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_GraphicQueue) , vulkanState.m_Device, "GraphicQueue" )
 		}
 	}
 
