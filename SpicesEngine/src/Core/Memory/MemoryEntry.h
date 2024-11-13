@@ -6,7 +6,7 @@ namespace Spices {
 /**
 * @brief Use MemoryPool for memories management. 
 */
-#define ENABLE_MAIN_MEMORY_POOL
+#define ENABLE_MAIN_MEMORY_POOL 1
     
     /**
     * @brief Process State Enum Definitions.
@@ -136,7 +136,7 @@ namespace Spices {
 
 /******************************************* override new delete ***********************************************************/
 
-#ifdef ENABLE_MAIN_MEMORY_POOL
+#if ENABLE_MAIN_MEMORY_POOL
 
 /**
 * @brief override new operation.
