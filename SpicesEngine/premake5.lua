@@ -57,6 +57,9 @@ project "SpicesEngine"
 		-- Library: meshoptimizer Files.
 		"vendor/meshoptimizer/src/**.h",
 		"vendor/meshoptimizer/src/**.cpp",
+
+		-- Library: nlohmann Files.
+		"vendor/nlohmann/include/nlohmann/json.hpp",
 	}
 
 	-- Macros Definitions
@@ -119,6 +122,7 @@ project "SpicesEngine"
 		"%{IncludeDir.shaderc}/libshaderc/include",           -- Library: libshaderc Folder.
 		"%{IncludeDir.shaderc}/libshaderc_util/include",      -- Library: libshaderc_util Folder.
 		"%{IncludeDir.glslang}",                              -- Library: glslang Folder.
+		"%{IncludeDir.nlohmann}",                             -- Library: nlohmann Folder.
 	}
 
 	-- The Solution Dependency

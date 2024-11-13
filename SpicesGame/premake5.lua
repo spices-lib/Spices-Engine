@@ -65,6 +65,7 @@ project "SpicesGame"
 		"%{IncludeDir.shaderc}/libshaderc/include",           -- Library: libshaderc Folder.
 		"%{IncludeDir.shaderc}/libshaderc_util/include",      -- Library: libshaderc_util Folder.
 		"%{IncludeDir.glslang}",                              -- Library: glslang Folder.
+		"%{IncludeDir.nlohmann}",                             -- Library: nlohmann Folder.
 	}
 
 	-- In Visual Studio, it only works when generated a new solution, remember update solution will not works.

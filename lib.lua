@@ -31,6 +31,7 @@ IncludeDir["METIS"]                       = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["ktx"]                         = "%{wks.location}/SpicesEngine/vendor/KTX-Software"                                -- Include: ktx
 IncludeDir["shaderc"]                     = "%{wks.location}/SpicesEngine/vendor/shaderc"                                     -- Include: shaderc
 IncludeDir["glslang"]                     = "%{IncludeDir.VulkanSDK}/glslang"                                                 -- Include: glslang
+IncludeDir["nlohmann"]                    = "%{wks.location}/SpicesEngine/vendor/nlohmann/include/nlohmann"                   -- Include: nlohmann
 IncludeDir["googletest"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googletest/include"                 -- Include: googletest
 IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googlemock/include"                 -- Include: googlemock
 

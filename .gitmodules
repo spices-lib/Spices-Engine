@@ -52,3 +52,6 @@
 [submodule "SpicesEngine/vendor/shaderc"]
 	path = SpicesEngine/vendor/shaderc
 	url = https://github.com/spices-lib/shaderc.git
+[submodule "SpicesEngine/vendor/nlohmann"]
+	path = SpicesEngine/vendor/nlohmann
+	url = https://github.com/nlohmann/json.git
