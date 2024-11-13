@@ -24,18 +24,43 @@ namespace Spices {
 /**
 * @brief Use VMA for memory allocate.
 */
-#define VMA_ALLOCATOR
+#define VMA_ALLOCATOR 1
 
 /**
-* @brief Vulkan Check macro.
-* Verify Vulkan API Effectiveness.
+* @brief Disable Host Image copy for host memory heap is too smaller.
 */
-#define VK_CHECK(expr)                                                   \
-    {                                                                    \
-        auto expr_value = expr;                                          \
-        NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(expr_value);     \
-        ASSERT(expr_value == VK_SUCCESS);                                \
-    }
+#define VKImageHostOperation 0
+
+
+	/**
+	* @brief Handle VkResult Function.
+	* @param[in] result VkResult.
+	*/
+	static void HandleVkResult(VkResult result)
+	{
+		switch (result)
+		{
+			case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+			{
+				SPICES_CORE_CRITICAL("Video Memory has already run out.")
+				break;
+			}
+			case VK_ERROR_DEVICE_LOST:
+			{
+				SPICES_CORE_CRITICAL("Device has losted, Start Aftermath...");
+				NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(result);
+				break;
+			}
+			default:
+				break;
+		}
+	}
+
+	/**
+	* @brief Vulkan Check macro.
+	* Verify Vulkan API Effectiveness.
+	*/
+	#define VK_CHECK(expr)  { auto expr_value = expr;  ASSERT(expr_value == VK_SUCCESS);  HandleVkResult(expr_value); }
 
 	/**
 	* @brief This struct contains all Vulkan object in used golbal.

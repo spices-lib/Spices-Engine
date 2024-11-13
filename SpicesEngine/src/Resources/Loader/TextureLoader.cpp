@@ -35,7 +35,13 @@ namespace Spices {
 			LoadBin(fileName, it, outTexture);
 		}, 
 		[&](const std::string& it) {
-			LoadSrc(fileName, it, outTexture);
+
+			/**
+			* @brief Temp texture for create ktxtexture.
+			*/
+			std::unique_ptr<Texture2D> texture = std::make_unique<Texture2D>();
+			LoadSrc(fileName, it, texture.get());
+			LoadBin(fileName, it, outTexture);
 		}
 		);
 	}
@@ -77,7 +83,7 @@ namespace Spices {
 		std::stringstream ss;
 		ss << "File: " << fileName << " Not Find";
 
-		SPICES_CORE_ERROR(ss.str());
+		SPICES_CORE_ERROR(ss.str())
 		return false;
 	}
 
@@ -257,7 +263,7 @@ namespace Spices {
 		stbi_uc* pixels = stbi_load(filePath.c_str(), &width, &height, &texChannels, STBI_rgb_alpha);
 		if (!pixels)
 		{
-			SPICES_CORE_ERROR("Failed to load texture image!");
+			SPICES_CORE_ERROR("Failed to load texture image!")
 		}
 
 		/**
@@ -428,10 +434,10 @@ namespace Spices {
 			const uint32_t w      = std::max(1, resourceptr->m_Width  >> resourceptr->m_MipLevels - 1 - i);
 			const uint32_t h      = std::max(1, resourceptr->m_Height >> resourceptr->m_MipLevels - 1 - i);
 			const uint32_t size   = w * h * 4;
-
+		
 			std::vector<unsigned char> data;
 			data.resize(size);
-
+		
 			if (hostCopy)
 			{
 				hostCopyF(w, h, i, data);
@@ -440,13 +446,13 @@ namespace Spices {
 			{
 				deviceCopyF(w, h, i, data);
 			}
-
+		
 			/**
 			* @brief Write mipmap data to ktxTexture.
 			*/
 			Transcoder::WriteData(ktxTexture, resourceptr->m_MipLevels - 1 - i, data.data(), size);
 		}
-
+		
 		/**
 		* @brief Save to disk.
 		*/

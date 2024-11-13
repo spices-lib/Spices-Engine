@@ -185,7 +185,7 @@ namespace Spices {
 		*/
 		VkDeviceAddress m_BufferAddress{};
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief VMA allocation.

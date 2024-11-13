@@ -36,7 +36,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief Destroy Vkbuffer.
@@ -103,7 +103,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		SPICES_CORE_ERROR("VMA cannot enter this function.");
 
@@ -133,7 +133,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief Maped memory inside.
@@ -173,7 +173,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief Maped memory inside.
@@ -212,7 +212,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief Flush memory to update buffer's data.
@@ -263,7 +263,7 @@ namespace Spices {
 		bufferInfo.usage                                  = usage;
 		bufferInfo.sharingMode                            = VK_SHARING_MODE_EXCLUSIVE;
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief Instance a VmaAllocationCreateInfo.

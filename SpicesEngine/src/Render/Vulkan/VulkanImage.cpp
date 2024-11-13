@@ -73,7 +73,7 @@ namespace Spices {
 		vkDestroySampler(m_VulkanState.m_Device, m_TextureSampler, nullptr);
 		vkDestroyImageView(m_VulkanState.m_Device, m_ImageView, nullptr);
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief Destroy VkImage.
@@ -598,8 +598,8 @@ namespace Spices {
 			*/
 			for (uint32_t i = 1; i < m_MipLevels; i++) 
 			{
-				const int pw = std::max(1, (m_Width  >> i) - 1);
-				const int ph = std::max(1, (m_Height >> i) - 1);
+				const int pw = std::max(1, (m_Width  >> (i - 1)));
+				const int ph = std::max(1, (m_Height >> (i - 1)));
 
 				const int w  = std::max(1, m_Width  >> i);
 				const int h  = std::max(1, m_Height >> i);
@@ -790,7 +790,7 @@ namespace Spices {
 		imageInfo.samples                          = numSamples;
 		imageInfo.flags                            = flags;
 
-#ifdef VMA_ALLOCATOR
+#if VMA_ALLOCATOR
 
 		/**
 		* @brief Instance a VmaAllocationCreateInfo.
@@ -842,7 +842,7 @@ namespace Spices {
 				allocInfo.memoryTypeIndex = i;
 			}
 		}
-
+		
 		/**
 		* @brief Allocate video memory.
 		*/
@@ -955,7 +955,7 @@ namespace Spices {
 		*/
 		vkGetPhysicalDeviceFormatProperties2(m_VulkanState.m_PhysicalDevice, m_Format, &formatProperties2);
 
-		return formatProperties3.optimalTilingFeatures & VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT;
+		return formatProperties3.optimalTilingFeatures & VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT && VKImageHostOperation;
 	}
 
 	bool VulkanImage::IsHostCopyable(VulkanState& state, VkFormat format)
@@ -980,7 +980,7 @@ namespace Spices {
 		*/
 		vkGetPhysicalDeviceFormatProperties2(state.m_PhysicalDevice, format, &formatProperties2);
 
-		return formatProperties3.optimalTilingFeatures & VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT;
+		return formatProperties3.optimalTilingFeatures & VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT && VKImageHostOperation;
 	}
 
 	void VulkanImage::DestroyDescriptorSetLayout() const
