@@ -10,7 +10,7 @@
 #include "Render/FrameInfo.h"
 #include "Systems/SystemManager.h"
 #include "GamePlay/CameraController.h"
-#include "Plugins/HoudiniLiveLink/HoudiniSession.h"
+#include "Extensions/HoudiniLiveLink/HoudiniSession.h"
 
 namespace Spices {
 

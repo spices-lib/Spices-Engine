@@ -65,6 +65,8 @@ namespace Spices {
 
 	bool MaterialLoader::Load(const std::string& fileName, Material* outMaterial)
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Load from .sasset file first.
 		*/
