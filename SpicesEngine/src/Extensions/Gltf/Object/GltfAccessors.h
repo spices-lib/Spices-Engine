@@ -35,12 +35,8 @@ namespace Spices {
 				item.byteOffset = json["byteOffset"];
 				item.componentType = json["componentType"];
 				item.count = json["count"];
-				item.max.x = json["max"][0];
-				item.max.y = json["max"][1];
-				item.max.z = json["max"][2];
-				item.min.x = json["min"][0];
-				item.min.y = json["min"][1];
-				item.min.z = json["min"][2];
+				item.max = GltfHelper::GetVector(GltfHelper::GetElementJsonArray(json, "max", { 0.0, 0.0, 0.0, 0.0 }));
+				item.min = GltfHelper::GetVector(GltfHelper::GetElementJsonArray(json, "min", { 0.0, 0.0, 0.0, 0.0 }));
 				item.type = json["type"];
 			}
 		}

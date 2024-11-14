@@ -51,7 +51,7 @@ using uint = unsigned int;
 * @brief  Macros for Calculate Constant.
 */
 #define invAtan                      vec2(0.1591, 0.3183)      /* @brief inverse arctan.                                       */
-#define PI                           3.14159265f               /* @brief PI.                                                   */
+#define PI                           3.141592654f              /* @brief PI.                                                   */
 #define BIAS                         0.01f                     /* @brief small blas.                                           */
 	
 /*****************************************************************************************/

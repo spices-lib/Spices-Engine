@@ -2,6 +2,8 @@
 #include "Core/Core.h"
 #include "GltfObject.h"
 
+#include <glm/gtx/quaternion.hpp>
+
 namespace Spices {
 
 	class GltfNodes : public GltfObject
@@ -12,9 +14,15 @@ namespace Spices {
 			std::string name;
 			std::vector<uint32_t> children;
 			glm::mat4 matrix;
+			int meshIndex;
+			int skinIndex;
+			glm::vec4 translation;
+			glm::vec4 scale;
+			glm::mat4 rotation;
 		};
 
 	public:
+
 		GltfNodes(const Json& data) 
 			: GltfObject(GltfObjectType::nodes, data) 
 		{
@@ -36,24 +44,25 @@ namespace Spices {
 					}
 				}
 
+				item.meshIndex = GltfHelper::GetElementInt(node, "mesh", -1);
+				item.skinIndex = GltfHelper::GetElementInt(node, "skin", -1);
 
+				item.translation = GltfHelper::GetElementVector(node, "translation", glm::vec4(0, 0, 0, 0));
+				item.scale       = GltfHelper::GetElementVector(node, "scale", glm::vec4(0, 0, 0, 0));
 
-				item.matrix[0][0] = node["matrix"][0];
-				item.matrix[0][1] = node["matrix"][1];
-				item.matrix[0][2] = node["matrix"][2];
-				item.matrix[0][3] = node["matrix"][3];
-				item.matrix[1][0] = node["matrix"][4];
-				item.matrix[1][1] = node["matrix"][5];
-				item.matrix[1][2] = node["matrix"][6];
-				item.matrix[1][3] = node["matrix"][7];
-				item.matrix[2][0] = node["matrix"][8];
-				item.matrix[2][1] = node["matrix"][9];
-				item.matrix[2][2] = node["matrix"][10];
-				item.matrix[2][3] = node["matrix"][11];
-				item.matrix[3][0] = node["matrix"][12];
-				item.matrix[3][1] = node["matrix"][13];
-				item.matrix[3][2] = node["matrix"][14];
-				item.matrix[3][3] = node["matrix"][15];
+				if (node.find("rotation") != node.end())
+				{
+					glm::vec3 rotate = GltfHelper::GetElementVector(node, "rotation", glm::vec4(0, 0, 0, 0));
+					item.rotation = glm::toMat4(glm::quat({ glm::radians(rotate.x), glm::radians(rotate.y), glm::radians(rotate.z) }));
+				}
+				else if(node.find("matrix") != node.end())
+				{
+					item.rotation = GltfHelper::GetMatrix(node["matrix"].get<Json::array_t>());
+				}
+				else
+				{
+					item.rotation = glm::mat4(1.0f);
+				}
 			}
 		}
 		virtual ~GltfNodes() override = default;

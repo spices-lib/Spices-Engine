@@ -1,3 +1,9 @@
+/**
+* @file GltfHelper.h
+* @brief The GltfHelper Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "GltfHelper.h"
 
@@ -57,7 +63,26 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
-        return glm::vec4(accessor[0], accessor[1], accessor[2], (accessor.size() == 4) ? accessor[3] : 0);
+        if (accessor.size() == 0)
+        {
+            return glm::vec4(0.0f);
+        }
+        else if(accessor.size() == 1)
+        {
+            return glm::vec4(accessor[0], 0.0f, 0.0f, 0.0f);
+        }
+        else if (accessor.size() == 2)
+        {
+            return glm::vec4(accessor[0], accessor[1], 0.0f, 0.0f);
+        }
+        else if (accessor.size() == 3)
+        {
+            return glm::vec4(accessor[0], accessor[1], accessor[2], 0.0f);
+        }
+        else
+        {
+            return glm::vec4(accessor[0], accessor[1], accessor[2], accessor[3]);
+        }
     }
 
     glm::mat4 GltfHelper::GetMatrix(const Json::array_t& accessor)
@@ -74,31 +99,43 @@ namespace Spices {
 
     std::string GltfHelper::GetElementString(const Json::object_t& root, const char* path, std::string pDefault)
     {
+        SPICES_PROFILE_ZONE;
+
         return GetElement<std::string>(&root, path, pDefault);
     }
 
     bool GltfHelper::GetElementBoolean(const Json::object_t& root, const char* path, bool default)
     {
+        SPICES_PROFILE_ZONE;
+
         return GetElement<bool>(&root, path, default);
     }
 
     float GltfHelper::GetElementFloat(const Json::object_t& root, const char* path, float default)
     {
+        SPICES_PROFILE_ZONE;
+
         return GetElement<float>(&root, path, default);
     }
 
     int GltfHelper::GetElementInt(const Json::object_t& root, const char* path, int default)
     {
+        SPICES_PROFILE_ZONE;
+
         return GetElement<int>(&root, path, default);
     }
 
     GltfHelper::Json::array_t GltfHelper::GetElementJsonArray(const Json::object_t& root, const char* path, Json::array_t default)
     {
+        SPICES_PROFILE_ZONE;
+
         return GetElement<Json::array_t>(&root, path, default);
     }
 
     glm::vec4 GltfHelper::GetElementVector(Json::object_t& root, const char* path, glm::vec4 default)
     {
+        SPICES_PROFILE_ZONE;
+
         if (root.find(path) != root.end() && !root[path].is_null())
         {
             return GetVector(root[path].get<Json::array_t>());

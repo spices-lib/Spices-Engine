@@ -19,7 +19,7 @@ namespace Spices {
 			: GltfObject(GltfObjectType::asset, data) 
 		{
 			m_AssetData.generator = data["generator"];
-			m_AssetData.extras = data["extras"];
+			//m_AssetData.extras = data["extras"];
 			m_AssetData.version = data["version"];
 		}
 

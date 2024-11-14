@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "../GltfUtils.h"
+#include "../GltfHelper.h"
 
 #include <nlohmann/json.hpp>
 

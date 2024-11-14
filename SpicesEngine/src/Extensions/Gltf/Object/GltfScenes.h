@@ -11,7 +11,7 @@ namespace Spices {
 		struct Item
 		{
 			std::string name;
-			uint32_t nodes;
+			std::vector<uint32_t> nodes;
 		};
 
 	public:
@@ -27,7 +27,11 @@ namespace Spices {
 				const Json& json = data[i];
 
 				item.name = json["name"];
-				item.nodes = json["nodes"][0];
+
+				for (int n = 0; n < json["nodes"].size(); n++)
+				{
+					item.nodes.push_back(json["nodes"][n]);
+				}
 			}
 		}
 

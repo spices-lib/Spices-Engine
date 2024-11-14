@@ -4,6 +4,7 @@
 #include <GamePlay/MeshController.h>
 #include <Resources/ResourcePool/ResourcePool.h>
 #include <Systems/ResourceSystem.h>
+#include <Extensions/Gltf/GltfLoader.h>
 
 namespace Spices {
 
@@ -177,6 +178,9 @@ namespace Spices {
 			transformComp.SetPosition({ -7.0f, 5.0f, 25.0f });
 		}
 
+		{
+			GltfLoader::Load("E:/OpenGLProjects/ExtensionAssets/buster_drone/busterDrone.gltf");
+		}
 	}
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)

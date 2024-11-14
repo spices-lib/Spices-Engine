@@ -6,7 +6,9 @@
 #include "Object/GltfAsset.h"
 #include "Object/GltfBuffers.h"
 #include "Object/GltfBufferViews.h"
+#include "Object/GltfCameras.h"
 #include "Object/GltfImages.h"
+#include "Object/GltfLights.h"
 #include "Object/GltfMaterials.h"
 #include "Object/GltfMeshes.h"
 #include "Object/GltfNodes.h"
@@ -29,9 +31,8 @@ namespace Spices {
 		std::ifstream f(fileName);
 		f >> data;
 
-		GltfAccessors accessors(data["accessors"]);
-		GltfAnimations animations(data["animations"]);
 		GltfAsset asset(data["asset"]);
+		GltfAccessors accessors(data["accessors"]);
 		GltfBuffers buffers(data["buffers"]);
 		GltfBufferViews bufferViews(data["bufferViews"]);
 		GltfImages images(data["images"]);
@@ -44,10 +45,6 @@ namespace Spices {
 		GltfTextures textures(data["textures"]);
 		
 
-
-		
-
-
-		return false;
+		return true;
 	}
 }
