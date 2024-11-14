@@ -144,6 +144,8 @@ namespace Spices {
 		*/
 		m_Desc                              = ptr->m_Desc.Copy();
 		m_MeshResource                      = ptr->m_MeshResource;
+		m_NTasks                            = ptr->m_NTasks;
+		m_MeshTaskIndirectDrawCommand       = ptr->m_MeshTaskIndirectDrawCommand;
 
 		if (m_Material)
 		{
