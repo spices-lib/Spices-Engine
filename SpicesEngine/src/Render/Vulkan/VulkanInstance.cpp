@@ -235,8 +235,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		//m_LayerProperties.push_back("VK_LAYER_LUNARG_monitor");        /* @brief Enable show FPS in title. */
-
 #ifdef SPICES_DEBUG
 
 		/**
