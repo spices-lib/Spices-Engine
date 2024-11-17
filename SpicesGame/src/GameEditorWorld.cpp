@@ -4,7 +4,7 @@
 #include <GamePlay/MeshController.h>
 #include <Resources/ResourcePool/ResourcePool.h>
 #include <Systems/ResourceSystem.h>
-#include <Extensions/Gltf/GltfLoader.h>
+#include <Extensions/Gltf/GltfCollection.h>
 
 namespace Spices {
 
@@ -177,9 +177,10 @@ namespace Spices {
 			TransformComponent& transformComp = plightentity.GetComponent<TransformComponent>();
 			transformComp.SetPosition({ -7.0f, 5.0f, 25.0f });
 		}
-
+		
 		{
-			GltfLoader::Load("E:/OpenGLProjects/ExtensionAssets/buster_drone/busterDrone.gltf");
+			GltfCollection collection("E:/OpenGLProjects/ExtensionAssets/buster_drone/busterDrone.gltf");
+			collection.CreateEntity(this, "busterDrone");
 		}
 	}
 

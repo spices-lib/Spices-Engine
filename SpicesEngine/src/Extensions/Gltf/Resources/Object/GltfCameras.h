@@ -17,7 +17,7 @@ namespace Spices {
 
 	public:
 		GltfCameras(const Json& data)
-			: GltfObject(GltfObjectType::images, data)
+			: GltfObject(data)
 		{
 			m_CamerasData.resize(data.size());
 

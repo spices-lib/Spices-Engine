@@ -75,9 +75,10 @@ namespace Spices {
 		* @param[in] fileName src filenme.
 		* @param[in] it file directfolder.
 		* @param[in] outTexture Pointer of texture.
+		* @param[in] isCreateCompressTexture Create Ktx texture in disk if true.
 		* @return Returns true if load file succeed.
 		*/
-		static bool LoadSrc(const std::string& fileName, const std::string& it, Texture2D* outTexture);
+		static bool LoadSrc(const std::string& fileName, const std::string& it, Texture2D* outTexture, bool isCreateCompressTexture = true);
 
 	};
 }

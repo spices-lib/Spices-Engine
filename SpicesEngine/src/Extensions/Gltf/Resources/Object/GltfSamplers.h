@@ -18,7 +18,7 @@ namespace Spices {
 	public:
 
 		GltfSamplers(const Json& data) 
-			: GltfObject(GltfObjectType::samplers, data)
+			: GltfObject(data)
 		{
 			m_SamplersData.resize(data.size());
 

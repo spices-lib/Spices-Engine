@@ -7,7 +7,7 @@ namespace Spices {
 	class GltfAnimations : public GltfObject
 	{
 	public:
-		GltfAnimations(const Json& data) : GltfObject(GltfObjectType::animations, data) {}
+		GltfAnimations(const Json& data) : GltfObject(data) {}
 		virtual ~GltfAnimations() override = default;
 	};
 }

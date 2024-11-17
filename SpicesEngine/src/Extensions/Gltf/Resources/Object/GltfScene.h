@@ -9,9 +9,9 @@ namespace Spices {
 	public:
 
 		GltfScene(const Json data) 
-			: GltfObject(GltfObjectType::scene, data) 
-		{
-			scene = data["scene"];
+			: GltfObject(data) 
+		{ 
+			scene = data.get<int>();
 		}
 
 		virtual ~GltfScene() override = default;

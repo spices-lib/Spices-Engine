@@ -19,6 +19,9 @@ namespace Spices {
 
 		using Json = nlohmann::json;
 
+        static VkFormat GetFormat(const std::string& str, int id);
+        static uint32_t SizeOfFormat(VkFormat format);
+
         /**
         * @brief Get Variable Type bytes.
         * @param[in] id Type identify.

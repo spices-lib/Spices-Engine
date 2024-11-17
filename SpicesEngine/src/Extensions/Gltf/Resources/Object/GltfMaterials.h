@@ -8,7 +8,6 @@ namespace Spices {
 	{
 	public:
 
-
 		struct Item
 		{
 
@@ -16,11 +15,11 @@ namespace Spices {
 
 	public:
 		GltfMaterials(const Json& data) 
-			: GltfObject(GltfObjectType::materials, data)
+			: GltfObject(data)
 		{
 			
 		}
-
+		 
 		virtual ~GltfMaterials() override = default;
 
 	private:

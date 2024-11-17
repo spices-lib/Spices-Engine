@@ -13,9 +13,10 @@ namespace Spices {
 		{
 			std::string name;
 			std::vector<uint32_t> children;
-			glm::mat4 matrix;
 			int meshIndex;
 			int skinIndex;
+
+			glm::mat4 matrix;
 			glm::vec4 translation;
 			glm::vec4 scale;
 			glm::mat4 rotation;
@@ -24,7 +25,7 @@ namespace Spices {
 	public:
 
 		GltfNodes(const Json& data) 
-			: GltfObject(GltfObjectType::nodes, data) 
+			: GltfObject(data) 
 		{
 			m_NodesData.resize(data.size());
 
@@ -47,28 +48,27 @@ namespace Spices {
 				item.meshIndex = GltfHelper::GetElementInt(node, "mesh", -1);
 				item.skinIndex = GltfHelper::GetElementInt(node, "skin", -1);
 
-				item.translation = GltfHelper::GetElementVector(node, "translation", glm::vec4(0, 0, 0, 0));
-				item.scale       = GltfHelper::GetElementVector(node, "scale", glm::vec4(0, 0, 0, 0));
-
-				if (node.find("rotation") != node.end())
+				if (node.find("matrix") != node.end())
 				{
-					glm::vec3 rotate = GltfHelper::GetElementVector(node, "rotation", glm::vec4(0, 0, 0, 0));
-					item.rotation = glm::toMat4(glm::quat({ glm::radians(rotate.x), glm::radians(rotate.y), glm::radians(rotate.z) }));
-				}
-				else if(node.find("matrix") != node.end())
-				{
-					item.rotation = GltfHelper::GetMatrix(node["matrix"].get<Json::array_t>());
+					item.matrix      = GltfHelper::GetMatrix(node["matrix"].get<Json::array_t>());
 				}
 				else
 				{
-					item.rotation = glm::mat4(1.0f);
+					item.translation = GltfHelper::GetElementVector(node, "translation", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+					item.scale       = GltfHelper::GetElementVector(node, "scale", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+					glm::vec4 rotate = GltfHelper::GetElementVector(node, "rotation", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+					item.rotation    = glm::toMat4(glm::quat({ rotate.x, rotate.y, rotate.z, rotate.w }));
+
+					item.matrix      = glm::translate(glm::mat4(1.0f), glm::vec3(item.translation)) * item.rotation * glm::scale(glm::mat4(1.0f), glm::vec3(item.scale));
 				}
 			}
 		}
+
 		virtual ~GltfNodes() override = default;
 
 	private:
 
 		std::vector<Item> m_NodesData;
+		friend class GltfCollection;
 	};
 }

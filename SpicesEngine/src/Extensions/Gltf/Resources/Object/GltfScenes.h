@@ -17,7 +17,7 @@ namespace Spices {
 	public:
 
 		GltfScenes(const Json data) 
-			: GltfObject(GltfObjectType::scenes, data) 
+			: GltfObject(data) 
 		{
 			m_ScenesData.resize(data.size());
 
@@ -39,5 +39,6 @@ namespace Spices {
 
 	private:
 		std::vector<Item> m_ScenesData;
+		friend class GltfCollection;
 	};
 }

@@ -16,7 +16,7 @@ namespace Spices {
 		};
 
 		GltfAsset(const Json& data) 
-			: GltfObject(GltfObjectType::asset, data) 
+			: GltfObject(data) 
 		{
 			m_AssetData.generator = data["generator"];
 			//m_AssetData.extras = data["extras"];

@@ -22,7 +22,7 @@ namespace Spices {
 
 	public:
 		GltfLights(const Json& data)
-			: GltfObject(GltfObjectType::images, data)
+			: GltfObject(data)
 		{
 			m_LightsData.resize(data.size());
 

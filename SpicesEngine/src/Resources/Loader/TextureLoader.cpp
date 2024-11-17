@@ -29,6 +29,21 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::filesystem::path path(fileName);
+		if (path.is_absolute())
+		{
+			if (path.extension().string() == "ktx")
+			{
+				LoadBin(fileName, "", outTexture);
+			}
+			else
+			{
+				LoadSrc(fileName, "", outTexture, false);
+			}
+
+			return;
+		}
+
 		SearchFile(
 		fileName, 
 		[&](const std::string& it) {
@@ -91,8 +106,16 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
-		std::string binPath = it + binTexturePath + splitString[0] + ".ktx";
+		std::string binPath;
+		if (it == "")
+		{
+			binPath = fileName;
+		}
+		else
+		{
+			std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
+			binPath = it + binTexturePath + splitString[0] + ".ktx";
+		}
 
 		ktxTexture2* texture = nullptr;
 		Transcoder::LoadFromKTX(binPath, texture);
@@ -246,13 +269,24 @@ namespace Spices {
 		return true;
 	}
 
-	bool TextureLoader::LoadSrc(const std::string& fileName, const std::string& it, Texture2D* outTexture)
+	bool TextureLoader::LoadSrc(const std::string& fileName, const std::string& it, Texture2D* outTexture, bool isCreateCompressTexture)
 	{
 		SPICES_PROFILE_ZONE;
 
-		const std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
-		const std::string filePath = it + defaultTexturePath + fileName;
-		const std::string binPath  = it + binTexturePath + splitString[0] + ".ktx";
+		std::string filePath;
+		std::string binPath;
+		if (it == "")
+		{
+			assert(!isCreateCompressTexture);
+
+			filePath = fileName;
+		}
+		else
+		{
+			const std::vector<std::string> splitString = StringLibrary::SplitString(fileName, '.');
+			filePath = it + defaultTexturePath + fileName;
+			binPath  = it + binTexturePath + splitString[0] + ".ktx";
+		}
 
 		/**
 		* @brief Load Texture data.
@@ -427,6 +461,11 @@ namespace Spices {
 
 			resourceptr->CopyImageToMemoryHost({ memoryCopy });
 		};
+
+		if (!isCreateCompressTexture)
+		{
+			return true;
+		}
 
 		ktxTexture2* ktxTexture = Transcoder::CreateKTX2Texture(resourceptr->m_Width, resourceptr->m_Height);
 		for (uint32_t i = 0; i < resourceptr->m_MipLevels; i++)

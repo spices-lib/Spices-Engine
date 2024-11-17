@@ -21,7 +21,7 @@ namespace Spices {
 	public:
 
 		GltfTextures(const Json& data) 
-			: GltfObject(GltfObjectType::textures, data) 
+			: GltfObject(data) 
 		{
 			m_TexturesData.resize(data.size());
 

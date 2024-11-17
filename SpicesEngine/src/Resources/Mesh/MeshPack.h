@@ -513,6 +513,11 @@ namespace Spices {
 		}
 
 		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~PlanePack() = default;
+
+		/**
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		* @return Returns true if Create Pack successfully.
@@ -555,6 +560,11 @@ namespace Spices {
 		{
 			m_PackType = "CubePack";
 		}
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~CubePack() = default;
 
 		/**
 		* @brief This interface is used for build specific meshpack data.
@@ -600,6 +610,11 @@ namespace Spices {
 		}
 
 		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~SpherePack() = default;
+
+		/**
 		* @brief This interface is used for build specific meshpack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		* @return Returns true if Create Pack successfully.
@@ -639,6 +654,11 @@ namespace Spices {
 		{
 			m_PackType = "FilePack";
 		}
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~FilePack() = default;
 
 		/**
 		* @brief This interface is used for build specific meshpack data.

@@ -14,7 +14,7 @@ namespace Spices {
 		};
 
 		GltfSkins(const Json& data)
-			: GltfObject(GltfObjectType::asset, data)
+			: GltfObject(data)
 		{
 			m_SkinsData.resize(data.size());
 

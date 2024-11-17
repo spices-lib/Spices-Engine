@@ -271,7 +271,7 @@ namespace Spices {
 		m_Desc.UpdatemeshletsAddress           (m_MeshResource.meshlets.buffer                   );
 		m_Desc.UpdatenMeshlets                 (m_MeshResource.meshlets.attributes       ->size());
 
-#if 1
+#if 0
 
 		m_MeshResource.positions.attributes           = nullptr; 
 		m_MeshResource.normals.attributes             = nullptr;

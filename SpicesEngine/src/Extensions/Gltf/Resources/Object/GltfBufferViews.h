@@ -19,7 +19,7 @@ namespace Spices {
 
 	public:
 		GltfBufferViews(const Json& data)
-			: GltfObject(GltfObjectType::bufferViews, data)
+			: GltfObject(data)
 		{
 			m_BufferViewsData.resize(data.size());
 
@@ -40,5 +40,7 @@ namespace Spices {
 
 	private:
 		std::vector<Item> m_BufferViewsData;
+		friend class GltfLoader;
+		friend class GltfCollection;
 	};
 }

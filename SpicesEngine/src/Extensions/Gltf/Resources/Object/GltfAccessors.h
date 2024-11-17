@@ -22,7 +22,7 @@ namespace Spices {
 	public:
 
 		GltfAccessors(const Json& data) 
-			: GltfObject(GltfObjectType::accessors, data) 
+			: GltfObject(data) 
 		{
 			m_AccessorsData.resize(data.size());
 
@@ -45,5 +45,7 @@ namespace Spices {
 
 	private:
 		std::vector<Item> m_AccessorsData;
+		friend class GltfLoader;
+		friend class GltfCollection;
 	};
 }
