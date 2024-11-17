@@ -1,24 +1,45 @@
+/**
+* @file GltfBuffers.h.
+* @brief The GltfBuffers Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "GltfObject.h"
 
 namespace Spices {
 
+	/**
+	* @brief Wapper of Gltf Json Buffers.
+	*/
 	class GltfBuffers : public GltfObject
 	{
 	public:
+
+		/**
+		* @brief Buffers Item data.
+		*/
 		struct Item
 		{
-			uint32_t byteLength;
-			std::string uri;
-			std::unique_ptr<std::vector<char>> buffer;
+			int byteLength;                                /* @brief Buffer bytes.    */
+			std::string uri;                               /* @brief Buffer file url. */
+			std::unique_ptr<std::vector<char>> buffer;     /* @brief Buffer data.     */
 		};
 
 	public:
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] data Specific Json element.
+		* @param[in] path gltf file directory path.
+		*/
 		GltfBuffers(const Json& data, const std::filesystem::path& path)
 			: GltfObject(data)
 			, m_Path(path)
 		{
+			SPICES_PROFILE_ZONE;
+
 			m_BuffersData.resize(data.size());
 
 			for (int i = 0; i < data.size(); i++)
@@ -26,11 +47,14 @@ namespace Spices {
 				Item& item = m_BuffersData[i];
 				const Json& json = data[i];
 
-				item.byteLength = json["byteLength"];
-				item.uri = json["uri"];
+				item.byteLength    = GltfHelper::GetElementInt(json, "byteLength", -1);
+				item.uri           = GltfHelper::GetElementString(json, "uri", "");
 
+				/**
+				* @brief Read buffer file.
+				*/
 				std::stringstream file;
-				file << m_Path.string() << "/" << item.uri;
+				file << path.string() << "/" << item.uri;
 				
 				std::ifstream f(file.str(), std::ios::in | std::ios::binary);
 				if (!f)
@@ -51,11 +75,26 @@ namespace Spices {
 			}
 		}
 
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~GltfBuffers() override = default;
 
 	private:
+
+		/**
+		* @brief gltf file directory path.
+		*/
 		std::filesystem::path m_Path;
+
+		/**
+		* @brief Data of Gltf Json Buffers
+		*/
 		std::vector<Item> m_BuffersData;
+
+		/**
+		* @brief Allow GltfLoader and GltfCollection access all data this class.
+		*/
 		friend class GltfLoader;
 		friend class GltfCollection;
 	};

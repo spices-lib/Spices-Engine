@@ -1,3 +1,9 @@
+/**
+* @file GltfImages.h.
+* @brief The GltfImages Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "GltfObject.h"
@@ -8,20 +14,35 @@
 
 namespace Spices {
 
+	/**
+	* @brief Wapper of Gltf Json Images.
+	*/
 	class GltfImages : public GltfObject
 	{
 	public:
+
+		/**
+		* @brief Images Item data.
+		*/
 		struct Item
 		{
-			std::string uri;
-			std::shared_ptr<Texture> texture;
-			uint32_t index;
+			std::string uri;                         /* @brief Image file url.                        */
+			std::shared_ptr<Texture> texture;        /* @brief Image pointer.                         */
+			uint32_t index;                          /* @brief Image index in BindLess DescriptorSet. */
 		};
 
 	public:
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] data Specific Json element.
+		* @param[in] path gltf file directory path.
+		*/
 		GltfImages(const Json& data, const std::filesystem::path& path)
 			: GltfObject(data) 
 		{
+			SPICES_PROFILE_ZONE;
+
 			m_ImagesData.resize(data.size());
 
 			for (int i = 0; i < data.size(); i++)
@@ -48,10 +69,27 @@ namespace Spices {
 			}  
 		}
 
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~GltfImages() override = default;
 
 	private:
+
+		/**
+		* @brief gltf file directory path.
+		*/
 		std::filesystem::path m_Path;
+
+		/**
+		* @brief Data of Gltf Json Cameras
+		*/
 		std::vector<Item> m_ImagesData;
+
+		/**
+		* @brief Allow GltfLoader and GltfCollection access all data this class.
+		*/
+		friend class GltfLoader;
+		friend class GltfCollection;
 	};
 }

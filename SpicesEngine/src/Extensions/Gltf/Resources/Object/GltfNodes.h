@@ -1,3 +1,9 @@
+/**
+* @file GltfNodes.h.
+* @brief The GltfNodes Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "GltfObject.h"
@@ -6,27 +12,40 @@
 
 namespace Spices {
 
+	/**
+	* @brief Wapper of Gltf Json Nodes.
+	*/
 	class GltfNodes : public GltfObject
 	{
 	public:
+
+		/**
+		* @brief Nodes Item data.
+		*/
 		struct Item
 		{
-			std::string name;
-			std::vector<uint32_t> children;
-			int meshIndex;
-			int skinIndex;
+			std::string name;                      /* @brief Node name.             */
+			std::vector<uint32_t> children;        /* @brief Child node index.      */
+			int mesh;                              /* @brief Meshes index.          */
+			int skin;                              /* @brief Skins index.           */
 
-			glm::mat4 matrix;
-			glm::vec4 translation;
-			glm::vec4 scale;
-			glm::mat4 rotation;
+			glm::mat4 matrix;                      /* @brief Model matrix.          */
+			glm::vec4 translation;                 /* @brief Translation component. */
+			glm::vec4 scale;                       /* @brief Scale component.       */
+			glm::mat4 rotation;                    /* @brief Rotation component.    */
 		};
 
 	public:
 
-		GltfNodes(const Json& data) 
+		/**
+		* @brief Constructor Function.
+		* @param[in] data Specific Json element.
+		*/
+		explicit GltfNodes(const Json& data)
 			: GltfObject(data) 
 		{
+			SPICES_PROFILE_ZONE;
+
 			m_NodesData.resize(data.size());
 
 			for (int i = 0; i < data.size(); i++)
@@ -34,7 +53,7 @@ namespace Spices {
 				Item& item = m_NodesData[i];
 				Json::object_t node = data[i];
 
-				item.name = node["name"];
+				item.name = GltfHelper::GetElementString(node, "name", "");
 
 				if (node.find("children") != node.end())
 				{
@@ -45,8 +64,8 @@ namespace Spices {
 					}
 				}
 
-				item.meshIndex = GltfHelper::GetElementInt(node, "mesh", -1);
-				item.skinIndex = GltfHelper::GetElementInt(node, "skin", -1);
+				item.mesh = GltfHelper::GetElementInt(node, "mesh", -1);
+				item.skin = GltfHelper::GetElementInt(node, "skin", -1);
 
 				if (node.find("matrix") != node.end())
 				{
@@ -64,11 +83,22 @@ namespace Spices {
 			}
 		}
 
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~GltfNodes() override = default;
 
 	private:
 
+		/**
+		* @brief Data of Gltf Json Nodes.
+		*/
 		std::vector<Item> m_NodesData;
+
+		/**
+		* @brief Allow GltfLoader and GltfCollection access all data this class.
+		*/
+		friend class GltfLoader;
 		friend class GltfCollection;
 	};
 }

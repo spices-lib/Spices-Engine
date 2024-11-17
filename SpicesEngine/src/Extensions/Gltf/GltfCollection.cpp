@@ -43,7 +43,7 @@ namespace Spices {
 		/**
 		* @todo Create Empty Entity here.
 		*/
-		if (item.meshIndex < -0.5f) return;
+		if (item.mesh < -0.5f) return;
 
 		glm::vec3 position;
 		glm::vec3 rotation;
@@ -60,13 +60,13 @@ namespace Spices {
 		MeshComponent& meshComp = entity.AddComponent<MeshComponent>();
 		Mesh::Builder builder;
 
-		for (int j = 0; j < m_Meshes->m_MeshesData[item.meshIndex].primitives.size(); j++)
+		for (int j = 0; j < m_Meshes->m_MeshesData[item.mesh].primitives.size(); j++)
 		{
 			std::stringstream ss;
-			ss << m_Meshes->m_MeshesData[item.meshIndex].name << '_' << node;
+			ss << m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
 			std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* pack)
 			{
-				GltfLoader::LoadPack(pack, m_Meshes->m_MeshesData[item.meshIndex].primitives[j], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
+				GltfLoader::LoadPack(pack, m_Meshes->m_MeshesData[item.mesh].primitives[j], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
 			});
 
 			pack->SetMaterial("BasePassRenderer.Mesh.ground");
