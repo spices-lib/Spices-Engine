@@ -55,7 +55,7 @@ namespace Spices {
 				item.count         = GltfHelper::GetElementInt(json, "count", -1);
 				item.max           = GltfHelper::GetVector(GltfHelper::GetElementJsonArray(json, "max", { 0.0, 0.0, 0.0, 0.0 }));
 				item.min           = GltfHelper::GetVector(GltfHelper::GetElementJsonArray(json, "min", { 0.0, 0.0, 0.0, 0.0 }));
-				item.type          = GltfHelper::GetElementInt(json, "type", -1);
+				item.type          = GltfHelper::GetElementString(json, "type", "");
 			}
 		}
 

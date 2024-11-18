@@ -92,6 +92,12 @@ namespace Spices {
 			}
 		}
 		
+		// Colors
+		{
+			pack->m_MeshResource.colors.attributes->resize(1);
+			(*pack->m_MeshResource.colors.attributes)[0] = glm::vec3(0.0f);
+		}
+
 		// TexCoords
 		{
 			GltfAccessors::Item& texCoordAccessor     = accessors->m_AccessorsData[primitive.TEXCOORD_0];
@@ -114,12 +120,6 @@ namespace Spices {
 			}
 		}
 
-		// Colors
-		{
-			pack->m_MeshResource.colors.attributes->resize(1);
-			(*pack->m_MeshResource.colors.attributes)[0] = glm::vec3(0.0f);
-		}
-
 		// Vertices
 		{
 			GltfAccessors::Item& positionAccessor = accessors->m_AccessorsData[primitive.POSITION];
@@ -128,7 +128,7 @@ namespace Spices {
 			
 			for(uint32_t i = 0; i < pack->m_MeshResource.vertices.attributes->size(); i++)
 			{
-				(*pack->m_MeshResource.vertices.attributes)[i] = glm::uvec4(i, i, i, 0);
+				(*pack->m_MeshResource.vertices.attributes)[i] = glm::uvec4(i, i, 0, i);
 			}
 		}
 
