@@ -86,6 +86,29 @@ namespace Spices {
 		return m_Shaders[stage];
 	}
 
+	void Material::PushToShaderPath(const std::string& name, const std::string& shader)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Shaders[name].push_back(shader);
+		m_DefaultShaders[name].push_back(shader);
+	}
+
+	void Material::PushToTextureParams(const std::string& name, const TextureParam& texture)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_TextureParams.push_back(name, texture);
+		m_DefaultTextureParams.push_back(name, texture);
+	}
+
+	void Material::PushToConstParams(const std::string& name, const ConstantParam& param)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_ConstantParams.push_back(name, {param, param});
+	}
+
 	uint64_t Material::GetMaterialParamsAddress() const
 	{
 		SPICES_PROFILE_ZONE;

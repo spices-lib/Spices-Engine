@@ -95,7 +95,7 @@ namespace Spices {
 		* @brief Get Material Path.
 		* @return Return Material Path.
 		*/
-		std::string& GetName() { return m_MaterialPath; }
+		const std::string& GetName() const { return m_MaterialPath; }
 
 		/**
 		* @brief Get material shader path.
@@ -108,7 +108,7 @@ namespace Spices {
 		* @brief Get material shader path.
 		* @return Returns all the stage shader path that needed.
 		*/
-		std::unordered_map<std::string, std::vector<std::string>>& GetShaderPath() { return m_Shaders; }
+		const std::unordered_map<std::string, std::vector<std::string>>& GetShaderPath() const { return m_Shaders; }
 
 		/**
 		* @brief Get material texture parameters.
@@ -122,6 +122,33 @@ namespace Spices {
 		*/
 		scl::linked_unordered_map<std::string, ConstantParams>& GetConstantParams() { return m_ConstantParams; }
 
+		/**
+		* @brief Set material path.
+		* @param path material path.
+		*/
+		void SetName(const std::string& path) { m_MaterialPath = path; } 
+		
+		/**
+		* @brief Push item to ShaderPath.
+		* @param[in] name item name.
+		* @param[in] shader shader path.
+		*/
+		void PushToShaderPath(const std::string& name, const std::string& shader);
+
+		/**
+		* @brief Push item to ShaderPath.
+		* @param[in] name item name.
+		* @param[in] texture texture path.
+		*/
+		void PushToTextureParams(const std::string& name, const TextureParam& texture);
+		
+		/**
+		* @brief Push item to ConstParams.
+		* @param[in] name item name.
+		* @param[in] param ConstantParam.
+		*/
+		void PushToConstParams(const std::string& name, const ConstantParam& param);
+		
 		/**
 		* @brief Get default material constant parameter.
 		* @param[in] name Parameter Name.
