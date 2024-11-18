@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Gltf Json Samplers.
+	* @brief Wrapper of Gltf Json Samplers.
 	*/
 	class GltfSamplers : public GltfObject
 	{

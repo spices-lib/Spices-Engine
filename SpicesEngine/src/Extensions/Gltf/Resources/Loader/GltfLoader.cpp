@@ -1,3 +1,9 @@
+/**
+* @file GltfLoader.cpp.
+* @brief The GltfLoader Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "GltfLoader.h"
 #include "../Mesh/GltfPack.h"
@@ -16,7 +22,7 @@ namespace Spices {
 		if (!f)
 		{
 			std::stringstream ss;
-			ss << "Gltf File: " << fileName << "  is not finded.";
+			ss << "Gltf File: " << fileName << "  is not found.";
 
 			SPICES_CORE_ERROR(ss.str())
 			return false;
@@ -50,19 +56,19 @@ namespace Spices {
 
 		// Positions
 		{
-			GltfAccessors::Item& positionAccessor     = accessors->m_AccessorsData[primitive.POSITION];
-			GltfBufferViews::Item& positionBufferView = bufferViews->m_BufferViewsData[positionAccessor.bufferView];
-			GltfBuffers::Item& positionBuffer         = buffers->m_BuffersData[positionBufferView.buffer];
+			const GltfAccessors::Item& positionAccessor     = accessors->m_AccessorsData[primitive.POSITION];
+			const GltfBufferViews::Item& positionBufferView = bufferViews->m_BufferViewsData[positionAccessor.bufferView];
+			const GltfBuffers::Item& positionBuffer         = buffers->m_BuffersData[positionBufferView.buffer];
 
-			VkFormat format = GltfHelper::GetFormat(positionAccessor.type, positionAccessor.componentType);
-			uint32_t bytes = GltfHelper::SizeOfFormat(format);
+			const VkFormat format                           = GltfHelper::GetFormat(positionAccessor.type, positionAccessor.componentType);
+			const uint32_t bytes                            = GltfHelper::SizeOfFormat(format);
 
 			pack->m_MeshResource.positions.attributes->resize(positionAccessor.count);
 			for (uint32_t i = 0; i < pack->m_MeshResource.positions.attributes->size(); i++)
 			{
 				const uint32_t offset = i * bytes;
 
-				glm::vec3* p = (glm::vec3*)&(*positionBuffer.buffer)[positionAccessor.byteOffset + positionBufferView.byteOffset + offset];
+				auto p = reinterpret_cast<glm::vec3*>(&(*positionBuffer.buffer)[positionAccessor.byteOffset + positionBufferView.byteOffset + offset]);
 				(*pack->m_MeshResource.positions.attributes)[i] = *p;
 
 				glm::vec3& pos = (*pack->m_MeshResource.positions.attributes)[i];
@@ -72,19 +78,19 @@ namespace Spices {
 
 		// Normals
 		{
-			GltfAccessors::Item& normalAccessor     = accessors->m_AccessorsData[primitive.NORMAL];
-			GltfBufferViews::Item& normalBufferView = bufferViews->m_BufferViewsData[normalAccessor.bufferView];
-			GltfBuffers::Item& normalBuffer         = buffers->m_BuffersData[normalBufferView.buffer];
+			const GltfAccessors::Item& normalAccessor     = accessors->m_AccessorsData[primitive.NORMAL];
+			const GltfBufferViews::Item& normalBufferView = bufferViews->m_BufferViewsData[normalAccessor.bufferView];
+			const GltfBuffers::Item& normalBuffer         = buffers->m_BuffersData[normalBufferView.buffer];
 
-			VkFormat format = GltfHelper::GetFormat(normalAccessor.type, normalAccessor.componentType);
-			uint32_t bytes = GltfHelper::SizeOfFormat(format);
+			const VkFormat format                         = GltfHelper::GetFormat(normalAccessor.type, normalAccessor.componentType);
+			const uint32_t bytes                          = GltfHelper::SizeOfFormat(format);
 
 			pack->m_MeshResource.normals.attributes->resize(normalAccessor.count);
 			for (uint32_t i = 0; i < pack->m_MeshResource.normals.attributes->size(); i++)
 			{
 				const uint32_t offset = i * bytes;
 
-				glm::vec3* n = (glm::vec3*)&(*normalBuffer.buffer)[normalAccessor.byteOffset + normalBufferView.byteOffset + offset];
+				auto n = reinterpret_cast<glm::vec3*>(&(*normalBuffer.buffer)[normalAccessor.byteOffset + normalBufferView.byteOffset + offset]);
 				(*pack->m_MeshResource.normals.attributes)[i] = *n;
 
 				glm::vec3& nor = (*pack->m_MeshResource.normals.attributes)[i];
@@ -100,19 +106,19 @@ namespace Spices {
 
 		// TexCoords
 		{
-			GltfAccessors::Item& texCoordAccessor     = accessors->m_AccessorsData[primitive.TEXCOORD_0];
-			GltfBufferViews::Item& texCoordBufferView = bufferViews->m_BufferViewsData[texCoordAccessor.bufferView];
-			GltfBuffers::Item& texCoordBuffer         = buffers->m_BuffersData[texCoordBufferView.buffer];
+			const GltfAccessors::Item& texCoordAccessor     = accessors->m_AccessorsData[primitive.TEXCOORD_0];
+			const GltfBufferViews::Item& texCoordBufferView = bufferViews->m_BufferViewsData[texCoordAccessor.bufferView];
+			const GltfBuffers::Item& texCoordBuffer         = buffers->m_BuffersData[texCoordBufferView.buffer];
 
-			VkFormat format = GltfHelper::GetFormat(texCoordAccessor.type, texCoordAccessor.componentType);
-			uint32_t bytes = GltfHelper::SizeOfFormat(format);
+			const VkFormat format                           = GltfHelper::GetFormat(texCoordAccessor.type, texCoordAccessor.componentType);
+			const uint32_t bytes                            = GltfHelper::SizeOfFormat(format);
 
 			pack->m_MeshResource.texCoords.attributes->resize(texCoordAccessor.count);
 			for (uint32_t i = 0; i < pack->m_MeshResource.texCoords.attributes->size(); i++)
 			{
 				const uint32_t offset = i * bytes;
 
-				glm::vec2* u = (glm::vec2*)&(*texCoordBuffer.buffer)[texCoordAccessor.byteOffset + texCoordBufferView.byteOffset + offset];
+				auto u = reinterpret_cast<glm::vec2*>(&(*texCoordBuffer.buffer)[texCoordAccessor.byteOffset + texCoordBufferView.byteOffset + offset]);
 				(*pack->m_MeshResource.texCoords.attributes)[i] = *u;
 
 				glm::vec2& uv = (*pack->m_MeshResource.texCoords.attributes)[i];
@@ -122,7 +128,7 @@ namespace Spices {
 
 		// Vertices
 		{
-			GltfAccessors::Item& positionAccessor = accessors->m_AccessorsData[primitive.POSITION];
+			const GltfAccessors::Item& positionAccessor = accessors->m_AccessorsData[primitive.POSITION];
 
 			pack->m_MeshResource.vertices.attributes->resize(positionAccessor.count);
 			
@@ -134,21 +140,21 @@ namespace Spices {
 
 		// primVertices
 		{
-			GltfAccessors::Item& indicesAccessor     = accessors->m_AccessorsData[primitive.indices];
-			GltfBufferViews::Item& indicesBufferView = bufferViews->m_BufferViewsData[indicesAccessor.bufferView];
-			GltfBuffers::Item& indicesBuffer         = buffers->m_BuffersData[indicesBufferView.buffer];
+			const GltfAccessors::Item& indicesAccessor     = accessors->m_AccessorsData[primitive.indices];
+			const GltfBufferViews::Item& indicesBufferView = bufferViews->m_BufferViewsData[indicesAccessor.bufferView];
+			const GltfBuffers::Item& indicesBuffer         = buffers->m_BuffersData[indicesBufferView.buffer];
 
-			VkFormat format = GltfHelper::GetFormat(indicesAccessor.type, indicesAccessor.componentType);
-			uint32_t bytes = GltfHelper::SizeOfFormat(format);
+			const VkFormat format                          = GltfHelper::GetFormat(indicesAccessor.type, indicesAccessor.componentType);
+			const uint32_t bytes                           = GltfHelper::SizeOfFormat(format);
 
 			pack->m_MeshResource.primitiveVertices.attributes->resize(indicesAccessor.count / 3);
 			for (uint32_t i = 0; i < pack->m_MeshResource.primitiveVertices.attributes->size(); i++)
 			{
 				const uint32_t offset = i * 3 * bytes;
 
-				short* x = (short*)&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + 0];
-				short* y = (short*)&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes];
-				short* z = (short*)&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes * 2];
+				auto x = reinterpret_cast<short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + 0]);
+				auto y = reinterpret_cast<short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes]);
+				auto z = reinterpret_cast<short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes * 2]);
 
 				(*pack->m_MeshResource.primitiveVertices.attributes)[i] = glm::uvec3(*x, *y, *z);
 			}
@@ -161,7 +167,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::shared_ptr<Material> outMaterial = std::make_shared<Material>();
+		auto outMaterial = std::make_shared<Material>();
 
 		std::stringstream ss;
 		ss << "BasePassRenderer.Mesh." << material.name;

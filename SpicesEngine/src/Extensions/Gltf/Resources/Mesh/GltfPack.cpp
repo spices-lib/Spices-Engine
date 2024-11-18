@@ -1,3 +1,9 @@
+/**
+* @file GltfPack.cpp.
+* @brief The GltfPack Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "GltfPack.h"
 #include "../Loader/GltfLoader.h"

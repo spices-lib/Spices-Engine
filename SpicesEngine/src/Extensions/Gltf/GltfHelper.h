@@ -60,57 +60,57 @@ namespace Spices {
 
         /**
         * @brief Get string value in Json::object_t.
-        * @param[in] pRoot json object.
+        * @param[in] root json object.
         * @param[in] path type name.
         * @param[in] pDefault default return value.
-        * return Returns value if finded or default if not.
+        * return Returns value if found or default if not.
         */
-		static std::string GetElementString(const Json::object_t& root, const char* path, std::string pDefault);
+		static std::string GetElementString(const Json::object_t& root, const char* path, const std::string& pDefault);
 
         /**
         * @brief Get float value in Json::object_t.
-        * @param[in] pRoot json object.
+        * @param[in] root json object.
         * @param[in] path type name.
         * @param[in] pDefault default return value.
-        * return Returns value if finded or default if not.
+        * return Returns value if found or default if not.
         */
 		static float GetElementFloat(const Json::object_t& root, const char* path, float pDefault);
 
         /**
         * @brief Get int value in Json::object_t.
-        * @param[in] pRoot json object.
+        * @param[in] root json object.
         * @param[in] path type name.
         * @param[in] pDefault default return value.
-        * return Returns value if finded or default if not.
+        * return Returns value if found or default if not.
         */
 		static int GetElementInt(const Json::object_t& root, const char* path, int pDefault);
 
         /**
         * @brief Get bool value in Json::object_t.
-        * @param[in] pRoot json object.
+        * @param[in] root json object.
         * @param[in] path type name.
         * @param[in] pDefault default return value.
-        * return Returns value if finded or default if not.
+        * return Returns value if found or default if not.
         */
 		static bool GetElementBoolean(const Json::object_t& root, const char* path, bool pDefault);
 
         /**
         * @brief Get array value in Json::object_t.
-        * @param[in] pRoot json object.
+        * @param[in] root json object.
         * @param[in] path type name.
         * @param[in] pDefault default return value.
-        * return Returns value if finded or default if not.
+        * return Returns value if found or default if not.
         */
 		static Json::array_t GetElementJsonArray(const Json::object_t& root, const char* path, Json::array_t pDefault);
 
         /**
         * @brief Get vec4 value in Json::object_t.
-        * @param[in] pRoot json object.
+        * @param[in] root json object.
         * @param[in] path type name.
         * @param[in] pDefault default return value.
-        * return Returns value if finded or default if not.
+        * return Returns value if found or default if not.
         */
-		static glm::vec4 GetElementVector(Json::object_t& root, const char* path, glm::vec4 default);
+		static glm::vec4 GetElementVector(Json::object_t& root, const char* path, glm::vec4 pDefault);
 
 	private:
 
@@ -120,7 +120,7 @@ namespace Spices {
         * @param[in] pRoot json object.
         * @param[in] path type name.
         * @param[in] pDefault default return value.
-        * return Returns value if finded or default if not.
+        * return Returns value if found or default if not.
         */
 		template <class type>
         static type GetElement(const Json::object_t* pRoot, const char* path, type pDefault);

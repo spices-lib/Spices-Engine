@@ -13,14 +13,14 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Gltf Json element
+	* @brief Wrapper of Gltf Json element
 	*/
 	class GltfObject
 	{
 	public:
 
 		/**
-		* @brief using Json instand of nlohmann::json
+		* @brief using Json insteadd of nlohmann::json
 		*/
 		using Json = nlohmann::json;
 

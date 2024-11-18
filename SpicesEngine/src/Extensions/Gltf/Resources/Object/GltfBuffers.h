@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Gltf Json Buffers.
+	* @brief Wrapper of Gltf Json Buffers.
 	*/
 	class GltfBuffers : public GltfObject
 	{

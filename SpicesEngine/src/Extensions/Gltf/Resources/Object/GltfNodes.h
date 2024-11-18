@@ -13,7 +13,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Gltf Json Nodes.
+	* @brief Wrapper of Gltf Json Nodes.
 	*/
 	class GltfNodes : public GltfObject
 	{

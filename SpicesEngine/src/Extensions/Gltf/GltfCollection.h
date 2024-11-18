@@ -1,3 +1,9 @@
+/**
+* @file GltfCollection.h
+* @brief The GltfCollection Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 
@@ -20,42 +26,71 @@
 
 namespace Spices {
 
+	/**
+	* @brief Forward Declare.
+	*/
 	class GltfLoader;
 	class World;
 	class GltfPack;
 
+	/**
+	* @brief Wrapper of Gltf file data.
+	*/
 	class GltfCollection
 	{
 	public:
-		GltfCollection(const std::string& path);
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] path gltf file path.
+		*/
+		explicit GltfCollection(const std::string& path);
+
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~GltfCollection() = default;
 
+		/**
+		* @brief Create Entity instance from gltf file.
+		* @param[in] world World Pointer.
+		* @param[in] tag Entity name.
+		*/
 		void CreateEntity(World* world, const std::string& tag);
-
 
 	private:
 
+		/**
+		* @brief Create Entity recursive from gltf file nodes.
+		* @param[in] world World Pointer.
+		* @param[in] tag Entity name.
+		* @param[in] node gltf nodes index.
+		* @param[in] model recursive model matrix.
+		*/
 		void CreateEntityRecursive(World* world, const std::string& tag, uint32_t node, const glm::mat4& model);
 
 	private:
 
-		std::unique_ptr<GltfAccessors  >   m_Accessors;
-		std::unique_ptr<GltfAnimations >   m_Animations;
-		std::unique_ptr<GltfAsset      >   m_Asset;
-		std::unique_ptr<GltfBuffers    >   m_Buffers;
-		std::unique_ptr<GltfBufferViews>   m_BufferViews;
-		std::unique_ptr<GltfCameras    >   m_Cameras;
-		std::unique_ptr<GltfImages     >   m_Images;
-		std::unique_ptr<GltfLights     >   m_Lights;
-		std::unique_ptr<GltfMaterials  >   m_Materials;
-		std::unique_ptr<GltfMeshes     >   m_Meshes;
-		std::unique_ptr<GltfNodes      >   m_Nodes;
-		std::unique_ptr<GltfSamplers   >   m_Samplers;
-		std::unique_ptr<GltfScene      >   m_Scene;
-		std::unique_ptr<GltfScenes     >   m_Scenes;
-		std::unique_ptr<GltfSkins      >   m_Skins;
-		std::unique_ptr<GltfTextures   >   m_Textures;
+		std::unique_ptr<GltfAccessors  >   m_Accessors;         /* @brief BufferView Clip.      */
+		std::unique_ptr<GltfAnimations >   m_Animations;        /* @brief Animation data.       */
+		std::unique_ptr<GltfAsset      >   m_Asset;             /* @brief Gltf file information.*/
+		std::unique_ptr<GltfBuffers    >   m_Buffers;           /* @brief Mesh Buffer data.     */
+		std::unique_ptr<GltfBufferViews>   m_BufferViews;       /* @brief Buffer Clip.          */
+		std::unique_ptr<GltfCameras    >   m_Cameras;           /* @brief Camera data.          */
+		std::unique_ptr<GltfImages     >   m_Images;            /* @brief Image data.           */
+		std::unique_ptr<GltfLights     >   m_Lights;            /* @brief Light data.           */
+		std::unique_ptr<GltfMaterials  >   m_Materials;         /* @brief Material data.        */
+		std::unique_ptr<GltfMeshes     >   m_Meshes;            /* @brief Mesh data.            */
+		std::unique_ptr<GltfNodes      >   m_Nodes;             /* @brief Node data.            */
+		std::unique_ptr<GltfSamplers   >   m_Samplers;          /* @brief Image sampler data.   */
+		std::unique_ptr<GltfScene      >   m_Scene;             /* @brief Scene data.           */
+		std::unique_ptr<GltfScenes     >   m_Scenes;            /* @brief Scenes data.          */
+		std::unique_ptr<GltfSkins      >   m_Skins;             /* @brief Skins data.           */
+		std::unique_ptr<GltfTextures   >   m_Textures;          /* @brief Texture data.         */
 
+		/**
+		* @brief Allow GltfLoader access all data this class.
+		*/
 		friend class GltfLoader;
 	};
 }

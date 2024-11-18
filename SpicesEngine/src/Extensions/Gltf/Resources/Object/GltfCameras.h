@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Gltf Json Cameras.
+	* @brief Wrapper of Gltf Json Cameras.
 	*/
 	class GltfCameras : public GltfObject
 	{

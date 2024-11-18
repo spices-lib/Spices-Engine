@@ -1,3 +1,9 @@
+/**
+* @file GltfCollection.cpp
+* @brief The GltfCollection Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "GltfCollection.h"
 #include "Resources/Loader/GltfLoader.h"
@@ -22,7 +28,7 @@ namespace Spices {
 
 		for (auto& item : m_Scenes->m_ScenesData)
 		{
-			for (auto& node : item.nodes)
+			for (const auto& node : item.nodes)
 			{
 				CreateEntityRecursive(world, tag, node, glm::mat4(1.0f));
 			}
@@ -65,9 +71,9 @@ namespace Spices {
 		{
 			std::stringstream ss;
 			ss << m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
-			std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* pack)
+			std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* gltfPack)
 			{
-				GltfLoader::LoadPack(pack, m_Meshes->m_MeshesData[item.mesh].primitives[j], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
+				GltfLoader::LoadPack(gltfPack, m_Meshes->m_MeshesData[item.mesh].primitives[j], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
 			});
 
 			std::shared_ptr<Material> material = GltfLoader::LoadMaterial(m_Materials->m_MaterialsData[m_Meshes->m_MeshesData[item.mesh].primitives[j].material], m_Images.get());

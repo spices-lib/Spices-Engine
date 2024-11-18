@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of Gltf Json Animations.
+	* @brief Wrapper of Gltf Json Animations.
 	*/
 	class GltfAnimations : public GltfObject
 	{
