@@ -141,7 +141,7 @@ file in:  SpicesEngine/assets/Shaders/src/Header/Shader.BasePassRenderer.Mesh.De
 <a name="SR74e"></a>
 # DGC
 ---
-- **Support 30W DrawCall with 40 FPS in 4060.**
+- **Support 100W DrawCall（3 Points Per Mesh） with 40 FPS in 4060 or 30W DrawCall(600 Points Per Mesh)**
 file in:  SpicesEngine/src/Render/Renderer/SpecificRenderer/BasePassRenderer.cpp<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1724589939026-38229d51-0193-444d-84d2-83bfe943765e.png#averageHue=%23272727&clientId=ud381dff5-f5e5-4&from=paste&height=357&id=ub9b021e3&originHeight=535&originWidth=1537&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=101466&status=done&style=none&taskId=ue8b2792c-af95-4f4f-84e1-ec98b7736fe&title=&width=1024.6666666666667)
 <a name="oUmkY"></a>
 # Physically Based Rendering (PBR) 
