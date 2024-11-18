@@ -240,6 +240,12 @@ namespace Spices {
 		void SetMaterial(const std::string& materialPath);
 
 		/**
+		* @brief Set specific material for this class.
+		* @param[in] material Material Pointer.
+		*/
+		void SetMaterial(std::shared_ptr<Material> material);
+
+		/**
 		* @brief Get material in this class.
 		* @return Returns the material in this class.
 		*/

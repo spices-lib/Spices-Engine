@@ -69,7 +69,9 @@ namespace Spices {
 				GltfLoader::LoadPack(pack, m_Meshes->m_MeshesData[item.mesh].primitives[j], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
 			});
 
-			pack->SetMaterial("BasePassRenderer.Mesh.ground");
+			std::shared_ptr<Material> material = GltfLoader::LoadMaterial(m_Materials->m_MaterialsData[m_Meshes->m_MeshesData[item.mesh].primitives[j].material], m_Images.get());
+
+			pack->SetMaterial(material);
 
 			builder.AddPack(pack);
 		}

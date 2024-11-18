@@ -22,7 +22,12 @@ namespace Spices {
 		*/
 		struct Item
 		{
+			uint32_t   baseColorTexture;
+			glm::vec4  baseColorFactor;
+			uint32_t   metallicRoughnessTexture;
+			uint32_t   normalTexture;
 
+			std::string name;
 		};
 
 	public:
@@ -34,9 +39,26 @@ namespace Spices {
 		explicit GltfMaterials(const Json& data)
 			: GltfObject(data)
 		{
-			
+			SPICES_PROFILE_ZONE;
+
+			m_MaterialsData.resize(data.size());
+
+			for (int i = 0; i < data.size(); i++)
+			{
+				Item& item       = m_MaterialsData[i];
+				const Json& json = data[i];
+
+				item.baseColorTexture = json["pbrMetallicRoughness"]["baseColorTexture"]["index"];
+				Json::object_t factor = json["pbrMetallicRoughness"];
+				item.baseColorFactor  = GltfHelper::GetElementVector(factor, "baseColorFactor", glm::vec4(1.0f));
+
+				item.metallicRoughnessTexture = json["pbrMetallicRoughness"]["metallicRoughnessTexture"]["index"];
+				item.normalTexture = json["normalTexture"]["index"];
+
+				item.name = json["name"];
+			}
 		}
-		 
+		
 		/**
 		* @brief Destructor Function.
 		*/

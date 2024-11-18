@@ -156,4 +156,48 @@ namespace Spices {
 
 		return true;
 	}
+
+	std::shared_ptr<Material> GltfLoader::LoadMaterial(const GltfMaterials::Item& material, GltfImages* images)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::shared_ptr<Material> outMaterial = std::make_shared<Material>();
+
+		std::stringstream ss;
+		ss << "BasePassRenderer.Mesh." << material.name;
+		outMaterial->GetName() = ss.str();
+
+		outMaterial->GetShaderPath()["task"] = {"BasePassRenderer.Mesh.Default"};
+		outMaterial->GetShaderPath()["mesh"] = {"BasePassRenderer.Mesh.Default"};
+		outMaterial->GetShaderPath()["frag"] = {"BasePassRenderer.Mesh.PBRGltf"};
+		outMaterial->GetShaderPath()["rchit"] = {"BasePassRenderer.Mesh.PBRGltf"};
+
+		outMaterial->GetTextureParams().push_back("baseColorTexture", { "Texture2D", images->m_ImagesData[material.baseColorTexture].uri });
+		outMaterial->GetTextureParams().push_back("metallicRoughnessTexture", { "Texture2D", images->m_ImagesData[material.metallicRoughnessTexture].uri });
+		outMaterial->GetTextureParams().push_back("normalTexture", { "Texture2D", images->m_ImagesData[material.normalTexture].uri });
+
+		ConstantParam baseColorFactorParam;
+		baseColorFactorParam.paramType  = "float4";
+		baseColorFactorParam.paramValue = material.baseColorFactor;
+		outMaterial->GetConstantParams().push_back("baseColorFactor", { baseColorFactorParam , baseColorFactorParam });
+
+		ConstantParam maxRayDepthParam;
+		maxRayDepthParam.paramType = "int";
+		maxRayDepthParam.paramValue = 6;
+		outMaterial->GetConstantParams().push_back("maxRayDepth", { maxRayDepthParam , maxRayDepthParam });
+
+		ConstantParam maxLightDepthParam;
+		maxLightDepthParam.paramType = "int";
+		maxLightDepthParam.paramValue = 3;
+		outMaterial->GetConstantParams().push_back("maxLightDepth", { maxLightDepthParam , maxLightDepthParam });
+
+		ConstantParam maxShadowDepthParam;
+		maxShadowDepthParam.paramType = "int";
+		maxShadowDepthParam.paramValue = 3;
+		outMaterial->GetConstantParams().push_back("maxShadowDepth", { maxShadowDepthParam , maxShadowDepthParam });
+
+		ResourcePool<Material>::Registry(ss.str(), outMaterial);
+
+		return outMaterial;
+	}
 }

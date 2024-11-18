@@ -165,6 +165,16 @@ namespace Spices {
 		m_Desc.UpdatematerialParameterAddress(m_Material->GetMaterialParamsAddress());
 	}
 
+	void MeshPack::SetMaterial(std::shared_ptr<Material> material)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Material = material;
+		m_Material->BuildMaterial();
+
+		m_Desc.UpdatematerialParameterAddress(m_Material->GetMaterialParamsAddress());
+	}
+
 	uint32_t MeshPack::GetHitShaderHandle() const
 	{
 		SPICES_PROFILE_ZONE;

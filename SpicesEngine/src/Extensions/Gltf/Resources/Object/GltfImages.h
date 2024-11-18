@@ -27,8 +27,6 @@ namespace Spices {
 		struct Item
 		{
 			std::string uri;                         /* @brief Image file url.                        */
-			std::shared_ptr<Texture> texture;        /* @brief Image pointer.                         */
-			uint32_t index;                          /* @brief Image index in BindLess DescriptorSet. */
 		};
 
 	public:
@@ -50,22 +48,21 @@ namespace Spices {
 				Item& item = m_ImagesData[i];
 				const Json& json = data[i];
 
-				item.uri = json["uri"];
+				std::string folder = json["uri"];
 
 				std::stringstream file;
-				file << path.string() << "/" << item.uri;
+				file << path.string() << "/" << folder;
 
-				if (!FileLibrary::FileLibrary_Exists(file.str().c_str()))
+				item.uri = file.str();
+
+				if (!FileLibrary::FileLibrary_Exists(item.uri.c_str()))
 				{
 					std::stringstream ss;
-					ss << "Image Files: " << file.str() << "  is not finded.";
+					ss << "Image Files: " << item.uri << "  is not finded.";
 
 					SPICES_CORE_ERROR(ss.str())
 					continue;
 				}
-
-				item.texture = ResourcePool<Texture>::Load<Texture2D>(file.str(), file.str());
-				item.index   = BindLessTextureManager::Registry(file.str());
 			}  
 		}
 

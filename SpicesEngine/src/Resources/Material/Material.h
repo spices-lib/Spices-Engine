@@ -95,7 +95,7 @@ namespace Spices {
 		* @brief Get Material Path.
 		* @return Return Material Path.
 		*/
-		const std::string& GetName() { return m_MaterialPath; }
+		std::string& GetName() { return m_MaterialPath; }
 
 		/**
 		* @brief Get material shader path.
@@ -108,7 +108,7 @@ namespace Spices {
 		* @brief Get material shader path.
 		* @return Returns all the stage shader path that needed.
 		*/
-		const std::unordered_map<std::string, std::vector<std::string>>& GetShaderPath() { return m_Shaders; }
+		std::unordered_map<std::string, std::vector<std::string>>& GetShaderPath() { return m_Shaders; }
 
 		/**
 		* @brief Get material texture parameters.
