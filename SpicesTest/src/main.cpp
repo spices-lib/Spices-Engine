@@ -28,6 +28,9 @@
 #include "Core/Library/ProcessLibrary_test.h"
 #include "Core/Library/StringLibrary_test.h"
 
+/* Math */
+#include "Core/Math/Math_test.h"
+
 /* Memory */
 #include "Core/Memory/ObjectPool_test.h"
 #include "Core/Memory/ThreadCache_test.h"

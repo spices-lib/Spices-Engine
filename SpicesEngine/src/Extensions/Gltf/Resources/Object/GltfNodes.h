@@ -76,7 +76,7 @@ namespace Spices {
 					item.translation = GltfHelper::GetElementVector(node, "translation", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 					item.scale       = GltfHelper::GetElementVector(node, "scale", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 					glm::vec4 rotate = GltfHelper::GetElementVector(node, "rotation", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-					item.rotation    = glm::toMat4(glm::quat({ rotate.x, rotate.y, rotate.z, rotate.w }));
+					item.rotation    = glm::toMat4(glm::quat({ rotate.w, rotate.x, rotate.y, rotate.z }));
 
 					item.matrix      = glm::translate(glm::mat4(1.0f), glm::vec3(item.translation)) * item.rotation * glm::scale(glm::mat4(1.0f), glm::vec3(item.scale));
 				}

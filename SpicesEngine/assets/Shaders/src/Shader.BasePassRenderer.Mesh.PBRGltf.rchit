@@ -18,11 +18,10 @@
 struct MaterialParameter
 {
     uint  baseColorTexture;
-    vec4  baseColorFactor;
     uint  metallicRoughnessTexture;
-
     uint  normalTexture;
 
+    vec4  baseColorFactor;
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
@@ -40,8 +39,8 @@ struct MaterialParameter
 void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
 {
     attributes.albedo          = texture(BindLessTextureBuffer[materialParam.baseColorTexture], pi.texCoord).xyz * materialParam.baseColorFactor.xyz;
-    attributes.roughness       = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pi.texCoord).y;
-    //attributes.metallic        = texture(BindLessTextureBuffer[materialParam.metallicTexture],  pi.texCoord).x;
+    attributes.roughness       = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pi.texCoord).g;
+    //attributes.metallic        = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture],  pi.texCoord).b;
     attributes.emissive        = vec3(0.0f);
     attributes.maxRayDepth     = max(materialParam.maxRayDepth, 0);
     attributes.maxLightDepth   = max(materialParam.maxLightDepth, 0);

@@ -116,7 +116,7 @@ namespace Spices {
 				(*pack->m_MeshResource.texCoords.attributes)[i] = *u;
 
 				glm::vec2& uv = (*pack->m_MeshResource.texCoords.attributes)[i];
-				uv.y = 1.0f - uv.y;
+				//uv.y = 1.0f - uv.y;
 			}
 		}
 

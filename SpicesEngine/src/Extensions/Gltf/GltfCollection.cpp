@@ -50,6 +50,7 @@ namespace Spices {
 		glm::vec3 scale;
 
 		DecomposeTransform(model * item.matrix, position, rotation, scale);
+		rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
 
 		Entity entity = world->CreateEntity(tag);
 		TransformComponent& transformComp = entity.GetComponent<TransformComponent>();

@@ -23,9 +23,10 @@
 struct MaterialParameter
 {
     uint  baseColorTexture;
-    vec4  baseColorFactor;
     uint  metallicRoughnessTexture;
     uint  normalTexture;
+
+    vec4  baseColorFactor;
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
@@ -92,10 +93,10 @@ void main()
     float meshletrand1 = rnd(meshletSeed);
     float meshletrand2 = rnd(meshletSeed);
 
-    outAlbedo           = texture(BindLessTextureBuffer[0], pixel.texCoord) * materialParam.baseColorFactor;
+    outAlbedo           = texture(BindLessTextureBuffer[materialParam.baseColorTexture], pixel.texCoord) * materialParam.baseColorFactor;
     outNormal           = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
-    float roughness     = texture(BindLessTextureBuffer[0], pixel.texCoord).y;
-    float metallic      = texture(BindLessTextureBuffer[0], pixel.texCoord).x;
+    float roughness     = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pixel.texCoord).g;
+    float metallic      = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pixel.texCoord).b;
     outRoughness        = vec4(roughness, roughness, roughness, 1.0f);
     outMetallic         = vec4(metallic, metallic, metallic, 1.0f);
     outPosition         = vec4(pixel.position, 1.0f);

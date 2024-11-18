@@ -158,6 +158,8 @@ void main()
         brdf_specular += (CalculatePointLights(pi, materialAttributes) + CalculateDirectionalLights(pi, materialAttributes));
     }
     
+    brdf_specular = min(brdf_specular, 2.0f);
+
     vec3 BRDF = brdf_diffuse + brdf_specular;
     
     const float cos_theta = dot(rayDirection, materialAttributes.normal);
