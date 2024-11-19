@@ -266,7 +266,7 @@ namespace Spices {
 		*/
 		for (size_t i = 0; i < MaxFrameInFlight; i++) 
 		{
-			// Graphic SyncObkects.
+			// Graphic SyncObjects.
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_GraphicImageSemaphore[i]))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, reinterpret_cast<uint64_t>(m_VulkanState.m_GraphicImageSemaphore[i]), m_VulkanState.m_Device, "GraphicImageSemaphore")
 
@@ -276,7 +276,7 @@ namespace Spices {
 			VK_CHECK(vkCreateFence(m_VulkanState.m_Device, &fenceInfo, nullptr, &m_VulkanState.m_GraphicFence[i]))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_FENCE, reinterpret_cast<uint64_t>(m_VulkanState.m_GraphicFence[i]), m_VulkanState.m_Device, "GraphicFence")
 
-			// Compute SyncObkects.
+			// Compute SyncObjects.
 			VK_CHECK(vkCreateSemaphore(m_VulkanState.m_Device, &semaphoreInfo, nullptr, &m_VulkanState.m_ComputeQueueSemaphore[i]))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, reinterpret_cast<uint64_t>(m_VulkanState.m_ComputeQueueSemaphore[i]), m_VulkanState.m_Device, "ComputeQueueSemaphore")
 

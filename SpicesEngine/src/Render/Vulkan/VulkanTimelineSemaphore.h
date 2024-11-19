@@ -22,7 +22,7 @@ namespace Spices {
 		* @brief Constructor Function.
 		* @param[in] vulkanState The global VulkanState.
 		*/
-		VulkanTimelineSemaphore(VulkanState& vulkanState);
+		explicit VulkanTimelineSemaphore(VulkanState& vulkanState);
 
 		/**
 		* @brief Destructor Function.

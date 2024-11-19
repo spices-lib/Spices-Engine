@@ -378,7 +378,7 @@ namespace Spices {
 		*/
 		VkComputePipelineCreateInfo                       pipelineInfo {};
 		pipelineInfo.sType                              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-		pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
+		//pipelineInfo.flags                              = VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV;
 		pipelineInfo.layout                             = m_PipelineLayout;
 		pipelineInfo.stage                              = shaderStages[0];
 

@@ -101,15 +101,15 @@ namespace Spices {
 		std::array<VkImage,           MaxFrameInFlight>  m_SwapChainImages;            /* @brief The SwapChain's image, used for present.                        */
 		std::array<VkImageView,       MaxFrameInFlight>  m_SwapChainImageViews;        /* @brief The SwapChain's imageView.                                      */
 		std::array<VkSampler,         MaxFrameInFlight>  m_SwapChainImageSamplers;     /* @brief The SwapChain's imageSampler.                                   */
-	  
-		// Used for Graphic Queue	  
+	  													 
+		// Used for Graphic Queue	  					 
 		VkCommandPool                                    m_GraphicCommandPool;         /* @brief From VulkanCommandBuffer                                        */
 		std::array<VkCommandBuffer,   MaxFrameInFlight>  m_GraphicCommandBuffer;       /* @brief From VulkanCommandBuffer, Array num equals to MaxFrameInFlight. */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_GraphicImageSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_GraphicQueueSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 		std::array<VkFence,           MaxFrameInFlight>  m_GraphicFence;               /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
-									  
-		// Use for Compute Queue.	  
+									  					 
+		// Use for Compute Queue.	  					 
 		VkCommandPool                                    m_ComputeCommandPool;         /* @brief From VulkanCommandBuffer                                        */
 		std::array<VkCommandBuffer,   MaxFrameInFlight>  m_ComputeCommandBuffer;       /* @brief From VulkanCommandBuffer, Array num equals to MaxFrameInFlight. */
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_ComputeQueueSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */

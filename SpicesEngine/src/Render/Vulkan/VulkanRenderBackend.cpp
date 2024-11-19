@@ -28,6 +28,7 @@
 #include "Render/Renderer/SpecificRenderer/TestRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingComposeRenderer.h"
 #include "Render/Renderer/SpecificRenderer/ViewportGridRenderer.h"
+#include "Render/Renderer/SpecificRenderer/PostProcessRenderer.h"
 
 namespace Spices {
 
@@ -111,15 +112,16 @@ namespace Spices {
 		{
 			RendererManager::Get()
 			.Push<PreRenderer>              (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-
-			/* @brief Ray Tracing Renderer */
+																																		   
+			/* @brief Ray Tracing Renderer */																							   
 			.Push<RayTracingRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-
-			/* @brief Rasterization Renderer */
+																																		   
+			/* @brief Rasterization Renderer */																							   
 			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    //.Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+		  //.Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
+			.Push<PostProcessRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<ViewportGridRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 		    .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
@@ -164,6 +166,7 @@ namespace Spices {
 			.Pop("WorldPickRenderer")
 			.Pop("SpriteRenderer")
 			.Pop("ViewportGridRenderer")
+			.Pop("PostProcessRenderer")
 			.Pop("SceneComposeRenderer")
 			//.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
@@ -361,8 +364,8 @@ namespace Spices {
 			*/
 			VkSubmitInfo                          submitInfo{};
 			submitInfo.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submitInfo.waitSemaphoreCount       = 1;
-			submitInfo.pWaitSemaphores          = waitSemphores;
+			submitInfo.waitSemaphoreCount       = 0;
+			submitInfo.pWaitSemaphores          = nullptr;
 			submitInfo.pWaitDstStageMask        = waitStages;
 			submitInfo.commandBufferCount       = 1;
 			submitInfo.pCommandBuffers          = &m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex];
@@ -391,13 +394,15 @@ namespace Spices {
 			
 			DEBUGUTILS_BEGINQUEUELABEL(m_VulkanState.m_PresentQueue, "PresentQueue")
 
+			VkSemaphore waitSemphores[] = { m_VulkanState.m_ComputeQueueSemaphore[frameInfo.m_FrameIndex], m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex] };
+
 			/**
 			* @brief Instance a VkPresentInfoKHR.
 			*/
 			VkPresentInfoKHR                      presentInfo{};
 			presentInfo.sType                   = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-			presentInfo.waitSemaphoreCount      = 1;
-			presentInfo.pWaitSemaphores         = &m_VulkanState.m_GraphicQueueSemaphore[frameInfo.m_FrameIndex];
+			presentInfo.waitSemaphoreCount      = 2;
+			presentInfo.pWaitSemaphores         = waitSemphores;
 			presentInfo.swapchainCount          = 1;
 			presentInfo.pSwapchains             = &m_VulkanState.m_SwapChain;
 			presentInfo.pImageIndices           = &frameInfo.m_ImageIndex;

@@ -14,14 +14,14 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		RendererPassBuilder{ "PostProcess", this }
-		.AddSubPass("DownSample")
-		.EndSubPass()
+		/*.AddSubPass("DownSample")
+		.EndSubPass()*/
 		.AddSubPass("Blur")
 		.EndSubPass()
-		.AddSubPass("TAA")
+		/*.AddSubPass("TAA")
 		.EndSubPass()
 		.AddSubPass("Tonemapping")
-		.EndSubPass()
+		.EndSubPass()*/
 		.Build();
 	}
 
@@ -29,7 +29,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		DescriptorSetBuilder{ "Particle", this }
+		DescriptorSetBuilder{ "Blur", this }
+		.AddStorageTexture(2, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "SceneColor" })
 		.Build();
 	}
 
@@ -57,5 +58,20 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		ComputeRenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
+
+		//builder.Recording("Blur");
+
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Blur" }));
+
+		builder.BindPipeline("PostProcessRenderer.Blur.Default");
+		
+		builder.Dispatch(32, 32, 1);
+
+
+		//builder.EndRecording();
 	}
 }

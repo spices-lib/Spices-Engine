@@ -35,7 +35,7 @@ namespace Spices {
 		* @brief Create Timeline Semaphore.
 		*/
 		VK_CHECK(vkCreateSemaphore(vulkanState.m_Device, &createInfo, nullptr, &m_TimelineSemaphore))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, reinterpret_cast<uint64_t>(m_TimelineSemaphore), m_VulkanState.m_Device, "Timeline Semaphore")
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_SEMAPHORE, reinterpret_cast<uint64_t>(m_TimelineSemaphore), vulkanState.m_Device, "Timeline Semaphore")
 	}
 
 	VulkanTimelineSemaphore::~VulkanTimelineSemaphore()
