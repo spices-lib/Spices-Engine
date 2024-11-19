@@ -42,6 +42,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		if (m_RendererResource.find(name) == m_RendererResource.end())
+		{
+			std::stringstream ss;
+			ss << "Resource: " << name << " not found.";
+
+			SPICES_CORE_ERROR(ss.str())
+		}
+
 		return m_RendererResource[name]->GetTexture()->GetResource<VulkanImage>();
 	}
 }
