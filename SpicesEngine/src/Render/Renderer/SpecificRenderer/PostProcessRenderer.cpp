@@ -62,6 +62,9 @@ namespace Spices {
 
 		//builder.Recording("Blur");
 
+		auto image = m_RendererResourcePool->AccessRowResource("SceneColor").get();
+
+		builder.AddBarriers(image, VK_ACCESS_NONE, VK_ACCESS_SHADER_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
@@ -71,6 +74,7 @@ namespace Spices {
 		
 		builder.Dispatch(32, 32, 1);
 
+		builder.ReleaseBarriers(image, VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_NONE, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
 
 		//builder.EndRecording();
 	}

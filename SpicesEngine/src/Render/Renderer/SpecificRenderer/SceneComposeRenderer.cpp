@@ -109,6 +109,9 @@ namespace Spices {
 
 		RenderBehaveBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
 
+		auto image = m_RendererResourcePool->AccessRowResource("SceneColor").get();
+		builder.AddBarriers(image, VK_ACCESS_NONE, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+
 		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
@@ -128,5 +131,7 @@ namespace Spices {
 		builder.DrawFullScreenTriangle();
 
 		builder.EndRenderPass();
+
+		builder.ReleaseBarriers(image, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_ACCESS_NONE, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
 	}
 }

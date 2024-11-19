@@ -1567,8 +1567,70 @@ namespace Spices {
 		vkCmdDispatch(m_CommandBuffer, x, y, z);
 	}
 
-	/*void Renderer::ComputeRenderBehaveBuilder::AddBarriers(
-		VkBuffer              buffer        , 
+	void Renderer::RenderBehaveBuilder::AddBarriers(
+		VulkanImage*          image               ,
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		VkImageMemoryBarrier                   imageBarrier {};
+		imageBarrier.sType                   = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imageBarrier.srcAccessMask           = srcAccessMask;
+		imageBarrier.dstAccessMask           = dstAccessMask;
+		imageBarrier.srcQueueFamilyIndex     = srcQueueFamilyIndex;   // Fetch From Graphic to Compute.
+		imageBarrier.dstQueueFamilyIndex     = dstQueueFamilyIndex;
+		imageBarrier.image                   = image->GetImage();
+
+		vkCmdPipelineBarrier(
+			m_CommandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imageBarrier
+		);
+	}
+
+	void Renderer::RenderBehaveBuilder::ReleaseBarriers(
+		VulkanImage*          image               ,
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		VkImageMemoryBarrier                    imageBarrier{};
+		imageBarrier.sType                    = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imageBarrier.srcAccessMask            = srcAccessMask;
+		imageBarrier.dstAccessMask            = dstAccessMask;
+		imageBarrier.srcQueueFamilyIndex      = srcQueueFamilyIndex;  // Release From Compute to Graphic
+		imageBarrier.dstQueueFamilyIndex      = dstQueueFamilyIndex;
+		imageBarrier.image                    = image->GetImage();
+
+		vkCmdPipelineBarrier(
+			m_CommandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imageBarrier
+		);
+	}
+
+	void Renderer::RenderBehaveBuilder::InternalBarriers(
+		VulkanImage*          image         ,
 		VkAccessFlags         srcAccessMask , 
 		VkAccessFlags         dstAccessMask , 
 		VkPipelineStageFlags  srcStageMask  , 
@@ -1577,12 +1639,43 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
+		VkImageMemoryBarrier                    imageBarrier{};
+		imageBarrier.sType                    = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imageBarrier.srcAccessMask            = srcAccessMask;
+		imageBarrier.dstAccessMask            = dstAccessMask;
+		imageBarrier.srcQueueFamilyIndex      = VK_QUEUE_FAMILY_IGNORED;
+		imageBarrier.dstQueueFamilyIndex      = VK_QUEUE_FAMILY_IGNORED;
+		imageBarrier.image                    = image;
+
+		vkCmdPipelineBarrier(
+			m_CommandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imageBarrier
+		);
+	}
+
+	void Renderer::RenderBehaveBuilder::AddBarriers(
+		VkBuffer              buffer              , 
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex 
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
 		VkBufferMemoryBarrier                   bufferBarrier {};
 		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		bufferBarrier.srcAccessMask           = srcAccessMask;
 		bufferBarrier.dstAccessMask           = dstAccessMask;
-		bufferBarrier.srcQueueFamilyIndex     = m_Renderer->m_VulkanState.m_GraphicQueueFamily;
-		bufferBarrier.dstQueueFamilyIndex     = m_Renderer->m_VulkanState.m_ComputeQueueFamily;
+		bufferBarrier.srcQueueFamilyIndex     = srcQueueFamilyIndex;   // Fetch From Graphic to Compute.
+		bufferBarrier.dstQueueFamilyIndex     = dstQueueFamilyIndex;
 		bufferBarrier.size                    = VK_WHOLE_SIZE;
 		bufferBarrier.buffer                  = buffer;
 
@@ -1597,12 +1690,14 @@ namespace Spices {
 		);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::ReleaseBarriers(
-		VkBuffer              buffer        , 
-		VkAccessFlags         srcAccessMask , 
-		VkAccessFlags         dstAccessMask , 
-		VkPipelineStageFlags  srcStageMask  , 
-		VkPipelineStageFlags  dstStageMask
+	void Renderer::RenderBehaveBuilder::ReleaseBarriers(
+		VkBuffer              buffer              , 
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -1611,8 +1706,8 @@ namespace Spices {
 		bufferBarrier.sType                   = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		bufferBarrier.srcAccessMask           = srcAccessMask;
 		bufferBarrier.dstAccessMask           = dstAccessMask;
-		bufferBarrier.srcQueueFamilyIndex     = m_Renderer->m_VulkanState.m_ComputeQueueFamily;
-		bufferBarrier.dstQueueFamilyIndex     = m_Renderer->m_VulkanState.m_GraphicQueueFamily;
+		bufferBarrier.srcQueueFamilyIndex     = srcQueueFamilyIndex;  // Release From Compute to Graphic
+		bufferBarrier.dstQueueFamilyIndex     = dstQueueFamilyIndex;
 		bufferBarrier.size                    = VK_WHOLE_SIZE;
 		bufferBarrier.buffer                  = buffer;
 
@@ -1627,7 +1722,7 @@ namespace Spices {
 		);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::InternalBarriers(
+	void Renderer::RenderBehaveBuilder::InternalBarriers(
 		VkBuffer              buffer        , 
 		VkAccessFlags         srcAccessMask , 
 		VkAccessFlags         dstAccessMask , 
@@ -1655,7 +1750,67 @@ namespace Spices {
 			1, &bufferBarrier,
 			0, nullptr
 		);
-	}*/
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::AddBarriers(
+		VulkanImage*          image               ,
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		RenderBehaveBuilder::AddBarriers(image, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::ReleaseBarriers(
+		VulkanImage*          image               ,
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		RenderBehaveBuilder::ReleaseBarriers(image, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::AddBarriers(
+		VkBuffer              buffer              , 
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex 
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		RenderBehaveBuilder::AddBarriers(buffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::ReleaseBarriers(
+		VkBuffer              buffer              , 
+		VkAccessFlags         srcAccessMask       , 
+		VkAccessFlags         dstAccessMask       , 
+		VkPipelineStageFlags  srcStageMask        , 
+		VkPipelineStageFlags  dstStageMask        ,
+		uint32_t              srcQueueFamilyIndex ,
+		uint32_t              dstQueueFamilyIndex
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		RenderBehaveBuilder::ReleaseBarriers(buffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+	}
 
 	Renderer::DGCLayoutBuilder::DGCLayoutBuilder(
 		const std::string& subPassName , 

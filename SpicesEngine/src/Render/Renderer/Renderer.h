@@ -18,6 +18,7 @@
 
 /******************************Vulkan Backend Header************************************************/
 #include "Render/FrameInfo.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Render/Vulkan/VulkanPipeline.h"
 #include "Render/Vulkan/VulkanUtils.h"
 #include "Render/Vulkan/VulkanBuffer.h"
@@ -1049,6 +1050,68 @@ namespace Spices {
 			*/
 			void EndRenderPass() const;
 
+			/****************************************************************************/
+
+			virtual void AddBarriers(
+				VulkanImage*          image               ,
+				VkAccessFlags         srcAccessMask       , 
+				VkAccessFlags         dstAccessMask       , 
+				VkPipelineStageFlags  srcStageMask        , 
+				VkPipelineStageFlags  dstStageMask        ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+			);
+
+			virtual void ReleaseBarriers(
+				VulkanImage*          image          ,
+				VkAccessFlags         srcAccessMask  ,
+				VkAccessFlags         dstAccessMask  ,
+				VkPipelineStageFlags  srcStageMask   ,
+				VkPipelineStageFlags  dstStageMask   ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+			);
+
+			void InternalBarriers(
+				VulkanImage*          image                                                ,
+				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
+				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
+			);
+
+			/****************************************************************************/
+
+			virtual void AddBarriers(
+				VkBuffer              buffer         , 
+				VkAccessFlags         srcAccessMask  , 
+				VkAccessFlags         dstAccessMask  , 
+				VkPipelineStageFlags  srcStageMask   , 
+				VkPipelineStageFlags  dstStageMask   ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+			);
+
+			virtual void ReleaseBarriers(
+				VkBuffer              buffer         ,
+				VkAccessFlags         srcAccessMask  ,
+				VkAccessFlags         dstAccessMask  ,
+				VkPipelineStageFlags  srcStageMask   ,
+				VkPipelineStageFlags  dstStageMask   ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+			);
+
+			void InternalBarriers(
+				VkBuffer              buffer                                               ,
+				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
+				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
+			);
+
+			/****************************************************************************/
+
 		public:
 
 			/**
@@ -1308,29 +1371,51 @@ namespace Spices {
 			*/
 			void Dispatch(uint32_t x, uint32_t y, uint32_t z) const;
 
-			/*void AddBarriers(
+			/****************************************************************************/
+
+			virtual void AddBarriers(
+				VkImage               image               , 
+				VkAccessFlags         srcAccessMask       , 
+				VkAccessFlags         dstAccessMask       , 
+				VkPipelineStageFlags  srcStageMask        , 
+				VkPipelineStageFlags  dstStageMask        ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+			) override;
+
+			virtual void ReleaseBarriers(
+				VkImage               image          , 
+				VkAccessFlags         srcAccessMask  ,
+				VkAccessFlags         dstAccessMask  ,
+				VkPipelineStageFlags  srcStageMask   ,
+				VkPipelineStageFlags  dstStageMask   ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+			) override;
+
+			/****************************************************************************/
+
+			virtual void AddBarriers(
 				VkBuffer              buffer         , 
 				VkAccessFlags         srcAccessMask  , 
 				VkAccessFlags         dstAccessMask  , 
 				VkPipelineStageFlags  srcStageMask   , 
-				VkPipelineStageFlags  dstStageMask
-			);
+				VkPipelineStageFlags  dstStageMask   ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+			) override;
 
-			void ReleaseBarriers(
+			virtual void ReleaseBarriers(
 				VkBuffer              buffer         ,
 				VkAccessFlags         srcAccessMask  ,
 				VkAccessFlags         dstAccessMask  ,
 				VkPipelineStageFlags  srcStageMask   ,
-				VkPipelineStageFlags  dstStageMask
-			);
+				VkPipelineStageFlags  dstStageMask   ,
+				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+			) override;
 
-			void InternalBarriers(
-				VkBuffer              buffer                                               ,
-				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
-				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
-				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
-				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
-			);*/
+			/****************************************************************************/
 		};
 
 	protected:
