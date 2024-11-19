@@ -275,6 +275,45 @@ namespace Spices {
 		});
 	}
 
+	void VulkanImage::Barrier(
+		VkCommandBuffer      commandBuffer       ,
+		VkAccessFlags        srcAccessMask       , 
+		VkAccessFlags        dstAccessMask       , 
+		VkPipelineStageFlags srcStageMask        , 
+		VkPipelineStageFlags dstStageMask        , 
+		uint32_t             srcQueueFamilyIndex , 
+		uint32_t             dstQueueFamilyIndex
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkImageSubresourceRange                range{};
+		range.aspectMask                     = VK_IMAGE_ASPECT_COLOR_BIT;
+		range.baseMipLevel                   = 0;
+		range.levelCount                     = m_MipLevels;
+		range.baseArrayLayer                 = 0;
+		range.layerCount                     = m_Layers;
+
+		VkImageMemoryBarrier                   imageBarrier {};
+		imageBarrier.sType                   = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imageBarrier.srcAccessMask           = srcAccessMask;
+		imageBarrier.dstAccessMask           = dstAccessMask;
+		imageBarrier.srcQueueFamilyIndex     = srcQueueFamilyIndex;   // Fetch From Graphic to Compute.
+		imageBarrier.dstQueueFamilyIndex     = dstQueueFamilyIndex;
+		imageBarrier.image                   = m_Image;
+		imageBarrier.subresourceRange        = range;
+
+		vkCmdPipelineBarrier(
+			commandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imageBarrier
+		);
+	}
+
 	void VulkanImage::CopyBufferToImage(
 		VkBuffer buffer  , 
 		VkImage  image   , 

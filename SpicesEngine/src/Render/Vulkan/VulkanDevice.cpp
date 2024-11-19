@@ -185,7 +185,7 @@ namespace Spices {
 				}
 			}
 
-#if 1 // Use One Queue for all commands. This method with higher fps.
+#if 0 // Use One Queue for all commands. This method with higher fps.
 
 			vulkanState.m_GraphicQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0];
 			vulkanState.m_PresentQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0];
@@ -195,7 +195,7 @@ namespace Spices {
 #else // Split Commands to different Queues.
 
 			vulkanState.m_GraphicQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0];
-			vulkanState.m_PresentQueue  = queueFamilies[m_QueueHelper.presentqueuefamily .value()][1];
+			vulkanState.m_PresentQueue  = queueFamilies[m_QueueHelper.presentqueuefamily .value()][0];
 			vulkanState.m_ComputeQueue  = queueFamilies[m_QueueHelper.computequeuefamily .value()][2];
 			vulkanState.m_TransferQueue = queueFamilies[m_QueueHelper.transferqueuefamily.value()][3];
 
@@ -624,9 +624,9 @@ namespace Spices {
 			/**
 			* @brief Get graphic queue identify.
 			*/
-			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
-				m_QueueHelper.graphicqueuefamily = i;
+				m_QueueHelper.graphicqueuefamily   = i;
 				m_VulkanState.m_GraphicQueueFamily = i;
 
 				VkBool32 presentSupport = false;
@@ -639,13 +639,15 @@ namespace Spices {
 				{
 					m_QueueHelper.presentqueuefamily = i;
 				}
-
+			}
+			else
+			{
 				/**
 				* @brief Get compute queue identify.
 				*/
 				if (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) 
 				{
-					m_QueueHelper.computequeuefamily = i;
+					m_QueueHelper.computequeuefamily   = i;
 					m_VulkanState.m_ComputeQueueFamily = i;
 				}
 

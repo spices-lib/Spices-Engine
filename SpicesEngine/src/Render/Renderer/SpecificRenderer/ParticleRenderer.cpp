@@ -96,7 +96,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		ComputeRenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
+		ComputeRenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_ImageIndex, m_VulkanState.m_ComputeCommandBuffer };
 
 		builder.Recording("Particle");
 

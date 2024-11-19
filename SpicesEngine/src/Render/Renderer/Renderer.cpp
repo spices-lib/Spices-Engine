@@ -1529,14 +1529,15 @@ namespace Spices {
 	Renderer::ComputeRenderBehaveBuilder::ComputeRenderBehaveBuilder(
 		Renderer* renderer      , 
 		uint32_t  currentFrame  , 
-		uint32_t  currentImage
+		uint32_t  currentImage  ,
+		const std::array<VkCommandBuffer, MaxFrameInFlight>& cmdBuffers
 	)
 		: RenderBehaveBuilder(renderer, currentFrame, currentImage)
 	{
 		SPICES_PROFILE_ZONE;
 		
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
-		m_CommandBuffer = m_Renderer->m_VulkanState.m_ComputeCommandBuffer[currentFrame];
+		m_CommandBuffer  = cmdBuffers[currentFrame];
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
@@ -1579,23 +1580,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		VkImageMemoryBarrier                   imageBarrier {};
-		imageBarrier.sType                   = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imageBarrier.srcAccessMask           = srcAccessMask;
-		imageBarrier.dstAccessMask           = dstAccessMask;
-		imageBarrier.srcQueueFamilyIndex     = srcQueueFamilyIndex;   // Fetch From Graphic to Compute.
-		imageBarrier.dstQueueFamilyIndex     = dstQueueFamilyIndex;
-		imageBarrier.image                   = image->GetImage();
-
-		vkCmdPipelineBarrier(
-			m_CommandBuffer,
-			srcStageMask,
-			dstStageMask,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imageBarrier
-		);
+		image->Barrier(m_CommandBuffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
 	}
 
 	void Renderer::RenderBehaveBuilder::ReleaseBarriers(
@@ -1610,23 +1595,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		VkImageMemoryBarrier                    imageBarrier{};
-		imageBarrier.sType                    = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imageBarrier.srcAccessMask            = srcAccessMask;
-		imageBarrier.dstAccessMask            = dstAccessMask;
-		imageBarrier.srcQueueFamilyIndex      = srcQueueFamilyIndex;  // Release From Compute to Graphic
-		imageBarrier.dstQueueFamilyIndex      = dstQueueFamilyIndex;
-		imageBarrier.image                    = image->GetImage();
-
-		vkCmdPipelineBarrier(
-			m_CommandBuffer,
-			srcStageMask,
-			dstStageMask,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imageBarrier
-		);
+		image->Barrier(m_CommandBuffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
 	}
 
 	void Renderer::RenderBehaveBuilder::InternalBarriers(
@@ -1638,24 +1607,8 @@ namespace Spices {
 	)
 	{
 		SPICES_PROFILE_ZONE;
-		
-		VkImageMemoryBarrier                    imageBarrier{};
-		imageBarrier.sType                    = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imageBarrier.srcAccessMask            = srcAccessMask;
-		imageBarrier.dstAccessMask            = dstAccessMask;
-		imageBarrier.srcQueueFamilyIndex      = VK_QUEUE_FAMILY_IGNORED;
-		imageBarrier.dstQueueFamilyIndex      = VK_QUEUE_FAMILY_IGNORED;
-		imageBarrier.image                    = image;
 
-		vkCmdPipelineBarrier(
-			m_CommandBuffer,
-			srcStageMask,
-			dstStageMask,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imageBarrier
-		);
+		image->Barrier(m_CommandBuffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED);
 	}
 
 	void Renderer::RenderBehaveBuilder::AddBarriers(

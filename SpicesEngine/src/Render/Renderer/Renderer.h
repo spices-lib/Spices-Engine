@@ -1310,11 +1310,13 @@ namespace Spices {
 			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
 			* @param[in] currentFrame Passed from FrameInfo.
 			* @param[in] currentImage Passed from FrameInfo.
+			* @param[in] cmdBuffers Buffers that collect commands.
 			*/
 			ComputeRenderBehaveBuilder(
-				Renderer* renderer     , 
-				uint32_t  currentFrame , 
-				uint32_t  currentImage
+				Renderer* renderer      , 
+				uint32_t  currentFrame  , 
+				uint32_t  currentImage  ,
+				const std::array<VkCommandBuffer, MaxFrameInFlight>& cmdBuffers
 			);
 
 			/**
@@ -1374,7 +1376,7 @@ namespace Spices {
 			/****************************************************************************/
 
 			virtual void AddBarriers(
-				VkImage               image               , 
+				VulkanImage*          image               , 
 				VkAccessFlags         srcAccessMask       , 
 				VkAccessFlags         dstAccessMask       , 
 				VkPipelineStageFlags  srcStageMask        , 
@@ -1384,7 +1386,7 @@ namespace Spices {
 			) override;
 
 			virtual void ReleaseBarriers(
-				VkImage               image          , 
+				VulkanImage*          image          ,
 				VkAccessFlags         srcAccessMask  ,
 				VkAccessFlags         dstAccessMask  ,
 				VkPipelineStageFlags  srcStageMask   ,

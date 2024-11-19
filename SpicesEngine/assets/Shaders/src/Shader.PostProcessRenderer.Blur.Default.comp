@@ -8,7 +8,19 @@ layout(set = 2, binding = 0, rgba8) uniform image2D SceneColor;    /* @brief Sce
 
 layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 
+const float _21[5] = float[](0.23583300411701202392578125, 0.19806300103664398193359375, 0.11729399859905242919921875, 0.0489679984748363494873046875, 0.014407999813556671142578125);
+
+const vec2 u_dir = vec2(1.0f, 0.0f);
+
 void main()
 {
-	imageStore(SceneColor, ivec2(gl_GlobalInvocationID.xy), vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	int s_lenght = 5;
+    vec4 accum = imageLoad(SceneColor, ivec2(gl_GlobalInvocationID.xy)) * _21[0];
+    for (int i = 1; i < s_lenght; i++)
+    {
+        float f = float(i);
+        accum += (imageLoad(SceneColor, ivec2(gl_GlobalInvocationID.xy + u_dir * f)) * _21[i]);
+        accum += (imageLoad(SceneColor, ivec2(gl_GlobalInvocationID.xy - u_dir * f)) * _21[i]);
+    }
+    imageStore(SceneColor, ivec2(gl_GlobalInvocationID.xy), accum);
 }

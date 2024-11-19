@@ -115,6 +115,25 @@ namespace Spices {
 		);
 
 		/**
+		* @brief Wapper of Call vkcmdImageBarrier.
+		* @param[in] srcAccessMask .
+		* @param[in] dstAccessMask .
+		* @param[in] srcStageMask .
+		* @param[in] dstStageMask .
+		* @param[in] srcQueueFamilyIndex .
+		* @param[in] dstQueueFamilyIndex .
+		*/
+		void Barrier(
+			VkCommandBuffer       commandBuffer       ,
+			VkAccessFlags         srcAccessMask       ,
+			VkAccessFlags         dstAccessMask       ,
+			VkPipelineStageFlags  srcStageMask        ,
+			VkPipelineStageFlags  dstStageMask        ,
+			uint32_t              srcQueueFamilyIndex ,
+			uint32_t              dstQueueFamilyIndex
+		);
+
+		/**
 		* @brief Copy the Buffer's data to this VkImage.
 		* @param[in] buffer The buffer we want copy from.
 		* @param[in] image The image we want copy to, usually this VkImage Object.
