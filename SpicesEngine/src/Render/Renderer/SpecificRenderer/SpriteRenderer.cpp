@@ -17,6 +17,7 @@ namespace Spices {
 		.AddSubPass("Sprite")
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			isEnableBlend                            = true;
+			description.format                       = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddColorAttachment("EntityID", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format                       = VK_FORMAT_R32_SFLOAT;

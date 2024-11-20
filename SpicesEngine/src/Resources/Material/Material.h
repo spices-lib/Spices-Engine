@@ -27,7 +27,7 @@ namespace Spices {
 	{
 		std::string textureType;      /* @brief Texture type. */
 		std::string texturePath;      /* @brief Texture path. */
-		uint32_t    index = 0;        /* @breif Which array index this texture will use. */
+		int  index = -1;              /* @brief Which array index this texture will use. */
 	};
 
 	/**
@@ -244,7 +244,12 @@ namespace Spices {
 		/**
 		* @brief True if this material needs to draw a window.
 		*/
-		bool m_IsDrawWindow = false;
+		bool m_IsDrawWindow;
+
+		/**
+		* @brief True if this material already build a buffer.
+		*/
+		bool m_AlreadyBuild;
 	};
 
 	template<typename T>

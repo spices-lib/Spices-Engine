@@ -17,6 +17,7 @@ namespace Spices {
 		.AddSubPass("ViewportGrid")
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			isEnableBlend                            = true;
+			description.format                       = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddDepthAttachment("Depth", TextureType::Texture2D, [](VkAttachmentDescription& description) {})
 		.EndSubPass()

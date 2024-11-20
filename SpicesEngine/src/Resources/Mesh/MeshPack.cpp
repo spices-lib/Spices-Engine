@@ -172,7 +172,7 @@ namespace Spices {
 		m_Material = material;
 		m_Material->BuildMaterial();
 
-		m_Desc.UpdatematerialParameterAddress(m_Material->GetMaterialParamsAddress());
+		m_Desc.UpdatematerialParameterAddress(material->GetMaterialParamsAddress());
 	}
 
 	uint32_t MeshPack::GetHitShaderHandle() const

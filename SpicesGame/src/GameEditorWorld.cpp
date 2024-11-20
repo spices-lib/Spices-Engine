@@ -179,7 +179,7 @@ namespace Spices {
 		}
 		
 		{
-			GltfCollection collection("E:/OpenGLProjects/ExtensionAssets/buster_drone/busterDrone.gltf");
+			GltfCollection collection("G:/Vulkan/ExtensionAssets/buster_drone/busterDrone.gltf");
 			collection.CreateEntity(this, "busterDrone");
 		}
 	}

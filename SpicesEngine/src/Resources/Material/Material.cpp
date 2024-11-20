@@ -19,6 +19,8 @@ namespace Spices {
 
 	Material::Material(const std::string& materialPath)
 		: m_MaterialPath(materialPath)
+		, m_IsDrawWindow(false)
+		, m_AlreadyBuild(false)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -122,6 +124,29 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
+		* @brief Registry to renderer if already build.
+		*/
+		{
+			SPICES_PROFILE_ZONEN("BuildMaterial::RegistryToRenderer");
+
+			if (m_AlreadyBuild)
+			{
+				/**
+				* @brief Create PipelineLayout.
+				*/
+				{
+					std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
+					auto renderer = RendererManager::GetRenderer(sv[0]);
+					renderer->RegistryMaterial(m_MaterialPath, sv[1]);
+				}
+
+				return;
+			}
+
+			m_AlreadyBuild = true;
+		}
+
+		/**
 		* @brief Registry ShaderModule.
 		*/
 		{
@@ -166,7 +191,7 @@ namespace Spices {
 		/**
 		* @brief Return if not valid textureParameter or constantParameter.
 		*/
-		uint64_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.get_bytes();
+		uint64_t size = m_TextureParams.size() * sizeof(int) + m_Buffermemoryblocks.get_bytes();
 		if (size == 0)
 		{
 			const std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
@@ -207,29 +232,36 @@ namespace Spices {
 				*/
 				if (v.textureType == "Texture2D")
 				{
-					const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
-					v.index = BindLessTextureManager::Registry(v.texturePath);
+					if(v.texturePath == "")
+					{
+						v.index = -1;
+					}
+					else
+					{
+						const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
+						v.index = BindLessTextureManager::Registry(v.texturePath);
 
-					const auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
+						const auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
 
-					/**
-					* @brief Instance a VkWriteDescriptorSet.
-					*/
-					VkWriteDescriptorSet         write {};
-					write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					write.dstBinding           = BINDLESS_TEXTURE_BINDING;
-					write.dstSet               = descriptorSet->Get();
-					write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
-					write.descriptorCount      = 1;
-					write.dstArrayElement      = v.index;
+						/**
+						* @brief Instance a VkWriteDescriptorSet.
+						*/
+						VkWriteDescriptorSet         write {};
+						write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+						write.dstBinding           = BINDLESS_TEXTURE_BINDING;
+						write.dstSet               = descriptorSet->Get();
+						write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+						write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
+						write.descriptorCount      = 1;
+						write.dstArrayElement      = v.index;
 
-					/**
-					* @brief Update DescriptorSet.
-					*/
-					vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
-
-					m_MaterialParameterBuffer->WriteToBuffer(&v.index, sizeof(unsigned int), tindex * sizeof(unsigned int));
+						/**
+						* @brief Update DescriptorSet.
+						*/
+						vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
+					}
+						
+					m_MaterialParameterBuffer->WriteToBuffer(&v.index, sizeof(int), tindex * sizeof(int));
 					m_MaterialParameterBuffer->Flush();
 				}
 
@@ -254,7 +286,7 @@ namespace Spices {
 
 			m_Buffermemoryblocks.for_each([&](const std::string& name, void* pt) {
 				ConstantParam& ref = m_ConstantParams.find_value(name)->value;
-				size_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.item_location(name);
+				size_t size = m_TextureParams.size() * sizeof(int) + m_Buffermemoryblocks.item_location(name);
 				
 				/**
 				* @brief Fill in data to memory block.
@@ -320,6 +352,24 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
+		* @brief Registry ShaderModule.
+		*/
+		{
+			SPICES_PROFILE_ZONEN("BuildMaterial::Registry ShaderModule");
+
+			for (auto& pair : m_Shaders)
+			{
+				for (int i = 0; i < pair.second.size(); i++)
+				{
+					std::stringstream ss;
+					ss << pair.first << "." << pair.second[i];
+
+					ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first);
+				}
+			}
+		}
+
+		/**
 		* @brief Iter the constantParams and fill it's data to memoryblock.
 		*/
 		{
@@ -350,29 +400,36 @@ namespace Spices {
 				*/
 				if (v.textureType == "Texture2D")
 				{
-					std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
-					v.index = BindLessTextureManager::Registry(v.texturePath);
+					if (v.texturePath == "")
+					{
+						v.index = -1;
+					}
+					else
+					{
+						std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
+						v.index = BindLessTextureManager::Registry(v.texturePath);
 
-					auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
+						auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
 
-					/**
-					* @brief Instance a VkWriteDescriptorSet.
-					*/
-					VkWriteDescriptorSet         write {};
-					write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					write.dstBinding           = BINDLESS_TEXTURE_BINDING;
-					write.dstSet               = descriptorSet->Get();
-					write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
-					write.descriptorCount      = 1;
-					write.dstArrayElement      = v.index;
+						/**
+						* @brief Instance a VkWriteDescriptorSet.
+						*/
+						VkWriteDescriptorSet         write {};
+						write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+						write.dstBinding           = BINDLESS_TEXTURE_BINDING;
+						write.dstSet               = descriptorSet->Get();
+						write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+						write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
+						write.descriptorCount      = 1;
+						write.dstArrayElement      = v.index;
 
-					/**
-					* @brief Update DescriptorSet.
-					*/
-					vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
+						/**
+						* @brief Update DescriptorSet.
+						*/
+						vkUpdateDescriptorSets(VulkanRenderBackend::GetState().m_Device, 1, &write, 0, nullptr);
+					}
 
-					m_MaterialParameterBuffer->WriteToBuffer(&v.index, sizeof(unsigned int), tindex * sizeof(unsigned int));
+					m_MaterialParameterBuffer->WriteToBuffer(&v.index, sizeof(int), tindex * sizeof(int));
 					m_MaterialParameterBuffer->Flush();
 				}
 
@@ -397,7 +454,7 @@ namespace Spices {
 
 			m_Buffermemoryblocks.for_each([&](const std::string& name, void* pt) {
 				ConstantParam& ref = m_ConstantParams.find_value(name)->value;
-				size_t size = m_TextureParams.size() * sizeof(unsigned int) + m_Buffermemoryblocks.item_location(name);
+				size_t size = m_TextureParams.size() * sizeof(int) + m_Buffermemoryblocks.item_location(name);
 				
 				/**
 				* @brief Fill in data to memory block.

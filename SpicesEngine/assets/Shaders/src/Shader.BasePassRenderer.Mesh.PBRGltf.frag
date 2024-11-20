@@ -22,11 +22,14 @@
 */
 struct MaterialParameter
 {
-    uint  baseColorTexture;
-    uint  metallicRoughnessTexture;
-    uint  normalTexture;
+    int   baseColorTexture;
+    int   metallicRoughnessTexture;
+    int   normalTexture;
+    int   emissiveTexture;
+    int   occlusionTexture;
 
     vec4  baseColorFactor;
+    vec4  emissiveFactor;
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;
@@ -93,16 +96,51 @@ void main()
     float meshletrand1 = rnd(meshletSeed);
     float meshletrand2 = rnd(meshletSeed);
 
-    outAlbedo           = texture(BindLessTextureBuffer[materialParam.baseColorTexture], pixel.texCoord) * materialParam.baseColorFactor;
-    outNormal           = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
-    float roughness     = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pixel.texCoord).g;
-    float metallic      = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pixel.texCoord).b;
-    outRoughness        = vec4(roughness, roughness, roughness, 1.0f);
-    outMetallic         = vec4(metallic, metallic, metallic, 1.0f);
-    outPosition         = vec4(pixel.position, 1.0f);
-    outEntityID         = desc.entityID;
-    outTriangleID       = vec4(primitiverand0, primitiverand1, primitiverand2, 1.0f);
-    outMeshletID        = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
+    if(materialParam.baseColorTexture > -0.5f)
+    {
+        outAlbedo           = texture(BindLessTextureBuffer[materialParam.baseColorTexture], pixel.texCoord) * materialParam.baseColorFactor;
+    }
+    else
+    {
+        outAlbedo           = materialParam.baseColorFactor;
+    }
+    
+    if(materialParam.normalTexture > -0.5f)
+    {
+        outNormal           = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
+    }
+    else
+    {
+        outNormal           = vec4(pixel.normal * 0.5f + vec3(0.5f), 1.0f);
+    }
+    
+    if(materialParam.metallicRoughnessTexture > -0.5f)
+    {
+        float roughness     = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pixel.texCoord).g;
+        float metallic      = texture(BindLessTextureBuffer[materialParam.metallicRoughnessTexture], pixel.texCoord).b;
+        
+        outRoughness        = vec4(roughness, roughness, roughness, 1.0f);
+        outMetallic         = vec4(metallic, metallic, metallic, 1.0f);
+    }
+    else
+    {
+        outRoughness        = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+        outMetallic         = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+    }
+    
+    if(materialParam.emissiveTexture > -0.5f)
+    {
+        outAlbedo          += texture(BindLessTextureBuffer[materialParam.emissiveTexture], pixel.texCoord) * materialParam.emissiveFactor;
+    }
+    else
+    {
+        outAlbedo          += materialParam.emissiveFactor;
+    }
+    
+    outPosition             = vec4(pixel.position, 1.0f);
+    outEntityID             = desc.entityID;
+    outTriangleID           = vec4(primitiverand0, primitiverand1, primitiverand2, 1.0f);
+    outMeshletID            = vec4(meshletrand0, meshletrand1, meshletrand2, 1.0f);
 }
 
 /*****************************************************************************************/

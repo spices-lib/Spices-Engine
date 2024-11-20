@@ -90,6 +90,18 @@ namespace Spices {
 		*/
 		uint32_t GetLayers() const { return m_Layers; }
 
+		/**
+		* @brief Get this Height.
+		* @return Returns the m_Height.
+		*/
+		uint32_t GetHeight() const { return m_Height; }
+
+		/**
+		* @brief Get this Width.
+		* @return Returns the m_Height.
+		*/
+		uint32_t GetWidth() const { return m_Width; }
+		
 	public:
 
 		/**

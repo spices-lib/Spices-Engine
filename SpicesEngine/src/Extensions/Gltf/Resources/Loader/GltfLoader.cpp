@@ -167,10 +167,19 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto outMaterial = std::make_shared<Material>();
-
 		std::stringstream ss;
 		ss << "BasePassRenderer.Mesh." << material.name;
+
+		auto outMaterial = ResourcePool<Material>::Load(ss.str());
+		if (outMaterial)
+		{
+			return outMaterial;
+		}
+		
+		outMaterial = std::make_shared<Material>();
+
+		ResourcePool<Material>::Registry(ss.str(), outMaterial);
+
 		outMaterial->SetName(ss.str());
 		
 		outMaterial->PushToShaderPath("task", "BasePassRenderer.Mesh.Default");
@@ -178,17 +187,19 @@ namespace Spices {
 		outMaterial->PushToShaderPath("frag", "BasePassRenderer.Mesh.PBRGltf");
 		outMaterial->PushToShaderPath("rchit", "BasePassRenderer.Mesh.PBRGltf");
 		
-		outMaterial->PushToTextureParams("baseColorTexture", {"Texture2D", images->m_ImagesData[material.baseColorTexture].uri });
-		outMaterial->PushToTextureParams("metallicRoughnessTexture", {"Texture2D", images->m_ImagesData[material.metallicRoughnessTexture].uri });
-		outMaterial->PushToTextureParams("normalTexture", {"Texture2D", images->m_ImagesData[material.normalTexture].uri });
+		outMaterial->PushToTextureParams("baseColorTexture", {"Texture2D", material.baseColorTexture.has_value() ? images->m_ImagesData[material.baseColorTexture.value()].uri : "" });
+		outMaterial->PushToTextureParams("metallicRoughnessTexture", {"Texture2D",  material.metallicRoughnessTexture.has_value() ? images->m_ImagesData[material.metallicRoughnessTexture.value()].uri : "" });
+		outMaterial->PushToTextureParams("normalTexture", {"Texture2D", material.normalTexture.has_value() ? images->m_ImagesData[material.normalTexture.value()].uri : ""});
+		outMaterial->PushToTextureParams("emissiveTexture", {"Texture2D", material.emissiveTexture.has_value() ? images->m_ImagesData[material.emissiveTexture.value()].uri : "" });
+		outMaterial->PushToTextureParams("occlusionTexture", {"Texture2D", material.occlusionTexture.has_value() ? images->m_ImagesData[material.occlusionTexture.value()].uri : "" });
 		
 		outMaterial->PushToConstParams("baseColorFactor", {"float4", material.baseColorFactor});
+		outMaterial->PushToConstParams("emissiveFactor", {"float4", material.emissiveFactor});
+
 		outMaterial->PushToConstParams("maxRayDepth", {"int", 6});
 		outMaterial->PushToConstParams("maxLightDepth", {"int", 3});
 		outMaterial->PushToConstParams("maxShadowDepth", {"int", 1});
 		
-		ResourcePool<Material>::Registry(ss.str(), outMaterial);
-
 		return outMaterial;
 	}
 }

@@ -5,6 +5,8 @@
 */
 
 #pragma once
+#include <optional>
+
 #include "Core/Core.h"
 #include "GltfObject.h"
 
@@ -22,11 +24,15 @@ namespace Spices {
 		*/
 		struct Item
 		{
-			uint32_t   baseColorTexture;
+			std::optional<int> baseColorTexture;
+			std::optional<int> metallicRoughnessTexture;
+			std::optional<int> normalTexture;
+			std::optional<int> emissiveTexture;
+			std::optional<int> occlusionTexture;
+			
 			glm::vec4  baseColorFactor;
-			uint32_t   metallicRoughnessTexture;
-			uint32_t   normalTexture;
-
+			glm::vec4  emissiveFactor;
+			
 			std::string name;
 		};
 
@@ -46,16 +52,42 @@ namespace Spices {
 			for (int i = 0; i < data.size(); i++)
 			{
 				Item& item       = m_MaterialsData[i];
-				const Json& json = data[i];
+				Json::object_t json = data[i];
 
-				item.baseColorTexture = json["pbrMetallicRoughness"]["baseColorTexture"]["index"];
-				Json::object_t factor = json["pbrMetallicRoughness"];
-				item.baseColorFactor  = GltfHelper::GetElementVector(factor, "baseColorFactor", glm::vec4(1.0f));
+				if(json.find("pbrMetallicRoughness") != json.end())
+				{
+					Json::object_t factor = json["pbrMetallicRoughness"];
+					if(factor.find("baseColorTexture") != factor.end())
+					{
+						item.baseColorTexture = factor["baseColorTexture"]["index"];
+					}
 
-				item.metallicRoughnessTexture = json["pbrMetallicRoughness"]["metallicRoughnessTexture"]["index"];
-				item.normalTexture = json["normalTexture"]["index"];
+					item.baseColorFactor  = GltfHelper::GetElementVector(factor, "baseColorFactor", glm::vec4(1.0f));
 
-				item.name = json["name"];
+					if(factor.find("metallicRoughnessTexture") != factor.end())
+					{
+						item.metallicRoughnessTexture = factor["metallicRoughnessTexture"]["index"];
+					}
+				}
+
+				if(json.find("normalTexture") != json.end())
+				{
+					item.normalTexture = json["normalTexture"]["index"];
+				}
+
+				if(json.find("emissiveTexture") != json.end())
+				{
+					item.emissiveTexture = json["emissiveTexture"]["index"];
+				}
+
+				if(json.find("occlusionTexture") != json.end())
+				{
+					item.occlusionTexture = json["occlusionTexture"]["index"];
+				}
+
+				item.emissiveFactor = GltfHelper::GetElementVector(json, "emissiveFactor", glm::vec4(0.0f));
+				
+				item.name = GltfHelper::GetElementString(json, "name", "");
 			}
 		}
 		

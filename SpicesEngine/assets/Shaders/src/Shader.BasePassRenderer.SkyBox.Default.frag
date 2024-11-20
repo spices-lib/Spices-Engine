@@ -22,7 +22,7 @@
 */
 struct MaterialParameter
 {
-    uint     albedo;
+    int     albedo;
 };
 
 #include "Header/ShaderBindLessMaterial.glsl"

@@ -22,10 +22,10 @@
 */
 struct MaterialParameter
 {
-    uint  albedoTexture;
-    uint  normalTexture;
-    uint  roughnessTexture;
-    uint  metallicTexture;
+    int   albedoTexture;
+    int   normalTexture;
+    int   roughnessTexture;
+    int   metallicTexture;
     int   maxRayDepth;
     int   maxLightDepth;
     int   maxShadowDepth;

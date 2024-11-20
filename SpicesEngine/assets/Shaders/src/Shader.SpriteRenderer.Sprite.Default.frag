@@ -20,7 +20,7 @@
 */
 struct MaterialParameter
 {
-    uint  albedoTexture;
+    int  albedoTexture;
 };
 
 #include "Header/ShaderBindlessMaterial.glsl"

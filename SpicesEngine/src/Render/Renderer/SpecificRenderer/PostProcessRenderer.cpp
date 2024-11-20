@@ -61,16 +61,16 @@ namespace Spices {
 		ComputeRenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_ImageIndex, m_VulkanState.m_GraphicCommandBuffer };
 
 		builder.Recording("Blur");
-
-		auto image = m_RendererResourcePool->AccessRowResource("SceneColor").get();
-
+		
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Blur" }));
 
 		builder.BindPipeline("PostProcessRenderer.Blur.Default");
+
+		auto image = m_RendererResourcePool->AccessRowResource("SceneColor").get();
 		
-		builder.Dispatch(32, 32, 1);
+		builder.Dispatch(image->GetWidth() / 32 + 1, image->GetHeight() / 32 + 1, 1);
 
 		builder.EndRecording();
 	}

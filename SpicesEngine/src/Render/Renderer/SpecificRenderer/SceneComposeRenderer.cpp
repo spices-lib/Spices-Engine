@@ -40,9 +40,11 @@ namespace Spices {
 		.AddColorAttachment("SceneColor", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout                 = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                        = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			description.format                        = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddInputAttachment("Albedo", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format                        = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddInputAttachment("Normal", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
