@@ -23,5 +23,7 @@ void main()
         accum += imageLoad(SceneColor, ivec2(gl_GlobalInvocationID.xy - u_dir * view.sceneTextureSize.xy * f)) * s_coeffs[i];
     }
     
+    //memoryBarrier();
+
     //imageStore(SceneColor, ivec2(gl_GlobalInvocationID.xy), accum);
 }

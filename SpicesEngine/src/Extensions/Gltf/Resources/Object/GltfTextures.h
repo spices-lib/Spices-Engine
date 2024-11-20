@@ -22,12 +22,12 @@ namespace Spices {
 		*/
 		struct Item
 		{
-			uint32_t format;
-			uint32_t internalFormat;
-			uint32_t sampler;
-			uint32_t source;
-			uint32_t target;
-			uint32_t type;
+			int format;
+			int internalFormat;
+			int sampler;
+			int source;
+			int target;
+			int type;
 		};
 
 	public:
@@ -48,12 +48,12 @@ namespace Spices {
 				Item& item          = m_TexturesData[i];
 				const Json& json    = data[i];
 
-				item.format         = json["format"];
-				item.internalFormat = json["internalFormat"];
-				item.sampler        = json["sampler"];
-				item.source         = json["source"];
-				item.target         = json["target"];
-				item.type           = json["type"];
+				item.format         = GltfHelper::GetElementInt(json, "format", -1);
+				item.internalFormat = GltfHelper::GetElementInt(json, "internalFormat", -1);
+				item.sampler        = GltfHelper::GetElementInt(json, "sampler", -1);
+				item.source         = GltfHelper::GetElementInt(json, "source", -1);
+				item.target         = GltfHelper::GetElementInt(json, "target", -1);
+				item.type           = GltfHelper::GetElementInt(json, "type", -1);
 			}
 		}
 
