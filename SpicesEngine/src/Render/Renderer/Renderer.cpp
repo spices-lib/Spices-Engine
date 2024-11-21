@@ -522,7 +522,7 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, caption)
 		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, caption, 1, m_CurrentFrame)
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, caption)
-		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + caption)
 	}
 
 	void Renderer::RenderBehaveBuilder::EndRecording()
@@ -532,7 +532,7 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 1)
 		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
-		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass")
 	}
 
 	void Renderer::RenderBehaveBuilder::Async(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const
