@@ -64,12 +64,43 @@ void main()
     /**
     * @brief Horizontal blur.
     */
-    DirectionalBlur(ivec2(1, 0));
+    //DirectionalBlur(ivec2(1, 0));
 
     /**
     * @brief Vertical blur.
     */ 
-    DirectionalBlur(ivec2(0, 1));
+    //DirectionalBlur(ivec2(0, 1));
+    
+
+     //  x  0  1  2  3  4  5  6  7
+     // y+------------------------
+     // 0|  0  1  8  9 16 17 24 25
+     // 1|  2  3 10 11 18 19 26 27
+     // 2|  4  5 12 13 20 21 28 29
+     // 3|  6  7 14 15 22 23 30 31
+    
+    
+    uint numClusters = gl_SubgroupSize / 4;           // 8
+    uint clusterID = gl_SubgroupInvocationID / 4;     // 0 - 7
+
+    uint x = ((clusterID / 2) * 2) + (gl_SubgroupInvocationID % 2);   // [0, 1, 0, 1], [0, 1, 0, 1], [2, 3, 2, 3], [2, 3, 2, 3], [4, 5, 4, 5], [4, 5, 4, 5], [6, 7, 6, 7], [6, 7, 6, 7]
+    uint y = (gl_SubgroupInvocationID / 2) % 4;                       // [0, 0, 1, 1], [2, 2, 3, 3], [0, 0, 1, 1], [2, 2, 3, 3], [0, 0, 1, 1], [2, 2, 3, 3], [0, 0, 1, 1], [2, 2, 3, 3]
+
+                                       // 32
+    uvec3 inIndex = gl_WorkGroupID * uvec3(numClusters, 4, 1) + uvec3(x, y, 1);
+
+    vec4 load = imageLoad(SceneColor, ivec2(inIndex.xy));
+
+    vec4 max  = subgroupClusteredMax(load, 4);
+
+    //if (0 == (gl_SubgroupInvocationID % 4))
+    //{
+    //    uvec3 outIndex = gl_WorkGroupID * gl_WorkGroupSize + uvec3(x, y, 1);
+    //
+    //    imageStore(SceneColor, ivec2(outIndex.xy), vec4(1.0f));
+    //}
+
+    imageStore(SceneColor, ivec2(gl_GlobalInvocationID.xy), vec4(vec3(gl_SubgroupInvocationID), 1.0f));
 }
 
 /*****************************************************************************************/
