@@ -55,7 +55,7 @@ namespace Spices {
 				item.range          = GltfHelper::GetElementFloat(json, "range", 105);
 				item.intensity      = GltfHelper::GetElementFloat(json, "intensity", 1);
 				item.innerConeAngle = GltfHelper::GetElementFloat(json, "spot/innerConeAngle", 0);
-				item.outerConeAngle = GltfHelper::GetElementFloat(json, "spot/outerConeAngle", PI);
+				item.outerConeAngle = GltfHelper::GetElementFloat(json, "spot/outerConeAngle", SpicesShader::PI);
 
 				item.name           = GltfHelper::GetElementString(json, "name", "");
 				item.type           = GltfHelper::GetElementString(json, "type", "");

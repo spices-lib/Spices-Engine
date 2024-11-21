@@ -172,10 +172,10 @@ namespace Spices {
 		/**
 		* @brief Init meshopt variable.
 		*/
-		size_t max_meshlets = meshopt_buildMeshletsBound(primVertices.size() * 3, MESHLET_NVERTICES, MESHLET_NPRIMITIVES);
+		size_t max_meshlets = meshopt_buildMeshletsBound(primVertices.size() * 3, SpicesShader::MESHLET_NVERTICES, SpicesShader::MESHLET_NPRIMITIVES);
 		std::vector<meshopt_Meshlet> meshoptlets(max_meshlets);
-		std::vector<unsigned int> meshlet_vertices(max_meshlets * MESHLET_NVERTICES);
-		std::vector<unsigned char> meshlet_triangles(max_meshlets * MESHLET_NPRIMITIVES * 3);
+		std::vector<unsigned int> meshlet_vertices(max_meshlets * SpicesShader::MESHLET_NVERTICES);
+		std::vector<unsigned char> meshlet_triangles(max_meshlets * SpicesShader::MESHLET_NPRIMITIVES * 3);
 		
 		/**
 		* @brief Pack Sparse Inputs.
@@ -197,8 +197,8 @@ namespace Spices {
 			&packPoints[0].x           ,
 			packPoints.size()          ,
 			sizeof(glm::vec3)          , 
-			MESHLET_NVERTICES          , 
-			MESHLET_NPRIMITIVES        , 
+			SpicesShader::MESHLET_NVERTICES          , 
+			SpicesShader::MESHLET_NPRIMITIVES        , 
 			coneWeight
 		);
 		

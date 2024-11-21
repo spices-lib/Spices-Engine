@@ -19,7 +19,7 @@ namespace Spices {
 * @brief Max In Flight Frame.
 * 2 buffers are enough in this program.
 */
-#define MaxFrameInFlight 2
+constexpr uint32_t MaxFrameInFlight = 2;
 
 /**
 * @brief Use VMA for memory allocate.

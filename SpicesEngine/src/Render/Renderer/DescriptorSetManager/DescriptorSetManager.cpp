@@ -43,15 +43,15 @@ namespace Spices {
 		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
-			if (m_DescriptorSets[name].find(BINDLESS_TEXTURE_SET) == m_DescriptorSets[name].end())
+			if (m_DescriptorSets[name].find(SpicesShader::BINDLESS_TEXTURE_SET) == m_DescriptorSets[name].end())
 			{
 				m_DescriptorSets.erase(name);
 			}
 			else
 			{
-				const auto descriptorSet = m_DescriptorSets[name][BINDLESS_TEXTURE_SET];
+				const auto descriptorSet = m_DescriptorSets[name][SpicesShader::BINDLESS_TEXTURE_SET];
 				m_DescriptorSets.erase(name);
-				m_DescriptorSets[name][BINDLESS_TEXTURE_SET] = descriptorSet;
+				m_DescriptorSets[name][SpicesShader::BINDLESS_TEXTURE_SET] = descriptorSet;
 			}
 		}
 	}

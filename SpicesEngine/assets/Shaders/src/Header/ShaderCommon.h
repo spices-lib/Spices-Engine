@@ -33,27 +33,27 @@ using uint = unsigned int;
 /**
 * @brief Macros for Variable Constant.
 */
-#define BINDLESS_TEXTURE_MAXNUM        65536                     /* @brief Maximum number of BindLess Texture Array.             */
-#define BINDLESS_TEXTURE_SET           1                         /* @brief BindLess Texture Descriptor Set.                      */
-#define BINDLESS_TEXTURE_BINDING       0                         /* @brief BindLess Texture Descriptor Set Binding.              */
-#define MESH_BUFFER_MAXNUM             100000                    /* @brief Ray Tracing Renderer Maximum mesh desc buffer count.  */
-#define DIRECTIONALLIGHT_BUFFER_MAXNUM 100                       /* @brief Maximum number of Directional lights.                 */
-#define POINTLIGHT_BUFFER_MAXNUM       10000                     /* @brief Maximum number of Point lights.                       */
-#define MESHLET_NVERTICES              64                        /* @brief Maximum number of Meshlet's nVertices.                */
-#define MESHLET_NPRIMITIVES            124                       /* @brief Maximum number of Meshlet's nPrimitives.              */
-
-#define NV_SUBGROUP_SIZE               32                        /* @brief Nvidia Hardware only support 32 subgroup size.        */
-#define AMD_SUBGROUP_SIZE              64                        /* @brief AMD    Hardware only support 64 subgroup size.        */
-
-#define SUBGROUP_SIZE                  NV_SUBGROUP_SIZE          /* @brief Use Nvidia Hardware.                                  */
+const uint BINDLESS_TEXTURE_MAXNUM        = 65535                     ;   /* @brief Maximum number of BindLess Texture Array.             */
+const uint BINDLESS_TEXTURE_SET           = 1                         ;   /* @brief BindLess Texture Descriptor Set.                      */
+const uint BINDLESS_TEXTURE_BINDING       = 0                         ;   /* @brief BindLess Texture Descriptor Set Binding.              */
+const uint MESH_BUFFER_MAXNUM             = 100000                    ;   /* @brief Ray Tracing Renderer Maximum mesh desc buffer count.  */
+const uint DIRECTIONALLIGHT_BUFFER_MAXNUM = 100                       ;   /* @brief Maximum number of Directional lights.                 */
+const uint POINTLIGHT_BUFFER_MAXNUM       = 10000                     ;   /* @brief Maximum number of Point lights.                       */
+const uint MESHLET_NVERTICES              = 64                        ;   /* @brief Maximum number of Meshlet's nVertices.                */
+const uint MESHLET_NPRIMITIVES            = 124                       ;   /* @brief Maximum number of Meshlet's nPrimitives.              */
+          
+const uint NV_SUBGROUP_SIZE               = 32                        ;   /* @brief Nvidia Hardware only support 32 subgroup size.        */
+const uint AMD_SUBGROUP_SIZE              = 64                        ;   /* @brief AMD    Hardware only support 64 subgroup size.        */
+          
+const uint SUBGROUP_SIZE                  = NV_SUBGROUP_SIZE          ;   /* @brief Use Nvidia Hardware.                                  */
 
 /**
 * @brief  Macros for Calculate Constant.
 */
-#define invAtan                      vec2(0.1591, 0.3183)      /* @brief inverse arctan.                                       */
-#define PI                           3.141592654f              /* @brief PI.                                                   */
-#define BIAS                         0.01f                     /* @brief small blas.                                           */
-	
+const vec2 invAtan                        = vec2(0.1591, 0.3183) ;     /* @brief inverse arctan.                                       */
+const float PI                            = 3.141592654f              ;     /* @brief PI.                                                   */
+const float BIAS                          = 0.01f                     ;     /* @brief small blas.                                           */
+
 /*****************************************************************************************/
 
 

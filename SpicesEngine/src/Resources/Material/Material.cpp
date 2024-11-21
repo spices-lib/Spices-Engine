@@ -241,14 +241,14 @@ namespace Spices {
 						const std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
 						v.index = BindLessTextureManager::Registry(v.texturePath);
 
-						const auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
+						const auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", SpicesShader::BINDLESS_TEXTURE_SET);
 
 						/**
 						* @brief Instance a VkWriteDescriptorSet.
 						*/
 						VkWriteDescriptorSet         write {};
 						write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-						write.dstBinding           = BINDLESS_TEXTURE_BINDING;
+						write.dstBinding           = SpicesShader::BINDLESS_TEXTURE_BINDING;
 						write.dstSet               = descriptorSet->Get();
 						write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 						write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();
@@ -409,14 +409,14 @@ namespace Spices {
 						std::shared_ptr<Texture> texture = ResourcePool<Texture>::Load<Texture2D>(v.texturePath, v.texturePath);
 						v.index = BindLessTextureManager::Registry(v.texturePath);
 
-						auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", BINDLESS_TEXTURE_SET);
+						auto descriptorSet = DescriptorSetManager::Registry("PreRenderer", SpicesShader::BINDLESS_TEXTURE_SET);
 
 						/**
 						* @brief Instance a VkWriteDescriptorSet.
 						*/
 						VkWriteDescriptorSet         write {};
 						write.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-						write.dstBinding           = BINDLESS_TEXTURE_BINDING;
+						write.dstBinding           = SpicesShader::BINDLESS_TEXTURE_BINDING;
 						write.dstSet               = descriptorSet->Get();
 						write.descriptorType       = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 						write.pImageInfo           = texture->GetResource<VulkanImage>()->GetImageInfo();

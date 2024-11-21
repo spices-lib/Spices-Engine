@@ -264,7 +264,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_NTasks = m_MeshResource.meshlets.attributes->size() / SUBGROUP_SIZE + 1;
+		m_NTasks = m_MeshResource.meshlets.attributes->size() / SpicesShader::SUBGROUP_SIZE + 1;
 		m_MeshTaskIndirectDrawCommand.firstTask = 0;
 		m_MeshTaskIndirectDrawCommand.taskCount = m_NTasks;
 
