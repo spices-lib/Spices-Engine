@@ -1705,6 +1705,31 @@ namespace Spices {
 		);
 	}
 
+	void Renderer::RenderBehaveBuilder::InternalBarriers(
+		VkAccessFlags         srcAccessMask , 
+		VkAccessFlags         dstAccessMask , 
+		VkPipelineStageFlags  srcStageMask  , 
+		VkPipelineStageFlags  dstStageMask
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		VkMemoryBarrier                   barrier {};
+		barrier.sType                   = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		barrier.srcAccessMask           = srcAccessMask;
+		barrier.dstAccessMask           = dstAccessMask;
+
+		vkCmdPipelineBarrier(
+			m_CommandBuffer,
+			srcStageMask,
+			dstStageMask,
+			0,
+			1, &barrier,
+			0, nullptr,
+			0, nullptr
+		);
+	}
+
 	void Renderer::ComputeRenderBehaveBuilder::AddBarriers(
 		VulkanImage*          image               ,
 		VkAccessFlags         srcAccessMask       , 

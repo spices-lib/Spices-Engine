@@ -97,8 +97,8 @@ void main()
 {
 	GBufferPixel gbp = GetGBufferPixel();
 	
-	vec4 origin = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec3 V = normalize(origin.xyz - gbp.position);
+	vec4 ro          = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec3 V           = normalize(ro.xyz - gbp.position);
     
     vec3 col = BRDF_Diffuse_Lambert(gbp.albedo) * PI;
     
@@ -106,15 +106,15 @@ void main()
     {
     	PointLight light = pLightBuffer.i[i];
     	if(light.intensity < -500.0f) break;
-    	 
+    	
     	vec3 lpos = light.position;
         vec3 L = normalize(lpos - gbp.position);
         float tMax = length(lpos - gbp.position);
         
         float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
-        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color * light.intensity * attenuation, gbp.albedo, gbp.metallic, gbp.roughness);
+        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity * attenuation;
     }
-    
+
 	for(int i = 0; i < dLightBuffer.i.length(); i++)
 	{
 		DirectionalLight light = dLightBuffer.i[i];
@@ -123,7 +123,7 @@ void main()
         vec4 dir4 = light.rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
         vec3 L = dir4.xyz;
         
-        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color * light.intensity, gbp.albedo, gbp.metallic, gbp.roughness);
+        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity;
 	}
 
 	outSceneColor = vec4(col, 1.0f);
@@ -136,7 +136,7 @@ GBufferPixel GetGBufferPixel()
 	GBufferPixel gbp;
 	
 	gbp.albedo      = subpassLoad(GBuffer[ALBEDO]).xyz;
-	gbp.normal      = (subpassLoad(GBuffer[NORMAL]).xyz - vec3(0.5f)) * 2.0f;
+	gbp.normal      = normalize((subpassLoad(GBuffer[NORMAL]).xyz - vec3(0.5f)) * 2.0f);
 	gbp.roughness   = subpassLoad(GBuffer[ROUGHNESS]).x;
 	gbp.metallic    = subpassLoad(GBuffer[METALLIC]).x;
 	gbp.position    = subpassLoad(GBuffer[POSITION]).xyz;

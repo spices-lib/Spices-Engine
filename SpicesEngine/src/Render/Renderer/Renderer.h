@@ -1110,6 +1110,13 @@ namespace Spices {
 				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
 			);
 
+			void InternalBarriers(
+				VkAccessFlags         srcAccessMask , 
+				VkAccessFlags         dstAccessMask , 
+				VkPipelineStageFlags  srcStageMask  , 
+				VkPipelineStageFlags  dstStageMask
+			);
+
 			/****************************************************************************/
 
 		public:

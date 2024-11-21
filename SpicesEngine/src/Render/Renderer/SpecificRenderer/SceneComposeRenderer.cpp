@@ -48,12 +48,15 @@ namespace Spices {
 		})
 		.AddInputAttachment("Normal", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format                        = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddInputAttachment("Roughness", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format                        = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddInputAttachment("Metallic", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			description.format                        = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddInputAttachment("Position", TextureType::Texture2D, [](VkAttachmentDescription& description) {
 			description.finalLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

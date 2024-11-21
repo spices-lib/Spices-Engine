@@ -23,14 +23,17 @@ namespace Spices {
 		.AddColorAttachment("Normal", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format                = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddColorAttachment("Roughness", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format                = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddColorAttachment("Metallic", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
 			description.loadOp                = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			description.format                = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
 		.AddColorAttachment("Position", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -191,7 +194,7 @@ namespace Spices {
 			
 			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
 
-#if 0    // Use DGC or not
+#if 1    // Use DGC or not
 
 			IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 
