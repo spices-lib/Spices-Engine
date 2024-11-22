@@ -27,8 +27,8 @@ namespace Spices {
 		.EndSubPass()
 		.AddSubPass("Bloom")
 		.EndSubPass()
-		/*.AddSubPass("Tonemapping")
-		.EndSubPass()*/
+		.AddSubPass("TAA")
+		.EndSubPass()
 		.Build();
 	}
 
@@ -54,6 +54,9 @@ namespace Spices {
 			info.mipLevel  = SpicesShader::POST_BLOOM_MIPMAP;
 			info.sizeScale = 0.5f;
 		})
+		.Build();
+
+		DescriptorSetBuilder{ "TAA", this }
 		.Build();
 	}
 
@@ -100,11 +103,7 @@ namespace Spices {
 			});
 
 			builder.Dispatch((image->GetWidth() >> i) / 32 + 1, (image->GetHeight() >> i) / 32 + 1, 1);
-
-			//builder.InternalBarriers();
 		}
-
-		builder.EndRecording();
 
 		builder.BeginNextSubPass("Bloom");
 
@@ -123,9 +122,17 @@ namespace Spices {
 
 			if (i != 0)
 			{
-				//builder.InternalBarriers();
+				builder.InternalBarriers();
 			}
 		}
+
+		builder.BeginNextSubPass("TAA");
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "TAA" }));
+
+		builder.BindPipeline("PostProcessRenderer.TAA.Default");
+
+		builder.Dispatch(1, 1, 1);
 
 		builder.EndRenderPass();
 	}

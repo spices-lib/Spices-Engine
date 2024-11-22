@@ -82,21 +82,19 @@ void main()
     index.y = int(gl_GlobalInvocationID.y >> 1);
 
     DirectionalBlur(index, ivec2(1, 0), push.mipmap);
-    DirectionalBlur(index, ivec2(0, 1), push.mipmap);
+    DirectionalBlur(index, ivec2(0, 1), push.mipmap); 
 
-    vec4  color = imageLoad(Bloom[push.mipmap], index) * push.weight;
+    const vec4 color = imageLoad(Bloom[push.mipmap], index) * push.weight;
 
     vec4 aboveColor = vec4(0.0f);
     if(push.mipmap == 0)
     {
         aboveColor = (1.0f - push.weight) * imageLoad(SceneColor, ivec2(gl_GlobalInvocationID.xy)) + color;
-        memoryBarrierImage();
         imageStore(SceneColor, ivec2(gl_GlobalInvocationID.xy), aboveColor);
     }
     else
     {
         aboveColor = (1.0f - push.weight) * imageLoad(Bloom[push.mipmap - 1], ivec2(gl_GlobalInvocationID.xy)) + color;
-        memoryBarrierImage();
         imageStore(Bloom[push.mipmap - 1], ivec2(gl_GlobalInvocationID.xy), aboveColor);
     }
 }

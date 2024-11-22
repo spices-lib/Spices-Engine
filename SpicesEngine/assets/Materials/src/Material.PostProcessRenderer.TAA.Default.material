@@ -1,0 +1,15 @@
+# @file Material.PostProcessRenderer.TAA.Default.material.
+# @brief This File is the sample of Defining a PostProcess Renderer TAA SubPass Default Material.
+# @author Spices.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
+Material: PostProcessRenderer.TAA.Default
+
+# @brief Material Shaders usages.
+Shaders:
+  
+  # @brief Compute Shader Stage Shader File Path.
+  - Stage: comp
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: PostProcessRenderer.TAA.Default
