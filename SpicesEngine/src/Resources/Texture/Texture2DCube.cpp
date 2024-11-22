@@ -16,14 +16,16 @@ namespace Spices {
 	{
 		m_ResourcePath = "NONE";
 
+		uint32_t w = std::max(1.0f, glm::max(info.width, info.height) * info.sizeScale);
+
 		if (!info.isDepthResource)
 		{
 			m_Resource = std::make_shared<VulkanImage>(
 				VulkanRenderBackend::GetState(),
 				info.name,
 				VK_IMAGE_TYPE_2D,
-				glm::max(info.width, info.height),
-				glm::max(info.width, info.height),
+				w,
+				w,
 				6,
 				info.description.samples,
 				info.description.format,
@@ -58,8 +60,8 @@ namespace Spices {
 				VulkanRenderBackend::GetState(),
 				info.name,
 				VK_IMAGE_TYPE_2D,
-				glm::max(info.width, info.height),
-				glm::max(info.width, info.height),
+				w,
+				w,
 				6,
 				info.description.samples,
 				info.description.format,

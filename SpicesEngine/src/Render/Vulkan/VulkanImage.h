@@ -74,9 +74,10 @@ namespace Spices {
 		/**
 		* @breif Get VkImageView of this VkImage.
 		* Need Create before call this API.
+		* @param[in] mipLevel Specific mipmap.
 		* @return Returns VkImageView reference.
 		*/
-		VkImageView& GetView() { return m_ImageView; }
+		VkImageView& GetView(uint32_t mipLevel = 0) { return m_ImageViews[mipLevel]; }
 
 		/**
 		* @breif Get this VkImage.
@@ -101,17 +102,31 @@ namespace Spices {
 		* @return Returns the m_Height.
 		*/
 		uint32_t GetWidth() const { return m_Width; }
+
+		/**
+		* @brief Get this Format.
+		* @return Returns the m_Format.
+		*/
+		VkFormat GetFormat() const { return m_Format; }
+
+		/**
+		* @brief Get this MipLevels.
+		* @return Returns the m_MipLevels.
+		*/
+		uint32_t GetMipLevels() const { return m_MipLevels; }
 		
 	public:
 
 		/**
 		* @breif Get VkDescriptorImageInfo.
 		* @param[in] imageLayout Usually is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, also support custom layout.
+		* @param[in] mipLevel Which mipmap info.
 		* @return Returns VkDescriptorImageInfo row pointer, avoiding copy, use pointer here.
 		* fell free to using row pointer here.
 		*/
 		VkDescriptorImageInfo* GetImageInfo(
-			VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+			VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			uint32_t      mipLevel    = 0
 		);
 
 		/**
@@ -242,11 +257,13 @@ namespace Spices {
 		* @param[in] format VkFormat.
 		* @param[in] viewType VkImageViewType.
 		* @param[in] aspectFlags VkImageAspectFlags.
+		* @param[in] isCreateMipmapView True if needs create imageview for all mipmaps.
 		*/
 		void CreateImageView(
 			VkFormat           format      , 
 			VkImageViewType    viewType    ,
-			VkImageAspectFlags aspectFlags
+			VkImageAspectFlags aspectFlags ,
+			bool               isCreateMipmapView = false
 		);
 
 		/**
@@ -369,12 +386,12 @@ namespace Spices {
 		/**
 		* @brief The image view.
 		*/
-		VkImageView m_ImageView{};
+		std::vector<VkImageView> m_ImageViews;
 
 		/**
 		* @brief The image sampler.
 		*/
-		VkSampler m_TextureSampler{};
+		VkSampler m_TextureSampler;
 
 		/**
 		* @brief VkDescriptorImageInfo.

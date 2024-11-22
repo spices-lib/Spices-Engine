@@ -547,15 +547,37 @@ namespace Spices {
 			* @param[in] textureNames All Texture's Name.
 			* @param[in] format Texture Format, used in init.
 			* @param[in] type Texture's type, used in init.
+			* @param[in] func Function of define specific RendererResourceCreateInfo.
 			* @return Returns this reference.
 			*/
 			DescriptorSetBuilder& AddStorageTexture(
-				uint32_t                         set                                ,
-				uint32_t                         binding                            ,
-				VkShaderStageFlags               stageFlags                         ,
-				const std::vector<std::string>&  textureNames                       ,
-				VkFormat                         format = VK_FORMAT_R8G8B8A8_UNORM  ,
-				TextureType                      type = TextureType::Texture2D
+				uint32_t                                         set                                ,
+				uint32_t                                         binding                            ,
+				VkShaderStageFlags                               stageFlags                         ,
+				const std::vector<std::string>&                  textureNames                       ,
+				VkFormat                                         format = VK_FORMAT_R8G8B8A8_UNORM  ,
+				TextureType                                      type   = TextureType::Texture2D           
+			);
+
+			/**
+			* @brief Add the storage texture set binding with mipmap to descriptor set layout.
+			* @param[in] set Which set this texture wil use.
+			* @param[in] binding Which binding this texture wil use.
+			* @param[in] stageFlags Which buffer stage this buffer will use.
+			* @param[in] textureName Texture's Name.
+			* @param[in] format Texture Format, used in init.
+			* @param[in] type Texture's type, used in init.
+			* @param[in] func Function of define specific RendererResourceCreateInfo.
+			* @return Returns this reference.
+			*/
+			DescriptorSetBuilder& AddStorageTextureMipmaps(
+				uint32_t                                         set                                ,
+				uint32_t                                         binding                            ,
+				VkShaderStageFlags                               stageFlags                         ,
+				const std::string&                               textureName                        ,
+				VkFormat                                         format = VK_FORMAT_R8G8B8A8_UNORM  ,
+				TextureType                                      type   = TextureType::Texture2D    ,
+				std::function<void(RendererResourceCreateInfo&)> func   = nullptr             
 			);
 
 			/**
@@ -1027,7 +1049,7 @@ namespace Spices {
 			* @brief End a preview sub pass and stat next sub pass.
 			* @param[in] subPassName The name of next sub pass.
 			*/
-			void BeginNextSubPass(const std::string& subPassName);
+			virtual void BeginNextSubPass(const std::string& subPassName);
 
 			/**
 			* @brief End a preview sub pass and stat next sub pass.
@@ -1038,7 +1060,7 @@ namespace Spices {
 			/**
 			* @brief Begin this Renderer's RenderPass.
 			*/
-			void BeginRenderPass();
+			virtual void BeginRenderPass();
 
 			/**
 			* @brief Begin this Renderer's RenderPass Async.
@@ -1048,7 +1070,7 @@ namespace Spices {
 			/**
 			* @brief End this Renderer's RenderPass.
 			*/
-			void EndRenderPass() const;
+			virtual void EndRenderPass() const;
 
 			/****************************************************************************/
 
@@ -1111,10 +1133,10 @@ namespace Spices {
 			);
 
 			void InternalBarriers(
-				VkAccessFlags         srcAccessMask , 
-				VkAccessFlags         dstAccessMask , 
-				VkPipelineStageFlags  srcStageMask  , 
-				VkPipelineStageFlags  dstStageMask
+				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           , 
+				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            , 
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
 			);
 
 			/****************************************************************************/
@@ -1330,6 +1352,22 @@ namespace Spices {
 			* @brief Destructor Function.
 			*/
 			virtual ~ComputeRenderBehaveBuilder() override = default;
+
+			/**
+			* @brief Begin this Renderer's RenderPass.
+			*/
+			virtual void BeginRenderPass() override;
+
+			/**
+			* @brief End this Renderer's RenderPass.
+			*/
+			virtual void EndRenderPass() const override;
+
+			/**
+			* @brief End a preview sub pass and stat next sub pass.
+			* @param[in] subPassName The name of next sub pass.
+			*/
+			virtual void BeginNextSubPass(const std::string& subPassName) override;
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().

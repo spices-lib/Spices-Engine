@@ -16,14 +16,17 @@ namespace Spices {
 	{
 		m_ResourcePath = "NONE";
 
+		uint32_t w = std::max(1.0f, info.width * info.sizeScale);
+		uint32_t h = std::max(1.0f, info.height * info.sizeScale);
+
 		if (!info.isDepthResource)
 		{
 			m_Resource = std::make_shared<VulkanImage>(
 				VulkanRenderBackend::GetState(),
 				info.name,
 				VK_IMAGE_TYPE_2D,
-				info.width,
-				info.height,
+				w,
+				h,
 				1,
 				info.description.samples,
 				info.description.format,
@@ -36,11 +39,11 @@ namespace Spices {
 				VK_IMAGE_USAGE_STORAGE_BIT,              // Can be used for StorageTexture.
 				0,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				1
+				info.mipLevel
 			);
 
 			auto resourceptr = GetResource<VulkanImage>();
-			resourceptr->CreateImageView(info.description.format, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT);
+			resourceptr->CreateImageView(info.description.format, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, true);
 			
 			if (info.usage & VK_IMAGE_USAGE_STORAGE_BIT)
 			{
@@ -59,8 +62,8 @@ namespace Spices {
 				VulkanRenderBackend::GetState(),
 				info.name,
 				VK_IMAGE_TYPE_2D,
-				info.width,
-				info.height,
+				w,
+				h,
 				1,
 				info.description.samples,
 				info.description.format,

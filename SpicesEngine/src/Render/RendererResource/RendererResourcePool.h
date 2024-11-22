@@ -54,10 +54,12 @@ namespace Spices {
 		/**
 		* @brief Get Resource with specific name, create it if it have not been created.
 		* @param[in] info The info used for create resource.
+		* @param[in] mipLevel Which mipmap needs to be access.
 		* @return Returns the view of the resource.
 		*/
 		VkDescriptorImageInfo* AccessResource(
-			const RendererResourceCreateInfo& info = RendererResourceCreateInfo{}
+			const RendererResourceCreateInfo& info = RendererResourceCreateInfo{},
+			uint32_t                          mipLevel = 0
 		);
 
 		/**

@@ -23,7 +23,7 @@ namespace Spices {
 		}
 	}
 
-	VkDescriptorImageInfo* RendererResourcePool::AccessResource(const RendererResourceCreateInfo& info)
+	VkDescriptorImageInfo* RendererResourcePool::AccessResource(const RendererResourceCreateInfo& info, uint32_t mipLevel)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -35,7 +35,7 @@ namespace Spices {
 			m_RendererResource[info.name] = std::make_unique<RendererResource>(info);
 		}
 
-		return m_RendererResource[info.name]->GetTexture()->GetResource<VulkanImage>()->GetImageInfo();
+		return m_RendererResource[info.name]->GetTexture()->GetResource<VulkanImage>()->GetImageInfo(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevel);
 	}
 
 	std::shared_ptr<VulkanImage> RendererResourcePool::AccessRowResource(const std::string& name)

@@ -228,7 +228,7 @@ float ComputeDepth(in vec3 p)
 void main()
 {
     ExplainMaterialParameter(push.descAddress);
-
+    discard;
     if (!materialParam.enable) discard;
     vec2 d         = fragInput.texCoord * 2.0f - 1.0f;
 

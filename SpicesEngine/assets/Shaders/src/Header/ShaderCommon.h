@@ -47,10 +47,12 @@ const uint AMD_SUBGROUP_SIZE              = 64                        ;   /* @br
           
 const uint SUBGROUP_SIZE                  = NV_SUBGROUP_SIZE          ;   /* @brief Use Nvidia Hardware.                                  */
 
+const uint POST_BLOOM_MIPMAP              = 5                         ;   /* @brief PostRenderer Bloom mipmap count.                      */
+
 /**
 * @brief  Macros for Calculate Constant.
 */
-const vec2 invAtan                        = vec2(0.1591, 0.3183) ;     /* @brief inverse arctan.                                       */
+const vec2 invAtan                        = vec2(0.1591, 0.3183)      ;     /* @brief inverse arctan.                                       */
 const float PI                            = 3.141592654f              ;     /* @brief PI.                                                   */
 const float BIAS                          = 0.01f                     ;     /* @brief small blas.                                           */
 

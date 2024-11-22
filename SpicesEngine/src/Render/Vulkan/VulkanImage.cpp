@@ -71,7 +71,11 @@ namespace Spices {
 		* @brief Destroy reltative object.
 		*/
 		vkDestroySampler(m_VulkanState.m_Device, m_TextureSampler, nullptr);
-		vkDestroyImageView(m_VulkanState.m_Device, m_ImageView, nullptr);
+
+		for (int i = 0; i < m_ImageViews.size(); i++)
+		{
+			vkDestroyImageView(m_VulkanState.m_Device, m_ImageViews[i], nullptr);
+		}
 
 #if VMA_ALLOCATOR
 
@@ -92,13 +96,13 @@ namespace Spices {
 
 	}
 
-	VkDescriptorImageInfo* VulkanImage::GetImageInfo(VkImageLayout imageLayout)
+	VkDescriptorImageInfo* VulkanImage::GetImageInfo(VkImageLayout imageLayout, uint32_t mipLevel)
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_ImageInfo.imageLayout = imageLayout;
-		m_ImageInfo.imageView = m_ImageView;
-		m_ImageInfo.sampler = m_TextureSampler;
+		m_ImageInfo.imageView   = m_ImageViews[mipLevel];
+		m_ImageInfo.sampler     = m_TextureSampler;
 
 		return &m_ImageInfo;
 	}
@@ -720,29 +724,35 @@ namespace Spices {
 		});
 	}
 
-	void VulkanImage::CreateImageView(VkFormat format, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
+	void VulkanImage::CreateImageView(VkFormat format, VkImageViewType viewType, VkImageAspectFlags aspectFlags, bool isCreateMipmapView)
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Instance a VkImageViewCreateInfo.
-		*/
-		VkImageViewCreateInfo                        viewInfo{};
-		viewInfo.sType                             = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewInfo.image                             = m_Image;
-		viewInfo.viewType                          = viewType;
-		viewInfo.format                            = format;
-		viewInfo.subresourceRange.aspectMask       = aspectFlags;
-		viewInfo.subresourceRange.baseMipLevel     = 0;
-		viewInfo.subresourceRange.levelCount       = m_MipLevels;                                 // mipmaps num.
-		viewInfo.subresourceRange.baseArrayLayer   = 0;                                           // layer index.(access given index layer of texture array/texture cube)
-		viewInfo.subresourceRange.layerCount       = m_Layers;                                    // layer num.
+		uint32_t count = isCreateMipmapView ? m_MipLevels : 1;
 
-		/**
-		* @brief Create ImageView. 
-		*/
-		VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &viewInfo, nullptr, &m_ImageView))
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE_VIEW, reinterpret_cast<uint64_t>(m_ImageView), m_VulkanState.m_Device, "ImageView")
+		m_ImageViews.resize(count);
+		for(int i = 0; i < count; i++)
+		{
+			/**
+			* @brief Instance a VkImageViewCreateInfo.
+			*/
+			VkImageViewCreateInfo                        viewInfo{};
+			viewInfo.sType                             = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			viewInfo.image                             = m_Image;
+			viewInfo.viewType                          = viewType;
+			viewInfo.format                            = format;
+			viewInfo.subresourceRange.aspectMask       = aspectFlags;
+			viewInfo.subresourceRange.baseMipLevel     = i;
+			viewInfo.subresourceRange.levelCount       = isCreateMipmapView ? 1 : m_MipLevels;        // mipmaps num.
+			viewInfo.subresourceRange.baseArrayLayer   = 0;                                           // layer index.(access given index layer of texture array/texture cube)
+			viewInfo.subresourceRange.layerCount       = m_Layers;                                    // layer num.
+
+			/**
+			* @brief Create ImageView. 
+			*/
+			VK_CHECK(vkCreateImageView(m_VulkanState.m_Device, &viewInfo, nullptr, &m_ImageViews[i]))
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_IMAGE_VIEW, reinterpret_cast<uint64_t>(m_ImageViews[i]), m_VulkanState.m_Device, "ImageView")
+		}
 	}
 
 	void VulkanImage::CreateSampler()
@@ -951,7 +961,7 @@ namespace Spices {
 		*/
 		VkDescriptorImageInfo imageInfo{};
 		imageInfo.imageLayout                             = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		imageInfo.imageView                               = m_ImageView;
+		imageInfo.imageView                               = m_ImageViews[0];
 		imageInfo.sampler                                 = m_TextureSampler;
 
 		/**

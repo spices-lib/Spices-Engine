@@ -694,6 +694,26 @@ namespace Spices {
 		vkCmdNextSubpass(m_CommandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
+	void Renderer::ComputeRenderBehaveBuilder::BeginNextSubPass(const std::string& subPassName)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		++m_SubPassIndex;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
+
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		//NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 2)
+		//NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
+
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		//NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter SubPass:" + m_HandledSubPass->GetName())
+	}
+
 	void Renderer::RenderBehaveBuilder::BeginNextSubPassAsync(const std::string& subPassName)
 	{
 		SPICES_PROFILE_ZONE;
@@ -764,6 +784,26 @@ namespace Spices {
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
+	void Renderer::ComputeRenderBehaveBuilder::BeginRenderPass()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_SubPassIndex = 0;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
+
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName(), 1, m_CurrentFrame)
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
+
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+	}
+
 	void Renderer::RenderBehaveBuilder::BeginRenderPassAsync()
 	{
 		SPICES_PROFILE_ZONE;
@@ -820,6 +860,22 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		vkCmdEndRenderPass(m_CommandBuffer);
+
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
+
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+
+		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 2)
+		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 1)
+
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::EndRenderPass() const
+	{
+		SPICES_PROFILE_ZONE;
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -1332,12 +1388,12 @@ namespace Spices {
 	}
 
 	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageTexture(
-		uint32_t                         set           , 
-		uint32_t                         binding       , 
-		VkShaderStageFlags               stageFlags    , 
-		const std::vector<std::string>&  textureNames  , 
-		VkFormat                         format        ,
-		TextureType                      type
+		uint32_t                                         set           , 
+		uint32_t                                         binding       , 
+		VkShaderStageFlags                               stageFlags    , 
+		const std::vector<std::string>&                  textureNames  , 
+		VkFormat                                         format        ,
+		TextureType                                      type
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -1371,7 +1427,53 @@ namespace Spices {
 		return *this;
 	}
 
-	Renderer:: DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddAttachmentTexture(
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddStorageTextureMipmaps(
+		uint32_t                                         set           , 
+		uint32_t                                         binding       , 
+		VkShaderStageFlags                               stageFlags    , 
+		const std::string&                               textureName   , 
+		VkFormat                                         format        ,
+		TextureType                                      type          ,
+		std::function<void(RendererResourceCreateInfo&)> func
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief fill in imageInfos.
+		*/
+		RendererResourceCreateInfo info;
+		info.name                                = textureName;
+		info.type                                = type;
+		info.width                               = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.width;
+		info.height                              = m_Renderer->m_Device->GetSwapChainSupport().surfaceSize.height;
+		info.description.samples                 = VK_SAMPLE_COUNT_1_BIT;
+		info.description.format                  = format;
+		info.usage                               = VK_IMAGE_USAGE_STORAGE_BIT;
+
+		if (func)
+		{
+			func(info);
+		}
+
+		for(int i = 0; i < info.mipLevel; i++)
+		{
+			VkDescriptorImageInfo* imageInfo         = m_Renderer->m_RendererResourcePool->AccessResource(info, i);
+			imageInfo->imageLayout                   = VK_IMAGE_LAYOUT_GENERAL;
+
+			m_ImageInfos[set][binding].push_back(*imageInfo);
+		}
+
+		/**
+		* @brief Registy descriptor and add binging to it.
+		*/
+		const auto descriptorSet = DescriptorSetManager::Registry(m_DescriptorSetId, set);
+		descriptorSet->AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, stageFlags, static_cast<uint32_t>(info.mipLevel));
+
+		return *this;
+	}
+
+	Renderer::DescriptorSetBuilder& Renderer::DescriptorSetBuilder::AddAttachmentTexture(
 		uint32_t                         set,
 		uint32_t                         binding,
 		VkShaderStageFlags               stageFlags,

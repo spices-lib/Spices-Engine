@@ -1,0 +1,93 @@
+/**
+* @file Shader.PostProcessRenderer.DownSample.Default.comp.
+* @brief This Shader Defines PostProcessRenderer SubPass DownSample Default Compute Shader Behaves.
+* @author Spices.
+*/
+
+/************************************Pre Compile*******************************************/
+
+#version 460
+
+#extension GL_GOOGLE_include_directive             : enable            /* @brief Enable include Macro.            */
+
+#include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+
+/*****************************************************************************************/
+
+/*************************************Comp Input******************************************/
+
+layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
+
+/*****************************************************************************************/
+
+/************************************Specific Data****************************************/
+
+layout(set = 2, binding = 0, rgba16f) uniform image2D SceneColor;                  /* @brief SceneColor.  */
+layout(set = 2, binding = 1, rgba16f) uniform image2D Bloom[POST_BLOOM_MIPMAP];    /* @brief BloomBuffer. */
+
+/*****************************************************************************************/
+
+/*********************************Push Constant*******************************************/
+
+/**
+* @brief push constant.
+*/
+layout(push_constant) uniform Push 
+{
+    uint mipmap;
+} 
+push;
+
+/*****************************************************************************************/
+
+/************************************Constant Data****************************************/
+
+const ivec2 offsets[9] = {
+    ivec2( 1, 1), ivec2( 0, 1), ivec2(-1, 1),
+    ivec2( 1, 0), ivec2( 0, 0), ivec2(-1, 0),
+    ivec2( 1,-1), ivec2( 0,-1), ivec2(-1,-1)
+};
+
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
+
+void main()
+{
+    vec4 color = vec4(0.0f);
+    
+    if (push.mipmap == 0)
+    {
+        float valid = 0.0f;
+        for(int i = 0; i < 9; i++)
+        {
+            vec4 origin = imageLoad(SceneColor, ivec2(gl_GlobalInvocationID.xy + offsets[i]) * 2);
+            vec4 col    = log(max(0.01f + origin, vec4(0.01, 0.01, 0.01, 0.01)));
+            if(origin.w > 0.5f)
+            {
+                color += col;
+                valid += 1.0f;
+            }
+        }
+        color = exp(color / valid);
+    }
+    else
+    {
+        float valid = 0.0f;
+        for(int i = 0; i < 9; i++)
+        {
+            vec4 col = imageLoad(Bloom[push.mipmap - 1], ivec2(gl_GlobalInvocationID.xy + offsets[i]) * 2);
+            if(col.w > 0.5f)
+            {
+                color += col;
+                valid += 1.0f;
+            }
+        }
+        color = color / valid;
+    }
+    
+    imageStore(Bloom[push.mipmap], ivec2(gl_GlobalInvocationID.xy), color);
+}
+
+/*****************************************************************************************/
