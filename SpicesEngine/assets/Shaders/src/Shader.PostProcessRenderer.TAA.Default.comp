@@ -35,7 +35,11 @@ layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 
 /************************************Constant Data****************************************/
 
+const int RADIUS        = 1;
+const int GROUP_SIZE    = 32;
+const int TILE_DIM      = (2 * RADIUS + GROUP_SIZE);
 
+shared vec3 Tile[TILE_DIM * TILE_DIM];
 
 /*****************************************************************************************/
 
@@ -43,7 +47,18 @@ layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 
 void main()
 {
-   
+   /**const ivec2 dims      = ivec2(view.sceneTextureSize.x, view.sceneTextureSize.y);
+   const vec2 texelSize  = view.sceneTextureSize.zw;
+   bool isSkyPixel;
+
+   const vec2 uv       = (gl_GlobalInvocationID.xy + 0.5f) * texelSize;
+   const vec2 tilePos  = gl_LocalInvocationID.xy + RADIUS + 0.5f;
+
+   if (gl_LocalInvocationIDLinear < TILE_DIM * TILE_DIM / 4)
+   {
+       const int2 anchor = groupID.xy * GROUP_SIZE - RADIUS;
+
+   }*/
 }
 
 /*****************************************************************************************/

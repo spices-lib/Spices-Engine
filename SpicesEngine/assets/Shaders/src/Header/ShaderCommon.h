@@ -55,6 +55,7 @@ const uint POST_BLOOM_MIPMAP              = 5                         ;   /* @br
 const vec2 invAtan                        = vec2(0.1591, 0.3183)      ;     /* @brief inverse arctan.                                       */
 const float PI                            = 3.141592654f              ;     /* @brief PI.                                                   */
 const float BIAS                          = 0.01f                     ;     /* @brief small blas.                                           */
+const float EPS                           = 1e-6f                     ;     /* @brief small eps.                                            */
 
 /*****************************************************************************************/
 

@@ -1,0 +1,92 @@
+/**
+* @file Shader.PostProcessRenderer.ToneMapping.Default.comp.
+* @brief This Shader Defines PostProcessRenderer SubPass ToneMapping Default Compute Shader Behaves.
+* @author Spices.
+*/
+
+/************************************Pre Compile*******************************************/
+
+#version 460
+
+#extension GL_GOOGLE_include_directive             : enable            /* @brief Enable include Macro.            */
+
+#include "Header/ShaderCommon.h"
+#include "Header/ShaderPreRendererLayout.glsl"
+#include "Header/ShaderToneMappers.glsl"
+
+/**
+* @brief Material Parameter.
+* It should be the struct of all textures index and parameter buffer address.
+* One index per texture, One address per buffer.
+*/
+struct MaterialParameter
+{
+    float exposure;
+    int   toneMapper;
+};
+
+#include "Header/ShaderBindLessMaterial.glsl"
+        
+/*****************************************************************************************/
+
+/*************************************Comp Input******************************************/
+
+layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
+
+/*****************************************************************************************/
+
+/************************************Specific Data****************************************/
+
+layout(set = 2, binding = 0, rgba16f) uniform image2D SceneColor;                  /* @brief SceneColor.  */
+
+/*****************************************************************************************/
+
+/*********************************Push Constant*******************************************/
+
+/**
+* @brief push constant.
+*/
+layout(push_constant) uniform Push
+{
+uint64_t descAddress;
+}
+push;
+
+/*****************************************************************************************/
+
+/**************************************Functions******************************************/
+        
+
+vec3 Tonemap(vec3 color, float exposure, int tonemapper);
+
+/*****************************************************************************************/
+
+/**********************************Shader Entry*******************************************/
+
+void main()
+{
+    ExplainMaterialParameter(push.descAddress);
+        
+    ivec2 index   = ivec2(gl_GlobalInvocationID.xy);
+    vec4 texColor = imageLoad(SceneColor, index);
+    vec3 color    = Tonemap(texColor.rgb, materialParam.exposure, materialParam.toneMapper);
+    imageStore(SceneColor, index, vec4(color, texColor.a));
+}
+
+/*****************************************************************************************/
+
+vec3 Tonemap(vec3 color, float exposure, int tonemapper)
+{
+    color *= exposure;
+    
+    switch (tonemapper)
+    {
+        case 0: return AMDTonemapper(color);
+        case 1: return DX11DSK(color);
+        case 2: return Reinhard(color);
+        case 3: return Uncharted2Tonemap(color);
+        case 4: return tonemapACES(color);
+        case 5: return color;
+        default: return vec3(1, 1, 1);
+    }
+}

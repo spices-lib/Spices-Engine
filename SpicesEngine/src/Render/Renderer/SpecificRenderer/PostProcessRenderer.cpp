@@ -29,6 +29,8 @@ namespace Spices {
 		.EndSubPass()
 		.AddSubPass("TAA")
 		.EndSubPass()
+		.AddSubPass("ToneMapping")
+		.EndSubPass()
 		.Build();
 	}
 
@@ -58,6 +60,11 @@ namespace Spices {
 
 		DescriptorSetBuilder{ "TAA", this }
 		.Build();
+
+		DescriptorSetBuilder{ "ToneMapping", this }
+		.AddPushConstant(sizeof(uint64_t))
+		.AddStorageTexture(2, 0, VK_SHADER_STAGE_COMPUTE_BIT, { "SceneColor" })
+		.Build();
 	}
 
 	std::shared_ptr<VulkanPipeline> PostProcessRenderer::CreatePipeline(
@@ -84,7 +91,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto image = m_RendererResourcePool->AccessRowResource("Bloom").get();
+		auto bloomImage = m_RendererResourcePool->AccessRowResource("Bloom").get();
 
 		ComputeRenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_ImageIndex, m_VulkanState.m_GraphicCommandBuffer };
 
@@ -96,13 +103,15 @@ namespace Spices {
 
 		builder.BindPipeline("PostProcessRenderer.DownSample.Default");
 
-		for (int i = 0; i < image->GetMipLevels(); i++)
+		for (int i = 0; i < bloomImage->GetMipLevels(); i++)
 		{
 			builder.UpdatePushConstant<uint32_t>([&](auto& push) {
 				push = i;
 			});
 
-			builder.Dispatch((image->GetWidth() >> i) / 32 + 1, (image->GetHeight() >> i) / 32 + 1, 1);
+			builder.Dispatch((bloomImage->GetWidth() >> i) / 32 + 1, (bloomImage->GetHeight() >> i) / 32 + 1, 1);
+
+			builder.InternalBarriers();
 		}
 
 		builder.BeginNextSubPass("Bloom");
@@ -111,19 +120,16 @@ namespace Spices {
 
 		builder.BindPipeline("PostProcessRenderer.Bloom.Default");
 
-		for (int i = image->GetMipLevels() - 1; i >= 0; i--)
+		for (int i = bloomImage->GetMipLevels() - 1; i >= 0; i--)
 		{
 			builder.UpdatePushConstant<PostProcessR::BloomPushConstant>([&](auto& push) {
 				push.mipmap = i;
 				push.weight = i == 0 ? 0.08f : 1.0f;
 			});
 
-			builder.Dispatch(((image->GetWidth() * 2) >> i) / 32 + 1, ((image->GetHeight() * 2) >> i) / 32 + 1, 1);
+			builder.Dispatch(((bloomImage->GetWidth() * 2) >> i) / 32 + 1, ((bloomImage->GetHeight() * 2) >> i) / 32 + 1, 1);
 
-			if (i != 0)
-			{
-				builder.InternalBarriers();
-			}
+			builder.InternalBarriers();
 		}
 
 		builder.BeginNextSubPass("TAA");
@@ -133,6 +139,24 @@ namespace Spices {
 		builder.BindPipeline("PostProcessRenderer.TAA.Default");
 
 		builder.Dispatch(1, 1, 1);
+
+		builder.InternalBarriers();
+
+		builder.BeginNextSubPass("ToneMapping");
+
+		auto sceneColor = m_RendererResourcePool->AccessRowResource("SceneColor").get();
+
+		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "ToneMapping" }));
+
+		builder.BindPipeline("PostProcessRenderer.ToneMapping.Default");
+
+		builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+			push = GetDefaultMaterial("ToneMapping")->GetMaterialParamsAddress();
+		});
+
+		builder.Dispatch(sceneColor->GetWidth() / 32 + 1, sceneColor->GetHeight() / 32 + 1, 1);
+
+		builder.InternalBarriers();
 
 		builder.EndRenderPass();
 	}

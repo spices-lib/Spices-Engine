@@ -1,0 +1,32 @@
+# @file Material.PostProcessRenderer.ToneMapping.Default.material.
+# @brief This File is the sample of Defining a PostProcess Renderer ToneMapping SubPass Default Material.
+# @author Spices.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
+Material: PostProcessRenderer.ToneMapping.Default
+
+# @brief Material Shaders usages.
+Shaders:
+  
+  # @brief Compute Shader Stage Shader File Path.
+  - Stage: comp
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: PostProcessRenderer.ToneMapping.Default
+    
+# @brief Material Parameters usages. 
+Parameters:
+  
+  # @brief Usage: exposure.
+  - Name: exposure
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 1.0]
+    MinValue: [float, 0.0]
+    MaxValue: [float, 10.0]
+    
+  # @brief Usage: toneMapper.
+  - Name: toneMapper
+    # @brief [Parameter Type, Parameter Value]
+    Value: [int, 4]
+    MinValue: [int, 0]
+    MaxValue: [int, 5]

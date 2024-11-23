@@ -1,0 +1,130 @@
+/**
+* @file ShaderToneMappers.glsl.
+* @brief This Shader Header File Defines Tone Mappers.
+* @author Spices.
+*/
+
+/************************************Pre Compile******************************************/
+
+#ifndef SHADER_TONE_MAPPERS
+#define SHADER_TONE_MAPPERS
+
+#include "ShaderCommon.h"
+
+/*****************************************************************************************/
+
+/***************************************Mappers*******************************************/
+
+// General tonemapping operator, build 'b' term.
+float ColToneB(float hdrMax, float contrast, float shoulder, float midIn, float midOut)
+{
+    return
+    -((-pow(midIn, contrast) + (midOut * (pow(hdrMax, contrast * shoulder) * pow(midIn, contrast) -
+    pow(hdrMax, contrast) * pow(midIn, contrast * shoulder) * midOut)) /
+    (pow(hdrMax, contrast * shoulder) * midOut - pow(midIn, contrast * shoulder) * midOut)) /
+    (pow(midIn, contrast * shoulder) * midOut));
+}
+
+// General tonemapping operator, build 'c' term.
+float ColToneC(float hdrMax, float contrast, float shoulder, float midIn, float midOut)
+{
+    return 
+    (pow(hdrMax, contrast * shoulder) * pow(midIn, contrast) - pow(hdrMax, contrast) * pow(midIn, contrast * shoulder) * midOut) /
+    (pow(hdrMax, contrast * shoulder) * midOut - pow(midIn, contrast * shoulder) * midOut);
+}
+
+// General tonemapping operator, p := {contrast,shoulder,b,c}.
+float ColTone(float x, vec4 p)
+{
+    float z = pow(x, p.r);
+    return z / (pow(z, p.g) * p.b + p.a);
+}
+
+// AMD Tonemapper
+vec3 AMDTonemapper(vec3 color)
+{
+    const float hdrMax   = 16.0f;  // How much HDR range before clipping. HDR modes likely need this pushed up to say 25.0.
+    const float contrast = 2.0f;   // Use as a baseline to tune the amount of contrast the tonemapper has.
+    const float shoulder = 1.0f;   // Likely don抰 need to mess with this factor, unless matching existing tonemapper is not working well..
+    const float midIn    = 0.18f;  // most games will have a {0.0 to 1.0} range for LDR so midIn should be 0.18.
+    const float midOut   = 0.18f;  // Use for LDR. For HDR10 10:10:10:2 use maybe 0.18/25.0 to start. For scRGB, I forget what a good starting point is, need to re-calculate.
+
+    float b = ColToneB(hdrMax, contrast, shoulder, midIn, midOut);
+    float c = ColToneC(hdrMax, contrast, shoulder, midIn, midOut);
+    
+    float peak = max(color.r, max(color.g, color.b));
+    peak = max(EPS, peak);
+
+    vec3 ratio = color / peak;
+    peak = ColTone(peak, vec4(contrast, shoulder, b, c) );
+    // then process ratio
+
+    // probably want send these pre-computed (so send over saturation/crossSaturation as a constant)
+    float crosstalk = 4.0f; // controls amount of channel crosstalk
+    float saturation = contrast; // full tonal range saturation control
+    float crossSaturation = contrast * 16.0f; // crosstalk saturation
+
+    float white = 1.0f;
+
+    // wrap crosstalk in transform
+    ratio = pow(abs(ratio), vec3(saturation / crossSaturation));
+    ratio = mix(ratio, vec3(white), vec3(pow(peak, crosstalk)));
+    ratio = pow(abs(ratio), vec3(crossSaturation));
+
+    // then apply ratio to peak
+    color = peak * ratio;
+    return color;
+}
+
+// The tone mapper used in HDRToneMappingCS11
+vec3 DX11DSK(vec3 color)
+{
+    float  MIDDLE_GRAY = 0.72f;
+    float  LUM_WHITE = 1.5f;
+
+    // Tone mapping
+    color.rgb *= MIDDLE_GRAY;
+    color.rgb *= (1.0f + color/LUM_WHITE);
+    color.rgb /= (1.0f + color);
+
+    return color;
+}
+
+// Reinhard
+vec3 Reinhard(vec3 color)
+{
+    return color/(1+color);
+}
+
+// Hable's filmic
+vec3 Uncharted2TonemapOp(vec3 x)
+{
+    float A = 0.15;
+    float B = 0.50;
+    float C = 0.10;
+    float D = 0.20;
+    float E = 0.02;
+    float F = 0.30;
+
+    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
+}
+
+vec3 Uncharted2Tonemap(vec3 color)
+{
+    float W = 11.2;
+    return Uncharted2TonemapOp(2.0 * color) / Uncharted2TonemapOp(vec3(W));
+}
+
+vec3 tonemapACES( vec3 x )
+{
+    float a = 2.51;
+    float b = 0.03;
+    float c = 2.43;
+    float d = 0.59;
+    float e = 0.14;
+    return clamp((x*(a*x+b))/(x*(c*x+d)+e), 0.0, 1.0);
+}
+
+/*****************************************************************************************/
+
+#endif
