@@ -901,42 +901,65 @@ namespace Spices {
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(
+		const std::string&  materialName , 
+		VkCommandBuffer     cmdBuffer    , 
+		VkPipelineBindPoint bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 		
 		RenderBehaveBuilder::BindPipeline(materialName, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindPipelineAsync(const std::string& materialName, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindPipelineAsync(
+		const std::string&  materialName , 
+		VkPipelineBindPoint bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
 		RenderBehaveBuilder::BindPipelineAsync(materialName, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(
+		const DescriptorSetInfo& infos     , 
+		VkCommandBuffer          cmdBuffer , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 		
 		RenderBehaveBuilder::BindDescriptorSet(infos, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSetAsync(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSetAsync(
+		const DescriptorSetInfo& infos     , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
 		RenderBehaveBuilder::BindDescriptorSetAsync(infos, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSet(
+		const DescriptorSetInfo& infos     , 
+		const std::string&       name      , 
+		VkCommandBuffer          cmdBuffer , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 		
 		RenderBehaveBuilder::BindDescriptorSet(infos, name, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSetAsync(const DescriptorSetInfo& infos, const std::string& name, VkPipelineBindPoint bindPoint)
+	void Renderer::RayTracingRenderBehaveBuilder::BindDescriptorSetAsync(
+		const DescriptorSetInfo& infos , 
+		const std::string&       name  , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1001,7 +1024,11 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	void Renderer::RenderBehaveBuilder::BindDescriptorSet(
+		const DescriptorSetInfo& infos     , 
+		VkCommandBuffer          cmdBuffer , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1038,7 +1065,10 @@ namespace Spices {
 		}
 	}
 
-	void Renderer::RenderBehaveBuilder::BindDescriptorSetAsync(const DescriptorSetInfo& infos, VkPipelineBindPoint bindPoint)
+	void Renderer::RenderBehaveBuilder::BindDescriptorSetAsync(
+		const DescriptorSetInfo& infos , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1642,21 +1672,34 @@ namespace Spices {
 		m_CommandBuffer  = cmdBuffers[currentFrame];
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	void Renderer::ComputeRenderBehaveBuilder::BindPipeline(
+		const std::string&  materialName , 
+		VkCommandBuffer     cmdBuffer    , 
+		VkPipelineBindPoint bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 		
 		RenderBehaveBuilder::BindPipeline(materialName, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(
+		const DescriptorSetInfo& infos     , 
+		VkCommandBuffer          cmdBuffer , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 		
 		RenderBehaveBuilder::BindDescriptorSet(infos, cmdBuffer, bindPoint);
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(const DescriptorSetInfo& infos, const std::string& name, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	void Renderer::ComputeRenderBehaveBuilder::BindDescriptorSet(
+		const DescriptorSetInfo& infos     , 
+		const std::string&       name      , 
+		VkCommandBuffer          cmdBuffer , 
+		VkPipelineBindPoint      bindPoint
+	)
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -1677,12 +1720,21 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		image->Barrier(m_CommandBuffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+		image->Barrier(
+			cmdBuffer ? cmdBuffer : m_CommandBuffer , 
+			srcAccessMask                           , 
+			dstAccessMask                           , 
+			srcStageMask                            , 
+			dstStageMask                            , 
+			srcQueueFamilyIndex                     , 
+			dstQueueFamilyIndex
+		);
 	}
 
 	void Renderer::RenderBehaveBuilder::ReleaseBarriers(
@@ -1692,12 +1744,21 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		image->Barrier(m_CommandBuffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+		image->Barrier(
+			cmdBuffer ? cmdBuffer : m_CommandBuffer , 
+			srcAccessMask                           , 
+			dstAccessMask                           , 
+			srcStageMask                            , 
+			dstStageMask                            , 
+			srcQueueFamilyIndex                     , 
+			dstQueueFamilyIndex
+		);
 	}
 
 	void Renderer::RenderBehaveBuilder::InternalBarriers(
@@ -1705,12 +1766,41 @@ namespace Spices {
 		VkAccessFlags         srcAccessMask , 
 		VkAccessFlags         dstAccessMask , 
 		VkPipelineStageFlags  srcStageMask  , 
-		VkPipelineStageFlags  dstStageMask
+		VkPipelineStageFlags  dstStageMask  ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
 
-		image->Barrier(m_CommandBuffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED);
+		image->Barrier(
+			cmdBuffer ? cmdBuffer : m_CommandBuffer , 
+			srcAccessMask                           , 
+			dstAccessMask                           , 
+			srcStageMask                            , 
+			dstStageMask                            , 
+			VK_QUEUE_FAMILY_IGNORED                 , 
+			VK_QUEUE_FAMILY_IGNORED
+		);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::InternalBarriers(
+		VulkanImage*          image         ,
+		VkAccessFlags         srcAccessMask , 
+		VkAccessFlags         dstAccessMask , 
+		VkPipelineStageFlags  srcStageMask  , 
+		VkPipelineStageFlags  dstStageMask  ,
+		VkCommandBuffer       cmdBuffer
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		RenderBehaveBuilder::InternalBarriers(
+			srcAccessMask , 
+			dstAccessMask , 
+			srcStageMask  , 
+			dstStageMask  , 
+			cmdBuffer ? cmdBuffer : m_CommandBuffer
+		);
 	}
 
 	void Renderer::RenderBehaveBuilder::AddBarriers(
@@ -1720,7 +1810,8 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex 
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -1735,7 +1826,7 @@ namespace Spices {
 		bufferBarrier.buffer                  = buffer;
 
 		vkCmdPipelineBarrier(
-			m_CommandBuffer,
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			srcStageMask,
 			dstStageMask,
 			0,
@@ -1752,7 +1843,8 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -1767,7 +1859,7 @@ namespace Spices {
 		bufferBarrier.buffer                  = buffer;
 
 		vkCmdPipelineBarrier(
-			m_CommandBuffer,
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			srcStageMask,
 			dstStageMask,
 			0,
@@ -1782,7 +1874,8 @@ namespace Spices {
 		VkAccessFlags         srcAccessMask , 
 		VkAccessFlags         dstAccessMask , 
 		VkPipelineStageFlags  srcStageMask  , 
-		VkPipelineStageFlags  dstStageMask
+		VkPipelineStageFlags  dstStageMask  ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -1797,7 +1890,7 @@ namespace Spices {
 		bufferBarrier.buffer                  = buffer;
 
 		vkCmdPipelineBarrier(
-			m_CommandBuffer,
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			srcStageMask,
 			dstStageMask,
 			0,
@@ -1807,11 +1900,33 @@ namespace Spices {
 		);
 	}
 
+	void Renderer::ComputeRenderBehaveBuilder::InternalBarriers(
+		VkBuffer              buffer        , 
+		VkAccessFlags         srcAccessMask , 
+		VkAccessFlags         dstAccessMask , 
+		VkPipelineStageFlags  srcStageMask  , 
+		VkPipelineStageFlags  dstStageMask  ,
+		VkCommandBuffer       cmdBuffer
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		RenderBehaveBuilder::InternalBarriers(
+			buffer        , 
+			srcAccessMask , 
+			dstAccessMask , 
+			srcStageMask  , 
+			dstStageMask  , 
+			cmdBuffer ? cmdBuffer : m_CommandBuffer
+		);
+	}
+
 	void Renderer::RenderBehaveBuilder::InternalBarriers(
 		VkAccessFlags         srcAccessMask , 
 		VkAccessFlags         dstAccessMask , 
 		VkPipelineStageFlags  srcStageMask  , 
-		VkPipelineStageFlags  dstStageMask
+		VkPipelineStageFlags  dstStageMask  ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -1822,13 +1937,32 @@ namespace Spices {
 		barrier.dstAccessMask           = dstAccessMask;
 
 		vkCmdPipelineBarrier(
-			m_CommandBuffer,
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			srcStageMask,
 			dstStageMask,
 			0,
 			1, &barrier,
 			0, nullptr,
 			0, nullptr
+		);
+	}
+
+	void Renderer::ComputeRenderBehaveBuilder::InternalBarriers(
+		VkAccessFlags         srcAccessMask , 
+		VkAccessFlags         dstAccessMask , 
+		VkPipelineStageFlags  srcStageMask  , 
+		VkPipelineStageFlags  dstStageMask  ,
+		VkCommandBuffer       cmdBuffer
+	)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		RenderBehaveBuilder::InternalBarriers(
+			srcAccessMask ,
+			dstAccessMask , 
+			srcStageMask  , 
+			dstStageMask  , 
+			cmdBuffer ? cmdBuffer : m_CommandBuffer
 		);
 	}
 
@@ -1839,12 +1973,22 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::AddBarriers(image, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+		RenderBehaveBuilder::AddBarriers(
+			image               , 
+			srcAccessMask       , 
+			dstAccessMask       , 
+			srcStageMask        , 
+			dstStageMask        , 
+			srcQueueFamilyIndex , 
+			dstQueueFamilyIndex , 
+			cmdBuffer ? cmdBuffer : m_CommandBuffer
+		);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::ReleaseBarriers(
@@ -1854,12 +1998,22 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::ReleaseBarriers(image, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+		RenderBehaveBuilder::ReleaseBarriers(
+			image               , 
+			srcAccessMask       , 
+			dstAccessMask       , 
+			srcStageMask        , 
+			dstStageMask        , 
+			srcQueueFamilyIndex , 
+			dstQueueFamilyIndex , 
+			cmdBuffer ? cmdBuffer : m_CommandBuffer
+		);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::AddBarriers(
@@ -1869,12 +2023,22 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex 
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::AddBarriers(buffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+		RenderBehaveBuilder::AddBarriers(
+			buffer              , 
+			srcAccessMask       , 
+			dstAccessMask       , 
+			srcStageMask        , 
+			dstStageMask        , 
+			srcQueueFamilyIndex , 
+			dstQueueFamilyIndex , 
+			cmdBuffer ? cmdBuffer : m_CommandBuffer
+		);
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::ReleaseBarriers(
@@ -1884,12 +2048,22 @@ namespace Spices {
 		VkPipelineStageFlags  srcStageMask        , 
 		VkPipelineStageFlags  dstStageMask        ,
 		uint32_t              srcQueueFamilyIndex ,
-		uint32_t              dstQueueFamilyIndex
+		uint32_t              dstQueueFamilyIndex ,
+		VkCommandBuffer       cmdBuffer
 	)
 	{
 		SPICES_PROFILE_ZONE;
 		
-		RenderBehaveBuilder::ReleaseBarriers(buffer, srcAccessMask, dstAccessMask, srcStageMask, dstStageMask, srcQueueFamilyIndex, dstQueueFamilyIndex);
+		RenderBehaveBuilder::ReleaseBarriers(
+			buffer              , 
+			srcAccessMask       , 
+			dstAccessMask       , 
+			srcStageMask        , 
+			dstStageMask        , 
+			srcQueueFamilyIndex ,
+			dstQueueFamilyIndex , 
+			cmdBuffer ? cmdBuffer : m_CommandBuffer
+		);
 	}
 
 	Renderer::DGCLayoutBuilder::DGCLayoutBuilder(

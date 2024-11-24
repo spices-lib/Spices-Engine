@@ -1074,6 +1074,17 @@ namespace Spices {
 
 			/****************************************************************************/
 
+			/**
+			* @brief Add a Image Barrier from compute queue to this graphic queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void AddBarriers(
 				VulkanImage*          image               ,
 				VkAccessFlags         srcAccessMask       , 
@@ -1081,9 +1092,21 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask        , 
 				VkPipelineStageFlags  dstStageMask        ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
 			);
 
+			/**
+			* @brief Add a Image Barrier from this graphic queue to compute queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void ReleaseBarriers(
 				VulkanImage*          image          ,
 				VkAccessFlags         srcAccessMask  ,
@@ -1091,19 +1114,41 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask   ,
 				VkPipelineStageFlags  dstStageMask   ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
 			);
 
-			void InternalBarriers(
+			/**
+			* @brief Add a Image Barrier from this queue to this queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void InternalBarriers(
 				VulkanImage*          image                                                ,
 				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
 				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
-				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
-				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT    ,
+				VkCommandBuffer       cmdBuffer     = VK_NULL_HANDLE
 			);
 
 			/****************************************************************************/
 
+			/**
+			* @brief Add a Buffer Barrier from compute queue to this graphic queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void AddBarriers(
 				VkBuffer              buffer         , 
 				VkAccessFlags         srcAccessMask  , 
@@ -1111,9 +1156,21 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask   , 
 				VkPipelineStageFlags  dstStageMask   ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
 			);
 
+			/**
+			* @brief Add a Buffer Barrier from this graphic queue to compute queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void ReleaseBarriers(
 				VkBuffer              buffer         ,
 				VkAccessFlags         srcAccessMask  ,
@@ -1121,22 +1178,43 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask   ,
 				VkPipelineStageFlags  dstStageMask   ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
 			);
 
-			void InternalBarriers(
+			/**
+			* @brief Add a Buffer Barrier from this queue to this queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void InternalBarriers(
 				VkBuffer              buffer                                               ,
 				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
 				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
-				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
-				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT    ,
+				VkCommandBuffer       cmdBuffer     = VK_NULL_HANDLE
 			);
 
-			void InternalBarriers(
+			/**
+			* @brief Add a Memory Barrier from this queue to this queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void InternalBarriers(
 				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           , 
 				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            , 
-				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
-				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT    ,
+				VkCommandBuffer       cmdBuffer     = VK_NULL_HANDLE
 			);
 
 			/****************************************************************************/
@@ -1420,6 +1498,17 @@ namespace Spices {
 
 			/****************************************************************************/
 
+			/**
+			* @brief Add a Image Barrier from graphic queue to this compute queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void AddBarriers(
 				VulkanImage*          image               , 
 				VkAccessFlags         srcAccessMask       , 
@@ -1427,9 +1516,21 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask        , 
 				VkPipelineStageFlags  dstStageMask        ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
 			) override;
 
+			/**
+			* @brief Add a Image Barrier from this compute queue to graphic queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void ReleaseBarriers(
 				VulkanImage*          image          ,
 				VkAccessFlags         srcAccessMask  ,
@@ -1437,11 +1538,41 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask   ,
 				VkPipelineStageFlags  dstStageMask   ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
+			) override;
+
+			/**
+			* @brief Add a Image Barrier from this queue to this queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void InternalBarriers(
+				VulkanImage*          image                                                ,
+				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
+				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkCommandBuffer       cmdBuffer     = VK_NULL_HANDLE
 			) override;
 
 			/****************************************************************************/
 
+			/**
+			* @brief Add a Buffer Barrier from graphic queue to this compute queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void AddBarriers(
 				VkBuffer              buffer         , 
 				VkAccessFlags         srcAccessMask  , 
@@ -1449,9 +1580,21 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask   , 
 				VkPipelineStageFlags  dstStageMask   ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
 			) override;
 
+			/**
+			* @brief Add a Buffer Barrier from this compute queue to graphic queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] srcQueueFamilyIndex source queue family.
+			* @param[in] dstQueueFamilyIndex dest queue family.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
 			virtual void ReleaseBarriers(
 				VkBuffer              buffer         ,
 				VkAccessFlags         srcAccessMask  ,
@@ -1459,7 +1602,43 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask   ,
 				VkPipelineStageFlags  dstStageMask   ,
 				uint32_t              srcQueueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily,
-				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily
+				uint32_t              dstQueueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily,
+				VkCommandBuffer       cmdBuffer           = VK_NULL_HANDLE
+			) override;
+
+			/**
+			* @brief Add a Buffer Barrier from this queue to this queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void InternalBarriers(
+				VkBuffer              buffer                                               ,
+				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           ,
+				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            ,
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkCommandBuffer       cmdBuffer     = VK_NULL_HANDLE
+			) override;
+
+			/**
+			* @brief Add a Memory Barrier from this queue to this queue.
+			* @param[in] image VulkanImage.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			virtual void InternalBarriers(
+				VkAccessFlags         srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT           , 
+				VkAccessFlags         dstAccessMask = VK_ACCESS_SHADER_READ_BIT            , 
+				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT ,
+				VkCommandBuffer       cmdBuffer     = VK_NULL_HANDLE
 			) override;
 
 			/****************************************************************************/
