@@ -56,6 +56,11 @@ namespace Spices {
 
 		// Positions
 		{
+			if (primitive.POSITION < 0)
+			{
+				SPICES_CORE_ERROR("Positions buffer invalid.")
+				return false;
+			}
 			const GltfAccessors::Item& positionAccessor     = accessors->m_AccessorsData[primitive.POSITION];
 			const GltfBufferViews::Item& positionBufferView = bufferViews->m_BufferViewsData[positionAccessor.bufferView];
 			const GltfBuffers::Item& positionBuffer         = buffers->m_BuffersData[positionBufferView.buffer];
@@ -78,6 +83,11 @@ namespace Spices {
 
 		// Normals
 		{
+			if (primitive.NORMAL < 0)
+			{
+				SPICES_CORE_ERROR("Normal buffer invalid.")
+				return false;
+			}
 			const GltfAccessors::Item& normalAccessor     = accessors->m_AccessorsData[primitive.NORMAL];
 			const GltfBufferViews::Item& normalBufferView = bufferViews->m_BufferViewsData[normalAccessor.bufferView];
 			const GltfBuffers::Item& normalBuffer         = buffers->m_BuffersData[normalBufferView.buffer];
@@ -106,6 +116,11 @@ namespace Spices {
 
 		// TexCoords
 		{
+			if (primitive.TEXCOORD_0 < 0)
+			{
+				SPICES_CORE_ERROR("TexCoords buffer invalid.")
+				return false;
+			}
 			const GltfAccessors::Item& texCoordAccessor     = accessors->m_AccessorsData[primitive.TEXCOORD_0];
 			const GltfBufferViews::Item& texCoordBufferView = bufferViews->m_BufferViewsData[texCoordAccessor.bufferView];
 			const GltfBuffers::Item& texCoordBuffer         = buffers->m_BuffersData[texCoordBufferView.buffer];
@@ -140,6 +155,11 @@ namespace Spices {
 
 		// primVertices
 		{
+			if (primitive.indices < 0)
+			{
+				SPICES_CORE_ERROR("indices buffer invalid.")
+				return false;
+			}
 			const GltfAccessors::Item& indicesAccessor     = accessors->m_AccessorsData[primitive.indices];
 			const GltfBufferViews::Item& indicesBufferView = bufferViews->m_BufferViewsData[indicesAccessor.bufferView];
 			const GltfBuffers::Item& indicesBuffer         = buffers->m_BuffersData[indicesBufferView.buffer];

@@ -70,14 +70,14 @@ namespace Spices {
 					Primitive& prim = item.primitives[j];
 					auto& primitive = primitives[j];
 
-					prim.POSITION   = primitive["attributes"]["POSITION"];
-					prim.NORMAL     = primitive["attributes"]["NORMAL"];
-					prim.TEXCOORD_0 = primitive["attributes"]["TEXCOORD_0"];
-					prim.TANGENT    = primitive["attributes"]["TANGENT"];
+					prim.POSITION   = GltfHelper::GetElementInt(primitive["attributes"], "POSITION", -1);
+					prim.NORMAL     = GltfHelper::GetElementInt(primitive["attributes"], "NORMAL", -1);
+					prim.TEXCOORD_0 = GltfHelper::GetElementInt(primitive["attributes"], "TEXCOORD_0", -1);
+					prim.TANGENT    = GltfHelper::GetElementInt(primitive["attributes"], "TANGENT", -1);
 
-					prim.indices   = primitive["indices"];
-					prim.material  = primitive["material"];
-					prim.mode      = primitive["mode"];
+					prim.indices   = GltfHelper::GetElementInt(primitive, "indices", -1);
+					prim.material  = GltfHelper::GetElementInt(primitive, "material", -1);
+					prim.mode      = GltfHelper::GetElementInt(primitive, "mode", -1);
 				}
 			}
 		}
