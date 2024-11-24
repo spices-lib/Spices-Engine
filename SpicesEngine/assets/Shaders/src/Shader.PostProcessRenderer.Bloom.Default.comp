@@ -13,6 +13,19 @@
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
 
+/**
+* @brief Material Parameter.
+* It should be the struct of all textures index and parameter buffer address.
+* One index per texture, One address per buffer.
+*/
+struct MaterialParameter
+{
+    int   blurScale;
+    float blurStrength;
+};
+
+#include "Header/ShaderBindLessMaterial.glsl"
+        
 /*****************************************************************************************/
 
 /*************************************Comp Input******************************************/
@@ -35,8 +48,9 @@ layout(set = 2, binding = 1, rgba16f) uniform image2D Bloom[POST_BLOOM_MIPMAP]; 
 */
 layout(push_constant) uniform Push 
 {
-    uint  mipmap;
-    float weight;
+    uint64_t materialAddress;            /* @brief bloom material address. */
+    uint  mipmap;                        /* @brief mipmap level.           */
+    float weight;                        /* @brief above blend weight.     */
 }
 push;
 
@@ -77,12 +91,14 @@ void DirectionalBlur(const in ivec2 index, const in ivec2 dir, const in uint lev
 
 void main()
 {
+    ExplainMaterialParameter(push.materialAddress);
+        
     ivec2 index;
     index.x = int(gl_GlobalInvocationID.x >> 1);
     index.y = int(gl_GlobalInvocationID.y >> 1);
 
-    DirectionalBlur(index, ivec2(1, 0), push.mipmap);
-    DirectionalBlur(index, ivec2(0, 1), push.mipmap); 
+    DirectionalBlur(index, ivec2(materialParam.blurScale * 1, 0), push.mipmap);
+    DirectionalBlur(index, ivec2(0, materialParam.blurScale * 1), push.mipmap); 
 
     const vec4 color = imageLoad(Bloom[push.mipmap], index) * push.weight;
 
@@ -111,11 +127,11 @@ void DirectionalBlur(const in ivec2 index, const in ivec2 dir, const in uint lev
         vec4 l = imageLoad(Bloom[level], ivec2(index + dir * i));
         vec4 r = imageLoad(Bloom[level], ivec2(index - dir * i));
 
-        accum += l * s_coeffs[i];
-        accum += r * s_coeffs[i];
+        accum += l * s_coeffs[i] * materialParam.blurStrength;
+        accum += r * s_coeffs[i] * materialParam.blurStrength;
 
-        if(l.w < 0.5f) accum += origin * s_coeffs[i];
-        if(r.w < 0.5f) accum += origin * s_coeffs[i];
+        if(l.w < 0.5f) accum += origin * s_coeffs[i] * materialParam.blurStrength;
+        if(r.w < 0.5f) accum += origin * s_coeffs[i] * materialParam.blurStrength;
     }
     
     // Wait for read.

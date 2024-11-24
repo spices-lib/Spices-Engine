@@ -14,6 +14,7 @@ namespace Spices {
 	* @brief Forward declare.
 	*/
 	class ImguiDisplayOptions;
+	class ImguiPostProcessing;
 
 	/**
 	* @brief The ImguiPreferences Class.
@@ -57,6 +58,7 @@ namespace Spices {
 	private:
 
 		std::shared_ptr<ImguiDisplayOptions> m_ImguiDisplayOptions;
+		std::shared_ptr<ImguiPostProcessing> m_ImguiPostProcessing;
 	};
 
 }

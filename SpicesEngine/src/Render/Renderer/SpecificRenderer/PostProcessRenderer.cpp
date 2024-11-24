@@ -13,8 +13,9 @@ namespace Spices {
 	{
 		struct BloomPushConstant
 		{
+			uint64_t materialAddress;
 			uint32_t mipmap;
-			float weight;
+			float    weight;
 		};
 	}
 
@@ -38,7 +39,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto image = m_RendererResourcePool->AccessRowResource("SceneColor").get();
+		const auto image = m_RendererResourcePool->AccessRowResource("SceneColor").get();
 		
 		DescriptorSetBuilder{ "DownSample", this }
 		.AddPushConstant(sizeof(uint32_t))
@@ -91,7 +92,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto bloomImage = m_RendererResourcePool->AccessRowResource("Bloom").get();
+		const auto bloomImage = m_RendererResourcePool->AccessRowResource("Bloom").get();
 
 		ComputeRenderBehaveBuilder builder{ this ,frameInfo.m_FrameIndex, frameInfo.m_ImageIndex, m_VulkanState.m_GraphicCommandBuffer };
 
@@ -103,7 +104,7 @@ namespace Spices {
 
 		builder.BindPipeline("PostProcessRenderer.DownSample.Default");
 
-		for (int i = 0; i < bloomImage->GetMipLevels(); i++)
+		for (uint32_t i = 0; i < bloomImage->GetMipLevels(); i++)
 		{
 			builder.UpdatePushConstant<uint32_t>([&](auto& push) {
 				push = i;
@@ -123,6 +124,7 @@ namespace Spices {
 		for (int i = bloomImage->GetMipLevels() - 1; i >= 0; i--)
 		{
 			builder.UpdatePushConstant<PostProcessR::BloomPushConstant>([&](auto& push) {
+				push.materialAddress = GetDefaultMaterial("Bloom")->GetMaterialParamsAddress();
 				push.mipmap = i;
 				push.weight = i == 0 ? 0.08f : 1.0f;
 			});
@@ -144,7 +146,7 @@ namespace Spices {
 
 		builder.BeginNextSubPass("ToneMapping");
 
-		auto sceneColor = m_RendererResourcePool->AccessRowResource("SceneColor").get();
+		const auto sceneColor = m_RendererResourcePool->AccessRowResource("SceneColor").get();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "ToneMapping" }));
 

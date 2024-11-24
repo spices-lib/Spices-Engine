@@ -1,6 +1,6 @@
 /**
-* @file ImguiDisplayOptions.h
-* @brief The ImguiDisplayOptions Class Definitions.
+* @file ImguiPostProcessing.h
+* @brief The ImguiPostProcessing Class Definitions.
 * @author Spices.
 */
 
@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/**
-	* @brief The ImguiDisplayOptions Class.
-	* This class defines how to render a edit menu.
+	* @brief The ImguiPostProcessing Class.
+	* This class defines how to render a PostProcessing options.
 	*/
-	class ImguiDisplayOptions : public ImguiSlate
+	class ImguiPostProcessing : public ImguiSlate
 	{
 	public:
 
@@ -23,15 +23,15 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiDisplayOptions(
-			const std::string& panelName ,
-			FrameInfo&         frameInfo
+		ImguiPostProcessing(
+			const std::string& panelName,
+			FrameInfo& frameInfo
 		);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiDisplayOptions() override = default;
+		virtual ~ImguiPostProcessing() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.

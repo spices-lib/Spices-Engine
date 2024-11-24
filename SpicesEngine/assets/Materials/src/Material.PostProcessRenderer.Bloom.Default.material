@@ -13,3 +13,20 @@ Shaders:
   - Stage: comp
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: PostProcessRenderer.Bloom.Default
+    
+# @brief Material Parameters usages. 
+Parameters:
+  
+  # @brief Usage: blurScale.
+  - Name: blurScale
+    # @brief [Parameter Type, Parameter Value]
+    Value: [int, 1]
+    MinValue: [int, 0]
+    MaxValue: [int, 10]
+    
+  # @brief Usage: blurStrength.
+  - Name: blurStrength
+    # @brief [Parameter Type, Parameter Value]
+    Value: [float, 1.0]
+    MinValue: [float, 0.0]
+    MaxValue: [float, 10.0]

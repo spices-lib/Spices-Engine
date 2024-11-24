@@ -27,6 +27,6 @@ Parameters:
   # @brief Usage: toneMapper.
   - Name: toneMapper
     # @brief [Parameter Type, Parameter Value]
-    Value: [int, 4]
+    Value: [int, 0]
     MinValue: [int, 0]
     MaxValue: [int, 5]

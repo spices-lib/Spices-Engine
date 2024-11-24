@@ -124,6 +124,12 @@ namespace Spices {
 			std::function<void()> treeFunc
 		);
 
+		static void DrawMaterial(
+			const std::string&               name    , 
+			float                            width   , 
+			const std::shared_ptr<Material>& material
+		);
+
 		/**
 		* @brief Draw Drag Scale with different p_min p_max.
 		* @param[in] label Name.

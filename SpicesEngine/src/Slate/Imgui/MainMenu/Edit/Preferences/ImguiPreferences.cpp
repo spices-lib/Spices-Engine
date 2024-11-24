@@ -9,6 +9,7 @@
 
 #include "Systems/SlateSystem.h"
 #include "ImguiDisplayOptions.h"
+#include "ImguiPostProcessing.h"
 
 namespace Spices {
 
@@ -24,6 +25,7 @@ namespace Spices {
         * @brief Instance.
         */
         m_ImguiDisplayOptions = SlateSystem::GetRegister()->Register<ImguiDisplayOptions>(false, "DisplayOptions");
+        m_ImguiPostProcessing = SlateSystem::GetRegister()->Register<ImguiPostProcessing>(false, "PostProcessing");
     }
 
     void ImguiPreferences::OnRender()
@@ -72,31 +74,32 @@ namespace Spices {
                 ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.267f, 0.282f, 0.282f, 1.0f));
                 ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.121f, 0.129f, 0.137f, 1.0f));
 
-                if (ImGui::MenuItem(ICON_TEXT(" ", Animation))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Audio))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Capture Screenshot))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Curve Tools))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Datetime Format))) {}
+                if (ImGui::MenuItem(ICON_TEXT(" ", Animation))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Audio))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Capture Screenshot))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Curve Tools))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Datetime Format))) { selectedSlate = nullptr; }
                 if (ImGui::MenuItem(ICON_TEXT(" ", Display Options))) { selectedSlate = m_ImguiDisplayOptions.get(); }
-                if (ImGui::MenuItem(ICON_TEXT(" ", Environment))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Live))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Material))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Material Thumbnail))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Measure))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Metrics Assembler))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Navigation))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Particle System))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Physics))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Property Widgets))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Rendering))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Resource Monitor))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Stage))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Tagging))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Template Startup))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Thumbnail Generation))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Viewport))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Visual Scripting))) {}
-                if (ImGui::MenuItem(ICON_TEXT(" ", Visualization))) {}
+                if (ImGui::MenuItem(ICON_TEXT(" ", Post Processing))) { selectedSlate = m_ImguiPostProcessing.get(); }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Environment))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Live))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Material))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Material Thumbnail))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Measure))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Metrics Assembler))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Navigation))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Particle System))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Physics))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Property Widgets))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Rendering))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Resource Monitor))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Stage))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Tagging))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Template Startup))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Thumbnail Generation))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Viewport))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Visual Scripting))) { selectedSlate = nullptr; }
+                if (ImGui::MenuItem(ICON_TEXT(" ", Visualization))) { selectedSlate = nullptr; }
 
                 ImGui::PopStyleColor(2);
                 ImGui::PopStyleVar(2);
