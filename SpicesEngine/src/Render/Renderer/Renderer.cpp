@@ -20,7 +20,6 @@ namespace Spices {
 		const std::shared_ptr<VulkanDevice>&         device                ,
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
 		const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool         ,
-		RenderPassStatistics::StatisticsFlags        statisticsFlags       ,
 		bool                                         isLoadDefaultMaterial ,
 		bool                                         isRegistryDGCPipeline
 	)
@@ -29,7 +28,6 @@ namespace Spices {
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
 		, m_CmdThreadPool           (cmdThreadPool         )
-		, m_RendererStatistics      (std::make_shared<RenderPassStatistics>(vulkanState, statisticsFlags))
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 		, m_IsRegistryDGCPipeline   (isRegistryDGCPipeline )
@@ -517,6 +515,13 @@ namespace Spices {
 		pLightBuffer[index].intensity = -1000.0f;
 	}
 	
+	std::shared_ptr<RendererSubPass>& Renderer::RenderBehaveBuilder::GetStatisticsRendererPass()
+	{
+		SPICES_PROFILE_ZONE;
+
+		return *m_Renderer->m_Pass->GetSubPasses().first();
+	}
+
 	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption)
 	{
 		SPICES_PROFILE_ZONE;
@@ -700,6 +705,11 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		/**
+		* @brief End RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->EndStatistics(m_CommandBuffer);
+
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
 		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
@@ -714,6 +724,11 @@ namespace Spices {
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		//NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter SubPass:" + m_HandledSubPass->GetName())
+
+		/**
+		* @brief Begin RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->BeginStatistics(m_CommandBuffer);
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginNextSubPassAsync(const std::string& subPassName)
@@ -783,7 +798,19 @@ namespace Spices {
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 
+		/**
+		* @brief Begin RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->BeginStatistics(m_CommandBuffer);
+
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	}
+
+	std::shared_ptr<RendererSubPass>& Renderer::ComputeRenderBehaveBuilder::GetStatisticsRendererPass()
+	{
+		SPICES_PROFILE_ZONE;
+
+		return m_HandledSubPass;
 	}
 
 	void Renderer::ComputeRenderBehaveBuilder::BeginRenderPass()
@@ -804,6 +831,11 @@ namespace Spices {
 		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+
+		/**
+		* @brief Begin RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->BeginStatistics(m_CommandBuffer);
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginRenderPassAsync()
@@ -852,9 +884,9 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 
 		/**
-		* @brief Begin renderer statistics.
+		* @brief Begin RenderPass Statistics.
 		*/
-		m_Renderer->m_RendererStatistics->BeginStatistics(m_CommandBuffer);
+		GetStatisticsRendererPass()->GetStatistics()->BeginStatistics(m_CommandBuffer);
 
 		/**
 		* @brief This command not allow async.
@@ -862,16 +894,16 @@ namespace Spices {
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 	}
 
-	void Renderer::RenderBehaveBuilder::EndRenderPass() const
+	void Renderer::RenderBehaveBuilder::EndRenderPass()
 	{
 		SPICES_PROFILE_ZONE;
 
 		vkCmdEndRenderPass(m_CommandBuffer);
 
 		/**
-		* @brief End renderer statistics.
+		* @brief End RenderPass Statistics.
 		*/
-		m_Renderer->m_RendererStatistics->EndStatistics(m_CommandBuffer);
+		GetStatisticsRendererPass()->GetStatistics()->EndStatistics(m_CommandBuffer);
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -885,9 +917,14 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 	}
 
-	void Renderer::ComputeRenderBehaveBuilder::EndRenderPass() const
+	void Renderer::ComputeRenderBehaveBuilder::EndRenderPass()
 	{
 		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief End RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->EndStatistics(m_CommandBuffer);
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -911,6 +948,87 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 		
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+	}
+
+	std::shared_ptr<RendererSubPass>& Renderer::RayTracingRenderBehaveBuilder::GetStatisticsRendererPass()
+	{
+		SPICES_PROFILE_ZONE;
+
+		return m_HandledSubPass;
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::BeginRenderPass()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_HandledSubPass      = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_SubPassIndex        = 0;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
+
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName(), 1, m_CurrentFrame)
+		NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
+
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_Renderer->m_Pass->GetName())
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
+
+		/**
+		* @brief Begin RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->BeginStatistics(m_CommandBuffer);
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::EndRenderPass()
+	{
+		/**
+		* @brief End RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->EndStatistics(m_CommandBuffer);
+
+		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
+
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+
+		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 2)
+		NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 1)
+
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::BeginNextSubPass(const std::string& subPassName)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief End RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->EndStatistics(m_CommandBuffer);
+
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		++m_SubPassIndex;
+		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
+
+		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
+		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		//NSIGHTPERF_GPUPROFILERONESHOT_ENDRANGE(m_CommandBuffer, 2)
+		//NSIGHTPERF_GPUPROFILERONESHOT_BEGINRANGE(m_CommandBuffer, m_HandledSubPass->GetName(), 2, m_CurrentFrame)
+
+		DEBUGUTILS_ENDLABEL(m_CommandBuffer)
+		DEBUGUTILS_BEGINLABEL(m_CommandBuffer, m_HandledSubPass->GetName())
+
+		//NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter SubPass:" + m_HandledSubPass->GetName())
+
+		/**
+		* @brief Begin RenderPass Statistics.
+		*/
+		GetStatisticsRendererPass()->GetStatistics()->BeginStatistics(m_CommandBuffer);
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(
@@ -1626,12 +1744,15 @@ namespace Spices {
 		m_Renderer->m_Pass = std::make_shared<RendererPass>(rendererPassName, m_Renderer->m_Device);
 	}
 
-	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(const std::string& subPassName)
+	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(
+		const std::string& subPassName              , 
+		RenderPassStatistics::StatisticsFlags flags
+	)
 	{
 		SPICES_PROFILE_ZONE;
 
-		const size_t size = m_Renderer->m_Pass->GetSubPasses().size();
-		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, static_cast<uint32_t>(size));
+		const size_t size        = m_Renderer->m_Pass->GetSubPasses().size();
+		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, static_cast<uint32_t>(size), flags);
 
 		return *this;
 	}

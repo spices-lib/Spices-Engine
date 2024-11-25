@@ -44,12 +44,5 @@ namespace Spices {
 		* @brief Get QueryPool Stored Result.
 		*/
 		virtual void GetPoolResult() override;
-
-	private:
-
-		/**
-		* @brief QueryPool of Timestamp.
-		*/
-		std::unique_ptr<VulkanQueryPool> m_QueryPool;
 	};
 }

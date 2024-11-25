@@ -13,41 +13,29 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
-		{
-			m_QueryPool[i] = std::make_unique<VulkanQueryPool>(state, VK_QUERY_TYPE_PIPELINE_STATISTICS, 1, (VkQueryPipelineStatisticFlagBits)(1 << i));
-		}
+		m_QueryPool = std::make_unique<VulkanQueryPool>(state, VK_QUERY_TYPE_PIPELINE_STATISTICS, 1, (VkQueryPipelineStatisticFlags)PipelineStatisticEnum::ALL);
 	}
 
 	void PipelineStatisticsQueryer::BeginQuery(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
-		{
-			m_QueryPool[i]->Reset(commandBuffer);
-			m_QueryPool[i]->BeginQuery(commandBuffer);
-		}
+		m_QueryPool->Reset(commandBuffer);
+		m_QueryPool->BeginQuery(commandBuffer);
 	}
 
 	void PipelineStatisticsQueryer::EndQuery(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
-		{
-			m_QueryPool[i]->EndQuery(commandBuffer);
-		}
+		m_QueryPool->EndQuery(commandBuffer);
 	}
 
 	void PipelineStatisticsQueryer::GetPoolResult()
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
-		{
-			uint64_t result;
-			m_QueryPool[i]->QueryResults(&result);
-		}
+		uint64_t result;
+		m_QueryPool->QueryResults(&result);
 	}
 }

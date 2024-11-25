@@ -10,7 +10,7 @@
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
-#include "Render/Renderer/RenderPassStatistics/RenderPassStatistics.h"
+#include "Render/Renderer/RenderPassStatistics/PipelineStatisticsQueryer.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
@@ -77,7 +77,6 @@ namespace Spices {
 			const std::shared_ptr<VulkanDevice>&         device                  ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
 			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
-			RenderPassStatistics::StatisticsFlags        statisticsFlags       = RenderPassStatistics::Timestamp | RenderPassStatistics::Pipeline,
 			bool                                         isLoadDefaultMaterial = true ,
 			bool                                         isRegistryDGCPipeline = false
 		);
@@ -336,9 +335,14 @@ namespace Spices {
 			/**
 			* @brief Add a new SubPass to Renderer Pass.
 			* @param[in] subPassName SunPass Name.
+			* @param[in] flags Statistics Flags.
 			* @return Returns the RendererPassBuilder.
 			*/
-			RendererPassBuilder& AddSubPass(const std::string& subPassName);
+			RendererPassBuilder& AddSubPass(
+				const std::string& subPassName              , 
+				RenderPassStatistics::StatisticsFlags flags = 
+				RenderPassStatistics::Timestamp | RenderPassStatistics::Pipeline
+			);
 
 			/**
 			* @brief Add a swapchain image attachment.
@@ -789,6 +793,12 @@ namespace Spices {
 			virtual ~RenderBehaveBuilder() = default;
 
 			/**
+			* @brief Get RenderPass in statistics.
+			* @reutrn Return RenderPass.
+			*/
+			virtual std::shared_ptr<RendererSubPass>& GetStatisticsRendererPass();
+
+			/**
 			* @brief Recording all this behaves does.
 			* @param[in] caption Recording Name
 			*/
@@ -1073,7 +1083,7 @@ namespace Spices {
 			/**
 			* @brief End this Renderer's RenderPass.
 			*/
-			virtual void EndRenderPass() const;
+			virtual void EndRenderPass();
 
 			/****************************************************************************/
 
@@ -1301,6 +1311,28 @@ namespace Spices {
 			virtual ~RayTracingRenderBehaveBuilder() override = default;
 			
 			/**
+			* @brief Get RenderPass in statistics.
+			* @reutrn Return RenderPass.
+			*/
+			virtual std::shared_ptr<RendererSubPass>& GetStatisticsRendererPass() override;
+
+			/**
+			* @brief Begin this Renderer's RenderPass.
+			*/
+			virtual void BeginRenderPass() override;
+
+			/**
+			* @brief End this Renderer's RenderPass.
+			*/
+			virtual void EndRenderPass() override;
+
+			/**
+			* @brief End a preview sub pass and stat next sub pass.
+			* @param[in] subPassName The name of next sub pass.
+			*/
+			virtual void BeginNextSubPass(const std::string& subPassName) override;
+
+			/**
 			* @brief Bind the pipeline created by CreatePipeline().
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
@@ -1435,6 +1467,12 @@ namespace Spices {
 			virtual ~ComputeRenderBehaveBuilder() override = default;
 
 			/**
+			* @brief Get RenderPass in statistics.
+			* @reutrn Return RenderPass.
+			*/
+			virtual std::shared_ptr<RendererSubPass>& GetStatisticsRendererPass() override;
+
+			/**
 			* @brief Begin this Renderer's RenderPass.
 			*/
 			virtual void BeginRenderPass() override;
@@ -1442,7 +1480,7 @@ namespace Spices {
 			/**
 			* @brief End this Renderer's RenderPass.
 			*/
-			virtual void EndRenderPass() const override;
+			virtual void EndRenderPass() override;
 
 			/**
 			* @brief End a preview sub pass and stat next sub pass.
@@ -1673,11 +1711,6 @@ namespace Spices {
 		* @brief ThreadPool of Submit Commands.
 		*/
 		std::shared_ptr<VulkanCmdThreadPool> m_CmdThreadPool;
-
-		/**
-		* @brief Statistics of Renderer.
-		*/
-		std::shared_ptr<RenderPassStatistics> m_RendererStatistics;
 
 		/**
 		* @brief RendererPass.
@@ -1928,7 +1961,14 @@ namespace Spices {
 		inheritanceInfo.renderPass           = m_Pass->Get();
 		inheritanceInfo.subpass              = subPass;
 		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::Get().m_ImageIndex);
+		inheritanceInfo.occlusionQueryEnable = VK_TRUE;
+
+#ifdef SPICES_DEBUG
+
+		inheritanceInfo.pipelineStatistics   = (VkQueryPipelineStatisticFlags)PipelineStatisticEnum::ALL;
      
+#endif
+
 		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
 		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;

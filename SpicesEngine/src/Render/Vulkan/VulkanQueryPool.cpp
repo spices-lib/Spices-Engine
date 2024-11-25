@@ -63,34 +63,33 @@ namespace Spices {
 			flags |= VK_QUERY_CONTROL_PRECISE_BIT;
 		}
 
+		assert(!(m_QueryType & VK_QUERY_TYPE_TIMESTAMP));
+
 		/**
 		* @brief Begin Query.
 		*/
-		if (m_QueryType & VK_QUERY_TYPE_TIMESTAMP)
-		{
-			vkCmdWriteTimestamp2(commandBuffer, VK_PIPELINE_STAGE_2_NONE, m_QueryPool, index);
-		}
-		else
-		{
-			vkCmdBeginQuery(commandBuffer, m_QueryPool, index, flags);
-		}
+		vkCmdBeginQuery(commandBuffer, m_QueryPool, index, flags);
 	}
 
 	void VulkanQueryPool::EndQuery(VkCommandBuffer commandBuffer, uint32_t index)
 	{
 		SPICES_PROFILE_ZONE;
 
+		assert(!(m_QueryType & VK_QUERY_TYPE_TIMESTAMP));
+
 		/**
 		* @brief EndQuery.
 		*/
-		if (m_QueryType & VK_QUERY_TYPE_TIMESTAMP)
-		{
-			vkCmdWriteTimestamp2(commandBuffer, VK_PIPELINE_STAGE_2_NONE, m_QueryPool, index);
-		}
-		else
-		{
-			vkCmdEndQuery(commandBuffer, m_QueryPool, index);
-		}
+		vkCmdEndQuery(commandBuffer, m_QueryPool, index);
+	}
+
+	void VulkanQueryPool::WriteTimeStamp(VkCommandBuffer commandBuffer, uint32_t index)
+	{
+		SPICES_PROFILE_ZONE;
+
+		assert(m_QueryType & VK_QUERY_TYPE_TIMESTAMP);
+
+		vkCmdWriteTimestamp2(commandBuffer, VK_PIPELINE_STAGE_2_NONE, m_QueryPool, index);
 	}
 
 	void VulkanQueryPool::Reset(VkCommandBuffer commandBuffer)

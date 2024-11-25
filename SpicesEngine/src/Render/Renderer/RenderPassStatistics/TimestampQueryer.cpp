@@ -22,14 +22,14 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_QueryPool->Reset(commandBuffer);
-		m_QueryPool->BeginQuery(commandBuffer, 0);
+		m_QueryPool->WriteTimeStamp(commandBuffer, 0);
 	}
 
 	void TimestampQueryer::EndQuery(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_QueryPool->EndQuery(commandBuffer, 1);
+		m_QueryPool->WriteTimeStamp(commandBuffer, 1);
 	}
 
 	void TimestampQueryer::GetPoolResult()

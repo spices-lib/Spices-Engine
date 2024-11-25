@@ -52,6 +52,13 @@ namespace Spices {
 		void EndQuery(VkCommandBuffer commandBuffer, uint32_t index = 0);
 
 		/**
+		* @brief Write a TimeStamp to queryPool.
+		* @param[in] commandBuffer VkCommandBuffer.
+		* @param[in] index QueryIndex.
+		*/
+		void WriteTimeStamp(VkCommandBuffer commandBuffer, uint32_t index);
+
+		/**
 		* @brief Reset QueryPool.
 		* Call it on frame start.
 		* @param[in] commandBuffer VkCommandBuffer.

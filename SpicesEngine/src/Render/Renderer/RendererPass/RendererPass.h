@@ -44,9 +44,14 @@ namespace Spices {
 		* @brief Add a subp ass to this renderer pass.
 		* @param[in] subPassName The name of sub pass.
 		* @param[in] index The index of sub pass.
+		* @param[in] flags Statistics Flags.
 		* @return Return the sub pass.
 		*/
-		std::shared_ptr<RendererSubPass> AddSubPass(const std::string& subPassName, uint32_t index);
+		std::shared_ptr<RendererSubPass> AddSubPass(
+			const std::string& subPassName              , 
+			uint32_t index                              , 
+			RenderPassStatistics::StatisticsFlags flags
+		);
 
 		/**
 		* @brief Add a attachment to this renderer pass.

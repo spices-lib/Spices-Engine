@@ -114,7 +114,7 @@ namespace Spices {
 		
 		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
 
-		builder.Recording("RayTracing");
+		builder.BeginRenderPass();
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
@@ -141,7 +141,7 @@ namespace Spices {
 		
 		builder.TraceRays(&m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion);
 
-		builder.EndRecording();
+		builder.EndRenderPass();
 	}
 
 	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo)

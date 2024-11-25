@@ -6,10 +6,20 @@
 
 #include "Pchheader.h"
 #include "RendererSubPass.h"
-
+#include "Render/Vulkan/VulkanRenderBackend.h"
 #include "Render/Renderer/DescriptorSetManager/DescriptorSetManager.h"
 
 namespace Spices {
+
+	RendererSubPass::RendererSubPass(
+		const std::string& subPassName, 
+		uint32_t           index      , 
+		RenderPassStatistics::StatisticsFlags flags
+	)
+		: m_SubpassName(subPassName)
+		, m_Index      (index)
+		, m_Statistics (std::make_shared<RenderPassStatistics>(VulkanRenderBackend::GetState(), flags))
+	{}
 
 	void RendererSubPass::AddColorAttachmentReference(
 		const VkAttachmentReference&               attachmentReference,

@@ -22,7 +22,11 @@ namespace Spices {
 		});
 	}
 
-	std::shared_ptr<RendererSubPass> RendererPass::AddSubPass(const std::string& subPassName, uint32_t index)
+	std::shared_ptr<RendererSubPass> RendererPass::AddSubPass(
+		const std::string& subPassName              ,
+		uint32_t           index                    , 
+		RenderPassStatistics::StatisticsFlags flags
+	)
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -35,7 +39,7 @@ namespace Spices {
 			return nullptr;
 		}
 
-		auto ptr = std::make_shared<RendererSubPass>(subPassName, index);
+		auto ptr = std::make_shared<RendererSubPass>(subPassName, index, flags);
 		m_SubPasses.push_back(subPassName, ptr);
 		return ptr;
 	}

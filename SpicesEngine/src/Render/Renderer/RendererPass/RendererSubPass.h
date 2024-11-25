@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "Render/Renderer/RenderPassStatistics/RenderPassStatistics.h"
 
 /******************************Vulkan Backend Header************************************************/
 #include "Render/FrameInfo.h"
@@ -31,14 +32,13 @@ namespace Spices
 		* @brief Constructor Function.
 		* @param[in] subPassName The name of sub pass.
 		* @param[in] index Sub pass index of pass.
+		* @param[in] flags Statistics Flags.
 		*/
 		RendererSubPass(
-			const std::string& subPassName , 
-			uint32_t           index
-		) 
-			: m_SubpassName(subPassName )
-			, m_Index      (index       ) 
-		{}
+			const std::string& subPassName,
+			uint32_t           index      ,
+			RenderPassStatistics::StatisticsFlags flags
+		);
 
 		/**
 		* @brief Destructor Function.
@@ -174,6 +174,12 @@ namespace Spices
 		*/
 		std::vector<VkPipelineColorBlendAttachmentState>& GetColorBlend() { return m_ColorBlends; }
 
+		/**
+		* @brief Get RenderPassStatistics.
+		* @return Returns RenderPassStatistics.
+		*/
+		std::shared_ptr<RenderPassStatistics>& GetStatistics() { return m_Statistics; }
+
 	private:
 
 		/**
@@ -185,6 +191,11 @@ namespace Spices
 		* @brief Index of sub pass in pass.
 		*/
 		uint32_t m_Index;
+
+		/**
+		* @brief Statistics of RenderPass.
+		*/
+		std::shared_ptr<RenderPassStatistics> m_Statistics;
 
 		/**
 		* @brief VkSubpassDescription.

@@ -43,5 +43,12 @@ namespace Spices {
 		* @brief Get QueryPool Stored Result.
 		*/
 		virtual void GetPoolResult() = 0;
+
+	protected:
+
+		/**
+		* @brief QueryPool of Pipeline.
+		*/
+		std::unique_ptr<VulkanQueryPool> m_QueryPool;
 	};
 }
