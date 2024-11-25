@@ -20,7 +20,7 @@ namespace Spices {
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
 		const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool
 	)
-		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool, true, false)
+		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool)
 	{
 		SPICES_PROFILE_ZONE;
 

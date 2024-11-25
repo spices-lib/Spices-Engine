@@ -36,7 +36,7 @@ namespace Spices {
 		virtual void BeginQuery(VkCommandBuffer commandBuffer) override;
 		virtual void EndQuery(VkCommandBuffer commandBuffer) override;
 
-		void GetPoolResult();
+		virtual void GetPoolResult() override;
 
 	private:
 

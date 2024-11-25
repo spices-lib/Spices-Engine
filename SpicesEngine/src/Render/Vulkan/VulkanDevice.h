@@ -172,6 +172,12 @@ namespace Spices {
 		*/
 		inline static VkPhysicalDeviceFeatures& GetDeviceFeatures() { return m_DeviceFeatures; };
 
+		/**
+		* @brief Get VkPhysicalDeviceProperties.
+		* @return Returns VkPhysicalDeviceProperties.
+		*/
+		inline static VkPhysicalDeviceProperties& GetDeviceProperties() { return m_DeviceProperties; }
+
 	private:
 
 		/**

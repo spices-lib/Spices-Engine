@@ -10,6 +10,7 @@
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
+#include "Render/Renderer/RenderPassStatistics/RenderPassStatistics.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
@@ -64,6 +65,7 @@ namespace Spices {
 		* @param[in] device The shared pointer of VulkanDevice, used for render pass's formats query.
 		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for registry/access RT.
 		* @param[in] cmdThreadPool ThreadPool of submit Cmd parallel.
+		* @param[in] statisticsFlags Flags of enable statistics with this renderer.
 		* @param[in] isLoadDefaultMaterial True if need load a default material.
 		* @param[in] isRegistryDGCPipeline True if need registry dgc pipeline.
 		*/
@@ -75,6 +77,7 @@ namespace Spices {
 			const std::shared_ptr<VulkanDevice>&         device                  ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
 			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
+			RenderPassStatistics::StatisticsFlags        statisticsFlags       = 0    ,
 			bool                                         isLoadDefaultMaterial = true ,
 			bool                                         isRegistryDGCPipeline = false
 		);
@@ -1670,6 +1673,11 @@ namespace Spices {
 		* @brief ThreadPool of Submit Commands.
 		*/
 		std::shared_ptr<VulkanCmdThreadPool> m_CmdThreadPool;
+
+		/**
+		* @brief Statistics of Renderer.
+		*/
+		std::shared_ptr<RenderPassStatistics> m_RendererStatistics;
 
 		/**
 		* @brief RendererPass.

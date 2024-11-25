@@ -20,6 +20,7 @@ namespace Spices {
 		const std::shared_ptr<VulkanDevice>&         device                ,
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
 		const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool         ,
+		RenderPassStatistics::StatisticsFlags        statisticsFlags       ,
 		bool                                         isLoadDefaultMaterial ,
 		bool                                         isRegistryDGCPipeline
 	)
@@ -28,6 +29,7 @@ namespace Spices {
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
 		, m_CmdThreadPool           (cmdThreadPool         )
+		, m_RendererStatistics      (std::make_shared<RenderPassStatistics>(vulkanState, statisticsFlags))
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 		, m_IsRegistryDGCPipeline   (isRegistryDGCPipeline )
@@ -850,6 +852,11 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + m_Renderer->m_Pass->GetName())
 
 		/**
+		* @brief Begin renderer statistics.
+		*/
+		m_Renderer->m_RendererStatistics->BeginStatistics(m_CommandBuffer);
+
+		/**
 		* @brief This command not allow async.
 		*/
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
@@ -860,6 +867,11 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		vkCmdEndRenderPass(m_CommandBuffer);
+
+		/**
+		* @brief End renderer statistics.
+		*/
+		m_Renderer->m_RendererStatistics->EndStatistics(m_CommandBuffer);
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 

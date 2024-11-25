@@ -66,7 +66,14 @@ namespace Spices {
 		/**
 		* @brief Begin Query.
 		*/
-		vkCmdBeginQuery(commandBuffer, m_QueryPool, index, flags);
+		if (m_QueryType & VK_QUERY_TYPE_TIMESTAMP)
+		{
+			vkCmdWriteTimestamp2(commandBuffer, VK_PIPELINE_STAGE_2_NONE, m_QueryPool, index);
+		}
+		else
+		{
+			vkCmdBeginQuery(commandBuffer, m_QueryPool, index, flags);
+		}
 	}
 
 	void VulkanQueryPool::EndQuery(VkCommandBuffer commandBuffer, uint32_t index)
@@ -76,7 +83,14 @@ namespace Spices {
 		/**
 		* @brief EndQuery.
 		*/
-		vkCmdEndQuery(commandBuffer, m_QueryPool, index);
+		if (m_QueryType & VK_QUERY_TYPE_TIMESTAMP)
+		{
+			vkCmdWriteTimestamp2(commandBuffer, VK_PIPELINE_STAGE_2_NONE, m_QueryPool, index);
+		}
+		else
+		{
+			vkCmdEndQuery(commandBuffer, m_QueryPool, index);
+		}
 	}
 
 	void VulkanQueryPool::Reset(VkCommandBuffer commandBuffer)
