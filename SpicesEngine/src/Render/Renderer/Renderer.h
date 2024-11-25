@@ -77,7 +77,7 @@ namespace Spices {
 			const std::shared_ptr<VulkanDevice>&         device                  ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
 			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
-			RenderPassStatistics::StatisticsFlags        statisticsFlags       = 0    ,
+			RenderPassStatistics::StatisticsFlags        statisticsFlags       = RenderPassStatistics::Timestamp | RenderPassStatistics::Pipeline,
 			bool                                         isLoadDefaultMaterial = true ,
 			bool                                         isRegistryDGCPipeline = false
 		);

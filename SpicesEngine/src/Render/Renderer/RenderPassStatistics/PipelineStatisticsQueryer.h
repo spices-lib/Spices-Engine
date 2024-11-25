@@ -1,3 +1,9 @@
+/**
+* @file PipelineStatisticsQueryer.h
+* @brief The PipelineStatisticsQueryer Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "Queryer.h"
@@ -26,20 +32,46 @@ namespace Spices {
 		MAX                                        = 14,
 	};
 
+	/**
+	* @brief Queryer of Pipeline.
+	*/
 	class PipelineStatisticsQueryer : public Queryer
 	{
 	public:
 
+		/**
+		* @brief Constructor Function.
+		* @param[in] state VulkanState.
+		*/
 		explicit PipelineStatisticsQueryer(VulkanState& state);
+
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~PipelineStatisticsQueryer() = default;
 
+		/**
+		* @brief Begin QueryPool.
+		* @param[in] commandBuffer VkCommandBuffer.
+		*/
 		virtual void BeginQuery(VkCommandBuffer commandBuffer) override;
+
+		/**
+		* @brief End QueryPool.
+		* @param[in] commandBuffer VkCommandBuffer.
+		*/
 		virtual void EndQuery(VkCommandBuffer commandBuffer) override;
 
+		/**
+		* @brief Get QueryPool Stored Result.
+		*/
 		virtual void GetPoolResult() override;
 
 	private:
 
+		/**
+		* @brief QueryPool of Pipeline.
+		*/
 		std::array<std::unique_ptr<VulkanQueryPool>, (size_t)PipelineStatisticEnum::MAX> m_QueryPool;
 	};
 }

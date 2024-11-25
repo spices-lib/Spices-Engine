@@ -1,3 +1,9 @@
+/**
+* @file PipelineStatisticsQueryer.cpp.
+* @brief The PipelineStatisticsQueryer Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "PipelineStatisticsQueryer.h"
 
@@ -38,6 +44,10 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		
+		for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
+		{
+			uint64_t result;
+			m_QueryPool[i]->QueryResults(&result);
+		}
 	}
 }

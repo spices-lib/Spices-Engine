@@ -37,7 +37,7 @@ namespace Spices {
             const std::shared_ptr<RendererResourcePool>& rendererResourcePool ,
             const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool
         )
-            : Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool, RenderPassStatistics::StatisticsBits::None, false)
+            : Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, cmdThreadPool, RenderPassStatistics::None, false)
         {}
 
         /**
