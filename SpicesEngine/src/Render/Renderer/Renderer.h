@@ -182,6 +182,18 @@ namespace Spices {
 		*/
 		std::shared_ptr<Material> GetDefaultMaterial(const std::string& subPassName) const;
 		
+		/**
+		* @brief Iterator the specific RenderPass Statistics in Renderer.
+		* @param[in] func The function pointer that handle Statistics.
+		*/
+		template<typename F>
+		inline void IterStatistics(F&& func);
+
+		/**
+		* @brief Reset Renderer State to disactive.
+		*/
+		void ResetRendererState() { m_IsActive = false; }
+
 	private:
 
 		/**
@@ -784,6 +796,7 @@ namespace Spices {
 			{
 				SPICES_PROFILE_ZONE;
 
+				m_Renderer->m_IsActive = true;
 				m_CommandBuffer = m_Renderer->m_VulkanState.m_GraphicCommandBuffer[currentFrame];
 			}
 
@@ -1743,6 +1756,11 @@ namespace Spices {
 		bool m_IsRegistryDGCPipeline;
 
 		/**
+		* @brief Whether this renderer is actived.
+		*/
+		bool m_IsActive;
+
+		/**
 		* @brief Data of dgc Indirect Draw.
 		*/
 		std::unordered_map<std::string, std::shared_ptr<VulkanIndirectDrawNV>> m_IndirectData;
@@ -2077,6 +2095,26 @@ namespace Spices {
 			*/
 			if (func(static_cast<int>(e), transComp, tComp)) break;
 		}
+	}
+
+	template<typename F>
+	inline void Renderer::IterStatistics(F&& func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!m_IsActive) return;
+
+		/**
+		* @brief Iter valid statistics in rendererPass.
+		*/
+		m_Pass->GetSubPasses().for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subPass) {
+
+			const auto& ptr = subPass->GetStatistics(FrameInfo::Get().m_FrameIndex);
+
+			if (!ptr) return false;
+
+			return func(name, ptr);
+		});
 	}
 
 	template<typename T, typename F>

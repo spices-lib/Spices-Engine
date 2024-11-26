@@ -67,5 +67,10 @@ namespace Spices {
 		* @brief Get QueryPool Stored Result.
 		*/
 		virtual void GetPoolResult() override;
+
+		/**
+		* @brief Draw QueryPool Stored Result.
+		*/
+		virtual void DrawPoolResult() override;
 	};
 }

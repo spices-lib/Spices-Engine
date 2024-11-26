@@ -66,6 +66,13 @@ namespace Spices {
 		static void OnMeshAddedWorld();
 
 		/**
+		* @brief Iter all Renderer.
+		* @param[in] fn Iter function.
+		*/
+		template<typename T>
+		static void IterRenderer(T&& fn);
+
+		/**
 		* @brief Push a renderer to this manager, and initialize it.
 		* @param[in] T Specific Renderer Class.
 		* @param[in] args Args.
@@ -148,4 +155,12 @@ namespace Spices {
 		*/
 		static scl::linked_unordered_map<std::string, std::shared_ptr<Renderer>> m_Identities;
 	};
+
+	template<typename T>
+	inline void RendererManager::IterRenderer(T&& fn)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Identities.for_each(fn);
+	}
 }

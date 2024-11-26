@@ -18,8 +18,17 @@ namespace Spices {
 	)
 		: m_SubpassName(subPassName)
 		, m_Index      (index)
-		, m_Statistics (std::make_shared<RenderPassStatistics>(VulkanRenderBackend::GetState(), flags))
-	{}
+		, m_Statistics {nullptr}
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (flags == RenderPassStatistics::None) return;
+
+		for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			m_Statistics[i] = std::make_shared<RenderPassStatistics>(VulkanRenderBackend::GetState(), flags);
+		}
+	}
 
 	void RendererSubPass::AddColorAttachmentReference(
 		const VkAttachmentReference&               attachmentReference,
@@ -123,5 +132,19 @@ namespace Spices {
 
 		m_Buffers[i2]->WriteToBuffer(data, size, offset);
 		m_Buffers[i2]->Flush();
+	}
+
+	void RendererSubPass::BeginStatistics(VkCommandBuffer commandBuffer, uint32_t frameIndex)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_Statistics[frameIndex]) m_Statistics[frameIndex]->BeginStatistics(commandBuffer);
+	}
+
+	void RendererSubPass::EndStatistics(VkCommandBuffer commandBuffer, uint32_t frameIndex)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_Statistics[frameIndex]) m_Statistics[frameIndex]->EndStatistics(commandBuffer);
 	}
 }

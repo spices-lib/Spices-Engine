@@ -11,8 +11,6 @@
 #include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerContinuous.h"
 #include "Core/Library/ProcessLibrary.h"
-#include "ImguiVideoMemoryRuntimeHUD.h"
-#include "ImguiGPURuntimeProfilerHUD.h"
 
 namespace Spices {
 
@@ -21,15 +19,7 @@ namespace Spices {
         FrameInfo&         frameInfo
     )
         : ImguiSlate(panelName, frameInfo)
-    {
-        SPICES_PROFILE_ZONE;
-
-        /**
-        * @brief Instance.
-        */
-        m_ImguiVideoMemoryRuntimeHUD = SlateSystem::GetRegister()->Register<ImguiVideoMemoryRuntimeHUD>(true, "Video Memory Runtime HUD");
-        m_ImguiGPURuntimeProfilerHUD = SlateSystem::GetRegister()->Register<ImguiGPURuntimeProfilerHUD>(true, "GPU Runtime Profiler HUD");
-    }
+    {}
 
     void ImguiDebugger::OnRender()
     {
@@ -43,13 +33,8 @@ namespace Spices {
         ImGui::SeparatorText("GPU Stage");
         ImGui::PopStyleColor();
         if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Continuous), "F9")) { NSIGHTPERF_GPUPROFILERCONTINUOUS_CAPTUREFRAME }
-        if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Runtime Profiler HUD), "F9")) { m_ImguiGPURuntimeProfilerHUD->SetWindowState(true); }
         if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU Report Generate), "F10")) { NSIGHTPERF_GPUPROFILERREPORT_CAPTUREFRAME }
         if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, GPU One-Shot Collection), "F10")) { NSIGHTPERF_GPUPROFILERONESHOT_CAPTUREFRAME }
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-        ImGui::SeparatorText("Video Memory Stage");
-        ImGui::PopStyleColor();
-        if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Video Memory Runtime HUD), "F11")) { m_ImguiVideoMemoryRuntimeHUD->SetWindowState(true); }
 
         /**
         * @brief End render Utilities.

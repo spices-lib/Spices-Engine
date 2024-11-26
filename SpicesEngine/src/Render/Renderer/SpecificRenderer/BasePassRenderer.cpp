@@ -61,7 +61,7 @@ namespace Spices {
 		})
 		.AddSelfDependency(VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV,VK_ACCESS_INDIRECT_COMMAND_READ_BIT,VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT)
 		.EndSubPass()
-		.AddSubPass("SkyBox")
+		.AddSubPass("SkyBox", RenderPassStatistics::None)
 		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format                = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})

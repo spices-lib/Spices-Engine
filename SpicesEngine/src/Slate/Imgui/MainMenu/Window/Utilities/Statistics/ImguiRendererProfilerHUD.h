@@ -1,6 +1,6 @@
 /**
-* @file ImguiDebugger.h
-* @brief The ImguiDebugger Class Definitions.
+* @file ImguiRendererProfilerHUD.h
+* @brief The ImguiRendererProfilerHUD Class Definitions.
 * @author Spices.
 */
 
@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/*
-	* @brief The ImguiDebugger Class.
-	* This class defines how to render Debugger Panel.
+	* @brief The ImguiRendererProfilerHUD Class.
+	* This class defines how to render Renderer Profiler HUD.
 	*/
-	class ImguiDebugger : public ImguiSlate
+	class ImguiRendererProfilerHUD : public ImguiSlate
 	{
 	public:
 
@@ -23,7 +23,7 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiDebugger(
+		ImguiRendererProfilerHUD(
 			const std::string& panelName,
 			FrameInfo& frameInfo
 		);
@@ -31,7 +31,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiDebugger() override = default;
+		virtual ~ImguiRendererProfilerHUD() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
@@ -49,12 +49,5 @@ namespace Spices {
 		* @param[in] event Event.
 		*/
 		virtual void OnEvent(Event& event) override {};
-
-	private:
-
-		/**
-		* @brief The Path of tracy-profiler.
-		*/
-		std::string m_ProfileProcessName = SPICES_EXTENT_PROCESS_PATH + "tracy/tracy-profiler.exe";
 	};
 }

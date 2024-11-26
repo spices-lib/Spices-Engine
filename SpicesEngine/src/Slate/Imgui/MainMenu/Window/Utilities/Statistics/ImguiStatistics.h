@@ -1,6 +1,6 @@
 /**
-* @file ImguiDebugger.h
-* @brief The ImguiDebugger Class Definitions.
+* @file ImguiStatistics.h
+* @brief The ImguiStatistics Class Definitions.
 * @author Spices.
 */
 
@@ -10,11 +10,18 @@
 
 namespace Spices {
 
+	/**
+	* @brief Forward Declare.
+	*/
+	class ImguiVideoMemoryRuntimeHUD;
+	class ImguiGPURuntimeProfilerHUD;
+	class ImguiRendererProfilerHUD;
+
 	/*
-	* @brief The ImguiDebugger Class.
+	* @brief The ImguiStatistics Class.
 	* This class defines how to render Debugger Panel.
 	*/
-	class ImguiDebugger : public ImguiSlate
+	class ImguiStatistics : public ImguiSlate
 	{
 	public:
 
@@ -23,7 +30,7 @@ namespace Spices {
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
 		*/
-		ImguiDebugger(
+		ImguiStatistics(
 			const std::string& panelName,
 			FrameInfo& frameInfo
 		);
@@ -31,7 +38,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ImguiDebugger() override = default;
+		virtual ~ImguiStatistics() override = default;
 
 		/**
 		* @brief This interface is called On SlateSystem Update.
@@ -53,8 +60,18 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief The Path of tracy-profiler.
+		* @brief The shared pointer of ImguiVideoMemoryRuntimeHUD.
 		*/
-		std::string m_ProfileProcessName = SPICES_EXTENT_PROCESS_PATH + "tracy/tracy-profiler.exe";
+		std::shared_ptr<ImguiVideoMemoryRuntimeHUD> m_ImguiVideoMemoryRuntimeHUD;
+
+		/**
+		* @brief The shared pointer of ImguiGPURuntimeProfilerHUD.
+		*/
+		std::shared_ptr<ImguiGPURuntimeProfilerHUD> m_ImguiGPURuntimeProfilerHUD;
+
+		/**
+		* @brief The shared pointer of ImguiRendererProfilerHUD.
+		*/
+		std::shared_ptr<ImguiRendererProfilerHUD> m_ImguiRendererProfilerHUD;
 	};
 }

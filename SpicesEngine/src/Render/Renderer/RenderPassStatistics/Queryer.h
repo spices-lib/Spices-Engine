@@ -44,6 +44,11 @@ namespace Spices {
 		*/
 		virtual void GetPoolResult() = 0;
 
+		/**
+		* @brief Draw QueryPool Stored Result.
+		*/
+		virtual void DrawPoolResult() = 0;
+
 	protected:
 
 		/**

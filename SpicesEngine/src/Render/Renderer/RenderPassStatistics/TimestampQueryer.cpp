@@ -11,6 +11,7 @@
 namespace Spices {
 
 	TimestampQueryer::TimestampQueryer(VulkanState& state)
+		: m_TimeStamp(0.0f)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -40,9 +41,14 @@ namespace Spices {
 		m_QueryPool->QueryResults(result);
 
 		// timestampPeriod is the number of nanoseconds per timestamp value increment.
-		const double microsecondsPerTick = 1e-3f * VulkanDevice::GetDeviceProperties().limits.timestampPeriod;
+		const float msPerTick = 1e-6f * VulkanDevice::GetDeviceProperties().limits.timestampPeriod;
+		m_TimeStamp = msPerTick * (result[1] - result[0]);
+	}
 
-		const float ms = float(microsecondsPerTick * (double)(result[1] - result[0]));
-		std::cout << "ms: " << ms << std::endl;
+	void TimestampQueryer::DrawPoolResult()
+	{
+		SPICES_PROFILE_ZONE;
+
+		ImGui::Text(std::to_string(m_TimeStamp).c_str());
 	}
 }

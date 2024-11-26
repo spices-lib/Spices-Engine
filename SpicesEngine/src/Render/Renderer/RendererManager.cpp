@@ -36,6 +36,14 @@ namespace Spices {
 			v->Render(ts, frameInfo);
 			return false;
 		});
+
+		/**
+		* @brief Reset all renderer.
+		*/
+		m_Identities.for_each([&](auto& k, auto& v) {
+			v->ResetRendererState();
+			return false;
+		});
 	}
 
 	void RendererManager::OnWindowResizeOver()

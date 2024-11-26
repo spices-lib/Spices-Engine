@@ -8,6 +8,7 @@
 #include "ImguiUtilities.h"
 #include "Systems/SlateSystem.h"
 #include "Debugger/ImguiDebugger.h"
+#include "Statistics/ImguiStatistics.h"
 
 namespace Spices {
 
@@ -23,6 +24,7 @@ namespace Spices {
         * @brief Instance.
         */
         m_ImguiDebugger = SlateSystem::GetRegister()->Register<ImguiDebugger>(false, "Debugger");
+        m_ImguiStatistics = SlateSystem::GetRegister()->Register<ImguiStatistics>(false, "Statistics");
     }
 
     void ImguiUtilities::OnRender()
@@ -45,7 +47,7 @@ namespace Spices {
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Console))) {}
             if (ImGui::BeginMenu(ICON_TEXT(ICON_MD_CHECK, Debugger))) { m_ImguiDebugger->OnRender(); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Scene Optimizer))) {}
-            if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, Statistics))) {}
+            if (ImGui::BeginMenu(ICON_TEXT(ICON_MD_CHECK, Statistics))) { m_ImguiStatistics->OnRender(); }
             if (ImGui::MenuItem(ICON_TEXT(ICON_MD_CHECK, USD Paths))) {}
 
             /**

@@ -35,7 +35,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		uint64_t result;
-		m_QueryPool->QueryResults(&result);
+		uint64_t result[20] = {0};
+		m_QueryPool->QueryResults(result);
+
+		std::cout << result << std::endl;
+	}
+
+	void PipelineStatisticsQueryer::DrawPoolResult()
+	{
+		SPICES_PROFILE_ZONE;
 	}
 }

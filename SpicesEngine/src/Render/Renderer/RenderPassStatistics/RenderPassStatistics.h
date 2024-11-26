@@ -61,6 +61,11 @@ namespace Spices {
 		*/
 		void GetStatisticsResult();
 
+		/**
+		* @brief Draw Statistics Result.
+		*/
+		void DrawStatisticsResult();
+
 	private:
 		
 		/**

@@ -14,6 +14,7 @@ namespace Spices {
 	* @brief Forward Declare.
 	*/
 	class ImguiDebugger;
+	class ImguiStatistics;
 
 	/**
 	* @brief The ImguiUtilities Class.
@@ -60,5 +61,10 @@ namespace Spices {
 		* @brief The shared pointer of ImguiDebugger.
 		*/
 		std::shared_ptr<ImguiDebugger> m_ImguiDebugger;
+
+		/**
+		* @brief The shared pointer of ImguiStatistics.
+		*/
+		std::shared_ptr<ImguiStatistics> m_ImguiStatistics;
 	};
 }

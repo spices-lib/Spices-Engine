@@ -55,4 +55,14 @@ namespace Spices {
 			if (queryer) queryer->GetPoolResult();
 		}
 	}
+
+	void RenderPassStatistics::DrawStatisticsResult()
+	{
+		SPICES_PROFILE_ZONE;
+
+		for (auto& queryer : m_Queries)
+		{
+			if (queryer) queryer->DrawPoolResult();
+		}
+	}
 }
