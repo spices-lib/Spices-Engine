@@ -12,8 +12,7 @@
 
 namespace Spices {
 
-	bool Renderer::m_IsCaptureNextFrame = false;
-	bool Renderer::m_IsCaptureThisFrame = false;
+
 
 	Renderer::Renderer
 	(
@@ -713,6 +712,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
+		RENDERPASS_STATISTICS_ENDRENDERER
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
@@ -908,6 +908,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
+		RENDERPASS_STATISTICS_ENDRENDERER
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -929,6 +930,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
+		RENDERPASS_STATISTICS_ENDRENDERER
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -992,6 +994,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
+		RENDERPASS_STATISTICS_ENDRENDERER
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -1013,6 +1016,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
+		RENDERPASS_STATISTICS_ENDRENDERER
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;

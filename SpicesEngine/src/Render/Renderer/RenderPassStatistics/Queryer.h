@@ -69,9 +69,14 @@ namespace Spices {
 		virtual void EndQuery(VkCommandBuffer commandBuffer) = 0;
 
 		/**
+		* @brief Store QueryPool Result.
+		*/
+		virtual void StorePoolResult() = 0;
+
+		/**
 		* @brief Get QueryPool Stored Result.
 		*/
-		virtual std::shared_ptr<Queryer::Result> GetPoolResult() = 0;
+		std::shared_ptr<Queryer::Result> GetPoolResult() const { return m_Result; };
 
 		/**
 		* @brief Get this Queryer type.

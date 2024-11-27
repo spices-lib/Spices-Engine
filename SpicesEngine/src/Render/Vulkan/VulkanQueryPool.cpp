@@ -123,7 +123,7 @@ namespace Spices {
 			// Store results a 64 bit values and wait until the results have been finished
 			// If you don't want to wait, you can use VK_QUERY_RESULT_WITH_AVAILABILITY_BIT
 			// which also returns the state of the result (ready) in the result
-			VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WITH_AVAILABILITY_BIT
+			VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT
 		))
 	}
 }

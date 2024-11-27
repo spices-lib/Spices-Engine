@@ -13,6 +13,10 @@
 
 namespace Spices {
 
+	bool RenderPassStatistics::m_IsCaptureNextFrame = false;
+	bool RenderPassStatistics::m_IsCaptureThisFrame = false;
+	bool RenderPassStatistics::m_IsStoreResultNextFrame = false;
+
 	RenderPassStatistics::RenderPassStatistics(VulkanState& state, Queryer::StatisticsFlags flags)
 	{
 		SPICES_PROFILE_ZONE;
@@ -45,6 +49,16 @@ namespace Spices {
 		for (auto& queryer : m_Queries)
 		{
 			if (queryer) queryer->EndQuery(commandBuffer);
+		}
+	}
+
+	void RenderPassStatistics::StoreStatistics()
+	{
+		SPICES_PROFILE_ZONE;
+
+		for (auto& queryer : m_Queries)
+		{
+			if (queryer) queryer->StorePoolResult();
 		}
 	}
 }

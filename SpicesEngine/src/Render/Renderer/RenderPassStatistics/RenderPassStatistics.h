@@ -42,6 +42,11 @@ namespace Spices {
 		void EndStatistics(VkCommandBuffer commandBuffer);
 
 		/**
+		* @brief Store statistics result.
+		*/
+		void StoreStatistics();
+
+		/**
 		* @brief Iter all Statistics Result.
 		* @param[in] fn Function pointer of how to do with statistics result.
 		*/
@@ -54,6 +59,23 @@ namespace Spices {
 		* @brief Array of all statistics item.
 		*/
 		std::array<std::unique_ptr<Queryer>, (size_t)Queryer::Max> m_Queries;
+
+	public:
+
+		/**
+		* @brief Whether capture all next frame RenderPass.
+		*/
+		static bool m_IsCaptureNextFrame;
+
+		/**
+		* @brief Whether capture all this frame RenderPass.
+		*/
+		static bool m_IsCaptureThisFrame;
+
+		/**
+		* @brief Whether Store result all next frame RenderPass.
+		*/
+		static bool m_IsStoreResultNextFrame;
 	};
 
 	template<typename F>
@@ -69,4 +91,26 @@ namespace Spices {
 			}
 		}
 	}
+
+#ifdef SPICES_DEBUG
+
+#define RENDERPASS_STATISTICS_BEGINFRAME              { RenderPassStatistics::m_IsCaptureThisFrame = RenderPassStatistics::m_IsCaptureNextFrame; }
+#define RENDERPASS_STATISTICS_ENDRENDERER             { if(RenderPassStatistics::m_IsStoreResultNextFrame) ThreadPool::Get()->SubmitPoolTask([&](std::shared_ptr<RendererSubPass> subPass){ subPass->StoreStatistics(); }, GetStatisticsRendererPass()); }
+#define RENDERPASS_STATISTICS_ENDFRAME                { RenderPassStatistics::m_IsStoreResultNextFrame = false; if(RenderPassStatistics::m_IsCaptureThisFrame) { RenderPassStatistics::m_IsCaptureNextFrame = false; RenderPassStatistics::m_IsStoreResultNextFrame = true; } }
+#define RENDERPASS_STATISTICS_BEGINSTATISTICS(...)    { if(RenderPassStatistics::m_IsCaptureThisFrame) GetStatisticsRendererPass()->BeginStatistics(__VA_ARGS__); }
+#define RENDERPASS_STATISTICS_ENDSTATISTICS(...)      { if(RenderPassStatistics::m_IsCaptureThisFrame) GetStatisticsRendererPass()->EndStatistics(__VA_ARGS__);   }
+#define RENDERPASS_STATISTICS_CAPTUREFRAME            { RenderPassStatistics::m_IsCaptureNextFrame = true; }           
+
+#endif
+
+#ifdef SPICES_RELEASE
+
+#define RENDERPASS_STATISTICS_BEGINFRAME   
+#define RENDERPASS_STATISTICS_ENDRENDERER
+#define RENDERPASS_STATISTICS_ENDFRAME            
+#define RENDERPASS_STATISTICS_BEGINSTATISTICS(...)
+#define RENDERPASS_STATISTICS_ENDSTATISTICS(...)  
+#define RENDERPASS_STATISTICS_CAPTUREFRAME  
+
+#endif
 }

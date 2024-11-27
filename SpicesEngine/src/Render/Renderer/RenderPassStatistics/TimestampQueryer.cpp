@@ -34,7 +34,7 @@ namespace Spices {
 		m_QueryPool->WriteTimeStamp(commandBuffer, 1);
 	}
 
-	std::shared_ptr<Queryer::Result> TimestampQueryer::GetPoolResult()
+	void TimestampQueryer::StorePoolResult()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -44,13 +44,12 @@ namespace Spices {
 		m_QueryPool->QueryResults(poolResult);
 
 		result->valid = poolResult[2];
+		result->valid = true;
 		if (result->valid)
 		{
 			// timestampPeriod is the number of nanoseconds per timestamp value increment.
 			const float msPerTick = 1e-6f * VulkanDevice::GetDeviceProperties().limits.timestampPeriod;
 			result->timeStamp     = msPerTick * (poolResult[1] - poolResult[0]);
 		}
-
-		return m_Result;
 	}
 }

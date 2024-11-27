@@ -777,28 +777,6 @@ namespace Spices {
 		{
 		public:
 
-#ifdef SPICES_DEBUG
-
-#define RENDERPASS_STATISTICS_BEGINFRAME              { Renderer::m_IsCaptureThisFrame = Renderer::m_IsCaptureNextFrame; }
-#define RENDERPASS_STATISTICS_ENDFRAME                { if(Renderer::m_IsCaptureThisFrame) Renderer::m_IsCaptureNextFrame = false; }
-#define RENDERPASS_STATISTICS_BEGINSTATISTICS(...)    { if(m_Renderer->m_IsCaptureThisFrame) GetStatisticsRendererPass()->BeginStatistics(__VA_ARGS__); }
-#define RENDERPASS_STATISTICS_ENDSTATISTICS(...)      { if(m_Renderer->m_IsCaptureThisFrame) GetStatisticsRendererPass()->EndStatistics(__VA_ARGS__);   }
-#define RENDERPASS_STATISTICS_CAPTUREFRAME            { Renderer::m_IsCaptureNextFrame = true; }           
-
-#endif
-
-#ifdef SPICES_RELEASE
-
-#define RENDERPASS_STATISTICS_BEGINFRAME          
-#define RENDERPASS_STATISTICS_ENDFRAME            
-#define RENDERPASS_STATISTICS_BEGINSTATISTICS(...)
-#define RENDERPASS_STATISTICS_ENDSTATISTICS(...)  
-#define RENDERPASS_STATISTICS_CAPTUREFRAME  
-
-#endif
-
-		public:
-
 			/**
 			* @brief Constructor Function.
 			* Bind pipeline and all buffer type descriptor set.
@@ -1718,18 +1696,6 @@ namespace Spices {
 
 			/****************************************************************************/
 		};
-		
-	public:
-
-		/**
-		* @brief Whether capture all next frame RenderPass.
-		*/
-		static bool m_IsCaptureNextFrame;
-
-		/**
-		* @brief Whether capture all this frame RenderPass.
-		*/
-		static bool m_IsCaptureThisFrame;
 
 	protected:
 		

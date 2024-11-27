@@ -274,6 +274,18 @@ namespace Spices {
 		*/
 		const bool IsPoolRunning() const { return m_IsPoolRunning.load(); }
 
+		/**
+		* @brief Function used to testing thread running state.
+		*/
+		void InitThreadFunction()
+		{
+			std::thread::id threadId = std::this_thread::get_id();
+
+			std::stringstream ss;
+			ss << "ThreadPool Thread: " << threadId << ", is Started";
+			SPICES_CORE_INFO(ss.str())
+		}
+
 	protected:
 
 		/**

@@ -143,4 +143,11 @@ namespace Spices {
 
 		if (m_Statistics) m_Statistics->EndStatistics(commandBuffer);
 	}
+
+	void RendererSubPass::StoreStatistics()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_Statistics) m_Statistics->StoreStatistics();
+	}
 }

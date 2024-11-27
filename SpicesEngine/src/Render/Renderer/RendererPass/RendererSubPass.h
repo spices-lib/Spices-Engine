@@ -192,6 +192,11 @@ namespace Spices
 		*/
 		void EndStatistics(VkCommandBuffer commandBuffer);
 
+		/**
+		* @brief Store statistics this frame.
+		*/
+		void StoreStatistics();
+
 	private:
 
 		/**

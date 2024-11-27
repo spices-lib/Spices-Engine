@@ -58,7 +58,7 @@ namespace Spices {
 		m_QueryPool->EndQuery(commandBuffer);
 	}
 
-	std::shared_ptr<Queryer::Result> PipelineStatisticsQueryer::GetPoolResult()
+	void PipelineStatisticsQueryer::StorePoolResult()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -67,12 +67,11 @@ namespace Spices {
 		uint64_t poolResult[(int)PipelineStatisticEnum::MAX + 1];
 		m_QueryPool->QueryResults(poolResult);
 
-		result->valid = poolResult[(int)PipelineStatisticEnum::MAX];
+		//result->valid = poolResult[(int)PipelineStatisticEnum::MAX];
+		result->valid = true;
 		if (result->valid)
 		{
 			memcpy(result->statistics.data(), poolResult, sizeof(result->statistics));
 		}
-
-		return m_Result;
 	}
 }

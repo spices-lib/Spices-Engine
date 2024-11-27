@@ -51,8 +51,8 @@ namespace Spices {
 		virtual void EndQuery(VkCommandBuffer commandBuffer) override;
 
 		/**
-		* @brief Get QueryPool Stored Result.
+		* @brief Store QueryPool Result.
 		*/
-		virtual std::shared_ptr<Queryer::Result> GetPoolResult() override;
+		virtual void StorePoolResult() override;
 	};
 }

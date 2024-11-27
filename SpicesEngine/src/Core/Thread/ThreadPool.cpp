@@ -34,6 +34,11 @@ namespace Spices {
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
+
+		/**
+		* @brief Init Thread.
+		*/
+		SubmitThreadTask_LightWeight_ForEach(std::bind(&ThreadPool_Basic<>::InitThreadFunction, this));
 	}
 
 	void ThreadPool::ThreadFunc(Thread<>* thread)
