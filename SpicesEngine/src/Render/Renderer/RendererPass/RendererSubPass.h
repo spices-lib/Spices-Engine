@@ -178,21 +178,19 @@ namespace Spices
 		* @brief Get RenderPassStatistics.
 		* @return Returns RenderPassStatistics.
 		*/
-		std::shared_ptr<RenderPassStatistics>& GetStatistics(uint32_t frameIndex) { return m_Statistics[frameIndex]; }
+		std::shared_ptr<RenderPassStatistics>& GetStatistics() { return m_Statistics; }
 
 		/**
 		* @brief Begin Statistics this frame.
 		* @param[in] commandBuffer VkCommandBuffer.
-		* @param[in] frameIndex this frame index.
 		*/
-		void BeginStatistics(VkCommandBuffer commandBuffer, uint32_t frameIndex);
+		void BeginStatistics(VkCommandBuffer commandBuffer);
 
 		/**
 		* @brief End Statistics this frame.
 		* @param[in] commandBuffer VkCommandBuffer.
-		* @param[in] frameIndex this frame index.
 		*/
-		void EndStatistics(VkCommandBuffer commandBuffer, uint32_t frameIndex);
+		void EndStatistics(VkCommandBuffer commandBuffer);
 
 	private:
 
@@ -209,7 +207,7 @@ namespace Spices
 		/**
 		* @brief Statistics of RenderPass.
 		*/
-		std::array<std::shared_ptr<RenderPassStatistics>, MaxFrameInFlight> m_Statistics;
+		std::shared_ptr<RenderPassStatistics> m_Statistics;
 
 		/**
 		* @brief VkSubpassDescription.

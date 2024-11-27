@@ -23,11 +23,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		if (flags == Queryer::None) return;
-
-		for (int i = 0; i < MaxFrameInFlight; i++)
-		{
-			m_Statistics[i] = std::make_shared<RenderPassStatistics>(VulkanRenderBackend::GetState(), flags);
-		}
+		m_Statistics = std::make_shared<RenderPassStatistics>(VulkanRenderBackend::GetState(), flags);
 	}
 
 	void RendererSubPass::AddColorAttachmentReference(
@@ -134,17 +130,17 @@ namespace Spices {
 		m_Buffers[i2]->Flush();
 	}
 
-	void RendererSubPass::BeginStatistics(VkCommandBuffer commandBuffer, uint32_t frameIndex)
+	void RendererSubPass::BeginStatistics(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Statistics[frameIndex]) m_Statistics[frameIndex]->BeginStatistics(commandBuffer);
+		if (m_Statistics) m_Statistics->BeginStatistics(commandBuffer);
 	}
 
-	void RendererSubPass::EndStatistics(VkCommandBuffer commandBuffer, uint32_t frameIndex)
+	void RendererSubPass::EndStatistics(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Statistics[frameIndex]) m_Statistics[frameIndex]->EndStatistics(commandBuffer);
+		if (m_Statistics) m_Statistics->EndStatistics(commandBuffer);
 	}
 }

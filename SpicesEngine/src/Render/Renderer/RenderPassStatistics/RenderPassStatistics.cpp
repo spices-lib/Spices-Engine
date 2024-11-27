@@ -8,7 +8,6 @@
 #include "RenderPassStatistics.h"
 #include "TimestampQueryer.h"
 #include "PipelineStatisticsQueryer.h"
-#include "PerformanceQueryer.h"
 
 #include <glm/gtc/integer.hpp>
 
@@ -25,12 +24,7 @@ namespace Spices {
 
 		if (flags & Queryer::Pipeline)
 		{
-			//m_Queries[glm::log2((int)Queryer::Pipeline)] = std::make_unique<PipelineStatisticsQueryer>(state);
-		}
-
-		if (flags & Queryer::Performance)
-		{
-			m_Queries[glm::log2((int)Queryer::Performance)] = std::make_unique<PerformanceQueryer>(state);
+			m_Queries[glm::log2((int)Queryer::Pipeline)] = std::make_unique<PipelineStatisticsQueryer>(state);
 		}
 	}
 

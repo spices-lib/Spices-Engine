@@ -32,6 +32,11 @@ namespace Spices {
         */
         Begin();
 
+        if (ImGui::Button("Refresh", ImVec2(100.0f, 100.0f)))
+        {
+            RENDERPASS_STATISTICS_CAPTUREFRAME
+        }
+
         RendererManager::IterRenderer([&](const std::string& rendererName, const std::shared_ptr<Renderer>& renderer) {
             
             renderer->IterStatistics([&](const std::string& subPassName, const std::shared_ptr<RenderPassStatistics>& statistics) {
@@ -41,7 +46,7 @@ namespace Spices {
                     if (type == Queryer::Timestamp)
                     {
                         TimestampQueryer::Result* res = static_cast<TimestampQueryer::Result*>(result.get());
-                        ImGui::Text(std::to_string(res->timeStamp).c_str());
+                        if(res->valid) ImGui::Text(std::to_string(res->timeStamp).c_str());
                     }
                 });
                 return false;

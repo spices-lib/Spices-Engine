@@ -12,6 +12,9 @@
 
 namespace Spices {
 
+	bool Renderer::m_IsCaptureNextFrame = false;
+	bool Renderer::m_IsCaptureThisFrame = false;
+
 	Renderer::Renderer
 	(
 		const std::string&                           rendererName          , 
@@ -709,7 +712,7 @@ namespace Spices {
 		/**
 		* @brief End RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->EndStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
@@ -729,7 +732,7 @@ namespace Spices {
 		/**
 		* @brief Begin RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->BeginStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_BEGINSTATISTICS(m_CommandBuffer)
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginNextSubPassAsync(const std::string& subPassName)
@@ -802,7 +805,7 @@ namespace Spices {
 		/**
 		* @brief Begin RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->BeginStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_BEGINSTATISTICS(m_CommandBuffer)
 
 		vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -836,7 +839,7 @@ namespace Spices {
 		/**
 		* @brief Begin RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->BeginStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_BEGINSTATISTICS(m_CommandBuffer)
 	}
 
 	void Renderer::RenderBehaveBuilder::BeginRenderPassAsync()
@@ -887,7 +890,7 @@ namespace Spices {
 		/**
 		* @brief Begin RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->BeginStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_BEGINSTATISTICS(m_CommandBuffer)
 
 		/**
 		* @brief This command not allow async.
@@ -904,7 +907,7 @@ namespace Spices {
 		/**
 		* @brief End RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->EndStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -925,7 +928,7 @@ namespace Spices {
 		/**
 		* @brief End RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->EndStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -980,7 +983,7 @@ namespace Spices {
 		/**
 		* @brief Begin RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->BeginStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_BEGINSTATISTICS(m_CommandBuffer)
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::EndRenderPass()
@@ -988,7 +991,7 @@ namespace Spices {
 		/**
 		* @brief End RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->EndStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -1009,7 +1012,7 @@ namespace Spices {
 		/**
 		* @brief End RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->EndStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_ENDSTATISTICS(m_CommandBuffer)
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
@@ -1029,7 +1032,7 @@ namespace Spices {
 		/**
 		* @brief Begin RenderPass Statistics.
 		*/
-		GetStatisticsRendererPass()->BeginStatistics(m_CommandBuffer, m_CurrentFrame);
+		RENDERPASS_STATISTICS_BEGINSTATISTICS(m_CommandBuffer)
 	}
 
 	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(

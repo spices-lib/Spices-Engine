@@ -25,8 +25,7 @@ namespace Spices {
 			None        = 0     ,      /* @brief None Statistics.        */
 			Timestamp   = 1 << 0,      /* @brief Timestamp Statistics.   */
 			Pipeline    = 1 << 1,      /* @brief Pipeline Statistics.    */
-			Performance = 1 << 2,      /* @brief Performance Statistics. */
-			Max         = 3,           /* @brief Statistics Counts.      */
+			Max         = 2,           /* @brief Statistics Counts.      */
 			ALL         = 0xFFFFFFFF,  /* @brief Statistics All items.   */
 		};
 
@@ -39,7 +38,7 @@ namespace Spices {
 		*/
 		struct Result
 		{
-			bool valid;  /* @brief True if result is valid. */
+			bool valid = false;  /* @brief True if result is valid. */
 		};
 
 	public:
