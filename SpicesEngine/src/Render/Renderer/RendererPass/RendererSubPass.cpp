@@ -12,9 +12,9 @@
 namespace Spices {
 
 	RendererSubPass::RendererSubPass(
-		const std::string& subPassName, 
-		uint32_t           index      , 
-		RenderPassStatistics::StatisticsFlags flags
+		const std::string&       subPassName , 
+		uint32_t                 index       , 
+		Queryer::StatisticsFlags flags
 	)
 		: m_SubpassName(subPassName)
 		, m_Index      (index)
@@ -22,7 +22,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (flags == RenderPassStatistics::None) return;
+		if (flags == Queryer::None) return;
 
 		for (int i = 0; i < MaxFrameInFlight; i++)
 		{

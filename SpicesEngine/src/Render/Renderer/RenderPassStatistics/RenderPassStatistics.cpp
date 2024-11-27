@@ -8,21 +8,29 @@
 #include "RenderPassStatistics.h"
 #include "TimestampQueryer.h"
 #include "PipelineStatisticsQueryer.h"
+#include "PerformanceQueryer.h"
+
+#include <glm/gtc/integer.hpp>
 
 namespace Spices {
 
-	RenderPassStatistics::RenderPassStatistics(VulkanState& state, StatisticsFlags flags)
+	RenderPassStatistics::RenderPassStatistics(VulkanState& state, Queryer::StatisticsFlags flags)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (flags & StatisticsBits::Timestamp)
+		if (flags & Queryer::Timestamp)
 		{
-			m_Queries[StatisticsBits::Timestamp] = std::make_unique<TimestampQueryer>(state);
+			m_Queries[glm::log2((int)Queryer::Timestamp)] = std::make_unique<TimestampQueryer>(state);
 		}
 
-		if (flags & StatisticsBits::Pipeline)
+		if (flags & Queryer::Pipeline)
 		{
-			m_Queries[StatisticsBits::Pipeline] = std::make_unique<PipelineStatisticsQueryer>(state);
+			//m_Queries[glm::log2((int)Queryer::Pipeline)] = std::make_unique<PipelineStatisticsQueryer>(state);
+		}
+
+		if (flags & Queryer::Performance)
+		{
+			m_Queries[glm::log2((int)Queryer::Performance)] = std::make_unique<PerformanceQueryer>(state);
 		}
 	}
 
@@ -43,26 +51,6 @@ namespace Spices {
 		for (auto& queryer : m_Queries)
 		{
 			if (queryer) queryer->EndQuery(commandBuffer);
-		}
-	}
-
-	void RenderPassStatistics::GetStatisticsResult()
-	{
-		SPICES_PROFILE_ZONE;
-
-		for (auto& queryer : m_Queries)
-		{
-			if (queryer) queryer->GetPoolResult();
-		}
-	}
-
-	void RenderPassStatistics::DrawStatisticsResult()
-	{
-		SPICES_PROFILE_ZONE;
-
-		for (auto& queryer : m_Queries)
-		{
-			if (queryer) queryer->DrawPoolResult();
 		}
 	}
 }

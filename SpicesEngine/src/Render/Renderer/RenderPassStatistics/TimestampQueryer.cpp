@@ -11,11 +11,12 @@
 namespace Spices {
 
 	TimestampQueryer::TimestampQueryer(VulkanState& state)
-		: m_TimeStamp(0.0f)
+		: Queryer(StatisticsBits::Timestamp)
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_QueryPool = std::make_unique<VulkanQueryPool>(state, VK_QUERY_TYPE_TIMESTAMP, 2);
+		m_Result    = std::make_shared<Result>();
 	}
 
 	void TimestampQueryer::BeginQuery(VkCommandBuffer commandBuffer)
@@ -33,22 +34,23 @@ namespace Spices {
 		m_QueryPool->WriteTimeStamp(commandBuffer, 1);
 	}
 
-	void TimestampQueryer::GetPoolResult()
+	std::shared_ptr<Queryer::Result> TimestampQueryer::GetPoolResult()
 	{
 		SPICES_PROFILE_ZONE;
 
-		uint64_t result[2] = {};
-		m_QueryPool->QueryResults(result);
+		Result* result = static_cast<Result*>(m_Result.get());
 
-		// timestampPeriod is the number of nanoseconds per timestamp value increment.
-		const float msPerTick = 1e-6f * VulkanDevice::GetDeviceProperties().limits.timestampPeriod;
-		m_TimeStamp = msPerTick * (result[1] - result[0]);
-	}
+		uint64_t poolResult[3] = {};
+		m_QueryPool->QueryResults(poolResult);
 
-	void TimestampQueryer::DrawPoolResult()
-	{
-		SPICES_PROFILE_ZONE;
+		result->valid = poolResult[2];
+		if (result->valid)
+		{
+			// timestampPeriod is the number of nanoseconds per timestamp value increment.
+			const float msPerTick = 1e-6f * VulkanDevice::GetDeviceProperties().limits.timestampPeriod;
+			result->timeStamp     = msPerTick * (poolResult[1] - poolResult[0]);
+		}
 
-		ImGui::Text(std::to_string(m_TimeStamp).c_str());
+		return m_Result;
 	}
 }

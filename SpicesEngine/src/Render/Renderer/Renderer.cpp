@@ -1746,8 +1746,8 @@ namespace Spices {
 	}
 
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(
-		const std::string& subPassName              , 
-		RenderPassStatistics::StatisticsFlags flags
+		const std::string&       subPassName , 
+		Queryer::StatisticsFlags flags
 	)
 	{
 		SPICES_PROFILE_ZONE;

@@ -9,6 +9,8 @@
 #include "Render/Renderer/RendererManager.h"
 #include "Render/Renderer/Renderer.h"
 #include "Render/Renderer/RenderPassStatistics/RenderPassStatistics.h"
+#include "Render/Renderer/RenderPassStatistics/TimestampQueryer.h"
+#include "Render/Renderer/RenderPassStatistics/PipelineStatisticsQueryer.h"
 
 namespace Spices {
 
@@ -34,9 +36,14 @@ namespace Spices {
             
             renderer->IterStatistics([&](const std::string& subPassName, const std::shared_ptr<RenderPassStatistics>& statistics) {
                 
-                statistics->GetStatisticsResult();
-                statistics->DrawStatisticsResult();
-
+                statistics->IterStatisticsResult([&](const Queryer::StatisticsBits& type, std::shared_ptr<Queryer::Result>& result) {
+                    
+                    if (type == Queryer::Timestamp)
+                    {
+                        TimestampQueryer::Result* res = static_cast<TimestampQueryer::Result*>(result.get());
+                        ImGui::Text(std::to_string(res->timeStamp).c_str());
+                    }
+                });
                 return false;
             });
 

@@ -1,6 +1,6 @@
 /**
-* @file TimestampQueryer.h
-* @brief The TimestampQueryer Class Definitions.
+* @file PerformanceQueryer.h
+* @brief The PerformanceQueryer Class Definitions.
 * @author Spices.
 */
 
@@ -11,18 +11,18 @@
 namespace Spices {
 
 	/**
-	* @brief Queryer of GPU Timestamp.
+	* @brief Queryer of Performance.
 	*/
-	class TimestampQueryer : public Queryer
+	class PerformanceQueryer : public Queryer
 	{
 	public:
 
 		/**
-		* @brief Stored TimeStamp Result.
+		* @brief Stored Pipeline Statistics Result.
 		*/
 		struct Result : Queryer::Result
 		{
-			float timeStamp;  /* @brief TimeStamp in renderPass. */
+			
 		};
 
 	public:
@@ -31,12 +31,12 @@ namespace Spices {
 		* @brief Constructor Function.
 		* @param[in] state VulkanState.
 		*/
-		explicit TimestampQueryer(VulkanState& state);
+		explicit PerformanceQueryer(VulkanState& state);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~TimestampQueryer() = default;
+		virtual ~PerformanceQueryer() = default;
 
 		/**
 		* @brief Begin QueryPool.

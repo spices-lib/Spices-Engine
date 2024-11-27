@@ -351,9 +351,8 @@ namespace Spices {
 			* @return Returns the RendererPassBuilder.
 			*/
 			RendererPassBuilder& AddSubPass(
-				const std::string& subPassName              , 
-				RenderPassStatistics::StatisticsFlags flags = 
-				RenderPassStatistics::Timestamp | RenderPassStatistics::Pipeline
+				const std::string&       subPassName   , 
+				Queryer::StatisticsFlags flags = Queryer::ALL
 			);
 
 			/**

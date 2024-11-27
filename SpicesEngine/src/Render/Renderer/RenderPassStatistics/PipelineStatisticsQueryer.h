@@ -28,16 +28,32 @@ namespace Spices {
 		COMPUTE_SHADER_INVOCATIONS                 = 10,         /* @brief Compute Shader Invocations.                 */
 		TASK_SHADER_INVOCATIONS                    = 11,         /* @brief Task Shader Invocations.                    */
 		MESH_SHADER_INVOCATIONS                    = 12,         /* @brief Mesh Shader Invocations.                    */
-		CLUSTER_CULLING_SHADER_INVOCATIONS         = 13,         /* @brief Cluster Culling Shader Invocations.         */
-		MAX                                        = 14,         /* @brief Statistics Counts.                          */
-		ALL                                        = 0x00003FFF, /* @brief Statistics All items.                       */
+		MAX                                        = 13,         /* @brief Statistics Counts.                          */
+		ALL                                        = 0x00001FFF, /* @brief Statistics All items.                       */
 	};
+
+	/**
+	* @brief Thransfer a PipelineStatisticEnum to a string.
+	* @param[in] e PipelineStatisticEnum.
+	* @reurn Returns transfered string.
+	*/
+	static std::string PipelineStatisticEnumToString(PipelineStatisticEnum e);
 
 	/**
 	* @brief Queryer of Pipeline.
 	*/
 	class PipelineStatisticsQueryer : public Queryer
 	{
+	public:
+
+		/**
+		* @brief Stored Pipeline Statistics Result.
+		*/
+		struct Result : Queryer::Result
+		{
+			std::array<uint64_t, (size_t)PipelineStatisticEnum::MAX> statistics;
+		};
+
 	public:
 
 		/**
@@ -66,11 +82,6 @@ namespace Spices {
 		/**
 		* @brief Get QueryPool Stored Result.
 		*/
-		virtual void GetPoolResult() override;
-
-		/**
-		* @brief Draw QueryPool Stored Result.
-		*/
-		virtual void DrawPoolResult() override;
+		virtual std::shared_ptr<Queryer::Result> GetPoolResult() override;
 	};
 }

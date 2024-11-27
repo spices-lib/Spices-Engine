@@ -13,11 +13,13 @@ namespace Spices {
 		VulkanState&                  vulkanState , 
 		VkQueryType                   type        , 
 		uint32_t                      count       , 
+		uint32_t                      stride      ,
 		VkQueryPipelineStatisticFlags statistics
 	)
 		: VulkanObject(vulkanState)
 		, m_QueryType(type)
 		, m_QueryCount(count)
+		, m_Stride(stride)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -111,17 +113,17 @@ namespace Spices {
 		* @brief Query all result with uint64_t.
 		*/
 		VK_CHECK(vkGetQueryPoolResults(
-			m_VulkanState.m_Device          ,
-			m_QueryPool                     ,
-			0                               ,
-			m_QueryCount                    ,
-			sizeof(uint64_t) * m_QueryCount ,
-			result                          ,
-			sizeof(uint64_t)                ,
+			m_VulkanState.m_Device                     ,
+			m_QueryPool                                ,
+			0                                          ,
+			m_QueryCount                               ,
+			m_Stride * m_QueryCount + sizeof(uint64_t) ,
+			result                                     ,
+			m_Stride                                   ,
 			// Store results a 64 bit values and wait until the results have been finished
 			// If you don't want to wait, you can use VK_QUERY_RESULT_WITH_AVAILABILITY_BIT
 			// which also returns the state of the result (ready) in the result
-			VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT
+			VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WITH_AVAILABILITY_BIT
 		))
 	}
 }

@@ -18,26 +18,11 @@ namespace Spices {
 	public:
 
 		/**
-		* @brief Statistics types.
-		*/
-		enum StatisticsBits
-		{
-			None      = 0     ,    /* @brief None Statistics.      */
-			Timestamp = 1 << 0,    /* @brief Timestamp Statistics. */
-			Pipeline  = 1 << 1,    /* @brief Pipeline Statistics.  */
-			Max       = 1 << 2,    /* @brief All Statistics.       */
-		};
-
-		typedef uint32_t StatisticsFlags;
-
-	public:
-
-		/**
 		* @brief Constructor Function.
 		* @param[in] state VulkanState.
 		* @param[in] flags StatisticsFlags.
 		*/
-		RenderPassStatistics(VulkanState& state, StatisticsFlags flags);
+		RenderPassStatistics(VulkanState& state, Queryer::StatisticsFlags flags);
 		
 		/**
 		* @brief Destructor Function.
@@ -57,20 +42,31 @@ namespace Spices {
 		void EndStatistics(VkCommandBuffer commandBuffer);
 
 		/**
-		* @brief Get Statistics Result.
+		* @brief Iter all Statistics Result.
+		* @param[in] fn Function pointer of how to do with statistics result.
 		*/
-		void GetStatisticsResult();
-
-		/**
-		* @brief Draw Statistics Result.
-		*/
-		void DrawStatisticsResult();
+		template<typename F>
+		void IterStatisticsResult(F&& fn);
 
 	private:
 		
 		/**
 		* @brief Array of all statistics item.
 		*/
-		std::array<std::unique_ptr<Queryer>, (size_t)StatisticsBits::Max> m_Queries;
+		std::array<std::unique_ptr<Queryer>, (size_t)Queryer::Max> m_Queries;
 	};
+
+	template<typename F>
+	inline void RenderPassStatistics::IterStatisticsResult(F&& fn)
+	{
+		SPICES_PROFILE_ZONE;
+
+		for (auto& queryer : m_Queries)
+		{
+			if (queryer)
+			{
+				fn(queryer->GetStatisticsType(), queryer->GetPoolResult());
+			}
+		}
+	}
 }

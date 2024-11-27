@@ -65,7 +65,7 @@ namespace Spices {
 		EventCategoryKeyboard     =  (1 << 3),    /* @brief Keyboard     */
 		EventCategoryMouse        =  (1 << 4),    /* @brief Mouse        */
 		EventCategoryMouseButton  =  (1 << 5),    /* @brief MouseButton  */
-		EventCategoryWorld         = (1 << 6),    /* @brief World        */
+		EventCategoryWorld        =  (1 << 6),    /* @brief World        */
 	};
 
 /**

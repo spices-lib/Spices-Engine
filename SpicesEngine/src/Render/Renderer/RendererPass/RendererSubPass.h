@@ -35,9 +35,9 @@ namespace Spices
 		* @param[in] flags Statistics Flags.
 		*/
 		RendererSubPass(
-			const std::string& subPassName,
-			uint32_t           index      ,
-			RenderPassStatistics::StatisticsFlags flags
+			const std::string&       subPassName ,
+			uint32_t                 index       ,
+			Queryer::StatisticsFlags flags
 		);
 
 		/**

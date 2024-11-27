@@ -23,12 +23,14 @@ namespace Spices {
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] type VkQueryType.
 		* @param[in] count QueryCount.
+		* @param[in] stride single data bytes.
 		* @param[in] statistics Pipeline Query Statistics.
 		*/
 		VulkanQueryPool(
-			VulkanState&                  vulkanState   , 
-			VkQueryType                   type          , 
-			uint32_t                      count = 1     , 
+			VulkanState&                  vulkanState    , 
+			VkQueryType                   type           , 
+			uint32_t                      count      = 1 , 
+			uint32_t                      stride     = 8 ,
 			VkQueryPipelineStatisticFlags statistics = 0
 		);
 
@@ -93,5 +95,10 @@ namespace Spices {
 		* @brief Query Count.
 		*/
 		uint32_t m_QueryCount;
+
+		/**
+		* @brief Data stride.
+		*/
+		uint32_t m_Stride;
 	};
 }

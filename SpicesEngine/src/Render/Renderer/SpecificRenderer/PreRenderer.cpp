@@ -8,7 +8,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		RendererPassBuilder{ "PreRenderer", this }
-		.AddSubPass("PreRenderer", RenderPassStatistics::None)
+		.AddSubPass("PreRenderer", Queryer::None)
 		.EndSubPass()	
 		.Build();
 	}

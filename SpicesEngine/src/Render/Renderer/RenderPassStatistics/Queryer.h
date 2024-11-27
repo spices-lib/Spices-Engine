@@ -18,9 +18,39 @@ namespace Spices {
 	public:
 
 		/**
-		* @brief Constructor Function.
+		* @brief Statistics types.
 		*/
-		Queryer() = default;
+		enum StatisticsBits
+		{
+			None        = 0     ,      /* @brief None Statistics.        */
+			Timestamp   = 1 << 0,      /* @brief Timestamp Statistics.   */
+			Pipeline    = 1 << 1,      /* @brief Pipeline Statistics.    */
+			Performance = 1 << 2,      /* @brief Performance Statistics. */
+			Max         = 3,           /* @brief Statistics Counts.      */
+			ALL         = 0xFFFFFFFF,  /* @brief Statistics All items.   */
+		};
+
+		typedef uint32_t StatisticsFlags;
+
+	public:
+
+		/**
+		* @brief Basic definition of result.
+		*/
+		struct Result
+		{
+			bool valid;  /* @brief True if result is valid. */
+		};
+
+	public:
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] type Queryer Type.
+		*/
+		Queryer(StatisticsBits type)
+			: m_Type(type)
+		{}
 
 		/**
 		* @brief Destructor Function.
@@ -42,18 +72,29 @@ namespace Spices {
 		/**
 		* @brief Get QueryPool Stored Result.
 		*/
-		virtual void GetPoolResult() = 0;
+		virtual std::shared_ptr<Queryer::Result> GetPoolResult() = 0;
 
 		/**
-		* @brief Draw QueryPool Stored Result.
+		* @brief Get this Queryer type.
+		* @reutrn Returns Queryer type.
 		*/
-		virtual void DrawPoolResult() = 0;
+		StatisticsBits GetStatisticsType() const { return m_Type; }
 
 	protected:
 
 		/**
-		* @brief QueryPool of Pipeline.
+		* @brief QueryPool of RenderPass.
 		*/
 		std::unique_ptr<VulkanQueryPool> m_QueryPool;
+
+		/**
+		* @brief Result of QueryPool.
+		*/
+		std::shared_ptr<Result> m_Result;
+
+		/**
+		* @brief Specific Queryer Type.
+		*/
+		StatisticsBits m_Type;
 	};
 }
