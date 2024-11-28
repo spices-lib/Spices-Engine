@@ -545,15 +545,18 @@ namespace Spices {
 
 			// Query Statistics item.
 			{
-				auto state = m_Renderer->m_StatisticsStateList->AddNode();
+				for(int i = 0; i < Queryer::Max; i++)
+				{
+					auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
-				state->PushBehave("EndRenderer", nullptr);
-				state->PushBehave("BeginStatistics", [&](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
-					builder->GetStatisticsRendererPass()->BeginStatistics(commandBuffer);
-				});
-				state->PushBehave("EndStatistics", [&](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
-					builder->GetStatisticsRendererPass()->EndStatistics(commandBuffer);
-				});
+					state->PushBehave("EndRenderer", nullptr);
+					state->PushBehave("BeginStatistics", [=](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
+						builder->GetStatisticsRendererPass()->BeginStatistics(commandBuffer, Queryer::StatisticsBits(1 << i));
+					});
+					state->PushBehave("EndStatistics", [=](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
+						builder->GetStatisticsRendererPass()->EndStatistics(commandBuffer, Queryer::StatisticsBits(1 << i));
+					});
+				}
 			}
 
 			// Submit store task to threadPool.
@@ -578,7 +581,7 @@ namespace Spices {
 				state->PushBehave("EndStatistics", nullptr);
 			}
 
-			m_Renderer->m_StatisticsStateList->SetState(3);
+			m_Renderer->m_StatisticsStateList->SetState(Queryer::Max + 2);
 		}
 	}
 
@@ -776,7 +779,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(this, m_CommandBuffer)
-		RENDERPASS_STATISTICS_ENDRENDERER
+		RENDERPASS_STATISTICS_ENDRENDERER(this)
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
@@ -972,7 +975,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(this, m_CommandBuffer)
-		RENDERPASS_STATISTICS_ENDRENDERER
+		RENDERPASS_STATISTICS_ENDRENDERER(this)
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -994,7 +997,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(this, m_CommandBuffer)
-		RENDERPASS_STATISTICS_ENDRENDERER
+		RENDERPASS_STATISTICS_ENDRENDERER(this)
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -1058,7 +1061,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(this, m_CommandBuffer)
-		RENDERPASS_STATISTICS_ENDRENDERER
+		RENDERPASS_STATISTICS_ENDRENDERER(this)
 
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass:" + m_Renderer->m_Pass->GetName())
 
@@ -1080,7 +1083,7 @@ namespace Spices {
 		* @brief End RenderPass Statistics.
 		*/
 		RENDERPASS_STATISTICS_ENDSTATISTICS(this, m_CommandBuffer)
-		RENDERPASS_STATISTICS_ENDRENDERER
+		RENDERPASS_STATISTICS_ENDRENDERER(this)
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;

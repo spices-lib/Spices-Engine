@@ -9,31 +9,6 @@
 
 namespace Spices {
 
-	std::string PipelineStatisticEnumToString(PipelineStatisticEnum e)
-	{
-		switch (e)
-		{
-			case PipelineStatisticEnum::INPUT_ASSEMBLY_VERTICES:                     return "Input Assembly Vertices";
-			case PipelineStatisticEnum::INPUT_ASSEMBLY_PRIMITIVES:                   return "Input Assembly Primitive";
-			case PipelineStatisticEnum::VERTEX_SHADER_INVOCATIONS:                   return "Vertex Shader Invocations";
-			case PipelineStatisticEnum::GEOMETRY_SHADER_INVOCATIONS:                 return "Geometry Shader Invocations";
-			case PipelineStatisticEnum::GEOMETRY_SHADER_PRIMITIVES:                  return "Geometry Shader Primitive";
-			case PipelineStatisticEnum::CLIPPING_INVOCATIONS:                        return "Clipping Invocations";
-			case PipelineStatisticEnum::CLIPPING_PRIMITIVES:                         return "Clipping Primitive";
-			case PipelineStatisticEnum::FRAGMENT_SHADER_INVOCATIONS:                 return "Fragment Shader Invocations";
-			case PipelineStatisticEnum::TESSELLATION_CONTROL_SHADER_PATCHES:         return "Tessellation Control Invocations";
-			case PipelineStatisticEnum::TESSELLATION_EVALUATION_SHADER_INVOCATIONS:  return "Tessellation Evaluation Invocations";
-			case PipelineStatisticEnum::COMPUTE_SHADER_INVOCATIONS:                  return "Compute Shader Invocations";
-			case PipelineStatisticEnum::TASK_SHADER_INVOCATIONS:                     return "Task Shader Invocations";
-			case PipelineStatisticEnum::MESH_SHADER_INVOCATIONS:                     return "Mesh Shader Invocations";
-			default: 
-			{
-				SPICES_CORE_WARN("Special Enum Cannot be transfered inti a string.")
-				return "";
-			}
-		}
-	}
-
 	PipelineStatisticsQueryer::PipelineStatisticsQueryer(VulkanState& state)
 		: Queryer(StatisticsBits::Pipeline)
 	{

@@ -130,18 +130,18 @@ namespace Spices {
 		m_Buffers[i2]->Flush();
 	}
 
-	void RendererSubPass::BeginStatistics(VkCommandBuffer commandBuffer)
+	void RendererSubPass::BeginStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Statistics) m_Statistics->BeginStatistics(commandBuffer);
+		if (m_Statistics) m_Statistics->BeginStatistics(commandBuffer, flage);
 	}
 
-	void RendererSubPass::EndStatistics(VkCommandBuffer commandBuffer)
+	void RendererSubPass::EndStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Statistics) m_Statistics->EndStatistics(commandBuffer);
+		if (m_Statistics) m_Statistics->EndStatistics(commandBuffer, flage);
 	}
 
 	void RendererSubPass::StoreStatistics()

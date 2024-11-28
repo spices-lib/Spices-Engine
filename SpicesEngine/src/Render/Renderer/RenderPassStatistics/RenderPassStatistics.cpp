@@ -28,23 +28,33 @@ namespace Spices {
 		}
 	}
 
-	void RenderPassStatistics::BeginStatistics(VkCommandBuffer commandBuffer)
+	void RenderPassStatistics::BeginStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage)
 	{
 		SPICES_PROFILE_ZONE;
 
 		for (auto& queryer : m_Queries)
 		{
-			if(queryer) queryer->BeginQuery(commandBuffer);
+			if (!queryer) continue;
+
+			if (queryer->GetStatisticsType() & flage)
+			{
+				queryer->BeginQuery(commandBuffer);
+			}
 		}
 	}
 
-	void RenderPassStatistics::EndStatistics(VkCommandBuffer commandBuffer)
+	void RenderPassStatistics::EndStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage)
 	{
 		SPICES_PROFILE_ZONE;
 
 		for (auto& queryer : m_Queries)
 		{
-			if (queryer) queryer->EndQuery(commandBuffer);
+			if (!queryer) continue;
+
+			if (queryer->GetStatisticsType() & flage)
+			{
+				queryer->EndQuery(commandBuffer);
+			}
 		}
 	}
 

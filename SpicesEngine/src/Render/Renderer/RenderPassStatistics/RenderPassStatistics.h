@@ -35,14 +35,16 @@ namespace Spices {
 		/**
 		* @brief Begin Statistics.
 		* @param[in] commandBuffer VkCommandBuffer.
+		* @param[in] flage StatisticsFlags.
 		*/
-		void BeginStatistics(VkCommandBuffer commandBuffer);
+		void BeginStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage);
 
 		/**
 		* @brief End Statistics.
 		* @param[in] commandBuffer VkCommandBuffer.
+		* @param[in] flage StatisticsFlags.
 		*/
-		void EndStatistics(VkCommandBuffer commandBuffer);
+		void EndStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage);
 
 		/**
 		* @brief Store statistics result.
@@ -80,7 +82,7 @@ namespace Spices {
 
 #ifdef SPICES_DEBUG
 
-#define RENDERPASS_STATISTICS_ENDRENDERER             { m_Renderer->m_StatisticsStateList->GetState()->ExecuteBehave("EndRenderer", nullptr, VK_NULL_HANDLE); }
+#define RENDERPASS_STATISTICS_ENDRENDERER(...)        { m_Renderer->m_StatisticsStateList->GetState()->ExecuteBehave("EndRenderer", __VA_ARGS__, VK_NULL_HANDLE); }
 #define RENDERPASS_STATISTICS_ENDFRAME                { Renderer::m_StatisticsStateList->IncreateState(); }
 #define RENDERPASS_STATISTICS_BEGINSTATISTICS(...)    { m_Renderer->m_StatisticsStateList->GetState()->ExecuteBehave("BeginStatistics", __VA_ARGS__); }
 #define RENDERPASS_STATISTICS_ENDSTATISTICS(...)      { m_Renderer->m_StatisticsStateList->GetState()->ExecuteBehave("EndStatistics", __VA_ARGS__); }      
@@ -90,7 +92,7 @@ namespace Spices {
 
 #ifdef SPICES_RELEASE
  
-#define RENDERPASS_STATISTICS_ENDRENDERER
+#define RENDERPASS_STATISTICS_ENDRENDERER(...)
 #define RENDERPASS_STATISTICS_ENDFRAME            
 #define RENDERPASS_STATISTICS_BEGINSTATISTICS(...)
 #define RENDERPASS_STATISTICS_ENDSTATISTICS(...)  

@@ -183,14 +183,16 @@ namespace Spices
 		/**
 		* @brief Begin Statistics this frame.
 		* @param[in] commandBuffer VkCommandBuffer.
+		* @param[in] flage StatisticsFlags.
 		*/
-		void BeginStatistics(VkCommandBuffer commandBuffer);
+		void BeginStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage = Queryer::ALL);
 
 		/**
 		* @brief End Statistics this frame.
 		* @param[in] commandBuffer VkCommandBuffer.
+		* @param[in] flage StatisticsFlags.
 		*/
-		void EndStatistics(VkCommandBuffer commandBuffer);
+		void EndStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage = Queryer::ALL);
 
 		/**
 		* @brief Store statistics this frame.
