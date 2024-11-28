@@ -17,6 +17,7 @@
 #include "Core/Container/SpanList_test.h"
 #include "Core/Container/RadixTrie_test.h"
 #include "Core/Container/Vector_test.h"
+#include "Core/Container/BehaveStateList_test.h"
 
 /* Delegate */
 #include "Core/Delegate/Delegate_test.h"

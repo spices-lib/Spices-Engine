@@ -29,8 +29,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		RENDERPASS_STATISTICS_BEGINFRAME
-
 		/**
 		* @brief Iter all renderer in order.
 		*/

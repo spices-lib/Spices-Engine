@@ -116,7 +116,7 @@ namespace Spices {
         {
             std::stringstream err_msg;
             err_msg << "Unexpected crash dump status: " << status;
-            SPICES_CORE_CRITICAL(err_msg.str().c_str(), "Aftermath Error");
+            SPICES_CORE_CRITICAL(err_msg.str().c_str())
         }
 
         // Terminate on failure

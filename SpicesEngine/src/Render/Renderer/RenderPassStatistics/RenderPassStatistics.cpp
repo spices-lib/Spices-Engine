@@ -13,10 +13,6 @@
 
 namespace Spices {
 
-	bool RenderPassStatistics::m_IsCaptureNextFrame = false;
-	bool RenderPassStatistics::m_IsCaptureThisFrame = false;
-	bool RenderPassStatistics::m_IsStoreResultNextFrame = false;
-
 	RenderPassStatistics::RenderPassStatistics(VulkanState& state, Queryer::StatisticsFlags flags)
 	{
 		SPICES_PROFILE_ZONE;

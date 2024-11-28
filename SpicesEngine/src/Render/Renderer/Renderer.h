@@ -15,6 +15,7 @@
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
+#include "Core/Container/BehaveStateList.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -788,16 +789,7 @@ namespace Spices {
 				Renderer* renderer     , 
 				uint32_t  currentFrame , 
 				uint32_t  currentImage
-			)
-				: m_Renderer(renderer)
-				, m_CurrentFrame(currentFrame)
-				, m_CurrentImage(currentImage)
-			{
-				SPICES_PROFILE_ZONE;
-
-				m_Renderer->m_IsActive = true;
-				m_CommandBuffer = m_Renderer->m_VulkanState.m_GraphicCommandBuffer[currentFrame];
-			}
+			);
 
 			/**
 			* @brief Destructor Function.
@@ -1696,6 +1688,13 @@ namespace Spices {
 
 			/****************************************************************************/
 		};
+
+	public:
+
+		/**
+		* @brief Statistics StateList.
+		*/
+		static std::shared_ptr<scl::behave_state_list<void, Renderer::RenderBehaveBuilder*, VkCommandBuffer>> m_StatisticsStateList;
 
 	protected:
 		

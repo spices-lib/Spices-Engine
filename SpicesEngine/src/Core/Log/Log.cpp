@@ -19,6 +19,8 @@ namespace Spices {
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
 	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
 
+	bool Log::m_IsInitialized = false;
+
 	void Log::Init()
 	{
 		SPICES_PROFILE_ZONE;
@@ -73,11 +75,15 @@ namespace Spices {
 
 		s_ClientLogger = std::make_shared<spdlog::logger>("Game", begin(sinks), end(sinks));
 		s_ClientLogger->set_level(spdlog::level::trace);
+
+		m_IsInitialized = true;
 	}
 
 	void Log::ShutDown()
 	{
 		SPICES_PROFILE_ZONE;
+
+		m_IsInitialized = false;
 
 		s_CoreLogger.reset();
 		s_ClientLogger.reset();
