@@ -20,9 +20,22 @@ namespace Spices {
 		/**
 		* @brief Stored TimeStamp Result.
 		*/
-		struct Result : Queryer::Result
+		struct Result : public Queryer::Result
 		{
 			float timeStamp;  /* @brief TimeStamp in renderPass. */
+
+			/**
+			* @brief Combine result with another Result.
+			* @param[in] result another Result.
+			*/
+			virtual void Combine(Queryer::Result* result) override
+			{
+				auto r = static_cast<TimestampQueryer::Result*>(result);
+
+				if (!r->valid) return;
+
+				timeStamp += r->timeStamp;
+			}
 		};
 
 	public:

@@ -53,10 +53,11 @@ namespace Spices {
 
 		/**
 		* @brief Iter all Statistics Result.
+		* @param[in] flage StatisticsFlags.
 		* @param[in] fn Function pointer of how to do with statistics result.
 		*/
 		template<typename F>
-		void IterStatisticsResult(F&& fn);
+		void IterStatisticsResult(Queryer::StatisticsFlags flage, F&& fn);
 
 	private:
 		
@@ -67,13 +68,15 @@ namespace Spices {
 	};
 
 	template<typename F>
-	inline void RenderPassStatistics::IterStatisticsResult(F&& fn)
+	inline void RenderPassStatistics::IterStatisticsResult(Queryer::StatisticsFlags flage, F&& fn)
 	{
 		SPICES_PROFILE_ZONE;
 
 		for (auto& queryer : m_Queries)
 		{
-			if (queryer)
+			if (!queryer) continue;
+
+			if (queryer->GetStatisticsType() & flage)
 			{
 				fn(queryer->GetStatisticsType(), queryer->GetPoolResult());
 			}

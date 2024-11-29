@@ -49,5 +49,11 @@ namespace Spices {
 		* @param[in] event Event.
 		*/
 		virtual void OnEvent(Event& event) override {};
+
+	private:
+
+		void DrawTimeStamp();
+
+		void DrawPipelineStatistics();
 	};
 }

@@ -39,6 +39,12 @@ namespace Spices {
 		struct Result
 		{
 			bool valid = false;  /* @brief True if result is valid. */
+
+			/**
+			* @brief Combine result with another Result.
+			* @param[in] result another Result.
+			*/
+			virtual void Combine(Result* result) = 0;
 		};
 
 	public:

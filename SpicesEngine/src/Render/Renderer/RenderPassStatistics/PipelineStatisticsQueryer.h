@@ -72,9 +72,25 @@ namespace Spices {
 		/**
 		* @brief Stored Pipeline Statistics Result.
 		*/
-		struct Result : Queryer::Result
+		struct Result : public Queryer::Result
 		{
 			std::array<uint64_t, (size_t)PipelineStatisticEnum::MAX> statistics;
+
+			/**
+			* @brief Combine result with another Result.
+			* @param[in] result another Result.
+			*/
+			virtual void Combine(Queryer::Result* result) override
+			{
+				auto r = static_cast<PipelineStatisticsQueryer::Result*>(result);
+
+				if (!r->valid) return;
+
+				for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
+				{
+					statistics[i] += r->statistics[i];
+				}
+			}
 		};
 
 	public:

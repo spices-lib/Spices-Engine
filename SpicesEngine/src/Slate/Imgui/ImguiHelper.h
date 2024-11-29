@@ -124,6 +124,24 @@ namespace Spices {
 			std::function<void()> treeFunc
 		);
 
+		/**
+		* @brief Draw a stylized tree title bar.
+		* @param[in] treeName .
+		* @param[in] progressFunc Function of draw progress.
+		* @param[in] treeFunc Function of draw tree.
+		*/
+		static void DrawTreeProgressBar(
+			const std::string&    treeName     ,
+			std::function<void()> progressFunc ,
+			std::function<void()> treeFunc
+		);
+
+		/**
+		* @brief Draw a Material.
+		* @param[in] name tree name.
+		* @param[in] width name colume width.
+		* @param[in] material material reference.
+		*/
 		static void DrawMaterial(
 			const std::string&               name    , 
 			float                            width   , 
