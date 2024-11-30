@@ -29,31 +29,142 @@ namespace Spices {
         if (!m_IsSlateOn) return;
 
         /**
-        * @brief Begin render PerfProfilerHUD.
+        * @brief Begin render RendererProfilerHUD.
         */
         Begin();
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2.0f, 4.0f));
 
-        if (ImGui::Button("Refresh", ImVec2(100.0f, 100.0f)))
+        /**
+        * @brief Search String.
+        */
+        static std::string searchString;
+        static bool isEnableSearch = false;
+
+        /**
+        * @brief Begin render Search Input Text.
+        */
         {
-            RENDERPASS_STATISTICS_CAPTUREFRAME
+            SPICES_PROFILE_ZONEN("ImguiRendererProfilerHUD::Search");
+
+            ImGui::Spacing();
+            ImGui::PushItemWidth(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f - ImGui::GetStyle().WindowPadding.x);
+            static char search[256] = {};
+            if (ImGui::InputTextWithHint("##", ICON_TEXT(ICON_MD_SEARCH, Search), search, 128))
+            {
+                searchString = std::string(search);
+                if (searchString.size() == 0) isEnableSearch = false;
+                else isEnableSearch = true;
+            }
+            ImGui::PopItemWidth();
+
+            ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 2.0f);
+            ImGui::Button(ICON_MD_FILTER_ALT, ImGuiH::GetLineItemSize());
+            ImGui::SameLine(m_PanelSize.x - ImGuiH::GetLineItemSize().x * 1.0f);
+            ImGui::Button(ICON_MD_REORDER, ImGuiH::GetLineItemSize());
+            ImGui::Spacing();
         }
 
-        static const char* queryer[] = { "TimeStamp", "PipelineStatistics" };
-        static int selectedQueryer = 0;
-        ImGui::Combo("##", &selectedQueryer, queryer, _countof(queryer));
+        static int selectedStatistics = 0;
+        static int selectedChannel = 0;
 
-        if (selectedQueryer == 0)
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+
+        /**
+        * @brief Render Datails.
+        */
+        {
+            SPICES_PROFILE_ZONEN("ImguiRendererProfilerHUD::Datails");
+
+            {
+                ImGui::PushID("ImguiRendererProfilerHUD::Statistics Type");
+                ImGui::Columns(2, 0, false);
+                ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 4.0f);
+                ImGui::Text("Statistics");
+                ImGui::NextColumn();
+
+                static const char* type[] = { " TimeStamp", " PipelineStatistics" };
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
+                ImGui::Combo("##", &selectedStatistics, type, _countof(type));
+                ImGui::PopStyleColor();
+                ImGui::PopItemWidth();
+
+                ImGui::Columns(1);
+                ImGui::PopID();
+            }
+
+            if (selectedStatistics == 1)
+            {
+                ImGui::PushID("ImguiRendererProfilerHUD::PipelineChannel");
+                ImGui::Columns(2, 0, false);
+                ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 4.0f);
+                ImGui::Text("Channel");
+                ImGui::NextColumn();
+
+                static const char* channel[] = { 
+                    " Input Assembly Vertices", 
+                    " Input Assembly Primitive",
+                    " Vertex Shader Invocations",
+                    " Geometry Shader Invocations",
+                    " Geometry Shader Primitive",
+                    " Clipping Invocations",
+                    " Clipping Primitive",
+                    " Fragment Shader Invocations",
+                    " Tessellation Control Invocations",
+                    " Tessellation Evaluation Invocations",
+                    " Compute Shader Invocations",
+                    " Task Shader Invocations",
+                    " Mesh Shader Invocations"
+                };
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
+                ImGui::Combo("##", &selectedChannel, channel, _countof(channel));
+                ImGui::PopStyleColor();
+                ImGui::PopItemWidth();
+
+                ImGui::Columns(1);
+                ImGui::PopID();
+            }
+
+            {
+                ImGui::PushID("ImguiRendererProfilerHUD::Refresh");
+                ImGui::Columns(2, 0, false);
+                ImGui::SetColumnWidth(0, ImGuiH::GetLineItemSize().x * 4.0f);
+                ImGui::Text("Refresh");
+                ImGui::NextColumn();
+
+                static bool isChecked = false;
+                ImGuiH::Checkbox(&isChecked);
+
+                if (isChecked)
+                {
+                    RENDERPASS_STATISTICS_CAPTUREFRAME
+                    isChecked = false;
+                }
+
+                ImGui::Columns(1);
+                ImGui::PopID();
+            }
+        }
+
+        ImGui::PopStyleColor(4);
+
+        if (selectedStatistics == 0)
         {
             DrawTimeStamp();
         }
-        else if(selectedQueryer == 1)
+        else if(selectedStatistics == 1)
         {
-            DrawPipelineStatistics();
+            DrawPipelineStatistics(selectedChannel);
         }
 
         /**
-        * @brief End render GBuffer Visualizer.
+        * @brief End render RendererProfilerHUD Visualizer.
         */
+        ImGui::PopStyleVar();
         End();
     }
 
@@ -68,7 +179,7 @@ namespace Spices {
         };
 
         scl::tree<TimestampResult> totalResult;
-        totalResult.GetData().name = "Scene";
+        totalResult.GetData().name = "Scene ( Viewport 0 )";
 
         {
             SPICES_PROFILE_ZONEN("Fetch Statistics Caches");
@@ -89,8 +200,12 @@ namespace Spices {
                         if (res->valid)
                         {
                             subPassResult->GetData().result = *res;
+
                             rendererResult->GetData().result.Combine(res);
+                            rendererResult->GetData().result.valid = true;
+
                             totalResult.GetData().result.Combine(res);
+                            totalResult.GetData().result.valid = true;
                         }
                     });
 
@@ -101,100 +216,194 @@ namespace Spices {
             });
         }
 
+        {
+            SPICES_PROFILE_ZONEN("Draw Statistics Caches");
 
+            static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_NoBordersInBody;
+            static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
 
-        ImGuiH::DrawTreeProgressBar("Scene", [&]() {
+            ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
 
-            std::stringstream ss;
-            ss << " " << std::setprecision(3) << totalResult.GetData().result.timeStamp << " ms";
-
-            ImGui::ProgressBar(totalResult.GetData().result.timeStamp > 0.01f ? 1.0f : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
-            ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.3f);
-            ImGui::Text(ss.str().c_str());
-
-        },  [&]() {
-
-            for(auto& rendererStatistics : totalResult.GetChilds())
+            if (ImGui::BeginTable("timestampTree", 2, flags))
             {
-                TimestampResult& rendererRes = rendererStatistics->GetData();
+                // The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
+                ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+                ImGui::TableSetupColumn("TimeCost", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_PreferSortDescending, ImGuiH::GetLineItemSize().x * 3.0f);
+                ImGui::TableHeadersRow();
 
-                ImGuiH::DrawTreeProgressBar(rendererRes.name.c_str(), [&]() {
-                    
-                    std::stringstream ss;
-                    ss << " " << std::setprecision(3) << rendererRes.result.timeStamp << " ms";
+                static std::function<void(scl::tree<TimestampResult>*, scl::tree<TimestampResult>*)> DrawTimestampTree = [](scl::tree<TimestampResult>* node, scl::tree<TimestampResult>* root) {
+            
+                    if (!node->GetData().result.valid) return;
+                    if (node->GetData().result.timeStamp < 0.001f) return;
 
-                    ImGui::ProgressBar(totalResult.GetData().result.timeStamp > 0.01f ? rendererRes.result.timeStamp / totalResult.GetData().result.timeStamp : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
-                    ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.3f);
-                    ImGui::Text(ss.str().c_str());
-
-                }, [&]() {
-
-                    for (auto& subPassStatistics : rendererStatistics->GetChilds())
+                    ImGui::TableNextRow();
+                    ImGui::TableNextColumn();
+                    bool hasChild = node->GetChilds().size() > 0;
+                    if (hasChild)
                     {
-                        TimestampResult& subPassRes = subPassStatistics->GetData();
+                        bool open = ImGui::TreeNodeEx(node->GetData().name.c_str(), tree_node_flags);
+                        ImGui::TableNextColumn();
 
-                        ImGui::Text(subPassRes.name.c_str());
-                        
-                        if (subPassRes.result.valid)
+                        ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.0f, 0.8f, 0.0f, 1.0f));
+                        ImGui::ProgressBar(root->GetData().result.timeStamp > 0.01f ? (node->GetData().result.timeStamp  / root->GetData().result.timeStamp) : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
+                        ImGui::PopStyleColor();
+                        ImGui::SameLine(0.05f);
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+                        ImGui::Text("%.2f ms", node->GetData().result.timeStamp);
+                        ImGui::PopStyleColor();
+                        if (open)
                         {
-                            ImGui::SameLine((ImGui::GetContentRegionAvail().x - ImGui::GetStyle().FramePadding.x) * 0.3f);
-
-                            std::stringstream ss;
-                            ss << " " << std::setprecision(3) << subPassRes.result.timeStamp << " ms";
-
-                            ImGui::ProgressBar(totalResult.GetData().result.timeStamp > 0.01f ? glm::min(1.0f, subPassRes.result.timeStamp / totalResult.GetData().result.timeStamp) : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
-                            ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.3f);
-                            ImGui::Text(ss.str().c_str());
+                            for (auto& child : node->GetChilds())
+                            {
+                                DrawTimestampTree(child.get(), root);
+                            }
+                            ImGui::TreePop();
                         }
                     }
-                });
-            }
-        });
+                    else
+                    {
+                        ImGui::TreeNodeEx(node->GetData().name.c_str(), tree_node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+                        ImGui::TableNextColumn();
 
+                        ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.0f, 0.8f, 0.0f, 1.0f));
+                        ImGui::ProgressBar(root->GetData().result.timeStamp > 0.01f ? (node->GetData().result.timeStamp / root->GetData().result.timeStamp) : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
+                        ImGui::PopStyleColor();
+                        ImGui::SameLine(0.05f);
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+                        ImGui::Text("%.2f ms", node->GetData().result.timeStamp);
+                        ImGui::PopStyleColor();
+                    }
+                };
+
+                DrawTimestampTree(&totalResult, &totalResult);
+
+                ImGui::EndTable();
+            }
+            ImGui::PopStyleColor(4);
+            ImGui::PopStyleVar();
+        }
     }
 
-    void ImguiRendererProfilerHUD::DrawPipelineStatistics()
+    void ImguiRendererProfilerHUD::DrawPipelineStatistics(int bit)
     {
-        /*TimestampQueryer::Result totalResult;
+        SPICES_PROFILE_ZONE;
 
-        renderer->IterStatistics([&](const std::string& subPassName, const std::shared_ptr<RenderPassStatistics>& statistics) {
+        struct PipelineResult
+        {
+            PipelineStatisticsQueryer::Result result;
+            std::string name;
+        };
+
+        scl::tree<PipelineResult> totalResult;
+        totalResult.GetData().name = "Scene ( Viewport 0 )";
+
+        {
+            SPICES_PROFILE_ZONEN("Fetch Statistics Caches");
+
+            RendererManager::IterRenderer([&](const std::string& rendererName, const std::shared_ptr<Renderer>& renderer) {
+
+                auto rendererResult = totalResult.AddChild();
+                rendererResult->GetData().name = rendererName;
+
+                renderer->IterStatistics([&](const std::string& subPassName, const std::shared_ptr<RenderPassStatistics>& statistics) {
                 
-            TimestampQueryer::Result rendererResult;
+                    auto subPassResult = rendererResult->AddChild();
+                    subPassResult->GetData().name = subPassName;
 
-            statistics->IterStatisticsResult([&](const Queryer::StatisticsBits& type, std::shared_ptr<Queryer::Result>& result) {
-                    
-                if (type == Queryer::Timestamp && (1 << selectedQueryer) == Queryer::Timestamp)
-                {
-                    ImGui::Text(subPassName.c_str());
-                        
-                    TimestampQueryer::Result* res = static_cast<TimestampQueryer::Result*>(result.get());
-                    if (res->valid)
-                    {
-                        ImGui::SameLine(300.0f);
-                        ImGui::Text(std::to_string(res->timeStamp).c_str());
-                    }
-                }
+                    statistics->IterStatisticsResult(Queryer::Pipeline, [&](const Queryer::StatisticsBits& type, std::shared_ptr<Queryer::Result>& result) {
 
-                if (type == Queryer::Pipeline && (1 << selectedQueryer) == Queryer::Pipeline)
-                {
-                    PipelineStatisticsQueryer::Result* res = static_cast<PipelineStatisticsQueryer::Result*>(result.get());
-                    ImGui::SeparatorText(subPassName.c_str());
-                    if (res->valid)
-                    {
-                        for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
+                        PipelineStatisticsQueryer::Result* res = static_cast<PipelineStatisticsQueryer::Result*>(result.get());
+                        if (res->valid)
                         {
-                            if (res->statistics[i] > 0)
+                            subPassResult->GetData().result = *res;
+
+                            rendererResult->GetData().result.Combine(res);
+                            rendererResult->GetData().result.valid = true;
+
+                            totalResult.GetData().result.Combine(res);
+                            totalResult.GetData().result.valid = true;
+                        }
+                    });
+
+                    return false;
+                });
+
+                return false;
+            });
+        }
+
+        {
+            SPICES_PROFILE_ZONEN("Draw Statistics Caches");
+
+            static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_NoBordersInBody;
+            static ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
+
+            ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+
+            if (ImGui::BeginTable("pipelineTree", 2, flags))
+            {
+                // The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
+                ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+                ImGui::TableSetupColumn("Invocation Count", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_PreferSortDescending, ImGuiH::GetLineItemSize().x * 3.0f);
+                ImGui::TableHeadersRow();
+
+                static std::function<void(scl::tree<PipelineResult>*, scl::tree<PipelineResult>*)> DrawTimestampTree = [&](scl::tree<PipelineResult>* node, scl::tree<PipelineResult>* root) {
+            
+                    if (!node->GetData().result.valid) return;
+
+                    ImGui::TableNextRow();
+                    ImGui::TableNextColumn();
+                    bool hasChild = node->GetChilds().size() > 0;
+                    if (hasChild)
+                    {
+                        bool open = ImGui::TreeNodeEx(node->GetData().name.c_str(), tree_node_flags);
+                        ImGui::TableNextColumn();
+
+                        ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.0f, 0.8f, 0.0f, 1.0f));
+                        ImGui::ProgressBar(root->GetData().result.statistics[bit] > 0 ? (node->GetData().result.statistics[bit] / float(root->GetData().result.statistics[bit])) : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
+                        ImGui::PopStyleColor();
+                        ImGui::SameLine(0.05f);
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+                        ImGui::Text("%d", node->GetData().result.statistics[bit]);
+                        ImGui::PopStyleColor();
+                        if (open)
+                        {
+                            for (auto& child : node->GetChilds())
                             {
-                                ImGui::Text(PipelineStatisticEnumToString((PipelineStatisticEnum)i).c_str());
-                                ImGui::SameLine(300.0f);
-                                ImGui::Text(std::to_string(res->statistics[i]).c_str());
+                                DrawTimestampTree(child.get(), root);
                             }
+                            ImGui::TreePop();
                         }
                     }
-                    ImGui::Spacing();
-                }
-            });
-            return false;
-        });*/
+                    else
+                    {
+                        ImGui::TreeNodeEx(node->GetData().name.c_str(), tree_node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+                        ImGui::TableNextColumn();
+                         
+                        ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.0f, 0.8f, 0.0f, 1.0f));
+                        ImGui::ProgressBar(root->GetData().result.statistics[bit] > 0 ? (node->GetData().result.statistics[bit] / float(root->GetData().result.statistics[bit])) : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
+                        ImGui::PopStyleColor();
+                        ImGui::SameLine(0.05f);
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
+                        ImGui::Text("%d", node->GetData().result.statistics[bit]);
+                        ImGui::PopStyleColor();
+                    }
+                };
+
+                DrawTimestampTree(&totalResult, &totalResult);
+
+                ImGui::EndTable();
+            }
+            ImGui::PopStyleColor(4);
+            ImGui::PopStyleVar();
+        }
     }
 }

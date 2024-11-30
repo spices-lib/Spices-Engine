@@ -54,7 +54,7 @@ namespace Spices {
         }
 
         /**
-        * @brief Begin render PerfProfilerHUD.
+        * @brief Begin render VideoMemoryRuntimeHUD.
         */
         Begin();
 
@@ -163,7 +163,7 @@ namespace Spices {
         ImGui::PopStyleVar();
 
         /**
-        * @brief End render GBuffer Visualizer.
+        * @brief End render VideoMemoryRuntimeHUD.
         */
         End();
     }

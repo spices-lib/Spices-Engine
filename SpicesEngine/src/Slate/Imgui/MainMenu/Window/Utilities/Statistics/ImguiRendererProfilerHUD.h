@@ -54,6 +54,6 @@ namespace Spices {
 
 		void DrawTimeStamp();
 
-		void DrawPipelineStatistics();
+		void DrawPipelineStatistics(int bit);
 	};
 }

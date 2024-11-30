@@ -73,7 +73,7 @@ namespace Spices {
         ImGui::PopStyleVar();
 
         /**
-        * @brief End render GBuffer Visualizer.
+        * @brief End render PerfProfilerHUD.
         */
         End();
     }
