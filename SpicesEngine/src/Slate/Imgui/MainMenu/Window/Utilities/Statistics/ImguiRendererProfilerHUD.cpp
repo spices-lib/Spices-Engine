@@ -11,6 +11,7 @@
 #include "Render/Renderer/RenderPassStatistics/RenderPassStatistics.h"
 #include "Render/Renderer/RenderPassStatistics/TimestampQueryer.h"
 #include "Render/Renderer/RenderPassStatistics/PipelineStatisticsQueryer.h"
+#include "Core/Container/Tree.h"
 
 namespace Spices {
 
@@ -58,63 +59,96 @@ namespace Spices {
 
     void ImguiRendererProfilerHUD::DrawTimeStamp()
     {
-        static std::unordered_map<std::string, TimestampQueryer::Result> statisticsCaches;
+        SPICES_PROFILE_ZONE;
 
-        TimestampQueryer::Result totalResult = statisticsCaches["Scene"];
-        statisticsCaches["Scene"].timeStamp = 0.0f;
+        struct TimestampResult
+        {
+            TimestampQueryer::Result result;
+            std::string name;
+        };
 
-        ImGuiH::DrawTreeProgressBar("Scene", [&]() {
+        scl::tree<TimestampResult> totalResult;
+        totalResult.GetData().name = "Scene";
 
-            std::stringstream ss;
-            ss << totalResult.timeStamp << " ms";
-
-            ImGui::ProgressBar(totalResult.timeStamp > 0.01f ? 1.0f : 0.0f, ImVec2(-FLT_MIN, 2.0f), ss.str().c_str());
-
-        },  [&]() {
+        {
+            SPICES_PROFILE_ZONEN("Fetch Statistics Caches");
 
             RendererManager::IterRenderer([&](const std::string& rendererName, const std::shared_ptr<Renderer>& renderer) {
 
-                TimestampQueryer::Result rendererResult = statisticsCaches[rendererName];
-                statisticsCaches[rendererName].timeStamp = 0.0f;
+                auto rendererResult = totalResult.AddChild();
+                rendererResult->GetData().name = rendererName;
 
-                ImGuiH::DrawTreeProgressBar(rendererName.c_str(), [&]() {
-                    
-                    std::stringstream ss;
-                    ss << rendererResult.timeStamp << " ms";
-
-                    ImGui::ProgressBar(totalResult.timeStamp > 0.01f ? rendererResult.timeStamp / totalResult.timeStamp : 0.0f, ImVec2(-FLT_MIN, 2.0f), ss.str().c_str());
-
-                }, [&]() {
-
-                    renderer->IterStatistics([&](const std::string& subPassName, const std::shared_ptr<RenderPassStatistics>& statistics) {
+                renderer->IterStatistics([&](const std::string& subPassName, const std::shared_ptr<RenderPassStatistics>& statistics) {
                 
-                        statistics->IterStatisticsResult(Queryer::Timestamp, [&](const Queryer::StatisticsBits& type, std::shared_ptr<Queryer::Result>& result) {
-                    
-                            ImGui::Text(subPassName.c_str());
-                        
-                            TimestampQueryer::Result* res = static_cast<TimestampQueryer::Result*>(result.get());
-                            if (res->valid)
-                            {
-                                ImGui::SameLine((ImGui::GetContentRegionAvail().x - ImGui::GetStyle().FramePadding.x) * 0.3f);
+                    auto subPassResult = rendererResult->AddChild();
+                    subPassResult->GetData().name = subPassName;
 
-                                std::stringstream ss;
-                                ss << res->timeStamp << " ms";
+                    statistics->IterStatisticsResult(Queryer::Timestamp, [&](const Queryer::StatisticsBits& type, std::shared_ptr<Queryer::Result>& result) {
 
-                                ImGui::ProgressBar(totalResult.timeStamp > 0.01f ? glm::min(1.0f, res->timeStamp / totalResult.timeStamp) : 0.0f, ImVec2(-FLT_MIN, 2.0f), ss.str().c_str());
-
-                                statisticsCaches[rendererName].Combine(res);
-                                statisticsCaches["Scene"].Combine(res);
-                            }
-                        });
-
-                        return false;
+                        TimestampQueryer::Result* res = static_cast<TimestampQueryer::Result*>(result.get());
+                        if (res->valid)
+                        {
+                            subPassResult->GetData().result = *res;
+                            rendererResult->GetData().result.Combine(res);
+                            totalResult.GetData().result.Combine(res);
+                        }
                     });
 
+                    return false;
                 });
 
                 return false;
             });
+        }
 
+
+
+        ImGuiH::DrawTreeProgressBar("Scene", [&]() {
+
+            std::stringstream ss;
+            ss << " " << std::setprecision(3) << totalResult.GetData().result.timeStamp << " ms";
+
+            ImGui::ProgressBar(totalResult.GetData().result.timeStamp > 0.01f ? 1.0f : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
+            ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.3f);
+            ImGui::Text(ss.str().c_str());
+
+        },  [&]() {
+
+            for(auto& rendererStatistics : totalResult.GetChilds())
+            {
+                TimestampResult& rendererRes = rendererStatistics->GetData();
+
+                ImGuiH::DrawTreeProgressBar(rendererRes.name.c_str(), [&]() {
+                    
+                    std::stringstream ss;
+                    ss << " " << std::setprecision(3) << rendererRes.result.timeStamp << " ms";
+
+                    ImGui::ProgressBar(totalResult.GetData().result.timeStamp > 0.01f ? rendererRes.result.timeStamp / totalResult.GetData().result.timeStamp : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
+                    ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.3f);
+                    ImGui::Text(ss.str().c_str());
+
+                }, [&]() {
+
+                    for (auto& subPassStatistics : rendererStatistics->GetChilds())
+                    {
+                        TimestampResult& subPassRes = subPassStatistics->GetData();
+
+                        ImGui::Text(subPassRes.name.c_str());
+                        
+                        if (subPassRes.result.valid)
+                        {
+                            ImGui::SameLine((ImGui::GetContentRegionAvail().x - ImGui::GetStyle().FramePadding.x) * 0.3f);
+
+                            std::stringstream ss;
+                            ss << " " << std::setprecision(3) << subPassRes.result.timeStamp << " ms";
+
+                            ImGui::ProgressBar(totalResult.GetData().result.timeStamp > 0.01f ? glm::min(1.0f, subPassRes.result.timeStamp / totalResult.GetData().result.timeStamp) : 0.0f, ImVec2(-FLT_MIN, 2.0f), "##");
+                            ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.3f);
+                            ImGui::Text(ss.str().c_str());
+                        }
+                    }
+                });
+            }
         });
 
     }

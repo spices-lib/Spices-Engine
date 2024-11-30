@@ -407,7 +407,7 @@ namespace Spices {
        
         if (progressFunc)
         {
-            ImGui::SameLine((ImGui::GetContentRegionAvail().x - ImGui::GetStyle().FramePadding.x) * 0.3f);
+            ImGui::SameLine(ImGui::GetContentRegionAvail().x * 0.3f);
             progressFunc();
         }
 
