@@ -87,7 +87,10 @@ project "SpicesEngine"
 		'SPICES_EXTENT_PROCESS_PATH=std::string("' .. path.translate(os.getcwd(), "/") .. '/../vendor/")',
 
 		-- Define Engine Use Vulkan API for Rendering, though we may support multipile Rendering API.
-		"RENDERAPI_VULKAN"
+		"RENDERAPI_VULKAN",
+
+		-- Define Platform : Windows.
+		"PLATFORM_WINDOWS"
 	}
 
 	-- The Solution Additional Include Folder.

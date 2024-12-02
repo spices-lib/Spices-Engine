@@ -155,6 +155,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_ExtensionProperties.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+		m_ExtensionProperties.push_back(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);
 
 		/**
 		* @brief Get glfw extensions requirements.

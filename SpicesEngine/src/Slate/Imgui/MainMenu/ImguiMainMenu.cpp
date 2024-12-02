@@ -13,6 +13,7 @@
 #include "Window/ImguiWindow.h"
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
 
 #include <imgui_internal.h>
 
@@ -142,7 +143,22 @@ namespace Spices {
                 if (ImGui::MenuItem("Physics Authoring", "Ctrl+9")) {}
                 ImGui::Separator(); 
                 if (ImGui::MenuItem("UI Toggle Visibility", "F7")) {}
-                if (ImGui::MenuItem("Fullscreen Mode", "F11")) {}
+                if (ImGui::MenuItem("Fullscreen Mode", "F11")) 
+                {
+                    static bool isFullScreen = false;
+                    isFullScreen = !isFullScreen;
+
+                    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+                    if (isFullScreen)
+                    {
+                        glfwSetWindowMonitor(VulkanRenderBackend::GetState().m_Windows, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, mode->refreshRate);
+                    }
+                    else
+                    {
+                        glfwSetWindowMonitor(VulkanRenderBackend::GetState().m_Windows, nullptr, 0.05 * mode->width, 0.05 * mode->height, 0.9 * mode->width, 0.9 * mode->height, mode->refreshRate);
+                    }
+                }
                 ImGui::Separator(); 
                 if (ImGui::MenuItem("Save Layout")) {}
                 if (ImGui::MenuItem("Load Layout")) {}
