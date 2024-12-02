@@ -137,6 +137,12 @@ namespace Spices{
 		*/
 		inline bool IsResizedThisFrame() const { return m_IsResized; }
 
+		/**
+		* @brief Get this panel Name.
+		* @return Returns this panel Name.
+		*/
+		inline const std::string& GetName() const { return m_PanelName; }
+
 	protected:
 
 		/**

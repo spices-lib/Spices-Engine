@@ -58,7 +58,10 @@ namespace Spices {
 
         ImGui::SetNextWindowBgAlpha(0.7f); // Transparent background
         bool open = true;
-        if (ImGui::Begin(m_PanelName.c_str(), &open, window_flags))
+
+        std::stringstream ss;
+        ss << m_Owner->GetName() << "_" << m_PanelName;
+        if (ImGui::Begin(ss.str().c_str(), &open, window_flags))
         {
             ImGui::Text("FPS: %.2f | Frame time: %.2f ms", io.Framerate, 1000.0f / io.Framerate);
             ImGui::Text("ViewPort Size: ( %d, %d )", (int)work_size.x, (int)work_size.y);

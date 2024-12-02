@@ -40,7 +40,9 @@ namespace Spices {
 		ImGui::SetNextWindowPos(StartPos);
 
 		bool open = true;
-		Begin("Left ToolBar", 0.0f, window_flags);
+		std::stringstream lss;
+		lss << m_Owner->GetName() << "_" << "Left ToolBar";
+		Begin(lss.str().c_str(), 0.0f, window_flags);
 
 		ImVec2 ItemSize = ImGuiH::GetLineItemSize() * 1.5f;
 		ItemSize.x *= 4.0f;
@@ -127,7 +129,9 @@ namespace Spices {
 		NextPos.x += m_Owner->GetPanelSize().x - ItemSize.x - ItemSize.y - 10.0f;
 		ImGui::SetNextWindowPos(NextPos);
 
-		Begin("Right ToolBar", 0.0f, window_flags);
+		std::stringstream rss;
+		rss << m_Owner->GetName() << "_" << "Right ToolBar";
+		Begin(rss.str().c_str(), 0.0f, window_flags);
 		if (ImGui::Button(ICON_TEXT(ICON_MD_SUNNY, Stage Lights), ItemSize))
 		{
 			m_OptionMenuOn = false;

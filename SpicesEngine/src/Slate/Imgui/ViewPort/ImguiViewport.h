@@ -37,10 +37,12 @@ namespace Spices {
 		* @brief Constructor Function.
 		* @param[in] panelName The Slate's name to show.
 		* @param[in] frameInfo The Frame Date that in use.
+		* @param[in] index Viewport Index.
 		*/
 		ImguiViewport(
 			const std::string& panelName , 
-			FrameInfo&         frameInfo
+			FrameInfo&         frameInfo ,
+			uint32_t           index = 0
 		);
 
 		/**
@@ -109,6 +111,11 @@ namespace Spices {
 		* @brief ImTextureID of SceneColor.
 		*/
 		ImTextureID m_ViewportID;
+
+		/**
+		* @brief This viewport index.
+		*/
+		uint32_t m_Index;
 
 		/**
 		* @brief The shared pointer of ImguiFloatingInfo.

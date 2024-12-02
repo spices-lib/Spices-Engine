@@ -26,6 +26,7 @@ namespace Spices {
 		*/
 		m_SlateRegister->Register<ImguiMainMenu>      (true, "MainMenu");
 		m_SlateRegister->Register<ImguiViewport>      (true, "ViewPort");
+		//m_SlateRegister->Register<ImguiViewport>(true, "ViewPort_1", 1);
 		m_SlateRegister->Register<ImguiConsole>       (true, "Console"  , Console::Registry("Console"));
 		m_SlateRegister->Register<ImguiContentBrowser>(true, "Content" );
 		m_SlateRegister->Register<ImguiProperty>      (true, "Property");

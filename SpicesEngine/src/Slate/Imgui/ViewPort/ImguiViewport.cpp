@@ -17,9 +17,11 @@ namespace Spices {
 
     ImguiViewport::ImguiViewport(
         const std::string& panelName , 
-        FrameInfo&         frameInfo
+        FrameInfo&         frameInfo ,
+        uint32_t           index
     )
         : ImguiSlate(panelName, frameInfo)
+        , m_Index(index)
     {
         SPICES_PROFILE_ZONE;
 
@@ -40,19 +42,32 @@ namespace Spices {
         /**
         * @brief Instance a FloattingInfo.
         */
-        m_FloatingInfo = SlateSystem::GetRegister()->Register<ImguiFloatingInfo>(false, "FloatingInfo", this);
+        {
+            std::stringstream ss;
+            ss << "FloatingInfo_" << m_Index;
 
+            m_FloatingInfo = SlateSystem::GetRegister()->Register<ImguiFloatingInfo>(false, ss.str(), this);
+        }
 
         /**
         * @brief Instance a Gizmos.
         */
-        m_Gizmos = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, "Gizmos", this);
+        {
+            std::stringstream ss;
+            ss << "Gizmos_" << m_Index;
+
+            m_Gizmos = SlateSystem::GetRegister()->Register<ImguiGizmos>(false, ss.str(), this);
+        }
 
         /**
         * @brief Instance a Gizmos.
         */
-        m_ToolBar = SlateSystem::GetRegister()->Register<ImguiViewportToolBar>(false, "ToolBar", this);
+        {
+            std::stringstream ss;
+            ss << "ToolBar_" << m_Index;
 
+            m_ToolBar = SlateSystem::GetRegister()->Register<ImguiViewportToolBar>(false, ss.str(), this);
+        }
     }
 
     void ImguiViewport::OnRender()
