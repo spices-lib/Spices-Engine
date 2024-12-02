@@ -33,6 +33,7 @@ namespace Spices {
 		/**
 		* @brief Init General ThreadPool.
 		*/
+		ThreadPool::Init();
 		ThreadPool::Get()->SetMode(PoolMode::MODE_FIXED);
 		ThreadPool::Get()->Start(4);
 
@@ -65,6 +66,11 @@ namespace Spices {
 		.PopSystem("ResourceSystem")
 		.PopSystem("RenderSystem")
 		.PopSystem("NativeScriptSystem");
+
+		/**
+		* @brief Shutdown ThreadPool.
+		*/
+		ThreadPool::ShutDown();
 
 		/**
 		* @brief Shutdown Log Class.

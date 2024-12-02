@@ -21,13 +21,23 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ThreadPool() override;
+		virtual ~ThreadPool() override = default;
+
+		/**
+		* @brief Init ThreadPool Single Instance.
+		*/
+		static void Init();
 
 		/**
 		* @brief Get ThreadPool Single Instance.
 		* @return Returns ThreadPool Single Instance.
 		*/
 		static std::shared_ptr<ThreadPool>& Get() { return m_ThreadPool; }
+
+		/**
+		* @brief ShutDown ThreadPool Single Instance.
+		*/
+		static void ShutDown() { m_ThreadPool = nullptr; }
 
 		/******************************************Must Implementation************************************************/
 

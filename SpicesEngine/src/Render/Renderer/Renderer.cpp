@@ -563,7 +563,7 @@ namespace Spices {
 			{
 				auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
-				state->PushBehave("EndRenderer", [&](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
+				state->PushBehave("EndRenderer", [](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
 					ThreadPool::Get()->SubmitPoolTask([&](std::shared_ptr<RendererSubPass> subPass) { 
 						subPass->StoreStatistics(); 
 					}, builder->GetStatisticsRendererPass());
