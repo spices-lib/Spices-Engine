@@ -1754,7 +1754,7 @@ namespace Spices {
 		bool m_IsRegistryDGCPipeline;
 
 		/**
-		* @brief Whether this renderer is actived.
+		* @brief Whether this renderer is actived(submit commands in RendererBehaveBuilder).
 		*/
 		bool m_IsActive;
 
