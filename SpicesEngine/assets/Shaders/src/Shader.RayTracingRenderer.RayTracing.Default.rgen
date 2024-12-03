@@ -75,12 +75,13 @@ void main()
     float tMin              = 0.001f;
     float tMax              = 10000.0f;
     
-    vec3 curWeight          = vec3(1.0f);
-    vec3 hitValue           = vec3(0.0f);
+    vec3  curWeight         = vec3(1.0f);
+    vec3  hitValue          = vec3(0.0f);
     uint  maxRayDepth       = 0;
     uint  entityID          = 0;
     uint  triangleID        = 0;
-    
+    float depth             = 0.0f;
+
     /**
     * @brief First Entry.
     */
@@ -102,6 +103,7 @@ void main()
     maxRayDepth  = prd.maxRayDepth;
     entityID     = prd.entityID;
     triangleID   = prd.triangleID;
+    depth        = prd.depth;
 
     /**
     * @brief Recursive Ray by hit material ateribute.
@@ -132,14 +134,14 @@ void main()
     {
         float a         = 1.0f / float(view.stableFrames + 1);
         vec3  old_color = imageLoad(RayImage, ivec2(gl_LaunchIDEXT.xy)).xyz;
-        imageStore(RayImage, ivec2(gl_LaunchIDEXT.xy), vec4(mix(old_color, hitValue, a), 1.0f));
+        imageStore(RayImage, ivec2(gl_LaunchIDEXT.xy), vec4(mix(old_color, hitValue, a), depth));
     }
     else
     {
         /**
         * @brief First frame, replace the value in the buffer.
         */ 
-        imageStore(RayImage, ivec2(gl_LaunchIDEXT.xy), vec4(hitValue, 1.0f));
+        imageStore(RayImage, ivec2(gl_LaunchIDEXT.xy), vec4(hitValue, depth));
     }
 
     imageStore(RayID[0], ivec2(gl_LaunchIDEXT.xy), vec4(entityID));

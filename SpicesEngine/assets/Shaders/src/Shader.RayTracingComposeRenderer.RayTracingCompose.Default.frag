@@ -53,9 +53,12 @@ layout(set = 2, binding = 1, r32f) uniform image2D RayID[];
 
 void main()
 {
-	ivec2 uv     = ivec2(view.sceneTextureSize.xy * fragInput.texCoord.xy);
-	outColor     = imageLoad(RayImage, uv);
-	outEntityID  = imageLoad(RayID[0], uv).x;
+	ivec2 uv            = ivec2(view.sceneTextureSize.xy * fragInput.texCoord.xy);
+	vec4 rayImage       = imageLoad(RayImage, uv);
+				        
+	gl_FragDepth        = rayImage.w;
+	outColor            = vec4(rayImage.xyz, 1.0f);
+	outEntityID         = imageLoad(RayID[0], uv).x;
 
 	uint  triangleSeed  = uint(imageLoad(RayID[1], uv).x);
 	float trianglerand0 = rnd(triangleSeed);

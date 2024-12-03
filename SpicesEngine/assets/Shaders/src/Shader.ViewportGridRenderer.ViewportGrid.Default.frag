@@ -287,6 +287,6 @@ vec4 DrawEditorGridDigitalNumber(in vec4 color, in vec3 sd, in float t, in int l
 float ComputeDepth(in vec3 p)
 {
     vec3 offset = vec3(0.0f, BIAS, 0.0f);
-    vec4 cp = view.projection * view.view * vec4(p.xyz + offset, 1.0);
+    vec4 cp = view.projection * view.view * vec4(p.xyz + offset, 1.0f);
     return cp.z / cp.w;
 }

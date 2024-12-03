@@ -173,6 +173,10 @@ void main()
     prd.maxRayDepth    = materialAttributes.maxRayDepth;
     prd.entityID       = desc.entityID;
     prd.triangleID     = gl_PrimitiveID;
+
+    vec4 glPos         = view.projection * view.view * vec4(pi.position, 1.0f);
+    glPos             /= glPos.w;
+    prd.depth          = glPos.z;
 }
 
 /*****************************************************************************************/
