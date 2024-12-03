@@ -362,7 +362,7 @@ namespace Spices {
 			sizeInfo.buildScratchSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
 			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-			0
+			VMA_MEMORY_PROPERTY_DEDICATED_MEMORY_BIT
 		);
 
 		VkDeviceAddress scratchAddress = scratchBuffer->GetAddress();
