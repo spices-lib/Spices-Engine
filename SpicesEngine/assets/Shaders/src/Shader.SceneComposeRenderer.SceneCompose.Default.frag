@@ -216,6 +216,8 @@ vec3 CalculatePointLights(in GBufferPixel gbp)
                 col += BRDF_Specular_CookTorrance(dir, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity * attenuation;
             }
         }
+
+        break;
     }
     
     return col;
@@ -255,7 +257,7 @@ vec3 CalculateDirectionalLights(in GBufferPixel gbp)
             vec3  origin = gbp.position;
             vec3  rayDir = dir;
             uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
-            bool isShadowArea = true;
+            bool isShadowArea = false;
             
             rayQueryEXT rayQuery;
 
