@@ -74,7 +74,8 @@ namespace Spices {
 		.AddInput(2, 0, VK_SHADER_STAGE_FRAGMENT_BIT, { "Albedo", "Normal", "Roughness", "Metallic", "Position" })
 		.AddStorageBuffer(3, 0, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                        /* @brief World Directional Light Buffer. */
 		.AddStorageBuffer(3, 1, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_FRAGMENT_BIT)                              /* @brief World PointLight Buffer.        */
-		.Build();
+		.AddAccelerationStructure(4, 0, VK_SHADER_STAGE_FRAGMENT_BIT)                                                             /* @brief Acceleration Structure.         */
+		.Build(RayTracingRenderer::GetAccelerationStructure());
 	}
 
 	std::shared_ptr<VulkanPipeline> SceneComposeRenderer::CreatePipeline(

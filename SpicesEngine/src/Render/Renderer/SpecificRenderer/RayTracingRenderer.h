@@ -66,7 +66,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~RayTracingRenderer() override = default;
+		virtual ~RayTracingRenderer() override;
 
 		/**
 		* @brief The interface is inherited from Renderer.
@@ -74,6 +74,12 @@ namespace Spices {
 		* @param[in] frameInfo The current frame data.
 		*/
 		virtual void Render(TimeStep& ts, FrameInfo& frameInfo) override;
+
+		/**
+		* @brief Get RayTracing AccelerationStructure.
+		* @return Returns RayTracing AccelerationStructure.
+		*/
+		static const VkAccelerationStructureKHR& GetAccelerationStructure() { return m_VulkanRayTracing->GetAccelerationStructure(); }
 
 	private:
 
@@ -139,7 +145,7 @@ namespace Spices {
 		/**
 		* @brief VulkanRayTracing.
 		*/
-		std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
+		static std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
 
 		std::unique_ptr<VulkanBuffer> m_RTSBTBuffer;
 		std::unordered_map<std::string, uint32_t> m_HitGroups;

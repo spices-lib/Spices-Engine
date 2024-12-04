@@ -113,9 +113,13 @@ namespace Spices {
 		hostQueryResetFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
 		hostQueryResetFeatures.pNext                            = &layoutFeatures;
 
+		VkPhysicalDeviceRayQueryFeaturesKHR                       rayQueryFeatures {};
+		rayQueryFeatures.sType                                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR;
+		rayQueryFeatures.pNext                                  = &hostQueryResetFeatures;
+
 		VkPhysicalDeviceRayTracingPipelineFeaturesKHR             rayTracingFeatures {};
 		rayTracingFeatures.sType                                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
-		rayTracingFeatures.pNext                                = &hostQueryResetFeatures; 
+		rayTracingFeatures.pNext                                = &rayQueryFeatures;
 
 		VkPhysicalDeviceAccelerationStructureFeaturesKHR          accelerationStructureFeatures {};
 		accelerationStructureFeatures.sType                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
@@ -424,10 +428,14 @@ namespace Spices {
 		VkPhysicalDeviceHostQueryResetFeatures                hostQueryResetFeatures {};
 		hostQueryResetFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
 		hostQueryResetFeatures.pNext                        = &layoutFeatures;
-													        
+											
+		VkPhysicalDeviceRayQueryFeaturesKHR                   rayQueryFeatures {};
+		rayQueryFeatures.sType                              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR;
+		rayQueryFeatures.pNext                              = &hostQueryResetFeatures;
+
 		VkPhysicalDeviceRayTracingPipelineFeaturesKHR         rayTracingFeatures {};
 		rayTracingFeatures.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
-		rayTracingFeatures.pNext                            = &hostQueryResetFeatures; 
+		rayTracingFeatures.pNext                            = &rayQueryFeatures;
 
 		VkPhysicalDeviceAccelerationStructureFeaturesKHR      accelerationStructureFeatures {};
 		accelerationStructureFeatures.sType                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
@@ -466,6 +474,7 @@ namespace Spices {
 		ASSERT(bufferDeviceAddressFeatures.bufferDeviceAddressCaptureReplay)                  /* @brief Enable Buffer Address Capture Feature.          */
 		ASSERT(accelerationStructureFeatures.accelerationStructure)                           /* @brief Enable RayTracing AccelerationStructure.        */
 		ASSERT(rayTracingFeatures.rayTracingPipeline)                                         /* @brief Enable RayTracing Pipeline.                     */
+		ASSERT(rayQueryFeatures.rayQuery)                                                     /* @brief Enable RayTracing Query Feature.                */
 		ASSERT(hostQueryResetFeatures.hostQueryReset)                                         /* @brief Enable HostQueryReset Feature.                  */
 		ASSERT(layoutFeatures.scalarBlockLayout)                                              /* @brief Enable Shader ScalarBlockLayout Feature.        */
 
@@ -508,6 +517,7 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_KHR_MAINTENANCE_1_EXTENSION_NAME);                    /* @brief Negative Viewport Extension.                                            */
 		m_ExtensionProperties.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);           /* @brief To build acceleration structures.                                       */
 		m_ExtensionProperties.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);             /* @brief To use vkCmdTraceRaysKHR.                                               */
+		m_ExtensionProperties.push_back(VK_KHR_RAY_QUERY_EXTENSION_NAME);                        /* @brief Enable Ray Query.                                                       */
 		m_ExtensionProperties.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);         /* @brief Required by ray tracing pipeline.                                       */
 		m_ExtensionProperties.push_back(VK_KHR_SHADER_CLOCK_EXTENSION_NAME);                     /* @brief Enable Shader Clock Extension.                                          */
 		m_ExtensionProperties.push_back(VK_KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME);         /* @brief Enable Shader Debug Print.                                              */

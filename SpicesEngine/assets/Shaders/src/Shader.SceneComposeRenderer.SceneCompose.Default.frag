@@ -8,7 +8,9 @@
 
 #version 460
 
-#extension GL_GOOGLE_include_directive : enable     /* @brief Enable include Macro. */
+#extension GL_GOOGLE_include_directive : enable     /* @brief Enable include Macro.       */
+#extension GL_EXT_ray_tracing          : enable     /* @brief Enable Ray Tracing Shader.  */
+#extension GL_EXT_ray_query            : enable     /* @brief Enable Ray Query Feature.   */
 
 #include "Header/ShaderCommon.h"
 #include "Header/ShaderPreRendererLayout.glsl"
@@ -78,6 +80,11 @@ layout(set = 3, binding = 1, scalar) readonly buffer PLightBuffer
 } 
 pLightBuffer;
 
+/**
+* @brief Acceleration Structure.
+*/
+layout(set = 4, binding = 0) uniform accelerationStructureEXT topLevelAS;
+
 /*****************************************************************************************/
 
 /******************************************Functions**************************************/
@@ -88,6 +95,20 @@ pLightBuffer;
 * @see MaterialAttributes.
 */
 GBufferPixel GetGBufferPixel();
+
+/**
+* @brief Calculate Point Lights contribution for pixel emissive.
+* @param[in] gbp GBufferPixel.
+* @return Returns the contribution of Point Lights.
+*/
+vec3 CalculatePointLights(in GBufferPixel gbp);
+
+/**
+* @brief Calculate Directional Lights contribution for pixel emissive.
+* @param[in] gbp GBufferPixel.
+* @return Returns the contribution of Directional Lights.
+*/
+vec3 CalculateDirectionalLights(in GBufferPixel gbp);
 
 /*****************************************************************************************/
 
@@ -100,33 +121,17 @@ void main()
 	vec4 ro          = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
     vec3 V           = normalize(ro.xyz - gbp.position);
     
-    vec3 col = BRDF_Diffuse_Lambert(gbp.albedo) * PI;
-    
-    for(int i = 0; i < pLightBuffer.i.length(); i++)
-    {
-    	PointLight light = pLightBuffer.i[i];
-    	if(light.intensity < -500.0f) break;
-    	
-    	vec3 lpos = light.position;
-        vec3 L = normalize(lpos - gbp.position);
-        float tMax = length(lpos - gbp.position);
-        
-        float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
-        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity * attenuation;
-    }
+    /**
+    * @brief calaculate BRDF with Lights.
+    * Different from raytracing.
+    */
+    vec3 brdf_diffuse = BRDF_Diffuse_Lambert(gbp.albedo) * PI;
+    vec3 brdf_specular = vec3(0.0f);
+    brdf_specular += (CalculatePointLights(gbp) + CalculateDirectionalLights(gbp));
 
-	for(int i = 0; i < dLightBuffer.i.length(); i++)
-	{
-		DirectionalLight light = dLightBuffer.i[i];
-        if(light.intensity < -500.0f) break;
-        
-        vec4 dir4 = light.rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        vec3 L = dir4.xyz;
-        
-        col += BRDF_Specular_CookTorrance(L, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity;
-	}
+    vec3 BRDF = brdf_diffuse + brdf_specular;
 
-	outSceneColor = vec4(col, 1.0f);
+	outSceneColor = vec4(BRDF, 1.0f);
 }
 
 /*****************************************************************************************/
@@ -142,4 +147,147 @@ GBufferPixel GetGBufferPixel()
 	gbp.position    = subpassLoad(GBuffer[POSITION]).xyz;
 	
 	return gbp;
+}
+
+vec3 CalculatePointLights(in GBufferPixel gbp)
+{
+    vec3 col = vec3(0.0f);
+
+    /**
+    * @brief Iter all PointLights in Buffer.
+    */
+    for(int i = 0; i < pLightBuffer.i.length(); i++)
+    {
+        /**
+        * @brief Get PointLight from Buffer.
+        */
+        PointLight light = pLightBuffer.i[i];
+
+        /**
+        * @brief If hit break condition, than break.
+        */
+        if(light.intensity < -500.0f) break;
+
+        /**
+        * @brief light position
+        */ 
+        vec4 ro   = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        vec3 lpos = light.position;
+        vec3 dir  = normalize(lpos - gbp.position);
+        vec3 V    = normalize(ro.xyz - gbp.position);
+        
+        if(dot(gbp.normal, dir) > 0)
+        {
+            float tMin   = 0.001f;
+            float tMax   = length(lpos - gbp.position);
+            vec3  origin = gbp.position;
+            vec3  rayDir = dir;
+            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
+            bool isShadowArea = false;
+
+            rayQueryEXT rayQuery;
+
+            rayQueryInitializeEXT(rayQuery,  /* @brief Ray result.              */
+                topLevelAS,                  /* @brief Acceleration structure.  */
+                flags,                       /* @brief RayFlags.                */
+                0xFF,                        /* @brief CullMask.                */
+                origin,                      /* @brief Ray origin.              */
+                tMin,                        /* @brief Ray min range.           */
+                rayDir,                      /* @brief Ray direction.           */
+                tMax                         /* @brief Ray max range.           */
+            );                               
+          
+            /**
+            * @brief Traverse the acceleration structure and store information about the first intersection (if any).
+            */
+            rayQueryProceedEXT(rayQuery);
+
+            /**
+            * @brief If the intersection has hit a triangle, the fragment is shadowed.
+            */
+            if (rayQueryGetIntersectionTypeEXT(rayQuery, true) == gl_RayQueryCommittedIntersectionTriangleEXT) 
+            {
+                isShadowArea = true;
+            }
+
+            if(!isShadowArea)
+            {
+                float attenuation = 1.0f / (light.constantf + light.linear * tMax + light.quadratic * tMax * tMax);
+                col += BRDF_Specular_CookTorrance(dir, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity * attenuation;
+            }
+        }
+    }
+    
+    return col;
+}
+
+vec3 CalculateDirectionalLights(in GBufferPixel gbp)
+{
+    vec3 col = vec3(0.0f);
+    
+    /**
+    * @brief Iter all DirectionalLights in Buffer.
+    */
+    for(int i = 0; i < dLightBuffer.i.length(); i++)
+    {
+        /**
+        * @brief Get PointLight from Buffer.
+        */
+        DirectionalLight light = dLightBuffer.i[i];
+        
+        /**
+        * @brief If hit break condition, than break.
+        */
+        if(light.intensity < -500.0f) break;
+
+        /**
+        * @brief light position
+        */ 
+        vec4 ro   = view.inView * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        vec4 dir4 = light.rotationMatrix * vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        vec3 dir  = dir4.xyz;
+        vec3 V    = normalize(ro.xyz - gbp.position);
+
+        if(dot(gbp.normal, dir) > 0)
+        {
+            float tMin   = 0.001f;
+            float tMax   = 100000.0f;
+            vec3  origin = gbp.position;
+            vec3  rayDir = dir;
+            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
+            bool isShadowArea = true;
+            
+            rayQueryEXT rayQuery;
+
+            rayQueryInitializeEXT(rayQuery,  /* @brief Ray result.              */
+                topLevelAS,                  /* @brief Acceleration structure.  */
+                flags,                       /* @brief RayFlags.                */
+                0xFF,                        /* @brief CullMask.                */
+                origin,                      /* @brief Ray origin.              */
+                tMin,                        /* @brief Ray min range.           */
+                rayDir,                      /* @brief Ray direction.           */
+                tMax                         /* @brief Ray max range.           */
+            );
+
+            /**
+            * @brief Traverse the acceleration structure and store information about the first intersection (if any).
+            */
+            rayQueryProceedEXT(rayQuery);
+
+            /**
+            * @brief If the intersection has hit a triangle, the fragment is shadowed.
+            */
+            if (rayQueryGetIntersectionTypeEXT(rayQuery, true) == gl_RayQueryCommittedIntersectionTriangleEXT)
+            {
+                isShadowArea = true;
+            }
+
+            if(!isShadowArea)
+            {
+                col += BRDF_Specular_CookTorrance(dir, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity;
+            }
+        }
+    }
+    
+    return col;
 }

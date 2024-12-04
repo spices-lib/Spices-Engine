@@ -128,7 +128,7 @@ namespace Spices {
 		* @brief Get the position variable.
 		* @return Returns the position variable.
 		*/
-		const glm::vec3& GetPosition() const { return m_Transform.scale; }
+		const glm::vec3& GetPosition() const { return m_Transform.position; }
 
 		/**
 		* @brief Get the rotation variable.

@@ -12,6 +12,8 @@
 
 namespace Spices {
 	
+	std::unique_ptr<VulkanRayTracing> RayTracingRenderer::m_VulkanRayTracing = nullptr;
+
 	RayTracingRenderer::RayTracingRenderer(
 		const std::string&                           rendererName          ,
 		VulkanState&                                 vulkanState           ,
@@ -25,6 +27,13 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_VulkanRayTracing = std::make_unique<VulkanRayTracing>(m_VulkanState);
+	}
+
+	RayTracingRenderer::~RayTracingRenderer()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_VulkanRayTracing = nullptr;
 	}
 
 	void RayTracingRenderer::CreateRendererPass()
@@ -106,11 +115,11 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if(frameInfo.m_RendererType != RendererType::PathTracing) return;
-		
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
 		UpdateTopLevelAS(frameInfo);
+
+		if(frameInfo.m_RendererType != RendererType::PathTracing) return;
 		
 		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
 
