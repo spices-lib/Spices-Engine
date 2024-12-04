@@ -27,7 +27,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ThreadCache() = default;
+		virtual ~ThreadCache();
 
 		/**
 		* @brief Copy Constructor Function.
@@ -61,8 +61,9 @@ namespace Spices {
 		* @brief Release memory to cc.
 		* @param[in] list free_list.
 		* @param[in] size object bytes.
+		* @param[in] count release count.
 		*/
-		static void ListTooLong(scl::free_list& list, size_t size);
+		static void ReleaseToCentralCache(scl::free_list& list, size_t size, size_t count);
 
 		/**
 		* @brief Fetch memory from central cache if this is run out.
@@ -81,7 +82,38 @@ namespace Spices {
 	};
 
 	/**
-	* @brief Thread Unique TC.
+	* @brief Wapper of Instance/Delete ThreadCache in thread.
 	*/
-	static _declspec(thread) ThreadCache* pTLSThreadCache = nullptr;
+	class ThreadCacheThreadWapper
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		*/
+		ThreadCacheThreadWapper() : instance(nullptr) {}
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~ThreadCacheThreadWapper();
+
+		/**
+		* @brief Get ThreadCache Instance.
+		* @reutrn Returns ThreadCache Instance.
+		*/
+		ThreadCache*& GetInst();
+
+	private:
+
+		/**
+		* @brief This thread ThreadCache instance.
+		*/
+		ThreadCache* instance;
+	};
+
+	/**
+	* @brief Thread Unique TCWapper.
+	*/
+	static _declspec(thread) ThreadCacheThreadWapper pTLSThreadCache;
 }

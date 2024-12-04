@@ -78,6 +78,13 @@ namespace Spices {
 		static size_t Index(size_t size);
 
 		/**
+		* @brief Determine how much bytes freelist should process the memory block with given index.
+		* @param[in] index freelist index.
+		* @return Returns bytes of freelist index.
+		*/
+		static size_t Bytes(size_t index);
+
+		/**
 		* @brief Get count of blocks limit by tc align up bytes.
 		* @param[in] size align up bytes.
 		* @return Returns blocks limit.

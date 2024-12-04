@@ -7,8 +7,23 @@
 #include "Pchheader.h"
 #include "ThrealCache.h"
 #include "CentralCache.h"
+#include "ObjectPool.h"
 
 namespace Spices {
+
+	ThreadCache::~ThreadCache()
+	{
+		/**
+		* @brief Release all memory to cc while thread is destroied.
+		*/
+		for (int i = 0; i < MemoryPool::FREE_LIST_NUM; i++)
+		{
+			if (m_FreeLists[i].Size() > 0)
+			{
+				ReleaseToCentralCache(m_FreeLists[i], MemoryPool::Bytes(i), m_FreeLists[i].Size());
+			}
+		}
+	}
 
 	void* ThreadCache::Allocate(size_t size)
 	{
@@ -56,7 +71,7 @@ namespace Spices {
 		*/
 		if (m_FreeLists[index].Size() >= m_FreeLists[index].ApplyforNBlocks())
 		{
-			ListTooLong(m_FreeLists[index], size);
+			ReleaseToCentralCache(m_FreeLists[index], size, m_FreeLists[index].ApplyforNBlocks());
 		}
 	}
 
@@ -93,14 +108,36 @@ namespace Spices {
 		return start;
 	}
 
-	void ThreadCache::ListTooLong(scl::free_list& list, size_t size)
+	void ThreadCache::ReleaseToCentralCache(scl::free_list& list, size_t size, size_t count)
 	{
 		void* start = nullptr;
 		void* end   = nullptr;
 
-		list.PopRange(start, end, list.ApplyforNBlocks());
+		list.PopRange(start, end, count);
 
 		CentralCache::Get()->ReleaseListToSpans(start, size);
 	}
 
+	/**
+	* @brief ThreadCache ObjectPool for all threads.
+	*/
+	static ObjectPool<ThreadCache> objectPool;
+
+	ThreadCacheThreadWapper::~ThreadCacheThreadWapper()
+	{
+		if (instance)
+		{
+			objectPool.ThreadDelete(instance);
+		}
+	}
+
+	ThreadCache*& ThreadCacheThreadWapper::GetInst()
+	{
+		if (!instance)
+		{
+			instance = objectPool.ThreadNew();
+		}
+
+		return instance;
+	}
 }

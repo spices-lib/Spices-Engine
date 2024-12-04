@@ -35,14 +35,7 @@ namespace Spices {
 		*/
 		else
 		{
-			if (!pTLSThreadCache)
-			{
-				static ObjectPool<ThreadCache> objectPool;
-
-				pTLSThreadCache = objectPool.ThreadNew();
-			}
-
-			return pTLSThreadCache->Allocate(size);
+			return pTLSThreadCache.GetInst()->Allocate(size);
 		}
 	}
 
@@ -73,7 +66,7 @@ namespace Spices {
 		*/
 		else
 		{
-			pTLSThreadCache->Deallocate(ptr, size);
+			pTLSThreadCache.GetInst()->Deallocate(ptr, size);
 		}
 	}
 
@@ -135,6 +128,47 @@ namespace Spices {
 		{
 			assert(false);
 			return -1;
+		}
+	}
+
+	size_t MemoryPool::Bytes(size_t index)
+	{
+		static constexpr int group_array[4] = { 16, 56, 56, 56 };
+
+		// align up to 8 (8 - 128 B)
+		if (index < 16)
+		{
+			return 8 * (index + 1);
+		}
+
+		// align up to 16 (128B - 1024 B)
+		else if(index < 16 + 56)
+		{
+			return 16 * (index + 1 - group_array[0]) + 128;
+		}
+
+		// align up to 128 (1 - 8 KB)
+		else if (index < 16 + 56 + 56)
+		{
+			return 128 * (index + 1 - group_array[0] - group_array[1]) + 1024;
+		}
+
+		// align up to 1024 (8 - 64 KB)
+		else if (index < 16 + 56 + 56 + 56)
+		{
+			return 1024 * (index + 1 - group_array[0] - group_array[1] - group_array[2]) + 8 * 1024;
+		}
+
+		// align up to 8KB (64 - 256 KB)
+		else if (index < 16 + 56 + 56 + 56 + 24)
+		{
+			return 8 * 1024 * (index + 1 - group_array[0] - group_array[1] - group_array[2] - group_array[3]) + 64 * 1024;
+		}
+
+		else
+		{
+			SPICES_CORE_ERROR("Access invalid free_lits index")
+			return 8 * 1024;
 		}
 	}
 
