@@ -28,6 +28,13 @@ namespace Spices {
 	void SlateRenderer::CreateDescriptorSet()
 	{}
 
+	void SlateRenderer::CreatePipeline(
+		std::shared_ptr<Material>        material ,
+		VkPipelineLayout&                layout   ,
+		std::shared_ptr<RendererSubPass> subPass
+	)
+	{}
+
 	void SlateRenderer::OnSystemInitialize()
 	{
 		SPICES_PROFILE_ZONE;

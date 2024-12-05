@@ -18,7 +18,6 @@
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingRenderer.h"
 #include "Render/Renderer/SpecificRenderer/BasePassRenderer.h"
-#include "Render/Renderer/SpecificRenderer/ShadowRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SlateRenderer.h"
 #include "Render/Renderer/SpecificRenderer/SceneComposeRenderer.h"
 #include "Render/Renderer/SpecificRenderer/WorldPickRenderer.h"
@@ -119,7 +118,6 @@ namespace Spices {
 																																		   
 			/* @brief Rasterization Renderer */																							   
 			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		  //.Push<ShadowRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<PostProcessRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
 			.Push<ViewportGridRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
@@ -168,7 +166,6 @@ namespace Spices {
 			.Pop("ViewportGridRenderer")
 			.Pop("PostProcessRenderer")
 			.Pop("SceneComposeRenderer")
-			//.Pop("ShadowRenderer")
 			.Pop("BasePassRenderer")
 		    .Pop("RayTracingComposeRenderer")
 			.Pop("RayTracingRenderer")

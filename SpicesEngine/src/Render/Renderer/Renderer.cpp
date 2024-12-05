@@ -132,8 +132,7 @@ namespace Spices {
 		/**
 		* @brief Create Pipeline.
 		*/
-		const auto pipeline = CreatePipeline(material, pipelineLayout, subPass);
-		m_Pipelines[materialName] = pipeline;
+		CreatePipeline(material, pipelineLayout, subPass);
 	}
 
 	void Renderer::RegistryDGCPipeline(const std::string& materialName, const std::string& subPassName)
@@ -191,7 +190,7 @@ namespace Spices {
 		*/
 		std::stringstream ss;
 		ss << materialName << ".DGC";
-		m_Pipelines[ss.str()] = CreateDGCPipeline(ss.str(), materialName, pipelineLayout, subPass);
+		CreateDeviceGeneratedCommandPipeline(ss.str(), materialName, pipelineLayout, subPass);
 	}
 
 	std::shared_ptr<Material> Renderer::GetDefaultMaterial(const std::string& subPassName) const
@@ -274,78 +273,6 @@ namespace Spices {
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_PIPELINE_LAYOUT, reinterpret_cast<uint64_t>(pipelineLayout), m_VulkanState.m_Device, "PipelineLayout")
 
 		return pipelineLayout;
-	}
-
-	std::shared_ptr<VulkanPipeline> Renderer::CreateDGCPipeline(
-		const std::string&               pipelineName ,
-		const std::string&               materialName ,
-		VkPipelineLayout&                layout       ,
-		std::shared_ptr<RendererSubPass> subPass
-	)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Get Dafault PipelineConfigInfo.
-		*/
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-
-		/**
-		* @brief Fill in with configurable data.
-		*/
-		pipelineConfig.renderPass                     = m_Pass->Get();
-		pipelineConfig.subpass                        = subPass->GetIndex();
-		pipelineConfig.pipelineLayout                 = layout;
-		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
-		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
-
-		/**
-		* @brief Create VulkanPipeline.
-		*/
-		return std::make_shared<VulkanIndirectPipelineNV>(
-			m_VulkanState,
-			pipelineName,
-			materialName,
-			m_PipelinesRef[subPass->GetName()],
-			pipelineConfig
-		);
-
-		m_PipelinesRef.clear();
-	}
-	
-	std::shared_ptr<VulkanPipeline> Renderer::CreatePipeline(
-		std::shared_ptr<Material>        material , 
-		VkPipelineLayout&                layout   ,
-		std::shared_ptr<RendererSubPass> subPass
-	)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Get Dafault PipelineConfigInfo.
-		*/
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-
-		/**
-		* @brief Fill in with configurable data.
-		*/
-		pipelineConfig.renderPass                     = m_Pass->Get();
-		pipelineConfig.subpass                        = subPass->GetIndex();
-		pipelineConfig.pipelineLayout                 = layout;
-		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
-		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
-
-		/**
-		* @brief Create VulkanPipeline.
-		*/
-		return std::make_shared<VulkanPipeline>(
-			m_VulkanState,
-			material->GetName(),
-			material->GetShaderPath(),
-			pipelineConfig
-		);
 	}
 
 	std::tuple<glm::mat4, glm::mat4, unsigned int, float> Renderer::GetActiveCameraMatrix(FrameInfo& frameInfo)
@@ -2457,6 +2384,9 @@ namespace Spices {
 		, m_Material(material)
 		, m_HandledSubPass(subPass)
 		, m_pipelineConfig{}
+	{}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetDefault()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -2464,6 +2394,8 @@ namespace Spices {
 		* @brief Init Config.
 		*/
 		VulkanPipeline::DefaultPipelineConfigInfo(m_pipelineConfig);
+
+		return *this;
 	}
 
 	Renderer::PipelineBuilder& Renderer::PipelineBuilder::NullBindingDescriptions()
@@ -2525,20 +2457,87 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(m_HandledSubPass->GetColorBlend().size());
-		m_pipelineConfig.colorBlendInfo.pAttachments = m_HandledSubPass->GetColorBlend().data();
+		m_pipelineConfig.colorBlendInfo.pAttachments    = m_HandledSubPass->GetColorBlend().data();
 
 		return *this;
 	}
 
-	std::shared_ptr<VulkanPipeline> Renderer::PipelineBuilder::Build()
+	void Renderer::PipelineBuilder::Build()
 	{
 		SPICES_PROFILE_ZONE;
 
-		return std::make_shared<VulkanPipeline>(
-			m_Renderer->m_VulkanState,
-			m_Material->GetName(),
-			m_Material->GetShaderPath(),
+		auto pipeline = std::make_shared<VulkanPipeline>(
+			m_Renderer->m_VulkanState   , 
+			m_Material->GetName()       ,
+			m_Material->GetShaderPath() ,
 			m_pipelineConfig
 		);
+
+		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+	}
+
+	void Renderer::PipelineBuilder::BuildMesh()
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto pipeline = std::make_shared<VulkanMeshPipeline>(
+			m_Renderer->m_VulkanState   , 
+			m_Material->GetName()       ,
+			m_Material->GetShaderPath() ,
+			m_pipelineConfig
+		);
+
+		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+	}
+
+	void Renderer::PipelineBuilder::BuildCompute()
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto pipeline = std::make_shared<VulkanComputePipeline>(
+			m_Renderer->m_VulkanState   , 
+			m_Material->GetName()       ,
+			m_Material->GetShaderPath() ,
+			m_pipelineConfig
+		);
+
+		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+	}
+
+	void Renderer::PipelineBuilder::BuildRayTracing(const std::unordered_map<std::string, uint32_t>& hitGroups)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unordered_map<std::string, std::vector<std::string>> stages(m_Material->GetShaderPath());
+		for (auto& pair : hitGroups)
+		{
+			stages["rchit"].push_back(pair.first);
+		}
+
+		auto pipeline = std::make_shared<VulkanRayTracingPipeline>(
+			m_Renderer->m_VulkanState   , 
+			m_Material->GetName()       ,
+			stages                      ,
+			m_pipelineConfig
+		);
+
+		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+	}
+
+	void Renderer::PipelineBuilder::BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto pipeline = std::make_shared<VulkanIndirectMeshPipelineNV>(
+			m_Renderer->m_VulkanState ,
+			pipelineName              ,
+			materialName              ,
+			m_Renderer->m_PipelinesRef[m_HandledSubPass->GetName()] ,
+			m_pipelineConfig
+		);
+
+		m_Renderer->m_PipelinesRef.clear();
+
+		m_Renderer->m_Pipelines[pipelineName] = pipeline;
 	}
 }

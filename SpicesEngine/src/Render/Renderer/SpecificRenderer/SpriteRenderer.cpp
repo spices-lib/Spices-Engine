@@ -36,6 +36,24 @@ namespace Spices {
 		.Build();
 	}
 
+	void SpriteRenderer::CreatePipeline(
+		std::shared_ptr<Material>        material ,
+		VkPipelineLayout&                layout   ,
+		std::shared_ptr<RendererSubPass> subPass
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		PipelineBuilder{ subPass, material, this }
+		.SetDefault()
+		.SetRenderPass()
+		.SetSubPassIndex()
+		.SetPipelineLayout(layout)
+		.SetCullMode(VK_CULL_MODE_NONE)
+		.SetColorAttachments()
+		.Build();
+	}
+
 	void SpriteRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
 	{
 		SPICES_PROFILE_ZONE;

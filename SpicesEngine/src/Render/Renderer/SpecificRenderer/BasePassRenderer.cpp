@@ -111,7 +111,7 @@ namespace Spices {
 		FillIndirectRenderData<MeshComponent>("Mesh");	
 	}
 
-	std::shared_ptr<VulkanPipeline> BasePassRenderer::CreatePipeline(
+	void BasePassRenderer::CreatePipeline(
 		std::shared_ptr<Material>        material ,
 		VkPipelineLayout&                layout   ,
 		std::shared_ptr<RendererSubPass> subPass
@@ -119,25 +119,17 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-		//pipelineConfig.rasterizationInfo.polygonMode = VK_POLYGON_MODE_LINE;
-		pipelineConfig.renderPass                      = m_Pass->Get();
-		pipelineConfig.subpass                         = subPass->GetIndex();
-		pipelineConfig.pipelineLayout                  = layout;
-		pipelineConfig.rasterizationInfo.cullMode      = VK_CULL_MODE_NONE;
-		pipelineConfig.colorBlendInfo.attachmentCount  = static_cast<uint32_t>(subPass->GetColorBlend().size());
-		pipelineConfig.colorBlendInfo.pAttachments     = subPass->GetColorBlend().data();
-
-		return std::make_shared<VulkanMeshPipeline>(
-			m_VulkanState,
-			material->GetName(),
-			material->GetShaderPath(),
-			pipelineConfig
-		);
+		PipelineBuilder{ subPass, material, this }
+		.SetDefault()
+		.SetRenderPass()
+		.SetSubPassIndex()
+		.SetPipelineLayout(layout)
+		.SetCullMode(VK_CULL_MODE_NONE)
+		.SetColorAttachments()
+		.BuildMesh();
 	}
 
-	std::shared_ptr<VulkanPipeline> BasePassRenderer::CreateDGCPipeline(
+	void BasePassRenderer::CreateDeviceGeneratedCommandPipeline(
 		const std::string&               pipelineName ,
 		const std::string&               materialName ,
 		VkPipelineLayout&                layout       ,
@@ -146,34 +138,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Get Dafault PipelineConfigInfo.
-		*/
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-
-		/**
-		* @brief Fill in with configurable data.
-		*/
-		pipelineConfig.renderPass                     = m_Pass->Get();
-		pipelineConfig.subpass                        = subPass->GetIndex();
-		pipelineConfig.pipelineLayout                 = layout;
-		//pipelineConfig.rasterizationInfo.cullMode     = VK_CULL_MODE_NONE;
-		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
-		pipelineConfig.colorBlendInfo.pAttachments    = subPass->GetColorBlend().data();
-
-		/**
-		* @brief Create VulkanPipeline.
-		*/
-		return std::make_shared<VulkanIndirectMeshPipelineNV>(
-			m_VulkanState,
-			pipelineName,
-			materialName,
-			m_PipelinesRef[subPass->GetName()],
-			pipelineConfig
-		);
-
-		m_PipelinesRef.clear();
+		PipelineBuilder{ subPass, nullptr, this }
+		.SetDefault()
+		.SetRenderPass()
+		.SetSubPassIndex()
+		.SetPipelineLayout(layout)
+		.SetCullMode(VK_CULL_MODE_NONE)
+		.SetColorAttachments()
+		.BuildDeviceGeneratedCommand(pipelineName, materialName);
 	}
 
 	void BasePassRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

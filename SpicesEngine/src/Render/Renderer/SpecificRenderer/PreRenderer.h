@@ -65,5 +65,18 @@ namespace Spices {
 		* Create specific descriptor set for sub pass.
 		*/
         virtual void CreateDescriptorSet() override;
+
+        /**
+		* @brief The interface is inherited from Renderer.
+		* Create Material Specific Pipeline.
+		* @param[in] material Registried material.
+		* @param[in] layout VkPipelineLayout.
+		* @param[in] subPass Handled subPass.
+		*/
+		virtual void CreatePipeline(
+			std::shared_ptr<Material>        material  ,
+			VkPipelineLayout&                layout    ,
+			std::shared_ptr<RendererSubPass> subPass
+		) override;
     };
 }

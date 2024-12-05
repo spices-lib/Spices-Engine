@@ -72,7 +72,7 @@ namespace Spices {
 		Renderer::OnSystemInitialize();
 	}
 
-	std::shared_ptr<VulkanPipeline> ParticleRenderer::CreatePipeline(
+	void ParticleRenderer::CreatePipeline(
 		std::shared_ptr<Material>        material ,
 		VkPipelineLayout&                layout   ,
 		std::shared_ptr<RendererSubPass> subPass
@@ -80,16 +80,9 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		PipelineConfigInfo pipelineConfig{};
-
-		pipelineConfig.pipelineLayout              = layout;
-
-		return std::make_shared<VulkanComputePipeline>(
-			m_VulkanState,
-			material->GetName(),
-			material->GetShaderPath(),
-			pipelineConfig
-		);
+		PipelineBuilder{ subPass, material, this }
+		.SetPipelineLayout(layout)
+		.BuildCompute();
 	}
 
 	void ParticleRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

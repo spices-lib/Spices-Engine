@@ -87,9 +87,11 @@ namespace Spices {
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
-		* @todo Complete it by renderer.
+		* @param[in] material Registried material.
+		* @param[in] layout VkPipelineLayout.
+		* @param[in] subPass Handled subPass.
 		*/
-		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
+		virtual void CreatePipeline(
 			std::shared_ptr<Material>        material  ,
 			VkPipelineLayout&                layout    ,
 			std::shared_ptr<RendererSubPass> subPass
@@ -102,7 +104,7 @@ namespace Spices {
 		* @param[in] layout PipelineLayout.
 		* @param[in] subPass RendererSubPass.
 		*/
-		virtual std::shared_ptr<VulkanPipeline> CreateDGCPipeline(
+		virtual void CreateDeviceGeneratedCommandPipeline(
 			const std::string&               pipelineName ,
 			const std::string&               materialName ,
 			VkPipelineLayout&                layout       ,

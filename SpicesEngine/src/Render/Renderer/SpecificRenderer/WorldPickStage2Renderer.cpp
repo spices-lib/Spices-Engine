@@ -50,7 +50,7 @@ namespace Spices {
 		.Build();
 	}
 
-	std::shared_ptr<VulkanPipeline> WorldPickStage2Renderer::CreatePipeline(
+	void WorldPickStage2Renderer::CreatePipeline(
 		std::shared_ptr<Material>        material ,
 		VkPipelineLayout&                layout   ,
 		std::shared_ptr<RendererSubPass> subPass
@@ -58,25 +58,16 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-
-		pipelineConfig.bindingDescriptions = {};
-		pipelineConfig.attributeDescriptions = {};
-
-		pipelineConfig.renderPass = m_Pass->Get();
-		pipelineConfig.subpass = subPass->GetIndex();
-		pipelineConfig.pipelineLayout = layout;
-		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
-		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
-		pipelineConfig.colorBlendInfo.pAttachments = subPass->GetColorBlend().data();
-
-		return std::make_shared<VulkanPipeline>(
-			m_VulkanState,
-			material->GetName(),
-			material->GetShaderPath(),
-			pipelineConfig
-		);
+		PipelineBuilder{ subPass, material, this }
+		.SetDefault()
+		.NullBindingDescriptions()
+		.NullAttributeDescriptions()
+		.SetRenderPass()
+		.SetSubPassIndex()
+		.SetPipelineLayout(layout)
+		.SetCullMode(VK_CULL_MODE_NONE)
+		.SetColorAttachments()
+		.Build();
 	}
 
 	void WorldPickStage2Renderer::Render(TimeStep& ts, FrameInfo& frameInfo)

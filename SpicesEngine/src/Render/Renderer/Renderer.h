@@ -216,6 +216,18 @@ namespace Spices {
 		virtual void CreateDeviceGeneratedCommandsLayout() {}
 
 		/**
+		* @brief Create Specific Material Pipeline.
+		* @param[in] material Specific Material.
+		* @param[in] layout VkPipelineLayout.
+		* @param[in] subPass RendererSubPass.
+		*/
+		virtual void CreatePipeline(
+			std::shared_ptr<Material>        material  , 
+			VkPipelineLayout&                layout    ,
+			std::shared_ptr<RendererSubPass> subPass
+		) = 0;
+
+		/**
 		* @brief Create Specific Renderer Default Material. 
 		*/
 		void CreateDefaultMaterial();
@@ -237,25 +249,12 @@ namespace Spices {
 		* @param[in] layout PipelineLayout.
 		* @param[in] subPass RendererSubPass.
 		*/
-		virtual std::shared_ptr<VulkanPipeline> CreateDGCPipeline(
+		virtual void CreateDeviceGeneratedCommandPipeline(
 			const std::string&               pipelineName ,
 			const std::string&               materialName ,
 			VkPipelineLayout&                layout       ,
 			std::shared_ptr<RendererSubPass> subPass
-		);
-
-		/**
-		* @brief Create Specific Material Pipeline.
-		* @param[in] material Specific Material.
-		* @param[in] layout VkPipelineLayout.
-		* @param[in] subPass RendererSubPass.
-		* @todo Not be virtual and configurable with material.
-		*/
-		virtual std::shared_ptr<VulkanPipeline> CreatePipeline(
-			std::shared_ptr<Material>        material  , 
-			VkPipelineLayout&                layout    ,
-			std::shared_ptr<RendererSubPass> subPass
-		);
+		) {}
 
 		/***************************************************************************************************/
 
@@ -681,6 +680,10 @@ namespace Spices {
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> m_ImageInfos;
 		};
 
+		/**
+		* @brief This Class is a helper for Building Specific Renderer Pipeline.
+		* Only instanced during CreatePipeline().
+		*/
 		class PipelineBuilder
 		{
 		public:
@@ -702,15 +705,82 @@ namespace Spices {
 			*/
 			virtual ~PipelineBuilder() = default;
 
+			/**
+			* @brief Set PipelineConfigInfo to default value.
+			* @return Returns this reference.
+			*/
+			PipelineBuilder& SetDefault();
+
+			/**
+			* @brief Set bindingDescriptions to NULL.
+			* @return Returns this reference.
+			*/
 			PipelineBuilder& NullBindingDescriptions();
+
+			/**
+			* @brief Set attributeDescriptions to NULL.
+			* @return Returns this reference.
+			*/
 			PipelineBuilder& NullAttributeDescriptions();
+
+			/**
+			* @brief Set renderPass to correct value..
+			* @return Returns this reference.
+			*/
 			PipelineBuilder& SetRenderPass();
+
+			/**
+			* @brief Set subpass to correct value.
+			* @return Returns this reference.
+			*/
 			PipelineBuilder& SetSubPassIndex();
+
+			/**
+			* @brief Set pipelineLayout to given value.
+			* @param[in] layout VkPipelineLayout.
+			* @return Returns this reference.
+			*/
 			PipelineBuilder& SetPipelineLayout(VkPipelineLayout& layout);
+
+			/**
+			* @brief Set cullMode to given value.
+			* @param[in] cullMode VkCullModeFlags.
+			* @return Returns this reference.
+			*/
 			PipelineBuilder& SetCullMode(VkCullModeFlags cullMode);
+
+			/**
+			* @brief Set pAttachments to correct value.
+			* @return Returns this reference.
+			*/
 			PipelineBuilder& SetColorAttachments();
 
-			std::shared_ptr<VulkanPipeline> Build();
+			/**
+			* @brief Build Pipeline.
+			*/
+			void Build();
+
+			/**
+			* @brief Build Mesh Pipeline.
+			*/
+			void BuildMesh();
+
+			/**
+			* @brief Build Compute Pipeline.
+			*/
+			void BuildCompute();
+
+			/**
+			* @brief Build Raytracing Pipeline.
+			* @param[in] hitGroups scene hit shader groups.
+			*/
+			void BuildRayTracing(const std::unordered_map<std::string, uint32_t>& hitGroups);
+
+			/**
+			* @brief Build Raytracing Pipeline.
+			* @param[in] hitGroups scene hit shader groups.
+			*/
+			void BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName);
 
 		private:
 
@@ -723,7 +793,7 @@ namespace Spices {
 			/**
 			* @brief Referenced Material.
 			*/
-			std::shared_ptr<Material>        m_Material;
+			std::shared_ptr<Material> m_Material;
 
 			/**
 			* @brief Handled Sub pass.

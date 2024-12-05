@@ -24,6 +24,13 @@ namespace Spices {
 		.Build();
 	}
 
+	void PreRenderer::CreatePipeline(
+		std::shared_ptr<Material>        material ,
+		VkPipelineLayout&                layout   ,
+		std::shared_ptr<RendererSubPass> subPass
+	)
+	{}
+
 	PreRenderer::~PreRenderer()
 	{
 		DescriptorSetManager::UnLoadForce(m_RendererName);

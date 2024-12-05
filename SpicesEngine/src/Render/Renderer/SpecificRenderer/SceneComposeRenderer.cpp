@@ -78,7 +78,7 @@ namespace Spices {
 		.Build(RayTracingRenderer::GetAccelerationStructure());
 	}
 
-	std::shared_ptr<VulkanPipeline> SceneComposeRenderer::CreatePipeline(
+	void SceneComposeRenderer::CreatePipeline(
 		std::shared_ptr<Material>        material ,
 		VkPipelineLayout&                layout   ,
 		std::shared_ptr<RendererSubPass> subPass
@@ -86,8 +86,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		return
 		PipelineBuilder{ subPass, material, this }
+		.SetDefault()
 		.NullBindingDescriptions()
 		.NullAttributeDescriptions()
 		.SetRenderPass()

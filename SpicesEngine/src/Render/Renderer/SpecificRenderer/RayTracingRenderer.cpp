@@ -85,30 +85,20 @@ namespace Spices {
 		CreateRTShaderBindingTable(FrameInfo::Get());
 	}
 
-	std::shared_ptr<VulkanPipeline> RayTracingRenderer::CreatePipeline(
-		std::shared_ptr<Material>         material ,
-		VkPipelineLayout&                 layout   ,
-		std::shared_ptr<RendererSubPass>  subPass
+	void RayTracingRenderer::CreatePipeline(
+		std::shared_ptr<Material>        material ,
+		VkPipelineLayout&                layout   ,
+		std::shared_ptr<RendererSubPass> subPass
 	)
 	{
 		SPICES_PROFILE_ZONE;
 
-		PipelineConfigInfo pipelineConfig{};
-
-		pipelineConfig.pipelineLayout              = layout;
-
-		std::unordered_map<std::string, std::vector<std::string>> stages(material->GetShaderPath());
-		for (auto& pair : m_HitGroups)
-		{
-			stages["rchit"].push_back(pair.first);
-		}
-
-		return std::make_shared<VulkanRayTracingPipeline>(
-			m_VulkanState,
-			material->GetName(),
-			stages,
-			pipelineConfig
-		);
+		PipelineBuilder{ subPass, material, this }
+		.SetDefault()
+		.NullBindingDescriptions()
+		.NullAttributeDescriptions()
+		.SetPipelineLayout(layout)
+		.BuildRayTracing(m_HitGroups);
 	}
 
 	void RayTracingRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
