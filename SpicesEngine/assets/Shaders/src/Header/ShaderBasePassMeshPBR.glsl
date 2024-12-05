@@ -100,7 +100,7 @@ void WriteDataToGbuffer(const in MaterialAttributes materialAttributes)
     float meshletrand1 = rnd(meshletSeed);
     float meshletrand2 = rnd(meshletSeed);
 
-    outAlbedo           = vec4(materialAttributes.albedo, 1.0f);
+    outAlbedo           = vec4(materialAttributes.albedo + materialAttributes.emissive, 1.0f);
     outNormal           = vec4(materialAttributes.normal * 0.5f + vec3(0.5f), 1.0f);
     outRoughness        = vec4(materialAttributes.roughness);
     outMetallic         = vec4(materialAttributes.metallic);

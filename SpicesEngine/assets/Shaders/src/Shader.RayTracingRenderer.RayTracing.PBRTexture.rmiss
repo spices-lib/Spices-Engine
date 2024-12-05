@@ -60,7 +60,7 @@ void main()
     prd.maxRayDepth   = 0;
     prd.entityID      = push.entityID;
     prd.triangleID    = 0;
-    prd.depth         = 1E-10;
+    prd.depth         = 0.0f;
 }
 
 /*****************************************************************************************/

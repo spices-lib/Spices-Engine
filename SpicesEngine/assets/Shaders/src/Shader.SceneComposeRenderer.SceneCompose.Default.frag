@@ -127,8 +127,11 @@ void main()
     */
     vec3 brdf_diffuse = BRDF_Diffuse_Lambert(gbp.albedo) * PI;
     vec3 brdf_specular = vec3(0.0f);
-    brdf_specular += (CalculateDirectionalLights(gbp));
-
+    
+    if(length(subpassLoad(GBuffer[NORMAL]).xyz) > 0.9f)
+    {
+        brdf_specular += (CalculatePointLights(gbp) + CalculateDirectionalLights(gbp));
+    }
     vec3 BRDF = brdf_diffuse + brdf_specular;
 
 	outSceneColor = vec4(BRDF, 1.0f);
@@ -182,7 +185,7 @@ vec3 CalculatePointLights(in GBufferPixel gbp)
             float tMax   = length(lpos - gbp.position);
             vec3  origin = gbp.position;
             vec3  rayDir = dir;
-            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
+            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT;
             bool isShadowArea = false;
 
             rayQueryEXT rayQuery;
@@ -216,8 +219,6 @@ vec3 CalculatePointLights(in GBufferPixel gbp)
                 col += BRDF_Specular_CookTorrance(dir, V, gbp.normal, light.color, gbp.albedo, gbp.metallic, gbp.roughness) * light.intensity * attenuation;
             }
         }
-
-        break;
     }
     
     return col;
@@ -256,7 +257,7 @@ vec3 CalculateDirectionalLights(in GBufferPixel gbp)
             float tMax   = 100000.0f;
             vec3  origin = gbp.position;
             vec3  rayDir = dir;
-            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
+            uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT;
             bool isShadowArea = false;
             
             rayQueryEXT rayQuery;
