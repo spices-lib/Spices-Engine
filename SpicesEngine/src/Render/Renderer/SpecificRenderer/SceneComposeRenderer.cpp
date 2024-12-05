@@ -86,25 +86,16 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::DefaultPipelineConfigInfo(pipelineConfig);
-
-		pipelineConfig.bindingDescriptions = {};
-		pipelineConfig.attributeDescriptions = {};
-
-		pipelineConfig.renderPass = m_Pass->Get();
-		pipelineConfig.subpass = subPass->GetIndex();
-		pipelineConfig.pipelineLayout = layout;
-		pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
-		pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(subPass->GetColorBlend().size());
-		pipelineConfig.colorBlendInfo.pAttachments = subPass->GetColorBlend().data();
-
-		return std::make_shared<VulkanPipeline>(
-			m_VulkanState,
-			material->GetName(),
-			material->GetShaderPath(),
-			pipelineConfig
-		);
+		return
+		PipelineBuilder{ subPass, material, this }
+		.NullBindingDescriptions()
+		.NullAttributeDescriptions()
+		.SetRenderPass()
+		.SetSubPassIndex()
+		.SetPipelineLayout(layout)
+		.SetCullMode(VK_CULL_MODE_NONE)
+		.SetColorAttachments()
+		.Build();
 	}
 
 	void SceneComposeRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

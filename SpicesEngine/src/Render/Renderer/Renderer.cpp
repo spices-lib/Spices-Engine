@@ -2451,4 +2451,94 @@ namespace Spices {
 		*/
 		m_HandledIndirectData->BuildCommandLayout(m_InputInfos);
 	}
+
+	Renderer::PipelineBuilder::PipelineBuilder(std::shared_ptr<RendererSubPass> subPass, std::shared_ptr<Material> material, Renderer* renderer)
+		: m_Renderer(renderer)
+		, m_Material(material)
+		, m_HandledSubPass(subPass)
+		, m_pipelineConfig{}
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Init Config.
+		*/
+		VulkanPipeline::DefaultPipelineConfigInfo(m_pipelineConfig);
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::NullBindingDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.bindingDescriptions = {};
+
+		return *this;
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::NullAttributeDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.attributeDescriptions = {};
+
+		return *this;
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetRenderPass()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.renderPass = m_Renderer->m_Pass->Get();
+
+		return *this;
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetSubPassIndex()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.subpass = m_HandledSubPass->GetIndex();
+
+		return *this;
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetPipelineLayout(VkPipelineLayout& layout)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.pipelineLayout = layout;
+
+		return *this;
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetCullMode(VkCullModeFlags cullMode)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.rasterizationInfo.cullMode = cullMode;
+
+		return *this;
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetColorAttachments()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.colorBlendInfo.attachmentCount = static_cast<uint32_t>(m_HandledSubPass->GetColorBlend().size());
+		m_pipelineConfig.colorBlendInfo.pAttachments = m_HandledSubPass->GetColorBlend().data();
+
+		return *this;
+	}
+
+	std::shared_ptr<VulkanPipeline> Renderer::PipelineBuilder::Build()
+	{
+		SPICES_PROFILE_ZONE;
+
+		return std::make_shared<VulkanPipeline>(
+			m_Renderer->m_VulkanState,
+			m_Material->GetName(),
+			m_Material->GetShaderPath(),
+			m_pipelineConfig
+		);
+	}
 }

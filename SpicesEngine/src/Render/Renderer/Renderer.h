@@ -681,6 +681,61 @@ namespace Spices {
 			std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkDescriptorImageInfo>>> m_ImageInfos;
 		};
 
+		class PipelineBuilder
+		{
+		public:
+
+			/**
+			* @brief Constructor Function.
+			* @param[in] subPass The RendererSubPass.
+			* @param[in] material Referenced Material.
+			* @param[in] renderer The Owner, pass this pointer.
+			*/
+			PipelineBuilder(
+				std::shared_ptr<RendererSubPass> subPass ,
+				std::shared_ptr<Material>        material,
+				Renderer*                        renderer
+			);
+
+			/**
+			* @brief Destructor Function.
+			*/
+			virtual ~PipelineBuilder() = default;
+
+			PipelineBuilder& NullBindingDescriptions();
+			PipelineBuilder& NullAttributeDescriptions();
+			PipelineBuilder& SetRenderPass();
+			PipelineBuilder& SetSubPassIndex();
+			PipelineBuilder& SetPipelineLayout(VkPipelineLayout& layout);
+			PipelineBuilder& SetCullMode(VkCullModeFlags cullMode);
+			PipelineBuilder& SetColorAttachments();
+
+			std::shared_ptr<VulkanPipeline> Build();
+
+		private:
+
+			/**
+			* @brief Specific Renderer pointer.
+			* Passed while this class instanced.
+			*/
+			Renderer* m_Renderer;
+
+			/**
+			* @brief Referenced Material.
+			*/
+			std::shared_ptr<Material>        m_Material;
+
+			/**
+			* @brief Handled Sub pass.
+			*/
+			std::shared_ptr<RendererSubPass> m_HandledSubPass;
+
+			/**
+			* @brief PipelineConfigInfo for create Pipeline.
+			*/
+			PipelineConfigInfo m_pipelineConfig;
+		};
+
 		/**
 		* @brief This Class is a helper for Building GDC Layout.
 		* Only instanced during CreateDeviceGeneratedCommandsLayout().
