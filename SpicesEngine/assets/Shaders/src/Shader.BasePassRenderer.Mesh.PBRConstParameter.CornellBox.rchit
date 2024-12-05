@@ -34,7 +34,7 @@ struct MaterialParameter
 
 /******************************************Functions**************************************/
 
-void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
+void GetMaterialAttributes(const in Pixel pi, inout MaterialAttributes attributes)
 {
     if(pi.normal.z > 0.999)
     {

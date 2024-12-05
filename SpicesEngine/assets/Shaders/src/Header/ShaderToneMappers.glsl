@@ -16,7 +16,13 @@
 /***************************************Mappers*******************************************/
 
 // General tonemapping operator, build 'b' term.
-float ColToneB(float hdrMax, float contrast, float shoulder, float midIn, float midOut)
+float ColToneB(
+    const in float hdrMax   , 
+    const in float contrast , 
+    const in float shoulder , 
+    const in float midIn    , 
+    const in float midOut
+)
 {
     return
     -((-pow(midIn, contrast) + (midOut * (pow(hdrMax, contrast * shoulder) * pow(midIn, contrast) -
@@ -26,7 +32,13 @@ float ColToneB(float hdrMax, float contrast, float shoulder, float midIn, float 
 }
 
 // General tonemapping operator, build 'c' term.
-float ColToneC(float hdrMax, float contrast, float shoulder, float midIn, float midOut)
+float ColToneC(
+    const in float hdrMax   , 
+    const in float contrast , 
+    const in float shoulder , 
+    const in float midIn    , 
+    const in float midOut
+)
 {
     return 
     (pow(hdrMax, contrast * shoulder) * pow(midIn, contrast) - pow(hdrMax, contrast) * pow(midIn, contrast * shoulder) * midOut) /
@@ -34,14 +46,14 @@ float ColToneC(float hdrMax, float contrast, float shoulder, float midIn, float 
 }
 
 // General tonemapping operator, p := {contrast,shoulder,b,c}.
-float ColTone(float x, vec4 p)
+float ColTone(const in float x, const in vec4 p)
 {
     float z = pow(x, p.r);
     return z / (pow(z, p.g) * p.b + p.a);
 }
 
 // AMD Tonemapper
-vec3 AMDTonemapper(vec3 color)
+vec3 AMDTonemapper(in vec3 color)
 {
     const float hdrMax   = 16.0f;  // How much HDR range before clipping. HDR modes likely need this pushed up to say 25.0.
     const float contrast = 2.0f;   // Use as a baseline to tune the amount of contrast the tonemapper has.
@@ -77,7 +89,7 @@ vec3 AMDTonemapper(vec3 color)
 }
 
 // The tone mapper used in HDRToneMappingCS11
-vec3 DX11DSK(vec3 color)
+vec3 DX11DSK(in vec3 color)
 {
     float  MIDDLE_GRAY = 0.72f;
     float  LUM_WHITE = 1.5f;
@@ -91,13 +103,13 @@ vec3 DX11DSK(vec3 color)
 }
 
 // Reinhard
-vec3 Reinhard(vec3 color)
+vec3 Reinhard(const in vec3 color)
 {
     return color/(1+color);
 }
 
 // Hable's filmic
-vec3 Uncharted2TonemapOp(vec3 x)
+vec3 Uncharted2TonemapOp(const in vec3 x)
 {
     float A = 0.15;
     float B = 0.50;
@@ -109,13 +121,13 @@ vec3 Uncharted2TonemapOp(vec3 x)
     return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
 }
 
-vec3 Uncharted2Tonemap(vec3 color)
+vec3 Uncharted2Tonemap(const in vec3 color)
 {
     float W = 11.2;
     return Uncharted2TonemapOp(2.0 * color) / Uncharted2TonemapOp(vec3(W));
 }
 
-vec3 tonemapACES( vec3 x )
+vec3 tonemapACES(const in vec3 x)
 {
     float a = 2.51;
     float b = 0.03;

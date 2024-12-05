@@ -23,7 +23,7 @@
 * @param[in] val1 Input Value 1.
 * @return Returns the Random uint.
 */
-uint tea(uint val0, uint val1)
+uint tea(const in uint val0, const in uint val1)
 {
 	uint v0 = val0;
 	uint v1 = val1;
@@ -72,7 +72,7 @@ float rnd(inout uint prev)
 * @param[in] z Coordinate X axis.
 * @return Return Sampled Vector in Hemisphere.
 */
-vec3 SamplingHemisphere(inout uint seed, in vec3 x, in vec3 y, in vec3 z)
+vec3 SamplingHemisphere(inout uint seed, const in vec3 x, const in vec3 y, const in vec3 z)
 {    
 	float r1 = rnd(seed);
 	float r2 = rnd(seed);
@@ -90,7 +90,7 @@ vec3 SamplingHemisphere(inout uint seed, in vec3 x, in vec3 y, in vec3 z)
 * @param[out] Nt Tangent.
 * @param[out] Nb Bitangent.
 */ 
-void CreateCoordinateSystem(in vec3 N, out vec3 Nt, out vec3 Nb)
+void CreateCoordinateSystem(const in vec3 N, out vec3 Nt, out vec3 Nb)
 {
 	if (abs(N.x) > abs(N.y))
 		Nt = vec3(N.z, 0, -N.x) / sqrt(N.x * N.x + N.z * N.z);
@@ -104,7 +104,7 @@ void CreateCoordinateSystem(in vec3 N, out vec3 Nt, out vec3 Nb)
 * @param[in] v space TextureCube sampler uv.
 * @return Returns flatten uv.
 */
-vec2 SampleSphericalMap(in vec3 v)
+vec2 SampleSphericalMap(const in vec3 v)
 {
     vec2 uv = vec2(atan(-v.z, v.x), asin(-v.y));
     uv *= invAtan;
@@ -122,7 +122,7 @@ vec2 SampleSphericalMap(in vec3 v)
 * @see https://www.shadertoy.com/view/XdBGzd
 * https://jglrxavpok.github.io/2024/05/13/recreating-nanite-mesh-shader-time.html
 */
-float ProjectSphere(in Sphere sph, in mat4 mv, in float fov)
+float ProjectSphere(const in Sphere sph, const in mat4 mv, const in float fov)
 {
 	vec4 hCenter              = vec4(sph.c, 1.0f);
 	hCenter                   = mv * hCenter;
@@ -143,7 +143,7 @@ float ProjectSphere(in Sphere sph, in mat4 mv, in float fov)
 * @param[in] ro Camera Position.
 * @return Returns true if the cone is backfacing.
 */
-bool IsConeBackfacing(in vec3 coneApex, in vec3 coneAxis, in float coneCutoff, in vec3 ro)
+bool IsConeBackfacing(const in vec3 coneApex, const in vec3 coneAxis, const in float coneCutoff, const in vec3 ro)
 {
 	return (dot(normalize(coneApex - ro), coneAxis) >= coneCutoff);
 }
@@ -155,7 +155,7 @@ bool IsConeBackfacing(in vec3 coneApex, in vec3 coneAxis, in float coneCutoff, i
 * @param[in,out] planes frustumPlanes.
 * @update 24.08.07 by spices.
 */
-void ExtractFrustumPlanes(in mat4 matrix, inout vec4[5] planes)
+void ExtractFrustumPlanes(const in mat4 matrix, inout vec4[5] planes)
 {
     mat4 m = transpose(matrix);
     
@@ -181,7 +181,7 @@ void ExtractFrustumPlanes(in mat4 matrix, inout vec4[5] planes)
 * @param[in] radius Sphere Bounding Radius.
 * @return true if is inside frustum.
 */
-bool IsInsideFrustum_Sphere(in vec4[5] planes, in vec3 center, in float radius)
+bool IsInsideFrustum_Sphere(const in vec4[5] planes, const in vec3 center, const in float radius)
 {
     for(int i = 0; i < 5; i++)
     {
@@ -200,7 +200,7 @@ bool IsInsideFrustum_Sphere(in vec4[5] planes, in vec3 center, in float radius)
 * @param[in] model Model Matrix.
 * @return Returns true if can be render.
 */
-bool IsRenderSuchLodCluster(in Meshlet meshlet, in View view, in mat4 model)
+bool IsRenderSuchLodCluster(const in Meshlet meshlet, const in View view, const in mat4 model)
 {
 	const float threshhold = 1.0f;
 
@@ -222,7 +222,7 @@ bool IsRenderSuchLodCluster(in Meshlet meshlet, in View view, in mat4 model)
 * @param[in] albedo .
 * @return Returns diffuse.
 */
-vec3 BRDF_Diffuse_Lambert(in vec3 albedo)
+vec3 BRDF_Diffuse_Lambert(const in vec3 albedo)
 {
 	return albedo / PI;
 }
@@ -235,7 +235,7 @@ vec3 BRDF_Diffuse_Lambert(in vec3 albedo)
 * @param[in] roughness .
 * @return Returns specular (Normal Distribution function) part.
 */
-float BRDF_Specular_D_GGX(in float dotNH, in float roughness)
+float BRDF_Specular_D_GGX(const in float dotNH, const in float roughness)
 {
 	float alpha = roughness * roughness;
 	float alpha2 = alpha * alpha;
@@ -250,7 +250,7 @@ float BRDF_Specular_D_GGX(in float dotNH, in float roughness)
 * @param[in] roughness .
 * @return Returns specular (Geometric shadowing function) part.
 */
-float BRDF_Specular_G_SchlicksmithGGX(in float dotNL, in float dotNV, in float roughness)
+float BRDF_Specular_G_SchlicksmithGGX(const in float dotNL, const in float dotNV, const in float roughness)
 {
 	float r = (roughness + 1.0);
 	float k = (r * r) / 8.0f;
@@ -267,7 +267,7 @@ float BRDF_Specular_G_SchlicksmithGGX(in float dotNL, in float dotNV, in float r
 * @param[in] metallic .
 * @return Returns specular (Fresnel function) part.
 */
-vec3 BRDF_Specular_F_Schlick(in float dotNV, in vec3 albedo, in float metallic)
+vec3 BRDF_Specular_F_Schlick(const in float dotNV, const in vec3 albedo, const in float metallic)
 {
 	vec3 F0 = mix(vec3(0.04f), albedo, metallic); // * material.specular
 	vec3 F = F0 + (1.0 - F0) * pow(1.0 - dotNV, 5.0); 
@@ -284,7 +284,15 @@ vec3 BRDF_Specular_F_Schlick(in float dotNV, in vec3 albedo, in float metallic)
 * @param[in] metallic .
 * @param[in] roughness .
 */
-vec3 BRDF_Specular_CookTorrance(in vec3 L, in vec3 V, in vec3 N, in vec3 lightColor, in vec3 albedo, in float metallic, in float roughness)
+vec3 BRDF_Specular_CookTorrance(
+    const in vec3 L          , 
+    const in vec3 V          , 
+    const in vec3 N          , 
+    const in vec3 lightColor , 
+    const in vec3 albedo     , 
+    const in float metallic  , 
+    const in float roughness
+)
 {
 	if(dot(L, N) < 0) return vec3(0.0f);
 

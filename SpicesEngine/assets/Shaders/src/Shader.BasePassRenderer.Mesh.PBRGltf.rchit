@@ -39,9 +39,8 @@ struct MaterialParameter
 
 /******************************************Functions**************************************/
 
-void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
+void GetMaterialAttributes(const in Pixel pi, inout MaterialAttributes attributes)
 {
-
     if(materialParam.baseColorTexture > -0.5f)
     {
         attributes.albedo           = texture(BindLessTextureBuffer[materialParam.baseColorTexture], pi.texCoord).xyz * materialParam.baseColorFactor.xyz;

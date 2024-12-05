@@ -6,8 +6,8 @@
 
 /************************************Pre Compile*******************************************/
 
-#ifndef SHADER_CLOSEST_HIT
-#define SHADER_CLOSEST_HIT
+#ifndef SHADER_CLOSEST_HIT_PBR
+#define SHADER_CLOSEST_HIT_PBR
 
 #extension GL_EXT_ray_tracing           : require   /* @brief Enable Ray Tracing Shader. */
 
@@ -16,6 +16,7 @@
 #include "ShaderPreRendererLayout.glsl"
 #include "ShaderBindLessMaterial.glsl"
 #include "ShaderMeshDescLayout.glsl"
+#include "ShaderMaterialAttributes.glsl"
 
 /*****************************************************************************************/
 
@@ -86,20 +87,7 @@ pLightBuffer;
 * @return Returns the Pixel ray intersected.
 * @see Pixel.
 */
-Pixel UnPackPixel(in vec3 weight);
-        
-/**
-* @brief Init Material Attributes.
-* @param[in] pi Intersected Pixel.
-* @return Return specific MaterialAttributes.
-*/
-MaterialAttributes InitMaterialAttributes(in Pixel pi);
-        
-/**
-* @brief MaterialAttributes Post Handle.
-* @param[in, out] attr MaterialAttributes.
-*/
-void PostHandleWithMaterialAttributes(in out MaterialAttributes attr);
+Pixel UnPackPixel(const in vec3 weight);
 
 /**
 * @brief Calculate Point Lights contribution for pixel emissive.
@@ -107,7 +95,7 @@ void PostHandleWithMaterialAttributes(in out MaterialAttributes attr);
 * @param[in] attr MaterialAttributes.
 * @return Returns the contribution of Point Lights.
 */
-vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr);
+vec3 CalculatePointLights(const in Pixel pi, const in MaterialAttributes attr);
 
 /**
 * @brief Calculate Directional Lights contribution for pixel emissive.
@@ -115,14 +103,7 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr);
 * @param[in] attr MaterialAttributes.
 * @return Returns the contribution of Directional Lights.
 */
-vec3 CalculateDirectionalLights(in Pixel pi , in MaterialAttributes attr);
-
-/**
-* @brief Get Material Attributes, must be implementated by specific rchit shader.
-* @param[in] pi Intersected Pixel.
-* @param[in,out] attributes specific MaterialAttributes.
-*/
-void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes);
+vec3 CalculateDirectionalLights(const in Pixel pi, const in MaterialAttributes attr);
 
 /*****************************************************************************************/
 
@@ -181,7 +162,7 @@ void main()
 
 /*****************************************************************************************/
 
-Pixel UnPackPixel(in vec3 weight)
+Pixel UnPackPixel(const in vec3 weight)
 {
     /**
     * @brief Access Buffer by GPU address.
@@ -230,38 +211,15 @@ Pixel UnPackPixel(in vec3 weight)
     return pi;
 }
 
-MaterialAttributes InitMaterialAttributes(in Pixel pi)
+void ReverseBackFaceNormal(inout MaterialAttributes attr)
 {
-    MaterialAttributes attributes;
-    
-    attributes.albedo           = vec3(0.5f);     /* @brief 50% energy reflect.                   */
-    attributes.roughness        = 1.0f;           /* @brief 100% random direction reflect.        */
-    attributes.metallic         = 0.0f;
-    attributes.emissive         = vec3(0.0f);     /* @brief self no energy.                       */
-    attributes.normal           = pi.normal;      /* @brief Pixel World Normal.                   */
-    attributes.maxRayDepth      = 1;              /* @brief Pixel Ray Tracing Max Depth.          */
-    attributes.maxLightDepth    = 1;              /* @brief Pixel Ray Tracing Max Light Depth.    */
-    attributes.maxShadowDepth   = 1;              /* @brief Pixel Ray Tracing Max Shadow Depth.   */
-    
-    return attributes;
-}
-
-void PostHandleWithMaterialAttributes(in out MaterialAttributes attr)
-{
-    attr.albedo    = clamp(attr.albedo, vec3(0.0f), vec3(1.0f));    /* @brief Clamp to  0.0f - 1.0f */
-    attr.roughness = clamp(attr.roughness, 0.0f, 1.0f);             /* @brief Clamp to  0.0f - 1.0f */
-    attr.metallic  = clamp(attr.metallic, 0.0f, 1.0f);              /* @brief Clamp to  0.0f - 1.0f */
-    if(dot(-prd.rayDirection, attr.normal) < 0.0f)                  /* @brief Clamp to -1.0f - 1.0f */
+    if(dot(-prd.rayDirection, attr.normal) < 0.0f)
     {
-        attr.normal *= -1.0f;                                       /* @brief reverse normal in back face */
+        attr.normal *= -1.0f;
     }
-    attr.normal         = normalize(attr.normal);
-    attr.maxRayDepth    = max(0, attr.maxRayDepth);
-    attr.maxLightDepth  = max(0, attr.maxLightDepth);
-    attr.maxShadowDepth = max(0, attr.maxShadowDepth);
 }
 
-vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
+vec3 CalculatePointLights(const in Pixel pi, const in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
  
@@ -320,7 +278,7 @@ vec3 CalculatePointLights(in Pixel pi, in MaterialAttributes attr)
     return col;
 }
 
-vec3 CalculateDirectionalLights(in Pixel pi, in MaterialAttributes attr)
+vec3 CalculateDirectionalLights(const in Pixel pi, const in MaterialAttributes attr)
 {
     vec3 col = vec3(0.0f);
     

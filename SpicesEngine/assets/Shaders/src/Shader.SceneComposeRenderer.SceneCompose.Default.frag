@@ -127,7 +127,7 @@ void main()
     */
     vec3 brdf_diffuse = BRDF_Diffuse_Lambert(gbp.albedo) * PI;
     vec3 brdf_specular = vec3(0.0f);
-    brdf_specular += (CalculatePointLights(gbp) + CalculateDirectionalLights(gbp));
+    brdf_specular += (CalculateDirectionalLights(gbp));
 
     vec3 BRDF = brdf_diffuse + brdf_specular;
 

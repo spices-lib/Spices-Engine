@@ -34,7 +34,7 @@ struct MaterialParameter
 
 /******************************************Functions**************************************/
 
-void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
+void GetMaterialAttributes(const in Pixel pi, inout MaterialAttributes attributes)
 {
     attributes.albedo          = materialParam.albedo;
     attributes.roughness       = materialParam.roughness;

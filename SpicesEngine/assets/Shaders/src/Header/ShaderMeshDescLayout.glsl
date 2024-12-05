@@ -122,7 +122,7 @@ Meshlets meshlets;
 * @brief Explain Mesh Desciption to split variable.
 * @param[in] meshDescAddress the Mesh Desciption Buffer Address address.
 */
-void ExplainMeshDesciption(in uint64_t meshDescAddress)
+void ExplainMeshDesciption(const in uint64_t meshDescAddress)
 {
     desc                = MeshDescs(meshDescAddress).i[0];
     model               = Models(desc.modelAddress).i[0];
@@ -150,7 +150,7 @@ void ExplainMeshDesciption(in uint64_t meshDescAddress)
 * @param[in] model model matrix.
 * @return Returns Transformed Vertex.
 */
-Vertex TransformVertexToWorld(in Vertex vertex, in mat4 model)
+Vertex TransformVertexToWorld(const in Vertex vertex, const in mat4 model)
 {
     mat3 m3model       = mat3(transpose(inverse(model)));
     
@@ -169,7 +169,7 @@ Vertex TransformVertexToWorld(in Vertex vertex, in mat4 model)
 * @param[in] primitiveID Primitive index.
 * @return Returns Primitive Vertices.
 */
-Vertex[3] GetVerticesUsingPrimitive(in uint primitiveID)
+Vertex[3] GetVerticesUsingPrimitive(const in uint primitiveID)
 {
     uvec3 primVertex   = primitiveVertices.i[primitiveID];
                        
@@ -206,7 +206,7 @@ Vertex[3] GetVerticesUsingPrimitive(in uint primitiveID)
 * @return Returns PrimLocation Order.
 * @attention Not in use right now.
 */
-uvec3 GetPrimLocationOrder(in uvec3 primLocation)
+uvec3 GetPrimLocationOrder(const in uvec3 primLocation)
 {
     uvec3 order;
     
@@ -236,7 +236,7 @@ uvec3 GetPrimLocationOrder(in uvec3 primLocation)
 * @return Returns Barycentric Pxiel.
 * @attention Not in use right now.
 */
-Pixel GetPixelUsingPrimitiveBarycentric(in uint primitiveID, in vec3 baryCoord)
+Pixel GetPixelUsingPrimitiveBarycentric(const in uint primitiveID, const in vec3 baryCoord)
 {
     Vertex[3] vertices = GetVerticesUsingPrimitive(primitiveID);
 

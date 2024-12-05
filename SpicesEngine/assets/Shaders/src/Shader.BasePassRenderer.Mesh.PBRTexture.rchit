@@ -35,7 +35,7 @@ struct MaterialParameter
 
 /******************************************Functions**************************************/
 
-void GetMaterialAttributes(in Pixel pi, inout MaterialAttributes attributes)
+void GetMaterialAttributes(const in Pixel pi, inout MaterialAttributes attributes)
 {
     attributes.albedo          = texture(BindLessTextureBuffer[materialParam.albedoTexture],    pi.texCoord).xyz;
     attributes.roughness       = texture(BindLessTextureBuffer[materialParam.roughnessTexture], pi.texCoord).x;

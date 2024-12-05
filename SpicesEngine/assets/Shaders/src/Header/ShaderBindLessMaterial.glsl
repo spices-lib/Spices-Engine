@@ -33,7 +33,7 @@ MaterialParameter materialParam;
 * @brief Explain Material Parameter to split struct and texture.
 * @param[in] materialParameterAddress the MaterialParameter address.
 */
-void ExplainMaterialParameter(in uint64_t materialParameterAddress)
+void ExplainMaterialParameter(const in uint64_t materialParameterAddress)
 {
     materialParam = MaterialParameters(materialParameterAddress).i[0];
 }

@@ -177,7 +177,12 @@ float SampleDigit(const in float fDigit, const in vec2 vUV)
 
 #endif
 
-float PrintValue(const in vec2 vStringCharCoords, const in float fValue, const in float fMaxDigits, const in float fDecimalPlaces)
+float PrintValue(
+    const in vec2 vStringCharCoords ,
+    const in float fValue           , 
+    const in float fMaxDigits       , 
+    const in float fDecimalPlaces
+)
 {
 	float fAbsValue = abs(fValue);
 	
@@ -234,7 +239,14 @@ float PrintValue(const in vec2 vStringCharCoords, const in float fValue, const i
 	return SampleDigit(fDigitCharacter, vCharPos);	
 }
 
-float PrintValue(in vec2 fragCoord, const in vec2 vPixelCoords, const in vec2 vFontSize, const in float fValue, const in float fMaxDigits, const in float fDecimalPlaces)
+float PrintValue(
+    const in vec2 fragCoord       , 
+    const in vec2 vPixelCoords    , 
+    const in vec2 vFontSize       , 
+    const in float fValue         , 
+    const in float fMaxDigits     , 
+    const in float fDecimalPlaces
+)
 {
 	return PrintValue((fragCoord.xy - vPixelCoords) / vFontSize, fValue, fMaxDigits, fDecimalPlaces);
 }
