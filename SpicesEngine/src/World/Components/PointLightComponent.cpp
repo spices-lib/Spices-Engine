@@ -196,7 +196,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("PointLightComponent Quadratic");
 
-			ImGuiH::DrawPropertyItem("Linear", columeWidth, nullptr, [&]() {
+			ImGuiH::DrawPropertyItem("Quadratic", columeWidth, nullptr, [&]() {
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGuiH::GetLineItemSize().x);
 				if(ImGui::DragFloat("##", &m_PointLight.quadratic, 0.1f, 0.0f, 10000.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
 				{

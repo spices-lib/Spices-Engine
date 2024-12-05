@@ -130,7 +130,7 @@ void main()
     
     if(length(subpassLoad(GBuffer[NORMAL]).xyz) > 0.9f)
     {
-        brdf_specular += (CalculatePointLights(gbp) + CalculateDirectionalLights(gbp));
+        brdf_specular += (CalculatePointLights(gbp) + CalculateDirectionalLights(gbp)) * PI;
     }
     vec3 BRDF = brdf_diffuse + brdf_specular;
 

@@ -2466,7 +2466,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto pipeline = std::make_shared<VulkanPipeline>(
+		const auto pipeline = std::make_shared<VulkanPipeline>(
 			m_Renderer->m_VulkanState   , 
 			m_Material->GetName()       ,
 			m_Material->GetShaderPath() ,
@@ -2480,7 +2480,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto pipeline = std::make_shared<VulkanMeshPipeline>(
+		const auto pipeline = std::make_shared<VulkanMeshPipeline>(
 			m_Renderer->m_VulkanState   , 
 			m_Material->GetName()       ,
 			m_Material->GetShaderPath() ,
@@ -2494,7 +2494,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto pipeline = std::make_shared<VulkanComputePipeline>(
+		const auto pipeline = std::make_shared<VulkanComputePipeline>(
 			m_Renderer->m_VulkanState   , 
 			m_Material->GetName()       ,
 			m_Material->GetShaderPath() ,
@@ -2514,7 +2514,7 @@ namespace Spices {
 			stages["rchit"].push_back(pair.first);
 		}
 
-		auto pipeline = std::make_shared<VulkanRayTracingPipeline>(
+		const auto pipeline = std::make_shared<VulkanRayTracingPipeline>(
 			m_Renderer->m_VulkanState   , 
 			m_Material->GetName()       ,
 			stages                      ,
@@ -2528,7 +2528,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto pipeline = std::make_shared<VulkanIndirectMeshPipelineNV>(
+		const auto pipeline = std::make_shared<VulkanIndirectMeshPipelineNV>(
 			m_Renderer->m_VulkanState ,
 			pipelineName              ,
 			materialName              ,

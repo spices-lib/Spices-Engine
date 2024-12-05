@@ -1282,7 +1282,7 @@ namespace Spices {
 
 			/**
 			* @brief Add a Buffer Barrier from compute queue to this graphic queue.
-			* @param[in] image VulkanImage.
+			* @param[in] buffer VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -1304,7 +1304,7 @@ namespace Spices {
 
 			/**
 			* @brief Add a Buffer Barrier from this graphic queue to compute queue.
-			* @param[in] image VulkanImage.
+			* @param[in] buffer VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -1326,7 +1326,7 @@ namespace Spices {
 
 			/**
 			* @brief Add a Buffer Barrier from this queue to this queue.
-			* @param[in] image VulkanImage.
+			* @param[in] buffer VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -1344,7 +1344,6 @@ namespace Spices {
 
 			/**
 			* @brief Add a Memory Barrier from this queue to this queue.
-			* @param[in] image VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -1734,7 +1733,7 @@ namespace Spices {
 
 			/**
 			* @brief Add a Buffer Barrier from graphic queue to this compute queue.
-			* @param[in] image VulkanImage.
+			* @param[in] buffer VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -1756,7 +1755,7 @@ namespace Spices {
 
 			/**
 			* @brief Add a Buffer Barrier from this compute queue to graphic queue.
-			* @param[in] image VulkanImage.
+			* @param[in] buffer VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -1778,7 +1777,7 @@ namespace Spices {
 
 			/**
 			* @brief Add a Buffer Barrier from this queue to this queue.
-			* @param[in] image VulkanImage.
+			* @param[in] buffer VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
@@ -1796,7 +1795,6 @@ namespace Spices {
 
 			/**
 			* @brief Add a Memory Barrier from this queue to this queue.
-			* @param[in] image VulkanImage.
 			* @param[in] srcAccessMask VkAccessFlags.
 			* @param[in] dstAccessMask VkAccessFlags.
 			* @param[in] srcStageMask VkPipelineStageFlags.
