@@ -27,7 +27,7 @@
 #include "Render/Vulkan/VulkanImage.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
 #include "Render/Vulkan/VulkanRenderPass.h"
-#include "Render/Vulkan/VulkanIndirectDrawNV.h"
+#include "Render/Vulkan/VulkanDeviceGeneratedCommandsNV.h"
 /***************************************************************************************************/
 
 /******************************World Component Header***********************************************/
@@ -249,7 +249,7 @@ namespace Spices {
 		* @param[in] layout PipelineLayout.
 		* @param[in] subPass RendererSubPass.
 		*/
-		virtual void CreateDeviceGeneratedCommandPipeline(
+		virtual void CreateDeviceGeneratedCommandsPipeline(
 			const std::string&               pipelineName ,
 			const std::string&               materialName ,
 			VkPipelineLayout&                layout       ,
@@ -890,9 +890,9 @@ namespace Spices {
 			std::vector<VkIndirectCommandsLayoutTokenNV> m_InputInfos;
 
 			/**
-			* @brief Current SubPass IndirectData.
+			* @brief Current SubPass DGC Data.
 			*/
-			std::shared_ptr<VulkanIndirectDrawNV> m_HandledIndirectData;
+			std::shared_ptr<VulkanDeviceGeneratedCommandsNV> m_HandledDGCData;
 		};
 
 		/**
@@ -1407,9 +1407,9 @@ namespace Spices {
 			std::shared_ptr<RendererSubPass> m_HandledSubPass;
 
 			/**
-			* @brief Current subPass IndirectData.
+			* @brief Current subPass DGCData.
 			*/
-			std::shared_ptr<VulkanIndirectDrawNV> m_HandledIndirectData;
+			std::shared_ptr<VulkanDeviceGeneratedCommandsNV> m_HandledDGCData;
 		};
 
 		/**
@@ -1884,9 +1884,9 @@ namespace Spices {
 		bool m_IsActive;
 
 		/**
-		* @brief Data of dgc Indirect Draw.
+		* @brief Data of dgc DGC Draw.
 		*/
-		std::unordered_map<std::string, std::shared_ptr<VulkanIndirectDrawNV>> m_IndirectData;
+		std::unordered_map<std::string, std::shared_ptr<VulkanDeviceGeneratedCommandsNV>> m_DGCData;
 
 		/**
 		* @brief Allow this class access all data.
@@ -1901,7 +1901,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto indirectPtr = m_IndirectData[subPassName];
+		auto indirectPtr = m_DGCData[subPassName];
 		indirectPtr->ResetInput();
 
 		/**

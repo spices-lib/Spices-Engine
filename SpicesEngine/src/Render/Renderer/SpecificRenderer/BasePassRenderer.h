@@ -104,7 +104,7 @@ namespace Spices {
 		* @param[in] layout PipelineLayout.
 		* @param[in] subPass RendererSubPass.
 		*/
-		virtual void CreateDeviceGeneratedCommandPipeline(
+		virtual void CreateDeviceGeneratedCommandsPipeline(
 			const std::string&               pipelineName ,
 			const std::string&               materialName ,
 			VkPipelineLayout&                layout       ,

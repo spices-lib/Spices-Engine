@@ -1,15 +1,15 @@
 /**
-* @file VulkanIndirectDrawNV.cpp.
-* @brief The VulkanIndirectDrawNV Class Implementation.
+* @file VulkanDeviceGeneratedCommandsNV.cpp.
+* @brief The VulkanDeviceGeneratedCommandsNV Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "VulkanIndirectDrawNV.h"
+#include "VulkanDeviceGeneratedCommandsNV.h"
 
 namespace Spices {
 
-	VulkanIndirectDrawNV::VulkanIndirectDrawNV(VulkanState& vulkanState)
+	VulkanDeviceGeneratedCommandsNV::VulkanDeviceGeneratedCommandsNV(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
 		, m_IndirectCmdsLayout(VK_NULL_HANDLE)
 		, m_InputBuffer(nullptr)
@@ -22,7 +22,7 @@ namespace Spices {
 		, m_InputStreams{}
 	{}
 
-	VulkanIndirectDrawNV::~VulkanIndirectDrawNV()
+	VulkanDeviceGeneratedCommandsNV::~VulkanDeviceGeneratedCommandsNV()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -32,7 +32,7 @@ namespace Spices {
 		}
 	}
 
-	void VulkanIndirectDrawNV::ResetCommandsLayout()
+	void VulkanDeviceGeneratedCommandsNV::ResetCommandsLayout()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -45,7 +45,7 @@ namespace Spices {
 		}
 	}
 
-	void VulkanIndirectDrawNV::ResetInput()
+	void VulkanDeviceGeneratedCommandsNV::ResetInput()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -56,7 +56,7 @@ namespace Spices {
 		m_PreprocessSize    = 0;
 	}
 
-	void VulkanIndirectDrawNV::AddInputStride(uint32_t stride)
+	void VulkanDeviceGeneratedCommandsNV::AddInputStride(uint32_t stride)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -64,7 +64,7 @@ namespace Spices {
 		m_Strides += stride;
 	}
 
-	std::shared_ptr<VulkanBuffer> VulkanIndirectDrawNV::CreateInputBuffer(uint32_t size)
+	std::shared_ptr<VulkanBuffer> VulkanDeviceGeneratedCommandsNV::CreateInputBuffer(uint32_t size)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -79,7 +79,7 @@ namespace Spices {
 		return m_InputBuffer;
 	}
 
-	std::shared_ptr<VulkanBuffer> VulkanIndirectDrawNV::CreatePreprocessBuffer(uint32_t size)
+	std::shared_ptr<VulkanBuffer> VulkanDeviceGeneratedCommandsNV::CreatePreprocessBuffer(uint32_t size)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -94,7 +94,7 @@ namespace Spices {
 		return m_PreprocessBuffer;
 	}
 
-	void VulkanIndirectDrawNV::BuildCommandLayout(const std::vector<VkIndirectCommandsLayoutTokenNV>& inputInfos)
+	void VulkanDeviceGeneratedCommandsNV::BuildCommandLayout(const std::vector<VkIndirectCommandsLayoutTokenNV>& inputInfos)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -117,7 +117,7 @@ namespace Spices {
 		m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_VulkanState.m_Device, &genInfo, nullptr, &m_IndirectCmdsLayout);
 	}
 
-	void VulkanIndirectDrawNV::PreprocessDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const
+	void VulkanDeviceGeneratedCommandsNV::PreprocessDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -143,7 +143,7 @@ namespace Spices {
 		m_VulkanState.m_VkFunc.vkCmdPreprocessGeneratedCommandsNV(cmdBuffer, &info);
 	}
 
-	void VulkanIndirectDrawNV::ExecuteDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const
+	void VulkanDeviceGeneratedCommandsNV::ExecuteDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const
 	{
 		SPICES_PROFILE_ZONE;
 

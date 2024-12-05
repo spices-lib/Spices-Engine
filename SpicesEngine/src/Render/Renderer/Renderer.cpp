@@ -190,7 +190,7 @@ namespace Spices {
 		*/
 		std::stringstream ss;
 		ss << materialName << ".DGC";
-		CreateDeviceGeneratedCommandPipeline(ss.str(), materialName, pipelineLayout, subPass);
+		CreateDeviceGeneratedCommandsPipeline(ss.str(), materialName, pipelineLayout, subPass);
 	}
 
 	std::shared_ptr<Material> Renderer::GetDefaultMaterial(const std::string& subPassName) const
@@ -682,7 +682,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
+		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -710,7 +710,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
+		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -735,7 +735,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
+		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -757,7 +757,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		m_SubPassIndex = 0;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
+		m_HandledDGCData = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
 		/**
 		* @brief Instance a VkRenderPassBeginInfo.
@@ -817,7 +817,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		m_SubPassIndex = 0;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
+		m_HandledDGCData = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -842,7 +842,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
 		m_SubPassIndex = 0;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
+		m_HandledDGCData = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
 		/**
 		* @brief Instance a VkRenderPassBeginInfo.
@@ -963,7 +963,7 @@ namespace Spices {
 
 		m_HandledSubPass      = *m_Renderer->m_Pass->GetSubPasses().first();
 		m_SubPassIndex        = 0;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[m_HandledSubPass->GetName()];
+		m_HandledDGCData      = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_Renderer->m_Pass->GetName())
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -1014,7 +1014,7 @@ namespace Spices {
 
 		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
 		++m_SubPassIndex;
-		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
+		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
 		NSIGHTPERF_GPUPROFILERREPORT_POPRANGE(m_CommandBuffer)
 		NSIGHTPERF_GPUPROFILERREPORF_PUSHRANGE(m_CommandBuffer, m_HandledSubPass->GetName())
@@ -1285,7 +1285,7 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
-		m_HandledIndirectData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+		m_HandledDGCData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 	}
 
 	void Renderer::RenderBehaveBuilder::PreprocessDGCAsync_NV() const
@@ -1299,7 +1299,7 @@ namespace Spices {
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
-			m_HandledIndirectData->PreprocessDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+			m_HandledDGCData->PreprocessDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 		});
 	}
 
@@ -1313,7 +1313,7 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
-		m_HandledIndirectData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+		m_HandledDGCData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 	}
 
 	void Renderer::RenderBehaveBuilder::ExecuteDGCAsync_NV() const
@@ -1327,7 +1327,7 @@ namespace Spices {
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
-			m_HandledIndirectData->ExecuteDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+			m_HandledDGCData->ExecuteDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
 		});
 	}
 
@@ -2211,13 +2211,13 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_InputInfos.clear();
-		if (!m_Renderer->m_IndirectData[subPassName])
+		if (!m_Renderer->m_DGCData[subPassName])
 		{
-			m_Renderer->m_IndirectData[subPassName] = std::make_shared<VulkanIndirectDrawNV>(m_Renderer->m_VulkanState);
+			m_Renderer->m_DGCData[subPassName] = std::make_shared<VulkanDeviceGeneratedCommandsNV>(m_Renderer->m_VulkanState);
 		}
 
-		m_Renderer->m_IndirectData[subPassName]->ResetCommandsLayout();
-		m_HandledIndirectData = m_Renderer->m_IndirectData[subPassName];
+		m_Renderer->m_DGCData[subPassName]->ResetCommandsLayout();
+		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 	}
 
 	Renderer::DGCLayoutBuilder& Renderer::DGCLayoutBuilder::AddShaderGroupInput()
@@ -2238,7 +2238,7 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->AddInputStride(sizeof(VkBindShaderGroupIndirectCommandNV));
+		m_HandledDGCData->AddInputStride(sizeof(VkBindShaderGroupIndirectCommandNV));
 
 		return *this;
 	}
@@ -2264,7 +2264,7 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->AddInputStride(sizeof(VkBindVertexBufferIndirectCommandNV));
+		m_HandledDGCData->AddInputStride(sizeof(VkBindVertexBufferIndirectCommandNV));
 
 		return *this;
 	}
@@ -2287,7 +2287,7 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->AddInputStride(sizeof(VkBindIndexBufferIndirectCommandNV));
+		m_HandledDGCData->AddInputStride(sizeof(VkBindIndexBufferIndirectCommandNV));
 
 		return *this;
 	}
@@ -2318,7 +2318,7 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->AddInputStride(sizeof(VkDeviceAddress));
+		m_HandledDGCData->AddInputStride(sizeof(VkDeviceAddress));
 
 		return *this;
 	}
@@ -2341,7 +2341,7 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->AddInputStride(sizeof(VkDrawIndexedIndirectCommand));
+		m_HandledDGCData->AddInputStride(sizeof(VkDrawIndexedIndirectCommand));
 
 		return *this;
 	}
@@ -2364,7 +2364,7 @@ namespace Spices {
 		* @brief Store Input.
 		*/
 		m_InputInfos.push_back(input);
-		m_HandledIndirectData->AddInputStride(sizeof(VkDrawMeshTasksIndirectCommandNV));
+		m_HandledDGCData->AddInputStride(sizeof(VkDrawMeshTasksIndirectCommandNV));
 
 		return *this;
 	}
@@ -2376,7 +2376,7 @@ namespace Spices {
 		/**
 		* @brief Create IndirectCommandsLayout.
 		*/
-		m_HandledIndirectData->BuildCommandLayout(m_InputInfos);
+		m_HandledDGCData->BuildCommandLayout(m_InputInfos);
 	}
 
 	Renderer::PipelineBuilder::PipelineBuilder(std::shared_ptr<RendererSubPass> subPass, std::shared_ptr<Material> material, Renderer* renderer)

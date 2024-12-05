@@ -1,6 +1,6 @@
 /**
-* @file VulkanIndirectDrawNV.h.
-* @brief The VulkanIndirectDrawNV Class Definitions.
+* @file VulkanDeviceGeneratedCommandsNV.h.
+* @brief The VulkanDeviceGeneratedCommandsNV Class Definitions.
 * @author Spices.
 */
 
@@ -12,10 +12,10 @@
 namespace Spices {
 
 	/**
-	* @brief VulkanIndirectDrawNV Class.
-	* This class defines the VulkanIndirectDrawNV behaves.
+	* @brief VulkanDeviceGeneratedCommandsNV Class.
+	* This class defines the VulkanDeviceGeneratedCommandsNV behaves.
 	*/
-	class VulkanIndirectDrawNV : public VulkanObject
+	class VulkanDeviceGeneratedCommandsNV : public VulkanObject
 	{
 	public:
 
@@ -24,12 +24,12 @@ namespace Spices {
 		* Create VkCommandPool.
 		* @param[in] vulkanState The global VulkanState.
 		*/
-		VulkanIndirectDrawNV(VulkanState& vulkanState);
+		VulkanDeviceGeneratedCommandsNV(VulkanState& vulkanState);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanIndirectDrawNV() override;
+		virtual ~VulkanDeviceGeneratedCommandsNV() override;
 
 		/**
 		* @brief Reset this CommandsLayout.

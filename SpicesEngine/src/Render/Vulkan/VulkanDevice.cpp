@@ -65,9 +65,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/													    
+		VkPhysicalDeviceRobustness2FeaturesEXT                    robustness2{};
+		robustness2.sType                                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
+		robustness2.pNext                                       = nullptr;
+														       
 		VkPhysicalDeviceHostImageCopyFeaturesEXT                  hostImageCopyFeature{};
 		hostImageCopyFeature.sType                              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT;
-		hostImageCopyFeature.pNext                              = nullptr;
+		hostImageCopyFeature.pNext                              = &robustness2;
 															    
 		VkPhysicalDeviceTimelineSemaphoreFeatures                 timelineSemaphore{};
 		timelineSemaphore.sType                                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
@@ -381,9 +385,13 @@ namespace Spices {
 		/**
 		* @brief Create the feature chain.
 		*/
+		VkPhysicalDeviceRobustness2FeaturesEXT                robustness2{};
+		robustness2.sType                                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
+		robustness2.pNext                                   = nullptr;
+
 		VkPhysicalDeviceHostImageCopyFeaturesEXT              hostImageCopyFeature{};
 		hostImageCopyFeature.sType                          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT;
-		hostImageCopyFeature.pNext                          = nullptr;
+		hostImageCopyFeature.pNext                          = &robustness2;
 
 		VkPhysicalDeviceTimelineSemaphoreFeatures             timelineSemaphore{};
 		timelineSemaphore.sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
@@ -506,6 +514,8 @@ namespace Spices {
 
 		ASSERT(hostImageCopyFeature.hostImageCopy)                                            /* @brief Enable image copy from host directly Feature.                    */
 
+		ASSERT(robustness2.nullDescriptor)                                                    /* @brief Enable Enable null Descriptor write Feature.                     */
+
 		return true;
 	}
 
@@ -534,7 +544,8 @@ namespace Spices {
 		m_ExtensionProperties.push_back(VK_EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME);            /* @brief Enable calibrated timestamps(butter than query pool's timestamps).      */
 		m_ExtensionProperties.push_back(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME);                 /* @brief Enable reset query pool in host(without commandBuffer).                 */
 		m_ExtensionProperties.push_back(VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME);                  /* @brief Enable image copy from host directly.                                   */
-
+		m_ExtensionProperties.push_back(VK_EXT_ROBUSTNESS_2_EXTENSION_NAME);                     /* @brief Enable null Descriptor write(useful in raytracing renderer).            */
+		
 		/**
 		* @brief Those Extensions are enabled other place.
 		* 

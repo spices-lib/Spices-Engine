@@ -129,7 +129,7 @@ namespace Spices {
 		.BuildMesh();
 	}
 
-	void BasePassRenderer::CreateDeviceGeneratedCommandPipeline(
+	void BasePassRenderer::CreateDeviceGeneratedCommandsPipeline(
 		const std::string&               pipelineName ,
 		const std::string&               materialName ,
 		VkPipelineLayout&                layout       ,
