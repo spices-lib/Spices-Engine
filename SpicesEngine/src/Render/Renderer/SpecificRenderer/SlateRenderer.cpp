@@ -26,14 +26,27 @@ namespace Spices {
 	}
 
 	void SlateRenderer::CreateDescriptorSet()
-	{}
+	{
+		DescriptorSetBuilder{ "Slate", this }
+		.AddPushConstant(sizeof(uint64_t))
+		.Build();
+	}
 
 	void SlateRenderer::CreatePipeline(
 		std::shared_ptr<Material>        material ,
 		VkPipelineLayout&                layout   ,
 		std::shared_ptr<RendererSubPass> subPass
 	)
-	{}
+	{
+		PipelineBuilder{ subPass, material, this }
+		.SetDefault()
+		.SetRenderPass()
+		.SetSubPassIndex()
+		.SetPipelineLayout(layout)
+		.SetCullMode(VK_CULL_MODE_NONE)
+		.SetColorAttachments()
+		.Build();
+	}
 
 	void SlateRenderer::OnSystemInitialize()
 	{
@@ -223,15 +236,16 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		RenderBehaveBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
-
-		builder.BeginRenderPass();
-
 		BeginImguiFrame();
 
 		SlateSystem::GetRegister()->OnRender();
 
+		RenderBehaveBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
+
+		builder.BeginRenderPass();
+
 		EndImguiFrame(frameInfo.m_FrameIndex);
+
 		builder.EndRenderPass();
 	}
 }

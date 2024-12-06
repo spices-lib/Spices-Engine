@@ -23,8 +23,8 @@ namespace Spices {
 		*/
 		void Free()
 		{
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(TriangleID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(MeshletID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(TriangleID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(MeshletID));
 		}
 	};
 

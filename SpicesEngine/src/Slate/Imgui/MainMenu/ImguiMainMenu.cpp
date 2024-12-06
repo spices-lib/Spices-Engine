@@ -45,7 +45,7 @@ namespace Spices {
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4.0f, 4.0f));
-        ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
+        //ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
 
         /**
         * @brief MainMenu do not need call Begin(), End().
@@ -193,7 +193,7 @@ namespace Spices {
             ImGui::EndMainMenuBar();
         }
 
-        ImGui::PopItemFlag();
+        //ImGui::PopItemFlag();
         ImGui::PopStyleVar(2);
 	}
 }

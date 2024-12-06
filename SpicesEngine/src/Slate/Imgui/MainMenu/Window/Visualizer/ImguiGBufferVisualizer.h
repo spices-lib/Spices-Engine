@@ -30,12 +30,12 @@ namespace Spices {
 		*/
 		void Free() 
 		{
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(SceneColorID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(AlbedoID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(NormalID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(RoughnessID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(MetallicID));
-			ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(PositionID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(SceneColorID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(AlbedoID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(NormalID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(RoughnessID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(MetallicID));
+			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(PositionID));
 		}
 	};
 

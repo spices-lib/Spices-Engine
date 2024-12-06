@@ -157,7 +157,7 @@ namespace Spices {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 6.0f));
-		ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
+		//ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
 
 		if (m_OptionMenuOn)
 		{
@@ -542,7 +542,7 @@ namespace Spices {
 			ImGui::End();
 		}
 
-		ImGui::PopItemFlag();
+		//ImGui::PopItemFlag();
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(7);
 	}

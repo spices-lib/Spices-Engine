@@ -109,7 +109,7 @@ namespace Spices {
         VkDescriptorImageInfo* triangleID       = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "TriangleID" });
         VkDescriptorImageInfo* meshletID        = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "MeshletID" });
 
-        m_BufferID.TriangleID       = ImGui_ImplVulkan_AddTexture(triangleID->sampler, triangleID->imageView, triangleID->imageLayout);
-        m_BufferID.MeshletID        = ImGui_ImplVulkan_AddTexture(meshletID->sampler, meshletID->imageView, meshletID->imageLayout);
+        m_BufferID.TriangleID       = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(triangleID->sampler, triangleID->imageView, triangleID->imageLayout));
+        m_BufferID.MeshletID        = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(meshletID->sampler, meshletID->imageView, meshletID->imageLayout));
     }
 }

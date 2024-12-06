@@ -157,11 +157,11 @@ namespace Spices {
         const VkDescriptorImageInfo* metallicInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Metallic"   });
         const VkDescriptorImageInfo* positionInfo   = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "Position"   });
 
-        m_GBufferID.SceneColorID  = ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  );
-        m_GBufferID.AlbedoID      = ImGui_ImplVulkan_AddTexture(albedoInfo->sampler     , albedoInfo->imageView     , albedoInfo->imageLayout      );
-        m_GBufferID.NormalID      = ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      );
-        m_GBufferID.RoughnessID   = ImGui_ImplVulkan_AddTexture(roughnessInfo->sampler  , roughnessInfo->imageView  , roughnessInfo->imageLayout   );
-        m_GBufferID.MetallicID    = ImGui_ImplVulkan_AddTexture(metallicInfo->sampler   , metallicInfo->imageView   , metallicInfo->imageLayout    );
-        m_GBufferID.PositionID    = ImGui_ImplVulkan_AddTexture(positionInfo->sampler   , positionInfo->imageView   , positionInfo->imageLayout    );
+        m_GBufferID.SceneColorID  = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(sceneColorInfo->sampler , sceneColorInfo->imageView , sceneColorInfo->imageLayout  ));
+        m_GBufferID.AlbedoID      = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(albedoInfo->sampler     , albedoInfo->imageView     , albedoInfo->imageLayout      ));
+        m_GBufferID.NormalID      = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(normalInfo->sampler     , normalInfo->imageView     , normalInfo->imageLayout      ));
+        m_GBufferID.RoughnessID   = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(roughnessInfo->sampler  , roughnessInfo->imageView  , roughnessInfo->imageLayout   ));
+        m_GBufferID.MetallicID    = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(metallicInfo->sampler   , metallicInfo->imageView   , metallicInfo->imageLayout    ));
+        m_GBufferID.PositionID    = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(positionInfo->sampler   , positionInfo->imageView   , positionInfo->imageLayout    ));
     }
 }

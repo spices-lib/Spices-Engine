@@ -36,7 +36,7 @@ namespace Spices {
             /**
             * @brief Create SceneColor DescriptorSet.
             */
-            m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
+            m_ViewportID = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout));
         }
 
         /**
@@ -85,7 +85,28 @@ namespace Spices {
         {
             SPICES_PROFILE_ZONEN("Render Viewport Image");
 
-            ImGui::Image((void*)m_ViewportID, m_PanelSize);
+            ImGui::Image(m_ViewportID, m_PanelSize);
+
+            //ImVec2 p0 = ImGui::GetItemRectMin();
+            //ImVec2 p1 = ImGui::GetItemRectMax();
+            //
+            //
+            //ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            //draw_list->PushTextureID(m_ViewportID);
+            //draw_list->PrimReserve(6, 4);
+            //draw_list->PrimRectUV(p0, p1, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)));
+            //draw_list->AddCallback([](const ImDrawList* drawList, const ImDrawCmd* cmd) {
+
+            //    std::cout << cmd->GetTexID() << std::endl;
+
+            //    //vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, bd->PipelineLayout, 0, 1, desc_set, 0, nullptr);
+            //    //vkCmdDrawIndexed(command_buffer, cmd->ElemCount, 1, cmd->IdxOffset + global_idx_offset, cmd->VtxOffset + global_vtx_offset, 0);
+
+            //}, nullptr);
+            //draw_list->PopTextureID();
+            //draw_list->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
+
+
         }
 
         /**
@@ -168,7 +189,7 @@ namespace Spices {
         /**
         * @brief Free old Viewport image DescriptorSet.
         */
-        ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(m_ViewportID));
+        ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(m_ViewportID));
 
         /**
         * @brief Get SceneColor Info again.
@@ -178,7 +199,7 @@ namespace Spices {
         /**
         * @brief Create SceneColor DescriptorSet.
         */
-        m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
+        m_ViewportID = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout));
 
         /**
         * @brief Do not block the event.
@@ -193,7 +214,7 @@ namespace Spices {
         /**
         * @brief Free old Viewport image DescriptorSet.
         */
-        ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(m_ViewportID));
+        ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(m_ViewportID));
 
         /**
         * @brief Get SceneColor Info again.
@@ -203,7 +224,7 @@ namespace Spices {
         /**
         * @brief Create SceneColor DescriptorSet.
         */
-        m_ViewportID = ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout);
+        m_ViewportID = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout));
 
         /**
         * @brief Do not block the event.
