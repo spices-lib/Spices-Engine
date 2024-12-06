@@ -82,13 +82,15 @@ namespace Spices {
 		* @brief This function will be called on global Event function pointer is called.
 		* @param[in] event The Specific Event Type.
 		*/
-		void OnEvent(Event& event) const;
+		void OnEvent(Event& event);
 
 		/**
 		* @breif Get Viewport Slate.
 		* @return Returns the shared pointer of ImguiViewport.
 		*/
 		std::shared_ptr<ImguiViewport> GetViewPort();
+
+	
 
 	private:
 		

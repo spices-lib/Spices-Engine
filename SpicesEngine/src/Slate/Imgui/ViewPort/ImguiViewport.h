@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Slate/Imgui/ImguiUtils.h"
+#include "Core/Container/BehaveStateList.h"
 
 namespace Spices {
 
@@ -105,6 +106,13 @@ namespace Spices {
 		*/
 		bool OnWindowResizeOver(WindowResizeOverEvent& event);
 
+		/**
+		* @brief Toggle focused slate.
+		* @param[in] event KeyPressedEvent.
+		* @reutrn Returns true if want block the event.
+		*/
+		bool OnToggleSlate(KeyPressedEvent& event);
+
 	private:
 
 		/**
@@ -131,5 +139,25 @@ namespace Spices {
 		* @brief The shared pointer of ImguiGizmos.
 		*/
 		std::shared_ptr<ImguiViewportToolBar> m_ToolBar;
+
+		/**
+		* @brief This slate's cached size.
+		*/
+		ImVec2 m_CachedPanelSize = { 1, 1 };
+
+		/**
+		* @brief This slate's cached position in desktop.
+		*/
+		ImVec2 m_CachedPanelPos;
+
+		/**
+		* @brief True if this slate toggled this frame.
+		*/
+		bool m_IsToggled = false;
+
+		/**
+		* @brief Toggle behave state list.
+		*/
+		std::shared_ptr<scl::behave_state_list<void>> m_ToggleStateList;
 	};
 }

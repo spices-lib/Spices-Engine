@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "SlateRegister.h"
 #include "Core/Thread/ThreadPool.h"
+#include "Core/Event/KeyEvent.h"
 
 namespace Spices {
 
@@ -36,7 +37,7 @@ namespace Spices {
 		}
 	}
 
-	void SlateRegister::OnEvent(Event& event) const
+	void SlateRegister::OnEvent(Event& event)
 	{
 		SPICES_PROFILE_ZONE;
 

@@ -68,11 +68,60 @@ namespace Spices {
 
             m_ToolBar = SlateSystem::GetRegister()->Register<ImguiViewportToolBar>(false, ss.str(), this);
         }
+
+        /**
+        * @brief Build Toggle behave list.
+        */
+        {
+            m_ToggleStateList = std::make_shared<scl::behave_state_list<void>>();
+
+            {
+                auto state = m_ToggleStateList->AddNode();
+                state->PushBehave("Toggle", [&]() {
+
+                    m_IsToggled = !m_IsToggled;
+
+                    if (m_IsToggled)
+                    {
+                        m_CachedPanelPos = m_PanelPos;
+                        m_CachedPanelSize = m_PanelSize;
+
+                        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+                        ImGui::SetNextWindowPos(viewport->Pos);
+                        ImGui::SetNextWindowSize(viewport->Size);
+                    }
+                    else
+                    {
+                        ImGui::SetNextWindowPos(m_CachedPanelPos);
+                        ImGui::SetNextWindowSize(m_CachedPanelSize);
+
+                        ImGuiID dockspaceID = ImGui::GetID("DockSpace");
+                        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+                    }
+                });
+            }
+            {
+                auto state = m_ToggleStateList->AddNode();
+                state->PushBehave("Toggle", [&]() {
+
+                    if (m_IsToggled)
+                    {
+                        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+                        ImGui::SetNextWindowPos(viewport->Pos);
+                        ImGui::SetNextWindowSize(viewport->Size);
+                    }
+                });
+            }
+
+            m_ToggleStateList->SetState(1);
+        }
     }
 
     void ImguiViewport::OnRender()
     {
         SPICES_PROFILE_ZONE;
+
+        m_ToggleStateList->GetState()->ExecuteBehave("Toggle");
 
         /**
         * @brief Begin render Console.
@@ -128,6 +177,8 @@ namespace Spices {
         * @brief End Viewport Slate.
         */
         End();
+
+        m_ToggleStateList->IncreateState();
     }
 
     void ImguiViewport::OnEvent(Event& event)
@@ -144,6 +195,7 @@ namespace Spices {
         */
         dispatcher.Dispatch<SlateResizeEvent>(BIND_EVENT_FN(ImguiViewport::OnSlateResize));
         dispatcher.Dispatch<WindowResizeOverEvent>(BIND_EVENT_FN(ImguiViewport::OnWindowResizeOver));
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(ImguiViewport::OnToggleSlate));
     }
 
     void ImguiViewport::QueryIsResizedThisFrame(const ImVec2& thisFrameSize)
@@ -231,4 +283,16 @@ namespace Spices {
         */
         return false;
     }
+
+    bool ImguiViewport::OnToggleSlate(KeyPressedEvent& event)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (event.GetKeyCode() == Key::F11)
+		{
+            m_ToggleStateList->ResetState();
+		}
+
+		return false;
+	}
 }

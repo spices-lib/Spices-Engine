@@ -26,7 +26,7 @@ namespace Spices {
             ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
         }
 
-        ImGui::Begin(panelName.c_str(), &m_IsSlateOn, flags);
+        ImGui::Begin(panelName.c_str(), &m_IsSlateOn, flags | ImGuiWindowFlags_NoCollapse);
 
         if (ImGui::BeginPopupContextItem())
         {
