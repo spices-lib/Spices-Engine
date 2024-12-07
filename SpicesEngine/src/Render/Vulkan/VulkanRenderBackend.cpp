@@ -148,7 +148,6 @@ namespace Spices {
 		/**
 		* @brief Release RHIThreadPool.
 		*/
-		vkDeviceWaitIdle(m_VulkanState.m_Device);
 		ThrealModel::Get()->ShutDownRHIThreadPool();
 
 		/**

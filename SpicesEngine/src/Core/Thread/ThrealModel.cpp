@@ -52,8 +52,6 @@ namespace Spices {
 		if (!m_RHIThreadPool)
 		{
 			fn(m_RHIThreadPool);
-			m_RHIThreadPool->SetMode(PoolMode::MODE_FIXED);
-			m_RHIThreadPool->Start(4);
 		}
 	}
 
