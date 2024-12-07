@@ -16,6 +16,7 @@
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
 #include "Core/Container/BehaveStateList.h"
+#include "Core/Thread/ThrealModel.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -65,7 +66,6 @@ namespace Spices {
 		* @param[in] DescriptorPool The shared pointer of DescriptorPool, used for allocate descriptor and free descriptor.
 		* @param[in] device The shared pointer of VulkanDevice, used for render pass's formats query.
 		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for registry/access RT.
-		* @param[in] cmdThreadPool ThreadPool of submit Cmd parallel.
 		* @param[in] statisticsFlags Flags of enable statistics with this renderer.
 		* @param[in] isLoadDefaultMaterial True if need load a default material.
 		* @param[in] isRegistryDGCPipeline True if need registry dgc pipeline.
@@ -77,7 +77,6 @@ namespace Spices {
 			const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool          ,
 			const std::shared_ptr<VulkanDevice>&         device                  ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
-			const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool           ,
 			bool                                         isLoadDefaultMaterial = true ,
 			bool                                         isRegistryDGCPipeline = false
 		);
@@ -270,16 +269,6 @@ namespace Spices {
 		*/
 		template<typename F>
 		void SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func);
-
-		/**
-		* @brief Iterator the specific Component in World Parallel.
-		* @tparam T The specific Component class.
-		* @param[in] frameInfo The current frame data.
-		* @param[in] subPass subPass index.
-		* @param[in] func The function pointer that need to execute during this function.
-		*/
-		template<typename T, typename F>
-		inline void IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subPass, F func);
 
 		/**
 		* @brief Iterator the specific Component in World With break.
@@ -1842,11 +1831,6 @@ namespace Spices {
 		std::shared_ptr<RendererResourcePool> m_RendererResourcePool;
 
 		/**
-		* @brief ThreadPool of Submit Commands.
-		*/
-		std::shared_ptr<VulkanCmdThreadPool> m_CmdThreadPool;
-
-		/**
 		* @brief RendererPass.
 		*/
 		std::shared_ptr<RendererPass> m_Pass;
@@ -2113,7 +2097,7 @@ namespace Spices {
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
-		std::future<VkCommandBuffer> futureCmdBuffer = m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
+		std::future<VkCommandBuffer> futureCmdBuffer = AnyscRHITask(ThreadPoolEnum::RHI, [&](VkCommandBuffer cmdBuffer) {
 
 			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo))
 
@@ -2126,71 +2110,6 @@ namespace Spices {
 
 		const VkCommandBuffer buffer = futureCmdBuffer.get();
 		vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
-	}
-
-	template<typename T, typename F>
-	inline void Renderer::IterWorldCompSubmitCmdParallel(FrameInfo& frameInfo, uint32_t subPass, F func)
-	{
-		SPICES_PROFILE_ZONE;
-
-		VkCommandBufferInheritanceInfo         inheritanceInfo {};
-		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-		inheritanceInfo.renderPass           = m_Pass->Get();
-		inheritanceInfo.subpass              = subPass;
-		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(frameInfo.m_ImageIndex);
-						     
-		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
-		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
-
-		/**
-		* @brief Begin all Command Buffer.
-		*/
-		{
-			m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
-				VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
-			});
-			m_CmdThreadPool->Wait();
-		}
-
-		/**
-		* @brief Iter use view, not group.
-		* @attention Group result nullptr here.
-		*/
-		{
-			auto& view = frameInfo.m_World->GetRegistry().view<T>();
-			for (auto& e : view)
-			{
-				m_CmdThreadPool->SubmitPoolTask<VkCommandBuffer>([&](VkCommandBuffer cmdBuffer) {
-
-					auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
-
-					/**
-					* @brief This function defined how we use these components.
-					* @param[in] e entityid.
-					* @param[in] transComp TransformComponent.
-					* @param[in] tComp TComponent.
-					*/
-					func(cmdBuffer, static_cast<int>(e), transComp, tComp);
-
-					return cmdBuffer;
-				});
-			}
-			m_CmdThreadPool->Wait();
-		}
-
-		/**
-		* @brief End all Command Buffer.
-		*/
-		{
-			m_CmdThreadPool->SubmitThreadTask_LightWeight_ForEach([&](VkCommandBuffer cmdBuffer) {
-				VK_CHECK(vkEndCommandBuffer(cmdBuffer));
-			});
-			m_CmdThreadPool->Wait();
-		}
-
-		vkCmdExecuteCommands(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], m_CmdThreadPool->GetThreadsCount(), m_CmdThreadPool->GetCommandBuffers(frameInfo.m_FrameIndex).data());
 	}
 
 	template<typename T, typename F>

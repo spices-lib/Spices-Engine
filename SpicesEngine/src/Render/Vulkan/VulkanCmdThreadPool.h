@@ -10,6 +10,7 @@
 #include "Core/Thread/ThreadPoolBasic.h"
 #include "VulkanCommandBuffer.h"
 #include "Render/FrameInfo.h"
+#include "Core/Reflect/StaticReflect/FunctionTraits.h"
 
 namespace Spices {
 
@@ -41,10 +42,9 @@ namespace Spices {
 		* @brief Submit a part commands task to task queue, and wait for a idle thread to execute it.
 		* @tparam Func Task Function.
 		* @tparam Args Task Parameters.
-		* @tparam  RType Task Return Type.
 		*/
-		template<typename RType, typename Func, typename ...Args>
-		auto SubmitPoolTask(Func&& func, Args && ...args) -> std::future<RType>;
+		template<typename Func, typename ...Args>
+		auto SubmitPoolTask(Func&& func, Args && ...args) -> std::future<decltype(func(nullptr, std::forward<Args>(args)...))>;
 
 		/**
 		* @brief Thread Function.
@@ -80,14 +80,16 @@ namespace Spices {
 		std::array<std::vector<VkCommandBuffer>, MaxFrameInFlight> m_CmdBuffers;
 	};
 
-	template<typename RType, typename Func, typename ...Args>
-	inline auto VulkanCmdThreadPool::SubmitPoolTask(Func&& func, Args && ...args) -> std::future<RType>
+	template<typename Func, typename ...Args>
+	inline auto VulkanCmdThreadPool::SubmitPoolTask(Func&& func, Args && ...args) -> std::future<decltype(func(nullptr, std::forward<Args>(args)...))>
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto task = std::make_shared<std::packaged_task<RType(VkCommandBuffer)>>(std::bind(std::forward<Func>(func), std::placeholders::_1, std::forward<Args>(args)...));
-		std::future<RType> result = task->get_future();
+		using RType = decltype(func(nullptr, args...));
 
+		auto task = std::make_shared<std::packaged_task<RType(VkCommandBuffer)>>(std::bind(std::forward<Func>(func), std::placeholders::_1, std::forward<Args>(args)...));
+		std::future<decltype(func(nullptr, std::forward<Args>(args)...))> result = task->get_future();
+		
 		{
 			std::unique_lock<std::mutex> lock(m_Mutex);
 

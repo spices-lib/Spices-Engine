@@ -12,8 +12,6 @@
 
 namespace Spices {
 
-
-
 	Renderer::Renderer
 	(
 		const std::string&                           rendererName          , 
@@ -21,7 +19,6 @@ namespace Spices {
 		const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool        ,
 		const std::shared_ptr<VulkanDevice>&         device                ,
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
-		const std::shared_ptr<VulkanCmdThreadPool>&  cmdThreadPool         ,
 		bool                                         isLoadDefaultMaterial ,
 		bool                                         isRegistryDGCPipeline
 	)
@@ -29,7 +26,6 @@ namespace Spices {
 		, m_DescriptorPool          (DescriptorPool        )
 		, m_Device                  (device                )
 		, m_RendererResourcePool    (rendererResourcePool  )
-		, m_CmdThreadPool           (cmdThreadPool         )
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 		, m_IsRegistryDGCPipeline   (isRegistryDGCPipeline )
@@ -491,7 +487,7 @@ namespace Spices {
 				auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
 				state->PushBehave("EndRenderer", [](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
-					ThreadPool::Get()->SubmitPoolTask([&](std::shared_ptr<RendererSubPass> subPass) { 
+					AnyscTask(ThreadPoolEnum::Custom, [&](std::shared_ptr<RendererSubPass> subPass) { 
 						subPass->StoreStatistics(); 
 					}, builder->GetStatisticsRendererPass());
 				});

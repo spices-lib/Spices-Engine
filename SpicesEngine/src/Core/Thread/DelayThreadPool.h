@@ -23,22 +23,6 @@ namespace Spices {
 		*/
 		virtual ~DelayThreadPool() override = default;
 
-		/**
-		* @brief Init ThreadPool Single Instance.
-		*/
-		static void Init();
-
-		/**
-		* @brief Get ThreadPool Single Instance.
-		* @return Returns ThreadPool Single Instance.
-		*/
-		static std::shared_ptr<DelayThreadPool>& Get() { return m_ThreadPool; }
-
-		/**
-		* @brief ShutDown ThreadPool Single Instance.
-		*/
-		static void ShutDown() { m_ThreadPool = nullptr; }
-
 		void Continue();
 		void Suspend();
 
@@ -68,11 +52,6 @@ namespace Spices {
 		/*************************************************************************************************************/
 
 	private:
-
-		/**
-		* @brief ThreadPool Single Instance.
-		*/
-		static std::shared_ptr<DelayThreadPool> m_ThreadPool;
 
 		/**
 		* @brief True if needs stopping execute the task.

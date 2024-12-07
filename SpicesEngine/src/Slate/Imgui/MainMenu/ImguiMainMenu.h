@@ -72,7 +72,7 @@ namespace Spices {
 		/**
 		* @brief This interface is called On Global Event Function Pointer is called.
 		*/
-		virtual void OnEvent(Event& event) override {};
+		virtual void OnEvent(Event& event) override;
 
 	private:
 

@@ -6,7 +6,7 @@
 
 #include "Pchheader.h"
 #include "ImguiMainMenu.h"
-
+#include "Core/Input/Input.h"
 #include "Systems/SlateSystem.h"
 #include "ImguiFile.h"
 #include "Edit/ImguiEdit.h"
@@ -14,7 +14,8 @@
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
-
+#include "Core/Thread/ThrealModel.h"
+#include "Slate/SlateStyleLayout.h"
 #include <imgui_internal.h>
 
 namespace Spices {
@@ -134,16 +135,26 @@ namespace Spices {
 
                 SPICES_PROFILE_ZONEN("Render Menu Layout");
 
-                if (ImGui::MenuItem("Default", "Ctrl+1")) {}
+                if (ImGui::MenuItem("Default", "Ctrl+1")) 
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayout::Default);
+                    });
+                }
                 if (ImGui::MenuItem("Animation", "Ctrl+2")) {}
                 if (ImGui::MenuItem("Animation Graph", "Ctrl+3")) {}
                 if (ImGui::MenuItem("Paint", "Ctrl+4")) {}
                 if (ImGui::MenuItem("Rendering", "Ctrl+5")) {}
                 if (ImGui::MenuItem("Visual Scripting", "Ctrl+6")) {}
                 if (ImGui::MenuItem("Physics Authoring", "Ctrl+9")) {}
-                ImGui::Separator(); 
-                if (ImGui::MenuItem("UI Toggle Visibility", "F7")) {}
-                if (ImGui::MenuItem("Fullscreen Mode", "F11")) 
+                ImGui::Separator();
+                if (ImGui::MenuItem("UI Toggle Visibility", "F11")) 
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateSystem::GetRegister()->GetViewPort()->Toggle();
+                    });
+                }
+                if (ImGui::MenuItem("Fullscreen Mode")) 
                 {
                     static bool isFullScreen = false;
                     isFullScreen = !isFullScreen;
@@ -196,4 +207,24 @@ namespace Spices {
         //ImGui::PopItemFlag();
         ImGui::PopStyleVar(2);
 	}
+
+    void ImguiMainMenu::OnEvent(Event& event)
+    {
+        EventDispatcher dispatcher(event);
+
+        dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent& event) {
+            
+            if (event.GetKeyCode() == Key::D1)
+            {
+                if (Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayout::Default);
+                    });
+                }
+            }
+
+            return false;
+        });
+    }
 }

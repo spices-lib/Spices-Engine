@@ -8,8 +8,7 @@
 #include "Application.h"
 #include "Render/FrameInfo.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
-#include "Thread/ThreadPool.h"
-#include "Thread/DelayThreadPool.h"
+#include "Core/Thread/ThrealModel.h"
 
 // System Header.
 #include "Systems/SystemManager.h"
@@ -34,13 +33,8 @@ namespace Spices {
 		/**
 		* @brief Init General ThreadPool.
 		*/
-		ThreadPool::Init();
-		ThreadPool::Get()->SetMode(PoolMode::MODE_FIXED);
-		ThreadPool::Get()->Start(4);
-
-		DelayThreadPool::Init();
-		DelayThreadPool::Get()->SetMode(PoolMode::MODE_FIXED);
-		DelayThreadPool::Get()->Start(4);
+		ThrealModel::Get()->InitCustomThreadPool();
+		ThrealModel::Get()->InitGameThreadPool();
 
 		/**
 		* @brief Init all Systems.
@@ -75,8 +69,8 @@ namespace Spices {
 		/**
 		* @brief Shutdown ThreadPool.
 		*/
-		ThreadPool::ShutDown();
-		DelayThreadPool::ShutDown();
+		ThrealModel::Get()->ShutDownGameThreadPool();
+		ThrealModel::Get()->ShutDownCustomThreadPool();
 
 		/**
 		* @brief Shutdown Log Class.

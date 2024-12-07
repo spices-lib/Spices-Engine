@@ -12,7 +12,7 @@
 #include "ImguiFloatingInfo.h"
 #include "ImGuizmo.h"
 #include "ImguiViewportToolBar.h"
-#include "Core/Thread/DelayThreadPool.h"
+#include "Core/Thread/ThrealModel.h"
 
 namespace Spices {
 
@@ -100,7 +100,7 @@ namespace Spices {
 
                         m_WindowFlags ^= ImGuiWindowFlags_NoResize & ImGuiWindowFlags_NoMove;
 
-                        DelayThreadPool::Get()->SubmitPoolTask([]() {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
                             ImGui::LoadIniSettingsFromDisk("DefaultLayout.ini");
                         });
                     }
@@ -190,7 +190,7 @@ namespace Spices {
 
         if (IsResizedThisFrame())
         {
-            DelayThreadPool::Get()->SubmitPoolTask([](ImVec2 panelSize) {
+            AnyscTask(ThreadPoolEnum::Game, [](ImVec2 panelSize) {
 
                 /**
                 * @brief Might not needed?
@@ -258,6 +258,13 @@ namespace Spices {
         return pair;
     }
 
+    void ImguiViewport::Toggle()
+    {
+        SPICES_PROFILE_ZONE;
+
+        m_ToggleStateList->ResetState();
+    }
+
     bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
     {
         SPICES_PROFILE_ZONE;
@@ -314,7 +321,7 @@ namespace Spices {
 
 		if (event.GetKeyCode() == Key::F11)
 		{
-            m_ToggleStateList->ResetState();
+            Toggle();
 		}
 
 		return false;

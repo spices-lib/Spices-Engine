@@ -14,7 +14,7 @@
 #include "Render/Renderer/RendererManager.h"
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
-#include "Core/Thread/DelayThreadPool.h"
+#include "Core/Thread/ThrealModel.h"
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingRenderer.h"
@@ -103,7 +103,9 @@ namespace Spices {
 		* @brief Create CmdBuffers ThreadPool.
 		*/
 		{
-			m_CmdThreadPool = std::make_unique<VulkanCmdThreadPool>(m_VulkanState);
+			ThrealModel::Get()->InitRHIThreadPool([&](std::shared_ptr<VulkanCmdThreadPool>& ptr) {
+				ptr = std::make_shared<VulkanCmdThreadPool>(m_VulkanState);
+			});
 		}
 
 		/**
@@ -111,23 +113,23 @@ namespace Spices {
 		*/
 		{
 			RendererManager::Get()
-			.Push<PreRenderer>              (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-																																		   
-			/* @brief Ray Tracing Renderer */																							   
-			.Push<RayTracingRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-																																		   
-			/* @brief Rasterization Renderer */																							   
-			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<PostProcessRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<ViewportGridRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    .Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    .Push<WorldPickStage2Renderer>  (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		  //.Push<ParticleRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-		    .Push<TestRenderer>             (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool)
-			.Push<SlateRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool, m_CmdThreadPool);
+			.Push<PreRenderer>              (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+																															
+			/* @brief Ray Tracing Renderer */																				
+			.Push<RayTracingRenderer>       (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<RayTracingComposeRenderer>(m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+																															
+			/* @brief Rasterization Renderer */																				
+			.Push<BasePassRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SceneComposeRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<PostProcessRenderer>      (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<ViewportGridRenderer>     (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+		    .Push<SpriteRenderer>           (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+		    .Push<WorldPickRenderer>        (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+		    .Push<WorldPickStage2Renderer>  (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+		  //.Push<ParticleRenderer>         (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+		    .Push<TestRenderer>             (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool)
+			.Push<SlateRenderer>            (m_VulkanState, m_VulkanDescriptorPool, m_VulkanDevice, m_RendererResourcePool);
 		}
 	}
 
@@ -142,6 +144,12 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERCONTINUOUS_RESET
 		NSIGHTPERF_GPUPROFILERREPORT_RESET(m_VulkanState)
 		NSIGHTPERF_GPUPROFILERONESHOT_QUIT
+
+		/**
+		* @brief Release RHIThreadPool.
+		*/
+		vkDeviceWaitIdle(m_VulkanState.m_Device);
+		ThrealModel::Get()->ShutDownRHIThreadPool();
 
 		/**
 		* @brief Release RendererResourcePool.
@@ -256,7 +264,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("StartFrame::Suspend Delay ThreadPool");
 
-			DelayThreadPool::Get()->Suspend();
+			ThrealModel::Get()->GetGameThreadPool()->Suspend();
 		}
 
 		{
@@ -435,7 +443,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("StartFrame::Continue Delay ThreadPool");
 
-			DelayThreadPool::Get()->Continue();
+			ThrealModel::Get()->GetGameThreadPool()->Continue();
 		}
 	}
 

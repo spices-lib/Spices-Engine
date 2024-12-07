@@ -90,6 +90,11 @@ namespace Spices {
 		*/
 		inline std::shared_ptr<ImguiGizmos> GetGizmo() { return m_Gizmos; }
 
+		/**
+		* @brief Toggle viewport.
+		*/
+		void Toggle();
+
 	private:
 
 		/**

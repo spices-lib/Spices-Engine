@@ -9,18 +9,6 @@
 
 namespace Spices {
 
-	std::shared_ptr<DelayThreadPool> DelayThreadPool::m_ThreadPool = nullptr;
-
-	void DelayThreadPool::Init()
-	{
-		SPICES_PROFILE_ZONE;
-
-		if (!m_ThreadPool)
-		{
-			m_ThreadPool = std::make_shared<DelayThreadPool>();
-		}
-	}
-
 	void DelayThreadPool::Continue()
 	{
 		SPICES_PROFILE_ZONE;
