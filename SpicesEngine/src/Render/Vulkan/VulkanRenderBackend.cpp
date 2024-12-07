@@ -14,6 +14,7 @@
 #include "Render/Renderer/RendererManager.h"
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
+#include "Core/Thread/DelayThreadPool.h"
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingRenderer.h"
@@ -253,6 +254,12 @@ namespace Spices {
 		}
 
 		{
+			SPICES_PROFILE_ZONEN("StartFrame::Suspend Delay ThreadPool");
+
+			DelayThreadPool::Get()->Suspend();
+		}
+
+		{
 			SPICES_PROFILE_ZONEN("StartFrame::NsightPerfFrameStart0");
 
 			NSIGHTPERF_GPUPROFILERREPORT_BEGINFRAME(m_VulkanState.m_GraphicQueue, m_VulkanState.m_GraphicQueueFamily)
@@ -423,6 +430,12 @@ namespace Spices {
 			}
 
 			DEBUGUTILS_ENDQUEUELABEL(m_VulkanState.m_PresentQueue)
+		}
+
+		{
+			SPICES_PROFILE_ZONEN("StartFrame::Continue Delay ThreadPool");
+
+			DelayThreadPool::Get()->Continue();
 		}
 	}
 

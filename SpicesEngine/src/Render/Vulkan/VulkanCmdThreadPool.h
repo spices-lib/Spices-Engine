@@ -111,11 +111,6 @@ namespace Spices {
 						uint32_t threadId = ptr->GetId();
 						m_Threads.emplace(threadId, std::move(ptr));
 
-						/**
-						* @brief Init Thread.
-						*/
-						SubmitThreadTask_LightWeight(threadId, std::bind(&ThreadPool_Basic<VkCommandBuffer>::InitThreadFunction, this));
-
 						++m_IdleThreadSize;
 						++m_NThreads;
 						break;

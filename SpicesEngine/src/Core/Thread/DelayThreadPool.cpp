@@ -1,27 +1,50 @@
 /**
-* @file ThreadPool.cpp
-* @brief The ThreadPool Class Implementation.
+* @file DelayThreadPool.cpp
+* @brief The DelayThreadPool Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "ThreadPool.h"
+#include "DelayThreadPool.h"
 
 namespace Spices {
 
-	std::shared_ptr<ThreadPool> ThreadPool::m_ThreadPool = nullptr;
+	std::shared_ptr<DelayThreadPool> DelayThreadPool::m_ThreadPool = nullptr;
 
-	void ThreadPool::Init()
+	void DelayThreadPool::Init()
 	{
 		SPICES_PROFILE_ZONE;
 
 		if (!m_ThreadPool)
 		{
-			m_ThreadPool = std::make_shared<ThreadPool>();
+			m_ThreadPool = std::make_shared<DelayThreadPool>();
 		}
 	}
 
-	void ThreadPool::Start(int initThreadSize)
+	void DelayThreadPool::Continue()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_IsStoped = false;
+
+		if (m_Tasks.load() > 0)
+		{
+			m_NotEmpty.notify_all();
+		}
+	}
+
+	void DelayThreadPool::Suspend()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_IsStoped = true;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		m_IdleCond.wait(lock, [&]() { return m_IdleThreadSize.load() == m_NThreads.load(); });
+	}
+
+	void DelayThreadPool::Start(int initThreadSize)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -32,14 +55,14 @@ namespace Spices {
 
 		for (uint32_t i = 0; i < m_InitThreadSize; i++)
 		{
-			auto ptr = std::make_unique<Thread<>>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1), i);
+			auto ptr = std::make_unique<Thread<>>(std::bind(&DelayThreadPool::ThreadFunc, this, std::placeholders::_1), i);
 			int threadId = ptr->GetId();
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
 	}
 
-	void ThreadPool::ThreadFunc(Thread<>* thread)
+	void DelayThreadPool::ThreadFunc(Thread<>* thread)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -51,7 +74,7 @@ namespace Spices {
 			{
 				std::unique_lock<std::mutex> lock(m_Mutex);
 
-				while (m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0)
+				while ((m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0) || m_IsStoped)
 				{
 					/**
 					* @brief Exit.

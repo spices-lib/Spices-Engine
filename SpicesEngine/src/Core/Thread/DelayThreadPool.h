@@ -1,6 +1,6 @@
 /**
-* @file ThreadPool.h
-* @brief The ThreadPool Class Definitions.
+* @file DelayThreadPool.h
+* @brief The DelayThreadPool Class Definitions.
 * @author Spices.
 */
 
@@ -9,19 +9,19 @@
 
 namespace Spices {
 
-	class ThreadPool : public ThreadPool_Basic<>
+	class DelayThreadPool : public ThreadPool_Basic<>
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		ThreadPool() : ThreadPool_Basic<>() {}
+		DelayThreadPool() : ThreadPool_Basic<>(), m_IsStoped(true) {}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ThreadPool() override = default;
+		virtual ~DelayThreadPool() override = default;
 
 		/**
 		* @brief Init ThreadPool Single Instance.
@@ -32,12 +32,15 @@ namespace Spices {
 		* @brief Get ThreadPool Single Instance.
 		* @return Returns ThreadPool Single Instance.
 		*/
-		static std::shared_ptr<ThreadPool>& Get() { return m_ThreadPool; }
+		static std::shared_ptr<DelayThreadPool>& Get() { return m_ThreadPool; }
 
 		/**
 		* @brief ShutDown ThreadPool Single Instance.
 		*/
 		static void ShutDown() { m_ThreadPool = nullptr; }
+
+		void Continue();
+		void Suspend();
 
 		/******************************************Must Implementation************************************************/
 
@@ -69,11 +72,16 @@ namespace Spices {
 		/**
 		* @brief ThreadPool Single Instance.
 		*/
-		static std::shared_ptr<ThreadPool> m_ThreadPool;
+		static std::shared_ptr<DelayThreadPool> m_ThreadPool;
+
+		/**
+		* @brief True if needs stopping execute the task.
+		*/
+		bool m_IsStoped;
 	};
 
 	template<typename Func, typename ...Args>
-	inline auto ThreadPool::SubmitPoolTask(Func&& func, Args && ...args) -> std::future<decltype(func(std::forward<Args>(args)...))>
+	inline auto DelayThreadPool::SubmitPoolTask(Func&& func, Args && ...args) -> std::future<decltype(func(std::forward<Args>(args)...))>
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -103,7 +111,7 @@ namespace Spices {
 				{
 					if (m_Threads.find(i) == m_Threads.end())
 					{
-						auto ptr = std::make_unique<Thread<>>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1), i);
+						auto ptr = std::make_unique<Thread<>>(std::bind(&DelayThreadPool::ThreadFunc, this, std::placeholders::_1), i);
 						ptr->Start();
 						uint32_t threadId = ptr->GetId();
 						m_Threads.emplace(threadId, std::move(ptr));

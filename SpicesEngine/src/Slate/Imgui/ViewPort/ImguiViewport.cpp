@@ -12,6 +12,7 @@
 #include "ImguiFloatingInfo.h"
 #include "ImGuizmo.h"
 #include "ImguiViewportToolBar.h"
+#include "Core/Thread/DelayThreadPool.h"
 
 namespace Spices {
 
@@ -83,20 +84,25 @@ namespace Spices {
 
                     if (m_IsToggled)
                     {
-                        m_CachedPanelPos = m_PanelPos;
+                        m_CachedPanelPos  = m_PanelPos;
                         m_CachedPanelSize = m_PanelSize;
 
                         const ImGuiViewport* viewport = ImGui::GetMainViewport();
                         ImGui::SetNextWindowPos(viewport->Pos);
                         ImGui::SetNextWindowSize(viewport->Size);
+
+                        m_WindowFlags |= ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
                     }
                     else
                     {
                         ImGui::SetNextWindowPos(m_CachedPanelPos);
                         ImGui::SetNextWindowSize(m_CachedPanelSize);
 
-                        ImGuiID dockspaceID = ImGui::GetID("DockSpace");
-                        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+                        m_WindowFlags ^= ImGuiWindowFlags_NoResize & ImGuiWindowFlags_NoMove;
+
+                        DelayThreadPool::Get()->SubmitPoolTask([]() {
+                            ImGui::LoadIniSettingsFromDisk("DefaultLayout.ini");
+                        });
                     }
                 });
             }
@@ -109,6 +115,8 @@ namespace Spices {
                         const ImGuiViewport* viewport = ImGui::GetMainViewport();
                         ImGui::SetNextWindowPos(viewport->Pos);
                         ImGui::SetNextWindowSize(viewport->Size);
+
+                        m_WindowFlags |= ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
                     }
                 });
             }
@@ -179,6 +187,22 @@ namespace Spices {
         End();
 
         m_ToggleStateList->IncreateState();
+
+        if (IsResizedThisFrame())
+        {
+            DelayThreadPool::Get()->SubmitPoolTask([](ImVec2 panelSize) {
+
+                /**
+                * @brief Might not needed?
+                */
+                //VK_CHECK(vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device))
+
+                SlateResizeEvent event(static_cast<uint32_t>(panelSize.x), static_cast<uint32_t>(panelSize.y));
+
+                Event::GetEventCallbackFn()(event);
+
+            }, GetPanelSize());
+        }
     }
 
     void ImguiViewport::OnEvent(Event& event)

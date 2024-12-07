@@ -20,13 +20,16 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
+        m_WindowFlags |= flags;
+        m_WindowFlags |= ImGuiWindowFlags_NoCollapse;
+
         // The panel
         if (alpha < 1)
         {
             ImGui::SetNextWindowBgAlpha(alpha);  // For when the panel becomes a floating window
         }
 
-        ImGui::Begin(panelName.c_str(), &m_IsSlateOn, flags | ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin(panelName.c_str(), &m_IsSlateOn, m_WindowFlags);
 
         if (ImGui::BeginPopupContextItem())
         {

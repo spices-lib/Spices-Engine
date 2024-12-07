@@ -184,5 +184,10 @@ namespace Spices{
 		* @brief Boolean of whether resized this frame.
 		*/
 		bool m_IsResized = false;
+
+		/**
+		* @brief Flags of this window slate.
+		*/
+		ImGuiWindowFlags m_WindowFlags = 0;
 	};
 }

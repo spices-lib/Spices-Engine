@@ -107,11 +107,6 @@ namespace Spices {
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
-
-		/**
-		* @brief Init Thread.
-		*/
-		SubmitThreadTask_LightWeight_ForEach(std::bind(&ThreadPool_Basic<VkCommandBuffer>::InitThreadFunction, this));
 	}
 
 	void VulkanCmdThreadPool::ThreadFunc(Thread<VkCommandBuffer>* thread)
@@ -197,11 +192,13 @@ namespace Spices {
 				task(cmdBuffer);
 				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;
+				m_IdleCond.notify_all();
 			}
 			else
 			{
 				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;
+				m_IdleCond.notify_all();
 			}
 
 			lastTime = std::chrono::high_resolution_clock::now();

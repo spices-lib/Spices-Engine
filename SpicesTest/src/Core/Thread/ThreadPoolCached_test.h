@@ -202,7 +202,7 @@ namespace SpicesTest {
 
 		auto func = [](int sec) -> bool
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(sec));
+			std::this_thread::sleep_for(std::chrono::microseconds(sec));
 			return true;
 		};
 
@@ -352,7 +352,7 @@ namespace SpicesTest {
 
 		auto func = []() -> void
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
 		};
 
 		for (int i = 0; i < 2000; i++)
@@ -386,11 +386,11 @@ namespace SpicesTest {
 
 		auto func = []() -> void
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
 		};
 		auto func1 = [](int sec) -> void
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(sec));
+			std::this_thread::sleep_for(std::chrono::microseconds(sec));
 		};
 
 		for (int i = 0; i < 5000; i++)

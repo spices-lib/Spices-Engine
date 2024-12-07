@@ -51,8 +51,9 @@
 #include "Core/Reflect/StaticReflect/IsPointer_test.h"
 
 /* Thread */
-//#include "Core/Thread/ThreadPoolFixed_test.h"
-//#include "Core/Thread/ThreadPoolCached_test.h"
+#include "Core/Thread/ThreadPoolFixed_test.h"
+#include "Core/Thread/ThreadPoolCached_test.h"
+#include "Core/Thread/DelayThreadPoolFixed_test.h"
 
 /* Timer */
 #include "Core/Timer/ScopeTimer_test.h"

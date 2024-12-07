@@ -274,18 +274,6 @@ namespace Spices {
 		*/
 		const bool IsPoolRunning() const { return m_IsPoolRunning.load(); }
 
-		/**
-		* @brief Function used to testing thread running state.
-		*/
-		void InitThreadFunction()
-		{
-			std::thread::id threadId = std::this_thread::get_id();
-
-			std::stringstream ss;
-			ss << "ThreadPool Thread: " << threadId << ", is Started";
-			SPICES_CORE_INFO(ss.str())
-		}
-
 	protected:
 
 		/**
@@ -344,6 +332,11 @@ namespace Spices {
 		* @brief Thread pool Exit Condition.
 		*/
 		std::condition_variable m_ExitCond;
+
+		/**
+		* @brief Thread pool thread idle Condition.
+		*/
+		std::condition_variable m_IdleCond;
 
 		/**
 		* @brief Thread Pool Run Mode.
@@ -459,7 +452,15 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		while (!(m_IdleThreadSize.load() == m_NThreads.load() && m_Tasks.load() == 0)) {}
+		auto idleCond = [&]() {
+			return m_IdleThreadSize.load() == m_NThreads.load() && m_Tasks.load() == 0;
+		};
+
+		if (!idleCond())
+		{
+			std::unique_lock<std::mutex> lock(m_Mutex);
+			m_IdleCond.wait(lock, idleCond);
+		}
 
 		for (auto& pair : m_Threads)
 		{
