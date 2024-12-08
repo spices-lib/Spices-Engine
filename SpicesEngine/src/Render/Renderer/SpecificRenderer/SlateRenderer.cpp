@@ -8,6 +8,7 @@
 #include "SlateRenderer.h"
 #include "Systems/SlateSystem.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
+#include "Core/Library/FileLibrary.h"
 
 namespace Spices {
 
@@ -94,12 +95,17 @@ namespace Spices {
 		*/
 		ImGuiIO& io = ImGui::GetIO();
 
+		FileLibrary::FileLibrary_CopyFile(
+			SPICES_ENGINE_ASSETS_PATH + "SlateLayout/DefaultLayout.ini",
+			"DefaultLayout.ini"
+		);
+
 		/**
 		* @brief ImGui Slate Layout cache file.
 		* Set nullptr, if not need.
 		*/
-		io.IniFilename = "SlateLayout.ini";
-		io.LogFilename = nullptr;
+		io.IniFilename  = "DefaultLayout.ini";
+		io.LogFilename  = nullptr;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;    // Enable Multi-Viewport / Platform Windows

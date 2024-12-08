@@ -13,6 +13,7 @@
 #include "ImGuizmo.h"
 #include "ImguiViewportToolBar.h"
 #include "Core/Thread/ThrealModel.h"
+#include "Slate/SlateStyleLayout.h"
 
 namespace Spices {
 
@@ -84,8 +85,7 @@ namespace Spices {
 
                     if (m_IsToggled)
                     {
-                        m_CachedPanelPos  = m_PanelPos;
-                        m_CachedPanelSize = m_PanelSize;
+                        SlateStyleLayout::Get()->StoreLayoutInMemory();
 
                         const ImGuiViewport* viewport = ImGui::GetMainViewport();
                         ImGui::SetNextWindowPos(viewport->Pos);
@@ -95,13 +95,10 @@ namespace Spices {
                     }
                     else
                     {
-                        ImGui::SetNextWindowPos(m_CachedPanelPos);
-                        ImGui::SetNextWindowSize(m_CachedPanelSize);
-
                         m_WindowFlags ^= ImGuiWindowFlags_NoResize & ImGuiWindowFlags_NoMove;
 
                         AnyscTask(ThreadPoolEnum::Game, []() {
-                            ImGui::LoadIniSettingsFromDisk("DefaultLayout.ini");
+                            SlateStyleLayout::Get()->LoadLayoutInMemory();
                         });
                     }
                 });

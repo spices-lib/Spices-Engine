@@ -154,5 +154,7 @@ namespace Spices {
         * @return Returns the file path of selected file.
         */
         static std::string FileLibrary_OpenInExplore(const char* filter, HWND hwnd);
+
+        static bool FileLibrary_CopyFile(std::string srcFilePath, std::string dstFilePath);
     };
 }

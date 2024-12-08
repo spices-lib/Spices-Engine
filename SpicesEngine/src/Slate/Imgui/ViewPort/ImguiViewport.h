@@ -146,16 +146,6 @@ namespace Spices {
 		std::shared_ptr<ImguiViewportToolBar> m_ToolBar;
 
 		/**
-		* @brief This slate's cached size.
-		*/
-		ImVec2 m_CachedPanelSize = { 1, 1 };
-
-		/**
-		* @brief This slate's cached position in desktop.
-		*/
-		ImVec2 m_CachedPanelPos;
-
-		/**
 		* @brief True if this slate toggled this frame.
 		*/
 		bool m_IsToggled = false;

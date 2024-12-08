@@ -138,15 +138,45 @@ namespace Spices {
                 if (ImGui::MenuItem("Default", "Ctrl+1")) 
                 {
                     AnyscTask(ThreadPoolEnum::Game, []() {
-                        SlateStyleLayout::Get()->SetLayout(StyleLayout::Default);
+                        SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Default);
                     });
                 }
-                if (ImGui::MenuItem("Animation", "Ctrl+2")) {}
-                if (ImGui::MenuItem("Animation Graph", "Ctrl+3")) {}
-                if (ImGui::MenuItem("Paint", "Ctrl+4")) {}
-                if (ImGui::MenuItem("Rendering", "Ctrl+5")) {}
-                if (ImGui::MenuItem("Visual Scripting", "Ctrl+6")) {}
-                if (ImGui::MenuItem("Physics Authoring", "Ctrl+9")) {}
+                if (ImGui::MenuItem("Animation", "Ctrl+2"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Animation);
+                    });
+                }
+                if (ImGui::MenuItem("Animation Graph", "Ctrl+3"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::AnimationGraph);
+                    });
+                }
+                if (ImGui::MenuItem("Paint", "Ctrl+4"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Paint);
+                    });
+                }
+                if (ImGui::MenuItem("Rendering", "Ctrl+5"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Rendering);
+                    });
+                }
+                if (ImGui::MenuItem("Visual Scripting", "Ctrl+6"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::VisualScripting);
+                    });
+                }
+                if (ImGui::MenuItem("Physics Authoring", "Ctrl+9"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::PhysicsAuthoring);
+                    });
+                }
                 ImGui::Separator();
                 if (ImGui::MenuItem("UI Toggle Visibility", "F11")) 
                 {
@@ -171,11 +201,31 @@ namespace Spices {
                     }
                 }
                 ImGui::Separator(); 
-                if (ImGui::MenuItem("Save Layout")) {}
-                if (ImGui::MenuItem("Load Layout")) {}
+                if (ImGui::MenuItem("Save Layout"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->StoreLayout();
+                    });
+                }
+                if (ImGui::MenuItem("Load Layout"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->LoadLayout();
+                    });
+                }
                 ImGui::Separator(); 
-                if (ImGui::MenuItem("Quick Save", "Ctrl+7")) {}
-                if (ImGui::MenuItem("Quick Load", "Ctrl+8")) {}
+                if (ImGui::MenuItem("Quick Save", "Ctrl+7"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->QuickStoreLayout();
+                    });
+                }
+                if (ImGui::MenuItem("Quick Load", "Ctrl+8"))
+                {
+                    AnyscTask(ThreadPoolEnum::Game, []() {
+                        SlateStyleLayout::Get()->QuickLoadLayout();
+                    });
+                }
 
                 ImGui::EndMenu();
             }
@@ -214,13 +264,101 @@ namespace Spices {
 
         dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent& event) {
             
-            if (event.GetKeyCode() == Key::D1)
+            const auto isPressedCtrl = []() {
+                return Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+            };
+
+            switch (event.GetKeyCode())
             {
-                if (Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl))
+                case Key::D1:
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
-                        SlateStyleLayout::Get()->SetLayout(StyleLayout::Default);
-                    });
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Default);
+                        });
+                    }
+                    break;
+                }
+                case Key::D2:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Animation);
+                        });
+                    }
+                    break;
+                }
+                case Key::D3:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::AnimationGraph);
+                        });
+                    }
+                    break;
+                }
+                case Key::D4:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Paint);
+                        });
+                    }
+                    break;
+                }
+                case Key::D5:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Rendering);
+                        });
+                    }
+                    break;
+                }
+                case Key::D6:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::VisualScripting);
+                        });
+                    }
+                    break;
+                }
+                case Key::D7:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->QuickStoreLayout();
+                        });
+                    }
+                    break;
+                }
+                case Key::D8:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->QuickLoadLayout();
+                        });
+                    }
+                    break;
+                }
+                case Key::D9:
+                {
+                    if (isPressedCtrl())
+                    {
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::PhysicsAuthoring);
+                        });
+                    }
+                    break;
                 }
             }
 

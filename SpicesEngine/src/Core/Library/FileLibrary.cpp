@@ -197,4 +197,25 @@ namespace Spices {
 		}
 		return "";
 	}
+
+	bool FileLibrary::FileLibrary_CopyFile(std::string srcFilePath, std::string dstFilePath)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!FileLibrary_Exists(srcFilePath.c_str()))
+		{
+			std::stringstream ss;
+			ss << "File path: " << srcFilePath << " was not found.";
+
+			SPICES_CORE_WARN(ss.str());
+			return false;
+		}
+
+		std::ifstream src(srcFilePath, std::ios::binary);
+		std::ofstream dst(dstFilePath, std::ios::binary);
+
+		dst << src.rdbuf();
+
+		return true;
+	}
 }
