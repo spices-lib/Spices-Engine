@@ -267,6 +267,12 @@ namespace Spices {
 		}
 
 		{
+			SPICES_PROFILE_ZONEN("StartFrame::Free Parallel CommandBuffer");
+
+			ThrealModel::Get()->GetRHIThreadPool()->FreeParallelCommandBuffers(frameInfo.m_FrameIndex);
+		}
+
+		{
 			SPICES_PROFILE_ZONEN("StartFrame::NsightPerfFrameStart0");
 
 			NSIGHTPERF_GPUPROFILERREPORT_BEGINFRAME(m_VulkanState.m_GraphicQueue, m_VulkanState.m_GraphicQueueFamily)
@@ -443,7 +449,7 @@ namespace Spices {
 			SPICES_PROFILE_ZONEN("StartFrame::Continue Delay ThreadPool");
 
 			ThrealModel::Get()->GetGameThreadPool()->Continue();
-		}
+		}	
 	}
 
 	void VulkanRenderBackend::RenderFrame(TimeStep& ts, FrameInfo& frameInfo)

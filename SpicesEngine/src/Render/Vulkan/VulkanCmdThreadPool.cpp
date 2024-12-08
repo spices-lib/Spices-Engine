@@ -18,11 +18,17 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		{
+			for (int i = 0; i < MaxFrameInFlight; i++)
+			{
+				m_CmdBuffers[i].resize(nCmdThreads);
+			}
+		}
+
 		/**
 		* @brief Create Parallel CommandPool.
 		*/
 		{
-
 			m_CmdPools.resize(nCmdThreads);
 
 			/**
@@ -40,32 +46,6 @@ namespace Spices {
 			{
 				VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &m_CmdPools[i]));
 				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)m_CmdPools[i], vulkanState.m_Device, "ParallelGraphicCommandPool")
-			}
-		}
-
-		/**
-		* @brief Create Parallel CommandBuffer.
-		*/
-		{
-			for (int i = 0; i < MaxFrameInFlight; i++)
-			{
-				m_CmdBuffers[i].resize(nCmdThreads);
-			}
-
-			for (int i = 0; i < nCmdThreads; i++)
-			{
-				VkCommandBufferAllocateInfo       allocInfo{};
-				allocInfo.sType                 = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-				allocInfo.commandPool           = m_CmdPools[i];
-				allocInfo.level                 = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-				allocInfo.commandBufferCount    = 1;
-
-				for (int j = 0; j < MaxFrameInFlight; j++)
-				{
-					VK_CHECK(vkAllocateCommandBuffers(vulkanState.m_Device, &allocInfo, &m_CmdBuffers[j][i]))
-					DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)m_CmdBuffers[j][i], vulkanState.m_Device, "ParallelGraphicCommandBuffer")
-					SPICES_PROFILE_VK_COLLECT(m_CmdBuffers[j][i])
-				}
 			}
 		}
 
@@ -188,7 +168,7 @@ namespace Spices {
 			*/
 			if (task != nullptr)
 			{
-				VkCommandBuffer& cmdBuffer = m_CmdBuffers[FrameInfo::Get().m_FrameIndex][thread->GetId()];
+				VkCommandBuffer cmdBuffer = CreateParallelCommandBuffers(thread->GetId());
 				task(cmdBuffer);
 				thread->SetThreadInTask(false);
 				++m_IdleThreadSize;
@@ -202,6 +182,42 @@ namespace Spices {
 			}
 
 			lastTime = std::chrono::high_resolution_clock::now();
+		}
+	}
+
+	VkCommandBuffer VulkanCmdThreadPool::CreateParallelCommandBuffers(uint32_t threadId)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkCommandBufferAllocateInfo        allocInfo{};
+		allocInfo.sType                  = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool            = m_CmdPools[threadId];
+		allocInfo.level                  = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+		allocInfo.commandBufferCount     = 1;
+
+		VkCommandBuffer cmdBuffer;
+
+		VK_CHECK(vkAllocateCommandBuffers(m_VulkanState.m_Device, &allocInfo, &cmdBuffer))
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)cmdBuffer, m_VulkanState.m_Device, "ParallelGraphicCommandBuffer")
+		SPICES_PROFILE_VK_COLLECT(cmdBuffer)
+
+		m_CmdBuffers[FrameInfo::Get().m_FrameIndex][threadId].push_back(cmdBuffer);
+
+		return cmdBuffer;
+	}
+
+	void VulkanCmdThreadPool::FreeParallelCommandBuffers(uint32_t frameIndex)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto& commandBuffers = m_CmdBuffers[frameIndex];
+
+		for (int i = 0; i < m_NThreads.load(); i++)
+		{
+			if (commandBuffers[i].size() == 0) continue;
+
+			vkFreeCommandBuffers(m_VulkanState.m_Device, m_CmdPools[i], commandBuffers[i].size(), commandBuffers[i].data());
+			commandBuffers[i].clear();
 		}
 	}
 }

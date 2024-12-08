@@ -1,3 +1,9 @@
+/**
+* @file ThrealModel.cpp
+* @brief The ThrealModel Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "ThrealModel.h"
 
@@ -13,6 +19,8 @@ namespace Spices {
 
 	std::shared_ptr<ThrealModel> ThrealModel::Get()
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (!m_ThrealModel)
 		{
 			m_ThrealModel = std::make_shared<ThrealModel>();
@@ -75,5 +83,4 @@ namespace Spices {
 
 		m_RHIThreadPool = nullptr;
 	}
-
 }

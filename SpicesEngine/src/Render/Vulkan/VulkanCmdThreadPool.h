@@ -14,6 +14,9 @@
 
 namespace Spices {
 
+	/**
+	* @brief Wrappers of RHI Thread Pool.
+	*/
 	class VulkanCmdThreadPool : public VulkanObject, public ThreadPool_Basic<VkCommandBuffer>
 	{
 	public:
@@ -55,17 +58,17 @@ namespace Spices {
 		/*************************************************************************************************************/
 
 		/**
-		* @brief GetCommandPools.
-		* @return Return all CommandPools.
+		* @brief Create second CommndBuffer in rhi threadPool thread.
+		* @param[in] threadId .
+		* @return Returns second CommndBuffer.
 		*/
-		std::vector<VkCommandPool>& GetCommandPools() { return m_CmdPools; }
+		VkCommandBuffer CreateParallelCommandBuffers(uint32_t threadId);
 
 		/**
-		* @brief GetCommandBuffers.
-		* @param[in] frameIndex in FrameInfo
-		* @return Return all CommandBuffers.
+		* @brief Free all second CommndBuffer in rhi threadPool thread.
+		* @param[in] frameIndex current frame index.
 		*/
-		std::vector<VkCommandBuffer>& GetCommandBuffers(int frameIndex) { return m_CmdBuffers[frameIndex]; }
+		void FreeParallelCommandBuffers(uint32_t frameIndex);
 
 	private:
 
@@ -77,7 +80,7 @@ namespace Spices {
 		/**
 		* @brief Parallel Secondary CommandBuffers.
 		*/
-		std::array<std::vector<VkCommandBuffer>, MaxFrameInFlight> m_CmdBuffers;
+		std::array<std::vector<std::vector<VkCommandBuffer>>, MaxFrameInFlight> m_CmdBuffers;
 	};
 
 	template<typename Func, typename ...Args>

@@ -9,6 +9,9 @@
 
 namespace Spices {
 
+	/**
+	* @brief Wrappers of Delay Thread Pool.
+	*/
 	class DelayThreadPool : public ThreadPool_Basic<>
 	{
 	public:
@@ -23,7 +26,14 @@ namespace Spices {
 		*/
 		virtual ~DelayThreadPool() override = default;
 
+		/**
+		* @brief Continue ThreadPool.
+		*/
 		void Continue();
+
+		/**
+		* @brief Suspend ThreadPool.
+		*/
 		void Suspend();
 
 		/******************************************Must Implementation************************************************/
@@ -102,8 +112,6 @@ namespace Spices {
 				}
 			}
 		}
-
-		m_NotEmpty.notify_all();
 
 		return result;
 	}

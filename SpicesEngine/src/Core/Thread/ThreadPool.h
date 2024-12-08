@@ -9,6 +9,9 @@
 
 namespace Spices {
 
+	/**
+	* @brief Wrappers of Custom Thread Pool.
+	*/
 	class ThreadPool : public ThreadPool_Basic<>
 	{
 	public:
