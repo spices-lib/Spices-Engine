@@ -85,20 +85,16 @@ namespace Spices {
 
                     if (m_IsToggled)
                     {
-                        SlateStyleLayout::Get()->StoreLayoutInMemory();
-
-                        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-                        ImGui::SetNextWindowPos(viewport->Pos);
-                        ImGui::SetNextWindowSize(viewport->Size);
-
-                        m_WindowFlags |= ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+                        AnyscTask(ThreadPoolEnum::Game, []() {
+                            SlateStyleLayout::Get()->StoreLayoutCache();
+                        });
                     }
                     else
                     {
                         m_WindowFlags ^= ImGuiWindowFlags_NoResize & ImGuiWindowFlags_NoMove;
 
                         AnyscTask(ThreadPoolEnum::Game, []() {
-                            SlateStyleLayout::Get()->LoadLayoutInMemory();
+                            SlateStyleLayout::Get()->LoadLayoutCache();
                         });
                     }
                 });

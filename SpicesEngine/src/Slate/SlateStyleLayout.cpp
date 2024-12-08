@@ -7,6 +7,9 @@
 #include "Pchheader.h"
 #include "SlateStyleLayout.h"
 #include "Imgui/ImguiHelper.h"
+#include "Core/Library/FileLibrary.h"
+#include "Render/Vulkan/VulkanRenderBackend.h"
+#include "Core/Thread/ThrealModel.h"
 
 namespace Spices {
 
@@ -48,25 +51,60 @@ namespace Spices {
 	void SlateStyleLayout::LoadLayout()
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::string filepath = FileLibrary::FileLibrary_OpenInExplore(
+			"Slate Layout (*.ini)\0*.ini\0",
+			glfwGetWin32Window((GLFWwindow*)VulkanRenderBackend::GetState().m_Windows)
+		);
+
+		if (!filepath.empty())
+		{
+			AnyscTask(ThreadPoolEnum::Game, [=]() {
+				ImGui::LoadIniSettingsFromDisk(filepath.c_str());
+			});
+		}
 	}
 
 	void SlateStyleLayout::StoreLayout()
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::string filepath = FileLibrary::FileLibrary_SaveInExplore(
+			"Slate Layout (*.ini)\0*.ini\0",
+			glfwGetWin32Window((GLFWwindow*)VulkanRenderBackend::GetState().m_Windows)
+		);
+
+		filepath.append(".ini");
+
+		if (!filepath.empty())
+		{
+			AnyscTask(ThreadPoolEnum::Game, [=]() {
+				ImGui::SaveIniSettingsToDisk(filepath.c_str());
+			});
+		}
 	}
 
-	void SlateStyleLayout::StoreLayoutInMemory()
+	void SlateStyleLayout::StoreLayoutCache()
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_LayoutCache = const_cast<char*>(ImGui::SaveIniSettingsToMemory(&m_LayoutCacheBytes));
+		std::stringstream ss;
+
+		ss << "saved/SlateCache/";
+		std::filesystem::create_directory(ss.str());
+
+		ss << "CacheLayout.ini";
+		ImGui::SaveIniSettingsToDisk(ss.str().c_str());
 	}
 
-	void SlateStyleLayout::LoadLayoutInMemory()
+	void SlateStyleLayout::LoadLayoutCache()
 	{
 		SPICES_PROFILE_ZONE;
 
-		ImGui::LoadIniSettingsFromMemory(m_LayoutCache, m_LayoutCacheBytes);
+		std::stringstream ss;
+		ss << "saved/SlateCache/CacheLayout.ini";
+
+		ImGui::LoadIniSettingsFromDisk(ss.str().c_str());
 	}
 
 	void SlateStyleLayout::QuickStoreLayout()
@@ -75,7 +113,7 @@ namespace Spices {
 
 		std::stringstream ss;
 
-		ss << "saved/QuickSlateLayout/";
+		ss << "saved/SlateCache/";
 		std::filesystem::create_directory(ss.str());
 
 		ss << "QuickLayout.ini";
@@ -87,7 +125,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		std::stringstream ss;
-		ss << "saved/QuickSlateLayout/QuickLayout.ini";
+		ss << "saved/SlateCache/QuickLayout.ini";
 
 		ImGui::LoadIniSettingsFromDisk(ss.str().c_str());
 	}

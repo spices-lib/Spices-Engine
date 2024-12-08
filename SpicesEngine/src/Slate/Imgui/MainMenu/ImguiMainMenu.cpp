@@ -203,15 +203,11 @@ namespace Spices {
                 ImGui::Separator(); 
                 if (ImGui::MenuItem("Save Layout"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
-                        SlateStyleLayout::Get()->StoreLayout();
-                    });
+                    SlateStyleLayout::Get()->StoreLayout();
                 }
                 if (ImGui::MenuItem("Load Layout"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
-                        SlateStyleLayout::Get()->LoadLayout();
-                    });
+                    SlateStyleLayout::Get()->LoadLayout();
                 }
                 ImGui::Separator(); 
                 if (ImGui::MenuItem("Quick Save", "Ctrl+7"))

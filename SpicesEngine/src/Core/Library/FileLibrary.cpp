@@ -198,6 +198,28 @@ namespace Spices {
 		return "";
 	}
 
+	std::string FileLibrary::FileLibrary_SaveInExplore(const char* filter, HWND hwnd)
+	{
+		SPICES_PROFILE_ZONE;
+
+		OPENFILENAMEA ofn;           // common dialog box structure
+		CHAR szFile[260] = { 0 };    // if using TCHAR macros
+		// Initialize OPEN FILENAME
+		ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
+		ofn.lStructSize = sizeof(OPENFILENAMEA);
+		ofn.hwndOwner = hwnd;
+		ofn.lpstrFile = szFile;
+		ofn.nMaxFile = sizeof(szFile);
+		ofn.lpstrFilter = filter;
+		ofn.nFilterIndex = 1;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+		if (GetSaveFileNameA(&ofn) == TRUE)
+		{
+			return ofn.lpstrFile;
+		}
+		return "";
+	}
+
 	bool FileLibrary::FileLibrary_CopyFile(std::string srcFilePath, std::string dstFilePath)
 	{
 		SPICES_PROFILE_ZONE;

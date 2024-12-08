@@ -155,6 +155,20 @@ namespace Spices {
         */
         static std::string FileLibrary_OpenInExplore(const char* filter, HWND hwnd);
 
+        /**
+        * @brief Select a file to save in explore.
+        * @param[in] filter The file extension filter.
+        * @param[in] hwnd The Windows Needs.
+        * @return Returns the file path of selected file.
+        */
+        static std::string FileLibrary_SaveInExplore(const char* filter, HWND hwnd);
+
+        /**
+        * @brief Copy a file to dst path.
+        * @param[in] srcFilePath The src file.
+        * @param[in] dstFilePath The dst file.
+        * @return Returns true if copy succeed.
+        */
         static bool FileLibrary_CopyFile(std::string srcFilePath, std::string dstFilePath);
     };
 }

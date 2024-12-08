@@ -63,14 +63,14 @@ namespace Spices {
 		void LoadLayout();
 
 		/**
-		* @brief Store Slate Layout to memory.
+		* @brief Store Slate Layout Cache.
 		*/
-		void StoreLayoutInMemory();
+		void StoreLayoutCache();
 
 		/**
-		* @brief Load Slate Layout in memory.
+		* @brief Load Slate Layout Cache.
 		*/
-		void LoadLayoutInMemory();
+		void LoadLayoutCache();
 
 		/**
 		* @brief Quick Store Slate Layout to disk.
@@ -88,15 +88,5 @@ namespace Spices {
 		* @brief SlateStyleLayout single instance.
 		*/
 		static std::shared_ptr<SlateStyleLayout> m_Layout;
-
-		/**
-		* @brief Slate Layout cache data.
-		*/
-		char* m_LayoutCache;
-
-		/**
-		* @brief Slate Layout cache data bytes.
-		*/
-		size_t m_LayoutCacheBytes;
 	};
 }
