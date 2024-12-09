@@ -1,6 +1,6 @@
 /**
-* @file TracyProfilerWapper.h file.
-* @brief The TracyProfilerWapper Class Definitions.
+* @file TracyProfilerWrapper.h file.
+* @brief The TracyProfilerWrapper Class Definitions.
 * @author Spices.
 */
 
@@ -87,11 +87,11 @@ namespace Spices {
 #define SPICES_PROFILE_MARK(...)                                         TracyMessageL(__VA_ARGS__)
 #define SPICES_PROFILE_IMAGE(...)                                        FrameImage(__VA_ARGS__)
 
-#define SPICES_PROFILE_VK_CONTEXHOSTCALIBRATED(pd, d, qr, ctd, ct)       TracyVkContextHostCalibrated(pd, d, qr, ctd, ct)
-#define SPICES_PROFILE_VK_DESTROY                                        TracyVkDestroy(TracyGPUContext::Get().GetContext())                   
-#define SPICES_PROFILE_VK_CONTEXTNAME(ctx, name, size)                   TracyVkContextName(ctx, name, size)
-#define SPICES_PROFILE_VK_ZONE(cmdbuf, name)                             TracyVkZone(TracyGPUContext::Get().GetContext(), cmdbuf, name)
-#define SPICES_PROFILE_VK_COLLECT(cmdbuf)                                TracyVkCollect(TracyGPUContext::Get().GetContext(), cmdbuf)
+#define SPICES_PROFILE_VK_CONTEXHOSTCALIBRATED(pd, d, qr, ctd, ct)       //TracyVkContextHostCalibrated(pd, d, qr, ctd, ct)
+#define SPICES_PROFILE_VK_DESTROY                                        //TracyVkDestroy(TracyGPUContext::Get().GetContext())                   
+#define SPICES_PROFILE_VK_CONTEXTNAME(ctx, name, size)                   //TracyVkContextName(ctx, name, size)
+#define SPICES_PROFILE_VK_ZONE(cmdbuf, name)                             //TracyVkZone(TracyGPUContext::Get().GetContext(), cmdbuf, name)
+#define SPICES_PROFILE_VK_COLLECT(cmdbuf)                                //TracyVkCollect(TracyGPUContext::Get().GetContext(), cmdbuf)
 
 #else
 

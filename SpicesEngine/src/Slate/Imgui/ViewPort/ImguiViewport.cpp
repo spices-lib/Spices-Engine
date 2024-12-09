@@ -188,7 +188,7 @@ namespace Spices {
                 /**
                 * @brief Might not needed?
                 */
-                //VK_CHECK(vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device))
+                VK_CHECK(vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device))
 
                 SlateResizeEvent event(static_cast<uint32_t>(panelSize.x), static_cast<uint32_t>(panelSize.y));
 

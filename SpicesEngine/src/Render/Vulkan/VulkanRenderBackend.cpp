@@ -199,7 +199,7 @@ namespace Spices {
 		/**
 		* @brief Might not needed?
 		*/
-		//VK_CHECK(vkDeviceWaitIdle(m_VulkanState.m_Device))
+		VK_CHECK(vkDeviceWaitIdle(m_VulkanState.m_Device))
 
 		/**
 		* @brief Create an specific event.

@@ -5,7 +5,7 @@
 */
 
 #pragma once
-#include "Debugger/Tracy/TracyProfilerWapper.h"
+#include "Debugger/Tracy/TracyProfilerWrapper.h"
 #include "Debugger/NVTX/NvidiaToolExtensionLibrary.hpp"
 #include "TimeStep.h"
 #include "Log/Log.h"

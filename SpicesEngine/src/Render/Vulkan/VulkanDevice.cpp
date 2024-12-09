@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanDevice.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerHUD.h"
+#include "VulkanThreadQueue.h"
 
 namespace Spices {
 
@@ -33,12 +34,12 @@ namespace Spices {
 		/**
 		* @brief Create a queue identifies container.
 		*/
-		std::unordered_map<uint32_t, std::unordered_map<uint32_t, VkQueue>> queueFamilies;  // family - id - queue
+		std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::vector<VkQueue>>> queueFamilies;  // family - id - queues
 
-		queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0] = VK_NULL_HANDLE;
-		queueFamilies[m_QueueHelper.presentqueuefamily .value()][1] = VK_NULL_HANDLE;
-		queueFamilies[m_QueueHelper.computequeuefamily .value()][2] = VK_NULL_HANDLE;
-		queueFamilies[m_QueueHelper.transferqueuefamily.value()][3] = VK_NULL_HANDLE;
+		queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0] = std::vector<VkQueue>(1 + NThreadQueue, VK_NULL_HANDLE);
+		queueFamilies[m_QueueHelper.presentqueuefamily .value()][1] = std::vector<VkQueue>(1,                VK_NULL_HANDLE);
+		queueFamilies[m_QueueHelper.computequeuefamily .value()][2] = std::vector<VkQueue>(1 + NThreadQueue, VK_NULL_HANDLE);
+		queueFamilies[m_QueueHelper.transferqueuefamily.value()][3] = std::vector<VkQueue>(1,                VK_NULL_HANDLE);
 
 		/**
 		* @brief Fill in VkDeviceQueueCreateInfo.
@@ -47,7 +48,13 @@ namespace Spices {
 		std::vector<std::shared_ptr<std::vector<float>>> QueuePriorities;
 		for (auto& [family, idItems] : queueFamilies)
 		{
-			std::shared_ptr<std::vector<float>> queuePriority   = std::make_shared<std::vector<float>>(idItems.size(), 1.0f);
+			uint32_t count = 0;
+			for (auto& [id, queues] : idItems)
+			{
+				count += queues.size();
+			}
+
+			std::shared_ptr<std::vector<float>> queuePriority   = std::make_shared<std::vector<float>>(count, 1.0f);
 
 			/**
 			* @brief Instanced a VkDeviceQueueCreateInfo with default value.
@@ -55,7 +62,7 @@ namespace Spices {
 			VkDeviceQueueCreateInfo                               queueCreateInfo{};
 			queueCreateInfo.sType                               = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			queueCreateInfo.queueFamilyIndex                    = family;
-			queueCreateInfo.queueCount                          = idItems.size();
+			queueCreateInfo.queueCount                          = count;
 			queueCreateInfo.pQueuePriorities                    = queuePriority->data();
 			
 			QueuePriorities.push_back(queuePriority);
@@ -186,10 +193,13 @@ namespace Spices {
 			for (auto& [ family, idItems ] : queueFamilies)
 			{
 				int index = 0;
-				for (auto& [id, item] : idItems)
+				for (auto& [id, items] : idItems)
 				{
-					vkGetDeviceQueue(vulkanState.m_Device, family, index, &item);
-					index++;
+					for (int i = 0; i < items.size(); i++)
+					{
+						vkGetDeviceQueue(vulkanState.m_Device, family, index, &items[i]);
+						index++;
+					}
 				}
 			}
 
@@ -202,12 +212,21 @@ namespace Spices {
 
 #else // Split Commands to different Queues.
 
-			vulkanState.m_GraphicQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0];
-			vulkanState.m_PresentQueue  = queueFamilies[m_QueueHelper.presentqueuefamily .value()][0];
-			vulkanState.m_ComputeQueue  = queueFamilies[m_QueueHelper.computequeuefamily .value()][2];
-			vulkanState.m_TransferQueue = queueFamilies[m_QueueHelper.transferqueuefamily.value()][3];
+			vulkanState.m_GraphicQueue  = queueFamilies[m_QueueHelper.graphicqueuefamily .value()][0][0];
+			vulkanState.m_PresentQueue  = queueFamilies[m_QueueHelper.presentqueuefamily .value()][0][0];
+			vulkanState.m_ComputeQueue  = queueFamilies[m_QueueHelper.computequeuefamily .value()][2][0];
+			vulkanState.m_TransferQueue = queueFamilies[m_QueueHelper.transferqueuefamily.value()][3][0];
 
 #endif
+
+			/**
+			* @brief Create Thread Queue.
+			*/
+			for (int i = 0; i < NThreadQueue; i++)
+			{
+				VulkanThreadQueue::CreateGraphic(vulkanState, queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0][i + 1], i);
+				VulkanThreadQueue::CreateCompute(vulkanState, queueFamilies[m_QueueHelper.computequeuefamily.value()][2][i + 1], i);
+			}
 
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_TransferQueue), vulkanState.m_Device, "TransferQueue")
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_ComputeQueue) , vulkanState.m_Device, "ComputeQueue" )

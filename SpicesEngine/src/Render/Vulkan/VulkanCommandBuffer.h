@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
+#include "VulkanThreadQueue.h"
 
 namespace Spices {
 	
@@ -35,26 +36,62 @@ namespace Spices {
 		* @brief Get Thread Graphic VkCommandPool by thread id.
 		* @return Returns thread VkCommandPool.
 		*/
-		static VkCommandPool GetThreadGraphicCommandPool();
+		static VkCommandPool& GetThreadGraphicCommandPool();
 
 		/**
 		* @brief Get Thread Compute VkCommandPool by thread id.
 		* @return Returns thread VkCommandPool.
 		*/
-		static VkCommandPool GetThreadComputeCommandPool();
-		
-	private:
+		static VkCommandPool& GetThreadComputeCommandPool();
 		
 		/**
 		* @brief Thread Graphic VkCommandPool map. 
 		*/
-		static std::unordered_map<uint32_t, VkCommandPool> m_ThreadGraphicCommandPool;
+		static std::vector<VkCommandPool> m_ThreadGraphicCommandPool;
 
 		/**
 		* @brief Thread Compute VkCommandPool map. 
 		*/
-		static std::unordered_map<uint32_t, VkCommandPool> m_ThreadComputeCommandPool;
+		static std::vector<VkCommandPool> m_ThreadComputeCommandPool;
 	};
+
+	/**
+	* @brief Wapper of Instance/Delete VkCommandPool in thread.
+	*/
+	class VulkanCommandPoolThreadWapper
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		*/
+		VulkanCommandPoolThreadWapper() 
+			: m_GraphicThreadId(-1)
+			, m_ComputeThreadId(-1)
+		{}
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~VulkanCommandPoolThreadWapper();
+
+	public:
+
+		/**
+		* @brief Thread Unique Graphic ThreadId.
+		*/
+		int m_GraphicThreadId;
+
+		/**
+		* @brief Thread Unique Compute ThreadId.
+		*/
+		int m_ComputeThreadId;
+	};
+
+	/**
+	* @brief Thread Unique TCWapper.
+	*/
+	static _declspec(thread) VulkanCommandPoolThreadWapper pTLSVulkanCommandPool;
 
 	/**
 	* @brief VulkanCommandBuffer Class.
@@ -98,7 +135,7 @@ namespace Spices {
 		VkCommandBufferAllocateInfo     allocInfo{};
 		allocInfo.sType               = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level               = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool         = vulkanState.m_GraphicCommandPool;
+		allocInfo.commandPool         = VulkanCommandPool::GetThreadGraphicCommandPool();
 		allocInfo.commandBufferCount  = 1;
 
 		/**
@@ -133,26 +170,23 @@ namespace Spices {
 		VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 		/**
-		* @brief Instanced a VkSubmitInfo with default value.
+		* @brief Fetch valid Graphic Queue.
 		*/
-		VkSubmitInfo submitInfo{};
-		submitInfo.sType               = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount  = 1;
-		submitInfo.pCommandBuffers     = &commandBuffer;
+		auto& queue = VulkanThreadQueue::FetchGraphicQueue();
 
 		/**
-		* @brief Submit the CommandBuffer in graphic Queue.
+		* @brief Submit commandBuffer in queue.
 		*/
-		VK_CHECK(vkQueueSubmit(vulkanState.m_GraphicQueue, 1, &submitInfo, VK_NULL_HANDLE));
+		queue.Submit(commandBuffer);
 
 		/**
-		* @brief Wait for queu execute.
+		* @brief Wait queue finished.
 		*/
-		VK_CHECK(vkQueueWaitIdle(vulkanState.m_GraphicQueue));
+		queue.Wait();
 
 		/**
 		* @brief Free the CommandBuffer that created.
 		*/
-		vkFreeCommandBuffers(vulkanState.m_Device, vulkanState.m_GraphicCommandPool, 1, &commandBuffer);
+		vkFreeCommandBuffers(vulkanState.m_Device, allocInfo.commandPool, 1, &commandBuffer);
 	}
 }

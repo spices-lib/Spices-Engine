@@ -115,7 +115,7 @@ constexpr uint32_t MaxFrameInFlight = 2;
 		std::array<VkSemaphore,       MaxFrameInFlight>  m_ComputeQueueSemaphore;      /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 		std::array<VkFence,           MaxFrameInFlight>  m_ComputeFence;               /* @brief From VulkanSwapChain, Array num equals to MaxFrameInFlight.     */
 	};
-
+	
 	/**
 	* @brief VulkanObject Class.
 	* This class defines the basic behaves of VulkanObject.

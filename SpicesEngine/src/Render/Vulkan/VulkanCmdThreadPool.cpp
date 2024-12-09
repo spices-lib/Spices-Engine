@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "VulkanCmdThreadPool.h"
 #include "Render/FrameInfo.h"
+#include "VulkanCommandBuffer.h"
 
 namespace Spices {
 
@@ -18,36 +19,12 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			for (int i = 0; i < MaxFrameInFlight; i++)
-			{
-				m_CmdBuffers[i].resize(nCmdThreads);
-			}
+			m_CmdBuffers[i].resize(nCmdThreads);
 		}
 
-		/**
-		* @brief Create Parallel CommandPool.
-		*/
-		{
-			m_CmdPools.resize(nCmdThreads);
-
-			/**
-			* @brief Instanced a VkCommandPoolCreateInfo with default value.
-			*/
-			VkCommandPoolCreateInfo       poolInfo{};
-			poolInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-			poolInfo.flags              = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-			poolInfo.queueFamilyIndex   = vulkanState.m_GraphicQueueFamily;
-
-			/**
-			* @brief Create commandpool and set it global.
-			*/
-			for (int i = 0; i < nCmdThreads; i++)
-			{
-				VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &m_CmdPools[i]));
-				DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)m_CmdPools[i], vulkanState.m_Device, "ParallelGraphicCommandPool")
-			}
-		}
+		m_CmdPools.resize(nCmdThreads);
 
 		/**
 		* @brief Init ThreadPool.
@@ -59,17 +36,7 @@ namespace Spices {
 	}
 
 	VulkanCmdThreadPool::~VulkanCmdThreadPool()
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Destroy the Vulkan CommandPool Object.
-		*/
-		for (int i = 0; i < m_NThreads.load(); i++)
-		{
-			vkDestroyCommandPool(m_VulkanState.m_Device, m_CmdPools[i], nullptr);
-		}
-	}
+	{}
 
 	void VulkanCmdThreadPool::Start(int initThreadSize)
 	{
@@ -188,6 +155,11 @@ namespace Spices {
 	VkCommandBuffer VulkanCmdThreadPool::CreateParallelCommandBuffers(uint32_t threadId)
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (!m_CmdPools[threadId])
+		{
+			m_CmdPools[threadId]         = VulkanCommandPool::GetThreadGraphicCommandPool();
+		}
 
 		VkCommandBufferAllocateInfo        allocInfo{};
 		allocInfo.sType                  = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;

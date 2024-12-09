@@ -116,7 +116,7 @@ namespace Spices {
 		*/
 		std::shared_ptr<VulkanCmdThreadPool> m_RHIThreadPool;
 	};
-
+	
 	template<typename F, typename ...Args>
 	static auto AsyncTask(ThreadPoolEnum pool, F&& func, Args&&... args) -> std::future<decltype(func(std::forward<Args>(args)...))>
 	{

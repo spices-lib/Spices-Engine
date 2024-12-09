@@ -6,13 +6,12 @@
 
 #include "Pchheader.h"
 #include "VulkanCommandBuffer.h"
-
 #include "VulkanRenderBackend.h"
 
 namespace Spices {
 	
-	static std::unordered_map<uint32_t, VkCommandPool> m_ThreadGraphicCommandPool;
-	static std::unordered_map<uint32_t, VkCommandPool> m_ThreadComputeCommandPool;
+	std::vector<VkCommandPool> VulkanCommandPool::m_ThreadGraphicCommandPool;
+	std::vector<VkCommandPool> VulkanCommandPool::m_ThreadComputeCommandPool;
 	
 	VulkanCommandPool::VulkanCommandPool(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
@@ -32,7 +31,9 @@ namespace Spices {
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool))
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_GraphicCommandPool), vulkanState.m_Device, "GraphicCommandPool")
-		m_ThreadGraphicCommandPool[std::this_thread::get_id()] = vulkanState.m_GraphicCommandPool;
+		
+		pTLSVulkanCommandPool.m_GraphicThreadId = 0;
+		m_ThreadGraphicCommandPool.push_back(vulkanState.m_GraphicCommandPool);
 		
 		poolInfo.queueFamilyIndex = vulkanState.m_ComputeQueueFamily;
 
@@ -41,7 +42,9 @@ namespace Spices {
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_ComputeCommandPool))
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_ComputeCommandPool), vulkanState.m_Device, "ComputeCommandPool")
-		m_ThreadComputeCommandPool[std::this_thread::get_id()] = vulkanState.m_GraphicCommandPool;
+
+		pTLSVulkanCommandPool.m_ComputeThreadId = 0;
+		m_ThreadComputeCommandPool.push_back(vulkanState.m_GraphicCommandPool);
 	}
 
 	VulkanCommandPool::~VulkanCommandPool()
@@ -51,24 +54,44 @@ namespace Spices {
 		/**
 		* @brief Destroy the Vulkan CommandPool Object.
 		*/
-		for(auto& [id, pool] : m_ThreadGraphicCommandPool)
+		for(auto& pool : m_ThreadGraphicCommandPool)
 		{
-			vkDestroyCommandPool(m_VulkanState.m_Device, pool, nullptr);
+			if (pool)
+			{
+				vkDestroyCommandPool(m_VulkanState.m_Device, pool, nullptr);
+				pool = nullptr;
+			}
 		}
 		
-		for(auto& [id, pool] : m_ThreadComputeCommandPool)
+		for(auto& pool : m_ThreadComputeCommandPool)
 		{
-			vkDestroyCommandPool(m_VulkanState.m_Device, pool, nullptr);
+			if (pool)
+			{
+				vkDestroyCommandPool(m_VulkanState.m_Device, pool, nullptr);
+				pool = nullptr;
+			}
 		}
 	}
 
-	VkCommandPool VulkanCommandPool::GetThreadGraphicCommandPool()
+	VkCommandPool& VulkanCommandPool::GetThreadGraphicCommandPool()
 	{
 		SPICES_PROFILE_ZONE;
 
-		uint32_t threadId = std::this_thread::get_id();
+		if(pTLSVulkanCommandPool.m_GraphicThreadId == -1)
+		{
+			for (int i = 0; i < m_ThreadGraphicCommandPool.size(); i++)
+			{
+				if (!m_ThreadGraphicCommandPool[i]) pTLSVulkanCommandPool.m_GraphicThreadId = i;
+			}
+			
+			if (pTLSVulkanCommandPool.m_GraphicThreadId == -1)
+			{
+				pTLSVulkanCommandPool.m_GraphicThreadId = m_ThreadGraphicCommandPool.size();
+				m_ThreadGraphicCommandPool.push_back(nullptr);
+			}
+		}
 		
-		if(m_ThreadGraphicCommandPool.find(threadId) == m_ThreadGraphicCommandPool.end())
+		if(!m_ThreadGraphicCommandPool[pTLSVulkanCommandPool.m_GraphicThreadId])
 		{
 			/**
 			* @brief Instanced a VkCommandPoolCreateInfo with default value.
@@ -84,19 +107,31 @@ namespace Spices {
 			VkCommandPool pool;
 			VK_CHECK(vkCreateCommandPool(VulkanRenderBackend::GetState().m_Device, &poolInfo, nullptr, &pool))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(pool), VulkanRenderBackend::GetState().m_Device, "ThreadGraphicCommandPool")
-			m_ThreadGraphicCommandPool[threadId] = std::move(pool);
+			m_ThreadGraphicCommandPool[pTLSVulkanCommandPool.m_GraphicThreadId] = std::move(pool);
 		}
 
-		return m_ThreadGraphicCommandPool[threadId];
+		return m_ThreadGraphicCommandPool[pTLSVulkanCommandPool.m_GraphicThreadId];
 	}
 
-	VkCommandPool VulkanCommandPool::GetThreadComputeCommandPool()
+	VkCommandPool& VulkanCommandPool::GetThreadComputeCommandPool()
 	{
 		SPICES_PROFILE_ZONE;
 
-		uint32_t threadId = std::this_thread::get_id();
+		if (pTLSVulkanCommandPool.m_ComputeThreadId == -1)
+		{
+			for (int i = 0; i < m_ThreadComputeCommandPool.size(); i++)
+			{
+				if (!m_ThreadComputeCommandPool[i]) pTLSVulkanCommandPool.m_ComputeThreadId = i;
+			}
+
+			if (pTLSVulkanCommandPool.m_ComputeThreadId == -1)
+			{
+				pTLSVulkanCommandPool.m_ComputeThreadId = m_ThreadComputeCommandPool.size();
+				m_ThreadComputeCommandPool.push_back(nullptr);
+			}
+		}
 		
-		if(m_ThreadComputeCommandPool.find(threadId) == m_ThreadComputeCommandPool.end())
+		if(m_ThreadComputeCommandPool[pTLSVulkanCommandPool.m_ComputeThreadId])
 		{
 			/**
 			* @brief Instanced a VkCommandPoolCreateInfo with default value.
@@ -112,10 +147,10 @@ namespace Spices {
 			VkCommandPool pool;
 			VK_CHECK(vkCreateCommandPool(VulkanRenderBackend::GetState().m_Device, &poolInfo, nullptr, &pool))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(pool), VulkanRenderBackend::GetState().m_Device, "ThreadComputeCommandPool")
-			m_ThreadComputeCommandPool[threadId] = std::move(pool);
+			m_ThreadComputeCommandPool[pTLSVulkanCommandPool.m_ComputeThreadId] = std::move(pool);
 		}
 
-		return m_ThreadComputeCommandPool[threadId];
+		return m_ThreadComputeCommandPool[pTLSVulkanCommandPool.m_ComputeThreadId];
 	}
 
 	VulkanCommandBuffer::VulkanCommandBuffer(VulkanState& vulkanState)
@@ -147,6 +182,33 @@ namespace Spices {
 
 			SPICES_PROFILE_VK_COLLECT(vulkanState.m_GraphicCommandBuffer[i])
 			SPICES_PROFILE_VK_COLLECT(vulkanState.m_ComputeCommandBuffer[i])
+		}
+	}
+
+	VulkanCommandPoolThreadWapper::~VulkanCommandPoolThreadWapper()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_GraphicThreadId >=0)
+		{
+			auto& pool = VulkanCommandPool::GetThreadGraphicCommandPool();
+
+			if (pool)
+			{
+				vkDestroyCommandPool(VulkanRenderBackend::GetState().m_Device, pool, nullptr);
+				pool = nullptr;
+			}
+		}
+
+		if (m_ComputeThreadId >= 0)
+		{
+			auto& pool = VulkanCommandPool::GetThreadComputeCommandPool();
+
+			if (pool)
+			{
+				vkDestroyCommandPool(VulkanRenderBackend::GetState().m_Device, pool, nullptr);
+				pool = nullptr;
+			}
 		}
 	}
 }
