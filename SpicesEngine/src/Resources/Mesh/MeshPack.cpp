@@ -429,7 +429,7 @@ namespace Spices {
 			ApplyMatrixInPositions(*positions, tran);
 
 			const auto normals = resources.normals.attributes;
-			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+			ApplyMatrixInNormals(*normals, tran);
 
 			CopyToVertices(resources);
 		}
@@ -447,7 +447,7 @@ namespace Spices {
 			ApplyMatrixInPositions(*positions, tran * rot);
 
 			const auto normals = resources.normals.attributes;
-			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+			ApplyMatrixInNormals(*normals, tran * rot);
 
 			CopyToVertices(resources);			
 		}
@@ -465,7 +465,7 @@ namespace Spices {
 			ApplyMatrixInPositions(*positions, tran * rot);
 
 			const auto normals = resources.normals.attributes;
-			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+			ApplyMatrixInNormals(*normals, tran * rot);
 
 			CopyToVertices(resources);			
 		}
@@ -483,7 +483,7 @@ namespace Spices {
 			ApplyMatrixInPositions(*positions, tran * rot);
 
 			const auto normals = resources.normals.attributes;
-			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+			ApplyMatrixInNormals(*normals, tran * rot);
 
 			CopyToVertices(resources);
 		}
@@ -501,7 +501,7 @@ namespace Spices {
 			ApplyMatrixInPositions(*positions, tran * rot);
 
 			const auto normals = resources.normals.attributes;
-			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+			ApplyMatrixInNormals(*normals, tran * rot);
 
 			CopyToVertices(resources);
 		}
@@ -519,7 +519,7 @@ namespace Spices {
 			ApplyMatrixInPositions(*positions, tran * rot);
 
 			const auto normals = resources.normals.attributes;
-			ApplyMatrixInNormals(*normals, glm::mat4(1.0f));
+			ApplyMatrixInNormals(*normals, tran * rot);
 
 			CopyToVertices(resources);
 		}
