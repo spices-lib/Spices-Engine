@@ -1,35 +1,35 @@
 /**
-* @file ThrealModel.cpp
-* @brief The ThrealModel Class Implementation.
+* @file ThreadModel.cpp
+* @brief The ThreadModel Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "ThrealModel.h"
+#include "ThreadModel.h"
 
 namespace Spices {
 
-	std::shared_ptr<ThrealModel> ThrealModel::m_ThrealModel = nullptr;
+	std::shared_ptr<ThreadModel> ThreadModel::m_ThreadModel = nullptr;
 		
-	ThrealModel::ThrealModel()
+	ThreadModel::ThreadModel()
 		: m_CustomThreadPool(nullptr)
 		, m_GameThreadPool(nullptr)
 		, m_RHIThreadPool(nullptr)
 	{}
 
-	std::shared_ptr<ThrealModel> ThrealModel::Get()
+	std::shared_ptr<ThreadModel> ThreadModel::Get()
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (!m_ThrealModel)
+		if (!m_ThreadModel)
 		{
-			m_ThrealModel = std::make_shared<ThrealModel>();
+			m_ThreadModel = std::make_shared<ThreadModel>();
 		}
 
-		return m_ThrealModel;
+		return m_ThreadModel;
 	}
 
-	void ThrealModel::InitCustomThreadPool()
+	void ThreadModel::InitCustomThreadPool()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -41,7 +41,7 @@ namespace Spices {
 		}
 	}
 
-	void ThrealModel::InitGameThreadPool()
+	void ThreadModel::InitGameThreadPool()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -53,7 +53,7 @@ namespace Spices {
 		}
 	}
 
-	void ThrealModel::InitRHIThreadPool(std::function<void(std::shared_ptr<VulkanCmdThreadPool>& ptr)> fn)
+	void ThreadModel::InitRHIThreadPool(std::function<void(std::shared_ptr<VulkanCmdThreadPool>& ptr)> fn)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -63,21 +63,21 @@ namespace Spices {
 		}
 	}
 
-	void ThrealModel::ShutDownCustomThreadPool()
+	void ThreadModel::ShutDownCustomThreadPool()
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_CustomThreadPool = nullptr;
 	}
 
-	void ThrealModel::ShutDownGameThreadPool()
+	void ThreadModel::ShutDownGameThreadPool()
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_GameThreadPool = nullptr;
 	}
 
-	void ThrealModel::ShutDownRHIThreadPool()
+	void ThreadModel::ShutDownRHIThreadPool()
 	{
 		SPICES_PROFILE_ZONE;
 

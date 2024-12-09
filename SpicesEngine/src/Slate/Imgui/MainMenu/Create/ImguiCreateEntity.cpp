@@ -40,17 +40,17 @@ namespace Spices {
                     if (ImGui::MenuItem("Cone")) {}
                     if (ImGui::MenuItem("Cube")) 
                     {
-                        WorldFunctions::CreateCubeEntity(FrameInfo::Get().m_World.get());
+                        WorldFunctions::CreateBasicMeshEntity<CubePack>(FrameInfo::Get().m_World.get());
                     }
                     if (ImGui::MenuItem("Cylinder")) {}
                     if (ImGui::MenuItem("Disk")) {}
                     if (ImGui::MenuItem("Plane")) 
                     {
-                        WorldFunctions::CreatePlaneEntity(FrameInfo::Get().m_World.get());
+                        WorldFunctions::CreateBasicMeshEntity<PlanePack>(FrameInfo::Get().m_World.get());
                     }
                     if (ImGui::MenuItem("Sphere")) 
                     {
-                        WorldFunctions::CreateSphereEntity(FrameInfo::Get().m_World.get());
+                        WorldFunctions::CreateBasicMeshEntity<SpherePack>(FrameInfo::Get().m_World.get());
                     }
                     if (ImGui::MenuItem("Torus")) {}
                     ImGui::Separator();

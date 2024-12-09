@@ -9,7 +9,7 @@
 #include "Imgui/ImguiHelper.h"
 #include "Core/Library/FileLibrary.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
-#include "Core/Thread/ThrealModel.h"
+#include "..\Core\Thread\ThreadModel.h"
 
 namespace Spices {
 
@@ -59,7 +59,7 @@ namespace Spices {
 
 		if (!filepath.empty())
 		{
-			AnyscTask(ThreadPoolEnum::Game, [=]() {
+			AsyncTask(ThreadPoolEnum::Game, [=]() {
 				ImGui::LoadIniSettingsFromDisk(filepath.c_str());
 			});
 		}
@@ -78,7 +78,7 @@ namespace Spices {
 
 		if (!filepath.empty())
 		{
-			AnyscTask(ThreadPoolEnum::Game, [=]() {
+			AsyncTask(ThreadPoolEnum::Game, [=]() {
 				ImGui::SaveIniSettingsToDisk(filepath.c_str());
 			});
 		}

@@ -12,7 +12,7 @@
 #include "ImguiFloatingInfo.h"
 #include "ImGuizmo.h"
 #include "ImguiViewportToolBar.h"
-#include "Core/Thread/ThrealModel.h"
+#include "..\..\..\Core\Thread\ThreadModel.h"
 #include "Slate/SlateStyleLayout.h"
 
 namespace Spices {
@@ -85,7 +85,7 @@ namespace Spices {
 
                     if (m_IsToggled)
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->StoreLayoutCache();
                         });
                     }
@@ -93,7 +93,7 @@ namespace Spices {
                     {
                         m_WindowFlags ^= ImGuiWindowFlags_NoResize & ImGuiWindowFlags_NoMove;
 
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->LoadLayoutCache();
                         });
                     }
@@ -183,7 +183,7 @@ namespace Spices {
 
         if (IsResizedThisFrame())
         {
-            AnyscTask(ThreadPoolEnum::Game, [](ImVec2 panelSize) {
+            AsyncTask(ThreadPoolEnum::Game, [](ImVec2 panelSize) {
 
                 /**
                 * @brief Might not needed?

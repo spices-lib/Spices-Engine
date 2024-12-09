@@ -53,20 +53,20 @@ namespace Spices {
 
 		/**
 		* @brief The interface is inherited from Renderer.
-		* Create specific renderpass.
+		* Create specific render pass.
 		*/
 		virtual void CreateRendererPass() override;
 
 		/**
 		* @brief The interface is inherited from Renderer.
-		* Create specific descriptorset for subpass.
+		* Create specific descriptor set for sub pass.
 		*/
 		virtual void CreateDescriptorSet() override;
 
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
-		* @param[in] material Registried material.
+		* @param[in] material Registry material.
 		* @param[in] layout VkPipelineLayout.
 		* @param[in] subPass Handled subPass.
 		*/

@@ -27,7 +27,7 @@ namespace Spices {
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
-		* @param[in] material Registried material.
+		* @param[in] material Registry material.
 		* @param[in] layout VkPipelineLayout.
 		* @param[in] subPass Handled subPass.
 		*/

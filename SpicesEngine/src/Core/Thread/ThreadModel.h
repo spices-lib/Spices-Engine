@@ -1,6 +1,6 @@
 /**
-* @file ThrealModel.h
-* @brief The ThrealModel Class Definitions.
+* @file ThreadModel.h
+* @brief The ThreadModel Class Definitions.
 * @author Spices.
 */
 
@@ -25,25 +25,25 @@ namespace Spices {
 	/**
 	* @brief Wrappers of all Thread Pool.
 	*/
-	class ThrealModel
+	class ThreadModel
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		ThrealModel();
+		ThreadModel();
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ThrealModel() = default;
+		virtual ~ThreadModel() = default;
 
 		/**
-		* @brief Get ThrealModel single instance.
+		* @brief Get ThreadModel single instance.
 		* @return Returns this single instance.
 		*/
-		static std::shared_ptr<ThrealModel> Get();
+		static std::shared_ptr<ThreadModel> Get();
 
 		/**
 		* @brief Init Custom ThreadPool.
@@ -97,9 +97,9 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief Get ThrealModel single instance.
+		* @brief Get ThreadModel single instance.
 		*/
-		static std::shared_ptr<ThrealModel> m_ThrealModel;
+		static std::shared_ptr<ThreadModel> m_ThreadModel;
 
 		/**
 		* @brief Custom ThreadPool.
@@ -118,7 +118,7 @@ namespace Spices {
 	};
 
 	template<typename F, typename ...Args>
-	static auto AnyscTask(ThreadPoolEnum pool, F&& func, Args&&... args) -> std::future<decltype(func(std::forward<Args>(args)...))>
+	static auto AsyncTask(ThreadPoolEnum pool, F&& func, Args&&... args) -> std::future<decltype(func(std::forward<Args>(args)...))>
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -131,17 +131,17 @@ namespace Spices {
 		switch (pool)
 		{
 		case Spices::ThreadPoolEnum::Custom:
-			return ThrealModel::Get()->GetCustomThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
+			return ThreadModel::Get()->GetCustomThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
 		case Spices::ThreadPoolEnum::Game:
-			return ThrealModel::Get()->GetGameThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
+			return ThreadModel::Get()->GetGameThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
 		}
 	}
 
 	template<typename F, typename ...Args>
-	static auto AnyscRHITask(ThreadPoolEnum pool, F&& func, Args&&... args) -> std::future<decltype(func(nullptr, std::forward<Args>(args)...))>
+	static auto AsyncRHITask(ThreadPoolEnum pool, F&& func, Args&&... args) -> std::future<decltype(func(nullptr, std::forward<Args>(args)...))>
 	{
 		SPICES_PROFILE_ZONE;
 
-		return ThrealModel::Get()->GetRHIThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
+		return ThreadModel::Get()->GetRHIThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
 	}
 }

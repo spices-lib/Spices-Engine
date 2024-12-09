@@ -4,16 +4,16 @@
 
 namespace Spices {
 
-    Entity WorldFunctions::CreateMeshEntity(World* world, const std::string& name, std::shared_ptr<MeshPack> pack)
+    void WorldFunctions::CreateMeshEntity(World* world, const std::string& name, const std::shared_ptr<Mesh>& mesh)
     {
-		SPICES_PROFILE_ZONE;
+    	AsyncTask(ThreadPoolEnum::Game, [=](){
 
-		Entity entity = world->CreateEntity(name);
-		MeshComponent& meshComp = entity.AddComponent<MeshComponent>();
-
-		std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
-		meshComp.SetMesh(mesh);
-
-		return entity;
+    		SPICES_PROFILE_ZONEN("CreateMeshEntity");
+    		
+    		Entity entity  = world->CreateEntity(name);
+            auto& meshComp = entity.AddComponent<MeshComponent>();
+    	
+			meshComp.SetMesh(mesh);
+    	});
     }
 }

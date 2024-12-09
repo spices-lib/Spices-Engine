@@ -16,7 +16,7 @@
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
 #include "Core/Container/BehaveStateList.h"
-#include "Core/Thread/ThrealModel.h"
+#include "..\..\Core\Thread\ThreadModel.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -66,7 +66,6 @@ namespace Spices {
 		* @param[in] DescriptorPool The shared pointer of DescriptorPool, used for allocate descriptor and free descriptor.
 		* @param[in] device The shared pointer of VulkanDevice, used for render pass's formats query.
 		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for registry/access RT.
-		* @param[in] statisticsFlags Flags of enable statistics with this renderer.
 		* @param[in] isLoadDefaultMaterial True if need load a default material.
 		* @param[in] isRegistryDGCPipeline True if need registry dgc pipeline.
 		*/
@@ -190,11 +189,11 @@ namespace Spices {
 		inline void IterStatistics(F&& func);
 
 		/**
-		* @brief Reset Renderer State to disactive.
+		* @brief Reset Renderer State to disActive.
 		*/
 		void ResetRendererState() { m_IsActive = false; }
 
-	private:
+	protected:
 
 		/**
 		* @brief The interface is called during OnSystemInitialize().
@@ -559,7 +558,6 @@ namespace Spices {
 			* @param[in] textureNames All Texture's Name.
 			* @param[in] format Texture Format, used in init.
 			* @param[in] type Texture's type, used in init.
-			* @param[in] func Function of define specific RendererResourceCreateInfo.
 			* @return Returns this reference.
 			*/
 			DescriptorSetBuilder& AddStorageTexture(
@@ -772,7 +770,8 @@ namespace Spices {
 
 			/**
 			* @brief Build Raytracing Pipeline.
-			* @param[in] hitGroups scene hit shader groups.
+			* @param[in] pipelineName pipeline's name.
+			* @param[in] materialName material's name.
 			*/
 			void BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName);
 
@@ -2102,7 +2101,7 @@ namespace Spices {
 		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
-		std::future<VkCommandBuffer> futureCmdBuffer = AnyscRHITask(ThreadPoolEnum::RHI, [&](VkCommandBuffer cmdBuffer) {
+		std::future<VkCommandBuffer> futureCmdBuffer = AsyncRHITask(ThreadPoolEnum::RHI, [&](VkCommandBuffer cmdBuffer) {
 
 			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo))
 

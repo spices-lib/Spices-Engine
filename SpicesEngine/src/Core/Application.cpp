@@ -8,7 +8,7 @@
 #include "Application.h"
 #include "Render/FrameInfo.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
-#include "Core/Thread/ThrealModel.h"
+#include "Thread\ThreadModel.h"
 
 // System Header.
 #include "Systems/SystemManager.h"
@@ -16,7 +16,6 @@
 #include "Systems/NativeScriptSystem.h"
 #include "Systems/ResourceSystem.h"
 #include "Systems/SlateSystem.h"
-#include "Core/Thread/ThreadPool.h"
 #include "Core/Memory/MemoryPool.h"
 
 namespace Spices {
@@ -33,13 +32,11 @@ namespace Spices {
 		/**
 		* @brief Init General ThreadPool.
 		*/
-		ThrealModel::Get()->InitCustomThreadPool();
-		ThrealModel::Get()->InitGameThreadPool();
+		ThreadModel::Get()->InitCustomThreadPool();
+		ThreadModel::Get()->InitGameThreadPool();
 
 		/**
 		* @brief Init all Systems.
-		* @attention SystemManager Class did not Constructor, it returns Null.
-		* @todo Fixing it.
 		*/
 		SystemManager().Get()
 		.PushSystem<NativeScriptSystem>()
@@ -69,8 +66,8 @@ namespace Spices {
 		/**
 		* @brief Shutdown ThreadPool.
 		*/
-		ThrealModel::Get()->ShutDownGameThreadPool();
-		ThrealModel::Get()->ShutDownCustomThreadPool();
+		ThreadModel::Get()->ShutDownGameThreadPool();
+		ThreadModel::Get()->ShutDownCustomThreadPool();
 
 		/**
 		* @brief Shutdown Log Class.

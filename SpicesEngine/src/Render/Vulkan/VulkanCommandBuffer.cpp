@@ -7,8 +7,13 @@
 #include "Pchheader.h"
 #include "VulkanCommandBuffer.h"
 
-namespace Spices {
+#include "VulkanRenderBackend.h"
 
+namespace Spices {
+	
+	static std::unordered_map<uint32_t, VkCommandPool> m_ThreadGraphicCommandPool;
+	static std::unordered_map<uint32_t, VkCommandPool> m_ThreadComputeCommandPool;
+	
 	VulkanCommandPool::VulkanCommandPool(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
 	{
@@ -27,6 +32,7 @@ namespace Spices {
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool))
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_GraphicCommandPool), vulkanState.m_Device, "GraphicCommandPool")
+		m_ThreadGraphicCommandPool[std::this_thread::get_id()] = vulkanState.m_GraphicCommandPool;
 		
 		poolInfo.queueFamilyIndex = vulkanState.m_ComputeQueueFamily;
 
@@ -35,6 +41,7 @@ namespace Spices {
 		*/
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_ComputeCommandPool))
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_ComputeCommandPool), vulkanState.m_Device, "ComputeCommandPool")
+		m_ThreadComputeCommandPool[std::this_thread::get_id()] = vulkanState.m_GraphicCommandPool;
 	}
 
 	VulkanCommandPool::~VulkanCommandPool()
@@ -44,8 +51,71 @@ namespace Spices {
 		/**
 		* @brief Destroy the Vulkan CommandPool Object.
 		*/
-		vkDestroyCommandPool(m_VulkanState.m_Device, m_VulkanState.m_ComputeCommandPool, nullptr);
-		vkDestroyCommandPool(m_VulkanState.m_Device, m_VulkanState.m_GraphicCommandPool, nullptr);
+		for(auto& [id, pool] : m_ThreadGraphicCommandPool)
+		{
+			vkDestroyCommandPool(m_VulkanState.m_Device, pool, nullptr);
+		}
+		
+		for(auto& [id, pool] : m_ThreadComputeCommandPool)
+		{
+			vkDestroyCommandPool(m_VulkanState.m_Device, pool, nullptr);
+		}
+	}
+
+	VkCommandPool VulkanCommandPool::GetThreadGraphicCommandPool()
+	{
+		SPICES_PROFILE_ZONE;
+
+		uint32_t threadId = std::this_thread::get_id();
+		
+		if(m_ThreadGraphicCommandPool.find(threadId) == m_ThreadGraphicCommandPool.end())
+		{
+			/**
+			* @brief Instanced a VkCommandPoolCreateInfo with default value.
+			*/
+			VkCommandPoolCreateInfo     poolInfo{};
+			poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+			poolInfo.flags            = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+			poolInfo.queueFamilyIndex = VulkanRenderBackend::GetState().m_GraphicQueueFamily;
+
+			/**
+			* @brief Create commandpool and set it global. 
+			*/
+			VkCommandPool pool;
+			VK_CHECK(vkCreateCommandPool(VulkanRenderBackend::GetState().m_Device, &poolInfo, nullptr, &pool))
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(pool), VulkanRenderBackend::GetState().m_Device, "ThreadGraphicCommandPool")
+			m_ThreadGraphicCommandPool[threadId] = std::move(pool);
+		}
+
+		return m_ThreadGraphicCommandPool[threadId];
+	}
+
+	VkCommandPool VulkanCommandPool::GetThreadComputeCommandPool()
+	{
+		SPICES_PROFILE_ZONE;
+
+		uint32_t threadId = std::this_thread::get_id();
+		
+		if(m_ThreadComputeCommandPool.find(threadId) == m_ThreadComputeCommandPool.end())
+		{
+			/**
+			* @brief Instanced a VkCommandPoolCreateInfo with default value.
+			*/
+			VkCommandPoolCreateInfo     poolInfo{};
+			poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+			poolInfo.flags            = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+			poolInfo.queueFamilyIndex = VulkanRenderBackend::GetState().m_ComputeQueueFamily;
+
+			/**
+			* @brief Create commandpool and set it global. 
+			*/
+			VkCommandPool pool;
+			VK_CHECK(vkCreateCommandPool(VulkanRenderBackend::GetState().m_Device, &poolInfo, nullptr, &pool))
+			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(pool), VulkanRenderBackend::GetState().m_Device, "ThreadComputeCommandPool")
+			m_ThreadComputeCommandPool[threadId] = std::move(pool);
+		}
+
+		return m_ThreadComputeCommandPool[threadId];
 	}
 
 	VulkanCommandBuffer::VulkanCommandBuffer(VulkanState& vulkanState)

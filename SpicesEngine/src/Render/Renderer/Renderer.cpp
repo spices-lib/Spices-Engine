@@ -505,7 +505,7 @@ namespace Spices {
 				auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
 				state->PushBehave("EndRenderer", [](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
-					AnyscTask(ThreadPoolEnum::Custom, [&](std::shared_ptr<RendererSubPass> subPass) { 
+					AsyncTask(ThreadPoolEnum::Custom, [&](std::shared_ptr<RendererSubPass> subPass) { 
 						subPass->StoreStatistics(); 
 					}, builder->GetStatisticsRendererPass());
 				});

@@ -168,7 +168,7 @@ namespace Spices {
 		* @brief Get m_Buffer's Address.
 		* @return Returns the m_Buffer's Address.
 		*/
-		uint64_t GetBufferAddress() { return m_Buffer->GetAddress(); }
+		uint64_t GetBufferAddress() const { return m_Buffer->GetAddress(); }
 
 		/**
 		* @brief Update Function.
@@ -205,7 +205,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		* @param[in] name MeshPack Name.
-		* @param[in] instanced Is this maeshpack instanced.
+		* @param[in] instanced Is this maesh pack instanced.
 		*/
 		MeshPack(const std::string& name, bool instanced);
 
@@ -227,7 +227,7 @@ namespace Spices {
 		MeshPack& operator=(const MeshPack&) = delete;
 
 		/**
-		* @brief This interface is used for build specific meshpack data.
+		* @brief This interface is used for build specific mesh pack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		* @return Returns true if copy resource from Pool.
 		*/
@@ -276,7 +276,7 @@ namespace Spices {
 		uint32_t GetShaderGroupHandle() const;
 		
 		/**
-		* @brief Get meshpack UUID.
+		* @brief Get mesh pack UUID.
 		*/
 		UUID GetUUID() const { return m_UUID; }
 
@@ -311,8 +311,8 @@ namespace Spices {
 		uint32_t GetNTasks() const { return m_NTasks; }
 
 		/**
-		* @brief Get Mesh Desciption.
-		* @return Returns the Mesh Desciption.
+		* @brief Get Mesh Description.
+		* @return Returns the Mesh Description.
 		*/
 		MeshDesc& GetMeshDesc() { return m_Desc; }
 
@@ -343,7 +343,7 @@ namespace Spices {
 	protected:
 
 		/**
-		* @brief Create Vertices buffer anf Inddices buffer.
+		* @brief Create Vertices buffer anf Indices buffer.
 		*/
 		void CreateBuffer();
 
@@ -355,7 +355,7 @@ namespace Spices {
 		std::string m_MeshPackName;
 
 		/**
-		* @brief If this meshpack needs instanced.
+		* @brief If this mesh pack needs instanced.
 		*/
 		bool m_Instanced;
 
@@ -365,12 +365,12 @@ namespace Spices {
 		MeshResource m_MeshResource;
 
 		/**
-		* @brief Task Sahder Work Group Size.
+		* @brief Task Shader Work Group Size.
 		*/
 		uint32_t m_NTasks;
 
 		/**
-		* @brief specific material poinnter.
+		* @brief specific material pointer.
 		*/
 		std::shared_ptr<Material> m_Material;
 
@@ -387,17 +387,17 @@ namespace Spices {
 		std::optional<uint32_t> m_ShaderGroupHandle;
 
 		/**
-		* @brief Mesh Desciption.
+		* @brief Mesh Description.
 		*/
 		MeshDesc m_Desc;
 
 		/**
-		* @brief specific meshpack type.
+		* @brief specific mesh pack type.
 		*/
 		std::string m_PackType;
 
 		/**
-		* @brief UUID for meshpack.
+		* @brief UUID for mesh pack.
 		*/
 		UUID m_UUID;
 
@@ -497,7 +497,7 @@ namespace Spices {
 
 	/**
 	* @brief PlanePack Class.
-	* This class defines plane type meshpack.
+	* This class defines plane type mesh pack.
 	*/
 	class PlanePack : public MeshPack
 	{
@@ -508,7 +508,7 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] rows The rows number.
 		* @param[in] columns The columns number.
-		* @param[in] instanced Is this maeshpack instanced.
+		* @param[in] instanced Is this mesh pack instanced.
 		*/
 		PlanePack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
 			: MeshPack("Plane", instanced)
@@ -521,10 +521,10 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~PlanePack() = default;
+		virtual ~PlanePack() override = default;
 
 		/**
-		* @brief This interface is used for build specific meshpack data.
+		* @brief This interface is used for build specific mesh pack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		* @return Returns true if Create Pack successfully.
 		*/
@@ -546,7 +546,7 @@ namespace Spices {
 
 	/**
 	* @brief CubePack Class.
-	* This class defines box type meshpack.
+	* This class defines box type mesh pack.
 	*/
 	class CubePack : public MeshPack
 	{
@@ -557,7 +557,7 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] rows The rows number.
 		* @param[in] columns The columns number.
-		* @param[in] instanced Is this maeshpack instanced.
+		* @param[in] instanced Is this mesh pack instanced.
 		*/
 		CubePack(uint32_t rows = 2, uint32_t columns = 2, bool instanced = true)
 			: MeshPack("Cube", instanced)
@@ -570,10 +570,10 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~CubePack() = default;
+		virtual ~CubePack() override = default;
 
 		/**
-		* @brief This interface is used for build specific meshpack data.
+		* @brief This interface is used for build specific mesh pack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		* @return Returns true if Create Pack successfully.
 		*/
@@ -594,7 +594,7 @@ namespace Spices {
 
 	/**
 	* @brief SpherePack Class.
-	* This class defines sphere type meshpack.
+	* This class defines sphere type mesh pack.
 	*/
 	class SpherePack : public MeshPack
 	{
@@ -605,7 +605,7 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] rows The rows number.
 		* @param[in] columns The columns number.
-		* @param[in] instanced Is this maeshpack instanced.
+		* @param[in] instanced Is this mesh pack instanced.
 		*/
 		SpherePack(uint32_t rows = 15, uint32_t columns = 24, bool instanced = true)
 			: MeshPack("Sphere", instanced)
@@ -618,10 +618,10 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SpherePack() = default;
+		virtual ~SpherePack() override = default;
 
 		/**
-		* @brief This interface is used for build specific meshpack data.
+		* @brief This interface is used for build specific mesh pack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		* @return Returns true if Create Pack successfully.
 		*/
@@ -642,7 +642,7 @@ namespace Spices {
 
 	/**
 	* @brief FilePack Class.
-	* This class defines file type meshpack.
+	* This class defines file type mesh pack.
 	*/
 	class FilePack : public MeshPack
 	{
@@ -652,7 +652,7 @@ namespace Spices {
 		* @brief Constructor Function.
 		* Init member variables.
 		* @param[in] filePath The mesh file path in disk.
-		* @param[in] instanced Is this maeshpack instanced.
+		* @param[in] instanced Is this mesh pack instanced.
 		*/
 		FilePack(const std::string& filePath, bool instanced = true)
 			: MeshPack(filePath, instanced)
@@ -664,10 +664,10 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~FilePack() = default;
+		virtual ~FilePack() override = default;
 
 		/**
-		* @brief This interface is used for build specific meshpack data.
+		* @brief This interface is used for build specific mesh pack data.
 		* @param[in] isCreateBuffer Whether it needs to create buffer.
 		* @return Returns true if Create Pack successfully.
 		*/

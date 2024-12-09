@@ -14,7 +14,7 @@
 #include "Create/ImguiCreateEntity.h"
 #include "Help/ImguiHelp.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
-#include "Core/Thread/ThrealModel.h"
+#include "..\..\..\Core\Thread\ThreadModel.h"
 #include "Slate/SlateStyleLayout.h"
 #include <imgui_internal.h>
 
@@ -137,50 +137,50 @@ namespace Spices {
 
                 if (ImGui::MenuItem("Default", "Ctrl+1")) 
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Default);
                     });
                 }
                 if (ImGui::MenuItem("Animation", "Ctrl+2"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Animation);
                     });
                 }
                 if (ImGui::MenuItem("Animation Graph", "Ctrl+3"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::AnimationGraph);
                     });
                 }
                 if (ImGui::MenuItem("Paint", "Ctrl+4"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Paint);
                     });
                 }
                 if (ImGui::MenuItem("Rendering", "Ctrl+5"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Rendering);
                     });
                 }
                 if (ImGui::MenuItem("Visual Scripting", "Ctrl+6"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::VisualScripting);
                     });
                 }
                 if (ImGui::MenuItem("Physics Authoring", "Ctrl+9"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::PhysicsAuthoring);
                     });
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("UI Toggle Visibility", "F11")) 
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateSystem::GetRegister()->GetViewPort()->Toggle();
                     });
                 }
@@ -212,13 +212,13 @@ namespace Spices {
                 ImGui::Separator(); 
                 if (ImGui::MenuItem("Quick Save", "Ctrl+7"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->QuickStoreLayout();
                     });
                 }
                 if (ImGui::MenuItem("Quick Load", "Ctrl+8"))
                 {
-                    AnyscTask(ThreadPoolEnum::Game, []() {
+                    AsyncTask(ThreadPoolEnum::Game, []() {
                         SlateStyleLayout::Get()->QuickLoadLayout();
                     });
                 }
@@ -270,7 +270,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Default);
                         });
                     }
@@ -280,7 +280,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Animation);
                         });
                     }
@@ -290,7 +290,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::AnimationGraph);
                         });
                     }
@@ -300,7 +300,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Paint);
                         });
                     }
@@ -310,7 +310,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::Rendering);
                         });
                     }
@@ -320,7 +320,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::VisualScripting);
                         });
                     }
@@ -330,7 +330,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->QuickStoreLayout();
                         });
                     }
@@ -340,7 +340,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->QuickLoadLayout();
                         });
                     }
@@ -350,7 +350,7 @@ namespace Spices {
                 {
                     if (isPressedCtrl())
                     {
-                        AnyscTask(ThreadPoolEnum::Game, []() {
+                        AsyncTask(ThreadPoolEnum::Game, []() {
                             SlateStyleLayout::Get()->SetLayout(StyleLayoutEnum::PhysicsAuthoring);
                         });
                     }

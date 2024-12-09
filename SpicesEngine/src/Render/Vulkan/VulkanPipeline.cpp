@@ -408,19 +408,23 @@ namespace Spices {
 		* @brief Create the VulkanShaderModule.
 		*/
 		std::vector<std::shared_ptr<VulkanShaderModule>> shaderModules;
-		for (auto& pair : shaders)
 		{
-			if (pair.first == "rchit") continue;
-
-			for (size_t i = 0; i < pair.second.size(); i++)
+			SPICES_PROFILE_ZONEN("Create the VulkanShaderModule");
+			
+			for (auto& pair : shaders)
 			{
-				std::stringstream ss;
-				ss << pair.first << "." << pair.second[i];
+				if (pair.first == "rchit") continue;
 
-				shaderModules.push_back(ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first)->GetShaderModule());
+				for (size_t i = 0; i < pair.second.size(); i++)
+				{
+					std::stringstream ss;
+					ss << pair.first << "." << pair.second[i];
+
+					shaderModules.push_back(ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first)->GetShaderModule());
+				}
 			}
 		}
-
+		
 		/**
 		* @brief Instance VkPipelineShaderStageCreateInfo.
 		*/

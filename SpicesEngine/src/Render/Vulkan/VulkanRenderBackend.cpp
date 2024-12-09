@@ -14,7 +14,7 @@
 #include "Render/Renderer/RendererManager.h"
 #include "Render/RendererResource/RendererResourcePool.h"
 #include "Systems/SlateSystem.h"
-#include "Core/Thread/ThrealModel.h"
+#include "..\..\Core\Thread\ThreadModel.h"
 
 #include "Render/Renderer/SpecificRenderer/PreRenderer.h"
 #include "Render/Renderer/SpecificRenderer/RayTracingRenderer.h"
@@ -103,7 +103,7 @@ namespace Spices {
 		* @brief Create CmdBuffers ThreadPool.
 		*/
 		{
-			ThrealModel::Get()->InitRHIThreadPool([&](std::shared_ptr<VulkanCmdThreadPool>& ptr) {
+			ThreadModel::Get()->InitRHIThreadPool([&](std::shared_ptr<VulkanCmdThreadPool>& ptr) {
 				ptr = std::make_shared<VulkanCmdThreadPool>(m_VulkanState);
 			});
 		}
@@ -148,7 +148,7 @@ namespace Spices {
 		/**
 		* @brief Release RHIThreadPool.
 		*/
-		ThrealModel::Get()->ShutDownRHIThreadPool();
+		ThreadModel::Get()->ShutDownRHIThreadPool();
 
 		/**
 		* @brief Release RendererResourcePool.
@@ -263,13 +263,13 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("StartFrame::Suspend Delay ThreadPool");
 
-			ThrealModel::Get()->GetGameThreadPool()->Suspend();
+			ThreadModel::Get()->GetGameThreadPool()->Suspend();
 		}
 
 		{
 			SPICES_PROFILE_ZONEN("StartFrame::Free Parallel CommandBuffer");
 
-			ThrealModel::Get()->GetRHIThreadPool()->FreeParallelCommandBuffers(frameInfo.m_FrameIndex);
+			ThreadModel::Get()->GetRHIThreadPool()->FreeParallelCommandBuffers(frameInfo.m_FrameIndex);
 		}
 
 		{
@@ -448,7 +448,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("StartFrame::Continue Delay ThreadPool");
 
-			ThrealModel::Get()->GetGameThreadPool()->Continue();
+			ThreadModel::Get()->GetGameThreadPool()->Continue();
 		}	
 	}
 

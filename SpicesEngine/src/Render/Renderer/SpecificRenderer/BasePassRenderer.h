@@ -78,14 +78,14 @@ namespace Spices {
 		virtual void CreateDeviceGeneratedCommandsLayout() override;
 
 		/**
-		* @breif This interface is called on world mark queryer tick (registry by MeshComponent).
+		* @breif This interface is called on world mark query tick (registry by MeshComponent).
 		*/
 		virtual void OnMeshAddedWorld() override;
 
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
-		* @param[in] material Registried material.
+		* @param[in] material Registry material.
 		* @param[in] layout VkPipelineLayout.
 		* @param[in] subPass Handled subPass.
 		*/

@@ -94,14 +94,14 @@ namespace Spices {
 		virtual void CreateDescriptorSet() override;
 
 		/**
-		* @breif This interface is called on worldmarkqueryer tick (registry by MeshComponent).
+		* @breif This interface is called on world mark query tick (registry by MeshComponent).
 		*/
 		virtual void OnMeshAddedWorld() override;
 
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
-		* @param[in] material Registried material.
+		* @param[in] material Registry material.
 		* @param[in] layout VkPipelineLayout.
 		* @param[in] subPass Handled subPass.
 		*/
@@ -122,14 +122,14 @@ namespace Spices {
 		/**
 		* @brief Create TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
-		* @param[in] update , default false.
+		* @param[in] update default false.
 		*/
 		void CreateTopLevelAS(FrameInfo& frameInfo, bool update = false);
 
 		/**
 		* @brief Update TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
-		* @param[in] update , default true.
+		* @param[in] update default true.
 		* @todo Event Queue.
 		*/
 		void UpdateTopLevelAS(FrameInfo& frameInfo, bool update = true);

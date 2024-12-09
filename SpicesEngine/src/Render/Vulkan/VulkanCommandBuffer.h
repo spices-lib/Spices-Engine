@@ -30,6 +30,30 @@ namespace Spices {
 		* @brief Destructor Function.
 		*/
 		virtual ~VulkanCommandPool() override;
+
+		/**
+		* @brief Get Thread Graphic VkCommandPool by thread id.
+		* @return Returns thread VkCommandPool.
+		*/
+		static VkCommandPool GetThreadGraphicCommandPool();
+
+		/**
+		* @brief Get Thread Compute VkCommandPool by thread id.
+		* @return Returns thread VkCommandPool.
+		*/
+		static VkCommandPool GetThreadComputeCommandPool();
+		
+	private:
+		
+		/**
+		* @brief Thread Graphic VkCommandPool map. 
+		*/
+		static std::unordered_map<uint32_t, VkCommandPool> m_ThreadGraphicCommandPool;
+
+		/**
+		* @brief Thread Compute VkCommandPool map. 
+		*/
+		static std::unordered_map<uint32_t, VkCommandPool> m_ThreadComputeCommandPool;
 	};
 
 	/**
@@ -67,7 +91,7 @@ namespace Spices {
 	inline void VulkanCommandBuffer::CustomGraphicCmd(VulkanState& vulkanState, T func)
 	{
 		SPICES_PROFILE_ZONE;
-
+		
 		/**
 		* @brief Instanced a VkCommandBufferAllocateInfo with default value.
 		*/

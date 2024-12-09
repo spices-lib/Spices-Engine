@@ -12,7 +12,7 @@ namespace Spices {
 
 	/**
 	* @brief WorldPickRenderer Class.
-	* This class defines the picked entity render behaver.
+	* This class defines the picked entity render behaves.
 	*/
 	class WorldPickStage2Renderer : public Renderer
 	{
@@ -64,7 +64,7 @@ namespace Spices {
 		/**
 		* @brief The interface is inherited from Renderer.
 		* Create Material Specific Pipeline.
-		* @param[in] material Registried material.
+		* @param[in] material Registry material.
 		* @param[in] layout VkPipelineLayout.
 		* @param[in] subPass Handled subPass.
 		*/
