@@ -106,7 +106,7 @@ namespace Spices {
 
 		AnyscTask(ThreadPoolEnum::Game, [=]() {
 			std::shared_ptr<CubePack> pack = std::make_shared<CubePack>(std::forward<Args>(args)...);
-			pack->SetMaterial("BasePassRenderer.Mesh.ground");
+			pack->SetMaterial("BasePassRenderer.Mesh.Default");
 			CreateMeshEntity(world, "Cube", pack);
 		});
 	}

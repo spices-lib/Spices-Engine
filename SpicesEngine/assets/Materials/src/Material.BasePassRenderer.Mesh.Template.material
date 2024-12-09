@@ -1,5 +1,5 @@
-# @file Material.BasePassRenderer.Mesh.Default.material.
-# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass Default Material.
+# @file Material.BasePassRenderer.Mesh.Template.material.
+# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass Template Material.
 # @author Spices.
 
 # @brief Material Name.
@@ -13,7 +13,7 @@ Shaders:
   - Stage: task
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: BasePassRenderer.Mesh.Default
-    
+
   # @brief Mesh Shader Stage Shader File Path.
   - Stage: mesh
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
@@ -23,11 +23,34 @@ Shaders:
   - Stage: frag
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: BasePassRenderer.Mesh.PBRConstParameter
-    
+
   # @brief Ray Closest Hit Shader Stage Shader File Path.
   - Stage: rchit
     # @brief [Renderer Name].[SubPass Name].[Shader Identify]
     Path: BasePassRenderer.Mesh.PBRConstParameter
+
+# @brief Material Textures usages.
+Textures:
+
+  # @brief Usage: albedo.
+  - Name: albedo
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
+    
+  # @brief Usage: normal.
+  - Name: normal
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
+    
+  # @brief Usage: roughness.
+  - Name: roughness
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
+      
+  # @brief Usage: metallic.
+  - Name: metallic
+    # @brief [Texture Type, Texture Path]
+    Value: [Texture2D, default.jpg]
     
 # @brief Material Parameters usages. 
 Parameters:
@@ -35,12 +58,12 @@ Parameters:
   # @brief Usage: albedo.
   - Name: albedo
     # @brief [Parameter Type, Parameter Value]
-    Value: [float3, [0.7, 0.7, 0.7]]
+    Value: [float3, [0.5, 0.5, 0.5]]
     
   # @brief Usage: roughness.
   - Name: roughness
     # @brief [Parameter Type, Parameter Value]
-    Value: [float, 1.0]
+    Value: [float, 0.5]
     
   # @brief Usage: metallic.
   - Name: metallic
@@ -51,7 +74,7 @@ Parameters:
   - Name: maxRayDepth
     # @brief [Parameter Type, Parameter Value]
     Value: [int, 6]
-    
+      
   # @brief Usage: maxRayDepth.
   - Name: maxLightDepth
     # @brief [Parameter Type, Parameter Value]

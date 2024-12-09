@@ -257,7 +257,7 @@ namespace Spices {
 		}
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
 		{
-			SPICES_CORE_ERROR("Failed to acquire swap chain image!");
+			SPICES_CORE_ERROR("Failed to acquire swap chain image!")
 		}
 
 		{

@@ -232,6 +232,11 @@ namespace Spices {
 		void CreateDefaultMaterial();
 
 		/**
+		* @brief Create Specific Renderer DGC Material. 
+		*/
+		void CreateDGCMaterial();
+		
+		/**
 		* @brief Create Pipeline Layout with material's descriptorset and renderer's descriptor set.
 		* @param[in] rowSetLayouts All descriptor set collected.
 		* @param[in] subPass material used sub pass.
@@ -2048,7 +2053,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Regenerate dgc pipeline");
 
-			CreateDefaultMaterial();
+			CreateDGCMaterial();
 		}
 
 		/**

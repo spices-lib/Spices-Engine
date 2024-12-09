@@ -50,7 +50,8 @@ namespace Spices {
 		* @brief Create specific renderer default material.
 		*/
 		CreateDefaultMaterial();
-
+		CreateDGCMaterial();
+		
 		/**
 		* @brief Create Device Generated Commands Layout.
 		*/
@@ -205,37 +206,54 @@ namespace Spices {
 	void Renderer::CreateDefaultMaterial()
 	{
 		SPICES_PROFILE_ZONE;
+		
+		if (!m_IsLoadDefaultMaterial) return;
 
+		/**
+        * @brief Iter all subpass.
+        */
+		m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
+			
+			std::stringstream ss;
+			ss << m_RendererName << "." << K << ".Default";
+
+			/**
+			* @brief Registry Real Material.
+			*/
+			auto material = GetDefaultMaterial(K);
+			material->BuildMaterial();
+
+			/**
+			* @brief Not break loop.
+			*/
+			return false;
+		});
+	}
+
+	void Renderer::CreateDGCMaterial()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!m_IsRegistryDGCPipeline) return;
+		
 		/**
 		* @brief Iter all subpass.
 		*/
-		if (m_IsLoadDefaultMaterial)
-		{
-			m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
+		m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
 				
-				std::stringstream ss;
-				ss << m_RendererName << "." << K << ".Default";
+			std::stringstream ss;
+			ss << m_RendererName << "." << K << ".Default";
+			
+			/**
+			* @brief Registry DGC Pipeline.
+			*/
+			RegistryDGCPipeline(ss.str(), K);
 
-				/**
-				* @brief Registry Real Material.
-				*/
-				auto material = GetDefaultMaterial(K);
-				material->BuildMaterial();
-				
-				/**
-				* @brief Abstract Indirect Material.
-				*/
-				if (m_IsRegistryDGCPipeline)
-				{
-					RegistryDGCPipeline(ss.str(), K);
-				}
-
-				/**
-				* @brief Not break loop.
-				*/
-				return false;
-			});
-		}
+			/**
+			* @brief Not break loop.
+			*/
+			return false;
+		});
 	}
 
 	VkPipelineLayout Renderer::CreatePipelineLayout(

@@ -1,8 +1,8 @@
-# @file Material.BasePassRenderer.Mesh.0.material.
-# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass 0 Material.
+# @file Material.BasePassRenderer.Mesh.ground.material.
+# @brief This File is the sample of Defining a BasePass Renderer Mesh SubPass ground Material.
 # @author Spices.
 
-Material: BasePassRenderer.Mesh.0
+Material: BasePassRenderer.Mesh.ground
 Shaders:
   - Stage: task
     Path: BasePassRenderer.Mesh.Default
