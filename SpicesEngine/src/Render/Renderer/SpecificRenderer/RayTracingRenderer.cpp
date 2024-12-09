@@ -66,6 +66,12 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
+		* @brief Wait for last frame render finish.
+		* So we can recreate BLAS/TLAS safely.
+		*/
+		vkDeviceWaitIdle(m_VulkanState.m_Device);
+		
+		/**
 		* @brief Destroy old AS if created before.
 		*/
 		m_VulkanRayTracing->Destroy();

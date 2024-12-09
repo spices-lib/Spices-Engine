@@ -79,23 +79,6 @@ namespace Spices {
         }
 
         /**
-        * @brief Draw Editor Grid.
-        */
-        {
-            SPICES_PROFILE_ZONEN("ImGuizmo::DrawGrid");
-
-            /**
-            * @todo Remove it and implementate it by renderer.
-            */
-            /*ImGuizmo::DrawGrid(
-                glm::value_ptr(viewMat),
-                glm::value_ptr(projectionMat),
-                glm::value_ptr(glm::mat4(1.0f)),
-                100.f
-            );*/
-        }
-
-        /**
         * @brief Draw Editor ViewManipulate.
         */
         {
