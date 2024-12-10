@@ -36,17 +36,25 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_IsPoolRunning = true;
+		m_IsPoolRunning  = true;
 		m_InitThreadSize = initThreadSize;
 		m_IdleThreadSize = initThreadSize;
-		m_NThreads = initThreadSize;
+		m_NThreads       = initThreadSize;
 
 		for (uint32_t i = 0; i < m_InitThreadSize; i++)
 		{
 			auto ptr = std::make_unique<Thread<>>(std::bind(&DelayThreadPool::ThreadFunc, this, std::placeholders::_1), i);
 			int threadId = ptr->GetId();
+			
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
+
+			std::stringstream ss;
+			ss << "GameT" << threadId;
+			const std::string name = ss.str();
+			SubmitThreadTask_LightWeight(threadId, [=](){
+				ThreadLibrary::SetThreadName(name);
+			});
 		}
 	}
 

@@ -1,34 +1,69 @@
+/**
+* @file WorldPickIDQueryer.h.
+* @brief The WorldPickIDQueryer Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "NativeScript.h"
 #include "Core/Event/MouseEvent.h"
 
 namespace Spices {
-
+	
+	/**
+	* @brief Forward declare. 
+	*/
 	class ImguiViewport;
 
+	/**
+	* @brief Script of handle world entity pick.
+	*/
 	class WorldPickIDQueryer : public NativeScript
 	{
 	public:
-		WorldPickIDQueryer();
-		virtual ~WorldPickIDQueryer() {};
 
-		virtual void OnTick(TimeStep& ts) {};
-		virtual void OnEvent(Event& e);
+		/**
+		* @brief Constructor Function.
+		*/
+		WorldPickIDQueryer() = default;
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~WorldPickIDQueryer() override = default;
+
+		/**
+		* @brief This interface defines the behave on specific component tick every frame.
+		* @param[in] ts TimeStep.
+		*/
+		virtual void OnTick(TimeStep& ts) override {};
+
+		/**
+		* @brief This interface defines the behave on specific component event happened.
+		* @param[in] e Event.
+		*/
+		virtual void OnEvent(Event& e) override;
 
 	private:
+		
 		/**
 		* @brief Event OnKeyPressed.
-		* We do nothing here.
-		* @param[in] e Event Warpper.
+		* @param[in] e Event Wrapper.
 		* @return true if we need block the event.
-		* @todo Implementate it.
 		*/
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
 	private:
+		
+		/**
+		* @brief World Picked entity id (only use channel 0).
+		*/
 		float m_WorldPickID[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		float* m_WorldPickIDMemory;
+
+		/**
+		* @brief viewport pointer.
+		*/
 		std::shared_ptr<ImguiViewport> m_ViewPort;
 	};
 }

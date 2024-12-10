@@ -36,7 +36,16 @@ namespace Spices {
 	}
 
 	VulkanCmdThreadPool::~VulkanCmdThreadPool()
-	{}
+	{
+		SPICES_PROFILE_ZONE;
+
+		vkDeviceWaitIdle(m_VulkanState.m_Device);
+
+		for (int i = 0; i < MaxFrameInFlight; i++)
+		{
+			FreeParallelCommandBuffers(i);
+		}
+	}
 
 	void VulkanCmdThreadPool::Start(int initThreadSize)
 	{
@@ -51,8 +60,16 @@ namespace Spices {
 		{
 			auto ptr = std::make_unique<Thread<VkCommandBuffer>>(std::bind(&VulkanCmdThreadPool::ThreadFunc, this, std::placeholders::_1), i);
 			uint32_t threadId = ptr->GetId();
+			
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
+
+			std::stringstream ss;
+			ss << "RHIT" << threadId;
+			const std::string name = ss.str();
+			SubmitThreadTask_LightWeight(threadId, [=](VkCommandBuffer buffer){
+				ThreadLibrary::SetThreadName(name);
+			});
 		}
 	}
 

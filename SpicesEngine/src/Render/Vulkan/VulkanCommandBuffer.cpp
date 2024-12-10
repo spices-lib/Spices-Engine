@@ -12,11 +12,14 @@ namespace Spices {
 	
 	std::vector<VkCommandPool> VulkanCommandPool::m_ThreadGraphicCommandPool;
 	std::vector<VkCommandPool> VulkanCommandPool::m_ThreadComputeCommandPool;
-	
+	bool VulkanCommandPool::m_IsPoolActive = false;
+
 	VulkanCommandPool::VulkanCommandPool(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
 	{
 		SPICES_PROFILE_ZONE;
+
+		m_IsPoolActive = true;
 
 		/**
 		* @brief Instanced a VkCommandPoolCreateInfo with default value.
@@ -44,12 +47,14 @@ namespace Spices {
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_ComputeCommandPool), vulkanState.m_Device, "ComputeCommandPool")
 
 		pTLSVulkanCommandPool.m_ComputeThreadId = 0;
-		m_ThreadComputeCommandPool.push_back(vulkanState.m_GraphicCommandPool);
+		m_ThreadComputeCommandPool.push_back(vulkanState.m_ComputeCommandPool);
 	}
 
 	VulkanCommandPool::~VulkanCommandPool()
 	{
 		SPICES_PROFILE_ZONE;
+
+		m_IsPoolActive = false;
 
 		/**
 		* @brief Destroy the Vulkan CommandPool Object.
@@ -76,6 +81,11 @@ namespace Spices {
 	VkCommandPool& VulkanCommandPool::GetThreadGraphicCommandPool()
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (!m_IsPoolActive)
+		{
+			SPICES_CORE_ERROR("CommandPool is not active.")
+		}
 
 		if(pTLSVulkanCommandPool.m_GraphicThreadId == -1)
 		{
@@ -116,6 +126,11 @@ namespace Spices {
 	VkCommandPool& VulkanCommandPool::GetThreadComputeCommandPool()
 	{
 		SPICES_PROFILE_ZONE;
+
+		if (!m_IsPoolActive)
+		{
+			SPICES_CORE_ERROR("CommandPool is not active.")
+		}
 
 		if (pTLSVulkanCommandPool.m_ComputeThreadId == -1)
 		{
@@ -189,7 +204,9 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_GraphicThreadId >=0)
+		if (!VulkanCommandPool::m_IsPoolActive) return;
+
+		if (m_GraphicThreadId >= 0)
 		{
 			auto& pool = VulkanCommandPool::GetThreadGraphicCommandPool();
 

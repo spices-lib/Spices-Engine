@@ -53,6 +53,11 @@ namespace Spices {
 		* @brief Thread Compute VkCommandPool map. 
 		*/
 		static std::vector<VkCommandPool> m_ThreadComputeCommandPool;
+
+		/**
+		* @brief True if this Pool is actived.
+		*/
+		static bool m_IsPoolActive;
 	};
 
 	/**

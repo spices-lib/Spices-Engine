@@ -1,9 +1,18 @@
+/**
+* @file NativeScript.h.
+* @brief The NativeScript & NativeScriptRegister Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "Core/Event/Event.h"
 
 namespace Spices {
-
+	
+	/**
+	* @brief Native C++ Script Class.
+	*/
 	class NativeScript
 	{
 	public:
@@ -31,6 +40,9 @@ namespace Spices {
 		virtual void OnEvent(Event& e) = 0;
 	};
 
+	/**
+	* @brief Registry Native C++ Script Class.
+	*/
 	class NativeScriptRegister
 	{
 	public:

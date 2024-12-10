@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "Core/Library/ThreadLibrary.h"
 
 #include <future>
 #include <queue>

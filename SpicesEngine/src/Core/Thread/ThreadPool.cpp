@@ -22,8 +22,16 @@ namespace Spices {
 		{
 			auto ptr = std::make_unique<Thread<>>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1), i);
 			int threadId = ptr->GetId();
+			
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
+
+			std::stringstream ss;
+			ss << "CusT" << threadId;
+			const std::string name = ss.str();
+			SubmitThreadTask_LightWeight(threadId, [=](){
+				ThreadLibrary::SetThreadName(name);
+			});
 		}
 	}
 

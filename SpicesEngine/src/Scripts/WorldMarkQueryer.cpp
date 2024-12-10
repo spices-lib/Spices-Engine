@@ -1,3 +1,9 @@
+/**
+* @file WorldMarkQueryer.cpp.
+* @brief The WorldMarkQueryer & NativeScriptRegister Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "WorldMarkQueryer.h"
 #include "Render/FrameInfo.h"
@@ -7,11 +13,10 @@
 
 namespace Spices {
 
-	WorldMarkQueryer::WorldMarkQueryer()
-	{}
-
 	void WorldMarkQueryer::OnTick(TimeStep& ts)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		World::WorldMarkFlags mark = FrameInfo::Get().m_World->GetMarker();
 
 		if (mark & World::MeshAddedToWorld)

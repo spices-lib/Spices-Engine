@@ -180,22 +180,6 @@ namespace Spices {
         End();
 
         m_ToggleStateList->IncreateState();
-
-        if (IsResizedThisFrame())
-        {
-            AsyncTask(ThreadPoolEnum::Game, [](ImVec2 panelSize) {
-
-                /**
-                * @brief Might not needed?
-                */
-                VK_CHECK(vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device))
-
-                SlateResizeEvent event(static_cast<uint32_t>(panelSize.x), static_cast<uint32_t>(panelSize.y));
-
-                Event::GetEventCallbackFn()(event);
-
-            }, GetPanelSize());
-        }
     }
 
     void ImguiViewport::OnEvent(Event& event)

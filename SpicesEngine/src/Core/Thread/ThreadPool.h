@@ -84,12 +84,21 @@ namespace Spices {
 					if (m_Threads.find(i) == m_Threads.end())
 					{
 						auto ptr = std::make_unique<Thread<>>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1), i);
-						ptr->Start();
 						uint32_t threadId = ptr->GetId();
-						m_Threads.emplace(threadId, std::move(ptr));
 
+						ptr->Start();
+						m_Threads.emplace(threadId, std::move(ptr));
+						
 						++m_IdleThreadSize;
 						++m_NThreads;
+
+						std::stringstream ss;
+						ss << "CusT" << threadId;
+						const std::string name = ss.str();
+						SubmitThreadTask_LightWeight(threadId, [=](){
+							ThreadLibrary::SetThreadName(name);
+						});
+						
 						break;
 					}
 				}

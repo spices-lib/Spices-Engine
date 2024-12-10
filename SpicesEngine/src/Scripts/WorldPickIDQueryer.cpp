@@ -1,3 +1,9 @@
+/**
+* @file WorldPickIDQueryer.cpp.
+* @brief The WorldPickIDQueryer & NativeScriptRegister Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "WorldPickIDQueryer.h"
 #include "Systems/SlateSystem.h"
@@ -11,11 +17,6 @@
 
 namespace Spices {
 
-	WorldPickIDQueryer::WorldPickIDQueryer()
-	{
-		m_WorldPickIDMemory = &m_WorldPickID[0];
-	}
-
 	void WorldPickIDQueryer::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
@@ -25,6 +26,8 @@ namespace Spices {
 
 	bool WorldPickIDQueryer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		/**
 		* @brief The first frame, we will not get register pointer.
 		*/
@@ -71,7 +74,7 @@ namespace Spices {
 				std::stringstream ss;
 				ss << "Select entity: " << entityName;
 
-				SPICES_CORE_TRACE(ss.str());
+				SPICES_CORE_TRACE(ss.str())
 			}
 
 			/**
@@ -95,7 +98,7 @@ namespace Spices {
 					std::stringstream ss;
 					ss << "Deselect entity: " << *ptr;
 
-					SPICES_CORE_TRACE(ss.str());
+					SPICES_CORE_TRACE(ss.str())
 
 					FrameInfo::Get().m_PickEntityID.erase(static_cast<int>(m_WorldPickID[0]));
 				}
@@ -126,7 +129,7 @@ namespace Spices {
 				std::stringstream ss;
 				ss << "Select entity: " << entityName;
 
-				SPICES_CORE_TRACE(ss.str());
+				SPICES_CORE_TRACE(ss.str())
 			}
 		}
 
