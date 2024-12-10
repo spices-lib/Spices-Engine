@@ -1428,13 +1428,15 @@ namespace Spices {
 			* @brief Constructor Function.
 			* Bind pipeline and all buffer type descriptor set.
 			* @param[in] renderer When instanced during CreatePipelineLayoutAndDescriptor(), pass this pointer.
+			* @param[in] rayTracing VulkanRayTracing.
 			* @param[in] currentFrame Passed from FrameInfo.
 			* @param[in] currentImage Passed from FrameInfo.
 			*/
 			RayTracingRenderBehaveBuilder(
-				Renderer* renderer     , 
-				uint32_t  currentFrame , 
-				uint32_t  currentImage
+				Renderer*         renderer     , 
+				VulkanRayTracing* rayTracing   ,
+				uint32_t          currentFrame , 
+				uint32_t          currentImage
 			);
 
 			/**
@@ -1542,17 +1544,8 @@ namespace Spices {
 
 			/**
 			* @brief Call vkCmdTraceRaysKHR here.
-			* @param[in] rgenRegion RayGen Shader Group.
-			* @param[in] missRegion Miss Shader Group.
-			* @param[in] hitRegion Hit Shader Group.
-			* @param[in] callRegion Callable Shader Group.
 			*/
-			void TraceRays(
-				const VkStridedDeviceAddressRegionKHR* rgenRegion,
-				const VkStridedDeviceAddressRegionKHR* missRegion,
-				const VkStridedDeviceAddressRegionKHR* hitRegion,
-				const VkStridedDeviceAddressRegionKHR* callRegion
-			) const;
+			void TraceRays() const;
 
 			/**
 			* @brief Call vkCmdTraceRaysKHR here Async.
@@ -1567,6 +1560,13 @@ namespace Spices {
 				const VkStridedDeviceAddressRegionKHR* hitRegion,
 				const VkStridedDeviceAddressRegionKHR* callRegion
 			) const;
+
+		private:
+
+			/**
+			* @brief Referenced VulkanRayTracing.
+			*/
+			VulkanRayTracing* m_VulkanRayTracing;
 		};
 		
 		/**

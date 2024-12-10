@@ -87,11 +87,11 @@ namespace Spices {
 		CreateTopLevelAS(FrameInfo::Get());
 
 		/**
-		* @breif ReCreate RenderPass, DescriptorSet and DefaultMaterial.
+		* @breif ReCreate DefaultMaterial.
 		*/
-		Renderer::OnSystemInitialize();
+		CreateDefaultMaterial();
 
-		CreateRTShaderBindingTable(FrameInfo::Get());
+		CreateRTShaderBindingTable();
 	}
 
 	void RayTracingRenderer::CreatePipeline(
@@ -107,7 +107,7 @@ namespace Spices {
 		.NullBindingDescriptions()
 		.NullAttributeDescriptions()
 		.SetPipelineLayout(layout)
-		.BuildRayTracing(m_HitGroups);
+		.BuildRayTracing(m_VulkanRayTracing->GetHitGroups());
 	}
 
 	void RayTracingRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
@@ -120,7 +120,7 @@ namespace Spices {
 
 		if(frameInfo.m_RendererType != RendererType::PathTracing) return;
 		
-		RayTracingRenderBehaveBuilder builder{ this , frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
+		RayTracingRenderBehaveBuilder builder{ this, m_VulkanRayTracing.get(), frameInfo.m_FrameIndex, frameInfo.m_ImageIndex};
 
 		builder.BeginRenderPass();
 
@@ -132,7 +132,7 @@ namespace Spices {
 
 		builder.UpdateAccelerationStructure(2, 0, m_VulkanRayTracing->GetAccelerationStructure());
 
-		builder.UpdateStorageBuffer(3, 0, m_DescArray.get());
+		builder.UpdateStorageBuffer(3, 0, m_VulkanRayTracing->GetMeshDescBuffer().get());
 		
 		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 1, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
@@ -149,7 +149,7 @@ namespace Spices {
 			});
 		});
 		
-		builder.TraceRays(&m_RgenRegion, &m_MissRegion, &m_HitRegion, &m_CallRegion);
+		builder.TraceRays();
 
 		builder.EndRenderPass();
 	}
@@ -196,7 +196,8 @@ namespace Spices {
 		std::vector<VkAccelerationStructureInstanceKHR> tlas;
 
 		int index = 0;
-		m_DescArray = std::make_unique<RayTracingR::MeshDescBuffer>();
+		std::shared_ptr<RayTracingR::MeshDescBuffer> descBuffer = std::make_shared<RayTracingR::MeshDescBuffer>();
+
 		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
 		{
@@ -212,26 +213,28 @@ namespace Spices {
 				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
 				rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(index);
 				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-				rayInst.mask                                                = 0xFF;                                                       //  Only be hit if rayMask & instance.mask != 0
+				rayInst.mask                                                = 0xFF;                                                       // Only be hit if rayMask & instance.mask != 0
 				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                                    // We will use the same hit group for all objects
 
 				tlas.push_back(rayInst);
 
-				m_DescArray->descs[index] = v->GetMeshDesc().GetBufferAddress();
+				descBuffer->descs[index] = v->GetMeshDesc().GetBufferAddress();
 
 				index += 1;
 				return false;
 			});
 		}
 		
+		m_VulkanRayTracing->SetMeshDescBuffer(descBuffer);
+
 		/**
 		* @brief Build TLAS.
 		*/
 		m_VulkanRayTracing->BuildTLAS(
 			tlas,
 			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
-			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR |
-			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR      |
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR  ,
 			update
 		);
 	}
@@ -246,100 +249,15 @@ namespace Spices {
 		CreateTopLevelAS(frameInfo, update);
 	}
 
-	void RayTracingRenderer::CreateRTShaderBindingTable(FrameInfo& frameInfo)
+	void RayTracingRenderer::CreateRTShaderBindingTable()
 	{
 		SPICES_PROFILE_ZONE;
 
-		const auto rayTracingMaterial           = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default", "RayTracingRenderer.RayTracing.Default");
-
-		const uint32_t rayGenCount              = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rgen").size());
-		const uint32_t missCount                = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rmiss").size());
-		const uint32_t hitCount                 = static_cast<uint32_t>(m_HitGroups.size());
-
-		const auto handleCount                  = rayGenCount + missCount + hitCount;
-		uint32_t handleSize                     = m_Device->GetRTPipelineProperties().shaderGroupHandleSize;
-
-		/**
-		* @brief The SBT(buffer) need to have starting groups to be aligned and handles in the group to be aligned.
-		*/
-		const uint32_t handleSizeAligned        = MemoryLibrary::align_up(handleSize, m_Device->GetRTPipelineProperties().shaderGroupHandleAlignment);
-
-		m_RgenRegion.stride                     = MemoryLibrary::align_up(handleSizeAligned, m_Device->GetRTPipelineProperties().shaderGroupBaseAlignment);
-		m_RgenRegion.size                       = m_RgenRegion.stride;  // The size member of pRayGenShaderBindingTable must be equal to its stride member
-
-		m_MissRegion.stride                     = handleSizeAligned;
-		m_MissRegion.size                       = MemoryLibrary::align_up(missCount * handleSizeAligned, m_Device->GetRTPipelineProperties().shaderGroupBaseAlignment);
-
-		m_HitRegion.stride                      = handleSizeAligned;
-		m_HitRegion.size                        = MemoryLibrary::align_up(hitCount * handleSizeAligned, m_Device->GetRTPipelineProperties().shaderGroupBaseAlignment);
-
-		/**
-		* @brief Get the shader group handles.
-		*/
-		const uint32_t dataSize                 = handleCount * handleSize;
-		std::vector<uint8_t> handles(dataSize);
-		VK_CHECK(m_VulkanState.m_VkFunc.vkGetRayTracingShaderGroupHandlesKHR(m_VulkanState.m_Device, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline(), 0, handleCount, dataSize, handles.data()))
-
-		/**
-		* @brief Allocate a buffer for storing the SBT.
-		*/ 
-		VkDeviceSize sbtSize = m_RgenRegion.size + m_MissRegion.size + m_HitRegion.size + m_CallRegion.size;
-
-		m_RTSBTBuffer = std::make_unique<VulkanBuffer>(
-			m_VulkanState, 
-			"SBTBuffer",
-			sbtSize, 
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT             | 
-			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT    | 
-			VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR , 
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT          | 
-			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-		);
-
-		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_RTSBTBuffer->Get(), m_VulkanState.m_Device, "SBT Buffer")
-
-		m_RgenRegion.deviceAddress              = m_RTSBTBuffer->GetAddress();
-		m_MissRegion.deviceAddress              = m_RTSBTBuffer->GetAddress() + m_RgenRegion.size;
-		m_HitRegion.deviceAddress               = m_RTSBTBuffer->GetAddress() + m_RgenRegion.size + m_MissRegion.size;
-
-		/**
-		* @brief Helper to retrieve the handle data.
-		*/ 
-		auto getHandle = [&](int i) { return handles.data() + i * handleSize; };
-
-		/**
-		* @brief Map the SBT buffer and write in the handles.
-		*/
-		uint64_t offset                         = 0;
-		uint32_t handleIdx                      = 0 ;
-
-		/**
-		* @brief Ray Generation.
-		*/ 
-		for (uint32_t c = 0; c < rayGenCount; c++)
-		{
-			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
-			m_RgenRegion.stride;
-		}
-
-		/**
-		* @brief Miss.
-		*/ 
-		offset = m_RgenRegion.size;
-		for (uint32_t c = 0; c < missCount; c++)
-		{
-			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
-			offset += m_MissRegion.stride;
-		}
-
-		/**
-		* @brief Closest Hit.
-		*/ 
-		offset = m_RgenRegion.size + m_MissRegion.size;
-		for (uint32_t c = 0; c < hitCount; c++)
-		{
-			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
-			offset += m_HitRegion.stride;
-		}
+		const auto rayTracingMaterial = ResourcePool<Material>::Load<Material>("RayTracingRenderer.RayTracing.Default", "RayTracingRenderer.RayTracing.Default");
+								  
+		const uint32_t rayGenCount    = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rgen").size());
+		const uint32_t missCount      = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rmiss").size());
+		 
+		m_VulkanRayTracing->CreateRTShaderBindingTable(rayGenCount, missCount, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline());
 	}
 }

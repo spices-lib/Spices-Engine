@@ -136,25 +136,14 @@ namespace Spices {
 
 		/**
 		* @brief Create Shader Binding Table.
-		* @param[in] frameInfo FrameInfo.
 		*/
-		void CreateRTShaderBindingTable(FrameInfo& frameInfo);
+		void CreateRTShaderBindingTable();
 
 	private:
 
 		/**
-		* @brief VulkanRayTracing.
+		* @brief In Used VulkanRayTracing.
 		*/
 		static std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
-
-		std::unique_ptr<VulkanBuffer> m_RTSBTBuffer;
-		std::unordered_map<std::string, uint32_t> m_HitGroups;
-
-		VkStridedDeviceAddressRegionKHR m_RgenRegion{};
-		VkStridedDeviceAddressRegionKHR m_MissRegion{};
-		VkStridedDeviceAddressRegionKHR m_HitRegion{};
-		VkStridedDeviceAddressRegionKHR m_CallRegion{};
-
-		std::unique_ptr<RayTracingR::MeshDescBuffer> m_DescArray;
 	};
 }

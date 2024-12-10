@@ -2,6 +2,8 @@
 #include "VulkanRayTracing.h"
 #include "VulkanMemoryAllocator.h"
 #include "VulkanQueryPool.h"
+#include "VulkanDevice.h"
+#include "Core/Library/MemoryLibrary.h"
 
 namespace Spices {
 
@@ -259,18 +261,16 @@ namespace Spices {
 		});
 	}
 
-#ifdef VK_NV_ray_tracing_motion_blur
-
 	void VulkanRayTracing::BuildTLAS(
 		const std::vector<VkAccelerationStructureInstanceKHR>&  instances , 
 		VkBuildAccelerationStructureFlagsKHR                    flags     , 
 		bool                                                    update
 	)
 	{
+		SPICES_PROFILE_ZONE;
+
 		BuildTLAS(instances, flags, update, false);
 	}
-
-#endif
 
 	void VulkanRayTracing::CmdCreateTLAS(
 		VkCommandBuffer                       cmdBuf           , 
@@ -389,6 +389,108 @@ namespace Spices {
 		* @brief Build the TLAS.
 		*/
 		m_VulkanState.m_VkFunc.vkCmdBuildAccelerationStructuresKHR(cmdBuf, 1, &buildInfo, &pBuildOffsetInfo);
+	}
+
+	void VulkanRayTracing::CreateRTShaderBindingTable(uint32_t rgenCount, uint32_t missCount, VkPipeline pipeline)
+	{
+		SPICES_PROFILE_ZONE;
+
+		const uint32_t hitCount                 = static_cast<uint32_t>(m_HitGroups.size());
+								                
+		const auto handleCount                  = rgenCount + missCount + hitCount;
+		const uint32_t handleSize               = VulkanDevice::GetRTPipelineProperties().shaderGroupHandleSize;
+
+		/**
+		* @brief The SBT(buffer) need to have starting groups to be aligned and handles in the group to be aligned.
+		*/
+		const uint32_t handleSizeAligned        = MemoryLibrary::align_up(handleSize, VulkanDevice::GetRTPipelineProperties().shaderGroupHandleAlignment);
+
+		m_RgenRegion.stride                     = MemoryLibrary::align_up(handleSizeAligned, VulkanDevice::GetRTPipelineProperties().shaderGroupBaseAlignment);
+		m_RgenRegion.size                       = m_RgenRegion.stride;  // The size member of pRayGenShaderBindingTable must be equal to its stride member
+
+		m_MissRegion.stride                     = handleSizeAligned;
+		m_MissRegion.size                       = MemoryLibrary::align_up(missCount * handleSizeAligned, VulkanDevice::GetRTPipelineProperties().shaderGroupBaseAlignment);
+
+		m_HitRegion.stride                      = handleSizeAligned;
+		m_HitRegion.size                        = MemoryLibrary::align_up(hitCount * handleSizeAligned, VulkanDevice::GetRTPipelineProperties().shaderGroupBaseAlignment);
+
+		/**
+		* @brief Get the shader group handles.
+		*/
+		const uint32_t dataSize                 = handleCount * handleSize;
+		std::vector<uint8_t> handles(dataSize);
+		VK_CHECK(m_VulkanState
+			.m_VkFunc
+			.vkGetRayTracingShaderGroupHandlesKHR(
+			m_VulkanState.m_Device , 
+			pipeline               , 
+			0                      , 
+			handleCount            , 
+			dataSize               , 
+			handles.data()
+		))
+
+		/**
+		* @brief Allocate a buffer for storing the SBT.
+		*/
+		VkDeviceSize sbtSize = m_RgenRegion.size + m_MissRegion.size + m_HitRegion.size + m_CallRegion.size;
+
+		m_RTSBTBuffer = std::make_unique<VulkanBuffer>(
+			m_VulkanState                                , 
+			"SBTBuffer"                                  ,
+			sbtSize                                      , 
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT             | 
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT    | 
+			VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR , 
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT          | 
+			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
+
+		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_BUFFER, (uint64_t)m_RTSBTBuffer->Get(), m_VulkanState.m_Device, "SBT Buffer")
+
+		m_RgenRegion.deviceAddress              = m_RTSBTBuffer->GetAddress();
+		m_MissRegion.deviceAddress              = m_RTSBTBuffer->GetAddress() + m_RgenRegion.size;
+		m_HitRegion.deviceAddress               = m_RTSBTBuffer->GetAddress() + m_RgenRegion.size + m_MissRegion.size;
+
+		/**
+		* @brief Helper to retrieve the handle data.
+		*/
+		auto getHandle = [&](int i) { return handles.data() + i * handleSize; };
+
+		/**
+		* @brief Map the SBT buffer and write in the handles.
+		*/
+		uint64_t offset                         = 0;
+		uint32_t handleIdx                      = 0 ;
+
+		/**
+		* @brief Ray Generation.
+		*/ 
+		for (uint32_t c = 0; c < rgenCount; c++)
+		{
+			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
+			m_RgenRegion.stride;
+		}
+
+		/**
+		* @brief Miss.
+		*/ 
+		offset = m_RgenRegion.size;
+		for (uint32_t c = 0; c < missCount; c++)
+		{
+			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
+			offset += m_MissRegion.stride;
+		}
+
+		/**
+		* @brief Closest Hit.
+		*/ 
+		offset = m_RgenRegion.size + m_MissRegion.size;
+		for (uint32_t c = 0; c < hitCount; c++)
+		{
+			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
+			offset += m_HitRegion.stride;
+		}
 	}
 
 	void VulkanRayTracing::CmdCreateBLAS(

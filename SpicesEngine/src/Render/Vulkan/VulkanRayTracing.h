@@ -11,6 +11,9 @@ namespace Spices {
 	*/
 	class VulkanQueryPool;
 
+	/**
+	* @brief Wrapper of Scene RayTracing (KHR/VK) Features and Data.
+	*/
 	class VulkanRayTracing : public VulkanObject
 	{
 	public:
@@ -45,8 +48,15 @@ namespace Spices {
 		
 	public:
 
+		/**
+		* @brief Constructor Function.
+		* @param[in] vulkanState VulkanState.
+		*/
 		VulkanRayTracing(VulkanState& vulkanState);
 
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~VulkanRayTracing() override;
 
 		void Destroy();
@@ -69,54 +79,115 @@ namespace Spices {
 
 		void UpdateBlas(uint32_t blasIdx, const BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags) const;
 
+		/******************************************TLAS*******************************************/
+
 		/**
 		* @brief Creating the top-level acceleration structure from the vector of Instance.
 		* The resulting TLAS will be stored in m_tlas.
 		* update is to rebuild the Tlas with updated matrices.
+		* @param[in] instances Scene MeshPack Instances data.
+		* @param[in] flags VkBuildAccelerationStructureFlagsKHR.
+		* @param[in] update True if want update rather than create new one.
 		*/
 		void BuildTLAS(
-			const std::vector<VkAccelerationStructureInstanceKHR>& instances,
-			VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
-			bool update = false
+			const std::vector<VkAccelerationStructureInstanceKHR>& instances   ,
+			VkBuildAccelerationStructureFlagsKHR                   flags     = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
+			bool                                                   update    = false
 		);
-
-#ifdef VK_NV_ray_tracing_motion_blur
-
-		void BuildTLAS(
-			const std::vector<VkAccelerationStructureMotionInstanceNV>& instances,
-			VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_MOTION_BIT_NV,
-			bool update = false
-		);
-
-#endif
 
 		/**
 		* @brief Build TLAS from an array of VkAccelerationStructureInstanceKHR.
-		* Use motion=true with VkAccelerationStructureMotionInstanceNV.
 		* The resulting TLAS will be stored in m_tlas.
 		* update is to rebuild the Tlas with updated matrices, flag must have the 'allow_update'
+		* @param[in] instances Scene MeshPack Instances data.
+		* @param[in] flags VkBuildAccelerationStructureFlagsKHR.
+		* @param[in] update True if want update rather than create new one.
+		* @param[in] motion True if  with VkAccelerationStructureMotionInstanceNV.
 		*/
 		template<class T>
 		void BuildTLAS(
-			const std::vector<T>& instances,
-			VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
-			bool update = false,
-			bool motion = false
+			const std::vector<T>&                instances   ,
+			VkBuildAccelerationStructureFlagsKHR flags     = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
+			bool                                 update    = false,
+			bool                                 motion    = false
 		);
 
 		/**
 		* @brief Low level of Tlas creation.
-		*  Creating the TLAS, called by buildTlas.
+		* Creating the TLAS, called by buildTlas.
+		* @param[in] cmdBuf VkCommandBuffer.
+		* @param[in] countInstance number of instances.
+		* @param[in] instBufferAddr Buffer address of instances.
+		* @param[in] scratchBuffer ScratchBuffer Buffer.
+		* @param[in] flags Build creation flag.
+		* @param[in] update Update == animation.
+		* @param[in] motion Motion Blur.
 		*/
 		void CmdCreateTLAS(
-			VkCommandBuffer                      cmdBuf         ,   // Command buffer.
-			uint32_t                             countInstance  ,   // number of instances.
-			VkDeviceAddress                      instBufferAddr ,   // Buffer address of instances.
-			std::unique_ptr<VulkanBuffer>&       scratchBuffer  ,   // ScratchBuffer Buffer.
-			VkBuildAccelerationStructureFlagsKHR flags          ,   // Build creation flag.
-			bool                                 update         ,   // Update == animation.
-			bool                                 motion             // Motion Blur.
+			VkCommandBuffer                      cmdBuf         ,
+			uint32_t                             countInstance  ,
+			VkDeviceAddress                      instBufferAddr ,
+			std::unique_ptr<VulkanBuffer>&       scratchBuffer  ,
+			VkBuildAccelerationStructureFlagsKHR flags          ,
+			bool                                 update         ,
+			bool                                 motion          
 		);
+
+		/*****************************************************************************************/
+
+		std::unordered_map<std::string, uint32_t>& GetHitGroups() { return m_HitGroups; }
+
+		/*****************************Shader Binding Table****************************************/
+
+		/**
+		* @brief Create Shader Binding Table.
+		* @param[in] rgenCount Ray Generation shader count in raytracing material.
+		* @param[in] missCount Ray Missing shader count in raytracing material.
+		* @param[in] pipeline RayTracing Pipeline.
+		*/
+		void CreateRTShaderBindingTable(uint32_t rgenCount, uint32_t missCount, VkPipeline pipeline);
+
+		/**
+		* @brief Get SBT RgenRegion.
+		* @return Returns SBT RgenRegion.
+		*/
+		VkStridedDeviceAddressRegionKHR& GetRgenRegion() { return m_RgenRegion; }
+
+		/**
+		* @brief Get SBT MissRegion.
+		* @return Returns SBT MissRegion.
+		*/
+		VkStridedDeviceAddressRegionKHR& GetMissRegion() { return m_MissRegion; }
+
+		/**
+		* @brief Get SBT HitRegion.
+		* @return Returns SBT HitRegion.
+		*/
+		VkStridedDeviceAddressRegionKHR& GetHitRegion() { return m_HitRegion; }
+
+		/**
+		* @brief Get SBT CallRegion.
+		* @return Returns SBT CallRegion.
+		*/
+		VkStridedDeviceAddressRegionKHR& GetCallRegion() { return m_CallRegion; }
+
+		/*****************************************************************************************/
+
+		/**************************************Mesh Description***********************************/
+
+		/**
+		* @brief Set Mesh Description Buffer.
+		* @param[in] buffer Mesh Description Buffer.
+		*/
+		void SetMeshDescBuffer(std::shared_ptr<RayTracingR::MeshDescBuffer> buffer) { m_MeshDescBuffer = buffer; }
+
+		/**
+		* @brief Get Mesh Description Buffer.
+		* @return Returns Mesh Description Buffer.
+		*/
+		std::shared_ptr<RayTracingR::MeshDescBuffer> GetMeshDescBuffer() { return m_MeshDescBuffer; }
+
+		/*****************************************************************************************/
 
 	private:
 
@@ -154,6 +225,46 @@ namespace Spices {
 
 		std::vector<AccelKHR> m_blas;  // Bottom-level acceleration structure
 		AccelKHR              m_tlas;  // Top-level acceleration structure
+		std::unordered_map<std::string, uint32_t> m_HitGroups;
+
+
+		/*****************************Shader Binding Table****************************************/
+
+		/**
+		* @brief Shader Binding Table Buffer.
+		*/
+		std::unique_ptr<VulkanBuffer> m_RTSBTBuffer;
+
+		/**
+		* @brief Ray Generation Region.
+		*/
+		VkStridedDeviceAddressRegionKHR m_RgenRegion{};
+
+		/**
+		* @brief Ray Missing Region.
+		*/
+		VkStridedDeviceAddressRegionKHR m_MissRegion{};
+
+		/**
+		* @brief Ray Hit Region.
+		*/
+		VkStridedDeviceAddressRegionKHR m_HitRegion{};
+
+		/**
+		* @brief Ray Callable Region.
+		*/
+		VkStridedDeviceAddressRegionKHR m_CallRegion{};
+
+		/*****************************************************************************************/
+
+		/**************************************Mesh Description***********************************/
+
+		/**
+		* @brief Scene Mesh Description Buffer
+		*/
+		std::shared_ptr<RayTracingR::MeshDescBuffer> m_MeshDescBuffer;
+
+		/*****************************************************************************************/
 	};
 
 	template<class T>
@@ -164,6 +275,8 @@ namespace Spices {
 		bool                                 motion
 	)
 	{
+		SPICES_PROFILE_ZONE;
+
 		/**
 		* @brief Cannot call buildTlas twice except to update.
 		*/
@@ -174,21 +287,21 @@ namespace Spices {
 		* @brief Create a buffer holding the actual instance data (matrices++) for use by the AS builder.
 		*/
 		VulkanBuffer instancesBuffer(
-			m_VulkanState,
-			"TLASInstancesBuffer",
-			sizeof(T) * instances.size(),
-			VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 
-			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+			m_VulkanState                              ,
+			"TLASInstancesBuffer"                      ,
+			sizeof(T) * instances.size()               ,
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT           |
+			VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT  | 
+			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR ,
 			0
 		);
 
 		VulkanBuffer stagingBuffer(
-			m_VulkanState,
-			"StagingBuffer",
-			sizeof(T) * instances.size(),
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+			m_VulkanState                        ,
+			"StagingBuffer"                      ,
+			sizeof(T) * instances.size()         ,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT     ,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT  |
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
 
@@ -207,25 +320,33 @@ namespace Spices {
 			/**
 			* @brief Make sure the copy of the instance buffer are copied before triggering the acceleration structure build.
 			*/
-			VkMemoryBarrier barrier{};
+			VkMemoryBarrier                        barrier{};
 			barrier.sType                        = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
 			barrier.srcAccessMask                = VK_ACCESS_TRANSFER_WRITE_BIT;
 			barrier.dstAccessMask                = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
 
 			vkCmdPipelineBarrier(
-				commandBuffer,
-				VK_PIPELINE_STAGE_TRANSFER_BIT,
-				VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
-				0,
-				1,
-				&barrier,
-				0,
-				nullptr,
-				0,
+				commandBuffer                                          ,
+				VK_PIPELINE_STAGE_TRANSFER_BIT                         ,
+				VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR ,
+				0                                                      ,
+				1                                                      ,
+				&barrier                                               ,
+				0                                                      ,
+				nullptr                                                ,
+				0                                                      ,
 				nullptr
 			);
 
-			CmdCreateTLAS(commandBuffer, countInstance, instBufferAddr, scratchBuffer, flags, update, motion);
+			CmdCreateTLAS(
+				commandBuffer  ,
+				countInstance  , 
+				instBufferAddr , 
+				scratchBuffer  , 
+				flags          , 
+				update         ,
+				motion
+			);
 		});
 	}
 }

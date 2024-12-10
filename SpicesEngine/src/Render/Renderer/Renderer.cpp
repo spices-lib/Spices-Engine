@@ -935,11 +935,13 @@ namespace Spices {
 	}
 
 	Renderer::RayTracingRenderBehaveBuilder::RayTracingRenderBehaveBuilder(
-		Renderer* renderer     ,
-		uint32_t  currentFrame ,
-		uint32_t  currentImage
+		Renderer*         renderer     ,
+		VulkanRayTracing* rayTracing   ,
+		uint32_t          currentFrame ,
+		uint32_t          currentImage
 	)
 		: RenderBehaveBuilder(renderer, currentFrame, currentImage)
+		, m_VulkanRayTracing(rayTracing)
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -1094,16 +1096,11 @@ namespace Spices {
 		RenderBehaveBuilder::BindDescriptorSetAsync(infos, name, bindPoint);
 	}
 
-	void Renderer::RayTracingRenderBehaveBuilder::TraceRays(
-		const VkStridedDeviceAddressRegionKHR* rgenRegion ,
-		const VkStridedDeviceAddressRegionKHR* missRegion ,
-		const VkStridedDeviceAddressRegionKHR* hitRegion  ,
-		const VkStridedDeviceAddressRegionKHR* callRegion
-	) const
+	void Renderer::RayTracingRenderBehaveBuilder::TraceRays() const
 	{
 		SPICES_PROFILE_ZONE;
 		
-		const uint32_t width = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
+		const uint32_t width  = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
 		const uint32_t height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
 
 		/*
@@ -1111,13 +1108,13 @@ namespace Spices {
 		* @see https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/8038.
 		*/
 		m_Renderer->m_VulkanState.m_VkFunc.vkCmdTraceRaysKHR(
-			m_CommandBuffer,
-			rgenRegion,
-			missRegion,
-			hitRegion,
-			callRegion,
-			width,
-			height,
+			m_CommandBuffer                      ,
+			&m_VulkanRayTracing->GetRgenRegion() ,
+			&m_VulkanRayTracing->GetMissRegion() ,
+			&m_VulkanRayTracing->GetHitRegion()  ,
+			&m_VulkanRayTracing->GetCallRegion() ,
+			width                                ,
+			height                               ,
 			1
 		);
 	}
