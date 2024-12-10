@@ -185,7 +185,7 @@ namespace Spices {
 		}
 	}
 
-	VulkanCommandPoolThreadWapper::~VulkanCommandPoolThreadWapper()
+	VulkanCommandPoolThreadWrapper::~VulkanCommandPoolThreadWrapper()
 	{
 		SPICES_PROFILE_ZONE;
 

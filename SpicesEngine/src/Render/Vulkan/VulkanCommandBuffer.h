@@ -56,16 +56,16 @@ namespace Spices {
 	};
 
 	/**
-	* @brief Wapper of Instance/Delete VkCommandPool in thread.
+	* @brief Wrapper of Instance/Delete VkCommandPool in thread.
 	*/
-	class VulkanCommandPoolThreadWapper
+	class VulkanCommandPoolThreadWrapper
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		VulkanCommandPoolThreadWapper() 
+		VulkanCommandPoolThreadWrapper() 
 			: m_GraphicThreadId(-1)
 			, m_ComputeThreadId(-1)
 		{}
@@ -73,7 +73,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanCommandPoolThreadWapper();
+		virtual ~VulkanCommandPoolThreadWrapper();
 
 	public:
 
@@ -89,9 +89,9 @@ namespace Spices {
 	};
 
 	/**
-	* @brief Thread Unique TCWapper.
+	* @brief Thread Unique VulkanCommandPoolThreadWrapper.
 	*/
-	static _declspec(thread) VulkanCommandPoolThreadWapper pTLSVulkanCommandPool;
+	static _declspec(thread) VulkanCommandPoolThreadWrapper pTLSVulkanCommandPool;
 
 	/**
 	* @brief VulkanCommandBuffer Class.
