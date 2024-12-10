@@ -401,6 +401,39 @@ namespace Spices {
 		}
 	}
 
+	void VulkanDescriptorSet::UpdateDescriptorSet(uint32_t binding, const VkAccelerationStructureKHR& accel) const
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkDescriptorType type = m_Bindings.find(binding)->second.descriptorType;
+
+		assert(type == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR);
+
+		/**
+		* @brief Instance a VkWriteDescriptorSetAccelerationStructureKHR.
+		*/
+		VkWriteDescriptorSetAccelerationStructureKHR descASInfo {};
+		descASInfo.sType                          = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
+		descASInfo.accelerationStructureCount     = 1;
+		descASInfo.pAccelerationStructures        = &accel;
+
+		/**
+		* @brief Instance a VkWriteDescriptorSet.
+		*/
+		VkWriteDescriptorSet write{};
+		write.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.dstBinding            = binding;
+		write.dstSet                = m_DescriptorSet;
+		write.descriptorType        = type;
+		write.pNext                 = &descASInfo;
+		write.descriptorCount       = 1;
+
+		/**
+		* @brief Update DescriptorSet.
+		*/
+		vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &write, 0, nullptr);
+	}
+
 	void VulkanDescriptorSet::UpdateBindLessTextureDescriptorSet(ImageInfo& imageInfo) const
 	{
 		SPICES_PROFILE_ZONE;

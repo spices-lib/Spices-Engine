@@ -267,6 +267,15 @@ namespace Spices {
         ) const;
         
         /**
+        * @brief Update this descriptor set.
+        * @param[in] accel VkAccelerationStructureKHR.
+        */
+        void UpdateDescriptorSet(
+            uint32_t                          binding ,
+            const VkAccelerationStructureKHR& accel
+        ) const;
+
+        /**
         * @brief Update this bind less descriptor set.
         * @param[in] imageInfo ImageInfo.
         */

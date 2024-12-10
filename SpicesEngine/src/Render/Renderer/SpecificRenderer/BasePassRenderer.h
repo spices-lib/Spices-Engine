@@ -42,7 +42,7 @@ namespace Spices {
 			const std::shared_ptr<VulkanDevice>&         device              ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool
 		)
-			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, true, true)
+			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, true)
 		{}
 
 		/**

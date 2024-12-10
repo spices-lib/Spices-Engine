@@ -19,8 +19,7 @@ namespace Spices {
 		const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool        ,
 		const std::shared_ptr<VulkanDevice>&         device                ,
 		const std::shared_ptr<RendererResourcePool>& rendererResourcePool  ,
-		bool                                         isLoadDefaultMaterial ,
-		bool                                         isRegistryDGCPipeline
+		bool                                         isLoadDefaultMaterial
 	)
 		: m_VulkanState             (vulkanState           )
 		, m_DescriptorPool          (DescriptorPool        )
@@ -28,7 +27,6 @@ namespace Spices {
 		, m_RendererResourcePool    (rendererResourcePool  )
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
-		, m_IsRegistryDGCPipeline   (isRegistryDGCPipeline )
 		, m_IsActive                (false)
 	{}
 
@@ -49,16 +47,15 @@ namespace Spices {
 		/**
 		* @brief Create specific renderer default material.
 		*/
-		CreateDefaultMaterial();
-		CreateDGCMaterial();
+		if (m_IsLoadDefaultMaterial)
+		{
+			CreateDefaultMaterial();
+		}
 		
 		/**
 		* @brief Create Device Generated Commands Layout.
 		*/
-		if (m_IsRegistryDGCPipeline)
-		{
-			CreateDeviceGeneratedCommandsLayout();
-		}
+		CreateDeviceGeneratedCommandsLayout();
 	}
 	
 	void Renderer::OnSlateResize()
@@ -206,8 +203,6 @@ namespace Spices {
 	void Renderer::CreateDefaultMaterial()
 	{
 		SPICES_PROFILE_ZONE;
-		
-		if (!m_IsLoadDefaultMaterial) return;
 
 		/**
         * @brief Iter all subpass.
@@ -230,30 +225,17 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::CreateDGCMaterial()
+	void Renderer::CreateDGCMaterial(const std::string& subPass)
 	{
 		SPICES_PROFILE_ZONE;
-
-		if (!m_IsRegistryDGCPipeline) return;
 		
-		/**
-		* @brief Iter all subpass.
-		*/
-		m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
-				
-			std::stringstream ss;
-			ss << m_RendererName << "." << K << ".Default";
-			
-			/**
-			* @brief Registry DGC Pipeline.
-			*/
-			RegistryDGCPipeline(ss.str(), K);
+		std::stringstream ss;
+		ss << m_RendererName << "." << subPass << ".Default";
 
-			/**
-			* @brief Not break loop.
-			*/
-			return false;
-		});
+		/**
+		* @brief Registry DGC Pipeline.
+		*/
+		RegistryDGCPipeline(ss.str(), subPass);
 	}
 
 	VkPipelineLayout Renderer::CreatePipelineLayout(
@@ -1721,8 +1703,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const auto descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
-
+		const auto& descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
+		
 		for (auto& pair : descriptorSets)
 		{
 			/**

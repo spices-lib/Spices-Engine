@@ -67,7 +67,6 @@ namespace Spices {
 		* @param[in] device The shared pointer of VulkanDevice, used for render pass's formats query.
 		* @param[in] rendererResourcePool The shared pointer of RendererResourcePool, used for registry/access RT.
 		* @param[in] isLoadDefaultMaterial True if need load a default material.
-		* @param[in] isRegistryDGCPipeline True if need registry dgc pipeline.
 		*/
 		Renderer
 		(
@@ -76,8 +75,7 @@ namespace Spices {
 			const std::shared_ptr<VulkanDescriptorPool>& DescriptorPool          ,
 			const std::shared_ptr<VulkanDevice>&         device                  ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool    ,
-			bool                                         isLoadDefaultMaterial = true ,
-			bool                                         isRegistryDGCPipeline = false
+			bool                                         isLoadDefaultMaterial = true
 		);
 
 		/**
@@ -231,9 +229,10 @@ namespace Spices {
 		void CreateDefaultMaterial();
 
 		/**
-		* @brief Create Specific Renderer DGC Material. 
+		* @brief Create Specific Renderer DGC Material.
+		* @param[in] subPass SubPass Name.
 		*/
-		void CreateDGCMaterial();
+		void CreateDGCMaterial(const std::string& subPass);
 		
 		/**
 		* @brief Create Pipeline Layout with material's descriptorset and renderer's descriptor set.
@@ -1181,6 +1180,18 @@ namespace Spices {
 			) const;
 
 			/**
+			* @brief Update AccelerationStructure in descriptorSet.
+			* @param[in] set descriptorSet index.
+			* @param[in] binding descriptorSet binding.
+			* @param[in] accel VkAccelerationStructureKHR.
+			*/
+			void UpdateAccelerationStructure(
+				uint32_t set     , 
+				uint32_t binding , 
+				const VkAccelerationStructureKHR& accel
+			);
+
+			/**
 			* @brief End a preview sub pass and stat next sub pass.
 			* @param[in] subPassName The name of next sub pass.
 			*/
@@ -1860,11 +1871,6 @@ namespace Spices {
 		bool m_IsLoadDefaultMaterial;
 
 		/**
-		* @brief Whether should registry dgc pipeline.
-		*/
-		bool m_IsRegistryDGCPipeline;
-
-		/**
 		* @brief Whether this renderer is actived(submit commands in RendererBehaveBuilder).
 		*/
 		bool m_IsActive;
@@ -2052,7 +2058,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Regenerate dgc pipeline");
 
-			CreateDGCMaterial();
+			CreateDGCMaterial(subPassName);
 		}
 
 		/**
@@ -2339,6 +2345,21 @@ namespace Spices {
 		* @breif Update uniform buffer.
 		*/
 		m_HandledSubPass->SetBuffer({ set, binding }, data, size, offset);
+	}
+
+	inline void Renderer::RenderBehaveBuilder::UpdateAccelerationStructure(
+		uint32_t set     , 
+		uint32_t binding , 
+		const VkAccelerationStructureKHR& accel
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		String2 m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
+
+		const auto& descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
+
+		descriptorSets.find(set)->second->UpdateDescriptorSet(binding, accel);
 	}
 
 	template<typename T>

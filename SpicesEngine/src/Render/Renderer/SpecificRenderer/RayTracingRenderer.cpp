@@ -69,8 +69,12 @@ namespace Spices {
 		* @brief Wait for last frame render finish.
 		* So we can recreate BLAS/TLAS safely.
 		*/
-		vkDeviceWaitIdle(m_VulkanState.m_Device);
-		
+		{
+			SPICES_PROFILE_ZONEN("Wait for GPU Work finish");
+
+			vkDeviceWaitIdle(m_VulkanState.m_Device);
+		}
+
 		/**
 		* @brief Destroy old AS if created before.
 		*/
@@ -125,6 +129,8 @@ namespace Spices {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("RayTracing"));
 		
 		builder.BindPipeline("RayTracingRenderer.RayTracing.Default");
+
+		builder.UpdateAccelerationStructure(2, 0, m_VulkanRayTracing->GetAccelerationStructure());
 
 		builder.UpdateStorageBuffer(3, 0, m_DescArray.get());
 		

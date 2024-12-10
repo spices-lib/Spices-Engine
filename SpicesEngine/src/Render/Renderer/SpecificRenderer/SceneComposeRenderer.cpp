@@ -77,13 +77,6 @@ namespace Spices {
 		.Build(RayTracingRenderer::GetAccelerationStructure());
 	}
 
-	void SceneComposeRenderer::OnMeshAddedWorld()
-	{
-		SPICES_PROFILE_ZONE;
-
-		Renderer::OnSlateResize();
-	}
-
 	void SceneComposeRenderer::CreatePipeline(
 		std::shared_ptr<Material>        material ,
 		VkPipelineLayout&                layout   ,
@@ -125,6 +118,8 @@ namespace Spices {
 		builder.UpdateStorageBuffer<RayTracingR::PointLightBuffer>(3, 1, [&](auto& ssbo) {
 			GetPointLight(frameInfo, ssbo.lights);
 		});
+
+		builder.UpdateAccelerationStructure(4, 0, RayTracingRenderer::GetAccelerationStructure());
 		
 		builder.BindPipeline("SceneComposeRenderer.SceneCompose.Default");
 

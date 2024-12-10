@@ -60,11 +60,11 @@ namespace Spices {
 
 			SPICES_PROFILE_ZONEN("CreateBasicMeshEntity");
 			
-			const std::shared_ptr<T> pack = std::make_shared<T>(std::forward<Args>(args)...);
+			const std::shared_ptr<T> pack    = std::make_shared<T>(std::forward<Args>(args)...);
 			const std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack).Build();
-			
+
 			pack->SetMaterial("BasePassRenderer.Mesh.Default");
-			
+
 			CreateMeshEntity(world, "Cube", mesh);
 		});
 	}
