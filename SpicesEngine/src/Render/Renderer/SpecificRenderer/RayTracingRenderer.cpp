@@ -85,7 +85,7 @@ namespace Spices {
 			* @brief Submit new raytracing instance.
 			*/
 			//AsyncTask(ThreadPoolEnum::Game, [&](std::shared_ptr<VulkanRayTracing> newInstance) {
-				m_RenderCache->PushToCaches(m_VulkanRayTracing);
+				m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_VulkanRayTracing);
 				m_VulkanRayTracing = rayTracingInstance;
 			//}, rayTracingInstance);
 		});

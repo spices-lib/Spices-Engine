@@ -30,29 +30,34 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONE;
 
-			ClearCaches();
+			for (int i = 0; i < MaxFrameInFlight; i++)
+			{
+				ClearCaches(i);
+			}
 		};
 
 		/**
 		* @brief Push a garbage to caches.
+		* @param[in] frameIndex .
 		* @param[in] any anything.
 		*/
 		template<typename T>
-		void PushToCaches(T&& any)
+		void PushToCaches(uint32_t frameIndex, T&& any)
 		{
 			SPICES_PROFILE_ZONE;
 
-			m_Caches.push_back(any);
+			m_Caches[frameIndex].push_back(any);
 		}
 
 		/**
 		* @brief Clear all caches.
+		* @param[in] frameIndex .
 		*/
-		void ClearCaches()
+		void ClearCaches(uint32_t frameIndex)
 		{
 			SPICES_PROFILE_ZONE;
 
-			m_Caches.clear();
+			m_Caches[frameIndex].clear();
 		}
 
 	private:
@@ -60,6 +65,6 @@ namespace Spices {
 		/**
 		* @brief Renderer caches data.
 		*/
-		std::vector<std::any> m_Caches;
+		std::array<std::vector<std::any>, MaxFrameInFlight> m_Caches;
 	};
 }

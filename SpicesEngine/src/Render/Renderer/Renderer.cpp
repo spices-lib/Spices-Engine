@@ -518,7 +518,7 @@ namespace Spices {
 		* @brief Clear unused renderer caches.
 		*/
 		{
-			//m_Renderer->m_RenderCache->ClearCaches();
+			m_Renderer->m_RenderCache->ClearCaches(m_CurrentFrame);
 		}
 	}
 
@@ -2482,7 +2482,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2501,7 +2501,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2520,7 +2520,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2545,7 +2545,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 		
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2567,7 +2567,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(pipelineName) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[pipelineName]);
+			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[pipelineName]);
 		}
 
 		m_Renderer->m_Pipelines[pipelineName] = pipeline;

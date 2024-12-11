@@ -420,13 +420,13 @@ namespace Spices {
 		/**
 		* @brief Instance a VkWriteDescriptorSet.
 		*/
-		VkWriteDescriptorSet write{};
-		write.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.dstBinding            = binding;
-		write.dstSet                = m_DescriptorSet;
-		write.descriptorType        = type;
-		write.pNext                 = &descASInfo;
-		write.descriptorCount       = 1;
+		VkWriteDescriptorSet                        write{};
+		write.sType                               = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.dstBinding                          = binding;
+		write.dstSet                              = m_DescriptorSet;
+		write.descriptorType                      = type;
+		write.pNext                               = &descASInfo;
+		write.descriptorCount                     = 1;
 
 		/**
 		* @brief Update DescriptorSet.
