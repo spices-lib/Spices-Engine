@@ -12,7 +12,7 @@
 
 namespace Spices {
 	
-	std::unique_ptr<VulkanRayTracing> RayTracingRenderer::m_VulkanRayTracing = nullptr;
+	std::shared_ptr<VulkanRayTracing> RayTracingRenderer::m_VulkanRayTracing = nullptr;
 
 	RayTracingRenderer::RayTracingRenderer(
 		const std::string&                           rendererName          ,
@@ -25,7 +25,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_VulkanRayTracing = std::make_unique<VulkanRayTracing>(m_VulkanState);
+		m_VulkanRayTracing = std::make_shared<VulkanRayTracing>(m_VulkanState);
 	}
 
 	RayTracingRenderer::~RayTracingRenderer()
@@ -54,7 +54,7 @@ namespace Spices {
 		.AddAccelerationStructure(2, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                    /* @brief Acceleration Structure.         */
 		.AddStorageTexture(2, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayImage" }, VK_FORMAT_R32G32B32A32_SFLOAT)                  /* @brief Ray Tracing Output Image.       */
 		.AddStorageTexture(2, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayEntityID", "RayTriangleID" }, VK_FORMAT_R32_SFLOAT)       /* @brief Ray Tracing Output IDs.         */
-		.AddStorageBuffer(3, 0, sizeof(RayTracingR::MeshDescBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                        /* @brief World Mesh Buffer.              */
+		.AddStorageBuffer(3, 0, sizeof(MeshDescBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                                     /* @brief World Mesh Buffer.              */
 		.AddStorageBuffer(3, 1, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                /* @brief World Directional Light Buffer. */
 		.AddStorageBuffer(3, 2, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                      /* @brief World PointLight Buffer.        */
 		.AddTexture<Texture2D>(4, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})       /* @brief temp.                           */
@@ -63,35 +63,37 @@ namespace Spices {
 
 	void RayTracingRenderer::OnMeshAddedWorld()
 	{
-		SPICES_PROFILE_ZONE;
+		AsyncTask(ThreadPoolEnum::Custom, [&]() {
 
-		/**
-		* @brief Wait for last frame render finish.
-		* So we can recreate BLAS/TLAS safely.
-		*/
-		{
-			SPICES_PROFILE_ZONEN("Wait for GPU Work finish");
+			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
-			vkDeviceWaitIdle(m_VulkanState.m_Device);
-		}
+			std::shared_ptr<VulkanRayTracing> rayTracingInstance = std::make_shared<VulkanRayTracing>(m_VulkanState);
 
-		/**
-		* @brief Destroy old AS if created before.
-		*/
-		m_VulkanRayTracing->Destroy();
+			/**
+			* @brief Create BLAS/TLAS.
+			*/
+			CreateBottomLevelAS(FrameInfo::Get(), rayTracingInstance);
+			CreateTopLevelAS   (FrameInfo::Get(), rayTracingInstance);
 
-		/**
-		* @brief Prepare RayTracing AC Structure ans SBT.
-		*/
-		CreateBottomLevelAS(FrameInfo::Get());
-		CreateTopLevelAS(FrameInfo::Get());
+			/**
+			* @brief Cache hit groups.
+			*/
+			SetHitGroupsCache(rayTracingInstance->GetHitGroups());
 
-		/**
-		* @breif ReCreate DefaultMaterial.
-		*/
-		CreateDefaultMaterial();
+			/**
+			* @brief Create Pipeline/SBT.
+			*/
+			CreateDefaultMaterial();
+			CreateRTShaderBindingTable(rayTracingInstance);
 
-		CreateRTShaderBindingTable();
+			/**
+			* @brief Submit new raytracing instance.
+			*/
+			AsyncTask(ThreadPoolEnum::Game, [&](std::shared_ptr<VulkanRayTracing> newInstance) {
+				m_RenderCache->PushToCaches(m_VulkanRayTracing);
+				m_VulkanRayTracing = newInstance;
+			}, rayTracingInstance);
+		});
 	}
 
 	void RayTracingRenderer::CreatePipeline(
@@ -107,7 +109,7 @@ namespace Spices {
 		.NullBindingDescriptions()
 		.NullAttributeDescriptions()
 		.SetPipelineLayout(layout)
-		.BuildRayTracing(m_VulkanRayTracing->GetHitGroups());
+		.BuildRayTracing(*GetHitGroupsCache());
 	}
 
 	void RayTracingRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)
@@ -116,7 +118,7 @@ namespace Spices {
 
 		if (m_VulkanRayTracing->GetAccelerationStructure() == VK_NULL_HANDLE) return;
 
-		UpdateTopLevelAS(frameInfo);
+		UpdateTopLevelAS(frameInfo, m_VulkanRayTracing);
 
 		if(frameInfo.m_RendererType != RendererType::PathTracing) return;
 		
@@ -154,7 +156,7 @@ namespace Spices {
 		builder.EndRenderPass();
 	}
 
-	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo)
+	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo, std::shared_ptr<VulkanRayTracing> ratTracingInstance)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -162,7 +164,7 @@ namespace Spices {
 		* @brief BLAS - Storing each primitive in a geometry.
 		*/
 		std::vector<VulkanRayTracing::BlasInput> allBlas;
-		m_HitGroups.clear();
+		std::shared_ptr<std::unordered_map<std::string, uint32_t>> hitGroups = std::make_shared<std::unordered_map<std::string, uint32_t>>();
 		
 		/**
 		* @brief Iter all MeshComponents.
@@ -175,13 +177,15 @@ namespace Spices {
 			auto blas = meshComp.GetMesh()->CreateMeshPackASInput();
 			allBlas.insert(allBlas.end(), blas.begin(), blas.end());
 
-			meshComp.GetMesh()->AddMaterialToHitGroup(m_HitGroups);
+			meshComp.GetMesh()->AddMaterialToHitGroup(*hitGroups);
 		}
+
+		ratTracingInstance->SetHitGroups(hitGroups);
 
 		/**
 		* @brief Build BLAS.
 		*/
-		m_VulkanRayTracing->BuildBLAS(
+		ratTracingInstance->BuildBLAS(
 			allBlas, 
 			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | 
 			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR 
@@ -189,14 +193,14 @@ namespace Spices {
 		);
 	}
  
-	void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo, bool update)
+	void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo, std::shared_ptr<VulkanRayTracing> ratTracingInstance, bool update)
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::vector<VkAccelerationStructureInstanceKHR> tlas;
 
 		int index = 0;
-		std::shared_ptr<RayTracingR::MeshDescBuffer> descBuffer = std::make_shared<RayTracingR::MeshDescBuffer>();
+		std::shared_ptr<MeshDescBuffer> descBuffer = std::make_shared<MeshDescBuffer>();
 
 		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
@@ -211,7 +215,7 @@ namespace Spices {
 				VkAccelerationStructureInstanceKHR                            rayInst{};
 				rayInst.transform                                           = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());          // Position of the instance
 				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
-				rayInst.accelerationStructureReference                      = m_VulkanRayTracing->GetBlasDeviceAddress(index);
+				rayInst.accelerationStructureReference                      = ratTracingInstance->GetBlasDeviceAddress(index);
 				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
 				rayInst.mask                                                = 0xFF;                                                       // Only be hit if rayMask & instance.mask != 0
 				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                                    // We will use the same hit group for all objects
@@ -225,12 +229,12 @@ namespace Spices {
 			});
 		}
 		
-		m_VulkanRayTracing->SetMeshDescBuffer(descBuffer);
+		ratTracingInstance->SetMeshDescBuffer(descBuffer);
 
 		/**
 		* @brief Build TLAS.
 		*/
-		m_VulkanRayTracing->BuildTLAS(
+		ratTracingInstance->BuildTLAS(
 			tlas,
 			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
 			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR      |
@@ -239,17 +243,17 @@ namespace Spices {
 		);
 	}
 	
-	void RayTracingRenderer::UpdateTopLevelAS(FrameInfo& frameInfo, bool update)
+	void RayTracingRenderer::UpdateTopLevelAS(FrameInfo& frameInfo, std::shared_ptr<VulkanRayTracing> ratTracingInstance, bool update)
 	{
 		SPICES_PROFILE_ZONE;
 
 		if(!(frameInfo.m_World->GetMarker() & World::NeedUpdateTLAS)) return;
 		frameInfo.m_World->ClearMarkerWithBits(World::NeedUpdateTLAS);
 		
-		CreateTopLevelAS(frameInfo, update);
+		CreateTopLevelAS(frameInfo, ratTracingInstance, update);
 	}
 
-	void RayTracingRenderer::CreateRTShaderBindingTable()
+	void RayTracingRenderer::CreateRTShaderBindingTable(std::shared_ptr<VulkanRayTracing> ratTracingInstance)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -258,6 +262,18 @@ namespace Spices {
 		const uint32_t rayGenCount    = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rgen").size());
 		const uint32_t missCount      = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rmiss").size());
 		 
-		m_VulkanRayTracing->CreateRTShaderBindingTable(rayGenCount, missCount, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline());
+		ratTracingInstance->CreateRTShaderBindingTable(rayGenCount, missCount, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline());
+	}
+
+	std::shared_ptr<std::unordered_map<std::string, uint32_t>> RayTracingRenderer::GetHitGroupsCache()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!m_HitGroupsCache)
+		{
+			m_HitGroupsCache = std::make_shared<std::unordered_map<std::string, uint32_t>>();
+		}
+		
+		return m_HitGroupsCache;
 	}
 }

@@ -108,7 +108,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		FillIndirectRenderData<MeshComponent>("Mesh");	
+		static bool added = false;
+
+		if (!added)
+		{
+			added = true;
+
+			FillIndirectRenderData<MeshComponent>("Mesh");
+		}
 	}
 
 	void BasePassRenderer::CreatePipeline(

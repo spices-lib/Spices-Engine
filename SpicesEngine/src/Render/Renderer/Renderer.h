@@ -17,6 +17,7 @@
 #include "Debugger/Perf/NsightPerfGPUProfilerOneshotCollection.h"
 #include "Core/Container/BehaveStateList.h"
 #include "..\..\Core\Thread\ThreadModel.h"
+#include "Render/Renderer/RendererCache/RendererCache.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -1067,36 +1068,6 @@ namespace Spices {
 			*/
 			void DrawFullScreenTriangleAsync() const;
 
-			/**
-			* @brief Add a memory Barrier.
-			* @param[in] srcAccessMask VkAccessFlags.
-			* @param[in] dstAccessMask VkAccessFlags.
-			* @param[in] srcStageMask VkPipelineStageFlags.
-			* @param[in] dstStageMask VkPipelineStageFlags.
-			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
-			*/
-			void PipelineMemoryBarrier(
-				VkAccessFlags          srcAccessMask ,
-				VkAccessFlags          dstAccessMask ,
-				VkPipelineStageFlags   srcStageMask  ,
-				VkPipelineStageFlags   dstStageMask  ,
-				VkCommandBuffer        cmdBuffer = VK_NULL_HANDLE
-			);
-
-			/**
-			* @brief Add a memory Barrier.
-			* @param[in] srcAccessMask VkAccessFlags.
-			* @param[in] dstAccessMask VkAccessFlags.
-			* @param[in] srcStageMask VkPipelineStageFlags.
-			* @param[in] dstStageMask VkPipelineStageFlags.
-			*/
-			void PipelineMemoryBarrierAsync(
-				VkAccessFlags          srcAccessMask ,
-				VkAccessFlags          dstAccessMask ,
-				VkPipelineStageFlags   srcStageMask  ,
-				VkPipelineStageFlags   dstStageMask
-			);
-
 			/******************************Update By Value**********************************************************/
 
 			/**
@@ -1360,6 +1331,36 @@ namespace Spices {
 				VkPipelineStageFlags  srcStageMask  = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT ,
 				VkPipelineStageFlags  dstStageMask  = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT    ,
 				VkCommandBuffer       cmdBuffer     = VK_NULL_HANDLE
+			);
+
+			/**
+			* @brief Add a memory Barrier.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			*/
+			void InternalRegionBarrier(
+				VkAccessFlags          srcAccessMask ,
+				VkAccessFlags          dstAccessMask ,
+				VkPipelineStageFlags   srcStageMask  ,
+				VkPipelineStageFlags   dstStageMask  ,
+				VkCommandBuffer        cmdBuffer = VK_NULL_HANDLE
+			);
+
+			/**
+			* @brief Add a memory Barrier.
+			* @param[in] srcAccessMask VkAccessFlags.
+			* @param[in] dstAccessMask VkAccessFlags.
+			* @param[in] srcStageMask VkPipelineStageFlags.
+			* @param[in] dstStageMask VkPipelineStageFlags.
+			*/
+			void InternalRegionBarrierAsync(
+				VkAccessFlags          srcAccessMask ,
+				VkAccessFlags          dstAccessMask ,
+				VkPipelineStageFlags   srcStageMask  ,
+				VkPipelineStageFlags   dstStageMask
 			);
 
 			/****************************************************************************/
@@ -1879,6 +1880,11 @@ namespace Spices {
 		* @brief Data of dgc DGC Draw.
 		*/
 		std::unordered_map<std::string, std::shared_ptr<VulkanDeviceGeneratedCommandsNV>> m_DGCData;
+
+		/**
+		* @brief RendererCache.
+		*/
+		std::shared_ptr<RendererCache> m_RenderCache;
 
 		/**
 		* @brief Allow this class access all data.

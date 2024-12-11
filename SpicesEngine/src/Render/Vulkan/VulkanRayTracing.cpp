@@ -62,7 +62,7 @@ namespace Spices {
 	}
 
 	void VulkanRayTracing::BuildBLAS(
-		const std::vector<BlasInput>& input, 
+		const std::vector<BlasInput>&        input , 
 		VkBuildAccelerationStructureFlagsKHR flags
 	)
 	{
@@ -391,11 +391,23 @@ namespace Spices {
 		m_VulkanState.m_VkFunc.vkCmdBuildAccelerationStructuresKHR(cmdBuf, 1, &buildInfo, &pBuildOffsetInfo);
 	}
 
+	std::shared_ptr<std::unordered_map<std::string, uint32_t>> VulkanRayTracing::GetHitGroups()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!m_HitGroups)
+		{
+			m_HitGroups = std::make_shared<std::unordered_map<std::string, uint32_t>>();
+		}
+
+		return m_HitGroups;
+	}
+
 	void VulkanRayTracing::CreateRTShaderBindingTable(uint32_t rgenCount, uint32_t missCount, VkPipeline pipeline)
 	{
 		SPICES_PROFILE_ZONE;
 
-		const uint32_t hitCount                 = static_cast<uint32_t>(m_HitGroups.size());
+		const uint32_t hitCount                 = static_cast<uint32_t>(m_HitGroups->size());
 								                
 		const auto handleCount                  = rgenCount + missCount + hitCount;
 		const uint32_t handleSize               = VulkanDevice::GetRTPipelineProperties().shaderGroupHandleSize;
@@ -491,6 +503,18 @@ namespace Spices {
 			m_RTSBTBuffer->WriteToBuffer(getHandle(handleIdx++), handleSize, offset);
 			offset += m_HitRegion.stride;
 		}
+	}
+
+	std::shared_ptr<MeshDescBuffer> VulkanRayTracing::GetMeshDescBuffer()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!m_MeshDescBuffer)
+		{
+			m_MeshDescBuffer = std::make_shared<MeshDescBuffer>();
+		}
+
+		return m_MeshDescBuffer;
 	}
 
 	void VulkanRayTracing::CmdCreateBLAS(

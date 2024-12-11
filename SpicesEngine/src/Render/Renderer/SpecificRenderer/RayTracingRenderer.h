@@ -14,11 +14,6 @@ namespace Spices {
 
 	namespace RayTracingR {
 		
-		struct MeshDescBuffer
-		{
-			std::array<uint64_t, SpicesShader::MESH_BUFFER_MAXNUM> descs;
-		};
-		
 		struct DirectionalLightBuffer
 		{
 			std::array<SpicesShader::DirectionalLight, SpicesShader::DIRECTIONALLIGHT_BUFFER_MAXNUM> lights;
@@ -116,34 +111,68 @@ namespace Spices {
 		/**
 		* @brief Create BottomLevelAS with all MeshComponents.
 		* @param[in] frameInfo FrameInfo.
+		* @param[in] ratTracingInstance VulkanRayTracingInstace.
 		*/
-		void CreateBottomLevelAS(FrameInfo& frameInfo);
+		void CreateBottomLevelAS(
+			FrameInfo& frameInfo, 
+			std::shared_ptr<VulkanRayTracing> ratTracingInstance
+		);
 
 		/**
 		* @brief Create TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
+		* @param[in] ratTracingInstance VulkanRayTracingInstance.
 		* @param[in] update default false.
 		*/
-		void CreateTopLevelAS(FrameInfo& frameInfo, bool update = false);
+		void CreateTopLevelAS(
+			FrameInfo& frameInfo, 
+			std::shared_ptr<VulkanRayTracing> ratTracingInstance, 
+			bool update = false
+		);
 
 		/**
 		* @brief Update TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
+		* @param[in] ratTracingInstance VulkanRayTracingInstance.
 		* @param[in] update default true.
 		* @todo Event Queue.
 		*/
-		void UpdateTopLevelAS(FrameInfo& frameInfo, bool update = true);
+		void UpdateTopLevelAS(
+			FrameInfo& frameInfo, 
+			std::shared_ptr<VulkanRayTracing> ratTracingInstance, 
+			bool update = true
+		);
 
 		/**
 		* @brief Create Shader Binding Table.
+		* @param[in] ratTracingInstance VulkanRayTracingInstance.
 		*/
-		void CreateRTShaderBindingTable();
+		void CreateRTShaderBindingTable(std::shared_ptr<VulkanRayTracing> ratTracingInstance);
+
+	private:
+
+		/**
+		* @brief Get HitGroupsCache.
+		* @return Returns HitGroupsCache.
+		*/
+		std::shared_ptr<std::unordered_map<std::string, uint32_t>> GetHitGroupsCache();
+
+		/**
+		* @brief Set HitGroupsCache.
+		* @param[in] cache HitGroupsCache.
+		*/
+		void SetHitGroupsCache(std::shared_ptr<std::unordered_map<std::string, uint32_t>> cache) { m_HitGroupsCache = cache; }
 
 	private:
 
 		/**
 		* @brief In Used VulkanRayTracing.
 		*/
-		static std::unique_ptr<VulkanRayTracing> m_VulkanRayTracing;
+		static std::shared_ptr<VulkanRayTracing> m_VulkanRayTracing;
+
+		/**
+		* @brief Hit groups cached data.
+		*/
+		std::shared_ptr<std::unordered_map<std::string, uint32_t>> m_HitGroupsCache;
 	};
 }

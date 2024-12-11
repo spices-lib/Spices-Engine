@@ -3,6 +3,7 @@
 #include "VulkanUtils.h"
 #include "VulkanCommandBuffer.h"
 #include "VulkanBuffer.h"
+#include "../../../assets/Shaders/src/Header/ShaderCommon.h"
 
 namespace Spices {
 
@@ -11,6 +12,11 @@ namespace Spices {
 	*/
 	class VulkanQueryPool;
 
+	struct MeshDescBuffer
+	{
+		std::array<uint64_t, SpicesShader::MESH_BUFFER_MAXNUM> descs;
+	};
+
 	/**
 	* @brief Wrapper of Scene RayTracing (KHR/VK) Features and Data.
 	*/
@@ -18,6 +24,9 @@ namespace Spices {
 	{
 	public:
 
+		/**
+		* @brief Blas Input data.
+		*/
 		struct BlasInput
 		{
 			// Data used to build acceleration structure geometry
@@ -26,24 +35,33 @@ namespace Spices {
 			VkBuildAccelerationStructureFlagsKHR                  flags{ 0 };
 		};
 
+		/**
+		* @brief AccelStructure Wrapper.
+		*/
 		struct AccelKHR
 		{
-			VkAccelerationStructureKHR                  accel = VK_NULL_HANDLE;
-			std::shared_ptr<VulkanBuffer>               buffer;
+			VkAccelerationStructureKHR    accel = VK_NULL_HANDLE;
+			std::shared_ptr<VulkanBuffer> buffer;
 
+			/**
+			* @brief Free AccelStructure Buffer.
+			*/
 			void FreeBuffer()
 			{
 				buffer = nullptr;
 			}
 		};
 
+		/**
+		* @brief AccelerationStructure Build Info and result.
+		*/
 		struct BuildAccelerationStructure
 		{
-			VkAccelerationStructureBuildGeometryInfoKHR buildInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR };
-			VkAccelerationStructureBuildSizesInfoKHR sizeInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR };
+			VkAccelerationStructureBuildGeometryInfoKHR     buildInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR };
+			VkAccelerationStructureBuildSizesInfoKHR        sizeInfo { VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR };
 			const VkAccelerationStructureBuildRangeInfoKHR* rangeInfo;
-			AccelKHR                                  as;  // result acceleration structure
-			AccelKHR                                 cleanupAS;
+			AccelKHR                                        as;         // result acceleration structure
+			AccelKHR                                        cleanupAS;
 		};
 		
 	public:
@@ -59,9 +77,22 @@ namespace Spices {
 		*/
 		virtual ~VulkanRayTracing() override;
 
+		/**
+		* @brief Destroy all blas/tlas.
+		*/
 		void Destroy();
 
+		/**
+		* @brief Get AccelerationStructure.
+		* @return Returns AccelerationStructure.
+		*/
 		const VkAccelerationStructureKHR& GetAccelerationStructure() const { return m_tlas.accel; };
+
+		/**
+		* @brief Get BLAS Buffer Address.
+		* @param[in] blasId BLAS index.
+		* @return Returns BLAS Buffer Address.
+		*/
 		VkDeviceAddress GetBlasDeviceAddress(uint32_t blasId) const;
 
 		/**
@@ -71,12 +102,20 @@ namespace Spices {
 		* The resulting BLAS (along with the inputs used to build) are stored in m_blas,
 		* and can be referenced by index.
 		* if flag has the 'Compact' flag, the BLAS will be compacted.
+		* @param[in] input BlasInput.
+		* @param[in] flags VkBuildAccelerationStructureFlagsKHR.
 		*/
 		void BuildBLAS(
-			const std::vector<BlasInput>&        input                                                             , 
+			const std::vector<BlasInput>&        input , 
 			VkBuildAccelerationStructureFlagsKHR flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR
 		);
 
+		/**
+		* @brief Update part of BLAS.
+		* @param[in] blasIdx index of BLAS.
+		* @param[in] blas specific BlasInput.
+		* @param[in] flags VkBuildAccelerationStructureFlagsKHR.
+		*/
 		void UpdateBlas(uint32_t blasIdx, const BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags) const;
 
 		/******************************************TLAS*******************************************/
@@ -135,7 +174,21 @@ namespace Spices {
 
 		/*****************************************************************************************/
 
-		std::unordered_map<std::string, uint32_t>& GetHitGroups() { return m_HitGroups; }
+		/**********************************Hit Groups*********************************************/
+
+		/**
+		* @brief Set Scene hit groups.
+		* @param[in] Scene hit groups.
+		*/
+		void SetHitGroups(std::shared_ptr<std::unordered_map<std::string, uint32_t>> groups) { m_HitGroups = groups; }
+
+		/**
+		* @brief Get Scene hit groups.
+		* @return Returns Scene hit groups.
+		*/
+		std::shared_ptr<std::unordered_map<std::string, uint32_t>> GetHitGroups();
+
+		/*****************************************************************************************/
 
 		/*****************************Shader Binding Table****************************************/
 
@@ -179,13 +232,13 @@ namespace Spices {
 		* @brief Set Mesh Description Buffer.
 		* @param[in] buffer Mesh Description Buffer.
 		*/
-		void SetMeshDescBuffer(std::shared_ptr<RayTracingR::MeshDescBuffer> buffer) { m_MeshDescBuffer = buffer; }
+		void SetMeshDescBuffer(std::shared_ptr<MeshDescBuffer> buffer) { m_MeshDescBuffer = buffer; }
 
 		/**
 		* @brief Get Mesh Description Buffer.
 		* @return Returns Mesh Description Buffer.
 		*/
-		std::shared_ptr<RayTracingR::MeshDescBuffer> GetMeshDescBuffer() { return m_MeshDescBuffer; }
+		std::shared_ptr<MeshDescBuffer> GetMeshDescBuffer();
 
 		/*****************************************************************************************/
 
@@ -196,6 +249,11 @@ namespace Spices {
 		* The array of BuildAccelerationStructure was created in buildBlas and the vector of
 		* indices limits the number of BLAS to create at once. This limits the amount of
 		* memory needed when compacting the BLAS.
+		* @param[in] cmdBuf VkCommandBuffer.
+		* @param[in] indices BLAS indices.
+		* @param[in] buildAs BuildAccelerationStructure.
+		* @param[in] scratchAddress .
+		* @param[in] queryPool Query AccelerationStructure data.
 		*/
 		void CmdCreateBLAS(
 			VkCommandBuffer                          cmdBuf         ,
@@ -209,6 +267,10 @@ namespace Spices {
 		* @brief Create and replace a new acceleration structure and buffer based on the size retrieved by the Query.
 		* We have to wait until all BLAS are built, to make a copy in the more suitable memory space.
 		* This is the reason why we used m_cmdPool.submitAndWait(cmdBuf) before calling this function.
+		* @param[in] cmdBuf VkCommandBuffer.
+		* @param[in] indices BLAS indices.
+		* @param[in] buildAs BuildAccelerationStructure.
+		* @param[in] queryPool Query AccelerationStructure data.
 		*/
 		void CmdCompactBLAS(
 			VkCommandBuffer                          cmdBuf   ,
@@ -217,16 +279,51 @@ namespace Spices {
 			std::shared_ptr<VulkanQueryPool>         queryPool
 		) const;
 
-		void DestroyNonCompacted(const std::vector<uint32_t>& indices, std::vector<BuildAccelerationStructure>& buildAs) const;
+		/**
+		* @brief Destroy non compact blas,
+		* @param[in] indices BLAS indices.
+		* @param[in] buildAs BuildAccelerationStructure.
+		*/
+		void DestroyNonCompacted(
+			const std::vector<uint32_t>&             indices , 
+			std::vector<BuildAccelerationStructure>& buildAs
+		) const;
+
+		/**
+		* @brief Is item in flags.
+		* @param[in] item VkFlags.
+		* @param[in] flag VkFlags.
+		* @return Returns true if item in flags.
+		*/
 		bool hasFlag(VkFlags item, VkFlags flag) { return (item & flag) == flag; }
+
+		/**
+		* @brief Create Acceleration.
+		* @param[in] accel VkAccelerationStructureCreateInfoKHR.
+		* @return Returns created Acceleration.
+		*/
 		AccelKHR CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel) const;
 
 	private:
 
-		std::vector<AccelKHR> m_blas;  // Bottom-level acceleration structure
-		AccelKHR              m_tlas;  // Top-level acceleration structure
-		std::unordered_map<std::string, uint32_t> m_HitGroups;
+		/**
+		* @brief Bottom-level acceleration structure.
+		*/
+		std::vector<AccelKHR> m_blas;
 
+		/**
+		* @brief Top-level acceleration structure.
+		*/
+		AccelKHR m_tlas;
+
+		/**********************************Hit Groups*********************************************/
+
+		/**
+		* @brief Scene ray hit shader gtroups.
+		*/
+		std::shared_ptr<std::unordered_map<std::string, uint32_t>> m_HitGroups;
+
+		/*****************************************************************************************/
 
 		/*****************************Shader Binding Table****************************************/
 
@@ -262,7 +359,7 @@ namespace Spices {
 		/**
 		* @brief Scene Mesh Description Buffer
 		*/
-		std::shared_ptr<RayTracingR::MeshDescBuffer> m_MeshDescBuffer;
+		std::shared_ptr<MeshDescBuffer> m_MeshDescBuffer;
 
 		/*****************************************************************************************/
 	};

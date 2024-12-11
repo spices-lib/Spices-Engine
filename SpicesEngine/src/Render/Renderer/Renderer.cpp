@@ -28,7 +28,11 @@ namespace Spices {
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 		, m_IsActive                (false)
-	{}
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_RenderCache = std::make_shared<RendererCache>();
+	}
 
 	void Renderer::OnSystemInitialize()
 	{
@@ -453,6 +457,9 @@ namespace Spices {
 		m_Renderer->m_IsActive = true;
 		m_CommandBuffer = m_Renderer->m_VulkanState.m_GraphicCommandBuffer[currentFrame];
 
+		/**
+		* @brief Create Statistics state list.
+		*/
 		if (!m_Renderer->m_StatisticsStateList)
 		{
 			m_Renderer->m_StatisticsStateList = std::make_shared<scl::behave_state_list<void, RenderBehaveBuilder*, VkCommandBuffer>>();
@@ -505,6 +512,13 @@ namespace Spices {
 			}
 
 			m_Renderer->m_StatisticsStateList->SetState(Queryer::Max + 2);
+		}
+
+		/**
+		* @brief Clear unused renderer caches.
+		*/
+		{
+			//m_Renderer->m_RenderCache->ClearCaches();
 		}
 	}
 
@@ -1238,7 +1252,7 @@ namespace Spices {
 
 		PreprocessDGC_NV(cmdBuffer);
 
-		PipelineMemoryBarrier(
+		InternalRegionBarrier(
 			VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV   ,
 			VK_ACCESS_INDIRECT_COMMAND_READ_BIT         ,
 			VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV ,
@@ -1256,7 +1270,7 @@ namespace Spices {
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			PreprocessDGC_NV(cmdBuffer);
 
-			PipelineMemoryBarrier(
+			InternalRegionBarrier(
 				VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV   ,
 				VK_ACCESS_INDIRECT_COMMAND_READ_BIT         ,
 				VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV ,
@@ -1346,7 +1360,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::PipelineMemoryBarrier(
+	void Renderer::RenderBehaveBuilder::InternalRegionBarrier(
 		VkAccessFlags          srcAccessMask , 
 		VkAccessFlags          dstAccessMask , 
 		VkPipelineStageFlags   srcStageMask  , 
@@ -1378,7 +1392,7 @@ namespace Spices {
 		);
 	}
 
-	void Renderer::RenderBehaveBuilder::PipelineMemoryBarrierAsync(
+	void Renderer::RenderBehaveBuilder::InternalRegionBarrierAsync(
 		VkAccessFlags          srcAccessMask  , 
 		VkAccessFlags          dstAccessMask  , 
 		VkPipelineStageFlags   srcStageMask   , 
@@ -2466,6 +2480,11 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
+		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		{
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+		}
+
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
 	}
 
@@ -2480,6 +2499,11 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
+		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		{
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+		}
+
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
 	}
 
@@ -2493,6 +2517,11 @@ namespace Spices {
 			m_Material->GetShaderPath() ,
 			m_pipelineConfig
 		);
+
+		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		{
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+		}
 
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
 	}
@@ -2514,6 +2543,11 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
+		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		{
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+		}
+		
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
 	}
 
@@ -2530,6 +2564,11 @@ namespace Spices {
 		);
 
 		m_Renderer->m_PipelinesRef.clear();
+
+		if (m_Renderer->m_Pipelines.find(pipelineName) != m_Renderer->m_Pipelines.end())
+		{
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[pipelineName]);
+		}
 
 		m_Renderer->m_Pipelines[pipelineName] = pipeline;
 	}
