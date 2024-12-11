@@ -505,16 +505,11 @@ namespace Spices {
 		}
 	}
 
-	std::shared_ptr<MeshDescBuffer> VulkanRayTracing::GetMeshDescBuffer()
+	Attribute<uint64_t>& VulkanRayTracing::GetMeshDesc()
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (!m_MeshDescBuffer)
-		{
-			m_MeshDescBuffer = std::make_shared<MeshDescBuffer>();
-		}
-
-		return m_MeshDescBuffer;
+		return m_MeshDesc;
 	}
 
 	void VulkanRayTracing::CmdCreateBLAS(

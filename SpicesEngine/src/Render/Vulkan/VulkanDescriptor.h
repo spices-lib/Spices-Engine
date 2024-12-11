@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
+#include "VulkanBuffer.h"
 
 #include <unordered_map>
 #include <vector>
@@ -266,6 +267,15 @@ namespace Spices {
             ImageInfo&  imageInfo
         ) const;
         
+        /**
+        * @brief Update this descriptor set.
+        * @param[in] buffer VulkanBuffer.
+        */
+        void UpdateDescriptorSet(
+            uint32_t                      binding ,
+            std::shared_ptr<VulkanBuffer> buffer
+        ) const;
+
         /**
         * @brief Update this descriptor set.
         * @param[in] accel VkAccelerationStructureKHR.

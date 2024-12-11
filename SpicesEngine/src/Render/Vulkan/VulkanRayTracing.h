@@ -3,6 +3,7 @@
 #include "VulkanUtils.h"
 #include "VulkanCommandBuffer.h"
 #include "VulkanBuffer.h"
+#include "Resources/Mesh/Attribute.h"
 #include "../../../assets/Shaders/src/Header/ShaderCommon.h"
 
 namespace Spices {
@@ -229,16 +230,10 @@ namespace Spices {
 		/**************************************Mesh Description***********************************/
 
 		/**
-		* @brief Set Mesh Description Buffer.
-		* @param[in] buffer Mesh Description Buffer.
+		* @brief Get Mesh Description.
+		* @return Returns Mesh Description.
 		*/
-		void SetMeshDescBuffer(std::shared_ptr<MeshDescBuffer> buffer) { m_MeshDescBuffer = buffer; }
-
-		/**
-		* @brief Get Mesh Description Buffer.
-		* @return Returns Mesh Description Buffer.
-		*/
-		std::shared_ptr<MeshDescBuffer> GetMeshDescBuffer();
+		Attribute<uint64_t>& GetMeshDesc();
 
 		/*****************************************************************************************/
 
@@ -359,7 +354,7 @@ namespace Spices {
 		/**
 		* @brief Scene Mesh Description Buffer
 		*/
-		std::shared_ptr<MeshDescBuffer> m_MeshDescBuffer;
+		Attribute<uint64_t> m_MeshDesc;
 
 		/*****************************************************************************************/
 	};

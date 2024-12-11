@@ -951,6 +951,19 @@ namespace Spices {
 			);
 
 			/**
+			* @brief Bind the pipeline created by CreatePipeline().
+			* Called on RenderBehaveBuilder instanced.
+			* @param[in] pipeline VkPipeline.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindPipeline(
+				VkPipeline           pipeline , 
+				VkCommandBuffer      cmdBuffer    = VK_NULL_HANDLE,
+				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS
+			);
+
+			/**
 			* @brief Bind the pipeline created by CreatePipeline() Async.
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
@@ -1148,6 +1161,18 @@ namespace Spices {
 				void*    data                   , 
 				uint64_t size   = VK_WHOLE_SIZE ,
 				uint64_t offset = 0
+			) const;
+
+			/**
+			* @brief Update a local buffer.
+			* @param[in] set Which set the descriptor will use.
+			* @param[in] binding Which binding the descriptor will use.
+			* @param[in] buffer Specific VulkanBuffer.
+			*/
+			void UpdateStorageBuffer(
+				uint32_t                      set     , 
+				uint32_t                      binding , 
+				std::shared_ptr<VulkanBuffer> buffer
 			) const;
 
 			/**
@@ -1481,6 +1506,19 @@ namespace Spices {
 			) override;
 
 			/**
+			* @brief Bind the pipeline created by CreatePipeline().
+			* Called on RenderBehaveBuilder instanced.
+			* @param[in] pipeline VkPipeline.
+			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
+			* @param[in] bindPoint VkPipelineBindPoint.
+			*/
+			virtual void BindPipeline(
+				VkPipeline           pipeline , 
+				VkCommandBuffer      cmdBuffer    = VK_NULL_HANDLE,
+				VkPipelineBindPoint  bindPoint    = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR
+			) override;
+
+			/**
 			* @brief Bind the pipeline created by CreatePipeline() Async.
 			* Called on RenderBehaveBuilder instanced.
 			* @param[in] materialName also pipelineName.
@@ -1547,6 +1585,20 @@ namespace Spices {
 			* @brief Call vkCmdTraceRaysKHR here.
 			*/
 			void TraceRays() const;
+
+			/**
+			* @brief Call vkCmdTraceRaysKHR here.
+			* @param[in] rgenRegion RayGen Shader Group.
+			* @param[in] missRegion Miss Shader Group.
+			* @param[in] hitRegion Hit Shader Group.
+			* @param[in] callRegion Callable Shader Group.
+			*/
+			void TraceRays(
+				const VkStridedDeviceAddressRegionKHR* rgenRegion,
+				const VkStridedDeviceAddressRegionKHR* missRegion,
+				const VkStridedDeviceAddressRegionKHR* hitRegion,
+				const VkStridedDeviceAddressRegionKHR* callRegion
+			) const;
 
 			/**
 			* @brief Call vkCmdTraceRaysKHR here Async.
@@ -2351,6 +2403,21 @@ namespace Spices {
 		* @breif Update uniform buffer.
 		*/
 		m_HandledSubPass->SetBuffer({ set, binding }, data, size, offset);
+	}
+
+	inline void Renderer::RenderBehaveBuilder::UpdateStorageBuffer(
+		uint32_t                      set     , 
+		uint32_t                      binding , 
+		std::shared_ptr<VulkanBuffer> buffer
+	) const
+	{
+		SPICES_PROFILE_ZONE;
+
+		String2 m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
+
+		const auto& descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
+
+		descriptorSets.find(set)->second->UpdateDescriptorSet(binding, buffer);
 	}
 
 	inline void Renderer::RenderBehaveBuilder::UpdateAccelerationStructure(

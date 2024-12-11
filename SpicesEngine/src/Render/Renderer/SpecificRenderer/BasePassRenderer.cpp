@@ -106,16 +106,12 @@ namespace Spices {
 
 	void BasePassRenderer::OnMeshAddedWorld()
 	{
-		SPICES_PROFILE_ZONE;
+		//AsyncTask(ThreadPoolEnum::Game, [&]() {
 
-		static bool added = false;
-
-		if (!added)
-		{
-			added = true;
+			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
 			FillIndirectRenderData<MeshComponent>("Mesh");
-		}
+		//});
 	}
 
 	void BasePassRenderer::CreatePipeline(

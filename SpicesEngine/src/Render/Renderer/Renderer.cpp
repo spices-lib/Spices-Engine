@@ -518,7 +518,7 @@ namespace Spices {
 		* @brief Clear unused renderer caches.
 		*/
 		{
-			m_Renderer->m_RenderCache->ClearCaches(m_CurrentFrame);
+			//m_Renderer->m_RenderCache->ClearCaches(m_CurrentFrame);
 		}
 	}
 
@@ -569,6 +569,17 @@ namespace Spices {
 			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			bindPoint,
 			m_Renderer->m_Pipelines[materialName]->GetPipeline()
+		);
+	}
+
+	void Renderer::RenderBehaveBuilder::BindPipeline(VkPipeline pipeline, VkCommandBuffer cmdBuffer, VkPipelineBindPoint bindPoint)
+	{
+		SPICES_PROFILE_ZONE;
+
+		vkCmdBindPipeline(
+			cmdBuffer ? cmdBuffer : m_CommandBuffer,
+			bindPoint,
+			pipeline
 		);
 	}
 
@@ -1056,6 +1067,17 @@ namespace Spices {
 		RenderBehaveBuilder::BindPipeline(materialName, cmdBuffer, bindPoint);
 	}
 
+	void Renderer::RayTracingRenderBehaveBuilder::BindPipeline(
+		VkPipeline          pipeline , 
+		VkCommandBuffer     cmdBuffer, 
+		VkPipelineBindPoint bindPoint
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		RenderBehaveBuilder::BindPipeline(pipeline, cmdBuffer, bindPoint);
+	}
+
 	void Renderer::RayTracingRenderBehaveBuilder::BindPipelineAsync(
 		const std::string&  materialName , 
 		VkPipelineBindPoint bindPoint
@@ -1129,6 +1151,33 @@ namespace Spices {
 			&m_VulkanRayTracing->GetCallRegion() ,
 			width                                ,
 			height                               ,
+			1
+		);
+	}
+
+	void Renderer::RayTracingRenderBehaveBuilder::TraceRays(
+		const VkStridedDeviceAddressRegionKHR* rgenRegion,
+		const VkStridedDeviceAddressRegionKHR* missRegion,
+		const VkStridedDeviceAddressRegionKHR* hitRegion,
+		const VkStridedDeviceAddressRegionKHR* callRegion
+	) const
+	{
+		SPICES_PROFILE_ZONE;
+		
+		const uint32_t width  = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().x);
+		const uint32_t height = static_cast<uint32_t>(SlateSystem::GetRegister()->GetViewPort()->GetPanelSize().y);
+
+		/**
+		* @brief Trace rays.
+		*/
+		m_Renderer->m_VulkanState.m_VkFunc.vkCmdTraceRaysKHR(
+			m_CommandBuffer ,
+			rgenRegion      ,
+			missRegion      ,
+			hitRegion       ,
+			callRegion      ,
+			width           ,
+			height          ,
 			1
 		);
 	}

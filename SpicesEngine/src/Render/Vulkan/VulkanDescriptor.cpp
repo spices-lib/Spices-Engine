@@ -401,6 +401,31 @@ namespace Spices {
 		}
 	}
 
+	void VulkanDescriptorSet::UpdateDescriptorSet(uint32_t binding, std::shared_ptr<VulkanBuffer> buffer) const
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkDescriptorType type = m_Bindings.find(binding)->second.descriptorType;
+
+		assert(type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER || type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+
+		/**
+		* @brief Instance a VkWriteDescriptorSet.
+		*/
+		VkWriteDescriptorSet write{};
+		write.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.dstBinding            = binding;
+		write.dstSet                = m_DescriptorSet;
+		write.descriptorType        = type;
+		write.pBufferInfo           = buffer->GetBufferInfo();
+		write.descriptorCount       = 1;
+
+		/**
+		* @brief Update DescriptorSet.
+		*/
+		vkUpdateDescriptorSets(m_VulkanState.m_Device, 1, &write, 0, nullptr);
+	}
+
 	void VulkanDescriptorSet::UpdateDescriptorSet(uint32_t binding, const VkAccelerationStructureKHR& accel) const
 	{
 		SPICES_PROFILE_ZONE;

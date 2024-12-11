@@ -54,7 +54,7 @@ namespace Spices {
 		.AddAccelerationStructure(2, 0, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                    /* @brief Acceleration Structure.         */
 		.AddStorageTexture(2, 1, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayImage" }, VK_FORMAT_R32G32B32A32_SFLOAT)                  /* @brief Ray Tracing Output Image.       */
 		.AddStorageTexture(2, 2, VK_SHADER_STAGE_RAYGEN_BIT_KHR, { "RayEntityID", "RayTriangleID" }, VK_FORMAT_R32_SFLOAT)       /* @brief Ray Tracing Output IDs.         */
-		.AddStorageBuffer(3, 0, sizeof(MeshDescBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                                     /* @brief World Mesh Buffer.              */
+		.AddStorageBuffer(3, 0, SpicesShader::MESH_BUFFER_MAXNUM * sizeof(uint64_t), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)        /* @brief World Mesh Buffer.              */
 		.AddStorageBuffer(3, 1, sizeof(RayTracingR::DirectionalLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                /* @brief World Directional Light Buffer. */
 		.AddStorageBuffer(3, 2, sizeof(RayTracingR::PointLightBuffer), VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR)                      /* @brief World PointLight Buffer.        */
 		.AddTexture<Texture2D>(4, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})       /* @brief temp.                           */
@@ -129,8 +129,8 @@ namespace Spices {
 
 		builder.UpdateAccelerationStructure(2, 0, m_VulkanRayTracing->GetAccelerationStructure());
 
-		builder.UpdateStorageBuffer(3, 0, m_VulkanRayTracing->GetMeshDescBuffer().get());
-		
+		builder.UpdateStorageBuffer(3, 0, m_VulkanRayTracing->GetMeshDesc().buffer);
+
 		builder.UpdateStorageBuffer<RayTracingR::DirectionalLightBuffer>(3, 1, [&](auto& ssbo) {
 			GetDirectionalLight(frameInfo, ssbo.lights);
 		});
@@ -200,7 +200,8 @@ namespace Spices {
 		std::vector<VkAccelerationStructureInstanceKHR> tlas;
 
 		int index = 0;
-		std::shared_ptr<MeshDescBuffer> descBuffer = std::make_shared<MeshDescBuffer>();
+		auto& desc = rayTracingInstance->GetMeshDesc().attributes;
+		desc->resize(SpicesShader::MESH_BUFFER_MAXNUM, 0);
 
 		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
 		for (auto& e : view)
@@ -222,14 +223,14 @@ namespace Spices {
 
 				tlas.push_back(rayInst);
 
-				descBuffer->descs[index] = v->GetMeshDesc().GetBufferAddress();
+				(*desc)[index] = v->GetMeshDesc().GetBufferAddress();
 
 				index += 1;
 				return false;
 			});
 		}
 
-		rayTracingInstance->SetMeshDescBuffer(descBuffer);
+		rayTracingInstance->GetMeshDesc().CreateBuffer("MeshDescBuffer", VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 
 		/**
 		* @brief Build TLAS.
