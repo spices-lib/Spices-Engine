@@ -115,7 +115,7 @@ namespace Spices {
 		*/
 		void CreateBottomLevelAS(
 			FrameInfo& frameInfo, 
-			std::shared_ptr<VulkanRayTracing> ratTracingInstance
+			std::shared_ptr<VulkanRayTracing> rayTracingInstance
 		);
 
 		/**
@@ -126,7 +126,7 @@ namespace Spices {
 		*/
 		void CreateTopLevelAS(
 			FrameInfo& frameInfo, 
-			std::shared_ptr<VulkanRayTracing> ratTracingInstance, 
+			std::shared_ptr<VulkanRayTracing> rayTracingInstance,
 			bool update = false
 		);
 
@@ -139,7 +139,7 @@ namespace Spices {
 		*/
 		void UpdateTopLevelAS(
 			FrameInfo& frameInfo, 
-			std::shared_ptr<VulkanRayTracing> ratTracingInstance, 
+			std::shared_ptr<VulkanRayTracing> rayTracingInstance,
 			bool update = true
 		);
 
@@ -147,7 +147,7 @@ namespace Spices {
 		* @brief Create Shader Binding Table.
 		* @param[in] ratTracingInstance VulkanRayTracingInstance.
 		*/
-		void CreateRTShaderBindingTable(std::shared_ptr<VulkanRayTracing> ratTracingInstance);
+		void CreateRTShaderBindingTable(std::shared_ptr<VulkanRayTracing> rayTracingInstance);
 
 	private:
 
