@@ -1,11 +1,11 @@
 /**
-* @file WorldPickIDQueryer.cpp.
-* @brief The WorldPickIDQueryer & NativeScriptRegister Class Implementation.
+* @file WorldPickIDQuerier.cpp.
+* @brief The WorldPickIDQuerier & NativeScriptRegister Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "WorldPickIDQueryer.h"
+#include "WorldPickIDQuerier.h"
 #include "Systems/SlateSystem.h"
 #include "Slate/Imgui/ViewPort/ImguiViewport.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
@@ -17,14 +17,14 @@
 
 namespace Spices {
 
-	void WorldPickIDQueryer::OnEvent(Event& e)
+	void WorldPickIDQuerier::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 
-		dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(WorldPickIDQueryer::OnMouseButtonPressed));
+		dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(WorldPickIDQuerier::OnMouseButtonPressed));
 	}
 
-	bool WorldPickIDQueryer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	bool WorldPickIDQuerier::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
 		SPICES_PROFILE_ZONE;
 		

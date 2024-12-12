@@ -1,6 +1,6 @@
 /**
-* @file ViewPortResizeQueryer.h.
-* @brief The ViewPortResizeQueryer Definitions.
+* @file ViewPortResizeQuerier.h.
+* @brief The ViewPortResizeQuerier Definitions.
 * @author Spices.
 */
 
@@ -18,19 +18,19 @@ namespace Spices {
 	/**
 	* @brief Script of handle viewport resize event. 
 	*/
-	class ViewPortResizeQueryer : public NativeScript
+	class ViewPortResizeQuerier : public NativeScript
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		ViewPortResizeQueryer() = default;
+		ViewPortResizeQuerier() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ViewPortResizeQueryer() override = default;
+		virtual ~ViewPortResizeQuerier() override = default;
 
 		/**
 		* @brief This interface defines the behave on specific component tick every frame.

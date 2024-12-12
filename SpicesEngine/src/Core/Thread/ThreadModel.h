@@ -9,6 +9,7 @@
 #include "ThreadPool.h"
 #include "DelayThreadPool.h"
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
+#include "Core/Container/TaskQueue.h"
 
 namespace Spices {
 
@@ -17,9 +18,10 @@ namespace Spices {
 	*/
 	enum class ThreadPoolEnum
 	{
-		Game    = 0,    /* @brief Game ThreadPool.   */
-		RHI     = 1,    /* @brief RHI ThreadPool.    */
-		Custom  = 2,    /* @brief Custom ThreadPool. */
+		Main    = 0,    /* @brief Main Thread.       */
+		Game    = 1,    /* @brief Game ThreadPool.   */
+		RHI     = 2,    /* @brief RHI ThreadPool.    */
+		Custom  = 3,    /* @brief Custom ThreadPool. */
 	};
 
 	/**
@@ -94,6 +96,12 @@ namespace Spices {
 		*/
 		std::shared_ptr<VulkanCmdThreadPool> GetRHIThreadPool() { return m_RHIThreadPool; }
 
+		/**
+		* @brief Get MainThread Task Queue.
+		* @return Returns MainThread Task Queue.
+		*/
+		scl::task_queue& GetMainTaskQueue() { return m_MainThreadTasks; }
+
 	private:
 
 		/**
@@ -115,6 +123,11 @@ namespace Spices {
 		* @brief RHI ThreadPool.
 		*/
 		std::shared_ptr<VulkanCmdThreadPool> m_RHIThreadPool;
+
+		/**
+		* @brief Tasks must be done in main thread.
+		*/
+		scl::task_queue m_MainThreadTasks;
 	};
 	
 	template<typename F, typename ...Args>
@@ -122,18 +135,18 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (pool == ThreadPoolEnum::RHI)
+		if (!(pool == ThreadPoolEnum::Game || pool == ThreadPoolEnum::Custom))
 		{
-			SPICES_CORE_ERROR("RHI task shouble be submit by AnyscRHITask()")
+			SPICES_CORE_ERROR("task shouble be submit to game/custom thread")
 			return std::future<decltype(func(std::forward<Args>(args)...))>();
 		}
 
 		switch (pool)
 		{
-		case Spices::ThreadPoolEnum::Custom:
-			return ThreadModel::Get()->GetCustomThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
 		case Spices::ThreadPoolEnum::Game:
 			return ThreadModel::Get()->GetGameThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
+		case Spices::ThreadPoolEnum::Custom:
+			return ThreadModel::Get()->GetCustomThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
 		}
 	}
 
@@ -142,6 +155,18 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		assert(pool == ThreadPoolEnum::RHI);
+
 		return ThreadModel::Get()->GetRHIThreadPool()->SubmitPoolTask(func, std::forward<Args>(args)...);
+	}
+
+	template<typename Func, typename ...Args>
+	inline void AsyncMainTask(ThreadPoolEnum pool, Func&& func, Args && ...args)
+	{
+		SPICES_PROFILE_ZONE;
+
+		assert(pool == ThreadPoolEnum::Main);
+
+		ThreadModel::Get()->GetMainTaskQueue().PushTask(std::bind(func, std::forward<Args>(args)...));
 	}
 }

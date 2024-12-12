@@ -1,11 +1,11 @@
 /**
-* @file ViewPortResizeQueryer.cpp.
-* @brief The ViewPortResizeQueryer & NativeScriptRegister Class Implementation.
+* @file ViewPortResizeQuerier.cpp.
+* @brief The ViewPortResizeQuerier & NativeScriptRegister Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "ViewPortResizeQueryer.h"
+#include "ViewPortResizeQuerier.h"
 #include "Systems/SlateSystem.h"
 #include "Slate/Imgui/ViewPort/ImguiViewport.h"
 #include "Core/Event/SlateEvent.h"
@@ -13,7 +13,7 @@
 
 namespace Spices {
 
-	void ViewPortResizeQueryer::OnTick(TimeStep& ts)
+	void ViewPortResizeQuerier::OnTick(TimeStep& ts)
 	{
 		SPICES_PROFILE_ZONE;
 		

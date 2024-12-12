@@ -1299,6 +1299,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::stringstream ss;
+		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
+
+		/**
+		* @brief Return if DGC Pipeline is not prepared yet.
+		*/
+		if (m_Renderer->m_Pipelines.find(ss.str()) == m_Renderer->m_Pipelines.end()) return;
+
 		PreprocessDGC_NV(cmdBuffer);
 
 		InternalRegionBarrier(
@@ -2266,7 +2274,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_InputInfos.clear();
 		if (!m_Renderer->m_DGCData[subPassName])
 		{
 			m_Renderer->m_DGCData[subPassName] = std::make_shared<VulkanDeviceGeneratedCommandsNV>(m_Renderer->m_VulkanState);
@@ -2612,7 +2619,7 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
-		m_Renderer->m_PipelinesRef.clear();
+		m_Renderer->m_PipelinesRef[m_HandledSubPass->GetName()].clear();
 
 		if (m_Renderer->m_Pipelines.find(pipelineName) != m_Renderer->m_Pipelines.end())
 		{

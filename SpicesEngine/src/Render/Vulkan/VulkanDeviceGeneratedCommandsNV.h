@@ -55,6 +55,24 @@ namespace Spices {
 
 		/**
 		* @brief Set InputStrides.
+		* @param[in] strides InputStrides.
+		*/
+		void SetInputStride(const std::vector<uint32_t>& strides) { m_InputStrides = strides; }
+
+		/**
+		* @brief Get Strides.
+		* @return Returns Strides.
+		*/
+		const uint32_t GetStrides() const { return m_Strides; }
+
+		/**
+		* @brief Set Strides.
+		* @param[in] stride Strides.
+		*/
+		void SetStrides(uint32_t stride) { m_Strides = stride; }
+
+		/**
+		* @brief Set InputStrides.
 		* @param[in] streams InputStreams.
 		*/
 		void SetInputStreams(const std::vector<VkIndirectCommandsStreamNV>& streams) { m_InputStreams = streams; }
@@ -97,10 +115,22 @@ namespace Spices {
 		const std::vector<VkIndirectCommandsLayoutTokenNV>& GetLayoutTokens() const { return m_LayoutTokens; }
 
 		/**
+		* @brief Set Layout Tokens.
+		* @param[in] layouts Layout Tokens.
+		*/
+		void SetLayoutTokens(const std::vector<VkIndirectCommandsLayoutTokenNV>& layouts) { m_LayoutTokens = layouts; }
+
+		/**
 		* @brief Get Command Layout.
 		* @return Returns Command Layout.
 		*/
 		VkIndirectCommandsLayoutNV GetCommandLayout() const { return m_IndirectCmdsLayout; }
+
+		/**
+		* @brief Set Command Layout.
+		* @param[in] layout VkIndirectCommandsLayoutNV.
+		*/
+		void SetCommandLayout(VkIndirectCommandsLayoutNV layout) { m_IndirectCmdsLayout = layout; }
 
 		/**
 		* @brief Preprocess with Indirect Command Buffer.

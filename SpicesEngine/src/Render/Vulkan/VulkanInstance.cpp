@@ -87,7 +87,7 @@ namespace Spices {
 		*/
 		std::vector<VkValidationFeatureEnableEXT> validationFeatureEnable;
 
-#if 0 // Set to 1 if want print message in shader.
+#if 0 // Set to 1 if want print message in shader.(Cause Device Wait 1s suspend.)
 
 		validationFeatureEnable.push_back(VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT);
 	

@@ -13,9 +13,10 @@
 #include "Core/Event/Event.h"
 #include "SlateSystem.h"
 
-#include "Scripts/ViewPortResizeQueryer.h"
-#include "Scripts/WorldPickIDQueryer.h"
-#include "Scripts/WorldMarkQueryer.h"
+#include "Scripts/ViewPortResizeQuerier.h"
+#include "Scripts/WorldPickIDQuerier.h"
+#include "Scripts/WorldMarkQuerier.h"
+#include "Scripts/MainTaskQuerier.h"
 
 namespace Spices {
 
@@ -23,9 +24,10 @@ namespace Spices {
 	{
 		m_NativeScriptRegister = std::make_unique<NativeScriptRegister>();
 
-		m_NativeScriptRegister->Register<ViewPortResizeQueryer>();
-		m_NativeScriptRegister->Register<WorldPickIDQueryer>();
-		m_NativeScriptRegister->Register<WorldMarkQueryer>();
+		m_NativeScriptRegister->Register<ViewPortResizeQuerier>();
+		m_NativeScriptRegister->Register<WorldPickIDQuerier>();
+		m_NativeScriptRegister->Register<WorldMarkQuerier>();
+		m_NativeScriptRegister->Register<MainTaskQuerier>();
 	}
 
 	void NativeScriptSystem::OnSystemShutDown()

@@ -1,11 +1,11 @@
 /**
-* @file WorldMarkQueryer.cpp.
-* @brief The WorldMarkQueryer & NativeScriptRegister Class Implementation.
+* @file WorldMarkQuerier.cpp.
+* @brief The WorldMarkQuerier & NativeScriptRegister Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "WorldMarkQueryer.h"
+#include "WorldMarkQuerier.h"
 #include "Render/FrameInfo.h"
 #include "World/World/World.h"
 #include "Core/Event/WorldEvent.h"
@@ -13,7 +13,7 @@
 
 namespace Spices {
 
-	void WorldMarkQueryer::OnTick(TimeStep& ts)
+	void WorldMarkQuerier::OnTick(TimeStep& ts)
 	{
 		SPICES_PROFILE_ZONE;
 		

@@ -1,6 +1,6 @@
 /**
-* @file WorldPickIDQueryer.h.
-* @brief The WorldPickIDQueryer Definitions.
+* @file WorldPickIDQuerier.h.
+* @brief The WorldPickIDQuerier Definitions.
 * @author Spices.
 */
 
@@ -19,19 +19,19 @@ namespace Spices {
 	/**
 	* @brief Script of handle world entity pick.
 	*/
-	class WorldPickIDQueryer : public NativeScript
+	class WorldPickIDQuerier : public NativeScript
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		WorldPickIDQueryer() = default;
+		WorldPickIDQuerier() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~WorldPickIDQueryer() override = default;
+		virtual ~WorldPickIDQuerier() override = default;
 
 		/**
 		* @brief This interface defines the behave on specific component tick every frame.

@@ -163,9 +163,10 @@ namespace Spices {
 		* @brief Fill in World RenderAble data to IndirectBuffer.
 		* @tparam T Specific Component.
 		* @param[in] subPassName .
+		* @return Returns new VulkanDeviceGeneratedCommandsNV.
 		*/
 		template<typename T>
-		void FillIndirectRenderData(const std::string& subPassName);
+		std::shared_ptr<VulkanDeviceGeneratedCommandsNV> FillIndirectRenderData(const std::string& subPassName);
 
 		/**
 		* @brief Get RendererPass.
@@ -1947,12 +1948,25 @@ namespace Spices {
 	};
 
 	template<typename T>
-	inline void Renderer::FillIndirectRenderData(const std::string& subPassName)
+	inline std::shared_ptr<VulkanDeviceGeneratedCommandsNV> Renderer::FillIndirectRenderData(const std::string& subPassName)
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto indirectPtr = m_DGCData[subPassName];
-		indirectPtr->ResetInput();
+		auto indirectPtr = std::make_shared<VulkanDeviceGeneratedCommandsNV>(m_VulkanState);
+		auto srcPtr      = m_DGCData[subPassName];
+
+		/**
+		* @brief Cache original data.
+		*/
+		indirectPtr->SetInputStride(srcPtr->GetInputStrides());
+		indirectPtr->SetStrides(srcPtr->GetStrides());
+		indirectPtr->SetCommandLayout(srcPtr->GetCommandLayout());
+		indirectPtr->SetLayoutTokens(srcPtr->GetLayoutTokens());
+
+		/**
+		* @brief Move original to caches.
+		*/
+		m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, srcPtr);
 
 		/**
 		* @brief Prepare ShaderGroup
@@ -1983,7 +1997,7 @@ namespace Spices {
 			}
 			indirectPtr->SetSequenceCount(nSequences);
 
-			m_PipelinesRef[subPassName].resize(pipelineMap.size());
+			m_PipelinesRef[subPassName].resize(pipelineMap.size(), nullptr);
 
 			for (auto& pair : pipelineMap)
 			{
@@ -2140,6 +2154,8 @@ namespace Spices {
 			indirectPtr->SetPreprocessSize(memReqs.memoryRequirements.size);
 			indirectPtr->CreatePreprocessBuffer(memReqs.memoryRequirements.size);
 		}
+
+		return indirectPtr;
 	}
 
 	template<typename F>

@@ -1,6 +1,6 @@
 /**
-* @file WorldMarkQueryer.h.
-* @brief The WorldMarkQueryer Definitions.
+* @file MainTaskQuerier.h.
+* @brief The MainTaskQuerier Definitions.
 * @author Spices.
 */
 
@@ -13,19 +13,19 @@ namespace Spices {
 	/**
 	* @brief Script of handle world mark.
 	*/
-	class WorldMarkQueryer : public NativeScript
+	class MainTaskQuerier : public NativeScript
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		WorldMarkQueryer() = default;
+		MainTaskQuerier() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~WorldMarkQueryer() override = default;
+		virtual ~MainTaskQuerier() override = default;
 
 		/**
 		* @brief This interface defines the behave on specific component tick every frame.
