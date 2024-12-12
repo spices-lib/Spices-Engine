@@ -86,8 +86,13 @@ namespace Spices {
 		* Enable DescriptorSet Index Check.
 		*/
 		std::vector<VkValidationFeatureEnableEXT> validationFeatureEnable;
+
+#if 0 // Set to 1 if want print message in shader.
+
 		validationFeatureEnable.push_back(VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT);
-		
+	
+#endif
+
 		VkValidationFeaturesEXT                               validationFeatures{};
 		validationFeatures.sType                            = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
 		validationFeatures.enabledValidationFeatureCount    = static_cast<uint32_t>(validationFeatureEnable.size());
