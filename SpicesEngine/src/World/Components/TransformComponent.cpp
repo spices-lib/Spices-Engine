@@ -34,6 +34,10 @@ namespace Spices {
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT   |
 			VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
+
+		SetPosition({ 0.0f, 0.0f, 0.0f });
+		SetRotation({ 0.0f, 0.0f, 0.0f });
+		SetScale({ 1.0f, 1.0f, 1.0f });
 	}
 
 	void TransformComponent::OnSerialize()
