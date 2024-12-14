@@ -67,6 +67,11 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		/**
+		* @brief Clear unused caches.
+		*/
+		m_RenderCache->ClearCaches();
+
+		/**
 		* @brief Recreate RenderPass.
 		*/
 		CreateRendererPass();
@@ -75,6 +80,16 @@ namespace Spices {
 		* @brief Create descriptorSet again.
 		*/
 		CreateDescriptorSet();
+	}
+
+	void Renderer::OnMeshAddedWorld()
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Clear unused caches.
+		*/
+		m_RenderCache->ClearCaches();
 	}
 
 	void Renderer::RegistryMaterial(const std::string& materialName, const std::string& subPassName)
@@ -514,13 +529,6 @@ namespace Spices {
 			}
 
 			m_Renderer->m_StatisticsStateList->SetState(Queryer::Max + 2);
-		}
-
-		/**
-		* @brief Clear unused renderer caches.
-		*/
-		{
-			//m_Renderer->m_RenderCache->ClearCaches(m_CurrentFrame);
 		}
 	}
 
@@ -2540,7 +2548,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2559,7 +2567,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2578,7 +2586,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2603,7 +2611,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
 		}
 		
 		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
@@ -2625,7 +2633,7 @@ namespace Spices {
 
 		if (m_Renderer->m_Pipelines.find(pipelineName) != m_Renderer->m_Pipelines.end())
 		{
-			m_Renderer->m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_Renderer->m_Pipelines[pipelineName]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[pipelineName]);
 		}
 
 		m_Renderer->m_Pipelines[pipelineName] = pipeline;

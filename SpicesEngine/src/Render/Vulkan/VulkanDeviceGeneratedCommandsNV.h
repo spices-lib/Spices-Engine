@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "VulkanUtils.h"
 #include "VulkanBuffer.h"
+#include "VulkanIndirectCommmandsLayoutNV.h"
 
 namespace Spices {
 
@@ -124,13 +125,13 @@ namespace Spices {
 		* @brief Get Command Layout.
 		* @return Returns Command Layout.
 		*/
-		VkIndirectCommandsLayoutNV GetCommandLayout() const { return m_IndirectCmdsLayout; }
+		std::shared_ptr<VulkanIndirectCommmandsLayoutNV> GetCommandLayout() const { return m_IndirectCmdsLayout; }
 
 		/**
 		* @brief Set Command Layout.
 		* @param[in] layout VkIndirectCommandsLayoutNV.
 		*/
-		void SetCommandLayout(VkIndirectCommandsLayoutNV layout) { m_IndirectCmdsLayout = layout; }
+		void SetCommandLayout(std::shared_ptr<VulkanIndirectCommmandsLayoutNV> layout) { m_IndirectCmdsLayout = layout; }
 
 		/**
 		* @brief Preprocess with Indirect Command Buffer.
@@ -148,15 +149,15 @@ namespace Spices {
 
 	private:
 
-		std::vector<uint32_t>                        m_InputStrides;
-		uint32_t                                     m_Strides;
-		VkIndirectCommandsLayoutNV                   m_IndirectCmdsLayout;
-		std::vector<VkIndirectCommandsLayoutTokenNV> m_LayoutTokens;
-
-		uint32_t                                     m_NSequence;
-		std::shared_ptr<VulkanBuffer>                m_InputBuffer;
-		std::vector<VkIndirectCommandsStreamNV>      m_InputStreams;
-		std::shared_ptr<VulkanBuffer>                m_PreprocessBuffer;
-		uint32_t                                     m_PreprocessSize;
+		std::vector<uint32_t>                             m_InputStrides;
+		uint32_t                                          m_Strides;
+		std::shared_ptr<VulkanIndirectCommmandsLayoutNV>  m_IndirectCmdsLayout;
+		std::vector<VkIndirectCommandsLayoutTokenNV>      m_LayoutTokens;
+													      
+		uint32_t                                          m_NSequence;
+		std::shared_ptr<VulkanBuffer>                     m_InputBuffer;
+		std::vector<VkIndirectCommandsStreamNV>           m_InputStreams;
+		std::shared_ptr<VulkanBuffer>                     m_PreprocessBuffer;
+		uint32_t                                          m_PreprocessSize;
 	};
 }

@@ -63,6 +63,8 @@ namespace Spices {
 
 	void RayTracingRenderer::OnMeshAddedWorld()
 	{
+		Renderer::OnMeshAddedWorld();
+
 		AsyncTask(ThreadPoolEnum::Custom, [&]() {
 
 			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
@@ -84,10 +86,10 @@ namespace Spices {
 			/**
 			* @brief Submit new raytracing instance.
 			*/
-			AsyncTask(ThreadPoolEnum::Game, [&](std::shared_ptr<VulkanRayTracing> newInstance) {
+			AsyncMainTask(ThreadPoolEnum::Main, [=](std::shared_ptr<VulkanRayTracing> newInstance) {
 
-				vkDeviceWaitIdle(m_VulkanState.m_Device);
-				m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, m_VulkanRayTracing);
+				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
+				m_RenderCache->PushToCaches(m_VulkanRayTracing);
 				m_VulkanRayTracing = newInstance;
 
 			}, rayTracingInstance);

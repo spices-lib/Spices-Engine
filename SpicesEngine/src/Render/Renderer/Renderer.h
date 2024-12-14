@@ -137,7 +137,7 @@ namespace Spices {
 		/**
 		* @breif This interface is called on world mark query tick (registry by MeshComponent).
 		*/
-		virtual void OnMeshAddedWorld() {}
+		virtual void OnMeshAddedWorld();
 
 		/**
 		* @brief Registry material to Specific Renderer.
@@ -1966,7 +1966,7 @@ namespace Spices {
 		/**
 		* @brief Move original to caches.
 		*/
-		m_RenderCache->PushToCaches(FrameInfo::Get().m_FrameIndex, srcPtr);
+		m_RenderCache->PushToCaches(srcPtr);
 
 		/**
 		* @brief Prepare ShaderGroup
@@ -2142,7 +2142,7 @@ namespace Spices {
 			VkGeneratedCommandsMemoryRequirementsInfoNV     memInfo{};
 			memInfo.sType                                 = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
 			memInfo.maxSequencesCount                     = nSequences;
-			memInfo.indirectCommandsLayout                = indirectPtr->GetCommandLayout();
+			memInfo.indirectCommandsLayout                = indirectPtr->GetCommandLayout()->Get();
 			memInfo.pipeline                              = m_Pipelines["BasePassRenderer.Mesh.Default.DGC"]->GetPipeline();
 			memInfo.pipelineBindPoint                     = VK_PIPELINE_BIND_POINT_GRAPHICS;
 

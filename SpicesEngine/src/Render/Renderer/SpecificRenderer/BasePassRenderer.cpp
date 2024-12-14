@@ -106,15 +106,19 @@ namespace Spices {
 
 	void BasePassRenderer::OnMeshAddedWorld()
 	{
+		Renderer::OnMeshAddedWorld();
+
 		AsyncTask(ThreadPoolEnum::Custom, [&]() {
 
 			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
+			CreateDeviceGeneratedCommandsLayout();
+
 			auto dgcInstance = FillIndirectRenderData<MeshComponent>("Mesh");
 
-			AsyncTask(ThreadPoolEnum::Game, [&](auto& newInstance) {
+			AsyncMainTask(ThreadPoolEnum::Main, [=](auto& newInstance) {
 			    
-				vkDeviceWaitIdle(m_VulkanState.m_Device);
+				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
 				m_DGCData["Mesh"] = newInstance;
 
 			}, dgcInstance);

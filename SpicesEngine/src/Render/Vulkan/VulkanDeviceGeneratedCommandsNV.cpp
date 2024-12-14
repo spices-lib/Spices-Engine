@@ -23,14 +23,7 @@ namespace Spices {
 	{}
 
 	VulkanDeviceGeneratedCommandsNV::~VulkanDeviceGeneratedCommandsNV()
-	{
-		SPICES_PROFILE_ZONE;
-
-		if (m_IndirectCmdsLayout)
-		{
-			m_VulkanState.m_VkFunc.vkDestroyIndirectCommandsLayoutNV(m_VulkanState.m_Device, m_IndirectCmdsLayout, nullptr);
-		}
-	}
+	{}
 
 	void VulkanDeviceGeneratedCommandsNV::ResetCommandsLayout()
 	{
@@ -38,11 +31,8 @@ namespace Spices {
 
 		m_InputStrides.clear();
 		m_Strides           = 0;
-		if (m_IndirectCmdsLayout)
-		{
-			m_VulkanState.m_VkFunc.vkDestroyIndirectCommandsLayoutNV(m_VulkanState.m_Device, m_IndirectCmdsLayout, nullptr);
-			m_IndirectCmdsLayout = nullptr;
-		}
+		m_IndirectCmdsLayout = nullptr;
+
 	}
 
 	void VulkanDeviceGeneratedCommandsNV::ResetInput()
@@ -111,10 +101,7 @@ namespace Spices {
 		genInfo.streamCount                    = static_cast<uint32_t>(m_InputStrides.size());
 		genInfo.pStreamStrides                 = m_InputStrides.data();
 
-		/**
-		* @brief Create IndirectCommandsLayout.
-		*/
-		m_VulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(m_VulkanState.m_Device, &genInfo, nullptr, &m_IndirectCmdsLayout);
+		m_IndirectCmdsLayout = std::make_shared<VulkanIndirectCommmandsLayoutNV>(m_VulkanState, genInfo);
 	}
 
 	void VulkanDeviceGeneratedCommandsNV::PreprocessDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const
@@ -130,7 +117,7 @@ namespace Spices {
 		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
 		info.pipeline                      = pipeline;
 		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		info.indirectCommandsLayout        = m_IndirectCmdsLayout;
+		info.indirectCommandsLayout        = m_IndirectCmdsLayout->Get();
 		info.sequencesCount                = m_NSequence;
 		info.streamCount                   = static_cast<uint32_t>(m_InputStreams.size());
 		info.pStreams                      = m_InputStreams.data();
@@ -156,7 +143,7 @@ namespace Spices {
 		info.sType                         = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
 		info.pipeline                      = pipeline;
 		info.pipelineBindPoint             = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		info.indirectCommandsLayout        = m_IndirectCmdsLayout;
+		info.indirectCommandsLayout        = m_IndirectCmdsLayout->Get();
 		info.sequencesCount                = m_NSequence;
 		info.streamCount                   = static_cast<uint32_t>(m_InputStreams.size());
 		info.pStreams                      = m_InputStreams.data();
