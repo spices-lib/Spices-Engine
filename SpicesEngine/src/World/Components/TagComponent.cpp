@@ -24,6 +24,45 @@ namespace Spices {
 
 	}
 
+	void TagComponent::RemoveTag(const std::string& tag)
+	{
+		SPICES_PROFILE_ZONE;
+
+		assert(m_Tags.size() > 0);
+
+		if (m_Tags.size() == 1)
+		{
+			std::stringstream ss;
+			ss << "Remove tag failed: Entity " << *m_Tags.begin() << " must have at lease one tag.";
+
+			SPICES_CORE_WARN(ss.str())
+
+			return;
+		}
+
+		if (m_Tags.find(tag) == m_Tags.end())
+		{
+			std::stringstream ss;
+			ss << "Remove tag failed: Entity " << *m_Tags.begin() << " do not have tag of " << tag;
+
+			SPICES_CORE_WARN(ss.str())
+
+			return;
+		}
+			
+		m_Tags.erase(tag);
+	}
+
+	void TagComponent::Rename(const std::string& tag)
+	{
+		SPICES_PROFILE_ZONE;
+
+		assert(m_Tags.size() > 0);
+
+		m_Tags.erase(*m_Tags.begin());
+		m_Tags.insert(tag);
+	}
+
 	void TagComponent::DrawThis()
 	{
 		SPICES_PROFILE_ZONE;

@@ -63,7 +63,13 @@ namespace Spices {
 		* @brief Remove a tag from this component handled.
 		* @param[in] tag The string type.
 		*/
-		void RemoveTag(const std::string& tag) { if (m_Tags.find(tag) != m_Tags.end()) m_Tags.erase(tag); }
+		void RemoveTag(const std::string& tag);
+
+		/**
+		* @brief Rename first element in tags.
+		* @param[in] tag new name.
+		*/
+		void Rename(const std::string& tag);
 
 		/**
 		* @brief Get the tags variable.

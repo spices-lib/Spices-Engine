@@ -40,17 +40,29 @@ namespace Spices {
                     if (ImGui::MenuItem("Cone")) {}
                     if (ImGui::MenuItem("Cube")) 
                     {
-                        WorldFunctions::CreateBasicMeshEntity<CubePack>(FrameInfo::Get().m_World.get());
+                        WorldFunctions::CreateMeshEntity(FrameInfo::Get().m_World.get(), "Cube", []() {
+                            auto pack = std::make_shared<CubePack>();
+                            pack->SetMaterial("BasePassRenderer.Mesh.Default");
+                            return Mesh::Builder().AddPack(pack).Build();
+                        });
                     }
                     if (ImGui::MenuItem("Cylinder")) {}
                     if (ImGui::MenuItem("Disk")) {}
                     if (ImGui::MenuItem("Plane")) 
                     {
-                        WorldFunctions::CreateBasicMeshEntity<PlanePack>(FrameInfo::Get().m_World.get());
+                        WorldFunctions::CreateMeshEntity(FrameInfo::Get().m_World.get(), "Cube", []() {
+                            auto pack = std::make_shared<PlanePack>();
+                            pack->SetMaterial("BasePassRenderer.Mesh.Default");
+                            return Mesh::Builder().AddPack(pack).Build();
+                        });
                     }
                     if (ImGui::MenuItem("Sphere")) 
                     {
-                        WorldFunctions::CreateBasicMeshEntity<SpherePack>(FrameInfo::Get().m_World.get());
+                        WorldFunctions::CreateMeshEntity(FrameInfo::Get().m_World.get(), "Cube", []() {
+                            auto pack = std::make_shared<PlanePack>();
+                            pack->SetMaterial("BasePassRenderer.Mesh.Default");
+                            return Mesh::Builder().AddPack(pack).Build();
+                        });
                     }
                     if (ImGui::MenuItem("Torus")) {}
                     ImGui::Separator();

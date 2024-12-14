@@ -112,8 +112,6 @@ namespace Spices {
 
 			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
-			CreateDeviceGeneratedCommandsLayout();
-
 			auto dgcInstance = FillIndirectRenderData<MeshComponent>("Mesh");
 
 			AsyncMainTask(ThreadPoolEnum::Main, [=](auto& newInstance) {

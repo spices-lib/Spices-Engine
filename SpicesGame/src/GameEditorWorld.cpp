@@ -32,47 +32,54 @@ namespace Spices {
 		
 		// bridge pbr model
 		{
-			Entity meshentity = CreateEntity("DefaultMesh");
-			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPosition({10.0f, 2.0f, 30.0f});
-			transformComp1.SetRotation({-180.0f, 0.0f, -180.0f});
-			
-			std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_01");
-			std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_02");
-			std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_03");
-			std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
-			std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
-		
-			pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack2->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack3->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			pack5->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
-			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
-			//std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-			meshComp.SetMesh(mesh);
+			WorldFunctions::CreateMeshEntity(this, "DefaultMesh", []() {
+
+				std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_01");
+				std::shared_ptr<FilePack> pack2 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_02");
+				std::shared_ptr<FilePack> pack3 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_03");
+				std::shared_ptr<FilePack> pack4 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_04");
+				std::shared_ptr<FilePack> pack5 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_05");
+
+				pack1->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+				pack2->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+				pack3->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+				pack4->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+				pack5->SetMaterial("BasePassRenderer.Mesh.interior_stair_wl3ieamdw");
+
+				return Mesh::Builder().AddPack(pack1).AddPack(pack2).AddPack(pack3).AddPack(pack4).AddPack(pack5).Build();
+
+			}, [](Entity& e) {
+
+				auto& transform = e.GetComponent<TransformComponent>();
+				transform.SetPosition({ 10.0f, 2.0f, 30.0f });
+				transform.SetRotation({ -180.0f, 0.0f, -180.0f });
+
+			});
 		}
-		
+	
 		// CornellBox
 		{
 			for(int i = 0; i < 3; i++)
 			{
 				std::stringstream ss;
 				ss << "CornellBox_" << i;
-				Entity meshentity = CreateEntity("CornellBox");
-				MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-				TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-				transformComp1.SetPosition({-7.0f, 5.0f, 5.0f + i * 10.0f});
-				transformComp1.SetRotation({0.0f, -90.0f, 0.0f});
 
-				std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("Test_room");
+				WorldFunctions::CreateMeshEntity(this, ss.str(), [=]() {
 
-				std::stringstream mss;
-				mss << "BasePassRenderer.Mesh.CornellBox" << i;
-				pack1->SetMaterial(mss.str());
-				std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-				meshComp.SetMesh(mesh);
+					std::shared_ptr<FilePack> pack = std::make_shared<FilePack>("Test_room");
+
+					std::stringstream mss;
+					mss << "BasePassRenderer.Mesh.CornellBox" << i;
+					pack->SetMaterial(mss.str());
+					return Mesh::Builder().AddPack(pack).Build();
+
+				}, [=](Entity& e) {
+
+					auto& transform = e.GetComponent<TransformComponent>();
+					transform.SetPosition({ -7.0f, 5.0f, 5.0f + i * 10.0f });
+					transform.SetRotation({ 0.0f, -90.0f, 0.0f });
+
+				});
 			}
 		}
 
@@ -84,18 +91,23 @@ namespace Spices {
 				{
 					std::stringstream ss;
 					ss << "Sphere_" << 10 * i + j;
-					Entity meshentity = CreateEntity(ss.str());
-					MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-					TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-					transformComp1.SetPosition({3.0f * i, 0.0f, 3.0f * j});
 
-					std::shared_ptr<SpherePack> pack1 = std::make_shared<SpherePack>(100, 100);
+					WorldFunctions::CreateMeshEntity(this, ss.str(), [=]() {
+			
+						std::shared_ptr<SpherePack> pack = std::make_shared<SpherePack>(100, 100);
 
-					std::stringstream mss;
-					mss << "BasePassRenderer.Mesh." << 10 * i + j;
-					pack1->SetMaterial(mss.str());
-					std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-					meshComp.SetMesh(mesh);
+						std::stringstream mss;
+						mss << "BasePassRenderer.Mesh." << 10 * i + j;
+
+						pack->SetMaterial(mss.str());
+						return Mesh::Builder().AddPack(pack).Build();
+			
+					}, [=](Entity& e) {
+
+						auto& transform = e.GetComponent<TransformComponent>();
+						transform.SetPosition({ 3.0f * i, 0.0f, 3.0f * j });
+
+					});
 				}
 			}
 		}
@@ -129,22 +141,21 @@ namespace Spices {
 		//}
 
 		// ground
-		{
-			Entity meshentity = CreateEntity("Ground");
-			MeshComponent& meshComp = meshentity.AddComponent<MeshComponent>();
-			TransformComponent& transformComp1 = meshentity.GetComponent<TransformComponent>();
-			transformComp1.SetPosition({0.0f, -1.1f, 15.0f});
-			transformComp1.SetRotation({90.0f, 0.0f, 0.0f});
-			transformComp1.SetScale({500.0f, 500.0f, 500.0f});
-		
-			std::shared_ptr<PlanePack> pack1 = std::make_shared<PlanePack>(1000, 1000);
-		
-			pack1->SetMaterial("BasePassRenderer.Mesh.ground");
-			std::shared_ptr<Mesh> mesh = Mesh::Builder().AddPack(pack1).Build();
-			meshComp.SetMesh(mesh);
-		}
+		WorldFunctions::CreateMeshEntity(this, "Ground", []() {
+			
+			std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>(1000, 1000);
 
-		//WorldFunctions::CreateCubeEntity(this);
+			pack->SetMaterial("BasePassRenderer.Mesh.ground");
+			return Mesh::Builder().AddPack(pack).Build();
+			
+		}, [](Entity& e) {
+
+			auto& transform = e.GetComponent<TransformComponent>();
+			transform.SetPosition({ 0.0f, -1.1f, 15.0f });
+			transform.SetRotation({ 90.0f, 0.0f, 0.0f });
+			transform.SetScale({ 500.0f, 500.0f, 500.0f });
+
+		});
 
 		// pointlight
 		{
@@ -178,10 +189,10 @@ namespace Spices {
 			transformComp.SetPosition({ -7.0f, 5.0f, 25.0f });
 		}
 		
-		{
+		/*{
 			GltfCollection collection("E:/OpenGLProjects/ExtensionAssets/BoomBox/glTF/BoomBox.gltf");
 			collection.CreateEntity(this, "BoomBox");
-		}
+		}*/
 	}
 
 	void GameEditorWorld::OnActivate(TimeStep& ts)
