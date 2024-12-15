@@ -73,7 +73,7 @@ namespace Spices {
 		* Usually call it.
 		* @param[in] materialPath Material Path in disk.
 		*/
-		Material(const std::string& materialPath);
+		explicit Material(const std::string& materialPath);
 
 		/**
 		* @brief Destructor Function.

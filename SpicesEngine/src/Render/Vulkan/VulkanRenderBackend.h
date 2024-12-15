@@ -66,12 +66,6 @@ namespace Spices {
 		bool isWindowClosed() { return glfwWindowShouldClose(m_VulkanState.m_Windows); }
 
 		/**
-		* @brief Wait for sync.
-		* Used in render stage.
-		*/
-		static void WaitIdle() { VK_CHECK(vkDeviceWaitIdle(m_VulkanState.m_Device)) }
-
-		/**
 		* @brief Start record a new frame with vulkan render backend.
 		* @param[in] frameInfo FrameInfo.
 		*/

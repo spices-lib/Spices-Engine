@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Core/UUID.h"
+#include "Resource.h"
 
 #include <any>
 #include <unordered_map>
@@ -52,6 +53,7 @@ namespace Spices {
 		/**
 		* @brief Load a resource by path.
 		* When we need a resource, we call this API.
+		* Load if resorce is not found.
 		* @tparam Ty Resource specific Class.
 		* @tparam Args Resource Construct Parameters.
 		* @param[in] path Resource file path in disk.
@@ -61,11 +63,12 @@ namespace Spices {
 		static std::shared_ptr<T> Load(const std::string& path, Args... args);
 
 		/**
-		* @brief Load a resource by path.
+		* @brief Access a resource by path directly.
+		* Do nothing if resorce is not found.
 		* @param[in] path Resource file path in disk.
 		* @return Returns resource smart pointer.
 		*/
-		static std::shared_ptr<T> Load(const std::string& path);
+		static std::shared_ptr<T> Access(const std::string& path);
 
 		/**
 		* @brief UnLoad a resource by path.
@@ -98,11 +101,11 @@ namespace Spices {
 		/**
 		* @brief Static variable stores all specific resources in a basic type Pool.
 		*/
-		static std::unordered_map<std::string, std::shared_ptr<T>> m_Resources;
+		static std::unordered_map<std::string, Resource> m_Resources;
 	};
 
 	template<typename T>
-	std::unordered_map<std::string, std::shared_ptr<T>> ResourcePool<T>::m_Resources;
+	std::unordered_map<std::string, Resource> ResourcePool<T>::m_Resources;
 
 	template<typename T>
 	template<typename Ty, typename ...Args>
@@ -110,25 +113,29 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Resources.find(path) != m_Resources.end())
+		if (m_Resources.find(path) == m_Resources.end())
 		{
-			return m_Resources[path];
-		}
-		else
-		{
-			m_Resources[path] = std::make_shared<Ty>(std::forward<Args>(args)...);
+			std::function<std::any()> fn = [=]() -> std::any {
+				return std::make_shared<Ty>(std::forward<Args>(args)...);
+			};
 
-			return m_Resources[path];
+			Resource resource(fn);
+
+			m_Resources.insert(std::pair<std::string, Resource>(path, resource));
 		}
+
+		return m_Resources[path].GetResource<T>();
 	}
 
 	template<typename T>
-	inline std::shared_ptr<T> ResourcePool<T>::Load(const std::string& path)
+	inline std::shared_ptr<T> ResourcePool<T>::Access(const std::string& path)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Resources.find(path) == m_Resources.end()) return nullptr;
-		return m_Resources[path];
+		assert(Has(path));
+		assert(m_Resources[path].GetState() == Resource::ResourceStateEnum::Loaded);
+
+		return m_Resources[path].GetResource<T>();
 	}
 
 	template<typename T>
@@ -157,7 +164,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		if (m_Resources.find(name) != m_Resources.end()) return;
-		m_Resources[name] = resource;
+		m_Resources.insert(std::pair<std::string, Resource>(name, Resource(resource)));
 	}
 
 	template<typename T>

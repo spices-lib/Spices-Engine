@@ -16,7 +16,6 @@ namespace Spices {
 		RenderFrontend& operator=(const RenderFrontend&) = delete;
 
 		bool isWindowClosed() { return m_RenderBackend->isWindowClosed(); }
-		void WaitIdle() { m_RenderBackend->WaitIdle(); }
 
 		void BeginFrame(FrameInfo& frameInfo);
 		void EndFrame(FrameInfo& frameInfo);

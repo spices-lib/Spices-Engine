@@ -152,7 +152,7 @@ namespace Spices {
 		*/
 		NSIGHTPERF_GPUPROFILERHUD_INITHUDRENDERER;
 
-		VK_CHECK(vkDeviceWaitIdle(m_VulkanState.m_Device))
+		VK_CHECK(vkQueueWaitIdle(m_VulkanState.m_GraphicQueue))
 	}
 
 	void SlateRenderer::ShutdownImgui()

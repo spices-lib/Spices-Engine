@@ -128,7 +128,7 @@ namespace Spices {
 		/**
 		* @brief Vulkan Device Idle.
 		*/
-		VulkanRenderBackend::WaitIdle();
+		vkDeviceWaitIdle(VulkanRenderBackend::GetState().m_Device);
 
 		/**
 		* @brief Deactivate Our Specific World.

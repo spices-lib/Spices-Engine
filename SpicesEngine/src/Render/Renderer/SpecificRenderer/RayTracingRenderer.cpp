@@ -60,40 +60,40 @@ namespace Spices {
 		.AddTexture<Texture2D>(4, 0, VK_SHADER_STAGE_MISS_BIT_KHR, {"skybox/kloofendal_48d_partly_cloudy_puresky_4k.hdr"})       /* @brief temp.                           */
 		.Build(m_VulkanRayTracing->GetAccelerationStructure());
 	}
-
+	
 	void RayTracingRenderer::OnMeshAddedWorld()
 	{
 		Renderer::OnMeshAddedWorld();
 
-		AsyncTask(ThreadPoolEnum::Custom, [&]() {
+		//AsyncTask(ThreadPoolEnum::Custom, [&]() {
 
-			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
+		//	SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
-			std::shared_ptr<VulkanRayTracing> rayTracingInstance = std::make_shared<VulkanRayTracing>(m_VulkanState);
+		//	std::shared_ptr<VulkanRayTracing> rayTracingInstance = std::make_shared<VulkanRayTracing>(m_VulkanState);
 
-			/**
-			* @brief Create BLAS/TLAS.
-			*/
-			CreateBottomLevelAS(FrameInfo::Get(), rayTracingInstance);
-			CreateTopLevelAS   (FrameInfo::Get(), rayTracingInstance);
+		//	/**
+		//	* @brief Create BLAS/TLAS.
+		//	*/
+		//	CreateBottomLevelAS(FrameInfo::Get(), rayTracingInstance);
+		//	CreateTopLevelAS   (FrameInfo::Get(), rayTracingInstance);
 
-			/**
-			* @brief Create Pipeline/SBT.
-			*/
-			CreateDefaultMaterial();
-			CreateRTShaderBindingTable(rayTracingInstance);
+		//	/**
+		//	* @brief Create Pipeline/SBT.
+		//	*/
+		//	CreateDefaultMaterial();
+		//	CreateRTShaderBindingTable(rayTracingInstance);
 
-			/**
-			* @brief Submit new raytracing instance.
-			*/
-			AsyncMainTask(ThreadPoolEnum::Main, [=](std::shared_ptr<VulkanRayTracing> newInstance) {
+		//	/**
+		//	* @brief Submit new raytracing instance.
+		//	*/
+		//	AsyncMainTask(ThreadPoolEnum::Main, [=](std::shared_ptr<VulkanRayTracing> newInstance) {
 
-				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
-				m_RenderCache->PushToCaches(m_VulkanRayTracing);
-				m_VulkanRayTracing = newInstance;
+		//		vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
+		//		m_RenderCache->PushToCaches(m_VulkanRayTracing);
+		//		m_VulkanRayTracing = newInstance;
 
-			}, rayTracingInstance);
-		});
+		//	}, rayTracingInstance);
+		//});
 	}
 
 	void RayTracingRenderer::CreatePipeline(

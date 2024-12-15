@@ -24,10 +24,10 @@ namespace Spices {
 	{
 		m_NativeScriptRegister = std::make_unique<NativeScriptRegister>();
 
+		m_NativeScriptRegister->Register<MainTaskQuerier>();
 		m_NativeScriptRegister->Register<ViewPortResizeQuerier>();
 		m_NativeScriptRegister->Register<WorldPickIDQuerier>();
 		m_NativeScriptRegister->Register<WorldMarkQuerier>();
-		m_NativeScriptRegister->Register<MainTaskQuerier>();
 	}
 
 	void NativeScriptSystem::OnSystemShutDown()

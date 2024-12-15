@@ -163,10 +163,11 @@ namespace Spices {
 		* @brief Fill in World RenderAble data to IndirectBuffer.
 		* @tparam T Specific Component.
 		* @param[in] subPassName .
+		* @param[in] view Component View.
 		* @return Returns new VulkanDeviceGeneratedCommandsNV.
 		*/
-		template<typename T>
-		std::shared_ptr<VulkanDeviceGeneratedCommandsNV> FillIndirectRenderData(const std::string& subPassName);
+		template<typename T, typename V>
+		std::shared_ptr<VulkanDeviceGeneratedCommandsNV> FillIndirectRenderData(const std::string& subPassName, V view);
 
 		/**
 		* @brief Get RendererPass.
@@ -1947,8 +1948,8 @@ namespace Spices {
 		friend class DGCLayoutBuilder;
 	};
 
-	template<typename T>
-	inline std::shared_ptr<VulkanDeviceGeneratedCommandsNV> Renderer::FillIndirectRenderData(const std::string& subPassName)
+	template<typename T, typename V>
+	inline std::shared_ptr<VulkanDeviceGeneratedCommandsNV> Renderer::FillIndirectRenderData(const std::string& subPassName, V view)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1972,12 +1973,11 @@ namespace Spices {
 		* @brief Prepare ShaderGroup
 		*/
 		uint32_t nSequences = 0;
-		auto view = FrameInfo::Get().m_World->GetRegistry().view<T>();
 		{
 			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Prepare ShaderGroup");
 
 			std::unordered_map<std::string, uint32_t> pipelineMap;
-
+			
 			for (auto& e : view)
 			{
 				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(e);

@@ -190,13 +190,12 @@ namespace Spices {
 		std::stringstream ss;
 		ss << "BasePassRenderer.Mesh." << material.name;
 
-		auto outMaterial = ResourcePool<Material>::Load(ss.str());
-		if (outMaterial)
+		if(ResourcePool<Material>::Has(ss.str()))
 		{
-			return outMaterial;
+			return ResourcePool<Material>::Access(ss.str());
 		}
 		
-		outMaterial = std::make_shared<Material>();
+		auto outMaterial = std::make_shared<Material>();
 
 		ResourcePool<Material>::Registry(ss.str(), outMaterial);
 

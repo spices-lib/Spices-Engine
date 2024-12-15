@@ -28,7 +28,7 @@ namespace Spices {
         std::function<void(Entity&)> onAdded
     )
     {
-    	AsyncTask(ThreadPoolEnum::Game, [=](){
+        AsyncMainTask(ThreadPoolEnum::Main, [=]() {
 
     		SPICES_PROFILE_ZONEN("CreateMeshEntity");
     		

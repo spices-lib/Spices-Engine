@@ -134,10 +134,10 @@ namespace Spices {
 	bool MeshPack::OnCreatePack(bool isCreateBuffer)
 	{
 		SPICES_PROFILE_ZONE;
-		
-		const auto ptr = ResourcePool<MeshPack>::Load(m_MeshPackName);
 
-		if (m_Instanced || !ptr) return false;
+		if (m_Instanced || !ResourcePool<MeshPack>::Has(m_MeshPackName)) return false;
+
+		auto ptr = ResourcePool<MeshPack>::Access(m_MeshPackName);
 
 		/**
 		* @brief Copy Data from ResourcePool.

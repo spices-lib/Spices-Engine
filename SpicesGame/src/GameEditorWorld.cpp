@@ -31,7 +31,7 @@ namespace Spices {
 		}
 		
 		// bridge pbr model
-		{
+		/*{
 			WorldFunctions::CreateMeshEntity(this, "DefaultMesh", []() {
 
 				std::shared_ptr<FilePack> pack1 = std::make_shared<FilePack>("interior_stair_wl3ieamdw_01");
@@ -55,7 +55,7 @@ namespace Spices {
 				transform.SetRotation({ -180.0f, 0.0f, -180.0f });
 
 			});
-		}
+		}*/
 	
 		// CornellBox
 		{
@@ -84,33 +84,33 @@ namespace Spices {
 		}
 
 		// sphere
-		{
-			for(int i = 0; i < 4; i++)  // range in albedo
-			{
-				for(int j = 0; j < 10; j++)  // range in roughness
-				{
-					std::stringstream ss;
-					ss << "Sphere_" << 10 * i + j;
+		//{
+		//	for(int i = 0; i < 4; i++)  // range in albedo
+		//	{
+		//		for(int j = 0; j < 10; j++)  // range in roughness
+		//		{
+		//			std::stringstream ss;
+		//			ss << "Sphere_" << 10 * i + j;
 
-					WorldFunctions::CreateMeshEntity(this, ss.str(), [=]() {
-			
-						std::shared_ptr<SpherePack> pack = std::make_shared<SpherePack>(100, 100);
+		//			WorldFunctions::CreateMeshEntity(this, ss.str(), [=]() {
+		//	
+		//				std::shared_ptr<SpherePack> pack = std::make_shared<SpherePack>(100, 100);
 
-						std::stringstream mss;
-						mss << "BasePassRenderer.Mesh." << 10 * i + j;
+		//				std::stringstream mss;
+		//				mss << "BasePassRenderer.Mesh." << 10 * i + j;
 
-						pack->SetMaterial(mss.str());
-						return Mesh::Builder().AddPack(pack).Build();
-			
-					}, [=](Entity& e) {
+		//				pack->SetMaterial(mss.str());
+		//				return Mesh::Builder().AddPack(pack).Build();
+		//	
+		//			}, [=](Entity& e) {
 
-						auto& transform = e.GetComponent<TransformComponent>();
-						transform.SetPosition({ 3.0f * i, 0.0f, 3.0f * j });
+		//				auto& transform = e.GetComponent<TransformComponent>();
+		//				transform.SetPosition({ 3.0f * i, 0.0f, 3.0f * j });
 
-					});
-				}
-			}
-		}
+		//			});
+		//		}
+		//	}
+		//}
 
 		// testsphere
 		//{
@@ -141,7 +141,7 @@ namespace Spices {
 		//}
 
 		// ground
-		WorldFunctions::CreateMeshEntity(this, "Ground", []() {
+		/*WorldFunctions::CreateMeshEntity(this, "Ground", []() {
 			
 			std::shared_ptr<PlanePack> pack = std::make_shared<PlanePack>(1000, 1000);
 
@@ -155,7 +155,7 @@ namespace Spices {
 			transform.SetRotation({ 90.0f, 0.0f, 0.0f });
 			transform.SetScale({ 500.0f, 500.0f, 500.0f });
 
-		});
+		});*/
 
 		// pointlight
 		{

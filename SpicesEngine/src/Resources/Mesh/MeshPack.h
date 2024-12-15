@@ -170,6 +170,11 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
+		*/
+		MeshPack() = default;
+
+		/**
+		* @brief Constructor Function.
 		* @param[in] name MeshPack Name.
 		* @param[in] instanced Is this maesh pack instanced.
 		*/

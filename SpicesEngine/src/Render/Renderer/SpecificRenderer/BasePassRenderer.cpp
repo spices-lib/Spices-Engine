@@ -108,19 +108,21 @@ namespace Spices {
 	{
 		Renderer::OnMeshAddedWorld();
 
-		AsyncTask(ThreadPoolEnum::Custom, [&]() {
+		auto view = FrameInfo::Get().m_World->GetRegistry().view<MeshComponent>();
+
+		//AsyncTask(ThreadPoolEnum::Custom, [&, view]() {
 
 			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
-			auto dgcInstance = FillIndirectRenderData<MeshComponent>("Mesh");
+			auto dgcInstance = FillIndirectRenderData<MeshComponent>("Mesh", view);
 
-			AsyncMainTask(ThreadPoolEnum::Main, [=](auto& newInstance) {
+			//AsyncMainTask(ThreadPoolEnum::Main, [=](auto& newInstance) {
 			    
-				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
-				m_DGCData["Mesh"] = newInstance;
+				//vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
+				m_DGCData["Mesh"] = dgcInstance;
 
-			}, dgcInstance);
-		});
+			//}, dgcInstance);
+		//});
 	}
 
 	void BasePassRenderer::CreatePipeline(
