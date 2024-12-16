@@ -102,12 +102,6 @@ namespace Spices {
 		inline scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; }
 
 		/**
-		* @brief Create all mesh pack AS Input and return it.
-		* @return Returns all  mesh pack AS Input.
-		*/
-		std::vector<VulkanRayTracing::BlasInput> CreateMeshPackASInput();
-
-		/**
 		* @brief Add Mesh's material to hit group.
 		* @param[in,out] hitGroup RayTracingRenderer HitGroup.
 		*/

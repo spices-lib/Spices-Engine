@@ -108,7 +108,7 @@ namespace Spices {
 	{
 		Renderer::OnMeshAddedWorld();
 
-		/*auto view = FrameInfo::Get().m_World->GetRegistry().view<MeshComponent>();
+		auto view = GetEntityWithComponent<MeshComponent>(FrameInfo::Get().m_World.get());
 
 		AsyncTask(ThreadPoolEnum::Custom, [&, view]() {
 
@@ -122,7 +122,7 @@ namespace Spices {
 				m_DGCData["Mesh"] = newInstance;
 
 			}, dgcInstance);
-		});*/
+		});
 	}
 
 	void BasePassRenderer::CreatePipeline(

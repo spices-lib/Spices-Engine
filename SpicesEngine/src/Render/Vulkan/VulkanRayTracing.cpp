@@ -11,54 +11,16 @@ namespace Spices {
 		: VulkanObject(vulkanState)
 	{}
 
-	VulkanRayTracing::~VulkanRayTracing()
+	const VkAccelerationStructureKHR VulkanRayTracing::GetAccelerationStructure() const
 	{
 		SPICES_PROFILE_ZONE;
 
-		Destroy();
-	}
-
-	void VulkanRayTracing::Destroy()
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief Destroy BLAS.
-		*/
-		for (auto& it : m_blas)
+		if (m_tlas.accel)
 		{
-			it.FreeBuffer();
-			if (it.accel != VK_NULL_HANDLE)
-			{
-				m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, it.accel, nullptr);
-				it.accel = VK_NULL_HANDLE;
-			}
+			return m_tlas.accel->Get();
 		}
-
-		/**
-		* @brief Destroy TLAS.
-		*/
-		if (m_tlas.accel != VK_NULL_HANDLE)
-		{
-			m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_tlas.accel, nullptr);
-			m_tlas.accel = VK_NULL_HANDLE;
-		}
-
-		m_blas.clear();
-		m_tlas.FreeBuffer();
-	}
-
-	VkDeviceAddress VulkanRayTracing::GetBlasDeviceAddress(uint32_t blasId) const
-	{
-		SPICES_PROFILE_ZONE;
-
-		assert(static_cast<size_t>(blasId) < m_blas.size());
-
-		VkAccelerationStructureDeviceAddressInfoKHR     addressInfo{};
-		addressInfo.sType                             = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
-		addressInfo.accelerationStructure             = m_blas[blasId].accel;
-
-		return m_VulkanState.m_VkFunc.vkGetAccelerationStructureDeviceAddressKHR(m_VulkanState.m_Device, &addressInfo);
+		
+		return nullptr;
 	}
 
 	void VulkanRayTracing::BuildBLAS(
@@ -89,6 +51,7 @@ namespace Spices {
 			buildAs[idx].buildInfo.geometryCount     = static_cast<uint32_t>(input[idx].asGeometry.size());
 			buildAs[idx].buildInfo.pGeometries       = input[idx].asGeometry.data();
 			buildAs[idx].rangeInfo                   = input[idx].asBuildOffsetInfo.data();  /*@brief Build range information.*/
+			buildAs[idx].as                          = input[idx].accel;
 
 			/*
 			* @brief Finding sizes to create acceleration structures and scratch.
@@ -172,11 +135,6 @@ namespace Spices {
 					VulkanCommandBuffer::CustomGraphicCmd(m_VulkanState, [&](const VkCommandBuffer& commandBuffer) {
 						CmdCompactBLAS(commandBuffer, indices, buildAs, queryPool);
 					});
-
-					/**
-					* @brief Destroy the non - compacted version.
-					*/ 
-					DestroyNonCompacted(indices, buildAs);
 				}
 				
 				/**
@@ -186,21 +144,11 @@ namespace Spices {
 				indices.clear();
 			}
 		}
-
-		/**
-		* @brief Keeping all the created acceleration structures.
-		*/ 
-		for (auto& b : buildAs)
-		{
-			m_blas.emplace_back(b.as);
-		}
 	}
 
 	void VulkanRayTracing::UpdateBlas(uint32_t blasIdx, const BlasInput& blas, VkBuildAccelerationStructureFlagsKHR flags) const
 	{
 		SPICES_PROFILE_ZONE;
-
-		assert(static_cast<size_t>(blasIdx) < m_blas.size());
 
 		// Preparing all build information, acceleration is filled later
 		VkAccelerationStructureBuildGeometryInfoKHR buildInfos{};
@@ -210,8 +158,8 @@ namespace Spices {
 		buildInfos.pGeometries                     = blas.asGeometry.data();
 		buildInfos.mode                            = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;  // UPDATE
 		buildInfos.type                            = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
-		buildInfos.srcAccelerationStructure        = m_blas[blasIdx].accel;  // UPDATE
-		buildInfos.dstAccelerationStructure        = m_blas[blasIdx].accel;
+		//buildInfos.srcAccelerationStructure        = m_blas[blasIdx].accel;  // UPDATE
+		//buildInfos.dstAccelerationStructure        = m_blas[blasIdx].accel;
 
 		// Find size to build on the device
 		std::vector<uint32_t> maxPrimCount(blas.asBuildOffsetInfo.size());
@@ -370,8 +318,8 @@ namespace Spices {
 		/**
 		* @brief Update build information.
 		*/ 
-		buildInfo.srcAccelerationStructure         = update ? m_tlas.accel : VK_NULL_HANDLE;
-		buildInfo.dstAccelerationStructure         = m_tlas.accel;
+		buildInfo.srcAccelerationStructure         = update ? m_tlas.accel->Get() : VK_NULL_HANDLE;
+		buildInfo.dstAccelerationStructure         = m_tlas.accel->Get();
 		buildInfo.scratchData.deviceAddress        = scratchAddress;
 
 		/**
@@ -540,17 +488,17 @@ namespace Spices {
 			/**
 			* @brief Actual allocation of buffer and acceleration structure.
 			*/
-			VkAccelerationStructureCreateInfoKHR createInfo{};
+			VkAccelerationStructureCreateInfoKHR      createInfo{};
 			createInfo.sType                        = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
 			createInfo.type                         = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
 			createInfo.size                         = buildAs[idx].sizeInfo.accelerationStructureSize;  // Will be used to allocate memory.
 
-			buildAs[idx].as = CreateAcceleration(createInfo);
+			*buildAs[idx].as = CreateAcceleration(createInfo);
 
 			/**
 			* @brief BuildInfo #2 part.
 			*/ 
-			buildAs[idx].buildInfo.dstAccelerationStructure  = buildAs[idx].as.accel;                  // Setting where the build lands
+			buildAs[idx].buildInfo.dstAccelerationStructure  = buildAs[idx].as->accel->Get();          // Setting where the build lands
 			buildAs[idx].buildInfo.scratchData.deviceAddress = scratchAddress;                         // All build are using the same scratch buffer
 
 			/**
@@ -624,46 +572,32 @@ namespace Spices {
 
 		for (const auto idx : indices)
 		{
-			buildAs[idx].cleanupAS                          = buildAs[idx].as;              // previous AS to destroy
+			buildAs[idx].cleanupAS                          = *buildAs[idx].as;             // previous AS to destroy
 			buildAs[idx].sizeInfo.accelerationStructureSize = compactSizes[queryCtn++];     // new reduced size
 
 			/**
 			* @brief Creating a compact version of the AS.
 			*/ 
-			VkAccelerationStructureCreateInfoKHR asCreateInfo{};
+			VkAccelerationStructureCreateInfoKHR              asCreateInfo{};
 			asCreateInfo.sType                              = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
 			asCreateInfo.size                               = buildAs[idx].sizeInfo.accelerationStructureSize;
 			asCreateInfo.type                               = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
-			buildAs[idx].as                                 = CreateAcceleration(asCreateInfo);
+			*buildAs[idx].as                                = CreateAcceleration(asCreateInfo);
 
 			/**
 			* @brief Copy the original BLAS to a compact version.
 			*/ 
-			VkCopyAccelerationStructureInfoKHR copyInfo{};
+			VkCopyAccelerationStructureInfoKHR                copyInfo{};
 			copyInfo.sType                                  = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
 			copyInfo.src                                    = buildAs[idx].buildInfo.dstAccelerationStructure;
-			copyInfo.dst                                    = buildAs[idx].as.accel;
+			copyInfo.dst                                    = buildAs[idx].as->accel->Get();
 			copyInfo.mode                                   = VK_COPY_ACCELERATION_STRUCTURE_MODE_COMPACT_KHR;
 
 			m_VulkanState.m_VkFunc.vkCmdCopyAccelerationStructureKHR(cmdBuf, &copyInfo);
 		}
 	}
 
-	void VulkanRayTracing::DestroyNonCompacted(
-		const std::vector<uint32_t>&             indices, 
-		std::vector<BuildAccelerationStructure>& buildAs
-	) const
-	{
-		SPICES_PROFILE_ZONE;
-
-		for (auto& i : indices)
-		{
-			m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, buildAs[i].cleanupAS.accel, nullptr);
-			buildAs[i].cleanupAS.buffer = nullptr;
-		}
-	}
-
-	VulkanRayTracing::AccelKHR VulkanRayTracing::CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel) const
+	AccelKHR VulkanRayTracing::CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -688,13 +622,8 @@ namespace Spices {
 
 		/**
 		* @brief Create the acceleration structure.
-		*/ 
-		m_VulkanState.m_VkFunc.vkCreateAccelerationStructureKHR(
-			m_VulkanState.m_Device, 
-			&accel, 
-			nullptr, 
-			&resultAccel.accel
-		);
+		*/
+		resultAccel.accel = std::make_shared<VulkanAccelerationStructure>(m_VulkanState, accel);
 
 		return resultAccel;
 	}

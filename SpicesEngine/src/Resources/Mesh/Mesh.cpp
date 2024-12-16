@@ -13,24 +13,6 @@ namespace Spices {
 		: m_Pack(meshPack)
 	{}
 
-	std::vector<VulkanRayTracing::BlasInput> Mesh::CreateMeshPackASInput()
-	{
-		SPICES_PROFILE_ZONE;
-
-		std::vector<VulkanRayTracing::BlasInput> allBlas;
-		allBlas.reserve(m_Pack.size());
-
-		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
-			
-			auto blas = v->MeshPackToVkGeometryKHR();
-			allBlas.emplace_back(blas);
-
-			return false;
-		});
-
-		return allBlas;
-	}
-
 	void Mesh::AddMaterialToHitGroup(std::unordered_map<std::string, uint32_t>& hitGroup)
 	{
 		SPICES_PROFILE_ZONE;

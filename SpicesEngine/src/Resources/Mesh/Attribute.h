@@ -6,8 +6,18 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "Render/Vulkan/VulkanAccelerationStructure.h"
 
 namespace Spices {
+
+	/**
+	* @brief AccelStructure Wrapper.
+	*/
+	struct AccelKHR
+	{
+		std::shared_ptr<VulkanAccelerationStructure> accel = nullptr;
+		std::shared_ptr<VulkanBuffer> buffer = nullptr;
+	};
 
 	/**
 	* @brief MeshResource's item template.

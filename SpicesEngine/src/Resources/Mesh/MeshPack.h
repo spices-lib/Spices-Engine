@@ -299,13 +299,19 @@ namespace Spices {
 		* @param[in] blasIndex Index of blas.
 		* @return Returns VulkanRayTracing::BlasInput.
 		*/
-		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR(uint32_t blasIndex) const;
+		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR();
 
 		/**
-		* @brief Get blas index.
-		* @return Returns blas index.
+		* @brief Is this meshpack has a valid blas.
+		* @return Returns true if has a valid blas.
 		*/
-		uint32_t GetBlasIndex() { return m_BlasIndex; }
+		bool HasBlasAccel() const { return m_Accel.accel != nullptr; }
+
+		/**
+		* @brief Get this accel.
+		* @return Returns this accel.
+		*/
+		AccelKHR& GetAccel() { return m_Accel; }
 
 		/**
 		* @brief Get Resource.
@@ -370,9 +376,9 @@ namespace Spices {
 		std::string m_PackType;
 
 		/**
-		* @brief Index of blas.
+		* @brief This meshpack blas accel.
 		*/
-		uint32_t m_BlasIndex;
+		AccelKHR m_Accel;
 
 		/**
 		* @brief UUID for mesh pack.

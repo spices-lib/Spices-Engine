@@ -166,8 +166,17 @@ namespace Spices {
 		* @param[in] view Component View.
 		* @return Returns new VulkanDeviceGeneratedCommandsNV.
 		*/
-		template<typename T, typename V>
-		std::shared_ptr<VulkanDeviceGeneratedCommandsNV> FillIndirectRenderData(const std::string& subPassName, V view);
+		template<typename T>
+		std::shared_ptr<VulkanDeviceGeneratedCommandsNV> FillIndirectRenderData(const std::string& subPassName, std::shared_ptr<std::vector<uint32_t>> view);
+
+		/**
+		* @brief Get entities with component in world.
+		* @tparam T Specific Component.
+		* @param[in] world world pointer .
+		* @return Returns entities.
+		*/
+		template<typename T>
+		std::shared_ptr<std::vector<uint32_t>> GetEntityWithComponent(World* world);
 
 		/**
 		* @brief Get RendererPass.
@@ -1948,8 +1957,8 @@ namespace Spices {
 		friend class DGCLayoutBuilder;
 	};
 
-	template<typename T, typename V>
-	inline std::shared_ptr<VulkanDeviceGeneratedCommandsNV> Renderer::FillIndirectRenderData(const std::string& subPassName, V view)
+	template<typename T>
+	inline std::shared_ptr<VulkanDeviceGeneratedCommandsNV> Renderer::FillIndirectRenderData(const std::string& subPassName, std::shared_ptr<std::vector<uint32_t>> view)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1978,9 +1987,9 @@ namespace Spices {
 
 			std::unordered_map<std::string, uint32_t> pipelineMap;
 			
-			for (auto& e : view)
+			for (auto& e : *view)
 			{
-				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(e);
+				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(static_cast<entt::entity>(e));
 
 				meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
 
@@ -2037,9 +2046,9 @@ namespace Spices {
 			auto& layoutTokens = indirectPtr->GetLayoutTokens();
 
 			int index = 0;
-			for (auto& e : view)
+			for (auto& e : *view)
 			{
-				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(e);
+				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(static_cast<entt::entity>(e));
 
 				meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
 
@@ -2156,6 +2165,22 @@ namespace Spices {
 		}
 
 		return indirectPtr;
+	}
+
+	template<typename T>
+	inline std::shared_ptr<std::vector<uint32_t>> Renderer::GetEntityWithComponent(World* world)
+	{
+		SPICES_PROFILE_ZONE;
+
+		auto entities = std::make_shared<std::vector<uint32_t>>();
+		auto view     = world->GetRegistry().view<MeshComponent>();
+
+		for (auto& e : view)
+		{
+			entities->push_back(static_cast<uint32_t>(e));
+		}
+
+		return entities;
 	}
 
 	template<typename F>

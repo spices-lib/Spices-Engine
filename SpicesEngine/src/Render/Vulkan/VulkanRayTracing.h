@@ -34,23 +34,7 @@ namespace Spices {
 			std::vector<VkAccelerationStructureGeometryKHR>       asGeometry;
 			std::vector<VkAccelerationStructureBuildRangeInfoKHR> asBuildOffsetInfo;
 			VkBuildAccelerationStructureFlagsKHR                  flags{ 0 };
-		};
-
-		/**
-		* @brief AccelStructure Wrapper.
-		*/
-		struct AccelKHR
-		{
-			VkAccelerationStructureKHR    accel = VK_NULL_HANDLE;
-			std::shared_ptr<VulkanBuffer> buffer;
-
-			/**
-			* @brief Free AccelStructure Buffer.
-			*/
-			void FreeBuffer()
-			{
-				buffer = nullptr;
-			}
+			AccelKHR*                                             accel;
 		};
 
 		/**
@@ -61,7 +45,7 @@ namespace Spices {
 			VkAccelerationStructureBuildGeometryInfoKHR     buildInfo{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR };
 			VkAccelerationStructureBuildSizesInfoKHR        sizeInfo { VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR };
 			const VkAccelerationStructureBuildRangeInfoKHR* rangeInfo;
-			AccelKHR                                        as;         // result acceleration structure
+			AccelKHR*                                       as;         // result acceleration structure
 			AccelKHR                                        cleanupAS;
 		};
 		
@@ -76,25 +60,13 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanRayTracing() override;
-
-		/**
-		* @brief Destroy all blas/tlas.
-		*/
-		void Destroy();
+		virtual ~VulkanRayTracing() override = default;
 
 		/**
 		* @brief Get AccelerationStructure.
 		* @return Returns AccelerationStructure.
 		*/
-		const VkAccelerationStructureKHR& GetAccelerationStructure() const { return m_tlas.accel; };
-
-		/**
-		* @brief Get BLAS Buffer Address.
-		* @param[in] blasId BLAS index.
-		* @return Returns BLAS Buffer Address.
-		*/
-		VkDeviceAddress GetBlasDeviceAddress(uint32_t blasId) const;
+		const VkAccelerationStructureKHR GetAccelerationStructure() const;
 
 		/**
 		* @brief Create all the BLAS from the vector of BlasInput.
@@ -275,16 +247,6 @@ namespace Spices {
 		) const;
 
 		/**
-		* @brief Destroy non compact blas,
-		* @param[in] indices BLAS indices.
-		* @param[in] buildAs BuildAccelerationStructure.
-		*/
-		void DestroyNonCompacted(
-			const std::vector<uint32_t>&             indices , 
-			std::vector<BuildAccelerationStructure>& buildAs
-		) const;
-
-		/**
 		* @brief Is item in flags.
 		* @param[in] item VkFlags.
 		* @param[in] flag VkFlags.
@@ -300,11 +262,6 @@ namespace Spices {
 		AccelKHR CreateAcceleration(VkAccelerationStructureCreateInfoKHR& accel) const;
 
 	private:
-
-		/**
-		* @brief Bottom-level acceleration structure.
-		*/
-		std::vector<AccelKHR> m_blas;
 
 		/**
 		* @brief Top-level acceleration structure.

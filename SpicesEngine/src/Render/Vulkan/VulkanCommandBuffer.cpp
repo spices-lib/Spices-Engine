@@ -84,6 +84,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::unique_lock<std::mutex> lock(m_GraphicCommandPoolMutex);
+
 		if (!m_IsPoolActive)
 		{
 			SPICES_CORE_ERROR("CommandPool is not active.")
@@ -91,8 +93,6 @@ namespace Spices {
 
 		if(pTLSVulkanCommandPool.m_GraphicThreadId == -1)
 		{
-			std::unique_lock<std::mutex> lock(m_GraphicCommandPoolMutex);
-
 			for (int i = 0; i < m_ThreadGraphicCommandPool.size(); i++)
 			{
 				if (!m_ThreadGraphicCommandPool[i]) pTLSVulkanCommandPool.m_GraphicThreadId = i;
@@ -131,6 +131,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::unique_lock<std::mutex> lock(m_ComputeCommandPoolMutex);
+
 		if (!m_IsPoolActive)
 		{
 			SPICES_CORE_ERROR("CommandPool is not active.")
@@ -138,8 +140,6 @@ namespace Spices {
 
 		if (pTLSVulkanCommandPool.m_ComputeThreadId == -1)
 		{
-			std::unique_lock<std::mutex> lock(m_ComputeCommandPoolMutex);
-
 			for (int i = 0; i < m_ThreadComputeCommandPool.size(); i++)
 			{
 				if (!m_ThreadComputeCommandPool[i]) pTLSVulkanCommandPool.m_ComputeThreadId = i;
