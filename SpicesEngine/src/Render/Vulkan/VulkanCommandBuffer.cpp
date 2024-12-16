@@ -12,6 +12,8 @@ namespace Spices {
 	
 	std::vector<VkCommandPool> VulkanCommandPool::m_ThreadGraphicCommandPool;
 	std::vector<VkCommandPool> VulkanCommandPool::m_ThreadComputeCommandPool;
+	std::mutex VulkanCommandPool::m_GraphicCommandPoolMutex;
+	std::mutex VulkanCommandPool::m_ComputeCommandPoolMutex;
 	bool VulkanCommandPool::m_IsPoolActive = false;
 
 	VulkanCommandPool::VulkanCommandPool(VulkanState& vulkanState)
@@ -89,6 +91,8 @@ namespace Spices {
 
 		if(pTLSVulkanCommandPool.m_GraphicThreadId == -1)
 		{
+			std::unique_lock<std::mutex> lock(m_GraphicCommandPoolMutex);
+
 			for (int i = 0; i < m_ThreadGraphicCommandPool.size(); i++)
 			{
 				if (!m_ThreadGraphicCommandPool[i]) pTLSVulkanCommandPool.m_GraphicThreadId = i;
@@ -134,6 +138,8 @@ namespace Spices {
 
 		if (pTLSVulkanCommandPool.m_ComputeThreadId == -1)
 		{
+			std::unique_lock<std::mutex> lock(m_ComputeCommandPoolMutex);
+
 			for (int i = 0; i < m_ThreadComputeCommandPool.size(); i++)
 			{
 				if (!m_ThreadComputeCommandPool[i]) pTLSVulkanCommandPool.m_ComputeThreadId = i;

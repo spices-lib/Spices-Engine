@@ -170,11 +170,6 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
-		*/
-		MeshPack() = default;
-
-		/**
-		* @brief Constructor Function.
 		* @param[in] name MeshPack Name.
 		* @param[in] instanced Is this maesh pack instanced.
 		*/
@@ -301,9 +296,16 @@ namespace Spices {
 
 		/**
 		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS.
+		* @param[in] blasIndex Index of blas.
 		* @return Returns VulkanRayTracing::BlasInput.
 		*/
-		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR() const;
+		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR(uint32_t blasIndex) const;
+
+		/**
+		* @brief Get blas index.
+		* @return Returns blas index.
+		*/
+		uint32_t GetBlasIndex() { return m_BlasIndex; }
 
 		/**
 		* @brief Get Resource.
@@ -366,6 +368,11 @@ namespace Spices {
 		* @brief specific mesh pack type.
 		*/
 		std::string m_PackType;
+
+		/**
+		* @brief Index of blas.
+		*/
+		uint32_t m_BlasIndex;
 
 		/**
 		* @brief UUID for mesh pack.

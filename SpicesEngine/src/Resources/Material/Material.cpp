@@ -157,7 +157,7 @@ namespace Spices {
 				for (int i = 0; i < pair.second.size(); i++)
 				{
 					std::stringstream ss;
-					ss << pair.first << "." << pair.second[i];
+					ss << pair.second[i] << "." << pair.first;
 
 					ResourcePool<Shader>::Load<Shader>(ss.str(), pair.second[i], pair.first);
 				}

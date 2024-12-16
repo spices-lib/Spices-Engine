@@ -111,21 +111,27 @@ namespace Spices {
 		/**
 		* @brief Create BottomLevelAS with all MeshComponents.
 		* @param[in] frameInfo FrameInfo.
+		* @param[in] view Component View.
 		* @param[in] ratTracingInstance VulkanRayTracingInstace.
 		*/
+		template<typename V>
 		void CreateBottomLevelAS(
 			FrameInfo& frameInfo, 
+			V& view,
 			std::shared_ptr<VulkanRayTracing> rayTracingInstance
 		);
 
 		/**
 		* @brief Create TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
+		* @param[in] view Component View.
 		* @param[in] ratTracingInstance VulkanRayTracingInstance.
 		* @param[in] update default false.
 		*/
+		template<typename V>
 		void CreateTopLevelAS(
 			FrameInfo& frameInfo, 
+			V& view,
 			std::shared_ptr<VulkanRayTracing> rayTracingInstance,
 			bool update = false
 		);
@@ -175,4 +181,106 @@ namespace Spices {
 		*/
 		std::shared_ptr<std::unordered_map<std::string, uint32_t>> m_HitGroupsCache;
 	};
+	
+	template<typename V>
+	inline void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo, V& view, std::shared_ptr<VulkanRayTracing> rayTracingInstance)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief BLAS - Storing each primitive in a geometry.
+		*/
+		std::vector<VulkanRayTracing::BlasInput> allBlas;
+		std::shared_ptr<std::unordered_map<std::string, uint32_t>> hitGroups = std::make_shared<std::unordered_map<std::string, uint32_t>>();
+		
+		/**
+		* @brief Iter all MeshComponents.
+		*/
+		for (auto& e : view)
+		{
+			if (!frameInfo.m_World->GetRegistry().any_of(e)) continue;
+
+			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);
+
+			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+
+				auto blas = v->MeshPackToVkGeometryKHR(allBlas.size());
+				allBlas.emplace_back(blas);
+
+				return false;
+			});
+
+			meshComp.GetMesh()->AddMaterialToHitGroup(*hitGroups);
+		}
+
+		/**
+		* @brief Cache this frame hit groups.
+		*/
+		SetHitGroupsCache(hitGroups);
+
+		rayTracingInstance->SetHitGroups(hitGroups);
+
+		/**
+		* @brief Build BLAS.
+		*/
+		rayTracingInstance->BuildBLAS(
+			allBlas, 
+			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | 
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR 
+			//VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR     // Compress cost too mush time in with large count of meshes.
+		);
+	}
+ 
+	template<typename V>
+	inline void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo, V& view, std::shared_ptr<VulkanRayTracing> rayTracingInstance, bool update)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkAccelerationStructureInstanceKHR> tlas;
+
+		int index = 0;
+		auto& desc = rayTracingInstance->GetMeshDesc().attributes;
+		desc->resize(SpicesShader::MESH_BUFFER_MAXNUM, 0);
+
+		for (auto& e : view)
+		{
+			if (!frameInfo.m_World->GetRegistry().any_of(e)) continue;
+
+			MeshComponent meshComp;
+			TransformComponent tranComp;
+
+			std::tie(meshComp, tranComp) = frameInfo.m_World->GetRegistry().get<MeshComponent, TransformComponent>(e);
+
+			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+
+				VkAccelerationStructureInstanceKHR                            rayInst{};
+				rayInst.transform                                           = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());          // Position of the instance
+				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
+				rayInst.accelerationStructureReference                      = rayTracingInstance->GetBlasDeviceAddress(v->GetBlasIndex());
+				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+				rayInst.mask                                                = 0xFF;                                                       // Only be hit if rayMask & instance.mask != 0
+				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                                    // We will use the same hit group for all objects
+
+				tlas.push_back(rayInst);
+
+				(*desc)[index] = v->GetMeshDesc().GetBufferAddress();
+
+				index += 1;
+				return false;
+			});
+		}
+
+		rayTracingInstance->GetMeshDesc().CreateBuffer("MeshDescBuffer", VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+
+		/**
+		* @brief Build TLAS.
+		*/
+		rayTracingInstance->BuildTLAS(
+			tlas,
+			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR      |
+			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR  ,
+			update
+		);
+	}
 }

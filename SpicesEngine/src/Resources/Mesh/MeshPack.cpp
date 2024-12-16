@@ -96,6 +96,7 @@ namespace Spices {
 		, m_Instanced(instanced)
 		, m_NTasks(0)
 		, m_UUID(UUID())
+		, m_BlasIndex(0)
 	{}
 
 	void MeshPack::OnBind(const VkCommandBuffer& commandBuffer) const
@@ -205,9 +206,11 @@ namespace Spices {
 		return m_ShaderGroupHandle.value();
 	}
 
-	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR() const
+	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR(uint32_t blasIndex) const
 	{
 		SPICES_PROFILE_ZONE;
+
+		m_BlasIndex = blasIndex;
 
 		/**
 		* @brief BLAS builder requires raw device addresses.

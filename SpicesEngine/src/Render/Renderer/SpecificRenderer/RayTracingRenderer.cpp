@@ -65,35 +65,37 @@ namespace Spices {
 	{
 		Renderer::OnMeshAddedWorld();
 
-		//AsyncTask(ThreadPoolEnum::Custom, [&]() {
+		auto view = FrameInfo::Get().m_World->GetRegistry().view<MeshComponent>();
 
-		//	SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
+		AsyncTask(ThreadPoolEnum::Custom, [&, view]() {
 
-		//	std::shared_ptr<VulkanRayTracing> rayTracingInstance = std::make_shared<VulkanRayTracing>(m_VulkanState);
+			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
-		//	/**
-		//	* @brief Create BLAS/TLAS.
-		//	*/
-		//	CreateBottomLevelAS(FrameInfo::Get(), rayTracingInstance);
-		//	CreateTopLevelAS   (FrameInfo::Get(), rayTracingInstance);
+			std::shared_ptr<VulkanRayTracing> rayTracingInstance = std::make_shared<VulkanRayTracing>(m_VulkanState);
 
-		//	/**
-		//	* @brief Create Pipeline/SBT.
-		//	*/
-		//	CreateDefaultMaterial();
-		//	CreateRTShaderBindingTable(rayTracingInstance);
+			/**
+			* @brief Create BLAS/TLAS.
+			*/
+			CreateBottomLevelAS(FrameInfo::Get(), view, rayTracingInstance);
+			CreateTopLevelAS   (FrameInfo::Get(), view, rayTracingInstance);
 
-		//	/**
-		//	* @brief Submit new raytracing instance.
-		//	*/
-		//	AsyncMainTask(ThreadPoolEnum::Main, [=](std::shared_ptr<VulkanRayTracing> newInstance) {
+			/**
+			* @brief Create Pipeline/SBT.
+			*/
+			CreateDefaultMaterial();
+			CreateRTShaderBindingTable(rayTracingInstance);
 
-		//		vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
-		//		m_RenderCache->PushToCaches(m_VulkanRayTracing);
-		//		m_VulkanRayTracing = newInstance;
+			/**
+			* @brief Submit new raytracing instance.
+			*/
+			AsyncMainTask(ThreadPoolEnum::Main, [=](std::shared_ptr<VulkanRayTracing> newInstance) {
 
-		//	}, rayTracingInstance);
-		//});
+				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
+				m_RenderCache->PushToCaches(m_VulkanRayTracing);
+				m_VulkanRayTracing = newInstance;
+
+			}, rayTracingInstance);
+		});
 	}
 
 	void RayTracingRenderer::CreatePipeline(
@@ -155,99 +157,6 @@ namespace Spices {
 
 		builder.EndRenderPass();
 	}
-
-	void RayTracingRenderer::CreateBottomLevelAS(FrameInfo& frameInfo, std::shared_ptr<VulkanRayTracing> rayTracingInstance)
-	{
-		SPICES_PROFILE_ZONE;
-
-		/**
-		* @brief BLAS - Storing each primitive in a geometry.
-		*/
-		std::vector<VulkanRayTracing::BlasInput> allBlas;
-		std::shared_ptr<std::unordered_map<std::string, uint32_t>> hitGroups = std::make_shared<std::unordered_map<std::string, uint32_t>>();
-		
-		/**
-		* @brief Iter all MeshComponents.
-		*/
-		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
-		for (auto& e : view)
-		{
-			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(e);
-
-			auto blas = meshComp.GetMesh()->CreateMeshPackASInput();
-			allBlas.insert(allBlas.end(), blas.begin(), blas.end());
-
-			meshComp.GetMesh()->AddMaterialToHitGroup(*hitGroups);
-		}
-
-		/**
-		* @brief Cache this frame hit groups.
-		*/
-		SetHitGroupsCache(hitGroups);
-
-		rayTracingInstance->SetHitGroups(hitGroups);
-
-		/**
-		* @brief Build BLAS.
-		*/
-		rayTracingInstance->BuildBLAS(
-			allBlas, 
-			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | 
-			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR 
-			//VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR     // Compress cost too mush time in with large count of meshes.
-		);
-	}
- 
-	void RayTracingRenderer::CreateTopLevelAS(FrameInfo& frameInfo, std::shared_ptr<VulkanRayTracing> rayTracingInstance, bool update)
-	{
-		SPICES_PROFILE_ZONE;
-
-		std::vector<VkAccelerationStructureInstanceKHR> tlas;
-
-		int index = 0;
-		auto& desc = rayTracingInstance->GetMeshDesc().attributes;
-		desc->resize(SpicesShader::MESH_BUFFER_MAXNUM, 0);
-
-		auto view = frameInfo.m_World->GetRegistry().view<MeshComponent>();
-		for (auto& e : view)
-		{
-			MeshComponent meshComp;
-			TransformComponent tranComp;
-
-			std::tie(meshComp, tranComp) = frameInfo.m_World->GetRegistry().get<MeshComponent, TransformComponent>(e);
-
-			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
-
-				VkAccelerationStructureInstanceKHR                            rayInst{};
-				rayInst.transform                                           = ToVkTransformMatrixKHR(tranComp.GetModelMatrix());          // Position of the instance
-				rayInst.instanceCustomIndex                                 = index;                                                      // gl_InstanceCustomIndexEXT
-				rayInst.accelerationStructureReference                      = rayTracingInstance->GetBlasDeviceAddress(index);
-				rayInst.flags                                               = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-				rayInst.mask                                                = 0xFF;                                                       // Only be hit if rayMask & instance.mask != 0
-				rayInst.instanceShaderBindingTableRecordOffset              = v->GetHitShaderHandle();                                    // We will use the same hit group for all objects
-
-				tlas.push_back(rayInst);
-
-				(*desc)[index] = v->GetMeshDesc().GetBufferAddress();
-
-				index += 1;
-				return false;
-			});
-		}
-
-		rayTracingInstance->GetMeshDesc().CreateBuffer("MeshDescBuffer", VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
-
-		/**
-		* @brief Build TLAS.
-		*/
-		rayTracingInstance->BuildTLAS(
-			tlas,
-			VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
-			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR      |
-			VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR  ,
-			update
-		);
-	}
 	
 	void RayTracingRenderer::UpdateTopLevelAS(FrameInfo& frameInfo, std::shared_ptr<VulkanRayTracing> rayTracingInstance, bool update)
 	{
@@ -256,7 +165,8 @@ namespace Spices {
 		if(!(frameInfo.m_World->GetMarker() & World::NeedUpdateTLAS)) return;
 		frameInfo.m_World->ClearMarkerWithBits(World::NeedUpdateTLAS);
 		
-		CreateTopLevelAS(frameInfo, rayTracingInstance, update);
+		auto view = FrameInfo::Get().m_World->GetRegistry().view<MeshComponent>();
+		CreateTopLevelAS(frameInfo, view, rayTracingInstance, update);
 	}
 
 	void RayTracingRenderer::CreateRTShaderBindingTable(std::shared_ptr<VulkanRayTracing> rayTracingInstance)

@@ -101,11 +101,11 @@ namespace Spices {
 		/**
 		* @brief Static variable stores all specific resources in a basic type Pool.
 		*/
-		static std::unordered_map<std::string, Resource> m_Resources;
+		static std::unordered_map<std::string, std::unique_ptr<Resource>> m_Resources;
 	};
 
 	template<typename T>
-	std::unordered_map<std::string, Resource> ResourcePool<T>::m_Resources;
+	std::unordered_map<std::string, std::unique_ptr<Resource>> ResourcePool<T>::m_Resources;
 
 	template<typename T>
 	template<typename Ty, typename ...Args>
@@ -115,16 +115,15 @@ namespace Spices {
 
 		if (m_Resources.find(path) == m_Resources.end())
 		{
-			std::function<std::any()> fn = [=]() -> std::any {
-				return std::make_shared<Ty>(std::forward<Args>(args)...);
+			std::function<std::any()> fn = [&]() -> std::any {
+				T* inst = new Ty(std::forward<Args>(args)...);
+				return std::shared_ptr<T>(inst);
 			};
 
-			Resource resource(fn);
-
-			m_Resources.insert(std::pair<std::string, Resource>(path, resource));
+			m_Resources[path] = std::make_unique<Resource>(fn);
 		}
 
-		return m_Resources[path].GetResource<T>();
+		return m_Resources[path]->GetResource<T>();
 	}
 
 	template<typename T>
@@ -133,9 +132,9 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		assert(Has(path));
-		assert(m_Resources[path].GetState() == Resource::ResourceStateEnum::Loaded);
+		assert(m_Resources[path]->GetState() == Resource::ResourceStateEnum::Loaded);
 
-		return m_Resources[path].GetResource<T>();
+		return m_Resources[path]->GetResource<T>();
 	}
 
 	template<typename T>
@@ -164,7 +163,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		if (m_Resources.find(name) != m_Resources.end()) return;
-		m_Resources.insert(std::pair<std::string, Resource>(name, Resource(resource)));
+		m_Resources[name] = std::make_unique<Resource>(resource);
 	}
 
 	template<typename T>

@@ -112,18 +112,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		constexpr auto isLoaded = [&]() { 
-			return m_State == ResourceStateEnum::Loaded 
-		};
-
-		if (isLoaded)
+		if (m_State == ResourceStateEnum::Loaded)
 		{
 			return std::any_cast<std::shared_ptr<T>>(m_Resource);
 		}
 
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
-		if (isLoaded)
+		if (m_State == ResourceStateEnum::Loaded)
 		{
 			return std::any_cast<std::shared_ptr<T>>(m_Resource);
 		}

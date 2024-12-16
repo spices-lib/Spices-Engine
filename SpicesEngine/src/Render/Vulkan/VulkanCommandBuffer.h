@@ -58,6 +58,16 @@ namespace Spices {
 		* @brief True if this Pool is actived.
 		*/
 		static bool m_IsPoolActive;
+
+		/**
+		* @brief Mutex for GraphicCommandPool.
+		*/
+		static std::mutex m_GraphicCommandPoolMutex;
+
+		/**
+		* @brief Mutex for GraphicCommandPool.
+		*/
+		static std::mutex m_ComputeCommandPoolMutex;
 	};
 
 	/**
