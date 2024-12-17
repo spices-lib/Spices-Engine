@@ -9,7 +9,7 @@
 #include "ThreadPool.h"
 #include "DelayThreadPool.h"
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
-#include "Core/Container/TaskQueue.h"
+#include "Core/Container/ThreadQueue.h"
 
 namespace Spices {
 
@@ -64,19 +64,9 @@ namespace Spices {
 		void InitRHIThreadPool(std::function<void(std::shared_ptr<VulkanCmdThreadPool>& ptr)> fn);
 
 		/**
-		* @brief Shutdown Custom ThreadPool.
+		* @brief Shutdown this ThreadModel.
 		*/
-		void ShutDownCustomThreadPool();
-
-		/**
-		* @brief Shutdown Game ThreadPool.
-		*/
-		void ShutDownGameThreadPool();
-
-		/**
-		* @brief Shutdown RHI ThreadPool.
-		*/
-		void ShutDownRHIThreadPool();
+		void ShutDownThreadModel();
 
 		/**
 		* @brief Get Custom ThreadPool.
@@ -100,7 +90,29 @@ namespace Spices {
 		* @brief Get MainThread Task Queue.
 		* @return Returns MainThread Task Queue.
 		*/
-		scl::task_queue& GetMainTaskQueue() { return m_MainThreadTasks; }
+		scl::thread_queue<std::function<void()>>& GetMainTaskQueue() { return m_MainThreadTasks; }
+
+	private:
+
+		/**
+		* @brief Shutdown Custom ThreadPool.
+		*/
+		void ShutDownCustomThreadPool();
+
+		/**
+		* @brief Shutdown Game ThreadPool.
+		*/
+		void ShutDownGameThreadPool();
+
+		/**
+		* @brief Shutdown RHI ThreadPool.
+		*/
+		void ShutDownRHIThreadPool();
+
+		/**
+		* @brief Clear task queue in main thread.
+		*/
+		void ClearMainThreadTaskQueue();
 
 	private:
 
@@ -127,7 +139,7 @@ namespace Spices {
 		/**
 		* @brief Tasks must be done in main thread.
 		*/
-		scl::task_queue m_MainThreadTasks;
+		scl::thread_queue<std::function<void()>> m_MainThreadTasks;
 	};
 	
 	template<typename F, typename ...Args>
@@ -167,6 +179,6 @@ namespace Spices {
 
 		assert(pool == ThreadPoolEnum::Main);
 
-		ThreadModel::Get()->GetMainTaskQueue().PushTask(std::bind(func, std::forward<Args>(args)...));
+		ThreadModel::Get()->GetMainTaskQueue().Push(std::bind(func, std::forward<Args>(args)...));
 	}
 }

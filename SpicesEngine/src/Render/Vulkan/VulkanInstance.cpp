@@ -135,6 +135,7 @@ namespace Spices {
 		* @brief Destroy the Vulkan Surface Object.
 		*/
 		vkDestroySurfaceKHR(m_VulkanState.m_Instance, m_VulkanState.m_Surface, nullptr);
+		m_VulkanState.m_Surface = nullptr;
 
 		/**
 		* @brief Destroy Vulkan's debug message callback function pointer.
@@ -153,6 +154,7 @@ namespace Spices {
 		* @brief Destroy the Vulkan Instance Object.
 		*/
 		vkDestroyInstance(m_VulkanState.m_Instance, nullptr);
+		m_VulkanState.m_Instance = nullptr;
 	}
 
 	void VulkanInstance::GetExtensionRequirements()

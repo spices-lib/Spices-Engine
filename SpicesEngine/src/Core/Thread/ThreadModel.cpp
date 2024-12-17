@@ -83,4 +83,21 @@ namespace Spices {
 
 		m_RHIThreadPool = nullptr;
 	}
+
+	void ThreadModel::ClearMainThreadTaskQueue()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_MainThreadTasks.Clear();
+	}
+
+	void ThreadModel::ShutDownThreadModel()
+	{
+		SPICES_PROFILE_ZONE;
+
+		ShutDownRHIThreadPool();
+		ShutDownGameThreadPool();
+		ShutDownCustomThreadPool();
+		ClearMainThreadTaskQueue();
+	}
 }

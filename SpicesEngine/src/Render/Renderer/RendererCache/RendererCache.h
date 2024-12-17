@@ -38,7 +38,7 @@ namespace Spices {
 		* @param[in] any anything.
 		*/
 		template<typename T>
-		void PushToCaches(T&& any)
+		void PushToCaches(T& any)
 		{
 			SPICES_PROFILE_ZONE;
 

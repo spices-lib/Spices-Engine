@@ -38,6 +38,8 @@ constexpr uint32_t MaxFrameInFlight = 2;
 	*/
 	static void HandleVkResult(VkResult result)
 	{
+		if (result == VK_SUCCESS) return;
+
 		switch (result)
 		{
 			case VK_ERROR_OUT_OF_DEVICE_MEMORY:
@@ -47,12 +49,15 @@ constexpr uint32_t MaxFrameInFlight = 2;
 			}
 			case VK_ERROR_DEVICE_LOST:
 			{
-				SPICES_CORE_CRITICAL("Device has losted, Start Aftermath...");
+				SPICES_CORE_CRITICAL("Device has losted, Start Aftermath...")
 				NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(result);
 				break;
 			}
 			default:
+			{
+				SPICES_CORE_ERROR("Render backend throw error.")
 				break;
+			}
 		}
 	}
 

@@ -242,6 +242,7 @@ namespace Spices {
 		* @brief Destroy SwapChain.
 		*/
 		vkDestroySwapchainKHR(m_VulkanState.m_Device, m_VulkanState.m_SwapChain, nullptr);
+		m_VulkanState.m_SwapChain = nullptr;
 	}
 
 	void VulkanSwapChain::CreateSyncObjects() const

@@ -239,11 +239,18 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		m_VulkanState.m_GraphicQueue = nullptr;
+		m_VulkanState.m_ComputeQueue = nullptr;
+		m_VulkanState.m_PresentQueue = nullptr;
+		m_VulkanState.m_TransferQueue = nullptr;
+
 		/**
 		* @brief Destroy the Vulkan Device Object.
 		* Queue is created by device, we do not need destroy queue here manually.
 		*/
 		vkDestroyDevice(m_VulkanState.m_Device, nullptr);
+		m_VulkanState.m_Device = nullptr;
+		m_VulkanState.m_PhysicalDevice = nullptr;
 	}
 
 	void VulkanDevice::RequerySwapChainSupport()

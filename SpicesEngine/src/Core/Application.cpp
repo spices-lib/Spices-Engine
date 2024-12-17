@@ -55,6 +55,11 @@ namespace Spices {
 		FrameInfo::Get().m_World = nullptr;
 
 		/**
+		* @brief Release ThreadPool.
+		*/
+		ThreadModel::Get()->ShutDownThreadModel();
+
+		/**
 		* @brief Destroy all Systems.
 		*/
 		SystemManager::Get()
@@ -62,12 +67,6 @@ namespace Spices {
 		.PopSystem("ResourceSystem")
 		.PopSystem("RenderSystem")
 		.PopSystem("NativeScriptSystem");
-
-		/**
-		* @brief Shutdown ThreadPool.
-		*/
-		ThreadModel::Get()->ShutDownGameThreadPool();
-		ThreadModel::Get()->ShutDownCustomThreadPool();
 
 		/**
 		* @brief Shutdown Log Class.

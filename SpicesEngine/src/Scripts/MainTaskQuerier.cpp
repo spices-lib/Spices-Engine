@@ -18,7 +18,8 @@ namespace Spices {
 
 		while (!taskQueue.IsEmpty())
 		{
-			taskQueue.ExecuteOneTask();
+			auto task = taskQueue.Pop();
+			task();
 		}
 	}
 }

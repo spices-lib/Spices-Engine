@@ -102,10 +102,18 @@ namespace Spices {
 		* @brief Static variable stores all specific resources in a basic type Pool.
 		*/
 		static std::unordered_map<std::string, std::unique_ptr<Resource>> m_Resources;
+
+		/**
+		* @brief Mutex for this pool.
+		*/
+		static std::mutex m_Mutex;
 	};
 
 	template<typename T>
 	std::unordered_map<std::string, std::unique_ptr<Resource>> ResourcePool<T>::m_Resources;
+
+	template<typename T>
+	std::mutex ResourcePool<T>::m_Mutex;
 
 	template<typename T>
 	template<typename Ty, typename ...Args>
@@ -113,14 +121,19 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Resources.find(path) == m_Resources.end())
 		{
-			std::function<std::any()> fn = [&]() -> std::any {
-				T* inst = new Ty(std::forward<Args>(args)...);
-				return std::shared_ptr<T>(inst);
-			};
+			std::unique_lock<std::mutex> lock(m_Mutex);
 
-			m_Resources[path] = std::make_unique<Resource>(fn);
+			if (m_Resources.find(path) == m_Resources.end())
+			{
+				std::function<std::any()> fn = [&]() -> std::any {
+					T* inst = new Ty(std::forward<Args>(args)...);
+					return std::shared_ptr<T>(inst);
+				};
+
+				m_Resources[path] = std::make_unique<Resource>(fn);
+			}
+
 		}
 
 		return m_Resources[path]->GetResource<T>();
@@ -142,6 +155,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
 		if (m_Resources.find(path) != m_Resources.end())
 		{
 			m_Resources.erase(path);
@@ -162,6 +177,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
 		if (m_Resources.find(name) != m_Resources.end()) return;
 		m_Resources[name] = std::make_unique<Resource>(resource);
 	}
@@ -170,6 +187,8 @@ namespace Spices {
 	inline void ResourcePool<T>::Destroy()
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		m_Resources.clear();
 	}

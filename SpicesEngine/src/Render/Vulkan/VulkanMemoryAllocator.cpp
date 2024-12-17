@@ -47,5 +47,6 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		vmaDestroyAllocator(m_VulkanState.m_VmaAllocator);
+		m_VulkanState.m_VmaAllocator = nullptr;
 	}
 }

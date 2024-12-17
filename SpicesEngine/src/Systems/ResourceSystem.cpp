@@ -12,6 +12,7 @@
 #include "Resources/Texture/Texture.h"
 #include "Resources/Material/Material.h"
 #include "Resources/Mesh/Mesh.h"
+#include "Resources/Shader/Shader.h"
 
 namespace Spices {
 
@@ -39,6 +40,7 @@ namespace Spices {
 		* @brief Release all Resources
 		*/
 		ResourcePool<Texture>  ::Destroy();
+		ResourcePool<Shader>   ::Destroy();
 		ResourcePool<Material> ::Destroy();
 		ResourcePool<MeshPack> ::Destroy();
 	}

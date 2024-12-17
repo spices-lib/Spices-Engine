@@ -146,11 +146,6 @@ namespace Spices {
 		NSIGHTPERF_GPUPROFILERONESHOT_QUIT
 
 		/**
-		* @brief Release RHIThreadPool.
-		*/
-		ThreadModel::Get()->ShutDownRHIThreadPool();
-
-		/**
 		* @brief Release RendererResourcePool.
 		*/
 		m_RendererResourcePool = nullptr;
