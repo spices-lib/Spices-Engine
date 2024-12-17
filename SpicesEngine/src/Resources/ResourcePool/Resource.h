@@ -52,6 +52,16 @@ namespace Spices {
 		{};
 
 		/**
+		* @brief Unload resource.
+		*/
+		virtual ~Resource()
+		{
+			SPICES_PROFILE_ZONE;
+
+			UnLoad();
+		}
+
+		/**
 		* @brief Get resource state.
 		* @return Returns resource state.
 		*/
@@ -64,6 +74,11 @@ namespace Spices {
 		template<typename T>
 		std::shared_ptr<T> GetResource();
 		
+		/**
+		* @brief UnLoad this resource.
+		*/
+		void UnLoad();
+
 	private:
 
 		/**
@@ -94,6 +109,17 @@ namespace Spices {
 		std::mutex m_Mutex;
 	};
 
+	inline void Resource::UnLoad()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_State = ResourceStateEnum::OnDestroy;
+
+		m_Resource.reset();
+
+		m_State = ResourceStateEnum::UnLoad;
+	}
+
 	inline void Resource::CreateResource()
 	{
 		SPICES_PROFILE_ZONE;
@@ -117,15 +143,17 @@ namespace Spices {
 			return std::any_cast<std::shared_ptr<T>>(m_Resource);
 		}
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
-
-		if (m_State == ResourceStateEnum::Loaded)
 		{
+			std::unique_lock<std::mutex> lock(m_Mutex);
+
+			if (m_State == ResourceStateEnum::Loaded)
+			{
+				return std::any_cast<std::shared_ptr<T>>(m_Resource);
+			}
+
+			CreateResource();
+
 			return std::any_cast<std::shared_ptr<T>>(m_Resource);
 		}
-
-		CreateResource();
-
-		return std::any_cast<std::shared_ptr<T>>(m_Resource);
 	}
 }

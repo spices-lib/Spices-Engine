@@ -139,7 +139,7 @@ namespace Spices {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		const auto& subPass = *m_Pass->GetSubPasses().find_value(subPassName);
+		const auto subPass = *m_Pass->GetSubPasses().find_value(subPassName);
 		VkPipelineLayout pipelineLayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
