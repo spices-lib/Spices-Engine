@@ -187,7 +187,7 @@ namespace Spices {
 			SPICES_CORE_ERROR(ss.str())
 		}
 		
-		return m_HitShaderHandle.value();
+		return m_HitShaderHandle.value().load();
 	}
 
 	uint32_t MeshPack::GetShaderGroupHandle() const
@@ -202,7 +202,7 @@ namespace Spices {
 			SPICES_CORE_ERROR(ss.str())
 		}
 
-		return m_ShaderGroupHandle.value();
+		return m_ShaderGroupHandle.value().load();
 	}
 
 	VulkanRayTracing::BlasInput MeshPack::MeshPackToVkGeometryKHR()

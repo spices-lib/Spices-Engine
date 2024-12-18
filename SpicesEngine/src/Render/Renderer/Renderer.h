@@ -2054,56 +2054,61 @@ namespace Spices {
 
 					for (int i = 0; i < layoutTokens.size(); i++)
 					{
-						VkBindShaderGroupIndirectCommandNV  shader;
-						VkBindVertexBufferIndirectCommandNV vbo;
-						VkBindIndexBufferIndirectCommandNV  ibo;
-						VkDeviceAddress                     push;
-						VkDrawIndexedIndirectCommand        drawIndexed;
-						VkDrawMeshTasksIndirectCommandNV    drawMesh;
-
 						switch (layoutTokens[i].tokenType)
 						{
-						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_SHADER_GROUP_NV:
-							shader.groupIndex = v->GetShaderGroupHandle() + 1;
-							stagingBuffer.WriteToBuffer(&shader, inputStrides[i], index * inputStrides[i] + offset[i]);
-							break;
-
-						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_VERTEX_BUFFER_NV:
-							vbo.bufferAddress = v->GetResource().positions.buffer->GetAddress();
-							vbo.size          = sizeof(v->GetResource().positions.attributes);
-							vbo.stride        = sizeof(glm::vec3);
-							stagingBuffer.WriteToBuffer(&vbo, inputStrides[i], index * inputStrides[i] + offset[i]);
-							break;
-
-						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NV:
-							ibo.bufferAddress = v->GetResource().primitivePoints.buffer->GetAddress();
-							ibo.size          = sizeof(v->GetResource().primitivePoints.attributes);
-							ibo.indexType     = VK_INDEX_TYPE_UINT32;
-							stagingBuffer.WriteToBuffer(&ibo, inputStrides[i], index * inputStrides[i] + offset[i]);
-							break;
-
-						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV:
-							push              = v->GetMeshDesc().GetBufferAddress();
-							stagingBuffer.WriteToBuffer(&push, inputStrides[i], index * inputStrides[i] + offset[i]);
-							break;
-
-						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NV:
-							drawIndexed.firstIndex     = 0;
-							drawIndexed.firstInstance  = 0;
-							drawIndexed.indexCount     = v->GetResource().primitivePoints.attributes->size();
-							drawIndexed.instanceCount  = 1;
-							drawIndexed.vertexOffset   = 0;
-							stagingBuffer.WriteToBuffer(&drawIndexed, inputStrides[i], index* inputStrides[i] + offset[i]);
-							break;
-
-						case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_TASKS_NV:
-							drawMesh = v->GetDrawCommand();
-							stagingBuffer.WriteToBuffer(&drawMesh, inputStrides[i], index * inputStrides[i] + offset[i]);
-							break;
-
-						default:
-							SPICES_CORE_ERROR("Not Supported Token Type.");
-							break;
+							case VK_INDIRECT_COMMANDS_TOKEN_TYPE_SHADER_GROUP_NV:
+							{
+								VkBindShaderGroupIndirectCommandNV shader;
+								shader.groupIndex = v->GetShaderGroupHandle() + 1;
+								stagingBuffer.WriteToBuffer(&shader, inputStrides[i], index * inputStrides[i] + offset[i]);
+								break;
+							}
+							case VK_INDIRECT_COMMANDS_TOKEN_TYPE_VERTEX_BUFFER_NV:
+							{
+								VkBindVertexBufferIndirectCommandNV vbo;
+								vbo.bufferAddress = v->GetResource().positions.buffer->GetAddress();
+								vbo.size          = sizeof(v->GetResource().positions.attributes);
+								vbo.stride        = sizeof(glm::vec3);
+								stagingBuffer.WriteToBuffer(&vbo, inputStrides[i], index * inputStrides[i] + offset[i]);
+								break;
+							}
+							case VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NV:
+							{
+								VkBindIndexBufferIndirectCommandNV ibo;
+								ibo.bufferAddress = v->GetResource().primitivePoints.buffer->GetAddress();
+								ibo.size          = sizeof(v->GetResource().primitivePoints.attributes);
+								ibo.indexType     = VK_INDEX_TYPE_UINT32;
+								stagingBuffer.WriteToBuffer(&ibo, inputStrides[i], index * inputStrides[i] + offset[i]);
+								break;
+							}
+							case VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV:
+							{
+								VkDeviceAddress push;
+								push              = v->GetMeshDesc().GetBufferAddress();
+								stagingBuffer.WriteToBuffer(&push, inputStrides[i], index * inputStrides[i] + offset[i]);
+								break;
+							}
+							case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NV:
+							{
+								VkDrawIndexedIndirectCommand drawIndexed;
+								drawIndexed.firstIndex     = 0;
+								drawIndexed.firstInstance  = 0;
+								drawIndexed.indexCount     = v->GetResource().primitivePoints.attributes->size();
+								drawIndexed.instanceCount  = 1;
+								drawIndexed.vertexOffset   = 0;
+								stagingBuffer.WriteToBuffer(&drawIndexed, inputStrides[i], index* inputStrides[i] + offset[i]);
+								break;
+							}
+							case VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_TASKS_NV:
+							{
+								VkDrawMeshTasksIndirectCommandNV drawMesh;
+								drawMesh = v->GetDrawCommand();
+								stagingBuffer.WriteToBuffer(&drawMesh, inputStrides[i], index * inputStrides[i] + offset[i]);
+								break;
+							}
+							default:
+								SPICES_CORE_ERROR("Not Supported Token Type.");
+								break;
 						}
 					}
 

@@ -67,7 +67,7 @@ namespace Spices {
 
 		auto view = GetEntityWithComponent<MeshComponent>(FrameInfo::Get().m_World.get());
 		
-		AsyncTask(ThreadPoolEnum::Custom, [&, view]() {
+		AsyncTask(ThreadPoolEnum::Custom, [=]() {
 
 			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
@@ -88,13 +88,13 @@ namespace Spices {
 			/**
 			* @brief Submit new raytracing instance.
 			*/
-			AsyncMainTask(ThreadPoolEnum::Main, [=](std::shared_ptr<VulkanRayTracing> newInstance) {
+			AsyncMainTask(ThreadPoolEnum::Main, [=]() {
 
 				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
 				m_RenderCache->PushToCaches(m_VulkanRayTracing);
-				m_VulkanRayTracing = newInstance;
+				m_VulkanRayTracing = rayTracingInstance;
 
-			}, rayTracingInstance);
+			});
 		});
 	}
 

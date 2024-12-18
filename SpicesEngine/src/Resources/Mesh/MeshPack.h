@@ -357,13 +357,13 @@ namespace Spices {
 		* @brief specific hit shader handle.
 		* Used in RayTracing Pipeline.
 		*/
-		std::optional<uint32_t> m_HitShaderHandle;
+		std::optional<std::atomic_uint32_t> m_HitShaderHandle;
 
 		/**
 		* @brief specific shader group handle.
 		* Used in IndirectDGCPipeline.
 		*/
-		std::optional<uint32_t> m_ShaderGroupHandle;
+		std::optional<std::atomic_uint32_t> m_ShaderGroupHandle;
 
 		/**
 		* @brief Mesh Description.
