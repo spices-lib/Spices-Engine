@@ -178,7 +178,7 @@ namespace Spices {
 		const uint32_t rayGenCount    = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rgen").size());
 		const uint32_t missCount      = static_cast<uint32_t>(rayTracingMaterial->GetShaderPath("rmiss").size());
 		 
-		rayTracingInstance->CreateRTShaderBindingTable(rayGenCount, missCount, m_Pipelines["RayTracingRenderer.RayTracing.Default"]->GetPipeline());
+		rayTracingInstance->CreateRTShaderBindingTable(rayGenCount, missCount, m_Pipelines.Find("RayTracingRenderer.RayTracing.Default")->GetPipeline());
 	}
 
 	std::shared_ptr<std::unordered_map<std::string, uint32_t>> RayTracingRenderer::GetHitGroupsCache()

@@ -187,17 +187,22 @@ namespace Spices {
 		/**
 		* @brief Fetch valid Graphic Queue.
 		*/
-		auto& queue = VulkanThreadQueue::FetchGraphicQueue();
+		auto queue = VulkanThreadQueue::FetchGraphicQueue();
 
 		/**
 		* @brief Submit commandBuffer in queue.
 		*/
-		queue.Submit(commandBuffer);
+		queue->Submit(commandBuffer);
 
 		/**
 		* @brief Wait queue finished.
 		*/
-		queue.Wait();
+		queue->Wait();
+
+		/**
+		* @brief Push back to Graphic queue.
+		*/
+		VulkanThreadQueue::PushToGraphic(queue);
 
 		/**
 		* @brief Free the CommandBuffer that created.

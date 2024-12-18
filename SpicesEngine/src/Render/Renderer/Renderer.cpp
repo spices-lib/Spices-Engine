@@ -578,7 +578,7 @@ namespace Spices {
 		vkCmdBindPipeline(
 			cmdBuffer ? cmdBuffer : m_CommandBuffer,
 			bindPoint,
-			m_Renderer->m_Pipelines[materialName]->GetPipeline()
+			m_Renderer->m_Pipelines.Find(materialName)->GetPipeline()
 		);
 	}
 
@@ -605,7 +605,7 @@ namespace Spices {
 			vkCmdBindPipeline(
 				cmdBuffer,
 				bindPoint,
-				m_Renderer->m_Pipelines[materialName]->GetPipeline()
+				m_Renderer->m_Pipelines.Find(materialName)->GetPipeline()
 			);
 		});
 	}
@@ -1253,7 +1253,7 @@ namespace Spices {
 			vkCmdBindDescriptorSets(
 				cmdBuffer ? cmdBuffer : m_CommandBuffer,
 				bindPoint,
-				m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
+				m_Renderer->m_Pipelines.Find(name)->GetPipelineLayout(),
 				pair.first,
 				1,
 				&pair.second->Get(),
@@ -1294,7 +1294,7 @@ namespace Spices {
 				vkCmdBindDescriptorSets(
 					secCmdBuffer,
 					bindPoint,
-					m_Renderer->m_Pipelines[name]->GetPipelineLayout(),
+					m_Renderer->m_Pipelines.Find(name)->GetPipelineLayout(),
 					pair.first,
 					1,
 					&pair.second->Get(),
@@ -1315,7 +1315,7 @@ namespace Spices {
 		/**
 		* @brief Return if DGC Pipeline is not prepared yet.
 		*/
-		if (m_Renderer->m_Pipelines.find(ss.str()) == m_Renderer->m_Pipelines.end()) return;
+		if (!m_Renderer->m_Pipelines.HasKey(ss.str())) return;
 
 		PreprocessDGC_NV(cmdBuffer);
 
@@ -1359,7 +1359,7 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
-		m_HandledDGCData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+		m_HandledDGCData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
 	}
 
 	void Renderer::RenderBehaveBuilder::PreprocessDGCAsync_NV() const
@@ -1373,7 +1373,7 @@ namespace Spices {
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
-			m_HandledDGCData->PreprocessDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+			m_HandledDGCData->PreprocessDGC(cmdBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
 		});
 	}
 
@@ -1387,7 +1387,7 @@ namespace Spices {
 		/**
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
-		m_HandledDGCData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+		m_HandledDGCData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
 	}
 
 	void Renderer::RenderBehaveBuilder::ExecuteDGCAsync_NV() const
@@ -1401,7 +1401,7 @@ namespace Spices {
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
-			m_HandledDGCData->ExecuteDGC(cmdBuffer, m_Renderer->m_Pipelines[ss.str()]->GetPipeline());
+			m_HandledDGCData->ExecuteDGC(cmdBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
 		});
 	}
 
@@ -2379,7 +2379,7 @@ namespace Spices {
 		input.sType                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
 		input.tokenType                    = VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NV;
 
-		input.pushconstantPipelineLayout   = m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout();
+		input.pushconstantPipelineLayout   = m_Renderer->m_Pipelines.Find(ss.str())->GetPipelineLayout();
 		input.pushconstantShaderStageFlags = VK_SHADER_STAGE_ALL;
 		input.pushconstantOffset           = 0;
 		input.pushconstantSize             = sizeof(VkDeviceAddress);
@@ -2546,12 +2546,12 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
-		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		if (m_Renderer->m_Pipelines.HasKey(m_Material->GetName()))
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines.Find(m_Material->GetName()));
 		}
 
-		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+		m_Renderer->m_Pipelines.Insert(m_Material->GetName(), pipeline);
 	}
 
 	void Renderer::PipelineBuilder::BuildMesh()
@@ -2565,12 +2565,12 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
-		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		if (m_Renderer->m_Pipelines.HasKey(m_Material->GetName()))
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines.Find(m_Material->GetName()));
 		}
 
-		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+		m_Renderer->m_Pipelines.Insert(m_Material->GetName(), pipeline);
 	}
 
 	void Renderer::PipelineBuilder::BuildCompute()
@@ -2584,12 +2584,12 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
-		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		if (m_Renderer->m_Pipelines.HasKey(m_Material->GetName()))
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines.Find(m_Material->GetName()));
 		}
 
-		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+		m_Renderer->m_Pipelines.Insert(m_Material->GetName(), pipeline);
 	}
 
 	void Renderer::PipelineBuilder::BuildRayTracing(const std::unordered_map<std::string, uint32_t>& hitGroups)
@@ -2609,12 +2609,12 @@ namespace Spices {
 			m_pipelineConfig
 		);
 
-		if (m_Renderer->m_Pipelines.find(m_Material->GetName()) != m_Renderer->m_Pipelines.end())
+		if (m_Renderer->m_Pipelines.HasKey(m_Material->GetName()))
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[m_Material->GetName()]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines.Find(m_Material->GetName()));
 		}
 		
-		m_Renderer->m_Pipelines[m_Material->GetName()] = pipeline;
+		m_Renderer->m_Pipelines.Insert(m_Material->GetName(), pipeline);
 	}
 
 	void Renderer::PipelineBuilder::BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName)
@@ -2625,17 +2625,17 @@ namespace Spices {
 			m_Renderer->m_VulkanState ,
 			pipelineName              ,
 			materialName              ,
-			m_Renderer->m_PipelinesRef[m_HandledSubPass->GetName()] ,
+			m_Renderer->m_PipelinesRef.Find(m_HandledSubPass->GetName()) ,
 			m_pipelineConfig
 		);
 
-		m_Renderer->m_PipelinesRef[m_HandledSubPass->GetName()].clear();
+		m_Renderer->m_PipelinesRef.Find(m_HandledSubPass->GetName()).clear();
 
-		if (m_Renderer->m_Pipelines.find(pipelineName) != m_Renderer->m_Pipelines.end())
+		if (m_Renderer->m_Pipelines.HasKey(pipelineName))
 		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines[pipelineName]);
+			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines.Find(pipelineName));
 		}
 
-		m_Renderer->m_Pipelines[pipelineName] = pipeline;
+		m_Renderer->m_Pipelines.Insert(pipelineName, pipeline);
 	}
 }

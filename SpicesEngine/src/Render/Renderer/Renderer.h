@@ -18,6 +18,7 @@
 #include "Core/Container/BehaveStateList.h"
 #include "..\..\Core\Thread\ThreadModel.h"
 #include "Render/Renderer/RendererCache/RendererCache.h"
+#include "Core/Container/ThreadUnorderedMap.h"
 /***************************************************************************************************/
 
 /******************************Vulkan Backend Header************************************************/
@@ -1922,12 +1923,12 @@ namespace Spices {
 		/**
 		* @brief Renderer stored material pipelines.
 		*/
-		std::unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
+		scl::thread_unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 		
 		/**
 		* @brief Pipelines Reference in DGC Pipeline.
 		*/
-		std::unordered_map<std::string, std::vector<VkPipeline>> m_PipelinesRef;
+		scl::thread_unordered_map<std::string, std::vector<VkPipeline>> m_PipelinesRef;
 
 		/**
 		* @brief Whether should load a default renderer material.
@@ -2006,11 +2007,11 @@ namespace Spices {
 			}
 			indirectPtr->SetSequenceCount(nSequences);
 
-			m_PipelinesRef[subPassName].resize(pipelineMap.size(), nullptr);
+			m_PipelinesRef.Find(subPassName).resize(pipelineMap.size(), nullptr);
 
 			for (auto& pair : pipelineMap)
 			{
-				m_PipelinesRef[subPassName][pair.second] = m_Pipelines[pair.first]->GetPipeline();
+				m_PipelinesRef.Find(subPassName)[pair.second] = m_Pipelines.Find(pair.first)->GetPipeline();
 			}
 		}
 
@@ -2157,7 +2158,7 @@ namespace Spices {
 			memInfo.sType                                 = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
 			memInfo.maxSequencesCount                     = nSequences;
 			memInfo.indirectCommandsLayout                = indirectPtr->GetCommandLayout()->Get();
-			memInfo.pipeline                              = m_Pipelines["BasePassRenderer.Mesh.Default.DGC"]->GetPipeline();
+			memInfo.pipeline                              = m_Pipelines.Find("BasePassRenderer.Mesh.Default.DGC")->GetPipeline();
 			memInfo.pipelineBindPoint                     = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
 			VkMemoryRequirements2                           memReqs{};
@@ -2295,7 +2296,7 @@ namespace Spices {
 		*/
 		vkCmdPushConstants(
 			cmdBuffer ? cmdBuffer : m_CommandBuffer,
-			m_Renderer->m_Pipelines[ss.str()]->GetPipelineLayout(),
+			m_Renderer->m_Pipelines.Find(ss.str())->GetPipelineLayout(),
 			VK_SHADER_STAGE_ALL,
 			0,
 			sizeof(T),

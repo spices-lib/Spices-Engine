@@ -43,7 +43,7 @@ namespace scl {
 		* @brief Is this queue is empty.
 		* @reutrn Returns true if empty.
 		*/
-		bool IsEmpty() { return m_Count.load() == 0; };
+		bool IsEmpty() { return m_Count.load() == 0; }
 
 		/**
 		* @brief Clear this queue.
@@ -58,12 +58,17 @@ namespace scl {
 		std::mutex m_Mutex;
 
 		/**
+		* @brief Not empty condition.
+		*/
+		std::condition_variable m_NotEmpty;
+
+		/**
 		* @brief Count of tasks.
 		*/
 		std::atomic_int m_Count;
 
 		/**
-		* @brief Tasks of this queue.
+		* @brief This wrappered queue.
 		*/
 		std::queue<T> m_Queue;
 	};
@@ -75,12 +80,17 @@ namespace scl {
 
 		m_Queue.push(item);
 		++m_Count;
+
+		m_NotEmpty.notify_all();
 	}
 
 	template<typename T>
 	inline T thread_queue<T>::Pop()
 	{
 		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		if (IsEmpty())
+			m_NotEmpty.wait(lock);
 
 		auto ptr = m_Queue.front();
 		m_Queue.pop();

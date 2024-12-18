@@ -9,64 +9,65 @@
 
 namespace Spices {
 
-	std::array<std::shared_ptr<VulkanThreadQueue>, NThreadQueue> VulkanThreadQueue::m_GraphicQueues;
-	std::array<std::shared_ptr<VulkanThreadQueue>, NThreadQueue> VulkanThreadQueue::m_ComputeQueues;
+	scl::thread_queue<std::shared_ptr<VulkanThreadQueue>> VulkanThreadQueue::m_GraphicQueues;
+	scl::thread_queue<std::shared_ptr<VulkanThreadQueue>> VulkanThreadQueue::m_ComputeQueues;
 
 	VulkanThreadQueue::VulkanThreadQueue(VulkanState& vulkanState, VkQueue queue)
 		: VulkanObject(vulkanState)
 		, m_Queue(queue)
-		, m_IsInUse(false)
 	{}
 
 	VulkanThreadQueue::~VulkanThreadQueue()
 	{}
 
-	void VulkanThreadQueue::CreateGraphic(VulkanState & vulkanState, VkQueue queue, uint32_t index)
+	void VulkanThreadQueue::CreateGraphic(VulkanState & vulkanState, VkQueue queue)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_GraphicQueues[index] = std::make_shared<VulkanThreadQueue>(vulkanState, queue);
+		m_GraphicQueues.Push(std::make_shared<VulkanThreadQueue>(vulkanState, queue));
 	}
 
-	void VulkanThreadQueue::CreateCompute(VulkanState& vulkanState, VkQueue queue, uint32_t index)
+	void VulkanThreadQueue::CreateCompute(VulkanState& vulkanState, VkQueue queue)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_ComputeQueues[index] = std::make_shared<VulkanThreadQueue>(vulkanState, queue);
+		m_ComputeQueues.Push(std::make_shared<VulkanThreadQueue>(vulkanState, queue));
 	}
 
-	VulkanThreadQueue& VulkanThreadQueue::FetchGraphicQueue()
+	std::shared_ptr<VulkanThreadQueue> VulkanThreadQueue::FetchGraphicQueue()
 	{
 		SPICES_PROFILE_ZONE;
 
-		for(;;)
-		{
-			for (auto& queue : m_GraphicQueues)
-			{
-				if (!queue->m_IsInUse.load())
-				{
-					queue->m_IsInUse = true;
-					return *queue;
-				}
-			}
-		}
+		return m_GraphicQueues.Pop();
 	}
 
-	VulkanThreadQueue& VulkanThreadQueue::FetchComputeQueue()
+	std::shared_ptr<VulkanThreadQueue> VulkanThreadQueue::FetchComputeQueue()
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (;;)
-		{
-			for (auto& queue : m_ComputeQueues)
-			{
-				if (!queue->m_IsInUse.load())
-				{
-					queue->m_IsInUse = true;
-					return *queue;
-				}
-			}
-		}
+		return m_ComputeQueues.Pop();
+	}
+
+	void VulkanThreadQueue::PushToGraphic(std::shared_ptr<VulkanThreadQueue>& queue)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_GraphicQueues.Push(std::move(queue));
+	}
+
+	void VulkanThreadQueue::PushToCompute(std::shared_ptr<VulkanThreadQueue>& queue)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_ComputeQueues.Push(std::move(queue));
+	}
+
+	void VulkanThreadQueue::Destroy()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_GraphicQueues.Clear();
+		m_ComputeQueues.Clear();
 	}
 
 	void VulkanThreadQueue::Submit(VkCommandBuffer commandBuffer)
@@ -88,8 +89,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		VK_CHECK(vkQueueWaitIdle(m_Queue));
-
-		m_IsInUse = false;
+		VK_CHECK(vkQueueWaitIdle(m_Queue))
 	}
 }

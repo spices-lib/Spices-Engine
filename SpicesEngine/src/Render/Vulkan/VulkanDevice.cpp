@@ -224,8 +224,8 @@ namespace Spices {
 			*/
 			for (int i = 0; i < NThreadQueue; i++)
 			{
-				VulkanThreadQueue::CreateGraphic(vulkanState, queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0][i + 1], i);
-				VulkanThreadQueue::CreateCompute(vulkanState, queueFamilies[m_QueueHelper.computequeuefamily.value()][2][i + 1], i);
+				VulkanThreadQueue::CreateGraphic(vulkanState, queueFamilies[m_QueueHelper.graphicqueuefamily.value()][0][i + 1]);
+				VulkanThreadQueue::CreateCompute(vulkanState, queueFamilies[m_QueueHelper.computequeuefamily.value()][2][i + 1]);
 			}
 
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_QUEUE, reinterpret_cast<uint64_t>(vulkanState.m_TransferQueue), vulkanState.m_Device, "TransferQueue")
@@ -243,6 +243,8 @@ namespace Spices {
 		m_VulkanState.m_ComputeQueue = nullptr;
 		m_VulkanState.m_PresentQueue = nullptr;
 		m_VulkanState.m_TransferQueue = nullptr;
+
+		VulkanThreadQueue::Destroy();
 
 		/**
 		* @brief Destroy the Vulkan Device Object.

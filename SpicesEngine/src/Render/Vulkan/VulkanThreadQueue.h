@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
+#include "Core/Container/ThreadQueue.h"
 
 namespace Spices {
 
@@ -39,29 +40,44 @@ namespace Spices {
 		* @brief Create Graphic VulkanThreadQueue.
 		* @param[in] vulkanState VulkanState.
 		* @param[in] queue VkQueue.
-		* @param[in] index Thread Queue index.
 		*/
-		static void CreateGraphic(VulkanState& vulkanState, VkQueue queue, uint32_t index);
+		static void CreateGraphic(VulkanState& vulkanState, VkQueue queue);
 
 		/**
 		* @brief Create Compute VulkanThreadQueue.
 		* @param[in] vulkanState VulkanState.
 		* @param[in] queue VkQueue.
-		* @param[in] index Thread Queue index.
 		*/
-		static void CreateCompute(VulkanState& vulkanState, VkQueue queue, uint32_t index);
+		static void CreateCompute(VulkanState& vulkanState, VkQueue queue);
 
 		/**
 		* @brief Fetch valid Graphic Queue.
 		* @return Returns valid VulkanThreadQueue.
 		*/
-		static VulkanThreadQueue& FetchGraphicQueue();
+		static std::shared_ptr<VulkanThreadQueue> FetchGraphicQueue();
 
 		/**
 		* @brief Fetch valid Compute Queue.
 		* @return Returns valid VulkanThreadQueue.
 		*/
-		static VulkanThreadQueue& FetchComputeQueue();
+		static std::shared_ptr<VulkanThreadQueue> FetchComputeQueue();
+
+		/**
+		* @brief Push queue to Graphic ThreadQueue.
+		* @param[in] queue VulkanThreadQueue.
+		*/
+		static void PushToGraphic(std::shared_ptr<VulkanThreadQueue>& queue);
+
+		/**
+		* @brief Push queue to Compute ThreadQueue.
+		* @param[in] queue VulkanThreadQueue.
+		*/
+		static void PushToCompute(std::shared_ptr<VulkanThreadQueue>& queue);
+
+		/**
+		* @brief Destroy all ThreadQueue.
+		*/
+		static void Destroy();
 
 		/**
 		* @brief Submit the CommandBuffer in this Queue.
@@ -79,21 +95,16 @@ namespace Spices {
 		/**
 		* @brief Graphic VulkanThreadQueue.
 		*/
-		static std::array<std::shared_ptr<VulkanThreadQueue>, NThreadQueue> m_GraphicQueues;
+		static scl::thread_queue<std::shared_ptr<VulkanThreadQueue>> m_GraphicQueues;
 
 		/**
 		* @brief Compute VulkanThreadQueue.
 		*/
-		static std::array<std::shared_ptr<VulkanThreadQueue>, NThreadQueue> m_ComputeQueues;
+		static scl::thread_queue<std::shared_ptr<VulkanThreadQueue>> m_ComputeQueues;
 
 		/**
 		* @brief This Thread VkQueue.
 		*/
 		VkQueue m_Queue;
-
-		/**
-		* @brief True if this VkQueue is in used.
-		*/
-		std::atomic_bool m_IsInUse;
 	};
 }
