@@ -14,6 +14,9 @@ project "WhittedRT"
 	-- Building Object Folder.
 	objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
+	-- Enable Multi Processor Compile
+	flags { "MultiProcessorCompile" }
+
 	-- The Solution Files.
 	files
 	{

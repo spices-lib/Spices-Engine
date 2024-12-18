@@ -14,6 +14,9 @@ project "SpicesEngine"
 	-- Building Object Folder.
 	objdir("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
+	-- Enable Multi Processor Compile
+	flags { "MultiProcessorCompile" }
+
 	pchheader "Pchheader.h"          -- PreCompiler Header File.
 	pchsource "src/Pchheader.cpp"    -- PreCompiler Cpp File.
 
