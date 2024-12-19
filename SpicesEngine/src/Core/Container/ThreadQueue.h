@@ -1,7 +1,7 @@
 /**
 * @file ThreadQueue.h.
 * @brief The thread_queue Class Definitions.
-* @author tcmalloc.
+* @author Spices.
 */
 
 #pragma once

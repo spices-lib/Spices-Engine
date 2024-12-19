@@ -2007,11 +2007,11 @@ namespace Spices {
 			}
 			indirectPtr->SetSequenceCount(nSequences);
 
-			m_PipelinesRef.Find(subPassName).resize(pipelineMap.size(), nullptr);
+			indirectPtr->GetPipelineRef().resize(pipelineMap.size(), nullptr);
 
 			for (auto& pair : pipelineMap)
 			{
-				m_PipelinesRef.Find(subPassName)[pair.second] = m_Pipelines.Find(pair.first)->GetPipeline();
+				indirectPtr->GetPipelineRef()[pair.second] = m_Pipelines.Find(pair.first)->GetPipeline();
 			}
 		}
 

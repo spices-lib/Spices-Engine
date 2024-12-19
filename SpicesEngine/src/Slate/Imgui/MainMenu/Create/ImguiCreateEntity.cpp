@@ -50,7 +50,7 @@ namespace Spices {
                     if (ImGui::MenuItem("Disk")) {}
                     if (ImGui::MenuItem("Plane")) 
                     {
-                        WorldFunctions::CreateMeshEntity(FrameInfo::Get().m_World.get(), "Cube", []() {
+                        WorldFunctions::CreateMeshEntity(FrameInfo::Get().m_World.get(), "Plane", []() {
                             auto pack = std::make_shared<PlanePack>();
                             pack->SetMaterial("BasePassRenderer.Mesh.Default");
                             return Mesh::Builder().AddPack(pack).Build();
@@ -58,8 +58,8 @@ namespace Spices {
                     }
                     if (ImGui::MenuItem("Sphere")) 
                     {
-                        WorldFunctions::CreateMeshEntity(FrameInfo::Get().m_World.get(), "Cube", []() {
-                            auto pack = std::make_shared<PlanePack>();
+                        WorldFunctions::CreateMeshEntity(FrameInfo::Get().m_World.get(), "Sphere", []() {
+                            auto pack = std::make_shared<SpherePack>();
                             pack->SetMaterial("BasePassRenderer.Mesh.Default");
                             return Mesh::Builder().AddPack(pack).Build();
                         });

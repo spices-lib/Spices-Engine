@@ -122,6 +122,12 @@ namespace Spices {
 		void SetLayoutTokens(const std::vector<VkIndirectCommandsLayoutTokenNV>& layouts) { m_LayoutTokens = layouts; }
 
 		/**
+		* @brief Get DGC pipeline references.
+		* @return Returns DGC pipeline references.
+		*/
+		std::vector<VkPipeline>& GetPipelineRef() { return m_PipelineRef; }
+
+		/**
 		* @brief Get Command Layout.
 		* @return Returns Command Layout.
 		*/
@@ -159,5 +165,7 @@ namespace Spices {
 		std::vector<VkIndirectCommandsStreamNV>           m_InputStreams;
 		std::shared_ptr<VulkanBuffer>                     m_PreprocessBuffer;
 		uint32_t                                          m_PreprocessSize;
+		std::shared_ptr<VulkanPipeline>                   m_Pipeline;
+		std::vector<VkPipeline>                           m_PipelineRef;
 	};
 }
