@@ -106,7 +106,8 @@ namespace Spices {
 			const std::string&               pipelineName ,
 			const std::string&               materialName ,
 			VkPipelineLayout&                layout       ,
-			std::shared_ptr<RendererSubPass> subPass
+			std::shared_ptr<RendererSubPass> subPass      ,
+			VulkanDeviceGeneratedCommandsNV* indirectPtr
 		) override;
 	};
 

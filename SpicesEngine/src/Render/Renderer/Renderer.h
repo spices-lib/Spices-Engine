@@ -42,6 +42,7 @@
 /******************************STL Header***********************************************************/
 #include <memory>
 #include <unordered_map>
+#include <algorithm>
 /***************************************************************************************************/
 
 static constexpr uint32_t MAX_DIRECTIONALLIGHT_NUM = 10;
@@ -154,10 +155,12 @@ namespace Spices {
 		* @brief Registry dgc pipeline to Specific Renderer.
 		* @param[in] materialName Material Name.
 		* @param[in] subPassName SubPass Name.
+		* @param[in] indirectPtr VulkanDeviceGeneratedCommandsNV.
 		*/
 		void RegistryDGCPipeline(
 			const std::string& materialName,
-			const std::string& subPassName
+			const std::string& subPassName ,
+			VulkanDeviceGeneratedCommandsNV* indirectPtr
 		);
 
 		/**
@@ -240,12 +243,13 @@ namespace Spices {
 		* @brief Create Specific Renderer Default Material. 
 		*/
 		void CreateDefaultMaterial();
-
+		
 		/**
 		* @brief Create Specific Renderer DGC Material.
 		* @param[in] subPass SubPass Name.
+		* @param[in] indirectPtr VulkanDeviceGeneratedCommandsNV.
 		*/
-		void CreateDGCMaterial(const std::string& subPass);
+		void CreateDGCMaterial(const std::string& subPass, VulkanDeviceGeneratedCommandsNV* indirectPtr);
 		
 		/**
 		* @brief Create Pipeline Layout with material's descriptorset and renderer's descriptor set.
@@ -263,12 +267,14 @@ namespace Spices {
 		* @param[in] materialName Material's name.
 		* @param[in] layout PipelineLayout.
 		* @param[in] subPass RendererSubPass.
+		* @param[in] indirectPtr VulkanDeviceGeneratedCommandsNV.
 		*/
 		virtual void CreateDeviceGeneratedCommandsPipeline(
 			const std::string&               pipelineName ,
 			const std::string&               materialName ,
 			VkPipelineLayout&                layout       ,
-			std::shared_ptr<RendererSubPass> subPass
+			std::shared_ptr<RendererSubPass> subPass      ,
+			VulkanDeviceGeneratedCommandsNV* indirectPtr
 		) {}
 
 		/***************************************************************************************************/
@@ -784,8 +790,9 @@ namespace Spices {
 			* @brief Build Raytracing Pipeline.
 			* @param[in] pipelineName pipeline's name.
 			* @param[in] materialName material's name.
+			* @param[in] indirectPtr VulkanDeviceGeneratedCommandsNV.
 			*/
-			void BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName);
+			void BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName, VulkanDeviceGeneratedCommandsNV* indirectPtr);
 
 		private:
 
@@ -1410,7 +1417,7 @@ namespace Spices {
 			*/
 			uint32_t GetSubPassIndex() const { return m_SubPassIndex; }
 
-		protected:
+		public:
 
 			/**
 			* @brief Specific Renderer pointer.
@@ -1924,11 +1931,6 @@ namespace Spices {
 		* @brief Renderer stored material pipelines.
 		*/
 		scl::thread_unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
-		
-		/**
-		* @brief Pipelines Reference in DGC Pipeline.
-		*/
-		scl::thread_unordered_map<std::string, std::vector<VkPipeline>> m_PipelinesRef;
 
 		/**
 		* @brief Whether should load a default renderer material.
@@ -2145,7 +2147,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("FillIndirectRenderData::Regenerate dgc pipeline");
 
-			CreateDGCMaterial(subPassName);
+			CreateDGCMaterial(subPassName, indirectPtr.get());
 		}
 
 		/**
@@ -2154,20 +2156,7 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONEN("FillIndirectRenderData:: Create ProcessBuffer");
 
-			VkGeneratedCommandsMemoryRequirementsInfoNV     memInfo{};
-			memInfo.sType                                 = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
-			memInfo.maxSequencesCount                     = nSequences;
-			memInfo.indirectCommandsLayout                = indirectPtr->GetCommandLayout()->Get();
-			memInfo.pipeline                              = m_Pipelines.Find("BasePassRenderer.Mesh.Default.DGC")->GetPipeline();
-			memInfo.pipelineBindPoint                     = VK_PIPELINE_BIND_POINT_GRAPHICS;
-
-			VkMemoryRequirements2                           memReqs{};
-			memReqs.sType                                 = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
-
-			m_VulkanState.m_VkFunc.vkGetGeneratedCommandsMemoryRequirementsNV(m_VulkanState.m_Device, &memInfo, &memReqs);
-
-			indirectPtr->SetPreprocessSize(memReqs.memoryRequirements.size);
-			indirectPtr->CreatePreprocessBuffer(memReqs.memoryRequirements.size);
+			indirectPtr->CreatePreprocessBuffer();
 		}
 
 		return indirectPtr;
@@ -2185,6 +2174,8 @@ namespace Spices {
 		{
 			entities->push_back(static_cast<uint32_t>(e));
 		}
+
+		std::reverse(entities->begin(), entities->end());
 
 		return entities;
 	}

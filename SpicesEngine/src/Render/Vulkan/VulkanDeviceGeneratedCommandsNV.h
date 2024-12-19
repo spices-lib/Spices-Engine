@@ -9,6 +9,7 @@
 #include "VulkanUtils.h"
 #include "VulkanBuffer.h"
 #include "VulkanIndirectCommmandsLayoutNV.h"
+#include "VulkanPipeline.h"
 
 namespace Spices {
 
@@ -87,10 +88,8 @@ namespace Spices {
 
 		/**
 		* @brief Create Process Buffer.
-		* @param[in] size Buffer Size.
-		* @return Returns Input Buffer.
 		*/
-		std::shared_ptr<VulkanBuffer> CreatePreprocessBuffer(uint32_t size);
+		void CreatePreprocessBuffer();
 
 		/**
 		* @brief Set Preprocess Size.
@@ -128,6 +127,20 @@ namespace Spices {
 		std::vector<VkPipeline>& GetPipelineRef() { return m_PipelineRef; }
 
 		/**
+		* @brief Build Raytracing Pipeline.
+		* @param[in] pipelineName pipeline's name.
+		* @param[in] materialName material's name.
+		* @param[in] config pipeline config.
+		*/
+		void CreateMeshPipeline(const std::string& pipelineName, const std::string& materialName, PipelineConfigInfo& config);
+
+		/**
+		* @brief Get NSequence.
+		* @return Returns NSequence.
+		*/
+		uint32_t GetSequences() { return m_NSequence; }
+
+		/**
 		* @brief Get Command Layout.
 		* @return Returns Command Layout.
 		*/
@@ -142,16 +155,14 @@ namespace Spices {
 		/**
 		* @brief Preprocess with Indirect Command Buffer.
 		* @param[in] cmdBuffer VkCommandBuffer.
-		* @param[in] pipeline VkPipeline.
 		*/
-		void PreprocessDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const;
+		void PreprocessDGC(const VkCommandBuffer& cmdBuffer) const;
 
 		/**
 		* @brief Execute Commands in Indirect Command Buffer.
 		* @param[in] cmdBuffer VkCommandBuffer.
-		* @param[in] pipeline VkPipeline.
 		*/
-		void ExecuteDGC(const VkCommandBuffer& cmdBuffer, VkPipeline pipeline) const;
+		void ExecuteDGC(const VkCommandBuffer& cmdBuffer) const;
 
 	private:
 

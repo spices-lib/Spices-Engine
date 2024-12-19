@@ -117,7 +117,7 @@ namespace Spices {
 			auto dgcInstance = FillIndirectRenderData<MeshComponent>("Mesh", view);
 
 			AsyncMainTask(ThreadPoolEnum::Main, [=]() {
-			    
+
 				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
 				m_DGCData["Mesh"] = dgcInstance;
 
@@ -147,7 +147,8 @@ namespace Spices {
 		const std::string&               pipelineName ,
 		const std::string&               materialName ,
 		VkPipelineLayout&                layout       ,
-		std::shared_ptr<RendererSubPass> subPass
+		std::shared_ptr<RendererSubPass> subPass      ,
+		VulkanDeviceGeneratedCommandsNV* indirectPtr
 	)
 	{
 		SPICES_PROFILE_ZONE;
@@ -159,7 +160,7 @@ namespace Spices {
 		.SetPipelineLayout(layout)
 		.SetCullMode(VK_CULL_MODE_NONE)
 		.SetColorAttachments()
-		.BuildDeviceGeneratedCommand(pipelineName, materialName);
+		.BuildDeviceGeneratedCommand(pipelineName, materialName, indirectPtr);
 	}
 
 	void BasePassRenderer::Render(TimeStep& ts, FrameInfo& frameInfo)

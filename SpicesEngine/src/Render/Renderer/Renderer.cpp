@@ -148,7 +148,7 @@ namespace Spices {
 		CreatePipeline(material, pipelineLayout, subPass);
 	}
 
-	void Renderer::RegistryDGCPipeline(const std::string& materialName, const std::string& subPassName)
+	void Renderer::RegistryDGCPipeline(const std::string& materialName, const std::string& subPassName, VulkanDeviceGeneratedCommandsNV* indirectPtr)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -203,7 +203,7 @@ namespace Spices {
 		*/
 		std::stringstream ss;
 		ss << materialName << ".DGC";
-		CreateDeviceGeneratedCommandsPipeline(ss.str(), materialName, pipelineLayout, subPass);
+		CreateDeviceGeneratedCommandsPipeline(ss.str(), materialName, pipelineLayout, subPass, indirectPtr);
 	}
 
 	std::shared_ptr<Material> Renderer::GetDefaultMaterial(const std::string& subPassName) const
@@ -246,7 +246,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::CreateDGCMaterial(const std::string& subPass)
+	void Renderer::CreateDGCMaterial(const std::string& subPass, VulkanDeviceGeneratedCommandsNV* indirectPtr)
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -256,7 +256,7 @@ namespace Spices {
 		/**
 		* @brief Registry DGC Pipeline.
 		*/
-		RegistryDGCPipeline(ss.str(), subPass);
+		RegistryDGCPipeline(ss.str(), subPass, indirectPtr);
 	}
 
 	VkPipelineLayout Renderer::CreatePipelineLayout(
@@ -1309,14 +1309,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::stringstream ss;
-		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
-
-		/**
-		* @brief Return if DGC Pipeline is not prepared yet.
-		*/
-		if (!m_Renderer->m_Pipelines.HasKey(ss.str())) return;
-
 		PreprocessDGC_NV(cmdBuffer);
 
 		InternalRegionBarrier(
@@ -1353,27 +1345,21 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::stringstream ss;
-		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
-
 		/**
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
-		m_HandledDGCData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
+		m_HandledDGCData->PreprocessDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer);
 	}
 
 	void Renderer::RenderBehaveBuilder::PreprocessDGCAsync_NV() const
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::stringstream ss;
-		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
-
 		/**
 		* @brief Call vkCmdPreprocessGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
-			m_HandledDGCData->PreprocessDGC(cmdBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
+			m_HandledDGCData->PreprocessDGC(cmdBuffer);
 		});
 	}
 
@@ -1381,27 +1367,21 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::stringstream ss;
-		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
-
 		/**
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
-		m_HandledDGCData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
+		m_HandledDGCData->ExecuteDGC(cmdBuffer ? cmdBuffer : m_CommandBuffer);
 	}
 
 	void Renderer::RenderBehaveBuilder::ExecuteDGCAsync_NV() const
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::stringstream ss;
-		ss << m_Renderer->m_RendererName << "." << m_HandledSubPass->GetName() << ".Default.DGC";
-
 		/**
 		* @brief Call vkCmdExecuteGeneratedCommandsNV.
 		*/
 		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
-			m_HandledDGCData->ExecuteDGC(cmdBuffer, m_Renderer->m_Pipelines.Find(ss.str())->GetPipeline());
+			m_HandledDGCData->ExecuteDGC(cmdBuffer);
 		});
 	}
 
@@ -2307,6 +2287,9 @@ namespace Spices {
 		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
 		input.offset                       = 0;
 
+		input.pIndexTypes                  = nullptr;
+		input.pIndexTypeValues             = nullptr;
+
 		/**
 		* @brief Store Input.
 		*/
@@ -2333,6 +2316,9 @@ namespace Spices {
 		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
 		input.offset                       = 0;
 
+		input.pIndexTypes                  = nullptr;
+		input.pIndexTypeValues             = nullptr;
+
 		/**
 		* @brief Store Input.
 		*/
@@ -2355,6 +2341,9 @@ namespace Spices {
 
 		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
 		input.offset                       = 0;
+
+		input.pIndexTypes                  = nullptr;
+		input.pIndexTypeValues             = nullptr;
 
 		/**
 		* @brief Store Input.
@@ -2387,6 +2376,9 @@ namespace Spices {
 		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
 		input.offset                       = 0;
 
+		input.pIndexTypes                  = nullptr;
+		input.pIndexTypeValues             = nullptr;
+
 		/**
 		* @brief Store Input.
 		*/
@@ -2409,6 +2401,9 @@ namespace Spices {
 
 		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
 		input.offset                       = 0;
+
+		input.pIndexTypes                  = nullptr;
+		input.pIndexTypeValues             = nullptr;
 
 		/**
 		* @brief Store Input.
@@ -2433,6 +2428,9 @@ namespace Spices {
 		input.stream                       = static_cast<uint32_t>(m_InputInfos.size());
 		input.offset                       = 0;
 
+		input.pIndexTypes                  = nullptr;
+		input.pIndexTypeValues             = nullptr;
+
 		/**
 		* @brief Store Input.
 		*/
@@ -2452,7 +2450,11 @@ namespace Spices {
 		m_HandledDGCData->BuildCommandLayout(m_InputInfos);
 	}
 
-	Renderer::PipelineBuilder::PipelineBuilder(std::shared_ptr<RendererSubPass> subPass, std::shared_ptr<Material> material, Renderer* renderer)
+	Renderer::PipelineBuilder::PipelineBuilder(
+		std::shared_ptr<RendererSubPass> subPass,
+		std::shared_ptr<Material>        material,
+		Renderer*                        renderer
+	)
 		: m_Renderer(renderer)
 		, m_Material(material)
 		, m_HandledSubPass(subPass)
@@ -2617,25 +2619,16 @@ namespace Spices {
 		m_Renderer->m_Pipelines.Insert(m_Material->GetName(), pipeline);
 	}
 
-	void Renderer::PipelineBuilder::BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName)
+	void Renderer::PipelineBuilder::BuildDeviceGeneratedCommand(const std::string& pipelineName, const std::string& materialName, VulkanDeviceGeneratedCommandsNV* indirectPtr)
 	{
 		SPICES_PROFILE_ZONE;
 
-		const auto pipeline = std::make_shared<VulkanIndirectMeshPipelineNV>(
-			m_Renderer->m_VulkanState ,
-			pipelineName              ,
-			materialName              ,
-			m_Renderer->m_PipelinesRef.Find(m_HandledSubPass->GetName()) ,
-			m_pipelineConfig
-		);
+		static int i = 0;
+		++i;
 
-		m_Renderer->m_PipelinesRef.Find(m_HandledSubPass->GetName()).clear();
+		std::stringstream ss;
+		ss << pipelineName << i;
 
-		if (m_Renderer->m_Pipelines.HasKey(pipelineName))
-		{
-			m_Renderer->m_RenderCache->PushToCaches(m_Renderer->m_Pipelines.Find(pipelineName));
-		}
-
-		m_Renderer->m_Pipelines.Insert(pipelineName, pipeline);
+		indirectPtr->CreateMeshPipeline(ss.str(), materialName, m_pipelineConfig);
 	}
 }
