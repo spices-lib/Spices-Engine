@@ -355,7 +355,7 @@ void* operator new[](size_t size, std::align_val_t align)
 /**
 * @brief override delete operator.
 * @param[in] ptr memory pointer.
-* @param[in] a aligned bytes.
+* @param[in] align aligned bytes.
 */
 void operator delete(void* ptr, std::align_val_t align) noexcept
 {
@@ -401,7 +401,7 @@ void operator delete(void* ptr, std::align_val_t align) noexcept
 /**
 * @brief override delete[] operator.
 * @param[in] ptr memory pointer.
-* @param[in] a aligned bytes.
+* @param[in] align aligned bytes.
 */
 void operator delete[](void* ptr, std::align_val_t align) noexcept
 {
