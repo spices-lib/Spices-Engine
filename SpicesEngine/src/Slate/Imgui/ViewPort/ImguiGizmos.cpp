@@ -62,10 +62,9 @@ namespace Spices {
             /**
             * @brief Iter by view.
             */
-            auto view = m_FrameInfo.m_World->GetRegistry().view<CameraComponent>();
-            for (auto& e : view)
-            {
-                auto [tComp, transComp] = m_FrameInfo.m_World->GetRegistry().get<CameraComponent, TransformComponent>(e);
+            m_FrameInfo.m_World->ViewComponent<CameraComponent>([&](auto e, auto& tComp){
+
+                auto& transComp = m_FrameInfo.m_World->GetComponent<TransformComponent>(e);
 
                 if (tComp.IsActive())
                 {
@@ -73,9 +72,11 @@ namespace Spices {
                     projectionMat = tComp.GetCamera()->GetPMatrix();
 
                     CameraEntity = Entity(e, m_FrameInfo.m_World.get());
-                    break;
+                    return true;
                 }
-            }
+
+                return false;
+            });
         }
 
         /**

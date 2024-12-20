@@ -278,8 +278,6 @@ namespace Spices {
 	T& World::GetComponent(entt::entity e)
 	{
 		SPICES_PROFILE_ZONE;
-
-		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		return m_Registry.get<T>(e);
 	}

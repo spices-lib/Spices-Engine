@@ -84,14 +84,14 @@ namespace Spices {
                 ImGui::TableSetupScrollFreeze(freeze_cols, freeze_rows);
                 ImGui::TableHeadersRow();
 
-                m_FrameInfo.m_World->GetRegistry().view<TagComponent>().each([&](auto entityID, auto& tComp) {
+                m_FrameInfo.m_World->ViewComponent<TagComponent>([&](auto entityID, auto& tComp) -> bool {
 
                     /**
                     * @brief Search Filter here.
                     */
                     if(isEnableSearch)
                     {
-                        if((*tComp.GetTag().begin()).find(searchString) == std::string::npos) return;
+                        if((*tComp.GetTag().begin()).find(searchString) == std::string::npos) return false;
                     }
                     
                     ImGui::TableNextRow();
@@ -148,6 +148,8 @@ namespace Spices {
 
                     ImGui::TableSetColumnIndex(2);
                     ImGui::Text("Entity");
+
+                    return false;
                 });
 
                 ImGui::EndTable();

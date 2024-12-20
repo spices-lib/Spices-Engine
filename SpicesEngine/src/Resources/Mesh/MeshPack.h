@@ -296,22 +296,21 @@ namespace Spices {
 
 		/**
 		* @brief Convert MeshPack into the ray tracing geometry used to build the BLAS.
-		* @param[in] blasIndex Index of blas.
 		* @return Returns VulkanRayTracing::BlasInput.
 		*/
 		VulkanRayTracing::BlasInput MeshPackToVkGeometryKHR();
 
 		/**
-		* @brief Is this meshpack has a valid blas.
+		* @brief Is this meshPack has a valid blas.
 		* @return Returns true if has a valid blas.
 		*/
-		bool HasBlasAccel() const { return m_Accel.accel != nullptr; }
+		bool HasBlasAccel();
 
 		/**
 		* @brief Get this accel.
 		* @return Returns this accel.
 		*/
-		AccelKHR& GetAccel() { return m_Accel; }
+		AccelKHR& GetAccel();
 
 		/**
 		* @brief Get Resource.
@@ -376,10 +375,15 @@ namespace Spices {
 		std::string m_PackType;
 
 		/**
-		* @brief This meshpack blas accel.
+		* @brief This meshPack blas accel.
 		*/
 		AccelKHR m_Accel;
 
+		/**
+		* @brief True if required accel by BLAS Build.
+		*/
+		std::atomic_bool m_IsRequiredAccel;
+		
 		/**
 		* @brief UUID for mesh pack.
 		*/

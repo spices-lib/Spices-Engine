@@ -13,10 +13,13 @@ namespace Spices {
 
 	std::unordered_map<std::string, uint32_t> BindLessTextureManager::m_TextureIDMap;
 	std::unordered_map<uint32_t, std::string> BindLessTextureManager::m_TextureInfoMap;
-
+	std::mutex BindLessTextureManager::m_Mutex;
+	
 	uint32_t BindLessTextureManager::Registry(const std::string& name)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		/**
 		* @brief Return ID if texture already registry.
@@ -50,6 +53,8 @@ namespace Spices {
 	void BindLessTextureManager::UnRegistry(const std::string& name)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		if (m_TextureIDMap.find(name) != m_TextureIDMap.end())
 		{

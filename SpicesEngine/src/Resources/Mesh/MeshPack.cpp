@@ -95,7 +95,8 @@ namespace Spices {
 		: m_MeshPackName(name)
 		, m_Instanced(instanced)
 		, m_NTasks(0)
-		, m_UUID(UUID())
+		, m_IsRequiredAccel(false)
+	    , m_UUID(UUID())
 	{}
 
 	void MeshPack::OnBind(const VkCommandBuffer& commandBuffer) const
@@ -146,7 +147,9 @@ namespace Spices {
 		m_MeshResource                      = ptr->m_MeshResource;
 		m_NTasks                            = ptr->m_NTasks;
 		m_MeshTaskIndirectDrawCommand       = ptr->m_MeshTaskIndirectDrawCommand;
-
+		m_Accel                             = ptr->m_Accel;
+		m_IsRequiredAccel                   = ptr->m_IsRequiredAccel.load();
+		
 		if (m_Material)
 		{
 			m_Desc.UpdatematerialParameterAddress(m_Material->GetMaterialParamsAddress());
@@ -259,6 +262,33 @@ namespace Spices {
 		input.accel = &m_Accel;
 
 		return input;
+	}
+
+	bool MeshPack::HasBlasAccel()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if(m_IsRequiredAccel) return true;
+		
+		m_IsRequiredAccel = true;
+		return false;
+	}
+
+	AccelKHR& MeshPack::GetAccel()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if(!m_IsRequiredAccel)
+		{
+			SPICES_CORE_ERROR("Can not access accel before require it.")
+		}
+
+		if(!m_Accel.accel)
+		{
+			SPICES_CORE_ERROR("Can not access accel before build it.")
+		}
+		
+		return m_Accel;
 	}
 
 	void MeshPack::CreateBuffer()

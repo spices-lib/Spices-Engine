@@ -98,5 +98,10 @@ namespace Spices {
 		* @brief The container of all descriptor sets, identified with owner's name and set number.
 		*/
 		static DescriptorManagerContainer m_DescriptorSets;
+
+		/**
+		* @brief Mutex of this DescriptorSetManager.
+		*/
+		static std::mutex m_Mutex;
 	};
 }

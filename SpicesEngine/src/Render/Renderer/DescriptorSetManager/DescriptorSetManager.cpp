@@ -12,10 +12,13 @@
 namespace Spices {
 
 	DescriptorManagerContainer DescriptorSetManager::m_DescriptorSets;
+	std::mutex DescriptorSetManager::m_Mutex;
 
 	std::shared_ptr<VulkanDescriptorSet> DescriptorSetManager::Registry(const String2& name, uint32_t set)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
@@ -40,6 +43,8 @@ namespace Spices {
 	void DescriptorSetManager::UnLoad(const String2& name)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
@@ -66,6 +71,8 @@ namespace Spices {
 	void DescriptorSetManager::UnLoadForce(const String2& name)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		if (m_DescriptorSets.find(name) != m_DescriptorSets.end())
 		{
@@ -83,6 +90,8 @@ namespace Spices {
 	void DescriptorSetManager::UnLoadAll()
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		m_DescriptorSets.clear();
 	}
@@ -90,6 +99,8 @@ namespace Spices {
 	DescriptorSetInfo& DescriptorSetManager::GetByName(const String2& name)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 		
 		return m_DescriptorSets[name];
 	}

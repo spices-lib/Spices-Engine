@@ -45,13 +45,10 @@ namespace Spices {
 		/**
 		* @brief Update NativeScriptComponent( C++ in world );
 		*/
-		auto view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
-		for (auto& e : view)
-		{
-			auto& nsComp = FrameInfo::Get().m_World->GetRegistry().get<NativeScriptComponent>(e);
-
+		FrameInfo::Get().m_World->ViewComponent<NativeScriptComponent>([&](auto e, auto& nsComp){
 			nsComp.OnTick(ts);
-		}
+			return false;
+		});
 	}
 
 	void NativeScriptSystem::OnEvent(Event& event)
@@ -60,12 +57,9 @@ namespace Spices {
 
 		m_NativeScriptRegister->OnEvent(event);
 
-		auto view = FrameInfo::Get().m_World->GetRegistry().view<NativeScriptComponent>();
-		for (auto& e : view)
-		{
-			auto& nsComp = FrameInfo::Get().m_World->GetRegistry().get<NativeScriptComponent>(e);
-
+		FrameInfo::Get().m_World->ViewComponent<NativeScriptComponent>([&](auto e, auto& nsComp){
 			nsComp.OnEvent(event);
-		}
+			return false;
+		});
 	}
 }

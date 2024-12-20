@@ -43,7 +43,7 @@ namespace scl {
 		* @brief Is this queue is empty.
 		* @reutrn Returns true if empty.
 		*/
-		bool IsEmpty() { return m_Count.load() == 0; }
+		bool IsEmpty() const { return m_Count.load() == 0; }
 
 		/**
 		* @brief Clear this queue.
@@ -90,7 +90,7 @@ namespace scl {
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		if (IsEmpty())
-			m_NotEmpty.wait(lock);
+			m_NotEmpty.wait(lock, [&](){ return !IsEmpty(); });
 
 		auto ptr = m_Queue.front();
 		m_Queue.pop();

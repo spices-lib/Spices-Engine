@@ -83,12 +83,12 @@ namespace Spices {
 		* @brief Submit the CommandBuffer in this Queue.
 		* @param[in] commandBuffer VkCommandBuffer.
 		*/
-		void Submit(VkCommandBuffer commandBuffer);
+		void Submit(VkCommandBuffer commandBuffer) const;
 
 		/**
 		* @brief Wait for queu execute.
 		*/
-		void Wait();
+		void Wait() const;
 
 	private:
 

@@ -72,7 +72,7 @@ namespace Spices {
 		* @brief Get RayTracing AccelerationStructure.
 		* @return Returns RayTracing AccelerationStructure.
 		*/
-		static  VkAccelerationStructureKHR GetAccelerationStructure() { return m_VulkanRayTracing->GetAccelerationStructure(); }
+		static VkAccelerationStructureKHR GetAccelerationStructure();
 
 	private:
 

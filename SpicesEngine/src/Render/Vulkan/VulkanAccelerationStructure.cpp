@@ -30,6 +30,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		m_VulkanState.m_VkFunc.vkDestroyAccelerationStructureKHR(m_VulkanState.m_Device, m_Accel, nullptr);
+		m_Accel = nullptr;
 	}
 
 	VkDeviceAddress VulkanAccelerationStructure::GetACDeviceAddress()

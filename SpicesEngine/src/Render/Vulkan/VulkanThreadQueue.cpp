@@ -70,7 +70,7 @@ namespace Spices {
 		m_ComputeQueues.Clear();
 	}
 
-	void VulkanThreadQueue::Submit(VkCommandBuffer commandBuffer)
+	void VulkanThreadQueue::Submit(VkCommandBuffer commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -82,10 +82,10 @@ namespace Spices {
 		submitInfo.commandBufferCount  = 1;
 		submitInfo.pCommandBuffers     = &commandBuffer;
 
-		VK_CHECK(vkQueueSubmit(m_Queue, 1, &submitInfo, VK_NULL_HANDLE));
+		VK_CHECK(vkQueueSubmit(m_Queue, 1, &submitInfo, VK_NULL_HANDLE))
 	}
 
-	void VulkanThreadQueue::Wait()
+	void VulkanThreadQueue::Wait() const
 	{
 		SPICES_PROFILE_ZONE;
 

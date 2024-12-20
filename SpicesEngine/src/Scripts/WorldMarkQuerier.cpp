@@ -29,17 +29,16 @@ namespace Spices {
 
 		if (mark & World::FrushStableFrame)
 		{
-			auto view = FrameInfo::Get().m_World->GetRegistry().view<CameraComponent>();
-			for (auto& e : view)
-			{
-				auto& camComp = FrameInfo::Get().m_World->GetRegistry().get<CameraComponent>(e);
+			FrameInfo::Get().m_World->ViewComponent<CameraComponent>([](auto e, auto& comp) {
 
-				if (camComp.IsActive())
+				if (comp.IsActive())
 				{
-					camComp.GetCamera()->ResetStableFrames();
+					comp.GetCamera()->ResetStableFrames();
 				}
-			}
 
+				return false;
+			});
+			
 			FrameInfo::Get().m_World->ClearMarkerWithBits(World::FrushStableFrame);
 		}
 	}

@@ -35,17 +35,16 @@ namespace Spices {
             
 
             float rate = 1.0f;
-            auto view = FrameInfo::Get().m_World->GetRegistry().view<CameraComponent>();
-            for(auto& e : view)
-            {
-                auto& camComp = FrameInfo::Get().m_World->GetRegistry().get<CameraComponent>(e);
+            FrameInfo::Get().m_World->ViewComponent<CameraComponent>([&](auto e, auto& camComp){
 
                 if(camComp.IsActive())
                 {
                     rate = static_cast<float>(camComp.GetCamera()->GetStableFrames()) / 100.0f;
-                    break;
+                    return true;
                 }
-            }
+
+                return false;
+            });
             
             if(rate <= 1.0f)
             {

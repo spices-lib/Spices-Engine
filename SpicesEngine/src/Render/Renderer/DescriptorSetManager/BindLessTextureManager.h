@@ -49,5 +49,10 @@ namespace Spices {
 		* @todo might be fill with texture's information.
 		*/
 		static std::unordered_map<uint32_t, std::string> m_TextureInfoMap;
+
+		/**
+		* @brief Mutex of this BindLessTextureManager.
+		*/
+		static std::mutex m_Mutex;
 	};
 }

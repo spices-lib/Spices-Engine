@@ -156,7 +156,16 @@ namespace Spices {
 
 		builder.EndRenderPass();
 	}
-	
+
+	VkAccelerationStructureKHR RayTracingRenderer::GetAccelerationStructure()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if(!m_VulkanRayTracing) return nullptr;
+		
+		return m_VulkanRayTracing->GetAccelerationStructure();
+	}
+
 	void RayTracingRenderer::UpdateTopLevelAS(FrameInfo& frameInfo, std::shared_ptr<VulkanRayTracing> rayTracingInstance, bool update)
 	{
 		SPICES_PROFILE_ZONE;
@@ -204,9 +213,7 @@ namespace Spices {
 		/**
 		* @brief Iter all MeshComponents.
 		*/
-		for (auto& e : *view)
-		{
-			auto& meshComp = frameInfo.m_World->GetRegistry().get<MeshComponent>(static_cast<entt::entity>(e));
+		frameInfo.m_World->ViewComponent<MeshComponent>(*view, [&](auto e, auto& meshComp){
 
 			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 
@@ -217,8 +224,15 @@ namespace Spices {
 
 				return false;
 			});
-		}
 
+			return false;
+		});
+
+		/**
+		* @brief Skip if no blas build requirment.
+		*/
+		if(allBlas.empty()) return;
+		
 		/**
 		* @brief Build BLAS.
 		*/
@@ -241,12 +255,9 @@ namespace Spices {
 		auto& desc = rayTracingInstance->GetMeshDesc().attributes;
 		desc->resize(SpicesShader::MESH_BUFFER_MAXNUM, 0);
 
-		for (auto& e : *view)
-		{
-			MeshComponent meshComp;
-			TransformComponent tranComp;
-
-			std::tie(meshComp, tranComp) = frameInfo.m_World->GetRegistry().get<MeshComponent, TransformComponent>(static_cast<entt::entity>(e));
+		frameInfo.m_World->ViewComponent<MeshComponent>(*view, [&](auto e, auto& meshComp){
+			
+			auto& tranComp = frameInfo.m_World->GetComponent<TransformComponent>(static_cast<entt::entity>(e));
 
 			meshComp.GetMesh()->AddMaterialToHitGroup(*hitGroups);
 			meshComp.GetMesh()->GetPacks().for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
@@ -266,7 +277,9 @@ namespace Spices {
 				index += 1;
 				return false;
 			});
-		}
+
+			return false;
+		});
 
 		rayTracingInstance->GetMeshDesc().CreateBuffer("MeshDescBuffer", VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 
