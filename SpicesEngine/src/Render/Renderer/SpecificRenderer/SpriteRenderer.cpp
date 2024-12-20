@@ -67,12 +67,13 @@ namespace Spices {
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Sprite" }));
 		
 		auto [ invViewMatrix, projectionMatrix, stableFrames, fov ] = GetActiveCameraMatrix(frameInfo);
-		const glm::vec3 camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
 
-		std::map<float, int> sortedEntity;
+		std::multimap<float, int> sortedEntity;
 		IterWorldCompWithBreak<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& tranComp, SpriteComponent& spriteComp) {
-			const glm::vec3 dis = tranComp.GetPosition() - camPos;
-			sortedEntity[glm::dot(dis, dis)] = entityId;
+
+			auto viewPos = glm::inverse(invViewMatrix) * glm::vec4(tranComp.GetPosition(), 0.0f);
+
+			sortedEntity.insert(std::pair(viewPos.z, entityId));
 
 			return false;
 		});

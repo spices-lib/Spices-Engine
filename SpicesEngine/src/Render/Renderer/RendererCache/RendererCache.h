@@ -29,8 +29,6 @@ namespace Spices {
 		virtual ~RendererCache()
 		{
 			SPICES_PROFILE_ZONE;
-
-			std::unique_lock<std::mutex> lock(m_Mutex);
 			
 			ClearCaches();
 		}
