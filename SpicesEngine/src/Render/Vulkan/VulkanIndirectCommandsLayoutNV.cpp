@@ -1,15 +1,15 @@
 /**
-* @file VulkanIndirectCommmandsLayoutNV.cpp.
-* @brief The VulkanIndirectCommmandsLayoutNV Class Implementation.
+* @file VulkanIndirectCommandsLayoutNV.cpp.
+* @brief The VulkanIndirectCommandsLayoutNV Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "VulkanIndirectCommmandsLayoutNV.h"
+#include "VulkanIndirectCommandsLayoutNV.h"
 
 namespace Spices {
 
-	VulkanIndirectCommmandsLayoutNV::VulkanIndirectCommmandsLayoutNV(
+	VulkanIndirectCommandsLayoutNV::VulkanIndirectCommandsLayoutNV(
 		VulkanState&                          vulkanState ,
 		VkIndirectCommandsLayoutCreateInfoNV& info
 	)
@@ -23,7 +23,7 @@ namespace Spices {
 		vulkanState.m_VkFunc.vkCreateIndirectCommandsLayoutNV(vulkanState.m_Device, &info, nullptr, &m_IndirectCmdsLayout);
 	}
 
-	VulkanIndirectCommmandsLayoutNV::~VulkanIndirectCommmandsLayoutNV()
+	VulkanIndirectCommandsLayoutNV::~VulkanIndirectCommandsLayoutNV()
 	{
 		SPICES_PROFILE_ZONE;
 

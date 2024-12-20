@@ -25,7 +25,7 @@ namespace Spices {
 	std::shared_ptr<RendererSubPass> RendererPass::AddSubPass(
 		const std::string&       subPassName  ,
 		uint32_t                 index        , 
-		Queryer::StatisticsFlags flags
+		Querier::StatisticsFlags flags
 	)
 	{
 		SPICES_PROFILE_ZONE;

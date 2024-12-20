@@ -1,26 +1,26 @@
 /**
-* @file TimestampQueryer.h
-* @brief The TimestampQueryer Class Definitions.
+* @file TimestampQuerier.h
+* @brief The TimestampQuerier Class Definitions.
 * @author Spices.
 */
 
 #pragma once
 #include "Core/Core.h"
-#include "Queryer.h"
+#include "Querier.h"
 
 namespace Spices {
 
 	/**
-	* @brief Queryer of GPU Timestamp.
+	* @brief Querier of GPU Timestamp.
 	*/
-	class TimestampQueryer : public Queryer
+	class TimestampQuerier : public Querier
 	{
 	public:
 
 		/**
 		* @brief Stored TimeStamp Result.
 		*/
-		struct Result : public Queryer::Result
+		struct Result : public Querier::Result
 		{
 			float timeStamp;  /* @brief TimeStamp in renderPass. */
 
@@ -28,9 +28,9 @@ namespace Spices {
 			* @brief Combine result with another Result.
 			* @param[in] result another Result.
 			*/
-			virtual void Combine(Queryer::Result* result) override
+			virtual void Combine(Querier::Result* result) override
 			{
-				auto r = static_cast<TimestampQueryer::Result*>(result);
+				auto r = static_cast<TimestampQuerier::Result*>(result);
 
 				if (!r->valid) return;
 
@@ -44,12 +44,12 @@ namespace Spices {
 		* @brief Constructor Function.
 		* @param[in] state VulkanState.
 		*/
-		explicit TimestampQueryer(VulkanState& state);
+		explicit TimestampQuerier(VulkanState& state);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~TimestampQueryer() = default;
+		virtual ~TimestampQuerier() override = default;
 
 		/**
 		* @brief Begin QueryPool.

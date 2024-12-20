@@ -8,7 +8,7 @@
 #include "Core/Core.h"
 #include "VulkanUtils.h"
 #include "VulkanBuffer.h"
-#include "VulkanIndirectCommmandsLayoutNV.h"
+#include "VulkanIndirectCommandsLayoutNV.h"
 #include "VulkanPipeline.h"
 
 namespace Spices {
@@ -31,7 +31,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanDeviceGeneratedCommandsNV() override;
+		virtual ~VulkanDeviceGeneratedCommandsNV() override = default;
 
 		/**
 		* @brief Reset this CommandsLayout.
@@ -138,19 +138,19 @@ namespace Spices {
 		* @brief Get NSequence.
 		* @return Returns NSequence.
 		*/
-		uint32_t GetSequences() { return m_NSequence; }
+		uint32_t GetSequences() const { return m_NSequence; }
 
 		/**
 		* @brief Get Command Layout.
 		* @return Returns Command Layout.
 		*/
-		std::shared_ptr<VulkanIndirectCommmandsLayoutNV> GetCommandLayout() const { return m_IndirectCmdsLayout; }
+		std::shared_ptr<VulkanIndirectCommandsLayoutNV> GetCommandLayout() const { return m_IndirectCmdsLayout; }
 
 		/**
 		* @brief Set Command Layout.
 		* @param[in] layout VkIndirectCommandsLayoutNV.
 		*/
-		void SetCommandLayout(std::shared_ptr<VulkanIndirectCommmandsLayoutNV> layout) { m_IndirectCmdsLayout = layout; }
+		void SetCommandLayout(std::shared_ptr<VulkanIndirectCommandsLayoutNV> layout) { m_IndirectCmdsLayout = layout; }
 
 		/**
 		* @brief Preprocess with Indirect Command Buffer.
@@ -165,18 +165,60 @@ namespace Spices {
 		void ExecuteDGC(const VkCommandBuffer& cmdBuffer) const;
 
 	private:
+		
+		/**
+		* @brief DrawCall elements Input Strides. 
+		*/
+		std::vector<uint32_t> m_InputStrides;
 
-		std::vector<uint32_t>                             m_InputStrides;
-		uint32_t                                          m_Strides;
-		std::shared_ptr<VulkanIndirectCommmandsLayoutNV>  m_IndirectCmdsLayout;
-		std::vector<VkIndirectCommandsLayoutTokenNV>      m_LayoutTokens;
-													      
-		uint32_t                                          m_NSequence;
-		std::shared_ptr<VulkanBuffer>                     m_InputBuffer;
-		std::vector<VkIndirectCommandsStreamNV>           m_InputStreams;
-		std::shared_ptr<VulkanBuffer>                     m_PreprocessBuffer;
-		uint32_t                                          m_PreprocessSize;
-		std::shared_ptr<VulkanPipeline>                   m_Pipeline;
-		std::vector<VkPipeline>                           m_PipelineRef;
+		/**
+		* @brief DrawCall total Input Strides. 
+		*/
+		uint32_t m_Strides;
+
+		/**
+		* @brief VkIndirectCommandsLayoutNV. 
+		*/
+		std::shared_ptr<VulkanIndirectCommandsLayoutNV> m_IndirectCmdsLayout;
+
+		/**
+		* @brief VkIndirectCommandsLayoutTokenNV. 
+		*/
+		std::vector<VkIndirectCommandsLayoutTokenNV> m_LayoutTokens;
+
+		/**
+		* @brief Draw count. 
+		*/
+		uint32_t m_NSequence;
+
+		/**
+		* @brief DrawCall Input Buffer. 
+		*/
+		std::shared_ptr<VulkanBuffer> m_InputBuffer;
+
+		/**
+		* @brief VkIndirectCommandsStreamNV. 
+		*/
+		std::vector<VkIndirectCommandsStreamNV> m_InputStreams;
+
+		/**
+		* @brief PreprocessBuffer. 
+		*/
+		std::shared_ptr<VulkanBuffer> m_PreprocessBuffer;
+
+		/**
+		* @brief PreprocessBuffer bytes. 
+		*/
+		uint32_t m_PreprocessSize;
+
+		/**
+		* @brief DGC pipeline. 
+		*/
+		std::shared_ptr<VulkanPipeline> m_Pipeline;
+
+		/**
+		* @brief DrawCall referenced pipeline. 
+		*/
+		std::vector<VkPipeline> m_PipelineRef;
 	};
 }

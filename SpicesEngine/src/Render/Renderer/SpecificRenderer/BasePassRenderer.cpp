@@ -61,7 +61,7 @@ namespace Spices {
 		})
 		.AddSelfDependency(VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV,VK_ACCESS_INDIRECT_COMMAND_READ_BIT,VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT)
 		.EndSubPass()
-		.AddSubPass("SkyBox", Queryer::None)
+		.AddSubPass("SkyBox", Querier::None)
 		.AddColorAttachment("Albedo", TextureType::Texture2D, [](bool& isEnableBlend, VkAttachmentDescription& description) {
 			description.format                = VK_FORMAT_R16G16B16A16_SFLOAT;
 		})
@@ -108,13 +108,13 @@ namespace Spices {
 	{
 		Renderer::OnMeshAddedWorld();
 
-		auto view = GetEntityWithComponent<MeshComponent>(FrameInfo::Get().m_World.get());
+		const auto view = GetEntityWithComponent<MeshComponent>(FrameInfo::Get().m_World.get());
 
 		AsyncTask(ThreadPoolEnum::Custom, [=]() {
 
 			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
 
-			auto dgcInstance = FillIndirectRenderData<MeshComponent>("Mesh", view);
+			const auto dgcInstance = FillIndirectRenderData<MeshComponent>("Mesh", view);
 
 			AsyncMainTask(ThreadPoolEnum::Main, [=]() {
 
@@ -215,7 +215,7 @@ namespace Spices {
 
 		IterWorldCompWithBreak<SkyBoxComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SkyBoxComponent& skyboxComp) {
 
-			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshpackId, const auto& meshPack) {
+			skyboxComp.GetMesh()->DrawMeshTasks(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](const uint32_t& meshPackId, const auto& meshPack) {
 
 				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 

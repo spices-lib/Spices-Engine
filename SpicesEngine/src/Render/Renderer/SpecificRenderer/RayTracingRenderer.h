@@ -112,7 +112,7 @@ namespace Spices {
 		* @brief Create BottomLevelAS with all MeshComponents.
 		* @param[in] frameInfo FrameInfo.
 		* @param[in] view Component View.
-		* @param[in] ratTracingInstance VulkanRayTracingInstace.
+		* @param[in] rayTracingInstance VulkanRayTracingInstance.
 		*/
 		void CreateBottomLevelAS(
 			FrameInfo& frameInfo, 
@@ -124,7 +124,7 @@ namespace Spices {
 		* @brief Create TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
 		* @param[in] view Component View.
-		* @param[in] ratTracingInstance VulkanRayTracingInstance.
+		* @param[in] rayTracingInstance VulkanRayTracingInstance.
 		* @param[in] update default false.
 		*/
 		void CreateTopLevelAS(
@@ -137,7 +137,7 @@ namespace Spices {
 		/**
 		* @brief Update TopLevelAS.
 		* @param[in] frameInfo FrameInfo.
-		* @param[in] ratTracingInstance VulkanRayTracingInstance.
+		* @param[in] rayTracingInstance VulkanRayTracingInstance.
 		* @param[in] update default true.
 		* @todo Event Queue.
 		*/
@@ -149,7 +149,7 @@ namespace Spices {
 
 		/**
 		* @brief Create Shader Binding Table.
-		* @param[in] ratTracingInstance VulkanRayTracingInstance.
+		* @param[in] rayTracingInstance VulkanRayTracingInstance.
 		*/
 		void CreateRTShaderBindingTable(std::shared_ptr<VulkanRayTracing> rayTracingInstance);
 

@@ -99,7 +99,7 @@ namespace Spices {
 		std::stringstream ss;
 		ss << "RendererManager::GetRenderer: Not such a renderer called: " << name;
 
-		SPICES_CORE_ERROR(ss.str());
+		SPICES_CORE_ERROR(ss.str())
 
 		return nullptr;
 	}

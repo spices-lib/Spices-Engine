@@ -9,8 +9,8 @@
 #include "Render/Renderer/RendererManager.h"
 #include "Render/Renderer/Renderer.h"
 #include "Render/Renderer/RenderPassStatistics/RenderPassStatistics.h"
-#include "Render/Renderer/RenderPassStatistics/TimestampQueryer.h"
-#include "Render/Renderer/RenderPassStatistics/PipelineStatisticsQueryer.h"
+#include "..\..\..\..\..\..\Render\Renderer\RenderPassStatistics\TimestampQuerier.h"
+#include "..\..\..\..\..\..\Render\Renderer\RenderPassStatistics\PipelineStatisticsQuerier.h"
 #include "Core/Container/Tree.h"
 
 namespace Spices {
@@ -177,7 +177,7 @@ namespace Spices {
         */
         struct TimestampResult
         {
-            TimestampQueryer::Result result;
+            TimestampQuerier::Result result;
             std::string name;
         };
 
@@ -195,17 +195,17 @@ namespace Spices {
 
             RendererManager::IterRenderer([&](const std::string& rendererName, const std::shared_ptr<Renderer>& renderer) {
 
-                auto rendererResult = totalResult.AddChild();
+                const auto rendererResult = totalResult.AddChild();
                 rendererResult->GetData().name = rendererName;
 
                 renderer->IterStatistics([&](const std::string& subPassName, const std::shared_ptr<RenderPassStatistics>& statistics) {
                 
-                    auto subPassResult = rendererResult->AddChild();
+                    const auto subPassResult = rendererResult->AddChild();
                     subPassResult->GetData().name = subPassName;
 
-                    statistics->IterStatisticsResult(Queryer::Timestamp, [&](const Queryer::StatisticsBits& type, std::shared_ptr<Queryer::Result>& result) {
+                    statistics->IterStatisticsResult(Querier::Timestamp, [&](const Querier::StatisticsBits& type, std::shared_ptr<Querier::Result>& result) {
 
-                        TimestampQueryer::Result* res = static_cast<TimestampQueryer::Result*>(result.get());
+                        TimestampQuerier::Result* res = static_cast<TimestampQuerier::Result*>(result.get());
                         if (res->valid)
                         {
                             subPassResult->GetData().result = *res;
@@ -243,8 +243,8 @@ namespace Spices {
             */
             static auto SortTimestampTreeMethod = [](const void* lhs, const void* rhs) -> int {
                 
-                const auto l = (const std::unique_ptr<scl::tree<TimestampResult>>*)lhs;
-                const auto r = (const std::unique_ptr<scl::tree<TimestampResult>>*)rhs;
+                const auto l = static_cast<const std::unique_ptr<scl::tree<TimestampResult>>*>(lhs);
+                const auto r = static_cast<const std::unique_ptr<scl::tree<TimestampResult>>*>(rhs);
 
                 ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs();
                 if (sortState == ImGuiSortDirection_Ascending)
@@ -374,7 +374,7 @@ namespace Spices {
         */
         struct PipelineResult
         {
-            PipelineStatisticsQueryer::Result result;
+            PipelineStatisticsQuerier::Result result;
             std::string name;
         };
 
@@ -400,9 +400,9 @@ namespace Spices {
                     auto subPassResult = rendererResult->AddChild();
                     subPassResult->GetData().name = subPassName;
 
-                    statistics->IterStatisticsResult(Queryer::Pipeline, [&](const Queryer::StatisticsBits& type, std::shared_ptr<Queryer::Result>& result) {
+                    statistics->IterStatisticsResult(Querier::Pipeline, [&](const Querier::StatisticsBits& type, std::shared_ptr<Querier::Result>& result) {
 
-                        PipelineStatisticsQueryer::Result* res = static_cast<PipelineStatisticsQueryer::Result*>(result.get());
+                        PipelineStatisticsQuerier::Result* res = static_cast<PipelineStatisticsQuerier::Result*>(result.get());
                         if (res->valid)
                         {
                             subPassResult->GetData().result = *res;
@@ -440,8 +440,8 @@ namespace Spices {
             */
             static auto SortTimestampTreeMethod = [](const void* lhs, const void* rhs) -> int {
                 
-                const auto l = (const std::unique_ptr<scl::tree<PipelineResult>>*)lhs;
-                const auto r = (const std::unique_ptr<scl::tree<PipelineResult>>*)rhs;
+                const auto l = static_cast<const std::unique_ptr<scl::tree<PipelineResult>>*>(lhs);
+                const auto r = static_cast<const std::unique_ptr<scl::tree<PipelineResult>>*>(rhs);
 
                 ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs();
                 if (sortState == ImGuiSortDirection_Ascending)

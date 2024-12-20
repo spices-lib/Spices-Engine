@@ -14,7 +14,7 @@ namespace Spices {
 	RendererSubPass::RendererSubPass(
 		const std::string&       subPassName , 
 		uint32_t                 index       , 
-		Queryer::StatisticsFlags flags
+		Querier::StatisticsFlags flags
 	)
 		: m_SubpassName(subPassName)
 		, m_Index      (index)
@@ -22,7 +22,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (flags == Queryer::None) return;
+		if (flags == Querier::None) return;
 		m_Statistics = std::make_shared<RenderPassStatistics>(VulkanRenderBackend::GetState(), flags);
 	}
 
@@ -130,21 +130,21 @@ namespace Spices {
 		m_Buffers[i2]->Flush();
 	}
 
-	void RendererSubPass::BeginStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage)
+	void RendererSubPass::BeginStatistics(VkCommandBuffer commandBuffer, Querier::StatisticsFlags flags) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Statistics) m_Statistics->BeginStatistics(commandBuffer, flage);
+		if (m_Statistics) m_Statistics->BeginStatistics(commandBuffer, flags);
 	}
 
-	void RendererSubPass::EndStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage)
+	void RendererSubPass::EndStatistics(VkCommandBuffer commandBuffer, Querier::StatisticsFlags flags) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (m_Statistics) m_Statistics->EndStatistics(commandBuffer, flage);
+		if (m_Statistics) m_Statistics->EndStatistics(commandBuffer, flags);
 	}
 
-	void RendererSubPass::StoreStatistics()
+	void RendererSubPass::StoreStatistics() const
 	{
 		SPICES_PROFILE_ZONE;
 

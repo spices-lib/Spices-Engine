@@ -30,8 +30,10 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONE;
 
+			std::unique_lock<std::mutex> lock(m_Mutex);
+			
 			ClearCaches();
-		};
+		}
 
 		/**
 		* @brief Push a garbage to caches.
@@ -42,6 +44,8 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONE;
 
+			std::unique_lock<std::mutex> lock(m_Mutex);
+			
 			m_Caches.push_back(any);
 		}
 
@@ -52,6 +56,8 @@ namespace Spices {
 		{
 			SPICES_PROFILE_ZONE;
 
+			std::unique_lock<std::mutex> lock(m_Mutex);
+			
 			m_Caches.clear();
 		}
 
@@ -61,5 +67,10 @@ namespace Spices {
 		* @brief Renderer caches data.
 		*/
 		std::vector<std::any> m_Caches;
+
+		/**
+		* @brief This caches mutex. 
+		*/
+		std::mutex m_Mutex;
 	};
 }

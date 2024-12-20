@@ -70,8 +70,8 @@ namespace Spices {
 		const glm::vec3 camPos = glm::vec3(invViewMatrix[3][0], invViewMatrix[3][1], invViewMatrix[3][2]);
 
 		std::map<float, int> sortedEntity;
-		IterWorldCompWithBreak<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, SpriteComponent& spriteComp) {
-			const glm::vec3 dis = transComp.GetPosition() - camPos;
+		IterWorldCompWithBreak<SpriteComponent>(frameInfo, [&](int entityId, TransformComponent& tranComp, SpriteComponent& spriteComp) {
+			const glm::vec3 dis = tranComp.GetPosition() - camPos;
 			sortedEntity[glm::dot(dis, dis)] = entityId;
 
 			return false;
@@ -81,7 +81,8 @@ namespace Spices {
 		{
 			auto [transComp, spriteComp] = frameInfo.m_World->GetRegistry().get<TransformComponent, SpriteComponent>(static_cast<entt::entity>(it->second));
 
-			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshpackId, auto meshPack) {
+			spriteComp.GetMesh()->Draw(m_VulkanState.m_GraphicCommandBuffer[frameInfo.m_FrameIndex], [&](uint32_t meshPackId, auto meshPack) {
+				
 				builder.BindPipeline(meshPack->GetMaterial()->GetName());
 
 				builder.UpdatePushConstant<uint64_t>([&](auto& push) {

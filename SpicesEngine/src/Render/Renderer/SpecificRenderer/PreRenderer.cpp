@@ -1,3 +1,9 @@
+/**
+* @file PreRenderer.h.
+* @brief The PreRenderer Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "PreRenderer.h"
 
@@ -8,7 +14,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		RendererPassBuilder{ "PreRenderer", this }
-		.AddSubPass("PreRenderer", Queryer::None)
+		.AddSubPass("PreRenderer", Querier::None)
 		.EndSubPass()	
 		.Build();
 	}

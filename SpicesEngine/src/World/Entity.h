@@ -9,7 +9,6 @@
 #include "entt.hpp"
 #include "World/Components/UUIDComponent.h"
 #include "World/World.h"
-#include <string>
 
 namespace Spices {
 
@@ -47,12 +46,13 @@ namespace Spices {
 		* @brief Template Function.
 		* Used for add specific component to entity.
 		* @tparam T Specific component.
+		* @param[in] args Component construct parameters.
 		* @return Returns The specific component reference that added.
 		*/
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-			T& component = m_World->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			T& component = m_World->AddComponent<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_World->OnComponentAdded<T>(this, component);
 			return component;
 		}
@@ -65,7 +65,7 @@ namespace Spices {
 		template<typename T>
 		T& GetComponent()
 		{
-			return m_World->m_Registry.get<T>(m_EntityHandle);
+			return m_World->GetComponent<T>(m_EntityHandle);
 		}
 
 		/**
@@ -73,20 +73,20 @@ namespace Spices {
 		* @tparam T Which Component we will remove.
 		*/
 		template<typename T>
-		void RemoveComponent()
+		void RemoveComponent() const
 		{
-			m_World->m_Registry.remove<T>(m_EntityHandle);
+			m_World->RemoveComponent<T>(m_EntityHandle);
 		}
 
 		/**
-		* @brief Judje Component is owned by this entity or not.
+		* @brief If Component is owned by this entity or not.
 		* @tparam T Which Component we will search.
-		* @return Returns true if finded.
+		* @return Returns true if found.
 		*/
 		template<typename T>
-		bool HasComponent()
+		bool HasComponent() const
 		{
-			return m_World->m_Registry.all_of<T>(m_EntityHandle);
+			return m_World->HasComponent<T>(m_EntityHandle);
 		}
 
 		/**
@@ -126,7 +126,7 @@ namespace Spices {
 		/**
 		* @brief Not equal Operation.
 		* @param[in] other Another Entity.
-		* @return Returns true if not euqal.
+		* @return Returns true if not equal.
 		*/
 		bool operator !=(const Entity& other) const
 		{

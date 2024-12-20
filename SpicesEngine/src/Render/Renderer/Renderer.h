@@ -9,8 +9,7 @@
 #include "Core/Core.h"
 #include "DescriptorSetManager/DescriptorSetManager.h"
 #include "Render/Renderer/RendererPass/RendererPass.h"
-#include "Render/Vulkan/VulkanCmdThreadPool.h"
-#include "Render/Renderer/RenderPassStatistics/PipelineStatisticsQueryer.h"
+#include "RenderPassStatistics\PipelineStatisticsQuerier.h"
 #include "..\..\..\assets\Shaders\src\Header\ShaderCommon.h"
 #include "Debugger/Aftermath/NsightAftermathGpuCrashTracker.h"
 #include "Debugger/Perf/NsightPerfGPUProfilerReportGenerator.h"
@@ -42,7 +41,6 @@
 /******************************STL Header***********************************************************/
 #include <memory>
 #include <unordered_map>
-#include <algorithm>
 /***************************************************************************************************/
 
 static constexpr uint32_t MAX_DIRECTIONALLIGHT_NUM = 10;
@@ -258,7 +256,7 @@ namespace Spices {
 		*/
 		VkPipelineLayout CreatePipelineLayout(
 			const std::vector<VkDescriptorSetLayout>& rowSetLayouts ,
-			std::shared_ptr<RendererSubPass>          subPass
+			const std::shared_ptr<RendererSubPass>&   subPass
 		) const;
 
 		/**
@@ -363,7 +361,7 @@ namespace Spices {
 			*/
 			RendererPassBuilder& AddSubPass(
 				const std::string&       subPassName   , 
-				Queryer::StatisticsFlags flags = Queryer::ALL
+				Querier::StatisticsFlags flags = Querier::ALL
 			);
 
 			/**
@@ -1204,7 +1202,7 @@ namespace Spices {
 				uint32_t set     , 
 				uint32_t binding , 
 				const VkAccelerationStructureKHR& accel
-			);
+			) const;
 
 			/**
 			* @brief End a preview sub pass and stat next sub pass.
@@ -1391,7 +1389,7 @@ namespace Spices {
 				VkPipelineStageFlags   srcStageMask  ,
 				VkPipelineStageFlags   dstStageMask  ,
 				VkCommandBuffer        cmdBuffer = VK_NULL_HANDLE
-			);
+			) const;
 
 			/**
 			* @brief Add a memory Barrier.
@@ -1405,7 +1403,7 @@ namespace Spices {
 				VkAccessFlags          dstAccessMask ,
 				VkPipelineStageFlags   srcStageMask  ,
 				VkPipelineStageFlags   dstStageMask
-			);
+			) const;
 
 			/****************************************************************************/
 
@@ -1990,10 +1988,8 @@ namespace Spices {
 
 			std::unordered_map<std::string, uint32_t> pipelineMap;
 			
-			for (auto& e : *view)
-			{
-				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(static_cast<entt::entity>(e));
-
+			FrameInfo::Get().m_World->ViewComponent<T>(*view, [&](const auto& e, auto& meshComp){
+				
 				meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
 
 					if (pipelineMap.find(v->GetMaterial()->GetName()) == pipelineMap.end())
@@ -2006,7 +2002,7 @@ namespace Spices {
 
 					return false;
 				});
-			}
+			});
 			indirectPtr->SetSequenceCount(nSequences);
 
 			indirectPtr->GetPipelineRef().resize(pipelineMap.size(), nullptr);
@@ -2049,10 +2045,8 @@ namespace Spices {
 			auto& layoutTokens = indirectPtr->GetLayoutTokens();
 
 			int index = 0;
-			for (auto& e : *view)
-			{
-				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<T>(static_cast<entt::entity>(e));
-
+			FrameInfo::Get().m_World->ViewComponent<T>(*view, [&](const auto& e, auto& meshComp){
+					
 				meshComp.GetMesh()->GetPacks().for_each([&](const auto& k, const std::shared_ptr<MeshPack>& v) {
 
 					for (int i = 0; i < layoutTokens.size(); i++)
@@ -2118,7 +2112,7 @@ namespace Spices {
 					index++;
 					return false;
 				});
-			}
+			});
 			stagingBuffer.Flush();
 
 			inputBuffer = indirectPtr->CreateInputBuffer(totalSize);
@@ -2168,14 +2162,13 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		auto entities = std::make_shared<std::vector<uint32_t>>();
-		auto view     = world->GetRegistry().view<MeshComponent>();
 
-		for (auto& e : view)
-		{
-			entities->push_back(static_cast<uint32_t>(e));
-		}
-
-		std::reverse(entities->begin(), entities->end());
+		world->ViewComponent<MeshComponent>([&](auto entityID, auto& tComp) {
+			
+			entities->push_back(static_cast<uint32_t>(entityID));
+			return false;
+			
+		});
 
 		return entities;
 	}
@@ -2194,7 +2187,7 @@ namespace Spices {
 
 #ifdef SPICES_DEBUG
 
-		inheritanceInfo.pipelineStatistics   = (VkQueryPipelineStatisticFlags)PipelineStatisticEnum::ALL;
+		inheritanceInfo.pipelineStatistics   = static_cast<VkQueryPipelineStatisticFlags>(PipelineStatisticEnum::ALL);
      
 #endif
 
@@ -2227,10 +2220,8 @@ namespace Spices {
 		* @brief Iter use view, not group.
 		* @attention Group result nullptr here.
 		*/
-		auto& view = frameInfo.m_World->GetRegistry().view<T>();
-		for (auto& e : view)
-		{
-			auto& [tComp, transComp] = frameInfo.m_World->GetRegistry().get<T, TransformComponent>(e);
+		frameInfo.m_World->ViewComponent<T>([&](auto e, auto& tComp) {
+			auto& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
 
 			/**
 			* @brief This function defined how we use these components.
@@ -2239,8 +2230,8 @@ namespace Spices {
 			* @param[in] tComp TComponent.
 			* @return Returns true if need break for for loop.
 			*/
-			if (func(static_cast<int>(e), transComp, tComp)) break;
-		}
+			return func(static_cast<int>(e), transComp, tComp);
+		});
 	}
 
 	template<typename F>
@@ -2462,11 +2453,11 @@ namespace Spices {
 		uint32_t set     , 
 		uint32_t binding , 
 		const VkAccelerationStructureKHR& accel
-	)
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		String2 m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
+		const String2 m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 
 		const auto& descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
 

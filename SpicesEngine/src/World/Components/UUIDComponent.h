@@ -21,9 +21,15 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
+		* @param[in] uuid UUID.
 		*/
-		UUIDComponent() = default;
+		UUIDComponent(UUID uuid) : m_uuid(uuid) {}
 
+		/**
+		* @brief Constructor Function.
+		*/
+		UUIDComponent() : m_uuid(UUID()) {};
+		
 		/**
 		* @brief Destructor Function.
 		*/
@@ -45,12 +51,6 @@ namespace Spices {
 		* @brief This interface defines how to draw this component to property panel.
 		*/
 		virtual void DrawThis() override;
-		
-		/**
-		* @brief Set the uuid this component handled.
-		* @param[in] uuid UUID.
-		*/
-		void SetUUID(UUID uuid) { m_uuid = uuid; }
 
 		/**
 		* @brief Get the uuid variable.

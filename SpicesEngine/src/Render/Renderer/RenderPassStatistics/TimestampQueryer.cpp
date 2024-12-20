@@ -1,17 +1,17 @@
 /**
 * @file TimestampQueryer.cpp.
-* @brief The TimestampQueryer Class Implementation.
+* @brief The TimestampQuerier Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "TimestampQueryer.h"
+#include "TimestampQuerier.h"
 #include "Render/Vulkan/VulkanRenderBackend.h"
 
 namespace Spices {
 
-	TimestampQueryer::TimestampQueryer(VulkanState& state)
-		: Queryer(StatisticsBits::Timestamp)
+	TimestampQuerier::TimestampQuerier(VulkanState& state)
+		: Querier(StatisticsBits::Timestamp)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -19,7 +19,7 @@ namespace Spices {
 		m_Result    = std::make_shared<Result>();
 	}
 
-	void TimestampQueryer::BeginQuery(VkCommandBuffer commandBuffer)
+	void TimestampQuerier::BeginQuery(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -27,14 +27,14 @@ namespace Spices {
 		m_QueryPool->WriteTimeStamp(commandBuffer, 0);
 	}
 
-	void TimestampQueryer::EndQuery(VkCommandBuffer commandBuffer)
+	void TimestampQuerier::EndQuery(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_QueryPool->WriteTimeStamp(commandBuffer, 1);
 	}
 
-	void TimestampQueryer::StorePoolResult()
+	void TimestampQuerier::StorePoolResult()
 	{
 		SPICES_PROFILE_ZONE;
 

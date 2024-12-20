@@ -260,8 +260,8 @@ namespace Spices {
 	}
 
 	VkPipelineLayout Renderer::CreatePipelineLayout(
-		const std::vector<VkDescriptorSetLayout>& rowSetLayouts , 
-		std::shared_ptr<RendererSubPass>          subPass
+		const std::vector<VkDescriptorSetLayout>& rowSetLayouts ,
+		const std::shared_ptr<RendererSubPass>&   subPass
 	) const
 	{
 		SPICES_PROFILE_ZONE;
@@ -353,7 +353,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << m_RendererName << ": " << "not find a active camera in world, please check again";
 
-			SPICES_CORE_WARN(ss.str());
+			SPICES_CORE_WARN(ss.str())
 		}
 
 		return std::make_tuple(invViewMat, projectionMat, stableFrames, fov);
@@ -371,12 +371,12 @@ namespace Spices {
 			frameInfo, 
 			[&](
 			int                          entityId,
-			const TransformComponent&    transComp, 
+			const TransformComponent&    tranComp, 
 			DirectionalLightComponent&   dirlightComp
 			) {
 
 			SpicesShader::DirectionalLight directionalLight = dirlightComp.GetLight();
-			directionalLight.rotationMatrix = transComp.GetRotateMatrix();
+			directionalLight.rotationMatrix = tranComp.GetRotateMatrix();
 			dLightBuffer[index] = directionalLight;
 			index++;
 			return false;
@@ -404,10 +404,10 @@ namespace Spices {
 			frameInfo,
 			[&](
 			int                  entityId,
-			TransformComponent&  transComp,
+			TransformComponent&  tranComp,
 			CameraComponent&     camComp
 			) {
-				camTranComp = transComp;
+				camTranComp = tranComp;
 				ratio = camComp.GetCamera()->GetAspectRatio();
 				return true;
 		});
@@ -417,7 +417,7 @@ namespace Spices {
 			frameInfo,
 			[&](
 			int                          entityId    ,
-			TransformComponent&          transComp   ,
+			TransformComponent&          tranComp   ,
 			DirectionalLightComponent&   dirlightComp
 			) {
 				TransformComponent tempComp;
@@ -445,12 +445,12 @@ namespace Spices {
 			frameInfo, 
 			[&](
 			int                   entityId, 
-			TransformComponent&   transComp, 
+			TransformComponent&   tranComp, 
 			PointLightComponent&  plightComp
 			) {
 
 			SpicesShader::PointLight pointLight = plightComp.GetLight();
-			pointLight.position = transComp.GetPosition();
+			pointLight.position = tranComp.GetPosition();
 			pLightBuffer[index] = pointLight;
 			index++;
 			return false;
@@ -483,7 +483,7 @@ namespace Spices {
 
 			// Do nothing.
 			{
-				auto state = m_Renderer->m_StatisticsStateList->AddNode();
+				const auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
 				state->PushBehave("EndRenderer", nullptr);
 				state->PushBehave("BeginStatistics", nullptr);
@@ -492,23 +492,23 @@ namespace Spices {
 
 			// Query Statistics item.
 			{
-				for(int i = 0; i < Queryer::Max; i++)
+				for(int i = 0; i < Querier::Max; i++)
 				{
-					auto state = m_Renderer->m_StatisticsStateList->AddNode();
+					const auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
 					state->PushBehave("EndRenderer", nullptr);
 					state->PushBehave("BeginStatistics", [=](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
-						builder->GetStatisticsRendererPass()->BeginStatistics(commandBuffer, Queryer::StatisticsBits(1 << i));
+						builder->GetStatisticsRendererPass()->BeginStatistics(commandBuffer, static_cast<Querier::StatisticsBits>(1 << i));
 					});
 					state->PushBehave("EndStatistics", [=](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
-						builder->GetStatisticsRendererPass()->EndStatistics(commandBuffer, Queryer::StatisticsBits(1 << i));
+						builder->GetStatisticsRendererPass()->EndStatistics(commandBuffer, static_cast<Querier::StatisticsBits>(1 << i));
 					});
 				}
 			}
 
 			// Submit store task to threadPool.
 			{
-				auto state = m_Renderer->m_StatisticsStateList->AddNode();
+				const auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
 				state->PushBehave("EndRenderer", [](RenderBehaveBuilder* builder, VkCommandBuffer commandBuffer) {
 					AsyncTask(ThreadPoolEnum::Custom, [&](std::shared_ptr<RendererSubPass> subPass) { 
@@ -521,14 +521,14 @@ namespace Spices {
 
 			// Do nothing.
 			{
-				auto state = m_Renderer->m_StatisticsStateList->AddNode();
+				const auto state = m_Renderer->m_StatisticsStateList->AddNode();
 
 				state->PushBehave("EndRenderer", nullptr);
 				state->PushBehave("BeginStatistics", nullptr);
 				state->PushBehave("EndStatistics", nullptr);
 			}
 
-			m_Renderer->m_StatisticsStateList->SetState(Queryer::Max + 2);
+			m_Renderer->m_StatisticsStateList->SetState(Querier::Max + 2);
 		}
 	}
 
@@ -1413,7 +1413,7 @@ namespace Spices {
 		VkPipelineStageFlags   srcStageMask  , 
 		VkPipelineStageFlags   dstStageMask  ,
 		VkCommandBuffer        cmdBuffer
-	)
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -1444,7 +1444,7 @@ namespace Spices {
 		VkAccessFlags          dstAccessMask  , 
 		VkPipelineStageFlags   srcStageMask   , 
 		VkPipelineStageFlags   dstStageMask
-	)
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 		
@@ -1802,7 +1802,7 @@ namespace Spices {
 
 	Renderer::RendererPassBuilder& Renderer::RendererPassBuilder::AddSubPass(
 		const std::string&       subPassName , 
-		Queryer::StatisticsFlags flags
+		Querier::StatisticsFlags flags
 	)
 	{
 		SPICES_PROFILE_ZONE;

@@ -8,7 +8,6 @@
 #include "RayTracingRenderer.h"
 #include "PreRenderer.h"
 #include "Render/Vulkan/VulkanRayTracing.h"
-#include "Core/Library/MemoryLibrary.h"
 
 namespace Spices {
 	

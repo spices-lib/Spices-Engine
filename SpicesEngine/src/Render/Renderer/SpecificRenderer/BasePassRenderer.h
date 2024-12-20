@@ -101,6 +101,7 @@ namespace Spices {
 		* @param[in] materialName Material's name.
 		* @param[in] layout PipelineLayout.
 		* @param[in] subPass RendererSubPass.
+		* @param[in] indirectPtr VulkanDeviceGeneratedCommandsNV.
 		*/
 		virtual void CreateDeviceGeneratedCommandsPipeline(
 			const std::string&               pipelineName ,

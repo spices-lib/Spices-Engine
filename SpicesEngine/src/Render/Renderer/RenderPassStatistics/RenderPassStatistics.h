@@ -6,8 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "Queryer.h"
-#include "Core/Container/BehaveStateList.h"
+#include "Querier.h"
 
 namespace Spices {
 
@@ -25,7 +24,7 @@ namespace Spices {
 		* @param[in] state VulkanState.
 		* @param[in] flags StatisticsFlags.
 		*/
-		RenderPassStatistics(VulkanState& state, Queryer::StatisticsFlags flags);
+		RenderPassStatistics(VulkanState& state, Querier::StatisticsFlags flags);
 		
 		/**
 		* @brief Destructor Function.
@@ -35,40 +34,40 @@ namespace Spices {
 		/**
 		* @brief Begin Statistics.
 		* @param[in] commandBuffer VkCommandBuffer.
-		* @param[in] flage StatisticsFlags.
+		* @param[in] flags StatisticsFlags.
 		*/
-		void BeginStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage);
+		void BeginStatistics(VkCommandBuffer commandBuffer, Querier::StatisticsFlags flags) const;
 
 		/**
 		* @brief End Statistics.
 		* @param[in] commandBuffer VkCommandBuffer.
-		* @param[in] flage StatisticsFlags.
+		* @param[in] flags StatisticsFlags.
 		*/
-		void EndStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage);
+		void EndStatistics(VkCommandBuffer commandBuffer, Querier::StatisticsFlags flags) const;
 
 		/**
 		* @brief Store statistics result.
 		*/
-		void StoreStatistics();
+		void StoreStatistics() const;
 
 		/**
 		* @brief Iter all Statistics Result.
-		* @param[in] flage StatisticsFlags.
+		* @param[in] flags StatisticsFlags.
 		* @param[in] fn Function pointer of how to do with statistics result.
 		*/
 		template<typename F>
-		void IterStatisticsResult(Queryer::StatisticsFlags flage, F&& fn);
+		void IterStatisticsResult(Querier::StatisticsFlags flags, F&& fn);
 
 	private:
 		
 		/**
 		* @brief Array of all statistics item.
 		*/
-		std::array<std::unique_ptr<Queryer>, (size_t)Queryer::Max> m_Queries;
+		std::array<std::unique_ptr<Querier>, static_cast<size_t>(Querier::Max)> m_Queries;
 	};
 
 	template<typename F>
-	inline void RenderPassStatistics::IterStatisticsResult(Queryer::StatisticsFlags flage, F&& fn)
+	inline void RenderPassStatistics::IterStatisticsResult(Querier::StatisticsFlags flage, F&& fn)
 	{
 		SPICES_PROFILE_ZONE;
 

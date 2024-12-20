@@ -1,24 +1,31 @@
 /**
 * @file PipelineStatisticsQueryer.cpp.
-* @brief The PipelineStatisticsQueryer Class Implementation.
+* @brief The PipelineStatisticsQuerier Class Implementation.
 * @author Spices.
 */
 
 #include "Pchheader.h"
-#include "PipelineStatisticsQueryer.h"
+#include "PipelineStatisticsQuerier.h"
 
 namespace Spices {
 
-	PipelineStatisticsQueryer::PipelineStatisticsQueryer(VulkanState& state)
-		: Queryer(StatisticsBits::Pipeline)
+	PipelineStatisticsQuerier::PipelineStatisticsQuerier(VulkanState& state)
+		: Querier(StatisticsBits::Pipeline)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_QueryPool = std::make_unique<VulkanQueryPool>(state, VK_QUERY_TYPE_PIPELINE_STATISTICS, 1, (uint32_t)PipelineStatisticEnum::MAX * sizeof(uint64_t), (VkQueryPipelineStatisticFlags)PipelineStatisticEnum::ALL);
-		m_Result    = std::make_shared<Result>();
+		m_QueryPool = std::make_unique<VulkanQueryPool>(
+			state,
+			VK_QUERY_TYPE_PIPELINE_STATISTICS,
+			1,
+			static_cast<uint32_t>(PipelineStatisticEnum::MAX) * sizeof(uint64_t),
+			static_cast<VkQueryPipelineStatisticFlags>(PipelineStatisticEnum::ALL)
+		);
+		
+		m_Result = std::make_shared<Result>();
 	}
 
-	void PipelineStatisticsQueryer::BeginQuery(VkCommandBuffer commandBuffer)
+	void PipelineStatisticsQuerier::BeginQuery(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -26,20 +33,20 @@ namespace Spices {
 		m_QueryPool->BeginQuery(commandBuffer);
 	}
 
-	void PipelineStatisticsQueryer::EndQuery(VkCommandBuffer commandBuffer)
+	void PipelineStatisticsQuerier::EndQuery(VkCommandBuffer commandBuffer)
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_QueryPool->EndQuery(commandBuffer);
 	}
 
-	void PipelineStatisticsQueryer::StorePoolResult()
+	void PipelineStatisticsQuerier::StorePoolResult()
 	{
 		SPICES_PROFILE_ZONE;
 
-		Result* result = static_cast<Result*>(m_Result.get());
+		auto* result = dynamic_cast<Result*>(m_Result.get());
 
-		uint64_t poolResult[(int)PipelineStatisticEnum::MAX + 1];
+		uint64_t poolResult[static_cast<int>(PipelineStatisticEnum::MAX) + 1];
 		m_QueryPool->QueryResults(poolResult);
 
 		//result->valid = poolResult[(int)PipelineStatisticEnum::MAX];

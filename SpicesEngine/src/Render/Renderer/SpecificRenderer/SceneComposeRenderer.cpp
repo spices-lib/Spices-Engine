@@ -6,7 +6,6 @@
 
 #include "Pchheader.h"
 #include "SceneComposeRenderer.h"
-#include "Systems/SlateSystem.h"
 #include "RayTracingRenderer.h"
 
 namespace Spices {

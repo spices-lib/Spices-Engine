@@ -93,7 +93,7 @@ namespace Spices {
 		/**
 		* @brief Init Imgui.
 		*/
-		void InitImgui();
+		void InitImgui() const;
 
 		/**
 		* @brief Shutdown Imgui.
@@ -109,7 +109,7 @@ namespace Spices {
 		* @brief End Imgui frame.
 		* @param[in] index CommandBuffer index.
 		*/
-		void EndImguiFrame(uint32_t index);
+		void EndImguiFrame(uint32_t index) const;
 
 		/**
 		* @brief End Imgui frame.

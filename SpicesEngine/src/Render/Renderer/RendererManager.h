@@ -61,7 +61,7 @@ namespace Spices {
 		static void OnSlateResize();
 
 		/**
-		* @brief Event Called on workdmarkqueryer.
+		* @brief Event Called on world mark querier.
 		*/
 		static void OnMeshAddedWorld();
 
@@ -74,7 +74,7 @@ namespace Spices {
 
 		/**
 		* @brief Push a renderer to this manager, and initialize it.
-		* @param[in] T Specific Renderer Class.
+		* @tparam T Specific Renderer Class.
 		* @param[in] args Args.
 		*/
 		template<typename T, typename ... Args>

@@ -39,7 +39,7 @@ namespace Spices {
 			if (tagComp.GetTag().find("Ground") != tagComp.GetTag().end())
 			{
 				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);
-				std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
+				const std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
 				buffer = meshPack->GetResource().positions.buffer;
 				return true;
 			}
@@ -99,7 +99,7 @@ namespace Spices {
 			if (tagComp.GetTag().find("Ground") != tagComp.GetTag().end())
 			{
 				auto& meshComp = FrameInfo::Get().m_World->GetRegistry().get<MeshComponent>((entt::entity)entityID);
-				std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
+				const std::shared_ptr<MeshPack> meshPack = *meshComp.GetMesh()->GetPacks().first();
 				buffer = meshPack->GetResource().positions.buffer;
 				return true;
 			}

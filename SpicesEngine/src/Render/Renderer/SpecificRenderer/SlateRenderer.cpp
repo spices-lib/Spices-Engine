@@ -74,7 +74,7 @@ namespace Spices {
 		Renderer::OnSlateResize();
 	}
 
-	void SlateRenderer::InitImgui()
+	void SlateRenderer::InitImgui() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -203,7 +203,7 @@ namespace Spices {
 		}
 	}
 
-	void SlateRenderer::EndImguiFrame(uint32_t index)
+	void SlateRenderer::EndImguiFrame(uint32_t index) const
 	{
 		SPICES_PROFILE_ZONE;
 

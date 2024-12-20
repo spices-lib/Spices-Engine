@@ -7,7 +7,6 @@
 #pragma once
 #include "Core/Core.h"
 #include "Render/Vulkan/VulkanDescriptor.h"
-#include "Core/Math/Math.h"
 
 namespace Spices {
 	

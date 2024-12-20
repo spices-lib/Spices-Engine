@@ -1,6 +1,6 @@
 /**
-* @file Queryer.h
-* @brief The Queryer Class Definitions.
+* @file Querier.h
+* @brief The Querier Class Definitions.
 * @author Spices.
 */
 
@@ -13,7 +13,7 @@ namespace Spices {
 	/**
 	* @brief Basic interface of Queries.
 	*/
-	class Queryer
+	class Querier
 	{
 	public:
 
@@ -38,7 +38,20 @@ namespace Spices {
 		*/
 		struct Result
 		{
-			bool valid = false;  /* @brief True if result is valid. */
+			/**
+			* @brief Constructor Function.
+			*/
+			Result() : valid(false) {}
+
+			/**
+			* @brief Destructor Function.
+			*/
+			virtual ~Result() = default;
+
+			/**
+			* @brief True if result is valid.
+			*/
+			bool valid;  
 
 			/**
 			* @brief Combine result with another Result.
@@ -51,16 +64,16 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
-		* @param[in] type Queryer Type.
+		* @param[in] type Querier Type.
 		*/
-		Queryer(StatisticsBits type)
+		Querier(StatisticsBits type)
 			: m_Type(type)
 		{}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Queryer() = default;
+		virtual ~Querier() = default;
 
 		/**
 		* @brief Begin QueryPool.
@@ -82,11 +95,11 @@ namespace Spices {
 		/**
 		* @brief Get QueryPool Stored Result.
 		*/
-		std::shared_ptr<Queryer::Result> GetPoolResult() const { return m_Result; };
+		std::shared_ptr<Querier::Result> GetPoolResult() const { return m_Result; }
 
 		/**
-		* @brief Get this Queryer type.
-		* @reutrn Returns Queryer type.
+		* @brief Get this Querier type.
+		* @reutrn Returns Querier type.
 		*/
 		StatisticsBits GetStatisticsType() const { return m_Type; }
 
@@ -103,7 +116,7 @@ namespace Spices {
 		std::shared_ptr<Result> m_Result;
 
 		/**
-		* @brief Specific Queryer Type.
+		* @brief Specific Querier Type.
 		*/
 		StatisticsBits m_Type;
 	};

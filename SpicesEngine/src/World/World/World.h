@@ -130,9 +130,65 @@ namespace Spices {
 		* @param[in] flags In flags.
 		*/
 		void ClearMarkerWithBits(WorldMarkFlags flags);
+
+		/**
+		* @brief View all component in this world.
+		* @tparam T Component.
+		* @param fn View function.
+		*/
+		template<typename T, typename F>
+		void ViewComponent(F&& fn);
+
+		/**
+		* @brief View all component in this world in ranges.
+		* @tparam T Component.
+		* @param[in] ranges view ranges.
+		* @param fn View function.
+		*/
+		template<typename T, typename F>
+		void ViewComponent(const std::vector<uint32_t>& ranges, F&& fn);
+
+		/**
+		* @brief Template Function.
+		* Used for add specific component to entity.
+		* @tparam T Specific component.
+		* @param[in] e entt::entity.
+		* @param[in] args Component construct parameters.
+		* @return Returns The specific component reference that added.
+		*/
+		template<typename T, typename... Args>
+		T& AddComponent(entt::entity e, Args&&... args);
+
+		/**
+		* @brief Get Component owned by this entity.
+		* @tparam T Which Component we will get.
+		* @param[in] e entt::entity.
+		* @return Returns the specific Component.
+		*/
+		template<typename T>
+		T& GetComponent(entt::entity e);
+
+		/**
+		* @brief Remove Component owned from this entity.
+		* @tparam T Which Component we will remove.
+		* @param[in] e entt::entity.
+		*/
+		template<typename T>
+		void RemoveComponent(entt::entity e);
+
+		/**
+		* @brief If Component is owned by this entity or not.
+		* @tparam T Which Component we will search.
+		* @param[in] e entt::entity.
+		* @return Returns true if found.
+		*/
+		template<typename T>
+		bool HasComponent(entt::entity e);
 		
 	private:
 
+		Entity CreateEmptyEntity(UUID uuid);
+		
 		/**
 		* @brief Called On any Component Added to this world.
 		* @param[in] entity Entity row pointer.
@@ -176,9 +232,83 @@ namespace Spices {
 		WorldMarkFlags m_Marker = WorldMarkBits::Clean;
 	};
 
+	template <typename T, typename F>
+	void World::ViewComponent(F&& fn)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		
+		auto view = m_Registry.view<T>();
+
+		for(auto e : view)
+		{
+			auto& comp = m_Registry.get<T>(e);
+			
+			if(fn(e, comp)) break;
+		}
+	}
+
+	template <typename T, typename F>
+	void World::ViewComponent(const std::vector<uint32_t>& ranges, F&& fn)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		for(auto e : ranges)
+		{
+			auto& comp = m_Registry.get<T>(static_cast<entt::entity>(e));
+
+			fn(e, comp);
+		}
+	}
+
+	template <typename T, typename ... Args>
+	T& World::AddComponent(entt::entity e, Args&&... args)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		return m_Registry.emplace<T>(e, std::forward<Args>(args)...);
+	}
+
+	template <typename T>
+	T& World::GetComponent(entt::entity e)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		
+		return m_Registry.get<T>(e);
+	}
+
+	template <typename T>
+	void World::RemoveComponent(entt::entity e)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		
+		m_Registry.remove<T>(e);
+	}
+
+	template <typename T>
+	bool World::HasComponent(entt::entity e)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		return m_Registry.all_of<T>(e);
+	}
+
 	template<typename T>
 	void World::OnComponentAdded(Entity* entity, T& component)
 	{
+		SPICES_PROFILE_ZONE;
+		
 		component.OnComponentAdded(*entity);
 	}
 }

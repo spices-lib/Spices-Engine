@@ -1,12 +1,12 @@
 /**
-* @file PipelineStatisticsQueryer.h
-* @brief The PipelineStatisticsQueryer Class Definitions.
+* @file PipelineStatisticsQuerier.h
+* @brief The PipelineStatisticsQuerier Class Definitions.
 * @author Spices.
 */
 
 #pragma once
 #include "Core/Core.h"
-#include "Queryer.h"
+#include "Querier.h"
 
 namespace Spices {
 
@@ -63,30 +63,30 @@ namespace Spices {
 	}
 
 	/**
-	* @brief Queryer of Pipeline.
+	* @brief Querier of Pipeline.
 	*/
-	class PipelineStatisticsQueryer : public Queryer
+	class PipelineStatisticsQuerier : public Querier
 	{
 	public:
 
 		/**
 		* @brief Stored Pipeline Statistics Result.
 		*/
-		struct Result : public Queryer::Result
+		struct Result : public Querier::Result
 		{
-			std::array<uint64_t, (size_t)PipelineStatisticEnum::MAX> statistics;
+			std::array<uint64_t, static_cast<size_t>(PipelineStatisticEnum::MAX)> statistics;
 
 			/**
 			* @brief Combine result with another Result.
 			* @param[in] result another Result.
 			*/
-			virtual void Combine(Queryer::Result* result) override
+			virtual void Combine(Querier::Result* result) override
 			{
-				auto r = static_cast<PipelineStatisticsQueryer::Result*>(result);
+				auto r = static_cast<PipelineStatisticsQuerier::Result*>(result);
 
 				if (!r->valid) return;
 
-				for (int i = 0; i < (int)PipelineStatisticEnum::MAX; i++)
+				for (int i = 0; i < static_cast<int>(PipelineStatisticEnum::MAX); i++)
 				{
 					statistics[i] += r->statistics[i];
 				}
@@ -99,12 +99,12 @@ namespace Spices {
 		* @brief Constructor Function.
 		* @param[in] state VulkanState.
 		*/
-		explicit PipelineStatisticsQueryer(VulkanState& state);
+		explicit PipelineStatisticsQuerier(VulkanState& state);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~PipelineStatisticsQueryer() = default;
+		virtual ~PipelineStatisticsQuerier() override = default;
 
 		/**
 		* @brief Begin QueryPool.

@@ -6,23 +6,18 @@
 
 #include "Pchheader.h"
 #include "VulkanDeviceGeneratedCommandsNV.h"
+#include "VulkanMemoryAllocator.h"
 
 namespace Spices {
 
 	VulkanDeviceGeneratedCommandsNV::VulkanDeviceGeneratedCommandsNV(VulkanState& vulkanState)
 		: VulkanObject(vulkanState)
+		, m_Strides(0)
 		, m_IndirectCmdsLayout(VK_NULL_HANDLE)
+		, m_NSequence(0)
 		, m_InputBuffer(nullptr)
 		, m_PreprocessBuffer(nullptr)
-		, m_NSequence(0)
 		, m_PreprocessSize(0)
-		, m_Strides(0)
-		, m_InputStrides{}
-		, m_LayoutTokens{}
-		, m_InputStreams{}
-	{}
-
-	VulkanDeviceGeneratedCommandsNV::~VulkanDeviceGeneratedCommandsNV()
 	{}
 
 	void VulkanDeviceGeneratedCommandsNV::ResetCommandsLayout()
@@ -90,7 +85,8 @@ namespace Spices {
 			"GDCPreprocessBuffer"               ,
 			memReqs.memoryRequirements.size     ,
 			VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT ,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
+			VMA_MEMORY_PROPERTY_DEDICATED_MEMORY_BIT
 		);
 
 		m_PreprocessSize = memReqs.memoryRequirements.size;
@@ -113,7 +109,7 @@ namespace Spices {
 		genInfo.streamCount                    = static_cast<uint32_t>(m_InputStrides.size());
 		genInfo.pStreamStrides                 = m_InputStrides.data();
 
-		m_IndirectCmdsLayout = std::make_shared<VulkanIndirectCommmandsLayoutNV>(m_VulkanState, genInfo);
+		m_IndirectCmdsLayout = std::make_shared<VulkanIndirectCommandsLayoutNV>(m_VulkanState, genInfo);
 	}
 
 	void VulkanDeviceGeneratedCommandsNV::CreateMeshPipeline(const std::string& pipelineName, const std::string& materialName, PipelineConfigInfo& config)

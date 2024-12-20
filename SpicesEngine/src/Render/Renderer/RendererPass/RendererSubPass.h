@@ -10,7 +10,6 @@
 
 /******************************Vulkan Backend Header************************************************/
 #include "Render/FrameInfo.h"
-#include "Render/Vulkan/VulkanPipeline.h"
 #include "Render/Vulkan/VulkanUtils.h"
 #include "Render/Vulkan/VulkanBuffer.h"
 #include "Render/Vulkan/VulkanImage.h"
@@ -37,7 +36,7 @@ namespace Spices
 		RendererSubPass(
 			const std::string&       subPassName ,
 			uint32_t                 index       ,
-			Queryer::StatisticsFlags flags
+			Querier::StatisticsFlags flags
 		);
 
 		/**
@@ -183,21 +182,21 @@ namespace Spices
 		/**
 		* @brief Begin Statistics this frame.
 		* @param[in] commandBuffer VkCommandBuffer.
-		* @param[in] flage StatisticsFlags.
+		* @param[in] flags StatisticsFlags.
 		*/
-		void BeginStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage = Queryer::ALL);
+		void BeginStatistics(VkCommandBuffer commandBuffer, Querier::StatisticsFlags flags = Querier::ALL) const;
 
 		/**
 		* @brief End Statistics this frame.
 		* @param[in] commandBuffer VkCommandBuffer.
-		* @param[in] flage StatisticsFlags.
+		* @param[in] flags StatisticsFlags.
 		*/
-		void EndStatistics(VkCommandBuffer commandBuffer, Queryer::StatisticsFlags flage = Queryer::ALL);
+		void EndStatistics(VkCommandBuffer commandBuffer, Querier::StatisticsFlags flags = Querier::ALL) const;
 
 		/**
 		* @brief Store statistics this frame.
 		*/
-		void StoreStatistics();
+		void StoreStatistics() const;
 
 	private:
 

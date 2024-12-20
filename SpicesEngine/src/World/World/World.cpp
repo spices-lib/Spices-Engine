@@ -20,25 +20,11 @@ namespace Spices {
 	Entity World::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
 		SPICES_PROFILE_ZONE;
-
-		Entity entity(m_Registry.create(), this);
-
-		/**
-		* @brief Add UUIDComponent default.
-		*/
-		entity.AddComponent<UUIDComponent>();
-
-		/**
-		* @brief Add TransformComponent default.
-		*/
+		
+		Entity entity = CreateEmptyEntity(uuid);
+		entity.AddComponent<UUIDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
-
-		/**
-		* @brief AddTagComponent default.
-		*/
 		entity.AddComponent<TagComponent>(name);
-
-		m_EntityMap[uuid] = entity;
 		return entity;
 	}
 
@@ -46,6 +32,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		
 		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.GetUUID());
 	}
@@ -65,5 +53,16 @@ namespace Spices {
 		{
 			m_Marker ^= flags;
 		}
+	}
+
+	Entity World::CreateEmptyEntity(UUID uuid)
+	{
+		SPICES_PROFILE_ZONE;
+		
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		
+		Entity entity(m_Registry.create(), this);
+		m_EntityMap[uuid] = entity;
+		return entity;
 	}
 }

@@ -1,6 +1,6 @@
 /**
-* @file VulkanIndirectCommmandsLayoutNV.h.
-* @brief The VulkanIndirectCommmandsLayoutNV Class Definitions.
+* @file VulkanIndirectCommandsLayoutNV.h.
+* @brief The VulkanIndirectCommandsLayoutNV Class Definitions.
 * @author Spices.
 */
 
@@ -11,10 +11,10 @@
 namespace Spices {
 
 	/**
-	* @brief VulkanIndirectCommmandsLayoutNV Class.
+	* @brief VulkanIndirectCommandsLayoutNV Class.
 	* This class is just a wrapper of VkIndirectCommandsLayoutNV.
 	*/
-	class VulkanIndirectCommmandsLayoutNV : VulkanObject
+	class VulkanIndirectCommandsLayoutNV : VulkanObject
 	{
 	public:
 
@@ -24,7 +24,7 @@ namespace Spices {
 		* @param[in] vulkanState The global VulkanState.
 		* @param[in] info CreateInfo.
 		*/
-		VulkanIndirectCommmandsLayoutNV(
+		VulkanIndirectCommandsLayoutNV(
 			VulkanState&                          vulkanState ,
 			VkIndirectCommandsLayoutCreateInfoNV& info
 		);
@@ -32,7 +32,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanIndirectCommmandsLayoutNV() override;
+		virtual ~VulkanIndirectCommandsLayoutNV() override;
 
 		/**
 		* @brief Get this VkIndirectCommandsLayoutNV instance.
