@@ -172,9 +172,9 @@ namespace Spices {
 			{
 				const uint32_t offset = i * 3 * bytes;
 
-				auto x = reinterpret_cast<short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + 0]);
-				auto y = reinterpret_cast<short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes]);
-				auto z = reinterpret_cast<short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes * 2]);
+				auto x = reinterpret_cast<unsigned short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + 0]);
+				auto y = reinterpret_cast<unsigned short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes]);
+				auto z = reinterpret_cast<unsigned short*>(&(*indicesBuffer.buffer)[indicesAccessor.byteOffset + indicesBufferView.byteOffset + offset + bytes * 2]);
 
 				(*pack->m_MeshResource.primitiveVertices.attributes)[i] = glm::uvec3(*x, *y, *z);
 			}
@@ -215,8 +215,8 @@ namespace Spices {
 		outMaterial->PushToConstParams("baseColorFactor", {"float4", material.baseColorFactor});
 		outMaterial->PushToConstParams("emissiveFactor", {"float4", material.emissiveFactor});
 
-		outMaterial->PushToConstParams("maxRayDepth", {"int", 6});
-		outMaterial->PushToConstParams("maxLightDepth", {"int", 3});
+		outMaterial->PushToConstParams("maxRayDepth", {"int", 3});
+		outMaterial->PushToConstParams("maxLightDepth", {"int", 2});
 		outMaterial->PushToConstParams("maxShadowDepth", {"int", 1});
 		
 		return outMaterial;

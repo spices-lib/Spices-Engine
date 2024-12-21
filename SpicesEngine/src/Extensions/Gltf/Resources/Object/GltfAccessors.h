@@ -50,7 +50,7 @@ namespace Spices {
 				const Json& json = data[i];
 
 				item.bufferView    = GltfHelper::GetElementInt(json, "bufferView", -1);
-				item.byteOffset    = GltfHelper::GetElementInt(json, "byteOffset", -1);
+				item.byteOffset    = GltfHelper::GetElementInt(json, "byteOffset", 0);
 				item.componentType = GltfHelper::GetElementInt(json, "componentType", -1);
 				item.count         = GltfHelper::GetElementInt(json, "count", -1);
 				item.max           = GltfHelper::GetVector(GltfHelper::GetElementJsonArray(json, "max", { 0.0, 0.0, 0.0, 0.0 }));

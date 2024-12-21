@@ -6,6 +6,9 @@
 /SpicesGame/saved
 /SpicesGame/DefaultLayout.ini
 
+/Samples/Renderer/WhittedRT/saved
+/Samples/Renderer/WhittedRT/DefaultLayout.ini
+
 /Document/
 
 *.user

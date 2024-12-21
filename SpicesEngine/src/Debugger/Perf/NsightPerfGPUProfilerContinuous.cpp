@@ -359,6 +359,8 @@ namespace Spices {
     {
         SPICES_PROFILE_ZONE;
 
+	    if(!m_IsInSession) return;
+	    
         NSPERF_CHECK(sampler.StopSampling())
         NSPERF_CHECK(sampler.EndSession())
         sampler.Reset();
