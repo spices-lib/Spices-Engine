@@ -21,6 +21,35 @@
 
 namespace Spices {
 
+	class InputAssembly
+	{
+	public:
+
+		/**
+		* @brief Get VkVertexInputBindingDescription for IA.
+		* @return Returns VkVertexInputBindingDescription Array.
+		*/
+		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
+
+		/**
+		* @brief Get VkVertexInputAttributeDescription for IA.
+		* @return Returns VkVertexInputAttributeDescription Array.
+		*/
+		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
+
+		/**
+		* @brief Get Slate VkVertexInputBindingDescription for IA.
+		* @return Returns VkVertexInputBindingDescription Array.
+		*/
+		static std::vector<VkVertexInputBindingDescription> GetSlateBindingDescriptions();
+
+		/**
+		* @brief Get Slate VkVertexInputAttributeDescription for IA.
+		* @return Returns VkVertexInputAttributeDescription Array.
+		*/
+		static std::vector<VkVertexInputAttributeDescription> GetSlateAttributeDescriptions();
+	};
+
 	/**
 	* @brief Meshlet Class.
 	* This class defines what Meshlet data.

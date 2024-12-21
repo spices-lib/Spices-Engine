@@ -31,7 +31,7 @@ struct MaterialParameter
 /************************************Fragment Input***************************************/
 
 /**
-* @brief Fragment Shader Input From Geometry Shader.
+* @brief Fragment Shader Input From Vertex Shader.
 */
 layout(location = 0) in struct FragInput 
 {

@@ -2491,6 +2491,28 @@ namespace Spices {
 		return *this;
 	}
 
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetBindingDescriptions(
+		const std::vector<VkVertexInputBindingDescription>& inputs
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.bindingDescriptions = inputs;
+
+		return *this;
+	}
+
+	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetAttributeDescriptions(
+		const std::vector<VkVertexInputAttributeDescription>& inputs
+	)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_pipelineConfig.attributeDescriptions = inputs;
+
+		return *this;
+	}
+
 	Renderer::PipelineBuilder& Renderer::PipelineBuilder::SetRenderPass()
 	{
 		SPICES_PROFILE_ZONE;

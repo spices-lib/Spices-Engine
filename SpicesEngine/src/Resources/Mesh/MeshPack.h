@@ -77,18 +77,6 @@ namespace Spices {
 		Lods                        lods;
 
 		/**
-		* @brief Get VkVertexInputBindingDescription for IA.
-		* @return Returns VkVertexInputBindingDescription Array.
-		*/
-		static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
-
-		/**
-		* @brief Get VkVertexInputAttributeDescription for IA.
-		* @return Returns VkVertexInputAttributeDescription Array.
-		*/
-		static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
-
-		/**
 		* @brief Create MeshResource Buffers.
 		* @param[in] name MeshPack Name.
 		*/

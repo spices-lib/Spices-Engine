@@ -1,0 +1,20 @@
+# @file Material.SlateRenderer.Slate.Default.material.
+# @brief This File is the sample of Defining a Slate Renderer Slate SubPass Default Material.
+# @author Spices.
+
+# @brief Material Name.
+# [Renderer Name].[SubPass Name].[Material Identify]
+Material: SlateRenderer.Slate.Default
+
+# @brief Material Shaders usages.
+Shaders:
+  
+  # @brief Vertex Shader Stage Shader File Path.
+  - Stage: vert
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: SlateRenderer.Slate.Default
+    
+  # @brief Vertex Shader Stage Shader File Path.
+  - Stage: frag
+    # @brief [Renderer Name].[SubPass Name].[Shader Identify]
+    Path: SlateRenderer.Slate.Default

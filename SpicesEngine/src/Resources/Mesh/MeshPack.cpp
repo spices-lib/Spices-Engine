@@ -10,29 +10,6 @@
 #include "Resources/Loader/MeshLoader.h"
 
 namespace Spices {
-	
-	std::vector<VkVertexInputBindingDescription> MeshResource::GetBindingDescriptions()
-	{
-		SPICES_PROFILE_ZONE;
-
-		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
-		bindingDescriptions[0].binding = 0;
-		bindingDescriptions[0].stride = sizeof(glm::vec3);
-		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-		return bindingDescriptions;
-	}
-
-	std::vector<VkVertexInputAttributeDescription> MeshResource::GetAttributeDescriptions()
-	{
-		SPICES_PROFILE_ZONE;
-
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-
-		attributeDescriptions.push_back({ 0, 0, VK_FORMAT_R32G32B32_SFLOAT, 0 });
-
-		return attributeDescriptions;
-	}
 
 	void MeshResource::CreateBuffer(const std::string& name)
 	{

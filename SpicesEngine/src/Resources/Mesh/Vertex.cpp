@@ -8,6 +8,79 @@
 #include "Vertex.h"
 
 namespace Spices {
+	
+	std::vector<VkVertexInputBindingDescription> InputAssembly::GetBindingDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+
+		bindingDescriptions[0].binding   = 0;
+		bindingDescriptions[0].stride    = sizeof(glm::vec3);
+		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+		return std::move(bindingDescriptions);
+	}
+
+	std::vector<VkVertexInputAttributeDescription> InputAssembly::GetAttributeDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions(1);
+
+		attributeDescriptions[0].binding  = 0;
+		attributeDescriptions[0].location = 0;
+		attributeDescriptions[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[0].offset   = 0;
+
+		return std::move(attributeDescriptions);
+	}
+
+	std::vector<VkVertexInputBindingDescription> InputAssembly::GetSlateBindingDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkVertexInputBindingDescription> bindingDescriptions(3);
+
+		bindingDescriptions[0].binding   = 0;
+		bindingDescriptions[0].stride    = sizeof(glm::vec2);
+		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+		bindingDescriptions[1].binding   = 1;
+		bindingDescriptions[1].stride    = sizeof(glm::vec2);
+		bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+		bindingDescriptions[2].binding   = 2;
+		bindingDescriptions[2].stride    = sizeof(glm::vec4);
+		bindingDescriptions[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+		return std::move(bindingDescriptions);
+	}
+
+	std::vector<VkVertexInputAttributeDescription> InputAssembly::GetSlateAttributeDescriptions()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions(3);
+
+		attributeDescriptions[0].binding  = 0;
+		attributeDescriptions[0].location = 0;
+		attributeDescriptions[0].format   = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[0].offset   = 0;
+
+		attributeDescriptions[1].binding  = 1;
+		attributeDescriptions[1].location = 1;
+		attributeDescriptions[1].format   = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[1].offset   = 0;
+
+		attributeDescriptions[2].binding  = 2;
+		attributeDescriptions[2].location = 2;
+		attributeDescriptions[2].format   = VK_FORMAT_R32G32B32A32_SFLOAT;
+		attributeDescriptions[2].offset   = 0;
+
+		return std::move(attributeDescriptions);
+	}
+
 
 	void Meshlet::FromMeshopt(const meshopt_Meshlet& m, const meshopt_Bounds& bounds)
 	{

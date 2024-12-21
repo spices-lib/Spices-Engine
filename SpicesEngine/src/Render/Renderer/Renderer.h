@@ -732,6 +732,24 @@ namespace Spices {
 			PipelineBuilder& NullAttributeDescriptions();
 
 			/**
+			* @brief Set bindingDescriptions.
+			* @param[in] inputs Vector of VkVertexInputBindingDescription.
+			* @return Returns this reference.
+			*/
+			PipelineBuilder& SetBindingDescriptions(
+				const std::vector<VkVertexInputBindingDescription>& inputs
+			);
+
+			/**
+			* @brief Set attributeDescriptions.
+			* @param[in] inputs Vector of VkVertexInputBindingDescription.
+			* @return Returns this reference.
+			*/
+			PipelineBuilder& SetAttributeDescriptions(
+				const std::vector<VkVertexInputAttributeDescription>& inputs
+			);
+
+			/**
 			* @brief Set renderPass to correct value..
 			* @return Returns this reference.
 			*/

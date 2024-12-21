@@ -29,7 +29,8 @@ namespace Spices {
 	void SlateRenderer::CreateDescriptorSet()
 	{
 		DescriptorSetBuilder{ "Slate", this }
-		.AddPushConstant(sizeof(uint64_t))
+		.AddPushConstant(16)
+		.AddTexture<Texture2D>(0, 0, VK_SHADER_STAGE_FRAGMENT_BIT, {"default.jpg"})
 		.Build();
 	}
 
@@ -41,6 +42,8 @@ namespace Spices {
 	{
 		PipelineBuilder{ subPass, material, this }
 		.SetDefault()
+		.SetBindingDescriptions(InputAssembly::GetSlateBindingDescriptions())
+		.SetAttributeDescriptions(InputAssembly::GetSlateAttributeDescriptions())
 		.SetRenderPass()
 		.SetSubPassIndex()
 		.SetPipelineLayout(layout)
