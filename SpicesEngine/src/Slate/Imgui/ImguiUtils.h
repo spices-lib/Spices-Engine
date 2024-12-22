@@ -1,6 +1,6 @@
 /**
 * @file ImguiSlate.h.
-* @brief The ImguiSlate Class Implementation.
+* @brief The ImguiSlate Class Definitions.
 * @author Spices.
 */
 

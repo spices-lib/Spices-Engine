@@ -136,27 +136,6 @@ namespace Spices {
             SPICES_PROFILE_ZONEN("Render Viewport Image");
 
             ImGui::Image(m_ViewportID, m_PanelSize);
-
-            //ImVec2 p0 = ImGui::GetItemRectMin();
-            //ImVec2 p1 = ImGui::GetItemRectMax();
-            //
-            //
-            //ImDrawList* draw_list = ImGui::GetWindowDrawList();
-            //draw_list->PushTextureID(m_ViewportID);
-            //draw_list->PrimReserve(6, 4);
-            //draw_list->PrimRectUV(p0, p1, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)));
-            //draw_list->AddCallback([](const ImDrawList* drawList, const ImDrawCmd* cmd) {
-
-            //    std::cout << cmd->GetTexID() << std::endl;
-
-            //    //vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, bd->PipelineLayout, 0, 1, desc_set, 0, nullptr);
-            //    //vkCmdDrawIndexed(command_buffer, cmd->ElemCount, 1, cmd->IdxOffset + global_idx_offset, cmd->VtxOffset + global_vtx_offset, 0);
-
-            //}, nullptr);
-            //draw_list->PopTextureID();
-            //draw_list->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
-
-
         }
 
         /**

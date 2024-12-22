@@ -1,6 +1,6 @@
 /**
 * @file SlateStyleLayout.h.
-* @brief The SlateStyleLayout Class Implementation.
+* @brief The SlateStyleLayout Class Definitions.
 * @author Spices.
 */
 

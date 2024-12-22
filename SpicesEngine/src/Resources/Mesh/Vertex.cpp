@@ -51,7 +51,7 @@ namespace Spices {
 		bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 		bindingDescriptions[2].binding   = 2;
-		bindingDescriptions[2].stride    = sizeof(glm::vec4);
+		bindingDescriptions[2].stride    = sizeof(float);
 		bindingDescriptions[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 		return std::move(bindingDescriptions);
@@ -75,7 +75,7 @@ namespace Spices {
 
 		attributeDescriptions[2].binding  = 2;
 		attributeDescriptions[2].location = 2;
-		attributeDescriptions[2].format   = VK_FORMAT_R32G32B32A32_SFLOAT;
+		attributeDescriptions[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
 		attributeDescriptions[2].offset   = 0;
 
 		return std::move(attributeDescriptions);

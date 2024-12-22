@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Resources/Material/Material.h"
+#include "Slate/SlateImage.h"
 
 // imgui header.
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -97,6 +98,13 @@ namespace Spices {
 		* @brief Draw main menu titile separator.
 		*/
 		static void MainMenuTitleSeparator();
+
+		/**
+		* @brief Draw image with custom material.
+		* @param[in] context SlateImage.
+		* @param[in] size image size.
+		*/
+		static void CustomMaterialImage(SlateImage* context, ImVec2 size);
 
 		/**
 		* @brief Draw a single property.

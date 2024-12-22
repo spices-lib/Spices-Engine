@@ -1,6 +1,6 @@
 /**
 * @file SlateRegister.h.
-* @brief The SlateRegister Class Implementation.
+* @brief The SlateRegister Class Definitions.
 * @author Spices.
 */
 
@@ -38,12 +38,12 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		SlateRegister() {};
+		SlateRegister() = default;
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SlateRegister() {};
+		virtual ~SlateRegister() = default;
 
 		/**
 		* @brief Copy Constructor Function.

@@ -301,6 +301,31 @@ namespace Spices {
         ImGui::SetWindowFontScale(1.0f);
     }
 
+    void ImGuiH::CustomMaterialImage(SlateImage* context, ImVec2 size)
+    {
+        SPICES_PROFILE_ZONE;
+
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
+            
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        draw_list->PushTextureID(context->GetTextureID());
+        draw_list->PrimReserve(6, 4);
+        draw_list->PrimRectUV(bb.Min, bb.Max, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)));
+        draw_list->AddCallback([](const ImDrawList* drawList, const ImDrawCmd* cmd, const int global_idx_offset, const int global_vtx_offset) {
+
+            ImGui_ImplVulkan_RenderState* render_state = (ImGui_ImplVulkan_RenderState*)ImGui::GetPlatformIO().Renderer_RenderState;
+            auto set = reinterpret_cast<VkDescriptorSet>(cmd->GetTexID());
+
+            //vkCmdBindPipeline(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, context->);
+            vkCmdBindDescriptorSets(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, render_state->PipelineLayout, 0, 1, &set, 0, nullptr);
+            vkCmdDrawIndexed(render_state->CommandBuffer, cmd->ElemCount, 1, cmd->IdxOffset + global_idx_offset, cmd->VtxOffset + global_vtx_offset, 0);
+
+        }, nullptr);
+        draw_list->PopTextureID();
+        draw_list->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
+    }
+
     void ImGuiH::DrawPropertyItem(
         const std::string&    itemName    , 
         float                 columeWidth , 

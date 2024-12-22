@@ -109,7 +109,7 @@ namespace Spices {
 			{
 				m_NotEmpty.notify_all();
 			}
-
+			
 			/**
 			* @brief execute task.
 			*/
