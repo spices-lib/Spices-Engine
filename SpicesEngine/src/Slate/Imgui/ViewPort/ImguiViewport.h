@@ -8,6 +8,7 @@
 #include "Core/Core.h"
 #include "Slate/Imgui/ImguiUtils.h"
 #include "Core/Container/BehaveStateList.h"
+#include "Slate/SlateImage.h"
 
 namespace Spices {
 
@@ -121,9 +122,9 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief ImTextureID of SceneColor.
+		* @brief SlateImage of SceneColor.
 		*/
-		ImTextureID m_ViewportID;
+		std::shared_ptr<SlateImage> m_ViewportContext;
 
 		/**
 		* @brief This viewport index.

@@ -9,11 +9,14 @@
 #include "Core/Library/FileLibrary.h"
 #include "Render/FrameInfo.h"
 #include "World/World/World.h"
+#include "Slate/SlateImage.h"
+#include "Render/Renderer/SpecificRenderer/SlateRenderer.h"
 
 // This file Only Can include once.
 #include <imgui.cpp>
 #include <imgui_internal.h>
 #include <imgui_widgets.cpp>
+#include <backends/imgui_impl_vulkan.cpp>
 
 namespace Spices {
 
@@ -307,7 +310,7 @@ namespace Spices {
 
         ImGuiWindow* window = ImGui::GetCurrentWindow();
         const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
-            
+
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         draw_list->PushTextureID(context->GetTextureID());
         draw_list->PrimReserve(6, 4);
@@ -315,13 +318,18 @@ namespace Spices {
         draw_list->AddCallback([](const ImDrawList* drawList, const ImDrawCmd* cmd, const int global_idx_offset, const int global_vtx_offset) {
 
             ImGui_ImplVulkan_RenderState* render_state = (ImGui_ImplVulkan_RenderState*)ImGui::GetPlatformIO().Renderer_RenderState;
-            auto set = reinterpret_cast<VkDescriptorSet>(cmd->GetTexID());
+            auto set      = reinterpret_cast<VkDescriptorSet>(cmd->GetTexID());
+            auto pipeline = static_cast<VulkanPipeline*>(cmd->UserCallbackData);
 
-            //vkCmdBindPipeline(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, context->);
-            vkCmdBindDescriptorSets(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, render_state->PipelineLayout, 0, 1, &set, 0, nullptr);
+            ImGui_ImplVulkan_Data* bd = ImGui_ImplVulkan_GetBackendData();
+            vkCmdBindDescriptorSets(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetPipelineLayout(), 0, 1, &set, 0, nullptr);
+
+            vkCmdBindPipeline(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetPipeline());
+            
+            //vkCmdBindDescriptorSets(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetPipelineLayout(), 0, 1, &set, 0, nullptr);
             vkCmdDrawIndexed(render_state->CommandBuffer, cmd->ElemCount, 1, cmd->IdxOffset + global_idx_offset, cmd->VtxOffset + global_vtx_offset, 0);
 
-        }, nullptr);
+        }, SlateRenderer::GetPipeline(context->GetMaterial()->GetName()).get());
         draw_list->PopTextureID();
         draw_list->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
     }

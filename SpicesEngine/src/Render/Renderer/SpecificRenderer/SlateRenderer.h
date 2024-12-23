@@ -33,9 +33,7 @@ namespace Spices {
 			const std::shared_ptr<VulkanDescriptorPool>& descriptorPool        ,
 			const std::shared_ptr<VulkanDevice>&         device                ,
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool
-		)
-			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool)
-		{}
+		);
 
 		/**
 		* @brief Destructor Function.
@@ -48,6 +46,13 @@ namespace Spices {
 		* @param[in] frameInfo The current frame data.
 		*/
 		virtual void Render(TimeStep& ts, FrameInfo& frameInfo) override;
+
+		/**
+		* @brief Get slate material pipeline.
+		* @param[in] name material name.
+		* @return Returns material pipeline.
+		*/
+		static std::shared_ptr<VulkanPipeline> GetPipeline(const std::string& name);
 
 	private:
 

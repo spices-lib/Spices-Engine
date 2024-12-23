@@ -1949,6 +1949,11 @@ namespace Spices {
 		scl::thread_unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 
 		/**
+		* @brief Combinaion of DescriptorSet.
+		*/
+		DescriptorSetManager::DescriptorSetCombineFlags m_DescriptorSetCombine;
+
+		/**
 		* @brief Whether should load a default renderer material.
 		*/
 		bool m_IsLoadDefaultMaterial;

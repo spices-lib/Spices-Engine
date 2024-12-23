@@ -12,6 +12,23 @@
 
 namespace Spices {
 
+	static scl::thread_unordered_map<std::string, std::shared_ptr<VulkanPipeline>>* m_SlatePipelinesPtr = nullptr;
+
+	SlateRenderer::SlateRenderer(
+		const std::string&                           rendererName         , 
+		VulkanState&                                 vulkanState          ,
+		const std::shared_ptr<VulkanDescriptorPool>& descriptorPool       ,
+		const std::shared_ptr<VulkanDevice>&         device               ,
+		const std::shared_ptr<RendererResourcePool>& rendererResourcePool
+	)
+		: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_SlatePipelinesPtr    = &m_Pipelines;
+		m_DescriptorSetCombine = DescriptorSetManager::ThisRenderer;
+	}
+
 	void SlateRenderer::CreateRendererPass()
 	{
 		SPICES_PROFILE_ZONE;
@@ -256,5 +273,12 @@ namespace Spices {
 		EndImguiFrame(frameInfo.m_FrameIndex);
 
 		builder.EndRenderPass();
+	}
+
+	std::shared_ptr<VulkanPipeline> SlateRenderer::GetPipeline(const std::string& name)
+	{
+		SPICES_PROFILE_ZONE;
+
+		return m_SlatePipelinesPtr->Find(name);
 	}
 }

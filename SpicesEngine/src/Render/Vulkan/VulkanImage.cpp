@@ -927,6 +927,18 @@ namespace Spices {
 		samplerLayoutBinding.pImmutableSamplers           = nullptr;
 		samplerLayoutBinding.stageFlags                   = VK_SHADER_STAGE_FRAGMENT_BIT;
 
+		VkDescriptorBindingFlags                           setBindingFlags;
+		setBindingFlags                                   = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT;
+
+		/**
+		* @breif Instance a VkDescriptorSetLayoutBindingFlagsCreateInfo.
+		*/
+		VkDescriptorSetLayoutBindingFlagsCreateInfo         bindingFlags{};
+		bindingFlags.sType                                = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+		bindingFlags.pNext                                = nullptr;
+		bindingFlags.pBindingFlags                        = &setBindingFlags;
+		bindingFlags.bindingCount                         = 1;
+
 		/**
 		* @brief Instance a VkDescriptorSetLayoutCreateInfo.
 		*/
@@ -934,6 +946,8 @@ namespace Spices {
 		layoutInfo.sType                                  = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.bindingCount                           = 1;
 		layoutInfo.pBindings                              = &samplerLayoutBinding;
+		layoutInfo.flags                                  = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
+		layoutInfo.pNext                                  = &bindingFlags;
 
 		/**
 		* @brief Create DescriptorSetLayout.

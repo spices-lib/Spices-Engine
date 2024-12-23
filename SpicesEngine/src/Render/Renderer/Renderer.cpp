@@ -28,6 +28,7 @@ namespace Spices {
 		, m_RendererName            (rendererName          )
 	    , m_IsLoadDefaultMaterial   (isLoadDefaultMaterial )
 		, m_IsActive                (false)
+		, m_DescriptorSetCombine    (DescriptorSetManager::ALL)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -105,19 +106,25 @@ namespace Spices {
 		/**
 		* @brief PreRenderer's DescriptorSetInfo.
 		*/
-		const auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
-		for (auto& pair : preRendererSetInfo)
+		if (m_DescriptorSetCombine & DescriptorSetManager::PreRenderer)
 		{
-			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
+			const auto preRendererSetInfo = DescriptorSetManager::GetByName("PreRenderer");
+			for (auto& pair : preRendererSetInfo)
+			{
+				sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
+			}
 		}
 
 		/**
 		* @brief SpecificRenderer's DescriptorSetInfo.
 		*/
-		const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subPassName});
-		for (auto& pair : specificRendererSetInfo)
+		if (m_DescriptorSetCombine & DescriptorSetManager::ThisRenderer)
 		{
-			sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
+			const auto specificRendererSetInfo = DescriptorSetManager::GetByName({ m_Pass->GetName(), subPassName });
+			for (auto& pair : specificRendererSetInfo)
+			{
+				sortedRowSetLayouts[pair.first] = pair.second->GetRowSetLayout();
+			}
 		}
 
 		/**
@@ -125,6 +132,10 @@ namespace Spices {
 		* @note remove for material use bindless descriptorset.
 		*/
 		const auto material = ResourcePool<Material>::Load<Material>(materialName, materialName);
+		if (m_DescriptorSetCombine & DescriptorSetManager::Material)
+		{
+			// Not Implementated.
+		}
 
 		/**
 		* @brief Instance a temp empty vector for VkDescriptorSetLayout.
@@ -2645,12 +2656,6 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		static int i = 0;
-		++i;
-
-		std::stringstream ss;
-		ss << pipelineName << i;
-
-		indirectPtr->CreateMeshPipeline(ss.str(), materialName, m_pipelineConfig);
+		indirectPtr->CreateMeshPipeline(pipelineName, materialName, m_pipelineConfig);
 	}
 }

@@ -7,7 +7,6 @@
 #pragma once
 #include "Core/Core.h"
 #include "Resources/Material/Material.h"
-#include "Slate/SlateImage.h"
 
 // imgui header.
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -48,6 +47,11 @@ namespace Spices {
 		Down,    // The Down          on the window.
 		Scene,   // The full screen   on the window.
 	};
+
+	/**
+	* @brief Forward declare.
+	*/
+	class SlateImage;
 
 	/**
 	* @brief The ImGuiH Class.

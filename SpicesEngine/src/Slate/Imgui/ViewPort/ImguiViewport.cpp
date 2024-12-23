@@ -30,15 +30,7 @@ namespace Spices {
         {
             SPICES_PROFILE_ZONEN("Create SceneColor ImTextureID");
 
-            /**
-            * @brief Get SceneColor Info.
-            */
-            VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
-
-            /**
-            * @brief Create SceneColor DescriptorSet.
-            */
-            m_ViewportID = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout));
+            m_ViewportContext = std::make_shared<SlateImage>("SceneColor", "SlateRenderer.Slate.Default");
         }
 
         /**
@@ -135,7 +127,7 @@ namespace Spices {
         {
             SPICES_PROFILE_ZONEN("Render Viewport Image");
 
-            ImGui::Image(m_ViewportID, m_PanelSize);
+            ImGuiH::CustomMaterialImage(m_ViewportContext.get(), m_PanelSize);
         }
 
         /**
@@ -226,19 +218,9 @@ namespace Spices {
         SPICES_PROFILE_ZONE;
 
         /**
-        * @brief Free old Viewport image DescriptorSet.
+        * @brief Recreate SceneColor SlateImage.
         */
-        ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(m_ViewportID));
-
-        /**
-        * @brief Get SceneColor Info again.
-        */
-        VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
-
-        /**
-        * @brief Create SceneColor DescriptorSet.
-        */
-        m_ViewportID = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout));
+        m_ViewportContext = std::make_shared<SlateImage>("SceneColor", "SlateRenderer.Slate.Default");
 
         /**
         * @brief Do not block the event.
@@ -251,19 +233,9 @@ namespace Spices {
         SPICES_PROFILE_ZONE;
 
         /**
-        * @brief Free old Viewport image DescriptorSet.
+        * @brief Recreate SceneColor SlateImage.
         */
-        ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(m_ViewportID));
-
-        /**
-        * @brief Get SceneColor Info again.
-        */
-        VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ "SceneColor" });
-
-        /**
-        * @brief Create SceneColor DescriptorSet.
-        */
-        m_ViewportID = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout));
+        m_ViewportContext = std::make_shared<SlateImage>("SceneColor", "SlateRenderer.Slate.Default");
 
         /**
         * @brief Do not block the event.
