@@ -1,0 +1,21 @@
+name: CI for SpicesEngine Solution
+
+on:
+  push:
+    branches: [ "Master" ]
+  pull_request:
+    branches: [ "Master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Generated Solution
+      run: Startup.bat
+
+    - name: Build Solution
+      run: Scripts/Build_Debug_x64.bat
