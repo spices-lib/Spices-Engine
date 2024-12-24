@@ -155,7 +155,7 @@ namespace Spices {
 		init_info.ImageCount                = MaxFrameInFlight;
 		init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;
 		init_info.Allocator                 = VK_NULL_HANDLE;
-		init_info.CheckVkResultFn           = VK_NULL_HANDLE;
+		init_info.CheckVkResultFn           = [](VkResult result) { VK_CHECK(result); };
 
 		/**
 		* @brief ImGui Init for Vulkan.
@@ -265,7 +265,7 @@ namespace Spices {
 		RenderBehaveBuilder builder{ this, frameInfo.m_FrameIndex, frameInfo.m_ImageIndex };
 
 		BeginImguiFrame();
-
+		
 		SlateSystem::GetRegister()->OnRender();
 
 		builder.BeginRenderPass();

@@ -322,11 +322,10 @@ namespace Spices {
             auto pipeline = static_cast<VulkanPipeline*>(cmd->UserCallbackData);
 
             ImGui_ImplVulkan_Data* bd = ImGui_ImplVulkan_GetBackendData();
-            vkCmdBindDescriptorSets(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetPipelineLayout(), 0, 1, &set, 0, nullptr);
+            vkCmdBindDescriptorSets(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, render_state->PipelineLayout, 0, 1, &set, 0, nullptr);
 
-            vkCmdBindPipeline(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetPipeline());
+            //vkCmdBindPipeline(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetPipeline());
             
-            //vkCmdBindDescriptorSets(render_state->CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetPipelineLayout(), 0, 1, &set, 0, nullptr);
             vkCmdDrawIndexed(render_state->CommandBuffer, cmd->ElemCount, 1, cmd->IdxOffset + global_idx_offset, cmd->VtxOffset + global_vtx_offset, 0);
 
         }, SlateRenderer::GetPipeline(context->GetMaterial()->GetName()).get());

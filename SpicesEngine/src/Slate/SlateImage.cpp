@@ -19,13 +19,12 @@ namespace Spices {
         /**
         * @brief Get Texture Info.
         */
-        auto ptr = VulkanRenderBackend::GetRendererResourcePool()->AccessRowResource({ textureName });
-        ptr->CreateDescriptorSet(0);
+        VkDescriptorImageInfo* info = VulkanRenderBackend::GetRendererResourcePool()->AccessResource({ textureName });
 
         /**
         * @brief Create Texture DescriptorSet.
         */
-        m_TextureID = reinterpret_cast<ImTextureID>(ptr->GetDescriptorSet());
+        m_TextureID = reinterpret_cast<ImTextureID>(ImGui_ImplVulkan_AddTexture(info->sampler, info->imageView, info->imageLayout));
 
         /**
         * @brief Load material.
@@ -37,6 +36,11 @@ namespace Spices {
     SlateImage::~SlateImage()
     {
         SPICES_PROFILE_ZONE;
+
+        /**
+       * @brief Free old Texture image DescriptorSet.
+       */
+        ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(m_TextureID));
 
         /**
         * @brief Unload useless material.

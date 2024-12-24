@@ -60,7 +60,7 @@ void main()
 {
     vertOut.color    = color;
     vertOut.texCoord = texCoord;
-
+    
     gl_Position = vec4(position * push.scale + push.translate, 0, 1);
 }
 
