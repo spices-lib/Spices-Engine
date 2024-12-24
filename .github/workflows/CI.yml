@@ -18,8 +18,10 @@ jobs:
 
     - name: Generate Solution
       shell: cmd
+      working-directory: .
       run: call .\Startup.bat
 
     - name: Build Solution
       shell: cmd
+      working-directory: .
       run: call .\Scripts\Build_Debug_x64.bat
