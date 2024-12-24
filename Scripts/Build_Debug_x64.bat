@@ -25,6 +25,4 @@ if not defined solution_path (
 REM Call Python script to build solution
 call python Build.py --target "%solution_path%" --configuration Debug --platform x64
 
-if %ERRORLEVEL% NEQ 0 (
-    PAUSE
-)
+PAUSE
