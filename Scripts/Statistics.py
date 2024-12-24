@@ -112,7 +112,7 @@ def main():
 
     global rootFolder
 
-    parser = argparse.ArgumentParser(description='Statistics Spices Project')
+    parser = argparse.ArgumentParser(description='Statistics Spices Solution')
     parser.add_argument('--rootFolder', type=str, required=True, help='root folder path, e.g. C:/')
     args = parser.parse_args()
 
