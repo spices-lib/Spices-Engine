@@ -3,8 +3,14 @@
 REM Fetch parent folder.
 set "parent_dir=%cd%\.."
 
+REM Display parent directory for debugging
+echo Parent directory: %parent_dir%
+
 REM Fetch solution path.
 for %%f in ("%parent_dir%\*.sln") do set "solution_path=%%f"
+
+REM Display solution path for debugging
+echo Solution path: %solution_path%
 
 REM Return if not find a solution file
 if not defined solution_path (
