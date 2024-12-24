@@ -23,5 +23,5 @@ jobs:
 
     - name: Build Solution
       shell: cmd
-      working-directory: .
-      run: call .\Scripts\Build_Debug_x64.bat
+      working-directory: .\Scripts
+      run: call .\Build_Debug_x64.bat
