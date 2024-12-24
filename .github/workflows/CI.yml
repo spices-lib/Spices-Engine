@@ -14,8 +14,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Generated Solution
-      run: |  call .\Startup.bat
+    - name: Generate Solution
+      run: |        call .\Startup.bat
 
     - name: Build Solution
-      run: |  call .\Scripts/Build_Debug_x64.bat
+      run: |        call .\Scripts\Build_Debug_x64.bat
