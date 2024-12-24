@@ -86,7 +86,7 @@ def main():
     if process.returncode == 0:
         print("Build Succeed")
     else:
-        print("Build Failed，Error Code:", process.returncode)
+        print("Build Failed, Error Code:", process.returncode)
 
 if __name__ == '__main__':
     main()
