@@ -12,6 +12,9 @@ for %%f in ("%parent_dir%\*.sln") do set "solution_path=%%f"
 REM Display solution path for debugging
 echo Solution path: %solution_path%
 
+REM List files in the parent directory for debugging
+dir "%parent_dir%"
+
 REM Return if not find a solution file
 if not defined solution_path (
     echo solution is not found
