@@ -349,7 +349,7 @@ OPTIMIZE_OUTPUT_SLICE  = NO
 #
 # Note see also the list of default file extension mappings.
 
-EXTENSION_MAPPING      =
+EXTENSION_MAPPING      = md=Markdown
 
 # If the MARKDOWN_SUPPORT tag is enabled then Doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
@@ -406,7 +406,7 @@ AUTOLINK_IGNORE_WORDS  =
 # collaboration diagrams that involve STL classes more complete and accurate.
 # The default value is: NO.
 
-BUILTIN_STL_SUPPORT    = NO
+BUILTIN_STL_SUPPORT    = YES
 
 # If you use Microsoft's C++/CLI language, you should set this option to YES to
 # enable parsing support.
@@ -988,7 +988,7 @@ INPUT                  = Samples\Renderer\WhittedRT\src \
                          SpicesEngine\src \
                          SpicesGame\src \
                          SpicesTest\src \
-                         SpicesEngine\document\mainpage.dox
+                         SpicesEngine\document
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1037,6 +1037,7 @@ FILE_PATTERNS          = *.c \
                          *.ccm \
                          *.c++ \
                          *.c++m \
+                         *.dox \
                          *.java \
                          *.ii \
                          *.ixx \
