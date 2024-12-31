@@ -1,6 +1,17 @@
 #!/bin/bash
 set -e
 
+# Download doxygen
+echo "Downloading doxygen..."
+wget https://github.com/doxygen/doxygen/releases/download/Release_1_13_0/doxygen-1.13.0.linux.bin.tar.gz -O /tmp/doxygen.tar.gz
+
+echo "Extracting doxygen..."
+mkdir -p /tmp/doxygen
+tar -xzf /tmp/doxygen.tar.gz -C /tmp/doxygen --strip-components=1
+
+# add to PATH
+export PATH=$PATH:/tmp/doxygen
+
 # Fetch parent folder.
 parent_dir=$(dirname "$(pwd)")
 

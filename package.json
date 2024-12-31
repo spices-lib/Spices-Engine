@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "GenerateDocuments_windows": "cmd /c Scripts\\GenerateDocuments.bat",
-    "GenerateDocuments_linux": "bash ./Scripts/GenerateDocuments.sh"
+    "GenerateDocuments_linux": "bash ./Scripts/GenerateDocuments.sh",
+    "vercel-build": "npm run GenerateDocuments_linux"
   }
 }
