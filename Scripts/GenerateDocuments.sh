@@ -3,11 +3,11 @@ set -e
 
 # Update package list
 echo "Updating package list..."
-sudo apt-get update
+apt-get update
 
 # Install doxygen and graphviz
 echo "Installing doxygen and graphviz..."
-sudo apt-get install -y doxygen graphviz
+apt-get install -y doxygen graphviz
 
 echo "Installation complete."
 
