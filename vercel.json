@@ -5,9 +5,9 @@
         "src": "package.json",
         "use": "@vercel/static-build",
         "config": {
-          "distDir": "Document"
+          "distDir": "Document/html"
         }
       }
     ],
-    "outputDirectory": "Document"
+    "outputDirectory": "Document/html"
   }

@@ -17,6 +17,8 @@ if exist "%parent_dir%\Doxyfile" (
 
     set "doxyfile_path=%parent_dir%\Doxyfile"
     
+    set "doxygen=%parent_dir%\vendor\doxygen\1.10.0\doxygen"
+    
     REM Back to parent folder
     cd ../
         
@@ -26,6 +28,8 @@ if exist "%parent_dir%\Doxyfile" (
     if exist "Doxyfile" (
     
         set "doxyfile_path=%cd%\Doxyfile"
+        
+        set "doxygen=%cd%\vendor\doxygen\1.10.0\doxygen"
         
     ) else (
     
@@ -37,6 +41,6 @@ if exist "%parent_dir%\Doxyfile" (
 )
 
 REM Call Python script to build solution
-doxygen %doxyfile_path%
+%doxygen% %doxyfile_path%
 
 PAUSE
