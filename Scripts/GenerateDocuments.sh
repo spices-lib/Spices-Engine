@@ -20,6 +20,13 @@ if [ -f "$parent_dir/Doxyfile" ]; then
     # Extract tar.gz file
     tar -xzvf $parent_dir/vendor/doxygen/1.10.0/doxygen-1.10.0.linux.bin.tar.gz -C
     
+    # List files in the extracted directory for debugging
+    echo "-------------------------"
+    ls "$(pwd)/vendor/doxygen/1.10.0"
+    echo "-------------------------"
+    ls "$(pwd)/vendor/doxygen/1.10.0/doxygen-1.10.0/bin"
+    echo "-------------------------"
+    
     doxygen="$parent_dir/vendor/doxygen/1.10.0/doxygen-1.10.0/bin/doxygen"
     
     # Back to parent folder
@@ -34,6 +41,13 @@ else
         
         # Extract tar.gz file
         tar -xzvf $(pwd)/vendor/doxygen/1.10.0/doxygen-1.10.0.linux.bin.tar.gz -C
+        
+        # List files in the extracted directory for debugging
+        echo "-------------------------"
+        ls "$(pwd)/vendor/doxygen/1.10.0"
+        echo "-------------------------"
+        ls "$(pwd)/vendor/doxygen/1.10.0/doxygen-1.10.0/bin"
+        echo "-------------------------"
         
         doxygen="$(pwd)/vendor/doxygen/1.10.0/doxygen-1.10.0/bin/doxygen"
         
