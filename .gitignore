@@ -10,12 +10,14 @@
 /Samples/Renderer/WhittedRT/DefaultLayout.ini
 
 /Document/
+/node_modules
 
 *.user
 *.sln
 *.vcxproj
 *.csproj
 *.vcxproj.filters
+*package-lock.json
 
 /Samples/*.json
 /SpicesEngine/*.json

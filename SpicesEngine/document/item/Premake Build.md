@@ -1,13 +1,16 @@
-# Building Structure
+Building Structure
+============
+# Build Tool
 ***
-## Build Tool
 * Tool Locating in **./vendor/premake/premake5.exe**
 
-## Build Scripts
+# Build Scripts
+***
 * Debug: **./scripts/Build_Debug_x64.bat**
 * Release: **./scripts/Build_Release_x64.bat**
 
-## Solution Build Config
+# Solution Build Config
+***
 * Solution Name: **SpicesEngine**
 * Config Locating in **./premake5.lua**
 * architecture: **x64**
@@ -28,8 +31,9 @@
   * **shaderc**
   * **googletest**
 
-## Project Build Config
-### SpicesEngine
+# Project Build Config
+***
+## SpicesEngine
 * Project Name: **SpicesEngine**
 * Config Locating in **./SpicesEngine/premake5.lua**
 * kind: **StaticLib**
@@ -53,7 +57,7 @@
   * shaderc
 * systemversion: **latest**
 * editAndContinue: **Off**
-### SpicesGame
+## SpicesGame
 * Project Name: **SpicesGame**
 * Config Locating in **./SpicesGame/premake5.lua**
 * kind: **ConsoleApp**
@@ -64,7 +68,7 @@
 * debugenvs: **"PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL"**
 * links: 
   * SpicesEngine
-### SpicesTest
+## SpicesTest
 * Project Name: **SpicesTest**
 * Config Locating in **./SpicesTest/premake5.lua**
 * kind: **ConsoleApp**
