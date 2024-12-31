@@ -17,6 +17,8 @@
 *.csproj
 *.vcxproj.filters
 
-*.json
-*.json
+/Samples/*.json
+/SpicesEngine/*.json
+/SpicesGame/*.json
+/SpicesTest/*.json
 *.log
