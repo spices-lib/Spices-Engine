@@ -1,0 +1,7 @@
+{
+  "name": "SpicesEngineDocument",
+  "version": "1.0.0",
+  "scripts": {
+    "GenerateDocuments": "cmd /c Scripts\\GenerateDocuments.bat"
+  }
+}

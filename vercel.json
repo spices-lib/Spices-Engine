@@ -1,8 +1,9 @@
 {
     "version": 2,
+    "buildCommand": "npm run GenerateDocuments",
     "builds": [
       {
-        "src": "Scripts/GenerateDocuments.bat",
+        "src": "package.json",
         "use": "@vercel/static-build",
         "config": {
           "distDir": "Document"
