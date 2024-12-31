@@ -17,7 +17,10 @@ if [ -f "$parent_dir/Doxyfile" ]; then
 
     doxyfile_path="$parent_dir/Doxyfile"
     
-    doxygen="$parent_dir/vendor/doxygen/1.10.0/doxygen"
+    # Extract tar.gz file
+    tar -xzvf $parent_dir/vendor/doxygen/1.10.0/doxygen-1.10.0.linux.bin.tar.gz -C
+    
+    doxygen="$parent_dir/vendor/doxygen/1.10.0/doxygen-1.10.0/bin/doxygen"
     
     # Back to parent folder
     cd "$parent_dir"
@@ -29,7 +32,10 @@ else
     
         doxyfile_path="$(pwd)/Doxyfile"
         
-        doxygen="$(pwd)/vendor/doxygen/1.10.0/doxygen"
+        # Extract tar.gz file
+        tar -xzvf $(pwd)/vendor/doxygen/1.10.0/doxygen-1.10.0.linux.bin.tar.gz -C
+        
+        doxygen="$(pwd)/vendor/doxygen/1.10.0/doxygen-1.10.0/bin/doxygen"
         
     else
     
