@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "GenerateDocuments": "npx cross-env CMD=cmd Scripts\\GenerateDocuments.bat",
+    "GenerateDocuments": "npx cross-env CMD=cmd ./Scripts/GenerateDocuments.bat",
     "vercel-build": "npm run GenerateDocuments"
   },
   "dependencies": {
