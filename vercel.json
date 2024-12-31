@@ -1,13 +1,3 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "Dockerfile",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "Document"
-        }
-      }
-    ],
-    "outputDirectory": "Document"
+    "version": 2
 }
