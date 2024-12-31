@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "GenerateDocuments": "cmd /c Scripts\\GenerateDocuments.bat"
+    "GenerateDocuments": "cmd /c Scripts\\GenerateDocuments.bat",
+    "vercel-build": "npm run GenerateDocuments"
   }
 }
