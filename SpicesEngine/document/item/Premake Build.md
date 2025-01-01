@@ -2,17 +2,32 @@ Building Structure
 ============
 # Build Tool
 ***
-* Tool Locating in **./vendor/premake/premake5.exe**
-
+* Tool Locating in
+  ~~~
+  ./vendor/premake/premake5.exe
+  ~~~
 # Build Scripts
 ***
-* Debug: **./scripts/Build_Debug_x64.bat**
-* Release: **./scripts/Build_Release_x64.bat**
+* Generate Solution: 
+  ~~~
+  ./Startup.bat
+  ~~~
+* Compile with Debug: 
+  ~~~
+  ./scripts/Build_Debug_x64.bat
+  ~~~
+* Compile with Release:
+  ~~~
+  ./scripts/Build_Release_x64.bat
+  ~~~
 
 # Solution Build Config
 ***
 * Solution Name: **SpicesEngine**
-* Config Locating in **./premake5.lua**
+* Config Locating in
+  ~~~
+  ./premake5.lua
+  ~~~
 * architecture: **x64**
 * startproject: **SpicesGame**
 * configurations: **Debug**, **Release**
@@ -35,14 +50,23 @@ Building Structure
 ***
 ## SpicesEngine
 * Project Name: **SpicesEngine**
-* Config Locating in **./SpicesEngine/premake5.lua**
+* Config Locating in
+  ~~~
+  ./SpicesEngine/premake5.lua
+  ~~~
 * kind: **StaticLib**
 * language: **C++**
 * cppdialect: **C++17**
 * staticruntime: **On**
 * flags: **MultiProcessorCompile**
-* pchheader: **Pchheader.h**
-* pchsource: **./SpicesEngine/src/Pchsource.cpp**
+* pchheader:
+  ~~~
+  Pchheader.h
+  ~~~
+* pchsource:
+  ~~~
+  ./SpicesEngine/src/Pchsource.cpp
+  ~~~
 * links: 
   * GLFW
   * VulkanSDK
@@ -59,31 +83,46 @@ Building Structure
 * editAndContinue: **Off**
 ## SpicesGame
 * Project Name: **SpicesGame**
-* Config Locating in **./SpicesGame/premake5.lua**
+* Config Locating in 
+  ~~~
+  ./SpicesGame/premake5.lua
+  ~~~
 * kind: **ConsoleApp**
 * language: **C++**
 * cppdialect: **C++17**
 * staticruntime: **On**
 * flags: **MultiProcessorCompile**
-* debugenvs: **"PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL"**
+* debugenvs: 
+  ~~~
+  PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL
+  ~~~
 * links: 
   * SpicesEngine
 ## SpicesTest
 * Project Name: **SpicesTest**
-* Config Locating in **./SpicesTest/premake5.lua**
+* Config Locating in
+  ~~~
+  ./SpicesTest/premake5.lua
+  ~~~
 * kind: **ConsoleApp**
 * language: **C++**
 * cppdialect: **C++17**
 * staticruntime: **On**
 * flags: **MultiProcessorCompile**
-* debugenvs: **"PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL"**
+* debugenvs:
+  ~~~
+  PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL
+  ~~~
 * links: 
   * SpicesEngine
   * googlemock
 
 ## Dependency Build Config (Use imgui as a sample)
 * Project Name: **imgui**
-* Config Locating in **./SpicesEngine/vendor/imgui/premake5.lua**
+* Config Locating in
+  ~~~
+  ./SpicesEngine/vendor/imgui/premake5.lua
+  ~~~
 * kind: **StaticLib**
 * language: **C++**
 * cppdialect: **C++17**

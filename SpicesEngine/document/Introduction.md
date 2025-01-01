@@ -11,6 +11,11 @@ ray tracing, and shader development. Prior to writing the first line of code,
 I underwent a rigorous six-month period of study to ensure I had the necessary 
 knowledge to successfully complete this project.
 *  **Device:** NVIDIA GeForce RTX 4060
+* **ScreenShots:**
+  * GltfPack: BistroExterior, Renderer: RayTracingRenderer <br/>
+    <img alt="BistroExterior" src="C:/Users/spiecs/Pictures/Screenshots/BistroExterior.png"/>
+  * Virtual Geometry
+    <img alt="Virtual Geometry" src="C:/Users/spiecs/Pictures/Screenshots/Virtual Geometry.png"/>
 
 # How to Build
 ***
@@ -20,6 +25,7 @@ knowledge to successfully complete this project.
    git clone --recursive https://github.com/spices-lib/Spices-Engine.git
    ~~~
 2. Locating to the root folder, and run the script **Startup.bat**, it will read the premake
+3. Run **SpicesEngine.sln** with Visual Studio 2022.
 scripts to build a visual studio project.
 ## JetBrains Rider
 1. Clone the solution with this code in cmd to the folder in your computer.<br/>
@@ -76,7 +82,7 @@ scripts to build a visual studio project.
 ## Features
 1. **[Premake Build](item/Premake Build.md)**
 2. **[MemoryPool](item/Memory.md)**
-3. **Reflect**
+3. **[Reflection](item/Reflection.md)**
 4. **[MultipleThreading](item/MultipleThreading.md)**
 5. **[Debugger](item/Debugger.md)**
 6. **Houdini LiveLink**
@@ -85,12 +91,12 @@ scripts to build a visual studio project.
 9. **[Ray Tracing](item/Ray Tracing.md)**
 10. **[Virtual Geometry](item/Virtual Geometry.md)**
 11. **[DeviceGeneratedCommands](item/DeviceGeneratedCommands.md)**
-12. **[Physically Based Rendering(PBR)](item/PBR.md)**
+12. **[Physically Based Rendering(PBR)](item/Physically Based Rendering.md)**
 13. **Entity Component System(ECS)**
-14. **Log System**
-15. **Unit Test**
-16. **Git CI**
-17. **User Interface**
+14. **[Log](item/Log.md)**
+15. **[Unit Test](item/Unit Test.md)**
+16. **[CI CD](item/CI CD.md)**
+17. **[User Interface](item/User Interface.md)**
 
 ## Todo List ( 44 / 205 )
 |   Index   |      State       | Description 
