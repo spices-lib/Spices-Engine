@@ -20,10 +20,13 @@ CI/CD
       ~~~
       ./Scripts/Build_Debug_x64.bat
       ~~~
+* TODO
+  1. add release build  to CD.
+  2. add test steps to CD.
 
 # CD
 ***
-* SpicesEngine Solution uses Vercel for CD
+* SpicesEngine Solution uses Vercel for documents CD
   * ScreenShot:<br/>
     <img alt="CD" height="729" src="CD.png" width="1428"/>
 * vercel config
@@ -42,3 +45,5 @@ CI/CD
       GenerateDocuments.sh
       ~~~
     4. Publish SpicesEngine Solution documents.
+* TODO
+  1. add binary pack to github release.
