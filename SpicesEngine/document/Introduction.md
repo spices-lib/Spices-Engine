@@ -13,9 +13,9 @@ knowledge to successfully complete this project.
 *  **Device:** NVIDIA GeForce RTX 4060
 * **ScreenShots:**
   * GltfPack: BistroExterior, Renderer: RayTracingRenderer <br/>
-    <img alt="BistroExterior" src="C:/Users/spiecs/Pictures/Screenshots/BistroExterior.png"/>
-  * Virtual Geometry
-    <img alt="Virtual Geometry" src="C:/Users/spiecs/Pictures/Screenshots/Virtual Geometry.png"/>
+    <img alt="BistroExterior" height="1087" src="BistroExterior.png" width="1800"/>
+  * Virtual Geometry<br/>
+    <img alt="Virtual Geometry" height="1087" src="Virtual Geometry.png" width="1800"/>
 
 # How to Build
 ***

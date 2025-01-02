@@ -55,3 +55,6 @@
 [submodule "SpicesEngine/vendor/nlohmann"]
 	path = SpicesEngine/vendor/nlohmann
 	url = https://github.com/nlohmann/json.git
+[submodule "Document/image"]
+	path = Document/image
+	url = https://github.com/spices-lib/SpiecsEngineDocumentImage.git

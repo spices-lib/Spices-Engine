@@ -4,12 +4,12 @@ CI/CD
 ***
 * SpicesEngine Solution uses Github Action for CI
   * [Linking](https://github.com/spices-lib/Spices-Engine/actions)
-  * ScreenShot:
-  <img alt="CI" src="C:/Users/spiecs/Pictures/Screenshots/CI.png"/>
+  * ScreenShot:<br/>
+    <img alt="CI" height="754" src="CI.png" width="1428"/>
 * CI workflows
   * [Linking](https://github.com/spices-lib/Spices-Engine/blob/Master/.github/workflows/CI.yml)
-  * ScreenShot:
-  <img alt="CI" src="C:/Users/spiecs/Pictures/Screenshots/CI workflows.png"/>
+  * ScreenShot:<br/>
+    <img alt="CI workflows" height="1077" src="CI workflows.png" width="1428"/>
   * Steps:
     1. clone the repository recursive.
     2. run
@@ -24,16 +24,16 @@ CI/CD
 # CD
 ***
 * SpicesEngine Solution uses Vercel for CD
-  * ScreenShot:
-    <img alt="CD" src="C:/Users/spiecs/Pictures/Screenshots/CD.png"/>
+  * ScreenShot:<br/>
+    <img alt="CD" height="729" src="CD.png" width="1428"/>
 * vercel config
   * [Linking](https://github.com/spices-lib/Spices-Engine/blob/Master/vercel.json)
-  * ScreenShot:
-  <img alt="vercel" src="C:/Users/spiecs/Pictures/Screenshots/vercel.png"/>
+  * ScreenShot:<br/>
+    <img alt="vercel" height="422" src="vercel.png" width="1424"/>
 * package config
   * [Linking](https://github.com/spices-lib/Spices-Engine/blob/Master/package.json)
-  * ScreenShot:
-    <img alt="package" src="C:/Users/spiecs/Pictures/Screenshots/package.png"/>
+  * ScreenShot:<br/>
+    <img alt="package" height="314" src="package.png" width="1428"/>
   * Steps:
     1. clone the repository recursive.
     2. npm run vercel-build.
