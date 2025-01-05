@@ -156,8 +156,6 @@ in the GPU rendering process and rendered them individually into a visualization
   2. Open the file with chrome website:
     ~~~
     ./SpicesTest/SpiceslProfile-SpicesTest.json
-    ~~~
-    ~~~
     chrome://tracing
     ~~~
 * **ScreenShot:**<br/>
@@ -194,14 +192,126 @@ in the GPU rendering process and rendered them individually into a visualization
 ## Frame Debugger
 ***
 * **Usage:** Frame Debugger is used to capturing frame and analyse rendering process.
-* **Advantage:**
-
-
+* **Advantage:** Commonly used, easy to use, and debuggable.
+* **Disadvantage:** Not supporting detailed analysis of pipelines.
+* **Launch:**
+  * Application Executable:
+    ~~~
+    ./bin/xxx/xxProjectxx/xxx.exe
+    ~~~
+  * Working Directory:
+    ~~~
+    xxProjectxx
+    ~~~
+  * Environment: PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL
+* **Vulkan:**
+  * Device Address C++ Support: **No**
+  * Enable Coherent Buffer Collection: **No**
+* **Troubleshooting:**
+  * Collect Hardware Performance Metrics: **No**
+  * Block on First Incompatibility: **Disable**
+* **Screen Shots:**
+  * Scrubber<br/>
+    <img alt="Scrubber" src="Scrubber.png"/>
+***
+  * Inspector<br/>
+    <img alt="Inspector" height="901" src="Inspector.png" width="1800"/>
+***
+  * Events<br/>
+    <img alt="Events" src="Events.png"/>
+***
+  * API Statistics<br/>
+    <img alt="API Statistics" src="API Statistics.png"/>
+***
+  * Resources<br/>
+    <img alt="Resources" height="540" src="Resources.png" width="1800"/>
+***
+  * DescriptorSets<br/>
+    <img alt="DescriptorSets" src="DescriptorSets.png"/>
+***
+  * DeviceMemory<br/>
+    <img alt="DeviceMemory" height="597" src="DeviceMemory.png" width="1800"/>
+***
+  * Objects<br/>
+    <img alt="Objects" height="677" src="Objects.png" width="1800"/>
+***
+  * Shader<br/>
+    <img alt="Shader" src="Shader.png"/>
+***
 
 ## C++ Capture
 ***
+* **Usage:** 
+* **Advantage:** 
+* **Disadvantage:** 
+* **Launch:**
+  * Application Executable:
+    ~~~
+    ./bin/xxx/xxProjectxx/xxx.exe
+    ~~~
+  * Working Directory:
+    ~~~
+    xxProjectxx
+    ~~~
+  * Environment: PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL
+* **Vulkan:**
+  * Device Address C++ Support: **No**
+  * Enable Coherent Buffer Collection: **No**
+* **Troubleshooting:**
+  * Block on First Incompatibility: **Disable**
+* **Generate C++ Project**
+  1. Generate C++ Capture
+  2. Build
+  3. Open IDE
+  4. Run
 
 ## GPU Trace Profiler
+***
+* **Usage:** 
+* **Advantage:** 
+* **Disadvantage:** 
+* **Launch:**
+  * Application Executable:
+    ~~~
+    ./bin/xxx/xxProjectxx/xxx.exe
+    ~~~
+  * Working Directory:
+    ~~~
+    xxProjectxx
+    ~~~
+  * Environment: PATH=LibraryDir.HoudiniEnginedll;LibraryDir.NvAftermath;LibraryDir.NvPerf;LibraryDir.VulkanSDKDLL
+  * Automatically Connect: **NO**
+* **Ada(NVIDIA GeForce RTX 4060)**
+  * Multi-Pass Metrics: **YES**
+  * Real-Time Shader Profiler: **YES**
+  * Capture Screenshot: **NO**
+* **Attach**
+  1. Select Process
+  2. Attach GPU Trace
+  3. Generate GPU Trace Capture
+* **Screen Shots:**
+  * Timeline<br/>
+    <img alt="Timeline" src="Timeline.png"/>
+***
+  * Metrics<br/>
+    <img alt="Metrics" src="Metrics.png"/>
+***
+  * HotSpots<br/>
+    <img alt="HotSpots" src="HotSpots.png"/>
+***
+  * ShaderPipelines<br/>
+    <img alt="ShaderPipelines" src="ShaderPipelines.png"/>
+***
+  * Summary<br/>
+    <img alt="Summary01" src="Summary01.png"/>
+    <img alt="Summary02" src="Summary02.png"/>
+    <img alt="Summary03" src="Summary03.png"/>
+***
+  * ShaderSource<br/>
+    <img alt="ShaderSource" src="ShaderSource.png"/>
+***
+  * TraceAnalysis<br/>
+    <img alt="TraceAnalysis" src="TraceAnalysis.png"/>
 ***
 
 # NVTX
