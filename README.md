@@ -52,50 +52,6 @@
 23. [**https://github.com/nvpro-samples/gl_vk_meshlet_cadscene**](https://github.com/nvpro-samples/gl_vk_meshlet_cadscene)
 24. [**https://developer.nvidia.com/blog/new-vulkan-device-generated-commands/**](https://developer.nvidia.com/blog/new-vulkan-device-generated-commands/)
 <a name="ym5nT"></a>
-# Project **screenshot**
----
-![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721468942734-334a66bf-5482-4f72-8b4e-ff24bea2792a.png#averageHue=%232e5250&clientId=u3caa4349-6f5a-4&from=paste&height=927&id=u86621213&originHeight=1391&originWidth=2560&originalType=binary&ratio=1&rotation=0&showTitle=false&size=3576004&status=done&style=none&taskId=u43d13339-3209-4388-95a4-d9688efcf63&title=&width=1706.6666666666667)
-<a name="pZtJM"></a>
-# Git Desktop Clone
----
-```bash
-https://github.com/spices-lib/Spices-Engine.git
-```
-- **SDK dependency**
-   - [Vulkan SDK 1.3.275.0](https://vulkan.lunarg.com/)
-- **Submodule dependency**
-   - [GLFW @ 9bed794](https://github.com/TheCherno/glfw/tree/9bed794ab7c1b961aaca259403695bbd3870d3b3)
-   - [IconFontCppHeaders @ f30b1e7](https://github.com/juliettef/IconFontCppHeaders/tree/f30b1e73b2d71eb331d77619c3f1de34199afc38)
-   - [ImGuizmo @ ba662b1](https://github.com/CedricGuillemet/ImGuizmo/tree/ba662b119d64f9ab700bb2cd7b2781f9044f5565)
-   - [glm @ ee7e155](https://github.com/spices-lib/glm/tree/ee7e155649041fd83920fdd045d28d0d5310a70d)
-   - [imgui @ 8d88308](https://github.com/spices-lib/imgui/tree/8d883081f68aea723aa4de7cc28c9511b55f9883)
-   - [implot @ b6fc717](https://github.com/spices-lib/implot/tree/b6fc71745b8471e2fda6f17dd40586145269971a)
-   - [spdlog @ d276069](https://github.com/gabime/spdlog/tree/d276069a6e916b1e1fd45885b15b72bd8ee000a7)
-   - [tracy @ 521e371](https://github.com/wolfpld/tracy/tree/521e371c60e37b47ffb8b0330d310af7061e0af8)
-   - [yaml-cpp @ ac5a1ca](https://github.com/spices-lib/yaml-cpp/tree/ac5a1ca552659ea1737db862f4037226dc11b7d4)
-   - [googletest @ 6a6515b](https://github.com/spices-lib/googletest/tree/6a6515b8afbddcdc7bc6c1133256e153f39d6e03)
-   - [VulkanMemoryAllocator @ 871913d](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/tree/871913da6a4b132b567d7b65c509600363c0041e)
-   - [meshoptimizer @ 30fe9fe](https://github.com/zeux/meshoptimizer/tree/30fe9fed38f963fb8bb9a255e8eb27fafc5b4746)
-   - [taskflow @ 9823d00](https://github.com/taskflow/taskflow/tree/9823d00e119b2205943de737b9ca5f93c5cc26bd)
-- **program dependency**
-   - Doxygen
-   - Nsight Graphics
-   - Nsight System
-<a name="gt0Gu"></a>
-# Premake Auto Build
----
-Double click  **Startup.bat**  and it will generate visual studio 2022 project by all **premake5.lua **files this project automatically.<br />These files determine the building of the project：
-- **lib.lua**
-- **premake5.lua**
-- **SpicesEngine/premake5.lua**
-- **SpicesGame/premake5.lua**
-- **SpicesTest/premake5.lua**
-- **SpicesEngine/vendor/GLFW/premake5.lua**
-- **SpicesEngine/vendor/imgui/premake5.lua**
-- **SpicesEngine/vendor/implot/premake5.lua**
-- **SpicesEngine/vendor/yaml-cpp/premake5.lua**
-- **SpicesTest/vendor/googletest/premake5.lua**
-<a name="IiXC5"></a>
 # Vulkan Render backend
 ---
 Spices Engine use vulkan as render backend
@@ -173,10 +129,6 @@ log files Folder: **Spices-Engine/bin/Log/**<br />Use spdlog library to collecti
 - Output to local files
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721492134375-7c0d1f28-07ee-4ae0-ac18-1daa800220c3.png#averageHue=%23fdfcfc&clientId=ue02393b1-df1c-4&from=paste&height=228&id=u31a61ed5&originHeight=342&originWidth=1190&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=29960&status=done&style=none&taskId=u97ffbad3-7205-48cb-81e9-2cb17d06476&title=&width=793.3333333333334)<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721492159980-b3928a6e-b59e-4803-b544-d1cd8b26d3d3.png#averageHue=%23f4f2f0&clientId=ue02393b1-df1c-4&from=paste&height=635&id=ub6dc877a&originHeight=953&originWidth=1460&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=134303&status=done&style=none&taskId=u22fed615-0f5c-401a-8957-d0b9eb9d7dd&title=&width=973.3333333333334)
 <a name="sx75d"></a>
-# Documentation
----
-Use Doxygen to generate project documents automatically.<br />Double Click **GenerateDocuments.bat** and it will generate html documents in folder** Document/** by  file **Doxyfile**.<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721494068619-1a647632-b5f3-44ef-b098-c5ff319705d9.png#averageHue=%23fcfbfb&clientId=u8190286b-2c81-4&from=paste&height=394&id=u6a034709&originHeight=394&originWidth=1207&originalType=binary&ratio=1&rotation=0&showTitle=false&size=39471&status=done&style=none&taskId=uec7d0377-84d7-4283-9c92-5e6253cd4d2&title=&width=1207)<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721493868616-0b9d66e2-94a7-43c5-b756-d95ea6eafc3b.png#averageHue=%23f4f6d3&clientId=u8190286b-2c81-4&from=paste&height=1318&id=u9dc1dc18&originHeight=1318&originWidth=2552&originalType=binary&ratio=1&rotation=0&showTitle=false&size=213012&status=done&style=none&taskId=u1a6e72b7-975a-4eb9-84fa-8504644a289&title=&width=2552)
-<a name="Qq42r"></a>
 # Rendering Pipeline Analysis
 ---
 **Nsight Graphics - Frame Debugger**<br />Mark interested vulkan object and commands with those method, and looks them by Nsight Graphics.
@@ -193,22 +145,10 @@ Scrubber<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/172149
 Timeline View<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721496152950-67909867-ee1c-4162-911b-dbe23ffe2f38.png#averageHue=%23eeedec&clientId=u8190286b-2c81-4&from=paste&height=636&id=ub1c03759&originHeight=636&originWidth=1966&originalType=binary&ratio=1&rotation=0&showTitle=false&size=86833&status=done&style=none&taskId=u357d8919-adaf-4dd1-87bd-831aa3f38b6&title=&width=1966)<br />State System View<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721496224451-711ebccc-3671-471e-b281-24051202bb8f.png#averageHue=%23f7f6f4&clientId=u8190286b-2c81-4&from=paste&height=579&id=u3830d934&originHeight=579&originWidth=1940&originalType=binary&ratio=1&rotation=0&showTitle=false&size=126849&status=done&style=none&taskId=ueca10f2a-f855-4c13-80b0-f4e7441c13c&title=&width=1940)<br />**Nsight Graphics - GPU Trace**<br />Timeline<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721497152153-428a3ce5-3e28-4c64-b503-dbe85a2a996e.png#averageHue=%23584c35&clientId=u8190286b-2c81-4&from=paste&height=855&id=ue72c63f7&originHeight=855&originWidth=1905&originalType=binary&ratio=1&rotation=0&showTitle=false&size=108089&status=done&style=none&taskId=uf8730769-2a51-412c-9e18-9e59deced3e&title=&width=1905)<br />Summary<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721497254242-1aedaba6-50ef-4689-a7d0-bdab13298ff5.png#averageHue=%238e7b4d&clientId=u8190286b-2c81-4&from=paste&height=793&id=u608b5e71&originHeight=793&originWidth=606&originalType=binary&ratio=1&rotation=0&showTitle=false&size=206115&status=done&style=none&taskId=u16749c88-f681-47c1-ac7e-283cf81ad82&title=&width=606)<br />Metrics<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721497200847-30de5274-f215-48f7-b1b3-75b1a2879e67.png#averageHue=%23373634&clientId=u8190286b-2c81-4&from=paste&height=782&id=ua61f849c&originHeight=782&originWidth=592&originalType=binary&ratio=1&rotation=0&showTitle=false&size=48699&status=done&style=none&taskId=u9056edcc-37a4-44f8-9ef1-afaa6837c58&title=&width=592)<br />Barrier<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721497328103-7204b01b-97a4-4fc4-b304-93e7017e48bd.png#averageHue=%23373432&clientId=u3b3e0354-2883-4&from=paste&height=323&id=u2ec7a1a7&originHeight=323&originWidth=1740&originalType=binary&ratio=1&rotation=0&showTitle=false&size=63004&status=done&style=none&taskId=u8feaa2d8-a6e5-4088-8dfc-3b6a98b7539&title=&width=1740)
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721497366323-05464242-f2b1-4f44-8b08-b64ccae28ea8.png#averageHue=%23363534&clientId=u3b3e0354-2883-4&from=paste&height=272&id=u49168c5c&originHeight=272&originWidth=1851&originalType=binary&ratio=1&rotation=0&showTitle=false&size=43435&status=done&style=none&taskId=ub2e16143-bb15-4439-b1e1-b57c7c8361b&title=&width=1851)
 <a name="BhDT8"></a>
-# Performance Analysis 
----
-In those files,  add **TRACY_ENABLE** macro
-- SpicesEngine/premake5.lua
-- SpicesGame/premake5.lua
-- SpicesTest/premake5.lua
-![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721536014413-2d615142-584f-452d-a2bb-aa078ac195cd.png#averageHue=%23201f1f&clientId=uf73232b3-ecc6-4&from=paste&height=183&id=ua71f570e&originHeight=201&originWidth=859&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=15638&status=done&style=none&taskId=ud2e0a174-b8f9-42fd-8da8-4d2fcdf1892&title=&width=780.9090739833425)<br />Run **Startup.bat**<br />Run Project<br />Click **MainMenu - Window - Utilities - Profiler**<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721535990955-cc161a58-ef6a-4ec1-b6ce-ba9022fc542d.png#averageHue=%235b616c&clientId=uf73232b3-ecc6-4&from=paste&height=475&id=u4aaf9bb1&originHeight=522&originWidth=715&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=324141&status=done&style=none&taskId=ub7341e82-d665-4596-bf65-41f8d6b8764&title=&width=649.9999859116298)<br />Connect<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721536042067-57665d85-a49d-458c-be7a-6f3482b7db12.png#averageHue=%236b8895&clientId=uf73232b3-ecc6-4&from=paste&height=273&id=u8001901f&originHeight=300&originWidth=712&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=23975&status=done&style=none&taskId=u45fb819b-0958-4160-a4dc-a31ab0f3470&title=&width=647.2727132434691)<br />Frame Time![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721536091727-4ce8946d-d47e-46ac-bb3b-8b0eb1f7cff1.png#averageHue=%23373828&clientId=uf73232b3-ecc6-4&from=paste&height=842&id=udca1ef57&originHeight=926&originWidth=2560&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=240361&status=done&style=none&taskId=u1ad87b5a-bc22-47b7-9abe-fd03c4e513f&title=&width=2327.2726768304506)<br />zone<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721536295487-5202299a-1f55-4e35-8872-716c1d0e7198.png#averageHue=%23282820&clientId=uf73232b3-ecc6-4&from=paste&height=731&id=ucbbfb2ce&originHeight=804&originWidth=511&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=52581&status=done&style=none&taskId=u0a8b5401-cc80-4907-81fc-e452d393471&title=&width=464.5454444767032)<br />zone info<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721536319608-f653e24c-3034-4d66-8f4a-e22761080be6.png#averageHue=%2327261d&clientId=uf73232b3-ecc6-4&from=paste&height=871&id=u107f2be6&originHeight=958&originWidth=836&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=198418&status=done&style=none&taskId=u3b1c7520-85da-41f9-9dfe-8c779912bf4&title=&width=759.999983527444)<br />statistics<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721536336687-683535f6-2026-4431-bb54-f1153e1d2dfc.png#averageHue=%2326261e&clientId=uf73232b3-ecc6-4&from=paste&height=662&id=u93fc4c3c&originHeight=728&originWidth=1490&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=295427&status=done&style=none&taskId=ua8129117-8dd9-49d6-a891-15193bacd32&title=&width=1354.545425186473)
-<a name="veP3j"></a>
 # Unit Test
 ---
 All unit tests are located at folder **SpicesTest/src** as a project<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721552740552-12100a74-7ca1-4543-9d5f-204de0653af3.png#averageHue=%232c2c2b&clientId=uf73232b3-ecc6-4&from=paste&height=486&id=ufbeea045&originHeight=535&originWidth=1272&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=61183&status=done&style=none&taskId=u2210c2a7-43f1-427d-a5b1-1dca5def422&title=&width=1156.36361130013)
 <a name="JoaS6"></a>
-# Git Version Control
----
-![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721552912226-c97b5d6f-1582-4bef-9bc2-bb07a3ac8b96.png#averageHue=%23fefefd&clientId=uf73232b3-ecc6-4&from=paste&height=832&id=u5f8bb9c1&originHeight=915&originWidth=1698&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=121818&status=done&style=none&taskId=u03011982-ea00-449a-b1a9-bb8d69957ed&title=&width=1543.6363301789472)<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721552971235-291b999d-927b-4253-8014-a6db00bb4c4e.png#averageHue=%23fefefe&clientId=uf73232b3-ecc6-4&from=paste&height=1045&id=ufdbab970&originHeight=1150&originWidth=1467&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=107718&status=done&style=none&taskId=u521ed215-9df5-4b21-aa75-eb67eb9d7f8&title=&width=1333.6363347305746)
-<a name="uYF9O"></a>
 # User Interface(Imgui)
 ---
 User Interface is designed based on Nvidia USD Composer style<br />MainMenu<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553266885-9b37500d-c02e-4a3e-9ee6-a4ebde9b1a75.png#averageHue=%236b6f79&clientId=uf73232b3-ecc6-4&from=paste&height=521&id=ufe49f289&originHeight=573&originWidth=749&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=305373&status=done&style=none&taskId=u5b80bb96-1d78-42f5-9888-e3f50e91f13&title=&width=680.9090761507841)<br />stage<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553031419-042db42d-29ed-4dfe-a8bc-4370ed10d5fe.png#averageHue=%23515151&clientId=uf73232b3-ecc6-4&from=paste&height=509&id=u67f79c83&originHeight=560&originWidth=522&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=73108&status=done&style=none&taskId=u64abf96e-7ac9-41c3-96f9-021f3099b5a&title=&width=474.545444259959)<br />Property<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553169122-b8a144ba-7b7b-4b9b-a24b-965fff8fe751.png#averageHue=%231bdf1b&clientId=uf73232b3-ecc6-4&from=paste&height=678&id=u920f6fd6&originHeight=746&originWidth=523&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=60076&status=done&style=none&taskId=uc496f10d-76ea-46ba-9022-4e69c9a1e79&title=&width=475.45453514934593)<br />Material Panel<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553195253-f9bc1a52-a7d0-4eca-971c-a943ea436e43.png#averageHue=%23323433&clientId=uf73232b3-ecc6-4&from=paste&height=508&id=u23bc9d47&originHeight=559&originWidth=527&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=47297&status=done&style=none&taskId=u2b8a3afe-4f05-4628-9984-ed53101c889&title=&width=479.09089870689354)<br />Console<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553215980-2ba352e6-db3a-4980-89e6-4cfc184a0285.png#averageHue=%23212224&clientId=uf73232b3-ecc6-4&from=paste&height=305&id=u3ca1342e&originHeight=336&originWidth=2003&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=86911&status=done&style=none&taskId=u1ffacb54-f17e-4bb9-b41e-c4a042bd924&title=&width=1820.9090514419502)<br />Viewport<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553239664-4be35d01-9317-45e9-8c78-d131d45db375.png#averageHue=%23667388&clientId=uf73232b3-ecc6-4&from=paste&height=878&id=u97504a6d&originHeight=966&originWidth=1991&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=2596285&status=done&style=none&taskId=uaf757af9-ed32-46b3-9202-0b5254e2353&title=&width=1809.9999607693073)<br />Gizmo<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721553322404-bb4d700f-03d7-462c-bafc-8dcd34e7852b.png#averageHue=%233b506b&clientId=uf73232b3-ecc6-4&from=paste&height=760&id=uadbb4435&originHeight=836&originWidth=1080&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=1472584&status=done&style=none&taskId=uf300c367-b953-46ac-a7e8-ec6281b91d0&title=&width=981.8181605378463)
