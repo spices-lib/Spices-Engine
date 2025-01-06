@@ -50,7 +50,7 @@ constexpr uint32_t MaxFrameInFlight = 2;
 			case VK_ERROR_DEVICE_LOST:
 			{
 				SPICES_CORE_CRITICAL("Device has losted, Start Aftermath...")
-				NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(result);
+				NSIGHTAFTERMATH_GPUCRASHTRACKER_DEVICELOSECHECK(result)
 				break;
 			}
 			default:

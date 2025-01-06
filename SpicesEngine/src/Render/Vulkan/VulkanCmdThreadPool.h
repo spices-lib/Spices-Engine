@@ -116,14 +116,14 @@ namespace Spices {
 
 						ptr->Start();
 						m_Threads.emplace(threadId, std::move(ptr));
-						
+
 						++m_IdleThreadSize;
 						++m_NThreads;
 
 						std::stringstream ss;
 						ss << "RHIT" << threadId;
 						const std::string name = ss.str();
-						SubmitThreadTask_LightWeight(threadId, [=](VkCommandBuffer buffer){
+						m_Threads[threadId]->ReceiveThreadTask([=](VkCommandBuffer buffer) {
 							ThreadLibrary::SetThreadName(name);
 						});
 						

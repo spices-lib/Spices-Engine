@@ -117,18 +117,6 @@ file in:  SpicesEngine/assets/Materials/src/Material.BasePassRenderer.Mesh.Defau
 ---
 Spices Engine use ECS as the manage solution of game world objects
 <a name="xyVpM"></a>
-# Log System
----
-log files Folder: **Spices-Engine/bin/Log/**<br />Use spdlog library to collection log information, and output in console、console ui、local files.
-- Use macro enable spdlog collection
-![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721492063735-49b2a876-1885-4955-89fb-5b2c91128a8e.png#averageHue=%232b2a28&clientId=ue02393b1-df1c-4&from=paste&height=101&id=u28cbe381&originHeight=151&originWidth=1442&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=41849&status=done&style=none&taskId=u61bc0076-92e8-4bcd-87b8-1aa1169a30d&title=&width=961.3333333333334)
-- Output to console
-![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721492243927-0cc7f692-04be-4b41-9d7d-f1ea633a35f5.png#averageHue=%23232323&clientId=ue02393b1-df1c-4&from=paste&height=340&id=ud7fcf6b6&originHeight=510&originWidth=959&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=49305&status=done&style=none&taskId=u5072e7ef-41bc-4286-8d1d-98a5cb8b97d&title=&width=639.3333333333334)
-- Output to console ui
-![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721492267322-e802f1b5-b8aa-400c-b9bd-6c98986f06c6.png#averageHue=%239e9f9f&clientId=ue02393b1-df1c-4&from=paste&height=225&id=uad9d0e03&originHeight=337&originWidth=1998&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=82349&status=done&style=none&taskId=u3a446f6b-b4fa-4999-a70f-e9305108a80&title=&width=1332)
-- Output to local files
-![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721492134375-7c0d1f28-07ee-4ae0-ac18-1daa800220c3.png#averageHue=%23fdfcfc&clientId=ue02393b1-df1c-4&from=paste&height=228&id=u31a61ed5&originHeight=342&originWidth=1190&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=29960&status=done&style=none&taskId=u97ffbad3-7205-48cb-81e9-2cb17d06476&title=&width=793.3333333333334)<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721492159980-b3928a6e-b59e-4803-b544-d1cd8b26d3d3.png#averageHue=%23f4f2f0&clientId=ue02393b1-df1c-4&from=paste&height=635&id=ub6dc877a&originHeight=953&originWidth=1460&originalType=binary&ratio=1.25&rotation=0&showTitle=false&size=134303&status=done&style=none&taskId=u22fed615-0f5c-401a-8957-d0b9eb9d7dd&title=&width=973.3333333333334)
-<a name="sx75d"></a>
 # Unit Test
 ---
 All unit tests are located at folder **SpicesTest/src** as a project<br />![image.png](https://cdn.nlark.com/yuque/0/2024/png/2894467/1721552740552-12100a74-7ca1-4543-9d5f-204de0653af3.png#averageHue=%232c2c2b&clientId=uf73232b3-ecc6-4&from=paste&height=486&id=ufbeea045&originHeight=535&originWidth=1272&originalType=binary&ratio=1.100000023841858&rotation=0&showTitle=false&size=61183&status=done&style=none&taskId=u2210c2a7-43f1-427d-a5b1-1dca5def422&title=&width=1156.36361130013)

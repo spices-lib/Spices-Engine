@@ -232,7 +232,7 @@ namespace Spices {
 				std::stringstream ss;
 				ss << "Instance Extension Required: " << set << ", Which is not satisfied";
 				
-				SPICES_CORE_WARN(ss.str());
+				SPICES_CORE_WARN(ss.str())
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace Spices {
 				std::stringstream ss;
 				ss << "Instance Layer Required: " << set << ", Which is not satisfied";
 				
-				SPICES_CORE_WARN(ss.str());
+				SPICES_CORE_WARN(ss.str())
 			}
 		}
 
@@ -357,28 +357,28 @@ namespace Spices {
 			* @brief verbose, unknown level.
 			*/
 			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-				SPICES_CORE_TRACE(ss.str());
+				SPICES_CORE_TRACE(ss.str())
 				break;
 
 			/**
 			* @brief info level.
 			*/
 			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-				SPICES_CORE_INFO(ss.str());
+				SPICES_CORE_INFO(ss.str())
 				break;
 
 			/**
 			* @brief warning level.
 			*/
 			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-				SPICES_CORE_WARN(ss.str());
+				SPICES_CORE_WARN(ss.str())
 				break;
 
 			/**
 			* @brief error level.
 			*/
 			case VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-				SPICES_CORE_ERROR(ss.str());
+				SPICES_CORE_ERROR(ss.str())
 				break;
 			
 			case VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT:

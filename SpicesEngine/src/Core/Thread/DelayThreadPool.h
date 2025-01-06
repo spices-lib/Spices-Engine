@@ -105,14 +105,14 @@ namespace Spices {
 						
 						ptr->Start();
 						m_Threads.emplace(threadId, std::move(ptr));
-						
+
 						++m_IdleThreadSize;
 						++m_NThreads;
 
 						std::stringstream ss;
 						ss << "GameT" << threadId;
 						const std::string name = ss.str();
-						SubmitThreadTask_LightWeight(threadId, [=](){
+						m_Threads[threadId]->ReceiveThreadTask([=]() {
 							ThreadLibrary::SetThreadName(name);
 						});
 						

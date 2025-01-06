@@ -29,7 +29,9 @@ namespace SpicesTest {
 			m_ThreadPool.Start(nThreads);
 		}
 
-		// void TearDown() override {}
+		void TearDown() override {
+			m_ThreadPool.Wait();
+		}
 
 		/**
 		* @brief ThreadPool.
