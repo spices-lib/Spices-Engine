@@ -50,6 +50,7 @@ namespace Spices {
 			m_GameThreadPool = std::make_shared<DelayThreadPool>();
 			m_GameThreadPool->SetMode(PoolMode::MODE_FIXED);
 			m_GameThreadPool->Start(4);
+			m_GameThreadPool->Suspend();
 		}
 	}
 

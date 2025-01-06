@@ -21,6 +21,7 @@ namespace SpicesTest {
 		Spices::DelayThreadPool threadPool;
 		threadPool.SetMode(Spices::PoolMode::MODE_FIXED);
 		threadPool.Start(4);
+		threadPool.Suspend();
 
 		std::atomic_int executeCount;
 

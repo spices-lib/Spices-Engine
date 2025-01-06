@@ -19,7 +19,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		DelayThreadPool() : ThreadPool_Basic<>(), m_IsStoped(true) {}
+		DelayThreadPool() : ThreadPool_Basic<>(), m_IsStoped(false) {}
 
 		/**
 		* @brief Destructor Function.
@@ -109,13 +109,29 @@ namespace Spices {
 						++m_IdleThreadSize;
 						++m_NThreads;
 
+						/**
+						* @brief Name thread.
+						*/
 						std::stringstream ss;
 						ss << "GameT" << threadId;
 						const std::string name = ss.str();
+
 						m_Threads[threadId]->ReceiveThreadTask([=]() {
 							ThreadLibrary::SetThreadName(name);
 						});
 						
+						/**
+						* @brief Wait for name.
+						*/
+						{
+							m_Mutex.unlock();
+
+							m_NotEmpty.notify_all();
+							m_Threads[threadId]->Wait();
+
+							m_Mutex.lock();
+						}
+
 						break;
 					}
 				}

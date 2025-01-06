@@ -26,13 +26,22 @@ namespace Spices {
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 
+			/**
+			* @brief Name thread.
+			*/
 			std::stringstream ss;
 			ss << "CusT" << threadId;
 			const std::string name = ss.str();
+
 			SubmitThreadTask_LightWeight(threadId, [=](){
 				ThreadLibrary::SetThreadName(name);
 			});
 		}
+
+		/**
+		* @brief Wait for name.
+		*/
+		Wait();
 	}
 
 	void ThreadPool::ThreadFunc(Thread<>* thread)

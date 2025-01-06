@@ -64,13 +64,22 @@ namespace Spices {
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 
+			/**
+			* @brief Name thread.
+			*/
 			std::stringstream ss;
 			ss << "RHIT" << threadId;
 			const std::string name = ss.str();
+
 			SubmitThreadTask_LightWeight(threadId, [=](VkCommandBuffer buffer){
 				ThreadLibrary::SetThreadName(name);
 			});
 		}
+
+		/**
+		* @brief Wait for name.
+		*/
+		Wait();
 	}
 
 	void VulkanCmdThreadPool::ThreadFunc(Thread<VkCommandBuffer>* thread)

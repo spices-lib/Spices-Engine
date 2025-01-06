@@ -1,0 +1,67 @@
+# @file Windows CI.yml
+# @brief This file is the configuration for the Windows CI in GitHub.
+# @author Spices.
+
+# configuration name
+name: Windows CI
+
+# workflow trigger
+on:
+  
+  # On Pushed
+  push:
+    branches: [ "Master" ]
+  
+  # On Pull Request
+  pull_request:
+    branches: [ "Master" ]
+
+# workflow jobs
+jobs:
+  
+  # Build Job
+  build:
+    
+    # Platform: Windows
+    runs-on: windows-latest
+
+    # Build Steps
+    steps:
+    
+    # Checkout recursive
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    # @TODO: Install Dependencies.
+
+    # Generate VisualStudio Solution
+    - name: Generate Solution
+      shell: cmd
+      working-directory: .
+      run: call .\Startup.bat
+    
+    # Build Solution with Debug Configuration
+    - name: Build Debug
+      shell: cmd
+      working-directory: .\Scripts
+      run: call .\Build_Debug_x64.bat
+      
+    # Build Solution with Release Configuration
+    - name: Build Release
+      shell: cmd
+      working-directory: .\Scripts
+      run: call .\Build_Release_x64.bat
+
+    # Execute Unit Test with Debug Configuration
+    #- name: Execute Unit Test
+    #  shell: cmd
+    #  working-directory: .\Scripts
+    #  run: call .\RunSpicesTest.bat
+    
+    # Execute Unit Test with Release Configuration
+    #- name: Execute Unit Test
+    #  shell: cmd
+    #  working-directory: .\Scripts
+    #  run: call .\RunSpicesTest.bat
