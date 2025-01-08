@@ -11,6 +11,11 @@
 namespace Spices {
 
 	/**
+	* @brief Forward Declare.
+	*/
+	class RendererPass;
+
+	/**
 	* @brief This struct included all infos usd to create a VkPipeline.
 	*/
 	struct PipelineConfigInfo 
@@ -46,7 +51,7 @@ namespace Spices {
 		std::vector<VkDynamicState>                      dynamicStateEnables;      /* @brief VkDynamicState.                               */
 		VkPipelineDynamicStateCreateInfo                 dynamicStateInfo{};       /* @brief VkPipelineDynamicStateCreateInfo.             */
 		VkPipelineLayout                                 pipelineLayout{};         /* @brief VkPipelineLayout.                             */
-		VkRenderPass                                     renderPass{};             /* @brief VkRenderPass.                                 */
+		std::shared_ptr<RendererPass>                    renderPass;               /* @brief RendererPass.                                 */
 		uint32_t                                         subpass = 0;              /* @brief SubPass num.                                  */
 	};
 

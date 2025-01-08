@@ -85,14 +85,16 @@ namespace Spices {
 		/**
 		* @brief Destroy FrameBuffer.
 		*/
-		for (const auto framebuffer : m_SwapChainFramebuffers) 
+		for (int i = 0; i < MaxFrameInFlight; i++)
 		{
-			vkDestroyFramebuffer(m_VulkanState.m_Device, framebuffer, nullptr);
+			vkDestroyFramebuffer(m_VulkanState.m_Device, m_SwapChainFramebuffers[i], nullptr);
+			m_SwapChainFramebuffers[i] = nullptr;
 		}
 
 		/**
 		* @brief Destroy RenderPass.
 		*/
 		vkDestroyRenderPass(m_VulkanState.m_Device, m_RenderPass, nullptr);
+		m_RenderPass = nullptr;
 	}
 }

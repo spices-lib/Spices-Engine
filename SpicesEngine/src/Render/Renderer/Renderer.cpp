@@ -2526,7 +2526,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_pipelineConfig.renderPass = m_Renderer->m_Pass->Get();
+		m_pipelineConfig.renderPass = m_Renderer->m_Pass;
 
 		return *this;
 	}

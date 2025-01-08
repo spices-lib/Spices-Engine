@@ -9,6 +9,7 @@
 #include "Resources/Mesh/Mesh.h"
 #include "Resources/ResourcePool/ResourcePool.h"
 #include "Resources/Shader/Shader.h"
+#include "Render/Renderer/RendererPass/RendererPass.h"
 
 namespace Spices {
 
@@ -84,7 +85,7 @@ namespace Spices {
 		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
 
 		pipelineInfo.layout                             = m_PipelineLayout;
-		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.renderPass                         = config.renderPass->Get();
 		pipelineInfo.subpass                            = config.subpass;
 
 		pipelineInfo.basePipelineIndex                  = -1;
@@ -452,7 +453,7 @@ namespace Spices {
 		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
 
 		pipelineInfo.layout                             = m_PipelineLayout;
-		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.renderPass                         = config.renderPass->Get();
 		pipelineInfo.subpass                            = config.subpass;
 
 		pipelineInfo.basePipelineIndex                  = -1;
@@ -540,7 +541,7 @@ namespace Spices {
 		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
 
 		pipelineInfo.layout                             = m_PipelineLayout;
-		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.renderPass                         = config.renderPass->Get();
 		pipelineInfo.subpass                            = config.subpass;
 
 		pipelineInfo.basePipelineIndex                  = -1;
@@ -617,7 +618,7 @@ namespace Spices {
 		pipelineInfo.pDynamicState                      = &config.dynamicStateInfo;
 
 		pipelineInfo.layout                             = m_PipelineLayout;
-		pipelineInfo.renderPass                         = config.renderPass;
+		pipelineInfo.renderPass                         = config.renderPass->Get();
 		pipelineInfo.subpass                            = config.subpass;
 
 		pipelineInfo.basePipelineIndex                  = -1;
