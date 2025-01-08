@@ -150,7 +150,7 @@ namespace Spices {
 				SPICES_CORE_ERROR(ss.str());
 			}
 
-			m_Identities.push_back(systemName, std::shared_ptr<System>(new T(systemName, std::forward<Args>(args)...)));
+			m_Identities.push_back(systemName, std::make_shared<T>(systemName, std::forward<Args>(args)...));
 
 			// system init
 			auto ptr = *m_Identities.find_value(systemName);

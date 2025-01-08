@@ -32,7 +32,7 @@ namespace Spices {
 			/**
 			* @brief Constructor Function.
 			*/
-			Builder() = default;
+			Builder();
 
 			/**
 			* @brief Destructor Function.
@@ -57,7 +57,7 @@ namespace Spices {
 			/**
 			* @brief The packs that used for create mesh.
 			*/
-			scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
+			std::shared_ptr<scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>> m_Pack;
 
 			/**
 			* @brief The packs nums.
@@ -72,7 +72,7 @@ namespace Spices {
 		* Init member variables.
 		* @param[in] meshPacks The mesh pack that used for create mesh.
 		*/
-		Mesh(scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPacks);
+		Mesh(std::shared_ptr<scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>> meshPacks);
 
 		/**
 		* @brief Destructor Function.
@@ -99,7 +99,7 @@ namespace Spices {
 		* @brief Get m_Pack.
 		* @return Returns m_Pack.
 		*/
-		inline scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return m_Pack; }
+		inline scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>& GetPacks() { return *m_Pack; }
 
 		/**
 		* @brief Add Mesh's material to hit group.
@@ -112,13 +112,13 @@ namespace Spices {
 		/**
 		* @brief All packs in this mesh.
 		*/
-		scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> m_Pack;
+		std::shared_ptr<scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>> m_Pack;
 	};
 
 	template<typename F>
 	inline void Mesh::Draw(VkCommandBuffer& commandBuffer, F func)
 	{
-		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+		m_Pack->for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 
 			/**
 			* @brief This function is used for bind material parameters.
@@ -137,7 +137,7 @@ namespace Spices {
 	template <typename F>
 	void Mesh::DrawMeshTasks(const VkCommandBuffer& commandBuffer, F func)
 	{
-		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+		m_Pack->for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 
 			/**
 			* @brief This function is used for bind material parameters.

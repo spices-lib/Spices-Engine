@@ -236,11 +236,9 @@ namespace Spices {
 
 		/**
         * @brief Iter all subpass.
-		* @note subPass must be a copy in multithreading.
         */
-		auto subPass = m_Pass->GetSubPasses();
-		subPass.for_each([&](const auto& K, const auto& V) {
-			
+		m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
+
 			std::stringstream ss;
 			ss << m_RendererName << "." << K << ".Default";
 

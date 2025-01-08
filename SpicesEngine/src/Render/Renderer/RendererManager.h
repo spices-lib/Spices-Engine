@@ -95,7 +95,7 @@ namespace Spices {
 				SPICES_CORE_ERROR(ss.str());
 			}
 
-			m_Identities.push_back(rendererName, std::shared_ptr<Renderer>(new T(rendererName, std::forward<Args>(args)...)));
+			m_Identities.push_back(rendererName, std::make_shared<T>(rendererName, std::forward<Args>(args)...));
 			const auto ptr = *m_Identities.find_value(rendererName);
 			ptr->OnSystemInitialize();
 

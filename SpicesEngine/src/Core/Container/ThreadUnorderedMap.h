@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include <shared_mutex>
 
 namespace scl {
 
@@ -85,7 +86,7 @@ namespace scl {
 		/**
 		* @brief Mutex of this queue.
 		*/
-		std::mutex m_Mutex;
+		std::shared_mutex m_Mutex;
 
 		/**
 		* @brief This wrappered unordered_map.
@@ -102,7 +103,7 @@ namespace scl {
 	template<typename K, typename V>
 	inline void thread_unordered_map<K, V>::Insert(K&& k, V&& v)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
 		m_Map[k] = v;
 	}
@@ -110,7 +111,7 @@ namespace scl {
 	template<typename K, typename V>
 	inline void thread_unordered_map<K, V>::Insert(const K& k, const V& v)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
 		m_Map[k] = v;
 	}
@@ -118,7 +119,7 @@ namespace scl {
 	template<typename K, typename V>
 	inline V& thread_unordered_map<K, V>::Find(K&& k)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		return m_Map[k];
 	}
@@ -126,7 +127,7 @@ namespace scl {
 	template<typename K, typename V>
 	inline V& thread_unordered_map<K, V>::Find(const K& k)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		return m_Map[k];
 	}
@@ -134,7 +135,7 @@ namespace scl {
 	template<typename K, typename V>
 	inline bool thread_unordered_map<K, V>::HasKey(K&& k)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		return m_Map.find(k) != m_Map.end();
 	}
@@ -142,7 +143,7 @@ namespace scl {
 	template<typename K, typename V>
 	inline bool thread_unordered_map<K, V>::HasKey(const K& k)
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		return m_Map.find(k) != m_Map.end();
 	}
@@ -150,7 +151,7 @@ namespace scl {
 	template<typename K, typename V>
 	inline void thread_unordered_map<K, V>::Clear()
 	{
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
 		m_Map.clear();
 	}

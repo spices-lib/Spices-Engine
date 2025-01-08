@@ -9,6 +9,7 @@
 #include "Core/Core.h"
 
 #include <unordered_map>
+#include <shared_mutex>
 #include <list>
 
 namespace scl {
@@ -16,6 +17,7 @@ namespace scl {
 	/**
 	* @brief The container combines hashmap and list together.
 	* Used in the case that we want iter a hashmap in order.
+	* Thread Safe.
 	*/
 	template<typename K, typename V>
 	class linked_unordered_map
@@ -25,24 +27,43 @@ namespace scl {
 		/**
 		* @brief The container keeps iter in order.
 		*/
-		std::list<K> keys_ = {};
+		std::list<K> m_Keys;
 		
 		/**
 		* @breif The container keeps quick search.
 		*/
-		std::unordered_map<K, V> map_ = {};
+		std::unordered_map<K, V> m_Map;
+
+		/**
+		* @brief Mutex for this container.
+		*/
+		std::shared_mutex m_Mutex;
+
+		/**
+		* @brief This container size.
+		*/
+		std::atomic_int m_Size;
 
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		linked_unordered_map() = default;
+		linked_unordered_map()
+			: m_Size(0)
+		{};
 
 		/**
 		* @brief Destructor Function.
 		*/
 		virtual ~linked_unordered_map() = default;
+
+		/**
+		* @brief Determine whether the container's element size is same.
+		* @return Returns true if the size of the keys_ and map_.
+		* @note Used for unit test, shou not be called during game.
+		*/
+		bool has_equal_size();
 
 		/**
 		* @brief Clear this container's data.
@@ -54,13 +75,6 @@ namespace scl {
 		* @return Returns the size of the container.
 		*/
 		size_t size();
-
-		/**
-		* @brief Determine whether the container's element size is same.
-		* @return Returns true if the size of the keys_ and map_.
-		* @note Used for unit test, shou not be called during game.
-		*/
-		bool has_equal_size();
 
 		/**
 		* @brief Add a element to this container.
@@ -132,85 +146,88 @@ namespace scl {
 	};
 
 	template<typename K, typename V>
+	inline bool linked_unordered_map<K, V>::has_equal_size()
+	{
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
+		return m_Keys.size() == m_Map.size();
+	}
+
+	template<typename K, typename V>
 	inline void linked_unordered_map<K, V>::clear()
 	{
-		/**
-		* @brief Clear list.
-		*/
-		keys_.clear(); // Clear list.
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
-		/**
-		* @brief Clear hashmap.
-		*/
-		map_.clear();
+		m_Keys.clear();
+		m_Map.clear();
+		m_Size = 0;
 	}
 
 	template<typename K, typename V>
 	inline size_t linked_unordered_map<K, V>::size()
 	{
-		/**
-		* @brief Though we already does unit test, 
-		* So not use map_.size() here.
-		*/
-		return keys_.size();
-	}
-
-	template<typename K, typename V>
-	inline bool linked_unordered_map<K, V>::has_equal_size()
-	{
-		return keys_.size() == map_.size();
+		return m_Size.load();
 	}
 
 	template<typename K, typename V>
 	inline void linked_unordered_map<K, V>::push_back(const K& key, const V& value)
 	{
-		if (!has_key(key))
+		bool hasKey = has_key(key);
+
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
+
+		if (!hasKey)
 		{
-			/**
-			* @brief Add to list.
-			*/
-			keys_.push_back(key);
+			m_Keys.push_back(key);
+
+			++m_Size;
 		}
 
-		/**
-		* @brief Update hashmap.
-		*/
-		map_[key] = value;
+		m_Map[key] = value;
 	}
 
 	template<typename K, typename V>
 	inline V* linked_unordered_map<K, V>::find_value(const K& key)
 	{
-		/**
-		* @brief Get V from map_ only while it does has the key.
-		* Otherwise return a new V.
-		*/
-		if(has_key(key)) return &map_[key];
+		bool hasKey = has_key(key);
+
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
+		if (hasKey)
+		{
+			return &m_Map[key];
+		}
+
 		return nullptr;
 	}
 
 	template<typename K, typename V>
 	inline bool linked_unordered_map<K, V>::has_key(const K& key)
 	{
-		if (map_.find(key) != map_.end()) return true;
-		else return false;
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
+		if (m_Map.find(key) != m_Map.end())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	template<typename K, typename V>
 	inline void linked_unordered_map<K, V>::erase(const K& key)
 	{
-		auto it = map_.find(key);
-		if (it != map_.end())
-		{
-			/**
-			* @brief Remove from list.
-			*/
-			keys_.remove(key);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
-			/**
-			* @brief Remove from hashmap.
-			*/
-			map_.erase(it);
+		auto it = m_Map.find(key);
+		if (it != m_Map.end())
+		{
+			m_Keys.remove(key);
+			m_Map.erase(it);
+
+			--m_Size;
 		}
 	}
 
@@ -218,7 +235,9 @@ namespace scl {
 	template<typename F>
 	inline void linked_unordered_map<K, V>::for_each(F fn)
 	{
-		for (const K& key : keys_)
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
+		for (const K& key : m_Keys)
 		{
 			/**
 			* @brief The function defines how to iter.
@@ -226,7 +245,7 @@ namespace scl {
 			* @param[in] value V the value.
 			* @return Retunrs True if want break this for loop.
 			*/
-			if(fn(key, map_[key])) break;   //Break If want.
+			if(fn(key, m_Map[key])) break;   //Break If want.
 		}
 	}
 
@@ -238,15 +257,17 @@ namespace scl {
 		*/
 		if (!has_key(key)) return nullptr;
 
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
 		/**
 		* @brief Returns nullptr if not a prev value;
 		*/
-		if (key == keys_.front()) return nullptr;
+		if (key == m_Keys.front()) return nullptr;
 
 		/**
 		* @brief Iter the list.
 		*/
-		for (auto it = keys_.begin(); it != keys_.end(); ++it)
+		for (auto it = m_Keys.begin(); it != m_Keys.end(); ++it)
 		{
 			if (*it == key)
 			{
@@ -265,15 +286,17 @@ namespace scl {
 		*/
 		if (!has_key(key)) return nullptr;
 
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
 		/**
 		* @brief Returns nullptr if not a prev value;
 		*/
-		if (key == keys_.back()) return nullptr;
+		if (key == m_Keys.back()) return nullptr;
 
 		/**
 		* @brief Iter the list.
 		*/
-		for (auto it = keys_.begin(); it != keys_.end(); ++it)
+		for (auto it = m_Keys.begin(); it != m_Keys.end(); ++it)
 		{
 			if (*it == key)
 			{
@@ -287,24 +310,30 @@ namespace scl {
 	template<typename K, typename V>
 	V* linked_unordered_map<K, V>::first()
 	{
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
 		if (size() == 0) return nullptr;
 
-		return &map_[keys_.front()];
+		return &m_Map[m_Keys.front()];
 	}
 
 	template<typename K, typename V>
 	V* linked_unordered_map<K, V>::end()
 	{
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
 		if (size() == 0) return nullptr;
 
-		return &map_[keys_.back()];
+		return &m_Map[m_Keys.back()];
 	}
 
 	template<typename K, typename V>
 	K* linked_unordered_map<K, V>::end_k()
 	{
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
 		if (size() == 0) return nullptr;
 
-		return &keys_.back();
+		return &m_Keys.back();
 	}
 }

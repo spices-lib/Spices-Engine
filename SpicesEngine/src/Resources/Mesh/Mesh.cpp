@@ -9,7 +9,7 @@
 
 namespace Spices {
 
-	Mesh::Mesh(scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>> meshPack)
+	Mesh::Mesh(std::shared_ptr<scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>> meshPack)
 		: m_Pack(meshPack)
 	{}
 
@@ -17,7 +17,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Pack.for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
+		m_Pack->for_each([&](const uint32_t& k, const std::shared_ptr<MeshPack>& v) {
 
 			auto& stages = v->GetMaterial()->GetShaderPath("rchit");
 			if (stages.empty())
@@ -43,13 +43,20 @@ namespace Spices {
 		});
 	}
 
+	Mesh::Builder::Builder()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Pack = std::make_shared<scl::linked_unordered_map<uint32_t, std::shared_ptr<MeshPack>>>();
+	}
+
 	Mesh::Builder& Mesh::Builder::AddPack(std::shared_ptr<MeshPack> meshPack)
 	{
 		SPICES_PROFILE_ZONE;
 
 		meshPack->OnCreatePack();
 
-		m_Pack.push_back(m_PackNums, meshPack);
+		m_Pack->push_back(m_PackNums, meshPack);
 		m_PackNums++;
 		return *this;
 	}
