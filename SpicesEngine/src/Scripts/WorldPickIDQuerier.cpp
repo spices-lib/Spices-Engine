@@ -36,14 +36,14 @@ namespace Spices {
 		/**
 		* @brief Get viewport.
 		*/
-		if (!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
+		if (!m_ViewPort.lock()) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
 
-		if (!m_ViewPort->IsHovered() || m_ViewPort->GetGizmo()->IsOver()) return false;
+		if (!m_ViewPort.lock()->IsHovered() || m_ViewPort.lock()->GetGizmo()->IsOver()) return false;
 
-		if (m_ViewPort->GetMousePosInViewport().first < 0                              ||
-			m_ViewPort->GetMousePosInViewport().first > m_ViewPort->GetPanelSize().x   ||
-			m_ViewPort->GetMousePosInViewport().second < 0                             ||
-			m_ViewPort->GetMousePosInViewport().second > m_ViewPort->GetPanelSize().y
+		if (m_ViewPort.lock()->GetMousePosInViewport().first < 0                              ||
+			m_ViewPort.lock()->GetMousePosInViewport().first > m_ViewPort.lock()->GetPanelSize().x   ||
+			m_ViewPort.lock()->GetMousePosInViewport().second < 0                             ||
+			m_ViewPort.lock()->GetMousePosInViewport().second > m_ViewPort.lock()->GetPanelSize().y
 			)
 		{
 			return false;
@@ -56,7 +56,7 @@ namespace Spices {
 			*/
 			if (Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift))
 			{
-				auto pair = m_ViewPort->GetMousePosInViewport();
+				auto pair = m_ViewPort.lock()->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
 				->AccessRowResource("EntityID")
@@ -82,7 +82,7 @@ namespace Spices {
 			*/
 			else if (Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl))
 			{
-				auto pair = m_ViewPort->GetMousePosInViewport();
+				auto pair = m_ViewPort.lock()->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
 				->AccessRowResource("EntityID")
@@ -111,7 +111,7 @@ namespace Spices {
 			{
 				FrameInfo::Get().m_PickEntityID.clear();
 
-				auto pair = m_ViewPort->GetMousePosInViewport();
+				auto pair = m_ViewPort.lock()->GetMousePosInViewport();
 
 				VulkanRenderBackend::GetRendererResourcePool()
 				->AccessRowResource("EntityID")

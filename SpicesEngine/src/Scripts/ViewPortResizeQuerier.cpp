@@ -22,16 +22,16 @@ namespace Spices {
 		*/
 		if (!SlateSystem::GetRegister()) return;
 
-		if (!m_ViewPort) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
+		if (!m_ViewPort.lock()) m_ViewPort = SlateSystem::GetRegister()->GetViewPort();
 
-		if (m_ViewPort->IsResizedThisFrame())
+		if (m_ViewPort.lock()->IsResizedThisFrame())
 		{
 			/**
 			* @brief Might not needed?
 			*/
 			VK_CHECK(vkQueueWaitIdle(VulkanRenderBackend::GetState().m_GraphicQueue))
 				
-			SlateResizeEvent event(static_cast<uint32_t>(m_ViewPort->GetPanelSize().x), static_cast<uint32_t>(m_ViewPort->GetPanelSize().y));
+			SlateResizeEvent event(static_cast<uint32_t>(m_ViewPort.lock()->GetPanelSize().x), static_cast<uint32_t>(m_ViewPort.lock()->GetPanelSize().y));
 
 			Event::GetEventCallbackFn()(event);
 		}

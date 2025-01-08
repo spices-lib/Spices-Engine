@@ -34,7 +34,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~SlateSystem() override = default;
+		virtual ~SlateSystem();
 
 		/**
 		* @brief This interface defines the behaves on specific system initialized.

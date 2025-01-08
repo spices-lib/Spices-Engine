@@ -49,7 +49,7 @@ namespace Spices {
 		/**
 		* @brief viewport pointer.
 		*/
-		std::shared_ptr<ImguiViewport> m_ViewPort;
+		std::weak_ptr<ImguiViewport> m_ViewPort;
 	};
 
 }

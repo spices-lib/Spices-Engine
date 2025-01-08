@@ -15,6 +15,13 @@ namespace Spices {
 
 	std::shared_ptr<SlateRegister> SlateSystem::m_SlateRegister;
 
+	SlateSystem::~SlateSystem()
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_SlateRegister = nullptr;
+	}
+
 	void SlateSystem::OnSystemInitialize()
 	{
 		SPICES_PROFILE_ZONE;

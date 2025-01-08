@@ -38,8 +38,8 @@ namespace Spices {
         SPICES_PROFILE_ZONE;
 
         /**
-       * @brief Free old Texture image DescriptorSet.
-       */
+        * @brief Free old Texture image DescriptorSet.
+        */
         ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(m_TextureID));
 
         /**
