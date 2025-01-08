@@ -80,6 +80,11 @@ namespace Spices {
 					prim.mode      = GltfHelper::GetElementInt(primitive, "mode", -1);
 				}
 			}
+
+			std::stringstream ss;
+			ss << "Meshes Counts: " << data.size();
+
+			SPICES_CORE_INFO(ss.str())
 		}
 
 		/**

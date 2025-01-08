@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
+#include "World/Components/TransformComponent.h"
 
 #include "Resources/Object/GltfAccessors.h"
 #include "Resources/Object/GltfAnimations.h"
@@ -55,8 +56,9 @@ namespace Spices {
 		* @brief Create Entity instance from gltf file.
 		* @param[in] world World Pointer.
 		* @param[in] tag Entity name.
+		* @param[in] transform GLTF Instance transform
 		*/
-		void CreateEntity(World* world, const std::string& tag);
+		void CreateEntity(World* world, const std::string& tag, Transform transform = {});
 
 	private:
 

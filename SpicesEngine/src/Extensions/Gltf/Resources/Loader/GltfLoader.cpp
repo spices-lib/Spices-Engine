@@ -33,6 +33,8 @@ namespace Spices {
 
 		std::filesystem::path parentPath = std::filesystem::path(fileName).parent_path();
 
+		SPICES_CORE_INFO("----------------------------------------------------------------");
+
 		if(data.find("asset")       != data.end()) collection->m_Asset       = std::make_unique<GltfAsset      >(data["asset"]);
 		if(data.find("accessors")   != data.end()) collection->m_Accessors   = std::make_unique<GltfAccessors  >(data["accessors"]);
 		if(data.find("buffers")     != data.end()) collection->m_Buffers     = std::make_unique<GltfBuffers    >(data["buffers"], parentPath);
@@ -46,6 +48,8 @@ namespace Spices {
 		if(data.find("scene")       != data.end()) collection->m_Scene       = std::make_unique<GltfScene      >(data["scene"]);
 		if(data.find("scenes")      != data.end()) collection->m_Scenes      = std::make_unique<GltfScenes     >(data["scenes"]);
 		if(data.find("textures")    != data.end()) collection->m_Textures    = std::make_unique<GltfTextures   >(data["textures"]);
+
+		SPICES_CORE_INFO("----------------------------------------------------------------");
 
 		return true;
 	}
@@ -82,62 +86,75 @@ namespace Spices {
 		}
 
 		// Normals
+		bool hasNormal = false;
 		{
 			if (primitive.NORMAL < 0)
 			{
-				SPICES_CORE_ERROR("Normal buffer invalid.")
-				return false;
+				  pack->m_MeshResource.normals.attributes->resize(1);
+				(*pack->m_MeshResource.normals.attributes)[0] = glm::vec3(0.0f, 1.0f, 0.0f);
 			}
-			const GltfAccessors::Item& normalAccessor     = accessors->m_AccessorsData[primitive.NORMAL];
-			const GltfBufferViews::Item& normalBufferView = bufferViews->m_BufferViewsData[normalAccessor.bufferView];
-			const GltfBuffers::Item& normalBuffer         = buffers->m_BuffersData[normalBufferView.buffer];
-
-			const VkFormat format                         = GltfHelper::GetFormat(normalAccessor.type, normalAccessor.componentType);
-			const uint32_t bytes                          = GltfHelper::SizeOfFormat(format);
-
-			pack->m_MeshResource.normals.attributes->resize(normalAccessor.count);
-			for (uint32_t i = 0; i < pack->m_MeshResource.normals.attributes->size(); i++)
+			else
 			{
-				const uint32_t offset = i * bytes;
+				hasNormal = true;
 
-				auto n = reinterpret_cast<glm::vec3*>(&(*normalBuffer.buffer)[normalAccessor.byteOffset + normalBufferView.byteOffset + offset]);
-				(*pack->m_MeshResource.normals.attributes)[i] = *n;
+				const GltfAccessors::Item& normalAccessor     = accessors->m_AccessorsData[primitive.NORMAL];
+				const GltfBufferViews::Item& normalBufferView = bufferViews->m_BufferViewsData[normalAccessor.bufferView];
+				const GltfBuffers::Item& normalBuffer         = buffers->m_BuffersData[normalBufferView.buffer];
 
-				glm::vec3& nor = (*pack->m_MeshResource.normals.attributes)[i];
-				nor.z = -nor.z;
+				const VkFormat format                         = GltfHelper::GetFormat(normalAccessor.type, normalAccessor.componentType);
+				const uint32_t bytes                          = GltfHelper::SizeOfFormat(format);
+
+				pack->m_MeshResource.normals.attributes->resize(normalAccessor.count);
+				for (uint32_t i = 0; i < pack->m_MeshResource.normals.attributes->size(); i++)
+				{
+					const uint32_t offset = i * bytes;
+
+					auto n = reinterpret_cast<glm::vec3*>(&(*normalBuffer.buffer)[normalAccessor.byteOffset + normalBufferView.byteOffset + offset]);
+					(*pack->m_MeshResource.normals.attributes)[i] = *n;
+
+					glm::vec3& nor = (*pack->m_MeshResource.normals.attributes)[i];
+					nor.z = -nor.z;
+				}
 			}
 		}
 		
 		// Colors
+		bool hasColor = false;
 		{
-			pack->m_MeshResource.colors.attributes->resize(1);
+			  pack->m_MeshResource.colors.attributes->resize(1);
 			(*pack->m_MeshResource.colors.attributes)[0] = glm::vec3(0.0f);
 		}
 
 		// TexCoords
+		bool hasTexCoords = false;
 		{
 			if (primitive.TEXCOORD_0 < 0)
 			{
-				SPICES_CORE_ERROR("TexCoords buffer invalid.")
-				return false;
+				  pack->m_MeshResource.texCoords.attributes->resize(1);
+				(*pack->m_MeshResource.texCoords.attributes)[0] = glm::vec2(0.0f);
 			}
-			const GltfAccessors::Item& texCoordAccessor     = accessors->m_AccessorsData[primitive.TEXCOORD_0];
-			const GltfBufferViews::Item& texCoordBufferView = bufferViews->m_BufferViewsData[texCoordAccessor.bufferView];
-			const GltfBuffers::Item& texCoordBuffer         = buffers->m_BuffersData[texCoordBufferView.buffer];
-
-			const VkFormat format                           = GltfHelper::GetFormat(texCoordAccessor.type, texCoordAccessor.componentType);
-			const uint32_t bytes                            = GltfHelper::SizeOfFormat(format);
-
-			pack->m_MeshResource.texCoords.attributes->resize(texCoordAccessor.count);
-			for (uint32_t i = 0; i < pack->m_MeshResource.texCoords.attributes->size(); i++)
+			else
 			{
-				const uint32_t offset = i * bytes;
+				hasTexCoords = true;
 
-				auto u = reinterpret_cast<glm::vec2*>(&(*texCoordBuffer.buffer)[texCoordAccessor.byteOffset + texCoordBufferView.byteOffset + offset]);
-				(*pack->m_MeshResource.texCoords.attributes)[i] = *u;
+				const GltfAccessors::Item& texCoordAccessor     = accessors->m_AccessorsData[primitive.TEXCOORD_0];
+				const GltfBufferViews::Item& texCoordBufferView = bufferViews->m_BufferViewsData[texCoordAccessor.bufferView];
+				const GltfBuffers::Item& texCoordBuffer         = buffers->m_BuffersData[texCoordBufferView.buffer];
 
-				glm::vec2& uv = (*pack->m_MeshResource.texCoords.attributes)[i];
-				//uv.y = 1.0f - uv.y;
+				const VkFormat format                           = GltfHelper::GetFormat(texCoordAccessor.type, texCoordAccessor.componentType);
+				const uint32_t bytes                            = GltfHelper::SizeOfFormat(format);
+
+				pack->m_MeshResource.texCoords.attributes->resize(texCoordAccessor.count);
+				for (uint32_t i = 0; i < pack->m_MeshResource.texCoords.attributes->size(); i++)
+				{
+					const uint32_t offset = i * bytes;
+
+					auto u = reinterpret_cast<glm::vec2*>(&(*texCoordBuffer.buffer)[texCoordAccessor.byteOffset + texCoordBufferView.byteOffset + offset]);
+					(*pack->m_MeshResource.texCoords.attributes)[i] = *u;
+
+					glm::vec2& uv = (*pack->m_MeshResource.texCoords.attributes)[i];
+					//uv.y = 1.0f - uv.y;
+				}
 			}
 		}
 
@@ -149,7 +166,7 @@ namespace Spices {
 			
 			for(uint32_t i = 0; i < pack->m_MeshResource.vertices.attributes->size(); i++)
 			{
-				(*pack->m_MeshResource.vertices.attributes)[i] = glm::uvec4(i, i, 0, i);
+				(*pack->m_MeshResource.vertices.attributes)[i] = glm::uvec4(i, hasNormal ? i : 0, hasColor ? i : 0, hasTexCoords ? i: 0);
 			}
 		}
 

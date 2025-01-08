@@ -89,6 +89,11 @@ namespace Spices {
 				
 				item.name = GltfHelper::GetElementString(json, "name", "");
 			}
+
+			std::stringstream ss;
+			ss << "Materials Counts: " << data.size();
+
+			SPICES_CORE_INFO(ss.str())
 		}
 		
 		/**

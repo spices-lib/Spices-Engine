@@ -22,15 +22,21 @@ namespace Spices {
 		GltfLoader::Load(path, this);
 	}
 
-	void GltfCollection::CreateEntity(World* world, const std::string& tag)
+	void GltfCollection::CreateEntity(World* world, const std::string& tag, Transform transform)
 	{
 		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Calaulate model matrix.
+		*/
+		const glm::mat4 rotation = glm::toMat4(glm::quat({ glm::radians(transform.rotation.x), glm::radians(transform.rotation.y), glm::radians(transform.rotation.z) }));
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position) * rotation * glm::scale(glm::mat4(1.0f), transform.scale);
 
 		for (auto& item : m_Scenes->m_ScenesData)
 		{
 			for (const auto& node : item.nodes)
 			{
-				CreateEntityRecursive(world, tag, node, glm::mat4(1.0f));
+				CreateEntityRecursive(world, tag, node, model);
 			}
 		}
 	}
