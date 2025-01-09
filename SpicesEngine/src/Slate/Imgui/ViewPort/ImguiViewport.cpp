@@ -220,7 +220,7 @@ namespace Spices {
         /**
         * @brief Recreate SceneColor SlateImage.
         */
-        m_ViewportContext = std::make_shared<SlateImage>("SceneColor", "SlateRenderer.Slate.Default");
+        m_ViewportContext->ReBuildTextureID();
 
         /**
         * @brief Do not block the event.
@@ -235,7 +235,7 @@ namespace Spices {
         /**
         * @brief Recreate SceneColor SlateImage.
         */
-        m_ViewportContext = std::make_shared<SlateImage>("SceneColor", "SlateRenderer.Slate.Default");
+        m_ViewportContext->ReBuildTextureID();
 
         /**
         * @brief Do not block the event.

@@ -31,6 +31,16 @@ namespace Spices {
 		virtual ~SlateImage();
 
 		/**
+		* @brief Rebuild this ImTextureID.
+		*/
+		void ReBuildTextureID();
+
+		/**
+		* @brief Rebuild this Material.
+		*/
+		void ReBuildMaterial();
+
+		/**
 		* @brief Get this TextureID.
 		* @return Return this TextureID.
 		*/
@@ -53,5 +63,15 @@ namespace Spices {
 		* @brief This Slate image draw material.
 		*/
 		std::shared_ptr<Material> m_Material;
+
+		/**
+		* @brief Texture name.
+		*/
+		std::string m_TextureName;
+
+		/**
+		* @brief Material name.
+		*/
+		std::string m_MaterialName;
 	};
 }
