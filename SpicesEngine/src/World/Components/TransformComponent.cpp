@@ -498,10 +498,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		/**
-		* @brief Use raidans
-		*/
-		return glm::toMat4(glm::quat({glm::radians(m_Transform.rotation.x), glm::radians(m_Transform.rotation.y), glm::radians(m_Transform.rotation.z)}));
+		return Transform::GetRoatationMatrix(m_Transform.rotation);
 	}
 
 	void TransformComponent::ClearMarkerWithBits(TransformComponentFlags flags)
@@ -525,9 +522,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const glm::mat4 rotation = GetRotateMatrix();
-		m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Transform.position) * rotation * glm::scale(glm::mat4(1.0f), m_Transform.scale);
-
+		m_ModelMatrix = m_Transform.ToMatrix();
 		m_ModelBuffer->WriteToBuffer(glm::value_ptr(m_ModelMatrix));
 	}
 }

@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "Component.h"
+#include "Core/Math/Transform.h"
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -15,14 +16,10 @@
 
 namespace Spices {
 
+	/**
+	* @brief Forward Declare.
+	*/
 	class VulkanBuffer;
-
-	struct Transform
-	{
-		glm::vec3 position{ 0.0f };
-		glm::vec3 rotation{ 0.0f };
-		glm::vec3 scale{ 1.0f };
-	};
 
 	/**
 	* @brief TransformComponent Class.
@@ -117,13 +114,13 @@ namespace Spices {
 		* @return Returns the modelMatrix variable.
 		*/
 		const glm::mat4& GetModelMatrix() { CalMatrix(); return m_ModelMatrix; }
-
+		
 		/**
 		* @brief Get Rotate Matrix.
 		* @return Returns the Rotate Matrix.
 		*/
 		glm::mat4 GetRotateMatrix() const;
-		
+
 		/**
 		* @brief Get the position variable.
 		* @return Returns the position variable.

@@ -29,14 +29,11 @@ namespace Spices {
 		/**
 		* @brief Calaulate model matrix.
 		*/
-		const glm::mat4 rotation = glm::toMat4(glm::quat({ glm::radians(transform.rotation.x), glm::radians(transform.rotation.y), glm::radians(transform.rotation.z) }));
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position) * rotation * glm::scale(glm::mat4(1.0f), transform.scale);
-
 		for (auto& item : m_Scenes->m_ScenesData)
 		{
 			for (const auto& node : item.nodes)
 			{
-				CreateEntityRecursive(world, tag, node, model);
+				CreateEntityRecursive(world, tag, node, transform.ToMatrix());
 			}
 		}
 	}
