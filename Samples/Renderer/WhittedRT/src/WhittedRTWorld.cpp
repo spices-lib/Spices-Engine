@@ -31,8 +31,9 @@ namespace Spices {
 		}
 
 		{
-			GltfCollection collection("E:/OpenGLProjects/ExtensionAssets/BistroExterior/BistroExterior.gltf");
-			collection.CreateEntity(this, "BistroExterior");
+			// TODO: remove new
+			GltfCollection* collection = new GltfCollection("E:/OpenGLProjects/ExtensionAssets/BistroExterior/BistroExterior.gltf");
+			collection->CreateEntity(this, "BistroExterior");
 		}
 	}
 

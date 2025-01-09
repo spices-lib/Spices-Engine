@@ -54,39 +54,49 @@ namespace Spices {
 		*/
 		if (item.mesh < -0.5f) return;
 
-		glm::vec3 position;
-		glm::vec3 rotation;
-		glm::vec3 scale;
+		AsyncTask(ThreadPoolEnum::Custom, [=]() {
 
-		DecomposeTransform(model * item.matrix, position, rotation, scale);
-		rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
+			Mesh::Builder builder;
 
-		Entity entity = world->CreateEntity(tag);
-		TransformComponent& transformComp = entity.GetComponent<TransformComponent>();
-		transformComp.SetPosition(position);
-		transformComp.SetRotation(rotation);
-		transformComp.SetScale(scale);
-
-		MeshComponent& meshComp = entity.AddComponent<MeshComponent>();
-		Mesh::Builder builder;
-
-		for (int j = 0; j < m_Meshes->m_MeshesData[item.mesh].primitives.size(); j++)
-		{
-			std::stringstream ss;
-			ss << m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
-			std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* gltfPack)
+			for (int i = 0; i < m_Meshes->m_MeshesData[item.mesh].primitives.size(); i++)
 			{
-				GltfLoader::LoadPack(gltfPack, m_Meshes->m_MeshesData[item.mesh].primitives[j], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
+				std::stringstream ss;
+				ss << m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
+
+				std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* gltfPack) {
+					GltfLoader::LoadPack(gltfPack, m_Meshes->m_MeshesData[item.mesh].primitives[i], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
+				});
+
+				std::shared_ptr<Material> material = GltfLoader::LoadMaterial(m_Materials->m_MaterialsData[m_Meshes->m_MeshesData[item.mesh].primitives[i].material], m_Images.get());
+
+				pack->SetMaterial(material);
+
+				builder.AddPack(pack);
+			}
+
+			std::shared_ptr<Mesh> mesh = builder.Build();
+
+			AsyncMainTask(ThreadPoolEnum::Main, [=]() {
+
+				Entity entity = world->CreateEntity(tag);
+				auto& meshComp = entity.AddComponent<MeshComponent>();
+
+				meshComp.SetMesh(mesh);
+
+				auto& transformComp = entity.GetComponent<TransformComponent>();
+
+				glm::vec3 position;
+				glm::vec3 rotation;
+				glm::vec3 scale;
+
+				DecomposeTransform(model * item.matrix, position, rotation, scale);
+				rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
+
+				transformComp.SetPosition(position);
+				transformComp.SetRotation(rotation);
+				transformComp.SetScale(scale);
+
 			});
-
-			std::shared_ptr<Material> material = GltfLoader::LoadMaterial(m_Materials->m_MaterialsData[m_Meshes->m_MeshesData[item.mesh].primitives[j].material], m_Images.get());
-
-			pack->SetMaterial(material);
-
-			builder.AddPack(pack);
-		}
-
-		std::shared_ptr<Mesh> mesh = builder.Build();
-		meshComp.SetMesh(mesh);
+		});
 	}
 }
