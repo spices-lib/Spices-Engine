@@ -87,10 +87,16 @@ namespace Spices {
 		/**
 		* @breif Get Viewport Slate.
 		* @return Returns the shared pointer of ImguiViewport.
+		* @todo remove this api.
 		*/
 		std::shared_ptr<ImguiViewport> GetViewPort();
 
-	
+		/**
+		* @brief Get Slate by name.
+		* @param[in] name Slate name.
+		* @reutrn Returns Slate instance.
+		*/
+		std::shared_ptr<ImguiSlate> GetSlate(const std::string& name);
 
 	private:
 		

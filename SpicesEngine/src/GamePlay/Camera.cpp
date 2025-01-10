@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Core/Math/Math.h"
 #include "Render/FrameInfo.h"
+#include "Slate/SlateInfoBar.h"
 
 namespace Spices {
 
@@ -50,6 +51,12 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 		
 		if (FrameInfo::Get().m_RendererType == RendererType::Rasterization) return;
+		
+		if (m_StableFrames > 100)
+		{
+			SlateInfoBar::Create("Refrush frame", [=]() -> float { return static_cast<float>(this->m_StableFrames) / 100.0f; });
+		}
+
 		m_StableFrames = 0;
 	}
 

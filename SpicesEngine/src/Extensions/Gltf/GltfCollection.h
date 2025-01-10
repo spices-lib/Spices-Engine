@@ -37,8 +37,15 @@ namespace Spices {
 	/**
 	* @brief Wrapper of Gltf file data.
 	*/
-	class GltfCollection
+	class GltfCollection : public std::enable_shared_from_this<GltfCollection>
 	{
+	public:
+
+		struct LoadingState
+		{
+			std::atomic_uint32_t loadedMeshes = 0;
+		};
+
 	public:
 
 		/**
@@ -68,8 +75,14 @@ namespace Spices {
 		* @param[in] tag Entity name.
 		* @param[in] node gltf nodes index.
 		* @param[in] model recursive model matrix.
+		* @param[in] loadingState LoadingState.
 		*/
-		void CreateEntityRecursive(World* world, const std::string& tag, uint32_t node, const glm::mat4& model);
+		void CreateEntityRecursive(
+			World*             world ,
+			const std::string& tag   ,
+			uint32_t           node  ,
+			const glm::mat4&   model ,
+			std::shared_ptr<LoadingState> loadingState);
 
 	private:
 

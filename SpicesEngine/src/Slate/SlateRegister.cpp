@@ -18,7 +18,7 @@ namespace Spices {
 		/**
 		* @brief Iter hash map.
 		*/
-		for (auto& pair : m_SlatesRenderContainer)
+		for (auto& pair : m_SlatesEventContainer)
 		{
 			pair.second->OnUpdate(ts);
 		}
@@ -55,5 +55,17 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		return std::static_pointer_cast<ImguiViewport>(m_SlatesRenderContainer["ViewPort"]);
+	}
+
+	std::shared_ptr<ImguiSlate> SlateRegister::GetSlate(const std::string& name)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (m_SlatesEventContainer.find(name) != m_SlatesEventContainer.end())
+		{
+			return m_SlatesEventContainer[name];
+		}
+
+		return nullptr;
 	}
 }

@@ -92,6 +92,12 @@ namespace Spices {
 		*/
 		virtual ~GltfMeshes() override = default;
 
+		/**
+		* @brief Get MeshesData Size.
+		* @return Returns MeshesData Size.
+		*/
+		size_t GetNMeshes() { return m_MeshesData.size(); }
+
 	private:
 
 		/**

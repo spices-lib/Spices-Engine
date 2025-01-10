@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Core.h"
 #include "ImguiUtils.h"
+#include "Slate/SlateInfoBar.h"
 
 namespace Spices {
 
@@ -27,7 +28,8 @@ namespace Spices {
             const std::string& panelName , 
             FrameInfo&         frameInfo
         ) 
-            : ImguiSlate(panelName, frameInfo) 
+            : ImguiSlate(panelName, frameInfo)
+            , m_SelectedInfoBar(nullptr)
         {}
 
         /**
@@ -39,7 +41,7 @@ namespace Spices {
         * @brief This interface is called On SlateSystem Update.
         * @param[in] ts TimeStep.
         */
-        virtual void OnUpdate(TimeStep& ts) override {}
+        virtual void OnUpdate(TimeStep& ts) override;
 
         /**
         * @brief This interface is called On SlateRenderer Render.
@@ -50,5 +52,23 @@ namespace Spices {
         * @brief This interface is called On Global Event Function Pointer is called.
         */
         virtual void OnEvent(Event& event) override {}
+
+        /**
+        * @brief Add a InfoBar instance to this.
+        * @param[in] instance InfoBar instance.
+        */
+        void Push(std::shared_ptr<SlateInfoBar> instance);
+
+    private:
+
+        /**
+        * @brief Selected InfoBar.
+        */
+        std::shared_ptr<SlateInfoBar> m_SelectedInfoBar;
+
+        /**
+        * @brief InfoBar instances.
+        */
+        scl::linked_unordered_map<std::string, std::shared_ptr<SlateInfoBar>> m_InfoBars;
     };
 }

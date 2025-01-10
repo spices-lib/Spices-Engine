@@ -31,8 +31,7 @@ namespace Spices {
 		}
 
 		{
-			// TODO: remove new
-			GltfCollection* collection = new GltfCollection("E:/OpenGLProjects/ExtensionAssets/BistroExterior/BistroExterior.gltf");
+			auto collection = std::make_shared<GltfCollection>("G:/Vulkan/ExtensionAssets/BistroExterior/BistroExterior.gltf");
 			collection->CreateEntity(this, "BistroExterior");
 		}
 	}

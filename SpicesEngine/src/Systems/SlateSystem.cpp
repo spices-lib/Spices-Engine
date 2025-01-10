@@ -50,6 +50,9 @@ namespace Spices {
 
 	void SlateSystem::OnSystemUpdate(TimeStep& ts)
 	{
+		SPICES_PROFILE_ZONE;
+
+		m_SlateRegister->OnUpdate(ts);
 	}
 
 	void SlateSystem::OnEvent(Event& event)

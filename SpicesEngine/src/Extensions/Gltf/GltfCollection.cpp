@@ -12,6 +12,7 @@
 #include "World/Components/MeshComponent.h"
 #include "Resources/Mesh/GltfPack.h"
 #include "Core/Math/Math.h"
+#include "Slate/SlateInfoBar.h"
 
 namespace Spices {
 
@@ -26,6 +27,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::shared_ptr<LoadingState> loadingState = std::make_shared<LoadingState>();
+
 		/**
 		* @brief Calaulate model matrix.
 		*/
@@ -33,12 +36,27 @@ namespace Spices {
 		{
 			for (const auto& node : item.nodes)
 			{
-				CreateEntityRecursive(world, tag, node, transform.ToMatrix());
+				CreateEntityRecursive(world, tag, node, transform.ToMatrix(), loadingState);
 			}
 		}
+
+		/**
+		* @brief InfoBar output.
+		*/
+		std::stringstream ss;
+		ss << "GLTF: " << tag << " is on Loading...";
+		SlateInfoBar::Create(ss.str(), [self = shared_from_this(), loadingState]() -> float {
+			return static_cast<float>(loadingState->loadedMeshes.load()) / static_cast<float>(self->m_Meshes->GetNMeshes());
+		});
 	}
 
-	void GltfCollection::CreateEntityRecursive(World* world, const std::string& tag, uint32_t node, const glm::mat4& model)
+	void GltfCollection::CreateEntityRecursive(
+		World*             world , 
+		const std::string& tag   , 
+		uint32_t           node  , 
+		const glm::mat4&   model , 
+		std::shared_ptr<LoadingState> loadingState
+	)
 	{
 		/**
 		* @brief Recursive in nodes.
@@ -46,7 +64,7 @@ namespace Spices {
 		GltfNodes::Item& item = m_Nodes->m_NodesData[node];
 		for (auto& n : item.children)
 		{
-			CreateEntityRecursive(world, tag, n, model * item.matrix);
+			CreateEntityRecursive(world, tag, n, model * item.matrix, loadingState);
 		}
 
 		/**
@@ -54,20 +72,20 @@ namespace Spices {
 		*/
 		if (item.mesh < -0.5f) return;
 
-		AsyncTask(ThreadPoolEnum::Custom, [=]() {
+		AsyncTask(ThreadPoolEnum::Custom, [self = shared_from_this(), item, node, world, tag, model, loadingState]() {
 
 			Mesh::Builder builder;
 
-			for (int i = 0; i < m_Meshes->m_MeshesData[item.mesh].primitives.size(); i++)
+			for (int i = 0; i < self->m_Meshes->m_MeshesData[item.mesh].primitives.size(); i++)
 			{
 				std::stringstream ss;
-				ss << m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
+				ss << self->m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
 
 				std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* gltfPack) {
-					GltfLoader::LoadPack(gltfPack, m_Meshes->m_MeshesData[item.mesh].primitives[i], m_Accessors.get(), m_Buffers.get(), m_BufferViews.get());
+					GltfLoader::LoadPack(gltfPack, self->m_Meshes->m_MeshesData[item.mesh].primitives[i], self->m_Accessors.get(), self->m_Buffers.get(), self->m_BufferViews.get());
 				});
 
-				std::shared_ptr<Material> material = GltfLoader::LoadMaterial(m_Materials->m_MaterialsData[m_Meshes->m_MeshesData[item.mesh].primitives[i].material], m_Images.get());
+				std::shared_ptr<Material> material = GltfLoader::LoadMaterial(self->m_Materials->m_MaterialsData[self->m_Meshes->m_MeshesData[item.mesh].primitives[i].material], self->m_Images.get());
 
 				pack->SetMaterial(material);
 
@@ -96,6 +114,7 @@ namespace Spices {
 				transformComp.SetRotation(rotation);
 				transformComp.SetScale(scale);
 
+				loadingState->loadedMeshes++;
 			});
 		});
 	}
