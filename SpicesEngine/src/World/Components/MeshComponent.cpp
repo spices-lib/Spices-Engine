@@ -290,10 +290,5 @@ namespace Spices {
 			v->GetMeshDesc().UpdateentityID((uint32_t)m_Owner);
 			return false;
 		});
-
-		/**
-		* @brief Mark World with MeshAddedToWorld bits.
-		*/
-		FrameInfo::Get().m_World->Mark(World::WorldMarkBits::MeshAddedToWorld);
 	}
 }

@@ -38,6 +38,11 @@ namespace Spices {
 			meshComp.SetMesh(mesh);
 
             if(onAdded) onAdded(entity);
+
+            /**
+            * @brief Mark World with MeshAddedToWorld bits.
+            */
+            world->Mark(World::WorldMarkBits::MeshAddedToWorld);
     	});
     }
 }

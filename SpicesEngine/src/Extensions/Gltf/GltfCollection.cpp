@@ -72,7 +72,8 @@ namespace Spices {
 		*/
 		if (item.mesh < -0.5f) return;
 
-		AsyncTask(ThreadPoolEnum::Custom, [self = shared_from_this(), item, node, world, tag, model, loadingState]() {
+		auto self = shared_from_this();
+		AsyncTask(ThreadPoolEnum::Custom, [=]() {
 
 			Mesh::Builder builder;
 
@@ -115,6 +116,14 @@ namespace Spices {
 				transformComp.SetScale(scale);
 
 				loadingState->loadedMeshes++;
+
+				/**
+				* @brief Mark the world with MeshAddedToWorld bit.
+				*/
+				if (loadingState->loadedMeshes.load() == self->m_Meshes->GetNMeshes())
+				{
+					world->Mark(World::WorldMarkBits::MeshAddedToWorld);
+				}
 			});
 		});
 	}
