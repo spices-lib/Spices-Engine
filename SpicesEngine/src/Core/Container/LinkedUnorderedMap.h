@@ -108,7 +108,7 @@ namespace scl {
 		* @param[in] fn The function of how to iter the container.
 		*/
 		template<typename F>
-		void for_each(F fn);
+		void for_each(F& fn);
 
 		/**
 		* @brief Get the previous element by the key.
@@ -233,7 +233,7 @@ namespace scl {
 
 	template<typename K, typename V>
 	template<typename F>
-	inline void linked_unordered_map<K, V>::for_each(F fn)
+	inline void linked_unordered_map<K, V>::for_each(F& fn)
 	{
 		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 

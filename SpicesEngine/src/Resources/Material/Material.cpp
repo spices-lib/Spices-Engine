@@ -194,9 +194,12 @@ namespace Spices {
 		uint64_t size = m_TextureParams.size() * sizeof(int) + m_Buffermemoryblocks.get_bytes();
 		if (size == 0)
 		{
-			const std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
-			auto renderer = RendererManager::GetRenderer(sv[0]);
-			renderer->RegistryMaterial(m_MaterialPath, sv[1]);
+			if (isAutoRegistry)
+			{
+				const std::vector<std::string> sv = StringLibrary::SplitString(m_MaterialPath, '.');
+				auto renderer = RendererManager::GetRenderer(sv[0]);
+				renderer->RegistryMaterial(m_MaterialPath, sv[1]);
+			}
 
 			return;
 		}

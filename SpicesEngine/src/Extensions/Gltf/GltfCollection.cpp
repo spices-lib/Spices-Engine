@@ -45,7 +45,9 @@ namespace Spices {
 		*/
 		std::stringstream ss;
 		ss << "GLTF: " << tag << " is on Loading...";
-		SlateInfoBar::Create(ss.str(), [self = shared_from_this(), loadingState]() -> float {
+
+		auto self = shared_from_this();
+		SlateInfoBar::Create(ss.str(), [=]() -> float {
 			return static_cast<float>(loadingState->loadedMeshes.load()) / static_cast<float>(self->m_Meshes->GetNMeshes());
 		});
 	}
