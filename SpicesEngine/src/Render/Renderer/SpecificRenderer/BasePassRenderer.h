@@ -43,6 +43,7 @@ namespace Spices {
 			const std::shared_ptr<RendererResourcePool>& rendererResourcePool
 		)
 			: Renderer(rendererName, vulkanState, descriptorPool, device, rendererResourcePool, true)
+			, m_View(nullptr)
 		{}
 
 		/**
@@ -110,6 +111,13 @@ namespace Spices {
 			std::shared_ptr<RendererSubPass> subPass      ,
 			VulkanDeviceGeneratedCommandsNV* indirectPtr
 		) override;
+
+	private:
+
+		/**
+		* @brief World entities view.
+		*/
+		std::shared_ptr<std::vector<uint32_t>> m_View;
 	};
 
 }

@@ -9,6 +9,11 @@
 
 namespace Spices {
 
+	/**
+	* @brief Use DGC or not.
+	*/
+	constexpr bool m_IsUseDGC = true;
+
 	void BasePassRenderer::CreateRendererPass()
 	{
 		SPICES_PROFILE_ZONE;
@@ -109,6 +114,7 @@ namespace Spices {
 		Renderer::OnMeshAddedWorld();
 
 		const auto view = GetEntityWithComponent<MeshComponent>(FrameInfo::Get().m_World.get());
+		m_View = view;
 
 		AsyncTask(ThreadPoolEnum::Custom, [=]() {
 
@@ -173,37 +179,57 @@ namespace Spices {
 		
 		builder.BeginRenderPassAsync();
 
-		builder.Async([&](const VkCommandBuffer& cmdBuffer) {
+		if constexpr (m_IsUseDGC)
+		{
+			builder.Await([&](const VkCommandBuffer& cmdBuffer) {
 
-			builder.SetViewPort(cmdBuffer);
+				builder.SetViewPort(cmdBuffer);
 			
-			builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
+				builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
 			
-			builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
+				builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
 
-#if 0    // Use DGC or not
+				builder.RunDGC(cmdBuffer);
 
-			IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
-
-				meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
-
-					builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
-
-					builder.UpdatePushConstant<uint64_t>([&](auto& push) {
-						push = meshPack->GetMeshDesc().GetBufferAddress();
-					}, cmdBuffer);
-				});
-
-				return false;
 			});
+		}
+		else
+		{
+			uint32_t nTask = m_View ? 4 : 0;
 
-#else
+			std::vector<std::future<VkCommandBuffer>> futureCmdBuffers(nTask);
+			for(int i = 0; i < nTask; i++)
+			{
+				futureCmdBuffers.push_back(builder.Async([&](const VkCommandBuffer& cmdBuffer) {
 
-			builder.RunDGC(cmdBuffer);
+					builder.SetViewPort(cmdBuffer);
 
-#endif
+					builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"), cmdBuffer);
 
-		});
+					builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
+
+					IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+
+						meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
+
+							builder.BindPipeline(meshPack->GetMaterial()->GetName(), cmdBuffer);
+
+							builder.UpdatePushConstant<uint64_t>([&](auto& push) {
+								push = meshPack->GetMeshDesc().GetBufferAddress();
+							}, cmdBuffer);
+						});
+
+						return false;
+					});
+
+				}));
+			}
+
+			for (int i = 0; i < nTask; i++)
+			{
+				builder.Wait(futureCmdBuffers);
+			}
+		}
 
 		builder.BeginNextSubPass("SkyBox");
 

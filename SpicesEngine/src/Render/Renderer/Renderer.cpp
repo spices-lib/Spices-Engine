@@ -568,16 +568,52 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Leave Pass")
 	}
 
-	void Renderer::RenderBehaveBuilder::Async(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const
+	std::future<VkCommandBuffer> Renderer::RenderBehaveBuilder::Async(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		/**
 		* @brief Submit Cmds to Thread Pool.
 		*/
-		m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
+		return m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			func(cmdBuffer);
 		});
+	}
+
+	void Renderer::RenderBehaveBuilder::Await(std::function<void(const VkCommandBuffer& cmdBuffer)> func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<std::future<VkCommandBuffer>> futureCmdBuffers;
+
+		/**
+		* @brief Submit Cmds to Thread Pool.
+		*/
+		futureCmdBuffers.push_back(m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
+			func(cmdBuffer);
+		}));
+
+		/**
+		* @brief Wait for merge.
+		*/
+		Wait(futureCmdBuffers);
+	}
+
+	void Renderer::RenderBehaveBuilder::Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::vector<VkCommandBuffer> buffers(futureCmdBuffers.size());
+
+		for (int i = 0; i < buffers.size(); i++)
+		{
+			buffers[i] = futureCmdBuffers[i].get();
+		}
+		
+		/**
+		* @brief Merge secondary commandbuffer to main commandbuffer.
+		*/
+		vkCmdExecuteCommands(m_CommandBuffer, buffers.size(), buffers.data());
 	}
 
 	void Renderer::RenderBehaveBuilder::BindPipeline(const std::string& materialName, VkCommandBuffer cmdBuffer, VkPipelineBindPoint  bindPoint)

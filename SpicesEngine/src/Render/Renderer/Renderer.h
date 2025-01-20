@@ -286,9 +286,10 @@ namespace Spices {
 		* @param[in] primaryCmdBuffer The main Command Buffer.
 		* @param[in] subPass subPass index.
 		* @param func Specific Commands.
+		* @return Returns future VkCommandBuffer.
 		*/
 		template<typename F>
-		void SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func);
+		std::future<VkCommandBuffer> SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func);
 
 		/**
 		* @brief Iterator the specific Component in World With break.
@@ -968,9 +969,22 @@ namespace Spices {
 
 			/**
 			* @brief Async Commands.
-			* @param[in] func In Function Pointer
+			* @param[in] func In Function Pointer.
+			* @return Returns future VkCommandBuffer.
 			*/
-			void Async(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const;
+			std::future<VkCommandBuffer> Async(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const;
+
+			/**
+			* @brief Await Async Commands.
+			* @param[in] func In Function Pointer.
+			*/
+			void Await(std::function<void(const VkCommandBuffer& cmdBuffer)> func);
+
+			/**
+			* @brief Wait for merge secondary commandbuffers.
+			* @param[in] futureCmdBuffers secondary commandbuffers.
+			*/
+			void Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers);
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
@@ -2197,29 +2211,29 @@ namespace Spices {
 	}
 
 	template<typename F>
-	inline void Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func)
+	inline std::future<VkCommandBuffer> Renderer::SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func)
 	{
 		SPICES_PROFILE_ZONE;
 
-		VkCommandBufferInheritanceInfo         inheritanceInfo {};
-		inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-		inheritanceInfo.renderPass           = m_Pass->Get();
-		inheritanceInfo.subpass              = subPass;
-		inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::Get().m_ImageIndex);
-		inheritanceInfo.occlusionQueryEnable = VK_TRUE;
+		return AsyncRHITask(ThreadPoolEnum::RHI, [=](VkCommandBuffer cmdBuffer) {
+
+			VkCommandBufferInheritanceInfo         inheritanceInfo {};
+			inheritanceInfo.sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+			inheritanceInfo.renderPass           = m_Pass->Get();
+			inheritanceInfo.subpass              = subPass;
+			inheritanceInfo.framebuffer          = m_Pass->GetFramebuffer(FrameInfo::Get().m_ImageIndex);
+			inheritanceInfo.occlusionQueryEnable = VK_TRUE;
 
 #ifdef SPICES_DEBUG
 
-		inheritanceInfo.pipelineStatistics   = static_cast<VkQueryPipelineStatisticFlags>(PipelineStatisticEnum::ALL);
+			inheritanceInfo.pipelineStatistics   = static_cast<VkQueryPipelineStatisticFlags>(PipelineStatisticEnum::ALL);
      
 #endif
 
-		VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
-		cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-		cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
-
-		std::future<VkCommandBuffer> futureCmdBuffer = AsyncRHITask(ThreadPoolEnum::RHI, [&](VkCommandBuffer cmdBuffer) {
+			VkCommandBufferBeginInfo               cmdBufferBeginInfo {};
+			cmdBufferBeginInfo.sType             = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			cmdBufferBeginInfo.flags             = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+			cmdBufferBeginInfo.pInheritanceInfo  = &inheritanceInfo;
 
 			VK_CHECK(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo))
 
@@ -2229,9 +2243,6 @@ namespace Spices {
 
 			return cmdBuffer;
 		});
-
-		const VkCommandBuffer buffer = futureCmdBuffer.get();
-		vkCmdExecuteCommands(primaryCmdBuffer, 1, &buffer);
 	}
 
 	template<typename T, typename F>
