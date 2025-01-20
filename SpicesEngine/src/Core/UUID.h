@@ -38,6 +38,12 @@ namespace Spices {
 		*/
 		operator uint64_t() const { return m_UUID; }
 		
+		/**
+		* @brief Transform UUID to String.
+		* @return Returns this UUID String.
+		*/
+		std::string ToString();
+
 	private:
 
 		/**

@@ -22,4 +22,14 @@ namespace Spices {
 	UUID::UUID(uint64_t uuid)
 		: m_UUID(uuid)
 	{}
+
+	std::string UUID::ToString()
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::stringstream ss;
+		ss << m_UUID;
+
+		return ss.str();
+	}
 }

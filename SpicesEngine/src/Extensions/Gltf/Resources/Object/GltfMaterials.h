@@ -49,6 +49,7 @@ namespace Spices {
 
 			m_MaterialsData.resize(data.size());
 
+			UUID defaultMaterialName;
 			for (int i = 0; i < data.size(); i++)
 			{
 				Item& item       = m_MaterialsData[i];
@@ -87,7 +88,9 @@ namespace Spices {
 
 				item.emissiveFactor = GltfHelper::GetElementVector(json, "emissiveFactor", glm::vec4(0.0f));
 				
-				item.name = GltfHelper::GetElementString(json, "name", "");
+				std::stringstream ss;
+				ss << defaultMaterialName.ToString() << "_" << i;
+				item.name = GltfHelper::GetElementString(json, "name", ss.str());
 			}
 
 			std::stringstream ss;
