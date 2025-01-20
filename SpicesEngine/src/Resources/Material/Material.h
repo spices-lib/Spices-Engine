@@ -250,6 +250,11 @@ namespace Spices {
 		* @brief True if this material already build a buffer.
 		*/
 		bool m_AlreadyBuild;
+
+		/**
+		* @brief Mutex of this material.
+		*/
+		std::mutex m_Mutex;
 	};
 
 	template<typename T>

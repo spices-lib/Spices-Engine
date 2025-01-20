@@ -92,6 +92,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
 		m_Shaders[name].push_back(shader);
 		m_DefaultShaders[name].push_back(shader);
 	}
@@ -99,6 +101,8 @@ namespace Spices {
 	void Material::PushToTextureParams(const std::string& name, const TextureParam& texture)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		m_TextureParams.push_back(name, texture);
 		m_DefaultTextureParams.push_back(name, texture);
@@ -108,6 +112,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
 		m_ConstantParams.push_back(name, {param, param});
 	}
 
@@ -115,13 +121,23 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if(m_MaterialParameterBuffer == nullptr) return 0;
-		else return m_MaterialParameterBuffer->GetAddress();
+		if (m_MaterialParameterBuffer == nullptr)
+		{
+			SPICES_CORE_ERROR("Bad access to material buffer address.")
+
+			return 0;
+		}
+		else
+		{
+			return m_MaterialParameterBuffer->GetAddress();
+		}
 	}
 
 	void Material::BuildMaterial(bool isAutoRegistry)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		/**
 		* @brief Registry to renderer if already build.
@@ -353,6 +369,8 @@ namespace Spices {
 	void Material::UpdateMaterial()
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
 
 		/**
 		* @brief Registry ShaderModule.

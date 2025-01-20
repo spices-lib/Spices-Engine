@@ -106,14 +106,14 @@ namespace Spices {
 		/**
 		* @brief Mutex for this pool.
 		*/
-		static std::mutex m_Mutex;
+		static std::shared_mutex m_Mutex;
 	};
 
 	template<typename T>
 	std::unordered_map<std::string, std::unique_ptr<Resource>> ResourcePool<T>::m_Resources;
 
 	template<typename T>
-	std::mutex ResourcePool<T>::m_Mutex;
+	std::shared_mutex ResourcePool<T>::m_Mutex;
 
 	template<typename T>
 	template<typename Ty, typename ...Args>
@@ -122,7 +122,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		{
-			std::unique_lock<std::mutex> lock(m_Mutex);
+			std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
 			if (m_Resources.find(path) == m_Resources.end())
 			{
@@ -155,7 +155,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
 		if (m_Resources.find(path) != m_Resources.end())
 		{
@@ -168,6 +168,8 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
 		if (m_Resources.find(name) != m_Resources.end()) return true;
 		return false;
 	}
@@ -177,9 +179,13 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
-		if (m_Resources.find(name) != m_Resources.end()) return;
+		if (m_Resources.find(name) != m_Resources.end())
+		{
+			return;
+		}
+
 		m_Resources[name] = std::make_unique<Resource>(resource);
 	}
 
@@ -188,7 +194,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
 		m_Resources.clear();
 	}
