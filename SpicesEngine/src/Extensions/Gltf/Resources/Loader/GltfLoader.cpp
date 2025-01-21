@@ -214,8 +214,6 @@ namespace Spices {
 		
 		auto outMaterial = std::make_shared<Material>();
 
-		ResourcePool<Material>::Registry(ss.str(), outMaterial);
-
 		outMaterial->SetName(ss.str());
 		
 		outMaterial->PushToShaderPath("task", "BasePassRenderer.Mesh.Default");
@@ -236,6 +234,8 @@ namespace Spices {
 		outMaterial->PushToConstParams("maxLightDepth", {"int", 2});
 		outMaterial->PushToConstParams("maxShadowDepth", {"int", 1});
 		
-		return outMaterial;
+		ResourcePool<Material>::Registry(ss.str(), outMaterial);
+
+		return ResourcePool<Material>::Access(ss.str());
 	}
 }

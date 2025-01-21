@@ -149,6 +149,17 @@ namespace Spices {
 		void ViewComponent(const std::vector<uint32_t>& ranges, F&& fn);
 
 		/**
+		* @brief View all component in this world in ranges.
+		* @tparam T Component.
+		* @param[in] ranges view ranges.
+		* @param[in] floor ranges floor.
+		* @param[in] ceil ranges ceil.
+		* @param fn View function.
+		*/
+		template<typename T, typename F>
+		void ViewComponent(const std::vector<uint32_t>& ranges, uint32_t floor, uint32_t ceil, F&& fn);
+
+		/**
 		* @brief Template Function.
 		* Used for add specific component to entity.
 		* @tparam T Specific component.
@@ -256,9 +267,30 @@ namespace Spices {
 		
 		std::unique_lock<std::mutex> lock(m_Mutex);
 
-		for(auto e : ranges)
+		for(auto range : ranges)
 		{
-			auto& comp = m_Registry.get<T>(static_cast<entt::entity>(e));
+			auto e = static_cast<entt::entity>(range);
+			auto& comp = m_Registry.get<T>(e);
+
+			fn(e, comp);
+		}
+	}
+
+	template<typename T, typename F>
+	inline void World::ViewComponent(const std::vector<uint32_t>& ranges, uint32_t floor, uint32_t ceil, F&& fn)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+
+		assert(floor >= 0);
+		assert(ceil >= floor);
+		assert(ceil <= ranges.size() - 1);
+
+		for(int32_t i = floor; i < ceil; i++)
+		{
+			auto e = static_cast<entt::entity>(ranges[i]);
+			auto& comp = m_Registry.get<T>(e);
 
 			fn(e, comp);
 		}

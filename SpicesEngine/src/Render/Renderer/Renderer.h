@@ -292,6 +292,15 @@ namespace Spices {
 		std::future<VkCommandBuffer> SubmitCmdsParallel(VkCommandBuffer primaryCmdBuffer, uint32_t subPass, F&& func);
 
 		/**
+		* @brief Iterator the specific Component in World.
+		* @tparam T The specific Component class.
+		* @param[in] frameInfo The current frame data.
+		* @param[in] func The function pointer that need to execute during this function.
+		*/
+		template<typename T, typename F>
+		inline void IterWorldComp(FrameInfo& frameInfo, F func);
+
+		/**
 		* @brief Iterator the specific Component in World With break.
 		* @tparam T The specific Component class.
 		* @param[in] frameInfo The current frame data.
@@ -299,6 +308,50 @@ namespace Spices {
 		*/
 		template<typename T, typename F>
 		inline void IterWorldCompWithBreak(FrameInfo& frameInfo, F func);
+
+		/**
+		* @brief Iterator the specific Component in World With range.
+		* @tparam T The specific Component class.
+		* @param[in] frameInfo The current frame data.
+		* @param[in] ranges Entities View ranges.
+		* @param[in] func The function pointer that need to execute during this function.
+		*/
+		template<typename T, typename F>
+		inline void IterWorldCompWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, F func);
+
+		/**
+		* @brief Iterator the specific Component in World With range.
+		* @tparam T The specific Component class.
+		* @param[in] frameInfo The current frame data.
+		* @param[in] ranges Entities View ranges.
+		* @param[in] floor ranges floor.
+		* @param[in] ceil ranges ceil.
+		* @param[in] func The function pointer that need to execute during this function.
+		*/
+		template<typename T, typename F>
+		inline void IterWorldCompWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, uint32_t floor, uint32_t ceil, F func);
+
+		/**
+		* @brief Iterator the specific Component in World With break With range.
+		* @tparam T The specific Component class.
+		* @param[in] frameInfo The current frame data.
+		* @param[in] ranges Entities View ranges.
+		* @param[in] func The function pointer that need to execute during this function.
+		*/
+		template<typename T, typename F>
+		inline void IterWorldCompWithBreakWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, F func);
+
+		/**
+		* @brief Iterator the specific Component in World With break With range.
+		* @tparam T The specific Component class.
+		* @param[in] frameInfo The current frame data.
+		* @param[in] ranges Entities View ranges.
+		* @param[in] floor ranges floor.
+		* @param[in] ceil ranges ceil.
+		* @param[in] func The function pointer that need to execute during this function.
+		*/
+		template<typename T, typename F>
+		inline void IterWorldCompWithBreakWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, uint32_t floor, uint32_t ceil, F func);
 
 		/**
 		* @brief Get The activated camera entity's view matrix and projection matrix.
@@ -2246,6 +2299,30 @@ namespace Spices {
 	}
 
 	template<typename T, typename F>
+	inline void Renderer::IterWorldComp(FrameInfo& frameInfo, F func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Iter use view, not group.
+		* @attention Group result nullptr here.
+		*/
+		frameInfo.m_World->ViewComponent<T>([&](auto e, auto& tComp) {
+			auto& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
+
+			/**
+			* @brief This function defined how we use these components.
+			* @param[in] e entityid.
+			* @param[in] transComp TransformComponent.
+			* @param[in] tComp TComponent.
+			*/
+			func(static_cast<int>(e), transComp, tComp);
+
+			return false;
+		});
+	}
+
+	template<typename T, typename F>
 	void Renderer::IterWorldCompWithBreak(FrameInfo& frameInfo, F func)
 	{
 		SPICES_PROFILE_ZONE;
@@ -2255,6 +2332,102 @@ namespace Spices {
 		* @attention Group result nullptr here.
 		*/
 		frameInfo.m_World->ViewComponent<T>([&](auto e, auto& tComp) {
+			auto& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
+
+			/**
+			* @brief This function defined how we use these components.
+			* @param[in] e entityid.
+			* @param[in] transComp TransformComponent.
+			* @param[in] tComp TComponent.
+			* @return Returns true if need break for for loop.
+			*/
+			return func(static_cast<int>(e), transComp, tComp);
+		});
+	}
+
+	template<typename T, typename F>
+	inline void Renderer::IterWorldCompWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, F func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Iter use view, not group.
+		* @attention Group result nullptr here.
+		*/
+		frameInfo.m_World->ViewComponent<T>(ranges, [&](auto e, auto& tComp) {
+			auto& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
+
+			/**
+			* @brief This function defined how we use these components.
+			* @param[in] e entityid.
+			* @param[in] transComp TransformComponent.
+			* @param[in] tComp TComponent.
+			* @return Returns true if need break for for loop.
+			*/
+			func(static_cast<int>(e), transComp, tComp);
+
+			return false;
+		});
+	}
+
+	template<typename T, typename F>
+	inline void Renderer::IterWorldCompWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, uint32_t floor, uint32_t ceil, F func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Iter use view, not group.
+		* @attention Group result nullptr here.
+		*/
+		frameInfo.m_World->ViewComponent<T>(ranges, floor, ceil, [&](auto e, auto& tComp) {
+			auto& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
+
+			/**
+			* @brief This function defined how we use these components.
+			* @param[in] e entityid.
+			* @param[in] transComp TransformComponent.
+			* @param[in] tComp TComponent.
+			* @return Returns true if need break for for loop.
+			*/
+			func(static_cast<int>(e), transComp, tComp);
+
+			return false;
+		});
+	}
+
+	template<typename T, typename F>
+	inline void Renderer::IterWorldCompWithBreakWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, F func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Iter use view, not group.
+		* @attention Group result nullptr here.
+		*/
+		frameInfo.m_World->ViewComponent<T>(ranges, [&](auto e, auto& tComp) {
+			auto& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
+
+			/**
+			* @brief This function defined how we use these components.
+			* @param[in] e entityid.
+			* @param[in] transComp TransformComponent.
+			* @param[in] tComp TComponent.
+			* @return Returns true if need break for for loop.
+			*/
+			return func(static_cast<int>(e), transComp, tComp);
+		});
+	}
+
+	template<typename T, typename F>
+	inline void Renderer::IterWorldCompWithBreakWithRange(FrameInfo& frameInfo, const std::vector<uint32_t>& ranges, uint32_t floor, uint32_t ceil, F func)
+	{
+		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Iter use view, not group.
+		* @attention Group result nullptr here.
+		*/
+		frameInfo.m_World->ViewComponent<T>(ranges, floor, ceil, [&](auto e, auto& tComp) {
 			auto& transComp = frameInfo.m_World->GetRegistry().get<TransformComponent>(e);
 
 			/**

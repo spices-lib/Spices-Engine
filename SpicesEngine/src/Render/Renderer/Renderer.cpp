@@ -575,7 +575,7 @@ namespace Spices {
 		/**
 		* @brief Submit Cmds to Thread Pool.
 		*/
-		return m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
+		return m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [=](const VkCommandBuffer& cmdBuffer) {
 			func(cmdBuffer);
 		});
 	}

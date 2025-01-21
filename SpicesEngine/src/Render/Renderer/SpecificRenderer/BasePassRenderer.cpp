@@ -114,8 +114,7 @@ namespace Spices {
 		Renderer::OnMeshAddedWorld();
 
 		const auto view = GetEntityWithComponent<MeshComponent>(FrameInfo::Get().m_World.get());
-		m_View = view;
-
+		
 		AsyncTask(ThreadPoolEnum::Custom, [=]() {
 
 			SPICES_PROFILE_ZONEN("RayTracingRenderer::OnMeshAddedWorld");
@@ -126,6 +125,7 @@ namespace Spices {
 
 				vkQueueWaitIdle(m_VulkanState.m_GraphicQueue);
 				m_DGCData["Mesh"] = dgcInstance;
+				m_View = view;
 
 			});
 		});
@@ -195,12 +195,13 @@ namespace Spices {
 		}
 		else
 		{
-			uint32_t nTask = m_View ? 4 : 0;
+			size_t nTask  = m_View ? (m_View->size() > 40 ? 1 : 1) : 0;
+			size_t nCount = m_View ? m_View->size() / nTask : 0;
 
-			std::vector<std::future<VkCommandBuffer>> futureCmdBuffers(nTask);
-			for(int i = 0; i < nTask; i++)
+			std::vector<std::future<VkCommandBuffer>> futureCmdBuffers;
+			for(size_t i = 0; i < nTask; i++)
 			{
-				futureCmdBuffers.push_back(builder.Async([&](const VkCommandBuffer& cmdBuffer) {
+				futureCmdBuffers.push_back(builder.Async([&, i](const VkCommandBuffer& cmdBuffer) {
 
 					builder.SetViewPort(cmdBuffer);
 
@@ -208,7 +209,7 @@ namespace Spices {
 
 					builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "Mesh" }), cmdBuffer);
 
-					IterWorldCompWithBreak<MeshComponent>(frameInfo, [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
+					IterWorldCompWithRange<MeshComponent>(frameInfo, *m_View, i * nCount, std::min((i + 1) * nCount, m_View->size() - 1), [&](int entityId, TransformComponent& transComp, MeshComponent& meshComp) {
 
 						meshComp.GetMesh()->DrawMeshTasks(cmdBuffer, [&](const uint32_t& meshpackId, const auto& meshPack) {
 
@@ -218,8 +219,6 @@ namespace Spices {
 								push = meshPack->GetMeshDesc().GetBufferAddress();
 							}, cmdBuffer);
 						});
-
-						return false;
 					});
 
 				}));
