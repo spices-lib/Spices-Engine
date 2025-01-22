@@ -312,9 +312,9 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 		
 		/**
-		* @brief rescruse
+		* @note lock cause bug here.
 		*/
-		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+		//std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		return m_Registry.get<T>(e);
 	}
