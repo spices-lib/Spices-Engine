@@ -68,6 +68,13 @@ namespace Spices {
 		return desc;
 	}
 
+	uint64_t MeshDesc::GetBufferAddress() const
+	{
+		SPICES_PROFILE_ZONE;
+
+		return m_Buffer->GetAddress();
+	}
+
 	MeshPack::MeshPack(const std::string& name, bool instanced)
 		: m_MeshPackName(name)
 		, m_Instanced(instanced)

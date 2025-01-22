@@ -213,7 +213,7 @@ namespace Spices {
 		/**
 		* @brief Mutex for world.
 		*/
-		std::mutex m_Mutex;
+		std::shared_mutex m_Mutex;
 
 		/**
 		* @brief This variable handles all entity.
@@ -248,7 +248,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 		
 		auto view = m_Registry.view<T>();
 
@@ -265,7 +265,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		for(auto range : ranges)
 		{
@@ -281,7 +281,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		assert(floor >= 0);
 		assert(ceil >= floor);
@@ -301,7 +301,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 
 		return m_Registry.emplace<T>(e, std::forward<Args>(args)...);
 	}
@@ -311,6 +311,11 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
+		/**
+		* @brief rescruse
+		*/
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
 		return m_Registry.get<T>(e);
 	}
 
@@ -319,7 +324,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 		
 		m_Registry.remove<T>(e);
 	}
@@ -329,7 +334,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
 
 		return m_Registry.all_of<T>(e);
 	}

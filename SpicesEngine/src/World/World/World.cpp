@@ -32,7 +32,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 		
 		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.GetUUID());
@@ -59,7 +59,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		std::unique_lock<std::mutex> lock(m_Mutex);
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 		
 		Entity entity(m_Registry.create(), this);
 		m_EntityMap[uuid] = entity;

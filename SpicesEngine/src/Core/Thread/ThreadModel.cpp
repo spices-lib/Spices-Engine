@@ -36,8 +36,8 @@ namespace Spices {
 		if (!m_CustomThreadPool)
 		{
 			m_CustomThreadPool = std::make_shared<ThreadPool>();
-			m_CustomThreadPool->SetMode(PoolMode::MODE_FIXED);
-			m_CustomThreadPool->Start(4);
+			m_CustomThreadPool->SetMode(PoolMode::MODE_CACHED);
+			m_CustomThreadPool->Start(8);
 		}
 	}
 

@@ -195,13 +195,16 @@ namespace Spices {
 		}
 		else
 		{
-			size_t nTask  = m_View ? (m_View->size() > 40 ? 1 : 1) : 0;
-			size_t nCount = m_View ? m_View->size() / nTask : 0;
+			const size_t nThreads = ThreadModel::Get()->GetRHIThreadPool()->GetThreadsCount();
+			const size_t nTask    = m_View ? (m_View->size() > 40 ? nThreads : 1) : 0;
+			const size_t nCount   = m_View ? m_View->size() / nTask : 0;
 
 			std::vector<std::future<VkCommandBuffer>> futureCmdBuffers;
 			for(size_t i = 0; i < nTask; i++)
 			{
-				futureCmdBuffers.push_back(builder.Async([&, i](const VkCommandBuffer& cmdBuffer) {
+				futureCmdBuffers.push_back(
+
+				builder.Async([&, i](const VkCommandBuffer& cmdBuffer) {
 
 					builder.SetViewPort(cmdBuffer);
 
@@ -220,11 +223,11 @@ namespace Spices {
 							}, cmdBuffer);
 						});
 					});
-
-				}));
+				})
+				);
 			}
 
-			for (int i = 0; i < nTask; i++)
+			if (nTask > 0)
 			{
 				builder.Wait(futureCmdBuffers);
 			}

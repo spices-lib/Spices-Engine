@@ -1035,6 +1035,12 @@ namespace Spices {
 
 			/**
 			* @brief Wait for merge secondary commandbuffers.
+			* @param[in] futureCmdBuffer secondary commandbuffer.
+			*/
+			void Wait(std::future<VkCommandBuffer>& futureCmdBuffer);
+
+			/**
+			* @brief Wait for merge secondary commandbuffers.
 			* @param[in] futureCmdBuffers secondary commandbuffers.
 			*/
 			void Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers);

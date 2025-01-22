@@ -122,7 +122,7 @@ namespace Spices {
 		* @brief Get m_Buffer's Address.
 		* @return Returns the m_Buffer's Address.
 		*/
-		uint64_t GetBufferAddress() const { return m_Buffer->GetAddress(); }
+		uint64_t GetBufferAddress() const;
 
 		/**
 		* @brief Update Function.

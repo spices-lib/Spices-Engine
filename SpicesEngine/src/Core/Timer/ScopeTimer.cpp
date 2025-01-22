@@ -28,7 +28,7 @@ namespace Spices {
 		std::stringstream ss;
 		ss << "ScopeTimer : " << std::chrono::duration<float, std::chrono::milliseconds::period>(m_LeaveTime - m_InTime).count() << " milliseconds " << m_Log;
 
-		std::cout << ss.str() << std::endl;
+		SPICES_CORE_INFO(ss.str())
 	}
 
 }

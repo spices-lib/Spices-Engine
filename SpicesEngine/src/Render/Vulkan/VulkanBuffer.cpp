@@ -90,6 +90,8 @@ namespace Spices {
 
 	VkDeviceAddress& VulkanBuffer::GetAddress()
 	{
+		SPICES_PROFILE_ZONE;
+
 		if (m_Usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
 		{
 			return m_BufferAddress;

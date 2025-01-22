@@ -584,19 +584,29 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::vector<std::future<VkCommandBuffer>> futureCmdBuffers;
-
 		/**
 		* @brief Submit Cmds to Thread Pool.
 		*/
-		futureCmdBuffers.push_back(m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
+		std::future<VkCommandBuffer> futureCmdBuffer = m_Renderer->SubmitCmdsParallel(m_CommandBuffer, m_SubPassIndex, [&](const VkCommandBuffer& cmdBuffer) {
 			func(cmdBuffer);
-		}));
+		});
 
 		/**
 		* @brief Wait for merge.
 		*/
-		Wait(futureCmdBuffers);
+		Wait(futureCmdBuffer);
+	}
+
+	void Renderer::RenderBehaveBuilder::Wait(std::future<VkCommandBuffer>& futureCmdBuffer)
+	{
+		SPICES_PROFILE_ZONE;
+
+		VkCommandBuffer buffers = futureCmdBuffer.get();
+
+		/**
+		* @brief Merge secondary commandbuffer to main commandbuffer.
+		*/
+		vkCmdExecuteCommands(m_CommandBuffer, 1, &buffers);
 	}
 
 	void Renderer::RenderBehaveBuilder::Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers)
