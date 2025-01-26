@@ -1,13 +1,14 @@
 /**
 * @file InetAddress.h.
 * @brief The InetAddress Class Definitions.
-* @author Spices.
+* @author Spices & Muduo.
 */
 
 #pragma once
 #include "Core/Core.h"
 
 #include <winsock2.h>
+#include<ws2tcpip.h>
 
 namespace Spices {
 
@@ -66,10 +67,16 @@ namespace Net {
 		const sockaddr_in* GetSockAddress() const { return &m_Address; }
 
 		/**
+		* @brief Get Socket Address.
+		* @return Returns Socket Address pointer.
+		*/
+		sockaddr_in* GetSockAddress() { return &m_Address; }
+		
+		/**
 		* @brief Set Socket Address.
 		* @param[in] addr sockaddr_in.
 		*/
-		void SetScokAddress(const sockaddr_in& addr) { m_Address = addr; }
+		void SetSockAddress(const sockaddr_in& addr) { m_Address = addr; }
 
 	private:
 

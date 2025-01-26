@@ -1,0 +1,96 @@
+#pragma once
+
+#include "Core/Core.h"
+#include <atomic>
+#include <windows.h>
+
+namespace Spices {
+
+namespace Net {
+
+	/**
+	* @brief Forward Declare.
+	*/
+	class Channel;
+	class Poller;
+
+	class EventLoop
+	{
+	public:
+
+		using Functor = std::function<void()>;
+		using ChannelList = std::vector<Channel*>;
+
+	public:
+
+		/**
+		* @brief Constructor Function.
+		*/
+		EventLoop();
+
+		/**
+		* @brief Destructor Function.
+		*/
+		~EventLoop();
+
+		/**
+		* @brief Copy Constructor Function.
+		* @note This Class not allowed copy behaves.
+		*/
+		EventLoop(const EventLoop&) = delete;
+
+		/**
+		* @brief Copy Assignment Operation.
+		* @note This Class not allowed copy behaves.
+		*/
+		EventLoop& operator=(const EventLoop&) = delete;
+
+		/**
+		* @brief Start Event Loop.
+		*/
+		void Loop();
+
+		/**
+		* @brief Quit from Event Loop.
+		*/
+		void Quit();
+
+	private:
+
+		/**
+		* @brief True if is in Looping.
+		*/
+		std::atomic_bool m_IsLooping;
+
+		/**
+		* @brief True if is quit from Looping.
+		*/
+		std::atomic_bool m_IsQuit;
+
+		std::atomic_bool m_IsCallingpendingFunctors;
+
+		/**
+		* @brief Thread's identify, which is runing this EventLoop.
+		*/
+		DWORD  m_ThreadId;
+
+		std::unique_ptr<Poller> m_Poller;
+
+		int m_WakeupFd;
+		std::unique_ptr<Channel> m_WeakupChannel;
+
+		ChannelList m_ActiveChannels;
+		Channel* m_CurrentActiveChannel;
+
+		std::vector<Functor> m_PendingFunctors;
+		std::mutex m_Mutex;
+	};
+
+	/**
+	* @brief Thread Unique EventLoop.
+	*/
+	static _declspec(thread) EventLoop* pTLSEventLoop;
+
+}
+
+}

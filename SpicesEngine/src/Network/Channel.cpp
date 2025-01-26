@@ -1,0 +1,82 @@
+﻿#include "Pchheader.h"
+#include "Channel.h"
+
+namespace Spices {
+
+namespace Net {
+
+	Channel::Channel(EventLoop* loop, SOCKET fd)
+		: m_Loop(loop)
+		, m_Fd(fd)
+		, m_Events(EventBits::None)
+		, m_Revents(0)
+		, m_Index(-1)
+	{}
+
+	void Channel::HandleEvent()
+	{
+		if (m_Tie.has_value())
+		{
+			if (m_Tie.value().lock())
+			{
+				HandleEventsWithGuard();
+			}
+		}
+		else
+		{
+			HandleEventsWithGuard();
+		}
+	}
+
+	void Channel::Tie(const std::shared_ptr<void>& obj)
+	{
+		m_Tie = obj;
+	}
+
+	void Channel::Remove()
+	{
+	}
+
+	void Channel::Update()
+	{
+
+	}
+
+	void Channel::HandleEventsWithGuard()
+	{
+		if ((m_Revents & EPOLLHUP) && !(m_Revents & EPOLLIN))
+		{
+			if (m_CloseCallback)
+			{
+				m_CloseCallback();
+			}
+		}
+
+		if (m_Revents & EPOLLERR)
+		{
+			if (m_ErrorCallback)
+			{
+				m_ErrorCallback();
+			}
+		}
+
+		if (m_Revents & (EPOLLIN | EPOLLPRI))
+		{
+			if (m_ReadCallback)
+			{
+				m_ReadCallback();
+			}
+		}
+
+		if (m_Revents & EPOLLOUT)
+		{
+			if (m_WriteCallback)
+			{
+				m_WriteCallback();
+			}
+		}
+	}
+
+}
+
+}

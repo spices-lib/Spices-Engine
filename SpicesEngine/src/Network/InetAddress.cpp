@@ -1,7 +1,7 @@
 /**
 * @file InetAddress.h.
 * @brief The InetAddress Class Implementation.
-* @author Spices.
+* @author Spices & Muduo.
 */
 
 #include "Pchheader.h"
@@ -39,8 +39,8 @@ namespace Net {
 
 		char buf[64] = { 0 };
 		::inet_ntop(AF_INET, &m_Address.sin_addr, buf, sizeof(buf));
-		size_t end = strlen(buf);
-		uint16_t port = ntohs(m_Address.sin_port);
+		const size_t end = strlen(buf);
+		const uint16_t port = ntohs(m_Address.sin_port);
 		sprintf(buf + end, ":%u", port);
 		return buf;
 	}
