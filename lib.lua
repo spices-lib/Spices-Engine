@@ -32,6 +32,7 @@ IncludeDir["ktx"]                         = "%{wks.location}/SpicesEngine/vendor
 IncludeDir["shaderc"]                     = "%{wks.location}/SpicesEngine/vendor/shaderc"                                     -- Include: shaderc
 IncludeDir["glslang"]                     = "%{IncludeDir.VulkanSDK}/glslang"                                                 -- Include: glslang
 IncludeDir["nlohmann"]                    = "%{wks.location}/SpicesEngine/vendor/nlohmann/include"                            -- Include: nlohmann
+IncludeDir["wepoll"]                      = "%{wks.location}/SpicesEngine/vendor/wepoll"                                      -- Include: wepoll
 IncludeDir["googletest"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googletest/include"                 -- Include: googletest
 IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/googletest/googlemock/include"                 -- Include: googlemock
 

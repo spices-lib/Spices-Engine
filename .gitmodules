@@ -58,3 +58,6 @@
 [submodule "Document/image"]
 	path = Document/image
 	url = https://github.com/spices-lib/SpiecsEngineDocumentImage.git
+[submodule "SpicesEngine/vendor/wepoll"]
+	path = SpicesEngine/vendor/wepoll
+	url = https://github.com/piscisaureus/wepoll.git

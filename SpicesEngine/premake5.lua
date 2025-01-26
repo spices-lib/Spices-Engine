@@ -63,6 +63,9 @@ project "SpicesEngine"
 
 		-- Library: nlohmann Files.
 		"vendor/nlohmann/include/nlohmann/json.hpp",
+
+		-- Library: wepoll Files.
+		"vendor/wepoll/wepoll.c",
 	}
 
 	-- Macros Definitions
@@ -129,6 +132,7 @@ project "SpicesEngine"
 		"%{IncludeDir.shaderc}/libshaderc_util/include",      -- Library: libshaderc_util Folder.
 		"%{IncludeDir.glslang}",                              -- Library: glslang Folder.
 		"%{IncludeDir.nlohmann}",                             -- Library: nlohmann Folder.
+		"%{IncludeDir.wepoll}",                               -- Library: wepoll Folder.
 	}
 
 	-- The Solution Dependency
@@ -165,6 +169,10 @@ project "SpicesEngine"
 
 	-- Library: meshoptimizer is included this solution, do not use PreCompiler Header.
 	filter "files:vendor/meshoptimizer/src/**.cpp"
+	flags { "NoPCH" }
+
+	-- Library: wepoll is included this solution, do not use PreCompiler Header.
+	filter "files:vendor/wepoll/wepoll.c"
 	flags { "NoPCH" }
 
 	-- Platform: Windows
