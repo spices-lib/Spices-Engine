@@ -189,7 +189,10 @@ project "SpicesEngine"
 
 		-- Windows Specific Solution Macro Definitions.
 		defines
-		{}
+		{
+			-- Use winsock2.h instead of winsock.h.
+			"WIN32_LEAN_AND_MEAN"
+		}
 
 		-- Windows Specific Solution Dependency.
 		links

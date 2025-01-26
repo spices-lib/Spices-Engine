@@ -54,9 +54,13 @@
 #include "Core/Thread/ThreadPoolFixed_test.h"
 #include "Core/Thread/ThreadPoolCached_test.h"
 #include "Core/Thread/DelayThreadPoolFixed_test.h"
+#include "Core/Thread/Semaphore_test.h"
 
 /* Timer */
 #include "Core/Timer/ScopeTimer_test.h"
+
+/* NetWork */
+#include "Network/InetAddress_test.h"
 
 /* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"

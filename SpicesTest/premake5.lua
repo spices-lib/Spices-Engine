@@ -94,6 +94,13 @@ project "SpicesTest"
 		systemversion "latest"                 -- Use Lastest WindowSDK
 		editAndContinue "Off"				   -- Use DebugInfoFormat: Zi (Program Database).
 		
+		-- Windows Specific Solution Macro Definitions.
+		defines
+		{
+			-- Use winsock2.h instead of winsock.h.
+			"WIN32_LEAN_AND_MEAN"
+		}
+
 	-- Configuration: Debug
 	filter "configurations:Debug"
 
