@@ -85,7 +85,7 @@ namespace Net {
 
         SOCKET Fd() const { return m_Fd; }
         int Events() const { return m_Events; }
-        int SetRevents(int revt) { m_Revents = revt; }
+        void SetRevents(int revt) { m_Revents = revt; }
 
         void EnableReading() { m_Events |= EventBits::Read; Update(); }
         void DisableReading() { m_Events &= ~EventBits::Read; Update(); }

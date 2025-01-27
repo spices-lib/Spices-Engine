@@ -1,5 +1,6 @@
 ﻿#include "Pchheader.h"
 #include "Channel.h"
+#include "EventLoop.h"
 
 namespace Spices {
 
@@ -35,11 +36,12 @@ namespace Net {
 
 	void Channel::Remove()
 	{
+		m_Loop->RemoveChannel(this);
 	}
 
 	void Channel::Update()
 	{
-
+		m_Loop->UpdateChannel(this);
 	}
 
 	void Channel::HandleEventsWithGuard()

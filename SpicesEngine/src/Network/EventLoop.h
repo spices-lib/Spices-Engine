@@ -55,6 +55,23 @@ namespace Net {
 		*/
 		void Quit();
 
+		void RunInLoop(Functor cb);
+
+		void QueueInLoop(Functor cb);
+
+		void WakeUp();
+
+		void UpdateChannel(Channel* channel);
+		void RemoveChannel(Channel* channel);
+		bool HasChannel(Channel* channel);
+
+		bool IsInLoopThread() const { return m_ThreadId == GetCurrentThreadId(); }
+
+	private:
+
+		void HandleRead();
+		void DoPendingFunctors();
+
 	private:
 
 		/**
@@ -72,7 +89,7 @@ namespace Net {
 		/**
 		* @brief Thread's identify, which is runing this EventLoop.
 		*/
-		DWORD  m_ThreadId;
+		DWORD m_ThreadId;
 
 		std::unique_ptr<Poller> m_Poller;
 
