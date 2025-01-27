@@ -14,8 +14,8 @@ namespace Spices {
 	RendererPass::~RendererPass()
 	{
 		SPICES_PROFILE_ZONE;
-		
-		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
+
+		m_SubPasses->for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			const String2 s2(m_PassName, name);
 			DescriptorSetManager::UnLoad(s2);
 			return false;
@@ -30,7 +30,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		if (m_SubPasses.has_key(subPassName))
+		if (m_SubPasses->has_key(subPassName))
 		{
 			std::stringstream ss;
 			ss << "RendererPass: " << m_PassName << ": SubPass: " << subPassName << " already added.";
@@ -40,7 +40,7 @@ namespace Spices {
 		}
 
 		auto ptr = std::make_shared<RendererSubPass>(subPassName, index, flags);
-		m_SubPasses.push_back(subPassName, ptr);
+		m_SubPasses->push_back(subPassName, ptr);
 		return ptr;
 	}
 
@@ -133,20 +133,20 @@ namespace Spices {
 		});
 
 		std::vector<VkSubpassDescription> subPassDescription;
-		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
+		m_SubPasses->for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			subPassDescription.push_back(subpass->GetDescription());
 			return false;
 		});
 
 		std::vector<VkSubpassDependency> subPassDependency;
-		(*m_SubPasses.first())->AddFirstSubPassDependency();
-		m_SubPasses.for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
+		(*m_SubPasses->first())->AddFirstSubPassDependency();
+		m_SubPasses->for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subpass) {
 			subPassDependency.insert(subPassDependency.end(), subpass->GetDependency().begin(), subpass->GetDependency().end());
 			return false;
 		});
 
 		VkSubpassDependency                               outDependency{};
-		outDependency.srcSubpass                        = static_cast<uint32_t>(m_SubPasses.size() - 1);
+		outDependency.srcSubpass                        = static_cast<uint32_t>(m_SubPasses->size() - 1);
 		outDependency.dstSubpass                        = VK_SUBPASS_EXTERNAL;
 		outDependency.srcStageMask                      = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		outDependency.dstStageMask                      = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;

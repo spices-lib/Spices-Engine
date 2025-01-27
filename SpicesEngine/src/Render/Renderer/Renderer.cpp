@@ -150,7 +150,7 @@ namespace Spices {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		const auto subPass = *m_Pass->GetSubPasses().find_value(subPassName);
+		const auto subPass = *m_Pass->GetSubPasses()->find_value(subPassName);
 		VkPipelineLayout pipelineLayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
@@ -206,7 +206,7 @@ namespace Spices {
 		/**
 		* @breif Create PipelineLayout.
 		*/
-		const auto& subPass = *m_Pass->GetSubPasses().find_value(subPassName);
+		const auto& subPass = *m_Pass->GetSubPasses()->find_value(subPassName);
 		VkPipelineLayout pipelineLayout = CreatePipelineLayout(rowSetLayouts, subPass);
 
 		/**
@@ -237,7 +237,7 @@ namespace Spices {
 		/**
         * @brief Iter all subpass.
         */
-		m_Pass->GetSubPasses().for_each([&](const auto& K, const auto& V) {
+		m_Pass->GetSubPasses()->for_each([&](const auto& K, const auto& V) {
 
 			std::stringstream ss;
 			ss << m_RendererName << "." << K << ".Default";
@@ -545,7 +545,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		return *m_Renderer->m_Pass->GetSubPasses().first();
+		return *m_Renderer->m_Pass->GetSubPasses()->first();
 	}
 
 	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption)
@@ -766,7 +766,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->find_value(subPassName);
 		++m_SubPassIndex;
 		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
@@ -794,7 +794,7 @@ namespace Spices {
 		RENDERPASS_STATISTICS_ENDSTATISTICS(this, m_CommandBuffer)
 		RENDERPASS_STATISTICS_ENDRENDERER(this)
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->find_value(subPassName);
 		++m_SubPassIndex;
 		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
@@ -819,7 +819,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->find_value(subPassName);
 		++m_SubPassIndex;
 		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
@@ -841,7 +841,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->first();
 		m_SubPassIndex = 0;
 		m_HandledDGCData = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
@@ -901,7 +901,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->first();
 		m_SubPassIndex = 0;
 		m_HandledDGCData = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
@@ -926,7 +926,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->first();
 		m_SubPassIndex = 0;
 		m_HandledDGCData = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
@@ -1035,7 +1035,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->first();
 	}
 
 	std::shared_ptr<RendererSubPass>& Renderer::RayTracingRenderBehaveBuilder::GetStatisticsRendererPass()
@@ -1049,7 +1049,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass      = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_HandledSubPass      = *m_Renderer->m_Pass->GetSubPasses()->first();
 		m_SubPassIndex        = 0;
 		m_HandledDGCData      = m_Renderer->m_DGCData[m_HandledSubPass->GetName()];
 
@@ -1100,7 +1100,7 @@ namespace Spices {
 		RENDERPASS_STATISTICS_ENDSTATISTICS(this, m_CommandBuffer)
 		RENDERPASS_STATISTICS_ENDRENDERER(this)
 
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->find_value(subPassName);
 		++m_SubPassIndex;
 		m_HandledDGCData = m_Renderer->m_DGCData[subPassName];
 
@@ -1535,7 +1535,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_HandledSubPass  = *renderer->m_Pass->GetSubPasses().find_value(subPassName);
+		m_HandledSubPass  = *renderer->m_Pass->GetSubPasses()->find_value(subPassName);
 		m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 	}
 
@@ -1862,7 +1862,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const size_t size        = m_Renderer->m_Pass->GetSubPasses().size();
+		const size_t size        = m_Renderer->m_Pass->GetSubPasses()->size();
 		m_HandledRendererSubPass = m_Renderer->m_Pass->AddSubPass(subPassName, static_cast<uint32_t>(size), flags);
 
 		return *this;
@@ -1889,7 +1889,7 @@ namespace Spices {
 
 		m_HandledRendererSubPass->BuildSubPassDescription();
 
-		const size_t index = m_Renderer->m_Pass->GetSubPasses().size() - 1;
+		const size_t index = m_Renderer->m_Pass->GetSubPasses()->size() - 1;
 		m_HandledRendererSubPass->BuildSubPassDependency(static_cast<uint32_t>(index));
 
 		return *this;
@@ -1912,7 +1912,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 		
-		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses().first();
+		m_HandledSubPass = *m_Renderer->m_Pass->GetSubPasses()->first();
 		m_CommandBuffer  = cmdBuffers[currentFrame];
 	}
 

@@ -2457,7 +2457,7 @@ namespace Spices {
 		/**
 		* @brief Iter valid statistics in rendererPass.
 		*/
-		m_Pass->GetSubPasses().for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subPass) {
+		m_Pass->GetSubPasses()->for_each([&](const std::string& name, const std::shared_ptr<RendererSubPass>& subPass) {
 
 			const auto& ptr = subPass->GetStatistics();
 

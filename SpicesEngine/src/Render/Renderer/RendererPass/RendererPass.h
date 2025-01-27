@@ -30,7 +30,11 @@ namespace Spices {
 		) 
 			: m_PassName(passName)
 			, m_Device(vulkanDevice)
-		{}
+		{
+			SPICES_PROFILE_ZONE;
+
+			m_SubPasses = std::make_shared<scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>>();
+		}
 
 		virtual ~RendererPass();
 
@@ -38,7 +42,7 @@ namespace Spices {
 		* @brief Get SubPasses held by this renderer pass.
 		* @return Return the SubPasses held by this renderer pass.
 		*/
-		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>& GetSubPasses() { return m_SubPasses; }
+		std::shared_ptr<scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>> GetSubPasses() { return m_SubPasses; }
 
 		/**
 		* @brief Add a subp ass to this renderer pass.
@@ -131,7 +135,7 @@ namespace Spices {
 		/**
 		* @brief SubPass this RenderPass handled.
 		*/
-		scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>> m_SubPasses;
+		std::shared_ptr<scl::linked_unordered_map<std::string, std::shared_ptr<RendererSubPass>>> m_SubPasses;
 		
 		/**
 		* @brief VulkanRenderPass this RenderPass handled.
