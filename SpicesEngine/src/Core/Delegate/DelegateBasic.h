@@ -31,24 +31,15 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		Delegate_Basic() = default;
+		Delegate_Basic()
+		{
+			m_Agents = std::make_shared<scl::linked_unordered_map<uint64_t, Agent>>();
+		}
 
 		/**
 		* @brief Destructor Function.
 		*/
 		virtual ~Delegate_Basic() = default;
-
-		/**
-		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaves.
-		*/
-		Delegate_Basic(const Delegate_Basic&) = delete;
-
-		/**
-		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaves.
-		*/
-		Delegate_Basic& operator=(const Delegate_Basic&) = delete;
 
 		/**
 		* @brief Bind Function pointer to delegate.
@@ -68,19 +59,25 @@ namespace Spices {
 		* @brief Get size of Agents.
 		* @return Returns the size of Agents.
 		*/
-		size_t size() { return m_Agents.size(); }
+		size_t size() { return m_Agents->size(); }
+
+		/**
+		* @brief Determine if this Delegate is empty;
+		* @return Returns true if empty.
+		*/
+		bool empty() { return m_Agents->size() == 0; }
 
 		/**
 		* @brief Execute all function pointer. 
 		*/
-		void Broadcast(Args... args);
+		void Broadcast(Args&&... args);
 
 	private:
 
 		/**
 		* @brief Map of Agent Function Pointer.
 		*/
-		scl::linked_unordered_map<uint64_t, Agent> m_Agents;
+		std::shared_ptr<scl::linked_unordered_map<uint64_t, Agent>> m_Agents;
 	};
 
 	template<typename ...Args>
@@ -89,7 +86,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		uint64_t* addr = reinterpret_cast<uint64_t*>(&func);
-		if (m_Agents.has_key(*addr))
+		if (m_Agents->has_key(*addr))
 		{
 			SPICES_CORE_WARN("Agent Function binding repeatly.");
 			return false;
@@ -98,7 +95,8 @@ namespace Spices {
 		/**
 		* @brief pack task as a lambda and to map.
 		*/
-		m_Agents.push_back(*addr, func);
+		m_Agents->push_back(*addr, func);
+
 		return true;
 	}
 
@@ -108,7 +106,7 @@ namespace Spices {
 		SPICES_PROFILE_ZONE;
 
 		uint64_t* addr = reinterpret_cast<uint64_t*>(&func);
-		if (!m_Agents.has_key(*addr))
+		if (!m_Agents->has_key(*addr))
 		{
 			SPICES_CORE_WARN("Agent Function not binded yet.");
 			return false;
@@ -117,17 +115,17 @@ namespace Spices {
 		/**
 		* @brief Erase from map.
 		*/
-		m_Agents.erase(*addr);
+		m_Agents->erase(*addr);
 
 		return true;
 	}
 
 	template<typename ...Args>
-	inline void Delegate_Basic<Args...>::Broadcast(Args... args)
+	inline void Delegate_Basic<Args...>::Broadcast(Args&&... args)
 	{
 		SPICES_PROFILE_ZONE;
 
-		m_Agents.for_each([&](const auto& k, const auto& v) {
+		m_Agents->for_each([&](const auto& k, const auto& v) {
 			v(std::forward<Args>(args)...);
 			return false;
 		});

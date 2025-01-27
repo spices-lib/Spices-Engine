@@ -19,13 +19,13 @@ namespace Net {
 		using ThreadInitCallback = std::function<void(EventLoop*)>;
 		using ConnectionMap = std::unordered_map<std::string, TcpConnectionPtr>;
 
-		enum Option
+		enum class Option
 		{
-			NoReusePort,
-			ReusePort
+			NoReusePort = 0,
+			ReusePort = 1
 		};
 
-		TcpServer(EventLoop* loop, const InetAddress& listenAddress, Option option = NoReusePort);
+		TcpServer(EventLoop* loop, const InetAddress& listenAddress, Option option = Option::NoReusePort);
 		virtual ~TcpServer();
 
 		/**
@@ -55,7 +55,7 @@ namespace Net {
 
 	private:
 
-		EventLoop m_Loop;
+		EventLoop* m_Loop;
 		std::string m_IpPort;
 
 		std::unique_ptr<Acceptor> m_Acceptor;

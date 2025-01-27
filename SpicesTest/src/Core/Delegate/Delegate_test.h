@@ -1,5 +1,5 @@
 /**
-* @file ClassLibrary_test.h.
+* @file Delegate_test.h.
 * @brief The ClassLibrary_test Definitions.
 * @author Spices.
 */
@@ -20,7 +20,6 @@ namespace SpicesTest {
 
 		/**
 		* @brief Basic Override Class Function.
-		* @return Returns true.
 		*/
 		void Test() 
 		{
@@ -57,7 +56,6 @@ namespace SpicesTest {
 
 	/**
 	* @brief Template Function.
-	* @tparam RType Return type.
 	* @tparam Args any type.
 	*/
 	template<typename ...Args>
@@ -142,6 +140,7 @@ namespace SpicesTest {
 		EXPECT_EQ(test0.size(), 5);
 		EXPECT_EQ(test1.size(), 3);
 		EXPECT_EQ(test2.size(), 2);
+		EXPECT_EQ(test2.empty(), false);
 	}
 
 	/**
@@ -160,6 +159,7 @@ namespace SpicesTest {
 		test0.Bind([&]() { return DelegateTestT(); });										                                           
 
 		EXPECT_EQ(test0.size(), 5);
+		EXPECT_EQ(test2.empty(), false);
 
 		test0.UnBind(std::bind((void(DelegateFuncTest::*)()) & DelegateFuncTest::Test, &funcTestClass));
 		test0.UnBind(std::bind(&DelegateFuncTest::Test1));
@@ -168,6 +168,7 @@ namespace SpicesTest {
 		test0.UnBind([&]() { return DelegateTestT(); });
 
 		EXPECT_EQ(test0.size(), 3);
+		EXPECT_EQ(test2.empty(), false);
 	}
 
 	/**
@@ -183,5 +184,41 @@ namespace SpicesTest {
 		test2.Broadcast(1, 10);
 
 		EXPECT_EQ(test2.size(), 1);
+		EXPECT_EQ(test2.empty(), false);
+	}
+
+	/**
+	* @brief Testing if copy successfully.
+	*/
+	TEST_F(Delegate_test, Copy) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		DelegateFuncTest funcTestClass;
+
+		/**
+		* @brief Bind to test2.
+		*/
+		{
+			test2.Bind(std::bind(&DelegateFuncTest::Test0, &funcTestClass, std::placeholders::_1, std::placeholders::_2));
+
+			EXPECT_EQ(test2.size(), 1);
+			EXPECT_EQ(test2.empty(), false);
+		}
+
+		/**
+		* @brief Copy from test2.
+		*/
+		{
+			DelegateTest2 test2c = test2;
+
+			EXPECT_EQ(test2c.size(), 1);
+			EXPECT_EQ(test2c.empty(), false);
+
+			test2c.UnBind(std::bind(&DelegateFuncTest::Test0, &funcTestClass, std::placeholders::_1, std::placeholders::_2));
+
+			EXPECT_EQ(test2.size(), 0);
+			EXPECT_EQ(test2.empty(), true);
+		}
 	}
 }
