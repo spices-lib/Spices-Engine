@@ -47,8 +47,10 @@ namespace Spices {
 		ss << "GLTF: " << tag << " is on Loading...";
 
 		auto self = shared_from_this();
-		SlateInfoBar::Create(ss.str(), [=]() -> float {
+		SlateInfoBar::Create<float>(ss.str(), [=]() -> float {
 			return static_cast<float>(loadingState->loadedMeshes.load()) / static_cast<float>(self->m_Meshes->GetNMeshes());
+		}, [=](SlateInfoBar* that) {
+			return std::any_cast<float>(that->GetRate()) >= 1.0f;
 		});
 	}
 

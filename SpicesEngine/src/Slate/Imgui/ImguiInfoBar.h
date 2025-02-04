@@ -7,10 +7,14 @@
 #pragma once
 #include "Core/Core.h"
 #include "ImguiUtils.h"
-#include "Slate/SlateInfoBar.h"
 
 namespace Spices {
 
+    /**
+    * @brief Forward declare.
+    */
+    class SlateInfoBar;
+    
     /**
     * @brief The ImguiInfoBar Class.
     * This class defines how to render a Operation Panel.

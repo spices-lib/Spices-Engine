@@ -7,6 +7,7 @@
 #include "Pchheader.h"
 #include "ImguiInfoBar.h"
 #include "World/World/World.h"
+#include "Slate/SlateInfoBar.h"
 
 namespace Spices {
 
@@ -19,7 +20,7 @@ namespace Spices {
         */
         if (m_SelectedInfoBar)
         {
-            if (m_SelectedInfoBar->GetRate() >= 1.0f)
+            if (m_SelectedInfoBar->IsDestroy())
             {
                 m_SelectedInfoBar = nullptr;
             }
@@ -29,7 +30,7 @@ namespace Spices {
 
         m_InfoBars.for_each([&](auto& k, auto& v) {
 
-            if (v->GetRate() >= 1.0f)
+            if (v->IsDestroy())
             {
                 eraseList.push_back(v->GetInfo());
             }
@@ -79,15 +80,30 @@ namespace Spices {
             ImGui::SetColumnWidth(0, 0.5f * width);
             ImGui::NextColumn();
                 
-            float rate = item->GetRate();
-                
             ImGui::SetColumnWidth(1, 0.39f * width);
             ImGui::Text(item->GetInfo().c_str());
             ImGui::NextColumn();
                 
-            ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.310f, 0.49f, 0.627f, 1.0f));
-            ImGui::ProgressBar(rate);
-            ImGui::PopStyleColor();
+            switch (item->GetType())
+            {
+            case SlateInfoBar::Type::progress:
+            {
+                float rate = std::any_cast<float>(item->GetRate());
+                ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.310f, 0.49f, 0.627f, 1.0f));
+                ImGui::ProgressBar(rate);
+                ImGui::PopStyleColor();
+                break;
+            }
+            case SlateInfoBar::Type::count:
+            {
+                int count = std::any_cast<int>(item->GetRate());
+                std::stringstream ss;
+                ss << count;
+
+                ImGui::Text(ss.str().c_str());
+                break;
+            }
+            }
 
             ImGui::Columns(1);
 

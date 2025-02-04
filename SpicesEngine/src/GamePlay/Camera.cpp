@@ -54,7 +54,11 @@ namespace Spices {
 		
 		if (m_StableFrames > 100)
 		{
-			SlateInfoBar::Create("Refrush frame", [=]() -> float { return static_cast<float>(this->m_StableFrames) / 100.0f; });
+			SlateInfoBar::Create<float>("Refrush frame", [=]() -> float { 
+				return static_cast<float>(this->m_StableFrames) / 100.0f; 
+			}, [=](SlateInfoBar* that) {
+				return std::any_cast<float>(that->GetRate()) >= 1.0f;
+			});
 		}
 
 		m_StableFrames = 0;
