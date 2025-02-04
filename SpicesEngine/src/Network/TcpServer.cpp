@@ -20,6 +20,10 @@ namespace Net {
 		m_Acceptor = std::make_unique<Acceptor>(loop, listenAddress, option == Option::ReusePort);
 
 		m_Acceptor->SetConnectionCallback(std::bind(&TcpServer::newConnection, this, std::placeholders::_1, std::placeholders::_2));
+
+		m_ThreadPool = std::make_shared<ThreadPool>();
+		m_ThreadPool->SetMode(PoolMode::MODE_FIXED);
+		m_ThreadPool->Start(4);
 	}
 
 	TcpServer::~TcpServer()
@@ -58,17 +62,32 @@ namespace Net {
 		}
 		InetAddress localAddress(local);
 
-		TcpConnectionPtr connectionPtr = std::make_shared<TcpConnection>(ioLoop, socketFd, localAddress, peerAddress);
+		TcpConnectionPtr connectionPtr = std::make_shared<TcpConnection>(ioLoop, connName, socketFd, localAddress, peerAddress);
 		m_Connections[connName] = connectionPtr;
 
-		//
+		connectionPtr->SetConnectionCallback(m_ConnectionCallback);
+		connectionPtr->SetMessageCallback(m_MessageCallback);
+		connectionPtr->SetWriteCompleteCallback(m_WriteCompleteCallback);
+
+		DelegateCloseCallback closeCallback;
+		closeCallback.Bind([=](const TcpConnectionPtr& connection) { removeConnection(connection); });
+		connectionPtr->SetCloseCallback(closeCallback);
+
+		ioLoop->RunInLoop([=]() { connectionPtr->ConnectEstablished(); });
 	}
 
 	void TcpServer::removeConnection(const TcpConnectionPtr& connection)
 	{
+		m_Loop->RunInLoop([=]() { removeConnectionInLoop(connection); });
 	}
+
 	void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& connection)
 	{
+		SPICES_CORE_INFO("TcpServer::removeConnectionInLoop")
+
+		m_Connections.erase(connection->GetName());
+		EventLoop* ioLoop = connection->GetLoop();
+		ioLoop->QueueInLoop([=]() { connection->ConnectDestroyed(); });
 	}
 }
 

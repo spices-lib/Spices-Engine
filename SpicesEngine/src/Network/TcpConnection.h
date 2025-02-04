@@ -28,6 +28,7 @@ namespace Net {
 
 		TcpConnection(
 			EventLoop* loop,
+			const std::string& name,
 			SOCKET socketFd,
 			const InetAddress& localAddress,
 			const InetAddress& peerAddress
@@ -48,6 +49,7 @@ namespace Net {
 		TcpConnection& operator=(const TcpConnection&) = delete;
 
 		EventLoop* GetLoop() const { return m_Loop; }
+		const std::string& GetName() const { return m_Name; }
 		const InetAddress& LocalAddress() const { return m_LocalAddress; }
 		const InetAddress& PeerAddress() const { return m_PeerAddress; }
 
@@ -79,6 +81,7 @@ namespace Net {
 	private:
 
 		EventLoop* m_Loop;
+		std::string m_Name;
 		std::atomic<State> m_State;
 		bool m_Reading;
 

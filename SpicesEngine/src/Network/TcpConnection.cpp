@@ -10,11 +10,13 @@ namespace Net {
 
 	TcpConnection::TcpConnection(
 		EventLoop*         loop         ,
+		const std::string& name,
 		SOCKET             socketFd     ,
 		const InetAddress& localAddress ,
 		const InetAddress& peerAddress
 	)
 		: m_Loop(loop)
+		, m_Name(name)
 		, m_State(State::Connecting)
 		, m_Reading(true)
 		, m_LocalAddress(localAddress)

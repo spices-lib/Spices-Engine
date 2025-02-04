@@ -3,9 +3,8 @@
 #include "EventLoop.h"
 #include "Acceptor.h"
 #include "InetAddress.h"
-//#include "EventLoopThreadPool.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Callbacks.h"
-//#include "TcpConnection.h"
 #include "Buffer.h"
 
 namespace Spices {
@@ -59,6 +58,8 @@ namespace Net {
 		std::string m_IpPort;
 
 		std::unique_ptr<Acceptor> m_Acceptor;
+
+		std::shared_ptr<ThreadPool> m_ThreadPool;
 
 		DelegateConnectionCallback m_ConnectionCallback;
 		DelegateMessageCallback m_MessageCallback;
