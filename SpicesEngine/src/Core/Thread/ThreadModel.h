@@ -6,8 +6,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "ThreadPool.h"
-#include "DelayThreadPool.h"
+#include "ThreadPoolBasic.h"
 #include "Render/Vulkan/VulkanCmdThreadPool.h"
 #include "Core/Container/ThreadQueue.h"
 
@@ -78,7 +77,7 @@ namespace Spices {
 		* @brief Get Game ThreadPool.
 		* @return Returns Game ThreadPool.
 		*/
-		std::shared_ptr<DelayThreadPool> GetGameThreadPool() { return m_GameThreadPool; }
+		std::shared_ptr<ThreadPool> GetGameThreadPool() { return m_GameThreadPool; }
 
 		/**
 		* @brief Get RHI ThreadPool.
@@ -129,7 +128,7 @@ namespace Spices {
 		/**
 		* @brief Game ThreadPool.
 		*/
-		std::shared_ptr<DelayThreadPool> m_GameThreadPool;
+		std::shared_ptr<ThreadPool> m_GameThreadPool;
 
 		/**
 		* @brief RHI ThreadPool.

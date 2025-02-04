@@ -7,7 +7,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include <Core/Container/KDTree.h>
-#include <Core/Thread/ThreadPool.h>
+#include <Core/Thread/ThreadPoolBasic.h>
 #include <random>
 #include "Instrumentor.h"
 

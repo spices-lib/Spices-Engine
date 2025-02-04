@@ -104,7 +104,7 @@ namespace Spices {
 		*/
 		{
 			ThreadModel::Get()->InitRHIThreadPool([&](std::shared_ptr<VulkanCmdThreadPool>& ptr) {
-				ptr = std::make_shared<VulkanCmdThreadPool>(m_VulkanState);
+				ptr = std::make_shared<VulkanCmdThreadPool>(m_VulkanState, "RHIT");
 			});
 		}
 

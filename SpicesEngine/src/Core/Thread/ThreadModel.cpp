@@ -35,7 +35,7 @@ namespace Spices {
 
 		if (!m_CustomThreadPool)
 		{
-			m_CustomThreadPool = std::make_shared<ThreadPool>();
+			m_CustomThreadPool = std::make_shared<ThreadPool>("CusT");
 			m_CustomThreadPool->SetMode(PoolMode::MODE_CACHED);
 			m_CustomThreadPool->Start(8);
 		}
@@ -47,7 +47,7 @@ namespace Spices {
 
 		if (!m_GameThreadPool)
 		{
-			m_GameThreadPool = std::make_shared<DelayThreadPool>();
+			m_GameThreadPool = std::make_shared<ThreadPool>("GameT");
 			m_GameThreadPool->SetMode(PoolMode::MODE_FIXED);
 			m_GameThreadPool->Start(4);
 			m_GameThreadPool->Suspend();

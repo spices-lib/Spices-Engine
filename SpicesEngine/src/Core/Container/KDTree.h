@@ -7,7 +7,7 @@
 
 #pragma once
 #include "Core/Core.h"
-#include "Core/Thread/ThreadPool.h"
+#include "Core/Thread/ThreadPoolBasic.h"
 
 namespace scl {
 

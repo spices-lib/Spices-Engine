@@ -13,9 +13,9 @@ namespace Spices {
 
 	const int nCmdThreads = glm::min(4, static_cast<int>(0.5 * std::thread::hardware_concurrency()));
 
-	VulkanCmdThreadPool::VulkanCmdThreadPool(VulkanState& vulkanState)
+	VulkanCmdThreadPool::VulkanCmdThreadPool(VulkanState& vulkanState, const std::string& name)
 		: VulkanObject(vulkanState)
-		, ThreadPool_Basic()
+		, ThreadPool_Basic(name)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -68,7 +68,7 @@ namespace Spices {
 			* @brief Name thread.
 			*/
 			std::stringstream ss;
-			ss << "RHIT" << threadId;
+			ss << m_PoolName << threadId;
 			const std::string name = ss.str();
 
 			SubmitThreadTask_LightWeight(threadId, [=](VkCommandBuffer buffer){

@@ -6,7 +6,7 @@
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Core/Thread/ThreadPool.h>
+#include <Core/Thread/ThreadPoolBasic.h>
 #include "Instrumentor.h"
 
 namespace SpicesTest {
@@ -512,6 +512,72 @@ namespace SpicesTest {
 		for (auto& pair : m_ThreadPool.GetThreads())
 		{
 			EXPECT_EQ(pair.second->GetThreadTasksCount(),0);
+		}
+	}
+
+	/**
+	* @brief Testing Continue/Suspand API.
+	*/
+	TEST_F(ThreadPoolFixed_test, ContinueSuspand) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		m_ThreadPool.Suspend();
+
+		std::atomic_int executeCount;
+
+		{
+			SPICESTEST_PROFILE_SCOPE("Quick Task");
+
+			for (int i = 0; i < 10; i++)
+			{
+				m_ThreadPool.SubmitPoolTask([&]() {
+					++executeCount;
+					});
+			}
+
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetTasks(), 10);
+
+			m_ThreadPool.Continue();
+
+			m_ThreadPool.Wait();
+			m_ThreadPool.Suspend();
+
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetTasks(), 0);
+			EXPECT_EQ(executeCount.load(), 10);
+		}
+
+		{
+			SPICESTEST_PROFILE_SCOPE("Slow Task");
+
+			for (int i = 0; i < 10; i++)
+			{
+				m_ThreadPool.SubmitPoolTask([&]() {
+					std::this_thread::sleep_for(std::chrono::seconds(2));
+					++executeCount;
+					});
+			}
+
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetTasks(), 10);
+
+			m_ThreadPool.Continue();
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+			m_ThreadPool.Suspend();
+			std::this_thread::sleep_for(std::chrono::seconds(2));
+
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetTasks(), 6);
+			EXPECT_EQ(executeCount.load(), 14);
+
+			m_ThreadPool.Continue();
+			m_ThreadPool.Wait();
+
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetTasks(), 0);
+			EXPECT_EQ(executeCount.load(), 20);
 		}
 	}
 }

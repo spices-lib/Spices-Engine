@@ -53,7 +53,6 @@
 /* Thread */
 #include "Core/Thread/ThreadPoolFixed_test.h"
 #include "Core/Thread/ThreadPoolCached_test.h"
-#include "Core/Thread/DelayThreadPoolFixed_test.h"
 #include "Core/Thread/Semaphore_test.h"
 
 /* Timer */

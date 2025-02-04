@@ -25,8 +25,9 @@ namespace Spices {
 		* @brief Constructor Function.
 		* Create Specific ThreadPool.
 		* @param[in] vulkanState The global VulkanState.
+		* @param[in] name ThreadPool Name.
 		*/
-		VulkanCmdThreadPool(VulkanState& vulkanState);
+		VulkanCmdThreadPool(VulkanState& vulkanState, const std::string& name);
 
 		/**
 		* @brief Destructor Function.
@@ -124,7 +125,7 @@ namespace Spices {
 						* @brief Name thread.
 						*/
 						std::stringstream ss;
-						ss << "RHIT" << threadId;
+						ss << m_PoolName << threadId;
 						const std::string name = ss.str();
 
 						m_Threads[threadId]->ReceiveThreadTask([=](VkCommandBuffer buffer) {
