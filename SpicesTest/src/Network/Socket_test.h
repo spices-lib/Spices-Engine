@@ -19,7 +19,7 @@ namespace SpicesTest {
 		* @brief Create Server.
 		* @param[in] address Server address.
 		*/
-		static void StartServer(Spices::Net::InetAddress& address)
+		static void StartServer(const Spices::Net::InetAddress& address)
 		{
 			Spices::Net::Socket serverSocket;
 			serverSocket.Create();
@@ -33,10 +33,10 @@ namespace SpicesTest {
 			for (int i = 0; i < 100; i++)
 			{
 				std::string message = clientSocket.Receive();
-				m_NReceives++;
+				++m_NReceives;
 
 				clientSocket.Send("Hello server!");
-				m_NSends++;
+				++m_NSends;
 			}
 		}
 
@@ -54,10 +54,10 @@ namespace SpicesTest {
 			for (int i = 0; i < 100; i++)
 			{
 				clientSocket.Send("Hello client!");
-				m_NSends++;
+				++m_NSends;
 
 				std::string response = clientSocket.Receive();
-				m_NReceives++;
+				++m_NReceives;
 			}
 		}
 

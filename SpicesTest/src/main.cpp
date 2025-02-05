@@ -59,6 +59,7 @@
 //#include "Core/Timer/ScopeTimer_test.h"
 //
 ///* NetWork */
+#include "Network/Buffer_test.h"
 //#include "Network/InetAddress_test.h"
 #include "Network/Socket_test.h"
 //#include "Network/TcpServer_test.h"
