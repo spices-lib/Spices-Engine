@@ -20,6 +20,11 @@ namespace Net {
 
 		/**
 		* @brief Constructor Function.
+		*/
+		Socket() = default;
+
+		/**
+		* @brief Constructor Function.
 		* @param[in] socketFd Socket fd.
 		*/
 		explicit Socket(SOCKET socketFd)
@@ -42,6 +47,11 @@ namespace Net {
 		* @note This Class not allowed copy behaves.
 		*/
 		Socket& operator=(const Socket&) = delete;
+
+		/**
+		* @brief Create Non Blocking Socket.
+		*/
+		void CreateNonBlocking();
 
 		/**
 		* @brief Get this socket fd.
@@ -67,11 +77,29 @@ namespace Net {
 		void Listen() const;
 
 		/**
+		* @brief Connect to socket
+		* @param connectAddress Connection address.
+		*/
+		void Connect(InetAddress* connectAddress);
+
+		/**
 		* @brief Accept connection on socket.
 		* @param peerAddress The address of peer.
 		* @return Returns the socket fd of peer.
 		*/
 		SOCKET Accept(InetAddress* peerAddress) const;
+
+		/**
+		* @brief Send data to server.
+		* @param[in] data Send data.
+		*/
+		void Send(const std::string& data);
+
+		/**
+		* @brief Reveive data from server.
+		* @return Returns received data.
+		*/
+		std::string Receive();
 
 		/**
 		* @brief Disable writen in socket.

@@ -18,11 +18,27 @@ namespace Net {
 		::closesocket(m_SocketFd);
 	}
 
+	void Socket::CreateNonBlocking()
+	{
+		SPICES_PROFILE_ZONE;
+
+		SOCKET sockfd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (sockfd < 0)
+		{
+			std::stringstream ss;
+			ss << "Listen socket create error: " << errno;
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
+
+		m_SocketFd = sockfd;
+	}
+
 	void Socket::BindAddress(const InetAddress& localAddress) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (::bind(m_SocketFd, (sockaddr*)localAddress.GetSockAddress(), sizeof(sockaddr_in)) != 0)
+		if (::bind(m_SocketFd, (sockaddr*)localAddress.GetSockAddress(), sizeof(sockaddr_in)) < 0)
 		{
 			std::stringstream ss;
 			ss << "Socket::BindAddress failed, socket fd: " << m_SocketFd;
@@ -35,10 +51,23 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (::listen(m_SocketFd, 1024) != 0)
+		if (::listen(m_SocketFd, 1024) < 0)
 		{
 			std::stringstream ss;
 			ss << "Socket::Listen failed, socket fd: " << m_SocketFd;
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
+	}
+
+	void Socket::Connect(InetAddress* connectAddress)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (::connect(m_SocketFd, reinterpret_cast<sockaddr*>(connectAddress->GetSockAddress()), sizeof(sockaddr_in)) < 0)
+		{
+			std::stringstream ss;
+			ss << "Socket::Connect failed, socket fd: " << m_SocketFd;
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -65,6 +94,35 @@ namespace Net {
 		peerAddress->SetSockAddress(address);
 
 		return connectFd;
+	}
+
+	void Socket::Send(const std::string& data)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (::send(m_SocketFd, data.c_str(), data.size(), 0) < 0)
+		{
+			std::stringstream ss;
+			ss << "Socket::Send error, socket fd: " << m_SocketFd;
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
+	}
+
+	std::string Socket::Receive()
+	{
+		SPICES_PROFILE_ZONE;
+
+		char buffer[1024];
+		if (::recv(m_SocketFd, buffer, sizeof(buffer), 0) < 0)
+		{
+			std::stringstream ss;
+			ss << "Socket::Receive error, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
+
+		return buffer;
 	}
 
 	void Socket::ShutDownWrite() const

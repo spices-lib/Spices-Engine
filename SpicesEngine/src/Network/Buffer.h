@@ -58,6 +58,11 @@ namespace Net {
 			m_ReaderIndex = m_WriterIndex = header;
 		}
 
+		std::string RetrieveAllAsString()
+		{
+			return RetrieveAsString(ReadableBytes());
+		}
+
 		std::string RetrieveAsString(size_t len)
 		{
 			std::string result(Peek(), len);

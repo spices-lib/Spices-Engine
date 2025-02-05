@@ -42,11 +42,14 @@ namespace Net {
 	{
 		if (m_State.load() == State::Connected)
 		{
-			SendInLoop(buffer.c_str(), buffer.size());
-		}
-		else
-		{
-			m_Loop->RunInLoop([=]() { SendInLoop(buffer.c_str(), buffer.size()); });
+			if(m_Loop->IsInLoopThread())
+			{
+				SendInLoop(buffer.c_str(), buffer.size());
+			}
+			else
+			{
+				m_Loop->RunInLoop([=]() { SendInLoop(buffer.c_str(), buffer.size()); });
+			}
 		}
 	}
 
@@ -113,7 +116,7 @@ namespace Net {
 				if (m_OutputBuffer.ReadableBytes() == 0)
 				{
 					m_Channel->DisableWriting();
-					if (m_WriteCompleteCallback.size() > 0)
+					if (!m_WriteCompleteCallback.empty())
 					{
 						m_Loop->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
 					}
@@ -139,7 +142,7 @@ namespace Net {
 		SetState(State::Disconnected);
 		m_Channel->DisableAll();
 
-		TcpConnectionPtr connectionPtr = shared_from_this();
+		const TcpConnectionPtr connectionPtr = shared_from_this();
 		m_ConnectionCallback.Broadcast(connectionPtr);
 		m_CloseCallback.Broadcast(connectionPtr);
 	}
@@ -178,26 +181,12 @@ namespace Net {
 
 		if (!m_Channel->IsWriting() && m_OutputBuffer.ReadableBytes() == 0)
 		{
-			nWrote = ::write(m_Channel->Fd(), message, len);
-			if (nWrote >= 0)
+			nWrote = ::_write(m_Channel->Fd(), message, len);
+
+			remaining = len - nWrote;
+			if (remaining == 0 && m_WriteCompleteCallback.size() > 0)
 			{
-				remaining = len - nWrote;
-				if (remaining == 0 && m_WriteCompleteCallback.size() > 0)
-				{
-					m_Loop->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
-				}
-			}
-			else
-			{
-				nWrote = 0;
-				if (errno != EWOULDBLOCK)
-				{
-					SPICES_CORE_ERROR("TcpConnection::SendInLoop")
-					if (errno == EPIPE || errno == ECONNRESET)
-					{
-						faultError = true;
-					}
-				}
+				m_Loop->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
 			}
 		}
 

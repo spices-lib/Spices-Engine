@@ -12,8 +12,8 @@ namespace Net {
 		Option             option
 	)
 		: m_Loop(loop)
-		, m_NextConnectedId(1)
 		, m_Started(0)
+		, m_NextConnectedId(1)
 	{
 		assert(m_Loop);
 		m_IpPort = listenAddress.ToIPPort();
@@ -23,7 +23,6 @@ namespace Net {
 
 		m_ThreadPool = std::make_shared<ThreadPool>();
 		m_ThreadPool->SetMode(PoolMode::MODE_FIXED);
-		m_ThreadPool->Start(4);
 	}
 
 	TcpServer::~TcpServer()
@@ -41,7 +40,7 @@ namespace Net {
 	{
 		if (m_Started++ == 0)
 		{
-			//
+			m_ThreadPool->Start(4);
 			m_Loop->RunInLoop([=]() { m_Acceptor->Listen(); });
 		}
 	}

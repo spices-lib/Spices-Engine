@@ -1,5 +1,5 @@
 /**
-* @file ThreadPool.h
+* @file ThreadPoolBasic.h
 * @brief The ThreadPool_Basic Class Definitions.
 * @author Spices.
 */
@@ -697,7 +697,7 @@ namespace Spices {
 
 			SubmitThreadTask_LightWeight(threadId, [=]() {
 				ThreadLibrary::SetThreadName(name);
-				});
+			});
 		}
 
 		/**
@@ -738,7 +738,7 @@ namespace Spices {
 				{
 					if (m_Threads.find(i) == m_Threads.end())
 					{
-						auto ptr = std::make_unique<Thread<>>(std::bind(&ThreadPool::ThreadFunc, this, std::placeholders::_1), i);
+						auto ptr = std::make_unique<Thread<>>(std::bind(&ThreadPool_Basic::ThreadFunc, this, std::placeholders::_1), i);
 						uint32_t threadId = ptr->GetId();
 
 						ptr->Start();
@@ -756,7 +756,7 @@ namespace Spices {
 
 						m_Threads[threadId]->ReceiveThreadTask([=]() {
 							ThreadLibrary::SetThreadName(name);
-							});
+						});
 
 						/**
 						* @brief Wait for name.

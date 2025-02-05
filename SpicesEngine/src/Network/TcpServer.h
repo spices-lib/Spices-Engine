@@ -3,9 +3,10 @@
 #include "EventLoop.h"
 #include "Acceptor.h"
 #include "InetAddress.h"
-#include "Core/Thread/ThreadPool.h"
+#include "Core/Thread/ThreadPoolBasic.h"
 #include "Callbacks.h"
 #include "Buffer.h"
+#include "TcpConnection.h"
 
 namespace Spices {
 
