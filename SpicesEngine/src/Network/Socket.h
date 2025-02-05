@@ -51,7 +51,7 @@ namespace Net {
 		/**
 		* @brief Create Non Blocking Socket.
 		*/
-		void CreateNonBlocking();
+		void Create();
 
 		/**
 		* @brief Get this socket fd.

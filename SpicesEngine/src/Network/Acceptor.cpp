@@ -10,7 +10,7 @@ namespace Net {
 		, m_AcceptChannel(loop, m_AcceptSocket.Fd())
 		, m_IsListening(false)
 	{
-		m_AcceptSocket.CreateNonBlocking();
+		m_AcceptSocket.Create();
 
 		m_AcceptSocket.SetReuseAddress(true);
 		m_AcceptSocket.SetReusePort(true);

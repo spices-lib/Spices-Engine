@@ -11,70 +11,121 @@
 
 namespace SpicesTest {
 
-	static void InitializeWinSocket()
+	class SocketTest
 	{
-		WSADATA wasData;
-		if (WSAStartup(MAKEWORD(2, 2), &wasData) < 0)
+	public:
+
+		/**
+		* @brief Create Server.
+		* @param[in] address Server address.
+		*/
+		static void StartServer(Spices::Net::InetAddress& address)
 		{
-			SPICES_CORE_CRITICAL("InitializeWinSocket falied")
+			Spices::Net::Socket serverSocket;
+			serverSocket.Create();
+
+			serverSocket.BindAddress(address);
+			serverSocket.Listen();
+
+			Spices::Net::InetAddress peerAddress;
+			Spices::Net::Socket clientSocket(serverSocket.Accept(&peerAddress));
+
+			for (int i = 0; i < 100; i++)
+			{
+				std::string message = clientSocket.Receive();
+				m_NReceives++;
+
+				clientSocket.Send("Hello server!");
+				m_NSends++;
+			}
 		}
-	}
 
-	static std::atomic_bool IsServerStarted = false;
+		/**
+		* @brief Create Client.
+		* @param[in] address Client address.
+		*/
+		static void StartClient(Spices::Net::InetAddress& address)
+		{
+			Spices::Net::Socket clientSocket;
+			clientSocket.Create();
 
-	void StartServer(Spices::Net::InetAddress& address)
-	{
-		Spices::Net::Socket serverSocket;
-		serverSocket.CreateNonBlocking();
+			clientSocket.Connect(&address);
 
-		serverSocket.BindAddress(address);
-		serverSocket.Listen();
+			for (int i = 0; i < 100; i++)
+			{
+				clientSocket.Send("Hello client!");
+				m_NSends++;
 
-		std::cout << "Server listening on: " << address.ToIPPort() << std::endl;
-		IsServerStarted = true;
+				std::string response = clientSocket.Receive();
+				m_NReceives++;
+			}
+		}
 
-		Spices::Net::InetAddress peerAddress;
-		Spices::Net::Socket clientSocket(serverSocket.Accept(&peerAddress));
-		std::cout << "PeerAddress: " << peerAddress.ToIPPort() << std::endl;
+		static std::atomic_int m_NSends;
+		static std::atomic_int m_NReceives;
+	};
 
-		while (1) {}
-	}
-
-	void StartClient(Spices::Net::InetAddress& address)
-	{
-		Spices::Net::Socket clientSocket;
-		clientSocket.CreateNonBlocking();
-
-		clientSocket.Connect(&address);
-
-		std::cout << "Connected to server: " << address.ToIPPort() << std::endl;
-
-		clientSocket.Send("Hello client!");
-		std::string response = clientSocket.Receive();
-		std::cout << "Received: " << response << std::endl;
-	}
+	std::atomic_int SocketTest::m_NSends = 0;
+	std::atomic_int SocketTest::m_NReceives = 0;
 
 	/**
-	* @brief Testing Spices::Net::Socket.
+	* @brief Testing Spices::Net::Server/Client.
 	*/
-	TEST(Socket_test, Socket) {
+	TEST(Socket_test, ServerClient) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		//InitializeWinSocket();
+		EXPECT_EQ(SocketTest::m_NSends, 0);
+		EXPECT_EQ(SocketTest::m_NReceives, 0);
 
 		std::thread server([&]() { 
-			StartServer(Spices::Net::InetAddress(8000, "127.0.0.1")); 
+			SocketTest::StartServer(Spices::Net::InetAddress(8000, "127.0.0.1"));
 		});
 
 		std::thread client([&]() { 
-
-			while (!IsServerStarted.load()) {}
-
-			StartClient(Spices::Net::InetAddress(8000, "127.0.0.1")); 
+			SocketTest::StartClient(Spices::Net::InetAddress(8000, "127.0.0.1"));
 		});
 		
 		server.join();
 		client.join();
+
+		EXPECT_EQ(SocketTest::m_NSends, 200);
+		EXPECT_EQ(SocketTest::m_NReceives, 200);
+	}
+
+	/**
+	* @brief Testing Spices::Net::ShutDownWrite.
+	*/
+	TEST(Socket_test, ShutDownWrite) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+	}
+
+	/**
+	* @brief Testing Spices::Net::SetTcpNoDelay.
+	*/
+	TEST(Socket_test, SetTcpNoDelay) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+	}
+
+	/**
+	* @brief Testing Spices::Net::SetReuseAddress.
+	*/
+	TEST(Socket_test, SetReuseAddress) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+	}
+
+	/**
+	* @brief Testing Spices::Net::SetKeepAlive.
+	*/
+	TEST(Socket_test, SetKeepAlive) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
 	}
 }

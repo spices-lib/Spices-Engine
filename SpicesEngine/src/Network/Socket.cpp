@@ -15,10 +15,16 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		::closesocket(m_SocketFd);
+		if(::closesocket(m_SocketFd) < 0)
+		{
+			std::stringstream ss;
+			ss << "Socket::Close failed, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
 	}
 
-	void Socket::CreateNonBlocking()
+	void Socket::Create()
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -26,7 +32,7 @@ namespace Net {
 		if (sockfd < 0)
 		{
 			std::stringstream ss;
-			ss << "Listen socket create error: " << errno;
+			ss << "Listen socket create failed, Error: " << WSAGetLastError();
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -41,7 +47,7 @@ namespace Net {
 		if (::bind(m_SocketFd, (sockaddr*)localAddress.GetSockAddress(), sizeof(sockaddr_in)) < 0)
 		{
 			std::stringstream ss;
-			ss << "Socket::BindAddress failed, socket fd: " << m_SocketFd;
+			ss << "Socket::BindAddress failed, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -54,7 +60,7 @@ namespace Net {
 		if (::listen(m_SocketFd, 1024) < 0)
 		{
 			std::stringstream ss;
-			ss << "Socket::Listen failed, socket fd: " << m_SocketFd;
+			ss << "Socket::Listen failed, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -67,7 +73,7 @@ namespace Net {
 		if (::connect(m_SocketFd, reinterpret_cast<sockaddr*>(connectAddress->GetSockAddress()), sizeof(sockaddr_in)) < 0)
 		{
 			std::stringstream ss;
-			ss << "Socket::Connect failed, socket fd: " << m_SocketFd;
+			ss << "Socket::Connect failed, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -86,7 +92,7 @@ namespace Net {
 		if(ioctlsocket(m_SocketFd, FIONBIO, &mode) == SOCKET_ERROR)
 		{
 			std::stringstream ss;
-			ss << "Socket::Accept failed, socket fd: " << m_SocketFd;
+			ss << "Socket::Accept failed, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -103,7 +109,7 @@ namespace Net {
 		if (::send(m_SocketFd, data.c_str(), data.size(), 0) < 0)
 		{
 			std::stringstream ss;
-			ss << "Socket::Send error, socket fd: " << m_SocketFd;
+			ss << "Socket::Send error, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -114,7 +120,8 @@ namespace Net {
 		SPICES_PROFILE_ZONE;
 
 		char buffer[1024];
-		if (::recv(m_SocketFd, buffer, sizeof(buffer), 0) < 0)
+		int bytes = ::recv(m_SocketFd, buffer, sizeof(buffer), 0);
+		if(bytes < 0)
 		{
 			std::stringstream ss;
 			ss << "Socket::Receive error, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
@@ -122,7 +129,7 @@ namespace Net {
 			SPICES_CORE_CRITICAL(ss.str())
 		}
 
-		return buffer;
+		return std::string(buffer, bytes);
 	}
 
 	void Socket::ShutDownWrite() const
@@ -132,7 +139,7 @@ namespace Net {
 		if (::shutdown(m_SocketFd, SD_SEND) < 0)
 		{
 			std::stringstream ss;
-			ss << "Socket::ShutDownWrite error, socket fd: " << m_SocketFd;
+			ss << "Socket::ShutDownWrite error, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
 
 			SPICES_CORE_CRITICAL(ss.str())
 		}
@@ -142,7 +149,13 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		::setsockopt(m_SocketFd, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&on), sizeof(bool));
+		if (::setsockopt(m_SocketFd, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&on), sizeof(bool)) < 0)
+		{
+			std::stringstream ss;
+			ss << "Socket::SetTcpNoDelay error, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
 	}
 
 	void Socket::SetReusePort(bool on) const
@@ -162,14 +175,26 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		::setsockopt(m_SocketFd, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<const char*>(&on), sizeof(bool));
+		if (::setsockopt(m_SocketFd, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<const char*>(&on), sizeof(bool)) < 0)
+		{
+			std::stringstream ss;
+			ss << "Socket::SetKeepAlive error, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
 	}
 
 	void Socket::SetReuseAddress(bool on) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		::setsockopt(m_SocketFd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&on), sizeof(bool));
+		if(::setsockopt(m_SocketFd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&on), sizeof(bool)) < 0)
+		{
+			std::stringstream ss;
+			ss << "Socket::SetReuseAddress error, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
+
+			SPICES_CORE_CRITICAL(ss.str())
+		}
 	}
 
 }
