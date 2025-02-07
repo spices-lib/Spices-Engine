@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Thread/ThreadPoolBasic.h"
+#include "EventLoop.h"
 
 namespace Spices {
 

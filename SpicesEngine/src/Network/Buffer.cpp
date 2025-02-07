@@ -38,6 +38,11 @@ namespace Net {
 		}
 	}
 
+	void Buffer::Append(const std::string& msg)
+	{
+		Append(msg.c_str(), msg.size());
+	}
+
 	void Buffer::Append(const char* data, size_t len)
 	{
 		EnsureWriteableBytes(len);
@@ -49,20 +54,16 @@ namespace Net {
 	{
 		char buffer[65536] = {}; // 64k
 
-		int n = ::read(fd, &buffer, sizeof(buffer));
+		int n = ::recv(fd, buffer, sizeof(buffer), 0);
 
 		if (n < 0)
 		{
 			*saveErrno = WSAGetLastError();
 		}
-		else if (n <= WriteableBytes())
-		{
-			m_WriterIndex += n;
-		}
 		else
 		{
-			m_WriterIndex = m_Buffer.size();
-			//Append();
+			const std::string str(buffer, n);
+			Append(str.c_str(), str.size());
 		}
 
 		return n;
@@ -70,7 +71,7 @@ namespace Net {
 
 	size_t Buffer::WriteFd(SOCKET fd, int* saveErrno)
 	{
-		int n = ::write(fd, Peek(), ReadableBytes());
+		int n = ::send(fd, Peek(), ReadableBytes(), 0);
 
 		if (n < 0)
 		{

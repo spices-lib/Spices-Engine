@@ -1,4 +1,10 @@
-﻿#include "Pchheader.h"
+﻿/**
+* @file Channel.cpp.
+* @brief The Channel Class Implementation.
+* @author Spices & Muduo.
+*/
+
+#include "Pchheader.h"
 #include "Channel.h"
 #include "EventLoop.h"
 

@@ -15,7 +15,7 @@ namespace Net {
 		m_AcceptSocket.SetReuseAddress(true);
 		m_AcceptSocket.SetReusePort(true);
 		m_AcceptSocket.BindAddress(listenAddress);
-		m_AcceptChannel.SetReadCallback(std::bind(&Acceptor::HandleRead, this));
+		m_AcceptChannel.SetReadCallback([=]() {HandleRead(); });
 	}
 
 	Acceptor::~Acceptor()

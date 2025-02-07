@@ -112,6 +112,12 @@ namespace Net {
 		void EnsureWriteableBytes(size_t len);
 
 		/**
+		* @brief Append Message to this buffer.
+		* @param[in] msg Message.
+		*/
+		void Append(const std::string& msg);
+
+		/**
 		* @brief Append another buffer data.
 		* @param[in] data Buffer start pointer.
 		* @param[in] len Buffer bytes.
@@ -141,6 +147,7 @@ namespace Net {
 		* @param[in] fd SOCKET.
 		* @param[in,out] saveErrno Error value.
 		* @return Returns read bytes.
+		* @note read api can only be used in linux, on windows use recv instead,
 		*/
 		size_t ReadFd(SOCKET fd, int* saveErrno);
 
@@ -149,6 +156,7 @@ namespace Net {
 		* @param[in] fd SOCKET.
 		* @param[in,out] saveErrno Error value.
 		* @return Returns write bytes.
+		* @note write api can only be used in linux, on windows use send instead,
 		*/
 		size_t WriteFd(SOCKET fd, int* saveErrno);
 

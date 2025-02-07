@@ -45,7 +45,7 @@ namespace Net {
 			pTLSEventLoop = this;
 		}
 
-		m_WeakupChannel->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
+		m_WeakupChannel->SetReadCallback([=]() { HandleWakeUp(); });
 		m_WeakupChannel->EnableReading();
 	}
 
@@ -115,11 +115,14 @@ namespace Net {
 
 	void EventLoop::WakeUp()
 	{
-		uint64_t one = 1;
-		size_t n = write(m_WakeupFd, &one, sizeof(one));
-		if (n != sizeof(one))
+		char one = 1;
+		int n = ::send(m_WakeupFd, &one, sizeof(one), 0);
+		if (n < 0)
 		{
-			SPICES_CORE_ERROR("EventLoop::HandleRead write error")
+			std::stringstream ss;
+			ss << "EventLoop::WakeUp error, Error: " << WSAGetLastError();
+
+			SPICES_CORE_ERROR(ss.str())
 		}
 	}
 
@@ -138,13 +141,16 @@ namespace Net {
 		return m_Poller->HasChannel(channel);
 	}
 
-	void EventLoop::HandleRead()
+	void EventLoop::HandleWakeUp()
 	{
-		uint64_t one = 1;
-		size_t n = read(m_WakeupFd, &one, sizeof(one));
-		if (n != sizeof(one))
+		char one = 1;
+		int n = ::recv(m_WakeupFd, &one, sizeof(one), 0);
+		if (n < 0)
 		{
-			SPICES_CORE_ERROR("EventLoop::HandleRead read error")
+			std::stringstream ss;
+			ss << "EventLoop::HandleWakeUp error, Error: " << WSAGetLastError();
+
+			SPICES_CORE_ERROR(ss.str())
 		}
 	}
 

@@ -1,5 +1,12 @@
-﻿#pragma once
+﻿/**
+* @file Channel.h.
+* @brief The Channel Class Definitions.
+* @author Spices & Muduo.
+*/
+
+#pragma once
 #include "InetAddress.h"
+#include "Socket.h"
 
 #include <wepoll.h>
 #include <optional>
@@ -54,44 +61,108 @@ namespace Net {
         */
         Channel& operator=(const Channel&) = delete;
 
-
         void HandleEvent();
 
         /**
         * @brief Set Read Event Callback.
         * @param[in] cb Read Event Callback.
         */
-        void SetReadCallback(EventCallback cb) { m_ReadCallback = std::move(cb); }
+        void SetReadCallback(EventCallback cb) 
+        { 
+            m_ReadCallback = std::move(cb); 
+        }
 
         /**
         * @brief Set Write Event Callback.
         * @param[in] cb Write Event Callback.
         */
-        void SetWriteCallback(EventCallback cb) { m_WriteCallback = std::move(cb); }
+        void SetWriteCallback(EventCallback cb) 
+        { 
+            m_WriteCallback = std::move(cb); 
+        }
 
         /**
         * @brief Set Close Event Callback.
         * @param[in] cb Close Event Callback.
         */
-        void SetCloseCallback(EventCallback cb) { m_CloseCallback = std::move(cb); }
+        void SetCloseCallback(EventCallback cb) 
+        { 
+            m_CloseCallback = std::move(cb); 
+        }
 
         /**
         * @brief Set Error Event Callback.
         * @param[in] cb Error Event Callback.
         */
-        void SetErrorCallback(EventCallback cb) { m_ErrorCallback = std::move(cb); }
+        void SetErrorCallback(EventCallback cb) 
+        { 
+            m_ErrorCallback = std::move(cb); 
+        }
 
         void Tie(const std::shared_ptr<void>& obj);
 
+        /**
+        * @brief Get this SOCKET.
+        * @return Returns this SOCKET
+        */
         SOCKET Fd() const { return m_Fd; }
+
+        /**
+        * @brief Get this Events type.
+        * @return Returns this Events type.
+        */
         int Events() const { return m_Events; }
+
+        /**
+        * @brief Set this REvents type.
+        * @param[in] revt Events type.
+        */
         void SetRevents(int revt) { m_Revents = revt; }
 
-        void EnableReading() { m_Events |= EventBits::Read; Update(); }
-        void DisableReading() { m_Events &= ~EventBits::Read; Update(); }
-        void EnableWriting() { m_Events |= EventBits::Write; Update(); }
-        void DisableWriting() { m_Events &= ~EventBits::Write; Update(); }
-        void DisableAll() { m_Events = EventBits::None; Update(); }
+        /**
+        * @brief Enable Read event.
+        */
+        void EnableReading() 
+        { 
+            m_Events |= EventBits::Read; 
+            Update(); 
+        }
+
+        /**
+        * @brief Disable Read event.
+        */
+        void DisableReading() 
+        { 
+            m_Events &= ~EventBits::Read; 
+            Update(); 
+        }
+
+        /**
+        * @brief Enable Write event.
+        */
+        void EnableWriting() 
+        { 
+            m_Events |= EventBits::Write; 
+            Update(); 
+        }
+
+        /**
+        * @brief Disable Write event.
+        */
+        void DisableWriting() 
+        { 
+            m_Events &= ~EventBits::Write; 
+            Update(); 
+        }
+
+        /**
+        * @brief Disable All event.
+        */
+        void DisableAll() 
+        { 
+            m_Events = EventBits::None; 
+            Update(); 
+        }
 
         /**
         * @brief Determine whether the event is a None Event.
@@ -126,6 +197,7 @@ namespace Net {
 
         EventLoop* m_Loop;
         SOCKET m_Fd;
+
         EventFlags m_Events;
         int m_Revents;
         int m_Index;

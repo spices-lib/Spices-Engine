@@ -59,6 +59,9 @@ namespace Net {
 
 		void QueueInLoop(Functor cb);
 
+		/**
+		* @brief WakeUp a thread, which wait on recv, by sending one byte data.
+		*/
 		void WakeUp();
 
 		void UpdateChannel(Channel* channel);
@@ -69,7 +72,14 @@ namespace Net {
 
 	private:
 
-		void HandleRead();
+		/**
+		* @brief Handle WakeUp notify by read one byte data.
+		*/
+		void HandleWakeUp();
+
+		/**
+		* @brief Execute all pending functors.
+		*/
 		void DoPendingFunctors();
 
 	private:

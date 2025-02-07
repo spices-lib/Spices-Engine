@@ -92,12 +92,14 @@ namespace Net {
 		/**
 		* @brief Send data to server.
 		* @param[in] data Send data.
+		* @note Usually not call Send directly, but use Buffer::WriteFd.
 		*/
 		void Send(const std::string& data);
 
 		/**
 		* @brief Reveive data from server.
 		* @return Returns received data.
+		* @note Usually not call Receive directly, but use Buffer::ReadFd.
 		*/
 		std::string Receive();
 
