@@ -1,3 +1,9 @@
+/**
+* @file EventLoop.h.
+* @brief The EventLoop Class Definitions.
+* @author Spices & Muduo.
+*/
+
 #pragma once
 
 #include "Core/Core.h"

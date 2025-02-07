@@ -1,3 +1,9 @@
+/**
+* @file EventLoop.cpp.
+* @brief The EventLoop Class Implementation.
+* @author Spices & Muduo.
+*/
+
 #include "Pchheader.h"
 #include "EventLoop.h"
 #include "Channel.h"

@@ -1,3 +1,9 @@
+/**
+* @file TcpConnection.cpp.
+* @brief The TcpConnection Class Implementation.
+* @author Spices & Muduo.
+*/
+
 #include "Pchheader.h"
 #include "TcpConnection.h"
 #include "Socket.h"
@@ -8,45 +14,50 @@ namespace Spices {
 
 namespace Net {
 
+	constexpr size_t HighWaterMark = 64 * 1024 * 1024;
+
 	TcpConnection::TcpConnection(
-		const std::string& name,
+		EventLoop*         ioLoop       ,
+		const std::string& name         ,
 		SOCKET             socketFd     ,
 		const InetAddress& localAddress ,
 		const InetAddress& peerAddress
 	)
-		: m_Name(name)
+		: m_IoLoop(ioLoop)
+		, m_Name(name)
 		, m_State(State::Connecting)
 		, m_Reading(true)
 		, m_LocalAddress(localAddress)
 		, m_PeerAddress(peerAddress)
-		, m_HighWaterMark(64 * 1024 * 1024)
 	{
-		m_Socket = std::make_unique<Socket>(socketFd);
-		m_Channel = std::make_unique<Channel>(socketFd);
+		SPICES_PROFILE_ZONE;
 
-		m_Channel->SetReadCallback([=]() { HandleRead(); });
+		m_Socket = std::make_unique<Socket>(socketFd);
+		m_Socket->SetKeepAlive(true);
+
+		m_Channel = std::make_unique<Channel>(socketFd);
+		m_Channel->SetReadCallback ([=]() { HandleRead();  });
 		m_Channel->SetWriteCallback([=]() { HandleWrite(); });
 		m_Channel->SetCloseCallback([=]() { HandleClose(); });
 		m_Channel->SetErrorCallback([=]() { HandleError(); });
-
-		m_Socket->SetKeepAlive(true);
 	}
 
 	TcpConnection::~TcpConnection()
 	{
+		SPICES_CORE_INFO("TcpConnection disconnection");
 	}
 
 	void TcpConnection::Send(const std::string& buffer)
 	{
 		if (m_State.load() == State::Connected)
 		{
-			if(pTLSEventLoop.GetInst()->IsInLoopThread())
+			if(m_IoLoop->IsInLoopThread())
 			{
 				SendInLoop(buffer.c_str(), buffer.size());
 			}
 			else
 			{
-				pTLSEventLoop.GetInst()->RunInLoop([=]() { SendInLoop(buffer.c_str(), buffer.size()); });
+				m_IoLoop->RunInLoop([=]() { SendInLoop(buffer.c_str(), buffer.size()); });
 			}
 		}
 	}
@@ -57,7 +68,7 @@ namespace Net {
 		{
 			SetState(State::Disconnecting);
 
-			pTLSEventLoop.GetInst()->RunInLoop([=]() { ShutDownInLoop(); });
+			m_IoLoop->RunInLoop([=]() { ShutDownInLoop(); });
 		}
 	}
 
@@ -96,7 +107,6 @@ namespace Net {
 		}
 		else
 		{
-			errno = saveErrno;
 			SPICES_CORE_ERROR("TcpConnection::HandleRead Error")
 			HandleError();
 		}
@@ -116,7 +126,7 @@ namespace Net {
 					m_Channel->DisableWriting();
 					if (!m_WriteCompleteCallback.empty())
 					{
-						pTLSEventLoop.GetInst()->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
+						m_IoLoop->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
 					}
 					if (m_State.load() == State::Disconnecting)
 					{
@@ -152,7 +162,7 @@ namespace Net {
 		int err = 0;
 		if (::getsockopt(m_Channel->Fd(), SOL_SOCKET, SO_ERROR, &optVal, &optLen) < 0)
 		{
-			err = errno;
+			err = WSAGetLastError();
 		}
 		else
 		{
@@ -165,35 +175,61 @@ namespace Net {
 		SPICES_CORE_ERROR(ss.str())
 	}
 
-	void TcpConnection::SendInLoop(const void* message, size_t len)
+	void TcpConnection::SendInLoop(const char* message, size_t len)
 	{
-		size_t nWrote = 0;
+		int nWrote = 0;
 		size_t remaining = len;
 		bool faultError = false;
 
+		/**
+		* @brief ShutDown has been called before.
+		*/
 		if (m_State.load() == State::Disconnected)
 		{
-			SPICES_CORE_ERROR("Disconnected")
+			SPICES_CORE_ERROR("Disconnected, Can bot send message")
 			return;
 		}
 
+		/**
+		* @brief First writing.
+		*/
 		if (!m_Channel->IsWriting() && m_OutputBuffer.ReadableBytes() == 0)
 		{
-			nWrote = ::_write(m_Channel->Fd(), message, len);
-
-			remaining = len - nWrote;
-			if (remaining == 0 && m_WriteCompleteCallback.size() > 0)
+			nWrote = ::send(m_Channel->Fd(), message, len, 0);
+			if (nWrote >= 0)
 			{
-				pTLSEventLoop.GetInst()->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
+				remaining = len - nWrote;
+				if (remaining == 0 && m_WriteCompleteCallback.size() > 0)
+				{
+					m_IoLoop->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
+				}
+			}
+			else
+			{
+				nWrote = 0;
+				int err = WSAGetLastError();
+
+				if (err != WSAEWOULDBLOCK)
+				{
+					SPICES_CORE_ERROR(" TcpConnection::SendInLoop")
+
+					if (err == WSAECONNRESET || err == WSAECONNRESET)
+					{
+						faultError = true;
+					}
+				}
 			}
 		}
 
+		/**
+		* @brief Send message separatly.
+		*/
 		if (!faultError && remaining > 0)
 		{
 			size_t oldLen = m_OutputBuffer.ReadableBytes();
-			if (oldLen + remaining >= m_HighWaterMark && oldLen < m_HighWaterMark && m_HighWaterMarkCallback.size() > 0)
+			if (oldLen + remaining >= HighWaterMark && oldLen < HighWaterMark && m_HighWaterMarkCallback.size() > 0)
 			{
-				pTLSEventLoop.GetInst()->QueueInLoop([=]() { m_HighWaterMarkCallback.Broadcast(shared_from_this(), oldLen + remaining); });
+				m_IoLoop->QueueInLoop([=]() { m_HighWaterMarkCallback.Broadcast(shared_from_this(), oldLen + remaining); });
 			}
 			m_OutputBuffer.Append((char*)message + nWrote, remaining);
 			if (!m_Channel->IsWriting())

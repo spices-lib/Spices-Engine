@@ -1,3 +1,9 @@
+/**
+* @file TcpConnection.h.
+* @brief The TcpConnection Class Definitions.
+* @author Spices & Muduo.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "InetAddress.h"
@@ -26,13 +32,25 @@ namespace Net {
 
 	public:
 
+		/**
+		* @brief Constructor Function.
+		* @param[in] ioLoop IO EventLoop.
+		* @param[in] name TcpConnection identify.
+		* @param[in] socketFd SOCKET.
+		* @param[in] localAddress InetAddress.
+		* @param[in] peerAddress InetAddress.
+		*/
 		TcpConnection(
-			const std::string& name,
-			SOCKET socketFd,
-			const InetAddress& localAddress,
+			EventLoop*         ioLoop       ,
+			const std::string& name         ,
+			SOCKET             socketFd     ,
+			const InetAddress& localAddress ,
 			const InetAddress& peerAddress
 		);
 
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~TcpConnection();
 
 		/**
@@ -47,19 +65,82 @@ namespace Net {
 		*/
 		TcpConnection& operator=(const TcpConnection&) = delete;
 
+		/**
+		* @brief Get this TcpConnection IO EventLoop.
+		* @return Returns this TcpConnection IO EventLoop.
+		*/
+		EventLoop* GetLoop() { return m_IoLoop; }
+
+		/**
+		* @brief Get this TcpConnection name.
+		* @return Returns this TcpConnection name.
+		*/
 		const std::string& GetName() const { return m_Name; }
+
+		/**
+		* @brief Get this TcpConnection LocalAddress.
+		* @return Returns this TcpConnection LocalAddress.
+		*/
 		const InetAddress& LocalAddress() const { return m_LocalAddress; }
+
+		/**
+		* @brief Get this TcpConnection PeerAddress.
+		* @return Returns this TcpConnection PeerAddress.
+		*/
 		const InetAddress& PeerAddress() const { return m_PeerAddress; }
 
+		/**
+		* @brief Determined if this TcpConnection is connected.
+		* @return Returns true if this TcpConnection is connected.
+		*/
 		bool Connected() const { return m_State == State::Connected; }
 		void Send(const std::string& buffer);
 		void ShutDown();
 
-		void SetConnectionCallback(const DelegateConnectionCallback& cb) { m_ConnectionCallback = cb; }
-		void SetMessageCallback(const DelegateMessageCallback& cb) { m_MessageCallback = cb; }
-		void SetWriteCompleteCallback(const DelegateWriteCompleteCallback& cb) { m_WriteCompleteCallback = cb; }
-		void SetHighWaterMarkCallback(const DelegateHighWaterMarkCallback& cb) { m_HighWaterMarkCallback = cb; }
-		void SetCloseCallback(const DelegateCloseCallback& cb) { m_CloseCallback = cb; }
+		/**
+		* @brief Set ConnectionCallback.
+		* @param[in] cb DelegateConnectionCallback.
+		*/
+		void SetConnectionCallback(const DelegateConnectionCallback& cb) 
+		{ 
+			m_ConnectionCallback = cb; 
+		}
+
+		/**
+		* @brief Set MessageCallback.
+		* @param[in] cb DelegateMessageCallback.
+		*/
+		void SetMessageCallback(const DelegateMessageCallback& cb) 
+		{ 
+			m_MessageCallback = cb; 
+		}
+
+		/**
+		* @brief Set WriteCompleteCallback.
+		* @param[in] cb DelegateWriteCompleteCallback.
+		*/
+		void SetWriteCompleteCallback(const DelegateWriteCompleteCallback& cb) 
+		{ 
+			m_WriteCompleteCallback = cb; 
+		}
+
+		/**
+		* @brief Set HighWaterMarkCallback.
+		* @param[in] cb DelegateHighWaterMarkCallback.
+		*/
+		void SetHighWaterMarkCallback(const DelegateHighWaterMarkCallback& cb) 
+		{ 
+			m_HighWaterMarkCallback = cb; 
+		}
+
+		/**
+		* @brief Set CloseCallback.
+		* @param[in] cb DelegateCloseCallback.
+		*/
+		void SetCloseCallback(const DelegateCloseCallback& cb) 
+		{ 
+			m_CloseCallback = cb; 
+		}
 
 		void ConnectEstablished();
 		void ConnectDestroyed();
@@ -73,10 +154,15 @@ namespace Net {
 		void HandleClose();
 		void HandleError();
 
-		void SendInLoop(const void* message, size_t len);
+		void SendInLoop(const char* message, size_t len);
 		void ShutDownInLoop();
 
 	private:
+
+		/**
+		* @brief io Loop from TcpServer::NewConnection.
+		*/
+		EventLoop* m_IoLoop;
 
 		std::string m_Name;
 		std::atomic<State> m_State;
@@ -88,15 +174,39 @@ namespace Net {
 		InetAddress m_LocalAddress;
 		InetAddress m_PeerAddress;
 
+		/**
+		* @brief DelegateConnectionCallback.
+		*/
 		DelegateConnectionCallback m_ConnectionCallback;
+
+		/**
+		* @brief DelegateMessageCallback.
+		*/
 		DelegateMessageCallback m_MessageCallback;
+
+		/**
+		* @brief DelegateWriteCompleteCallback.
+		*/
 		DelegateWriteCompleteCallback m_WriteCompleteCallback;
+
+		/**
+		* @brief DelegateHighWaterMarkCallback.
+		*/
 		DelegateHighWaterMarkCallback m_HighWaterMarkCallback;
+
+		/**
+		* @brief DelegateCloseCallback.
+		*/
 		DelegateCloseCallback m_CloseCallback;
 
-		size_t m_HighWaterMark;
-
+		/**
+		* @brief Input Buffer.
+		*/
 		Buffer m_InputBuffer;
+
+		/**
+		* @brief Output Buffer.
+		*/
 		Buffer m_OutputBuffer;
 	};
 

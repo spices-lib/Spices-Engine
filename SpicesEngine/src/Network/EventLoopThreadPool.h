@@ -12,6 +12,9 @@ namespace Spices {
 
 namespace Net {
 
+    /**
+    * @brief ThreadPool of Multiple threading EventLoop.
+    */
     class EventLoopThreadPool : public ThreadPool
     {
     public:
@@ -36,9 +39,22 @@ namespace Net {
         */
         virtual ~EventLoopThreadPool() override = default;
 
+        /**
+        * @brief Get next thread EventLoop.
+        * @return Returns Next Thread EventLoop.
+        */
         EventLoop* GetNextLoop();
+
+        /**
+        * @brief Get all thread EventLoop.
+        * @return Returns all thread EventLoop.
+        */
         std::vector<EventLoop*> GetAllLoops();
 
+        /**
+        * @brief Get ThreadPool Name.
+        * @return Returns ThreadPool Name.
+        */
         const std::string& Name() const { return m_PoolName; }
     
         /**
@@ -56,8 +72,19 @@ namespace Net {
 
     private:
 
+        /**
+        * @brief Next EventLoop index.
+        */
         int m_Next;
+
+        /**
+        * @brief All threads EventLoop collection.
+        */
         std::vector<EventLoop*> m_Loops;
+
+        /**
+        * @brief ThreadInitCallback.
+        */
         ThreadInitCallback m_ThreadInitCallback;
 
     };

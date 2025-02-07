@@ -12,7 +12,7 @@ namespace Spices {
 	/**
 	* @brief Use DGC or not.
 	*/
-	constexpr bool m_IsUseDGC = true;
+	constexpr bool m_IsUseDGC = false;
 
 	void BasePassRenderer::CreateRendererPass()
 	{

@@ -47,11 +47,15 @@ namespace Net {
 	void Acceptor::HandleRead()
 	{
 		InetAddress peerAddress;
-		Spices::Net::Socket connect(m_AcceptSocket.Accept(&peerAddress));
+		SOCKET connectFd = m_AcceptSocket.Accept(&peerAddress);
 		
 		if (m_ConnectionCallback)
 		{
-			m_ConnectionCallback(connect.Fd(), peerAddress);
+			m_ConnectionCallback(connectFd, peerAddress);
+		}
+		else
+		{
+			::closesocket(connectFd);
 		}
 	}
 
