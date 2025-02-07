@@ -7,19 +7,18 @@ namespace Spices {
 namespace Net {
 
 	TcpServer::TcpServer(
-		EventLoop*         loop          ,
 		const InetAddress& listenAddress , 
 		Option             option
 	)
-		: m_Loop(loop)
-		, m_Started(0)
+		: m_Started(false)
 		, m_NextConnectedId(1)
 	{
-		assert(m_Loop);
-		m_IpPort = listenAddress.ToIPPort();
-		m_Acceptor = std::make_unique<Acceptor>(loop, listenAddress, option == Option::ReusePort);
+		SPICES_PROFILE_ZONE;
 
-		m_Acceptor->SetConnectionCallback(std::bind(&TcpServer::newConnection, this, std::placeholders::_1, std::placeholders::_2));
+		m_IpPort = listenAddress.ToIPPort();
+
+		m_Acceptor = std::make_unique<Acceptor>(listenAddress, option == Option::ReusePort);
+		m_Acceptor->SetConnectionCallback(std::bind(&TcpServer::NewConnection, this, std::placeholders::_1, std::placeholders::_2));
 
 		m_ThreadPool = std::make_shared<ThreadPool>();
 		m_ThreadPool->SetMode(PoolMode::MODE_FIXED);
@@ -27,26 +26,32 @@ namespace Net {
 
 	TcpServer::~TcpServer()
 	{
+		SPICES_PROFILE_ZONE;
+
 		for (auto& item : m_Connections)
 		{
 			TcpConnectionPtr connection = item.second;
 			item.second.reset();
 
-			connection->GetLoop()->RunInLoop([=]() { connection->ConnectDestroyed(); });
+			pTLSEventLoop.GetInst()->RunInLoop([=]() { connection->ConnectDestroyed(); });
 		}
 	}
 
 	void TcpServer::Start()
 	{
-		if (m_Started++ == 0)
+		SPICES_PROFILE_ZONE;
+
+		if (!m_Started.load())
 		{
 			m_ThreadPool->Start(4);
-			m_Loop->RunInLoop([=]() { m_Acceptor->Listen(); });
+			pTLSEventLoop.GetInst()->RunInLoop([=]() { m_Acceptor->Listen(); });
 		}
 	}
 
-	void TcpServer::newConnection(SOCKET socketFd, const InetAddress& peerAddress)
+	void TcpServer::NewConnection(SOCKET socketFd, const InetAddress& peerAddress)
 	{
+		SPICES_PROFILE_ZONE;
+
 		EventLoop* ioLoop;
 		char buf[64] = { 0 };
 		snprintf(buf, sizeof(buf), "-%s#%d", m_IpPort.c_str(), m_NextConnectedId);
@@ -61,7 +66,7 @@ namespace Net {
 		}
 		InetAddress localAddress(local);
 
-		TcpConnectionPtr connectionPtr = std::make_shared<TcpConnection>(ioLoop, connName, socketFd, localAddress, peerAddress);
+		TcpConnectionPtr connectionPtr = std::make_shared<TcpConnection>(connName, socketFd, localAddress, peerAddress);
 		m_Connections[connName] = connectionPtr;
 
 		connectionPtr->SetConnectionCallback(m_ConnectionCallback);
@@ -69,24 +74,24 @@ namespace Net {
 		connectionPtr->SetWriteCompleteCallback(m_WriteCompleteCallback);
 
 		DelegateCloseCallback closeCallback;
-		closeCallback.Bind([=](const TcpConnectionPtr& connection) { removeConnection(connection); });
+		closeCallback.Bind([=](const TcpConnectionPtr& connection) { RemoveConnection(connection); });
 		connectionPtr->SetCloseCallback(closeCallback);
 
 		ioLoop->RunInLoop([=]() { connectionPtr->ConnectEstablished(); });
 	}
 
-	void TcpServer::removeConnection(const TcpConnectionPtr& connection)
+	void TcpServer::RemoveConnection(const TcpConnectionPtr& connection)
 	{
-		m_Loop->RunInLoop([=]() { removeConnectionInLoop(connection); });
+		pTLSEventLoop.GetInst()->RunInLoop([=]() { RemoveConnectionInLoop(connection); });
 	}
 
-	void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& connection)
+	void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& connection)
 	{
 		SPICES_CORE_INFO("TcpServer::removeConnectionInLoop")
 
 		m_Connections.erase(connection->GetName());
-		EventLoop* ioLoop = connection->GetLoop();
-		ioLoop->QueueInLoop([=]() { connection->ConnectDestroyed(); });
+		//EventLoop* ioLoop = connection->GetLoop();
+		//ioLoop->QueueInLoop([=]() { connection->ConnectDestroyed(); });
 	}
 }
 

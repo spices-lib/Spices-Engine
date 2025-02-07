@@ -20,6 +20,9 @@ namespace Net {
     */
     class EventLoop;
 
+    /**
+    * @brief Wrapper of SOCKET'S Event.
+    */
     class Channel
     {
     public:
@@ -39,10 +42,9 @@ namespace Net {
 
         /**
         * @brief Constructor Function.
-        * @param[in] loop EventLoop.
         * @param[in] fd socket fd.
         */
-        Channel(EventLoop* loop, SOCKET fd);
+        Channel(SOCKET fd);
 
         /**
         * @brief Destructor Function.
@@ -61,6 +63,9 @@ namespace Net {
         */
         Channel& operator=(const Channel&) = delete;
 
+        /**
+        * @brief Handle happened events on fd.
+        */
         void HandleEvent();
 
         /**
@@ -185,20 +190,32 @@ namespace Net {
         int Index() { return m_Index; }
         void SetIndex(int index) { m_Index = index; }
 
-        EventLoop* OwnerLoop() { return m_Loop; }
         void Remove();
 
     private:
 
         void Update();
+
+        /**
+        * @brief Internal handle happened events on fd.
+        */
         void HandleEventsWithGuard();
 
     private:
 
-        EventLoop* m_Loop;
+        /**
+        * @brief This channel interested SOCKET.
+        */
         SOCKET m_Fd;
 
+        /**
+        * @brief This SOCKET interested Events type.
+        */
         EventFlags m_Events;
+
+        /**
+        * @brief Current hanppened event type.
+        */
         int m_Revents;
         int m_Index;
 

@@ -15,13 +15,12 @@ namespace SpicesTest {
     {
     public:
 
-        TcpServerTest(Spices::Net::EventLoop* loop, Spices::Net::InetAddress& addr)
-            : m_Server(loop, addr)
-            , m_Loop(loop)
+        TcpServerTest(Spices::Net::InetAddress& addr)
+            : m_Server(addr)
         {
 
-            m_Server.SetConnectionCallback([=](const Spices::Net::TcpConnectionPtr& connection) { onConnection(connection); });
-            m_Server.SetMessageCallback([=](const Spices::Net::TcpConnectionPtr& connection, Spices::Net::Buffer* buf) { onMessage(connection, buf); });
+            m_Server.AddConnectionCallback([=](const Spices::Net::TcpConnectionPtr& connection) { onConnection(connection); });
+            m_Server.AddMessageCallback([=](const Spices::Net::TcpConnectionPtr& connection, Spices::Net::Buffer* buf) { onMessage(connection, buf); });
         }
 
         void start()
@@ -50,7 +49,6 @@ namespace SpicesTest {
             connection->ShutDown();
         }
 
-        Spices::Net::EventLoop* m_Loop;
         Spices::Net::TcpServer m_Server;
     };
 
@@ -61,12 +59,8 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        Spices::Net::EventLoop loop;
-        Spices::Net::InetAddress address(8000);
-
-        TcpServerTest server(&loop, address);
+        TcpServerTest server(Spices::Net::InetAddress(8000));
         server.start();
-        loop.Loop();
     }
 
 }

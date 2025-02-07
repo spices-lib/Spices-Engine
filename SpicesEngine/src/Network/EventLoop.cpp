@@ -13,37 +13,18 @@ namespace Net {
 	*/
 	constexpr uint32_t pollTimeoutMs = 10 * 1000;
 
-	/*SOCKET createEventfd()
-	{
-		SOCKET evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-		if (evtfd < 0)
-		{
-			LOG_FATAL("eventfd error:%d \n", errno);
-		}
-
-		return evtfd;
-	}*/
-
 	EventLoop::EventLoop()
 		: m_IsLooping(false)
 		, m_IsQuit(false)
 		, m_IsCallingpendingFunctors(false)
-		, m_ThreadId(GetCurrentThreadId())
-		, m_Poller(Poller::newDefaultPoller(this))
-		//, m_Wakeupfd(createEventfd())
-		//, m_WeakupChannel(new Channel(this, m_Wakeupfd))
 		, m_CurrentActiveChannel(nullptr)
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (pTLSEventLoop)
-		{
-			SPICES_CORE_CRITICAL("EventLoop is TLS ")
-		}
-		else
-		{
-			pTLSEventLoop = this;
-		}
+		m_ThreadId = GetCurrentThreadId();
+		m_Poller = std::unique_ptr<Poller>(Poller::newDefaultPoller(this));
+		m_WakeupFd.Create();
+		m_WeakupChannel = std::make_unique<Channel>(m_WakeupFd.Fd());
 
 		m_WeakupChannel->SetReadCallback([=]() { HandleWakeUp(); });
 		m_WeakupChannel->EnableReading();
@@ -53,8 +34,6 @@ namespace Net {
 	{
 		m_WeakupChannel->DisableAll();
 		m_WeakupChannel->Remove();
-		::closesocket(m_WakeupFd);
-		pTLSEventLoop = nullptr;
 	}
 
 	void EventLoop::Loop()
@@ -116,7 +95,7 @@ namespace Net {
 	void EventLoop::WakeUp()
 	{
 		char one = 1;
-		int n = ::send(m_WakeupFd, &one, sizeof(one), 0);
+		int n = ::send(m_WakeupFd.Fd(), &one, sizeof(one), 0);
 		if (n < 0)
 		{
 			std::stringstream ss;
@@ -144,7 +123,7 @@ namespace Net {
 	void EventLoop::HandleWakeUp()
 	{
 		char one = 1;
-		int n = ::recv(m_WakeupFd, &one, sizeof(one), 0);
+		int n = ::recv(m_WakeupFd.Fd(), &one, sizeof(one), 0);
 		if (n < 0)
 		{
 			std::stringstream ss;
@@ -170,6 +149,18 @@ namespace Net {
 		}
 
 		m_IsCallingpendingFunctors = false;
+	}
+
+	EventLoop*& EventLoopThreadWapper::GetInst()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (!instance)
+		{
+			instance = new EventLoop();
+		}
+
+		return instance;
 	}
 
 }

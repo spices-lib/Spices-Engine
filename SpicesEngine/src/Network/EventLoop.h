@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Socket.h"
 #include <atomic>
 #include <windows.h>
 
@@ -103,7 +104,7 @@ namespace Net {
 
 		std::unique_ptr<Poller> m_Poller;
 
-		int m_WakeupFd;
+		Socket m_WakeupFd;
 		std::unique_ptr<Channel> m_WeakupChannel;
 
 		ChannelList m_ActiveChannels;
@@ -114,9 +115,40 @@ namespace Net {
 	};
 
 	/**
+	* @brief Wapper of Instance/Delete ThreadCache in thread.
+	*/
+	class EventLoopThreadWapper
+	{
+	public:
+
+		/**
+		* @brief Constructor Function.
+		*/
+		EventLoopThreadWapper() : instance(nullptr) {}
+
+		/**
+		* @brief Destructor Function.
+		*/
+		virtual ~EventLoopThreadWapper() = default;
+
+		/**
+		* @brief Get EventLoop Instance.
+		* @reutrn Returns EventLoop Instance.
+		*/
+		EventLoop*& GetInst();
+
+	private:
+
+		/**
+		* @brief This thread EventLoop instance.
+		*/
+		EventLoop* instance;
+	};
+
+	/**
 	* @brief Thread Unique EventLoop.
 	*/
-	static _declspec(thread) EventLoop* pTLSEventLoop;
+	static _declspec(thread) EventLoopThreadWapper pTLSEventLoop;
 
 }
 

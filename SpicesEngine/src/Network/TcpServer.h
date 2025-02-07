@@ -25,7 +25,16 @@ namespace Net {
 			ReusePort = 1
 		};
 
-		TcpServer(EventLoop* loop, const InetAddress& listenAddress, Option option = Option::NoReusePort);
+		/**
+		* @brief Constructor Function.
+		* @param[in] listenAddress Server listen address.
+		* @param[in] option Is reuse port.
+		*/
+		TcpServer(const InetAddress& listenAddress, Option option = Option::NoReusePort);
+
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~TcpServer();
 
 		/**
@@ -40,35 +49,67 @@ namespace Net {
 		*/
 		TcpServer& operator=(const TcpServer&) = delete;
 
+		/**
+		* @brief Set Thread initialize Call back.
+		* @param[in] cb ThreadInitCallback.
+		*/
 		void SetThreadInitCallback(const ThreadInitCallback& cb) { m_ThreadInitCallback = cb; }
-		void SetConnectionCallback(const DelegateConnectionCallback::Agent& cb) { m_ConnectionCallback.Bind(cb); }
-		void SetMessageCallback(const DelegateMessageCallback::Agent& cb) { m_MessageCallback.Bind(cb); }
-		void SetWriteCompleteCallback(const DelegateWriteCompleteCallback::Agent& cb) { m_WriteCompleteCallback.Bind(cb); }
+
+		/**
+		* @brief Add Connection Call back.
+		* @param[in] cb DelegateConnectionCallback::Agent.
+		*/
+		void AddConnectionCallback(const DelegateConnectionCallback::Agent& cb) { m_ConnectionCallback.Bind(cb); }
+
+		/**
+		* @brief Add Message Call back.
+		* @param[in] cb DelegateMessageCallback::Agent.
+		*/
+		void AddMessageCallback(const DelegateMessageCallback::Agent& cb) { m_MessageCallback.Bind(cb); }
+
+		/**
+		* @brief Add WriteComple Call back.
+		* @param[in] cb DelegateWriteCompleteCallback::Agent.
+		*/
+		void AddWriteCompleteCallback(const DelegateWriteCompleteCallback::Agent& cb) { m_WriteCompleteCallback.Bind(cb); }
 
 		void Start();
 
 	private:
 
-		void newConnection(SOCKET socketFd, const InetAddress& peerAddress);
-		void removeConnection(const TcpConnectionPtr& connection);
-		void removeConnectionInLoop(const TcpConnectionPtr& connection);
+		void NewConnection(SOCKET socketFd, const InetAddress& peerAddress);
+		void RemoveConnection(const TcpConnectionPtr& connection);
+		void RemoveConnectionInLoop(const TcpConnectionPtr& connection);
 
 	private:
 
-		EventLoop* m_Loop;
 		std::string m_IpPort;
 
 		std::unique_ptr<Acceptor> m_Acceptor;
 
 		std::shared_ptr<ThreadPool> m_ThreadPool;
 
+		/**
+		* @brief ConnectionCallback.
+		*/
 		DelegateConnectionCallback m_ConnectionCallback;
+
+		/**
+		* @brief MessageCallback.
+		*/
 		DelegateMessageCallback m_MessageCallback;
+
+		/**
+		* @brief WriteCompleteCallback.
+		*/
 		DelegateWriteCompleteCallback m_WriteCompleteCallback;
 
+		/**
+		* @brief ThreadInitCallback.
+		*/
 		ThreadInitCallback m_ThreadInitCallback;
 
-		std::atomic_int m_Started;
+		std::atomic_bool m_Started;
 
 		int m_NextConnectedId;
 		ConnectionMap m_Connections;

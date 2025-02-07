@@ -9,14 +9,12 @@ namespace Spices {
 namespace Net {
 
 	TcpConnection::TcpConnection(
-		EventLoop*         loop         ,
 		const std::string& name,
 		SOCKET             socketFd     ,
 		const InetAddress& localAddress ,
 		const InetAddress& peerAddress
 	)
-		: m_Loop(loop)
-		, m_Name(name)
+		: m_Name(name)
 		, m_State(State::Connecting)
 		, m_Reading(true)
 		, m_LocalAddress(localAddress)
@@ -24,7 +22,7 @@ namespace Net {
 		, m_HighWaterMark(64 * 1024 * 1024)
 	{
 		m_Socket = std::make_unique<Socket>(socketFd);
-		m_Channel = std::make_unique<Channel>(loop, socketFd);
+		m_Channel = std::make_unique<Channel>(socketFd);
 
 		m_Channel->SetReadCallback([=]() { HandleRead(); });
 		m_Channel->SetWriteCallback([=]() { HandleWrite(); });
@@ -42,13 +40,13 @@ namespace Net {
 	{
 		if (m_State.load() == State::Connected)
 		{
-			if(m_Loop->IsInLoopThread())
+			if(pTLSEventLoop.GetInst()->IsInLoopThread())
 			{
 				SendInLoop(buffer.c_str(), buffer.size());
 			}
 			else
 			{
-				m_Loop->RunInLoop([=]() { SendInLoop(buffer.c_str(), buffer.size()); });
+				pTLSEventLoop.GetInst()->RunInLoop([=]() { SendInLoop(buffer.c_str(), buffer.size()); });
 			}
 		}
 	}
@@ -59,7 +57,7 @@ namespace Net {
 		{
 			SetState(State::Disconnecting);
 
-			m_Loop->RunInLoop([=]() { ShutDownInLoop(); });
+			pTLSEventLoop.GetInst()->RunInLoop([=]() { ShutDownInLoop(); });
 		}
 	}
 
@@ -118,7 +116,7 @@ namespace Net {
 					m_Channel->DisableWriting();
 					if (!m_WriteCompleteCallback.empty())
 					{
-						m_Loop->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
+						pTLSEventLoop.GetInst()->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
 					}
 					if (m_State.load() == State::Disconnecting)
 					{
@@ -186,7 +184,7 @@ namespace Net {
 			remaining = len - nWrote;
 			if (remaining == 0 && m_WriteCompleteCallback.size() > 0)
 			{
-				m_Loop->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
+				pTLSEventLoop.GetInst()->QueueInLoop([=]() { m_WriteCompleteCallback.Broadcast(shared_from_this()); });
 			}
 		}
 
@@ -195,7 +193,7 @@ namespace Net {
 			size_t oldLen = m_OutputBuffer.ReadableBytes();
 			if (oldLen + remaining >= m_HighWaterMark && oldLen < m_HighWaterMark && m_HighWaterMarkCallback.size() > 0)
 			{
-				m_Loop->QueueInLoop([=]() { m_HighWaterMarkCallback.Broadcast(shared_from_this(), oldLen + remaining); });
+				pTLSEventLoop.GetInst()->QueueInLoop([=]() { m_HighWaterMarkCallback.Broadcast(shared_from_this(), oldLen + remaining); });
 			}
 			m_OutputBuffer.Append((char*)message + nWrote, remaining);
 			if (!m_Channel->IsWriting())

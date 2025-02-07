@@ -126,7 +126,7 @@ namespace Net {
 		* @attention This option is only available on Linux.
 		* use SetReuseAddress instead
 		*/
-		void SetReusePort(bool on) const;
+		[[deprecated]] void SetReusePort(bool on) const;
 
 		/**
 		* @brief Set socket keep alive option.
