@@ -35,7 +35,7 @@ namespace Net {
 		m_Socket = std::make_unique<Socket>(socketFd);
 		m_Socket->SetKeepAlive(true);
 
-		m_Channel = std::make_unique<Channel>(socketFd);
+		m_Channel = std::make_unique<Channel>(socketFd, m_IoLoop);
 		m_Channel->SetReadCallback ([=]() { HandleRead();  });
 		m_Channel->SetWriteCallback([=]() { HandleWrite(); });
 		m_Channel->SetCloseCallback([=]() { HandleClose(); });

@@ -69,7 +69,7 @@ namespace Net {
 		return n;
 	}
 
-	size_t Buffer::WriteFd(SOCKET fd, int* saveErrno)
+	size_t Buffer::WriteFd(SOCKET fd, int* saveErrno) const
 	{
 		int n = ::send(fd, Peek(), ReadableBytes(), 0);
 
@@ -89,7 +89,7 @@ namespace Net {
 		}
 		else
 		{
-			size_t readableBytes = ReadableBytes();
+			const size_t readableBytes = ReadableBytes();
 			std::copy(
 				Begin() + m_ReaderIndex,
 				Begin() + m_WriterIndex,

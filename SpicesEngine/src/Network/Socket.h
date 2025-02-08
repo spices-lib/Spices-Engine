@@ -94,14 +94,14 @@ namespace Net {
 		* @param[in] data Send data.
 		* @note Usually not call Send directly, but use Buffer::WriteFd.
 		*/
-		void Send(const std::string& data);
+		void Send(const std::string& data) const;
 
 		/**
 		* @brief Reveive data from server.
 		* @return Returns received data.
 		* @note Usually not call Receive directly, but use Buffer::ReadFd.
 		*/
-		std::string Receive();
+		std::string Receive() const;
 
 		/**
 		* @brief Disable writen in socket.

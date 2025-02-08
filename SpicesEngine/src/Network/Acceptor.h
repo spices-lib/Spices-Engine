@@ -18,7 +18,7 @@ namespace Net {
 	class EventLoop;
 
 	/**
-	* @brief Wrapper of Cannnel and Socket, As the entrancy of comm.
+	* @brief Wrapper of Channel and Socket, As the entrance of comm.
 	*/
 	class Acceptor
 	{
@@ -77,7 +77,7 @@ namespace Net {
 		/**
 		* @brief On Read Event Callback.
 		*/
-		void HandleRead();
+		void HandleRead() const;
 
 	private:
 

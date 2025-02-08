@@ -68,10 +68,10 @@ namespace Net {
 		m_ThreadInitCallback = std::move(cb);
 		m_Loops.resize(initThreadSize);
 
-		m_IsPoolRunning = true;
+		m_IsPoolRunning  = true;
 		m_InitThreadSize = initThreadSize;
 		m_IdleThreadSize = initThreadSize;
-		m_NThreads = initThreadSize;
+		m_NThreads       = initThreadSize;
 		
 		for (uint32_t i = 0; i < m_InitThreadSize; i++)
 		{
@@ -80,23 +80,7 @@ namespace Net {
 
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
-
-			/**
-			* @brief Name thread.
-			*/
-			std::stringstream ss;
-			ss << m_PoolName << threadId;
-			const std::string name = ss.str();
-
-			SubmitThreadTask_LightWeight(threadId, [=]() {
-				ThreadLibrary::SetThreadName(name);
-			});
 		}
-
-		/**
-		* @brief Wait for name.
-		*/
-		Wait();
 
 	}
 

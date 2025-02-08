@@ -102,7 +102,7 @@ namespace Net {
 		return connectFd;
 	}
 
-	void Socket::Send(const std::string& data)
+	void Socket::Send(const std::string& data) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -115,7 +115,7 @@ namespace Net {
 		}
 	}
 
-	std::string Socket::Receive()
+	std::string Socket::Receive() const
 	{
 		SPICES_PROFILE_ZONE;
 

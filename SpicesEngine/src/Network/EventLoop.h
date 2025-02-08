@@ -108,7 +108,7 @@ namespace Net {
 		*/
 		DWORD m_ThreadId;
 
-		std::unique_ptr<Poller> m_Poller;
+		std::shared_ptr<Poller> m_Poller;
 
 		Socket m_WakeupFd;
 		std::unique_ptr<Channel> m_WeakupChannel;

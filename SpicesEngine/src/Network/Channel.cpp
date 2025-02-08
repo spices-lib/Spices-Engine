@@ -12,8 +12,9 @@ namespace Spices {
 
 namespace Net {
 
-	Channel::Channel(SOCKET fd)
+	Channel::Channel(SOCKET fd, EventLoop* loop)
 		: m_Fd(fd)
+		, m_Loop(loop)
 		, m_Events(EventBits::None)
 		, m_Revents(0)
 		, m_Index(-1)
@@ -41,15 +42,15 @@ namespace Net {
 
 	void Channel::Remove()
 	{
-		pTLSEventLoop.GetInst()->RemoveChannel(this);
+		m_Loop->RemoveChannel(this);
 	}
 
 	void Channel::Update()
 	{
-		pTLSEventLoop.GetInst()->UpdateChannel(this);
+		m_Loop->UpdateChannel(this);
 	}
-
-	void Channel::HandleEventsWithGuard()
+ 
+	void Channel::HandleEventsWithGuard() const
 	{
 		// Close event.
 		if ((m_Revents & EPOLLHUP) && !(m_Revents & EPOLLIN))

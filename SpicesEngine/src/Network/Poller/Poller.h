@@ -50,7 +50,12 @@ namespace Net {
 		*/
 		bool HasChannel(Channel* channel) const;
 
-		static Poller* newDefaultPoller(EventLoop* loop);
+		/**
+		* @brief Create Default Poller.
+		* @param[in] loop EventLoop.
+		* @return Returns Default Poller.
+		*/
+		static std::shared_ptr<Poller> DefaultPoller(EventLoop* loop);
 
 	protected:
 

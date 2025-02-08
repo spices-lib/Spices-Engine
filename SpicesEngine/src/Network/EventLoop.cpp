@@ -28,9 +28,9 @@ namespace Net {
 		SPICES_PROFILE_ZONE;
 
 		m_ThreadId = GetCurrentThreadId();
-		m_Poller = std::unique_ptr<Poller>(Poller::newDefaultPoller(this));
+		m_Poller = Poller::DefaultPoller(this);
 		m_WakeupFd.Create();
-		m_WeakupChannel = std::make_unique<Channel>(m_WakeupFd.Fd());
+		m_WeakupChannel = std::make_unique<Channel>(m_WakeupFd.Fd(), this);
 
 		m_WeakupChannel->SetReadCallback([=]() { HandleWakeUp(); });
 		m_WeakupChannel->EnableReading();

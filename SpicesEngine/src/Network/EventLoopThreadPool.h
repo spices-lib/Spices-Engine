@@ -68,7 +68,7 @@ namespace Net {
         * @param[in] initThreadSize Thread Size.
         * @param[in] cb ThreadInitCallback.
         */
-        void Start(int initThreadSize = 0.5 * std::thread::hardware_concurrency(), ThreadInitCallback cb = nullptr);
+        void Start(int initThreadSize = 3, ThreadInitCallback cb = nullptr);
 
     private:
 

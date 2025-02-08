@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "Acceptor.h"
+#include "EventLoop.h"
 
 namespace Spices {
 
@@ -23,7 +24,7 @@ namespace Net {
 		m_AcceptSocket.SetReuseAddress(true);
 		m_AcceptSocket.BindAddress(listenAddress);
 
-		m_AcceptChannel = std::make_shared<Channel>(m_AcceptSocket.Fd());
+		m_AcceptChannel = std::make_shared<Channel>(m_AcceptSocket.Fd(), pTLSEventLoop.GetInst());
 		m_AcceptChannel->SetReadCallback([=]() { HandleRead(); });
 	}
 
@@ -44,10 +45,10 @@ namespace Net {
 		m_AcceptChannel->EnableReading();
 	}
 
-	void Acceptor::HandleRead()
+	void Acceptor::HandleRead() const
 	{
 		InetAddress peerAddress;
-		SOCKET connectFd = m_AcceptSocket.Accept(&peerAddress);
+		const SOCKET connectFd = m_AcceptSocket.Accept(&peerAddress);
 		
 		if (m_ConnectionCallback)
 		{

@@ -158,7 +158,7 @@ namespace Net {
 		* @return Returns write bytes.
 		* @note write api can only be used in linux, on windows use send instead,
 		*/
-		size_t WriteFd(SOCKET fd, int* saveErrno);
+		size_t WriteFd(SOCKET fd, int* saveErrno) const;
 
 	private:
 

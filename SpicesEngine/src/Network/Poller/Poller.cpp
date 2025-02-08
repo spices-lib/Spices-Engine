@@ -1,6 +1,7 @@
 #include "Pchheader.h"
 #include "Poller.h"
 #include "Network/Channel.h"
+#include "EPollPoller.h"
 
 namespace Spices {
 
@@ -15,9 +16,9 @@ namespace Net {
 		return it != m_Channels.end() && it->second == channel;
 	}
 
-	Poller* Poller::newDefaultPoller(EventLoop* loop)
+	std::shared_ptr<Poller> Poller::DefaultPoller(EventLoop* loop)
 	{
-		return nullptr;
+		return std::make_shared<EPollPoller>(loop);
 	}
 
 }

@@ -43,8 +43,9 @@ namespace Net {
         /**
         * @brief Constructor Function.
         * @param[in] fd socket fd.
+        * @param[in] loop EventLoop.
         */
-        Channel(SOCKET fd);
+        Channel(SOCKET fd, EventLoop* loop);
 
         /**
         * @brief Destructor Function.
@@ -199,7 +200,7 @@ namespace Net {
         /**
         * @brief Internal handle happened events on fd.
         */
-        void HandleEventsWithGuard();
+        void HandleEventsWithGuard() const;
 
     private:
 
@@ -209,12 +210,17 @@ namespace Net {
         SOCKET m_Fd;
 
         /**
+        * @brief This channel interested EventLoop.
+        */
+        EventLoop* m_Loop;
+
+        /**
         * @brief This SOCKET interested Events type.
         */
         EventFlags m_Events;
 
         /**
-        * @brief Current hanppened event type.
+        * @brief Current happened event type.
         */
         int m_Revents;
         int m_Index;

@@ -25,7 +25,7 @@ namespace SpicesTest {
 
         void start()
         {
-            m_Server.Start();
+            m_Server.Start(1);
         }
 
     private:
@@ -61,6 +61,11 @@ namespace SpicesTest {
 
         TcpServerTest server(Spices::Net::InetAddress(8000));
         server.start();
+
+        while (1)
+        {
+            std::cout << "Hello" << std::endl;
+        }
     }
 
 }
