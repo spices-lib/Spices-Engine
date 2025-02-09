@@ -159,7 +159,7 @@ in the GPU rendering process and rendered them individually into a visualization
     chrome://tracing
     ~~~
 * **ScreenShot:**<br/>
-  <img alt="Instrumentor" src="Instrumentor.png"/><br/>
+  <img alt="Instrumentor" height="901" src="Instrumentor.png" width="1800"/><br/>
 
 # SubPass Statistics
 ***

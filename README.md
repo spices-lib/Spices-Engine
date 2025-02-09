@@ -1,4 +1,4 @@
-以下内容为未尚未整理到部署文档的临时部分。
+以下内容为尚未整理到部署文档的临时部分。
 临时存放使用,
 SpicesEngine项目的详情在[此处](https://spices-engine.vercel.app/index.html)。
 
