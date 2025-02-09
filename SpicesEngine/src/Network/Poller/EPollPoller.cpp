@@ -1,3 +1,9 @@
+/**
+* @file EPollPoller.cpp.
+* @brief The EPollPoller Class Implementation.
+* @author Spices & Muduo.
+*/
+
 #include "Pchheader.h"
 #include "EPollPoller.h"
 #include "../Channel.h"
@@ -6,14 +12,12 @@ namespace Spices {
 
 namespace Net {
 
-	const int kNew = -1;
-	const int kAdded = 1;
-	const int kDeleted = 2;
+	static constexpr int InitEventListSize = 16;
 
 	EPollPoller::EPollPoller(EventLoop* loop)
 		: Poller(loop)
 		, m_EPollFd(reinterpret_cast<SOCKET>(epoll_create1(0)))
-		, m_Events(kInitEventListSize)
+		, m_Events(InitEventListSize)
 	{}
 
 	EPollPoller::~EPollPoller()
@@ -24,7 +28,7 @@ namespace Net {
 	void EPollPoller::Poll(int timeoutMs, ChannelList* activeChannels)
 	{
 		const int numEvents = epoll_wait(reinterpret_cast<void*>(m_EPollFd), m_Events.data(), m_Events.size(), timeoutMs);
-		const int saveErrno = errno;
+		const int saveErrno = WSAGetLastError();
 
 		if (numEvents > 0)
 		{
@@ -41,27 +45,29 @@ namespace Net {
 		}
 		else
 		{
-			if (saveErrno != EINTR)
+			if (saveErrno != ERROR_OPERATION_ABORTED)
 			{
-				errno = saveErrno;
-				SPICES_CORE_ERROR("EPollPoller::Poll error")
+				std::stringstream ss;
+				ss << "EPollPoller::Poll Error: " << saveErrno;
+				
+				SPICES_CORE_ERROR(ss.str())
 			}
 		}
 	}
 
 	void EPollPoller::UpdateChannel(Channel* channel)
 	{
-		const int index = channel->Index();
+		const auto state = channel->GetPollState();
 
-		if (index == kNew || index == kDeleted)
+		if (state == Channel::PollState::New || state == Channel::PollState::Deleted)
 		{
-			if (index == kNew)
+			if (state == Channel::PollState::New)
 			{
 				SOCKET fd = channel->Fd();
 				m_Channels[fd] = channel;
 			}
 
-			channel->SetIndex(kAdded);
+			channel->SetPollState(Channel::PollState::Added);
 			Update(EPOLL_CTL_ADD, channel);
 		}
 		else
@@ -70,7 +76,7 @@ namespace Net {
 			if (channel->IsNoneEvent())
 			{
 				Update(EPOLL_CTL_DEL, channel);
-				channel->SetIndex(kDeleted);
+				channel->SetPollState(Channel::PollState::Deleted);
 			}
 			else
 			{
@@ -84,12 +90,12 @@ namespace Net {
 		SOCKET fd = channel->Fd();
 		m_Channels.erase(fd);
 
-		int index = channel->Index();
-		if (index == kAdded)
+		const auto state = channel->GetPollState();
+		if (state == Channel::PollState::Added)
 		{
 			Update(EPOLL_CTL_DEL, channel);
 		}
-		channel->SetIndex(kNew);
+		channel->SetPollState(Channel::PollState::New);
 	}
 
 	void EPollPoller::FillActiveChannels(int numEvents, ChannelList* activeChannels) const
@@ -104,23 +110,23 @@ namespace Net {
 
 	void EPollPoller::Update(int operation, Channel* channel)
 	{
-		epoll_event event = {};
-
-		SOCKET fd = channel->Fd();
-
-		event.events = channel->Events();
-		event.data.fd = fd;
-		event.data.ptr = channel;
+		epoll_event event  = {};
+						   
+		SOCKET fd          = channel->Fd();
+					       
+		event.events       = channel->Events();
+		event.data.fd      = fd;
+		event.data.ptr     = channel;
 
 		if(::epoll_ctl(reinterpret_cast<void*>(m_EPollFd), operation, fd, &event) < 0)
 		{
 			if(operation == EPOLL_CTL_DEL)
 			{
-				SPICES_CORE_ERROR("EPOLL_CTL_DEL error")
+				SPICES_CORE_ERROR("EPollPoller::Update::EPOLL_CTL_DEL Error")
 			}
 			else
 			{
-				SPICES_CORE_CRITICAL("EPOLL_CTL_ADD/MOD error")
+				SPICES_CORE_CRITICAL("EPollPoller::Update::EPOLL_CTL_ADD/MOD Error")
 			}
 		}
 	}

@@ -1,3 +1,9 @@
+/**
+* @file Poller.cpp.
+* @brief The Poller Class Implementation.
+* @author Spices & Muduo.
+*/
+
 #include "Pchheader.h"
 #include "Poller.h"
 #include "Network/Channel.h"

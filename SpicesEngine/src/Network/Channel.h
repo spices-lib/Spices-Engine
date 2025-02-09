@@ -38,6 +38,13 @@ namespace Net {
 
         using EventFlags = uint32_t;
 
+        enum class PollState
+        {
+            New     = 0,
+            Added   = 1,
+            Deleted = 2
+        };
+
     public:
 
         /**
@@ -188,8 +195,17 @@ namespace Net {
         */
         bool IsReading() const { return m_Events & EventBits::Read; }
 
-        int Index() { return m_Index; }
-        void SetIndex(int index) { m_Index = index; }
+        /**
+        * @brief Get Poll State.
+        * @return Returns PollState.
+        */
+        PollState GetPollState() { return m_PollState; }
+
+        /**
+        * @brief Set Poll State.
+        * @param[in] state PollState.
+        */
+        void SetPollState(PollState state) { m_PollState = state; }
 
         void Remove();
 
@@ -223,7 +239,11 @@ namespace Net {
         * @brief Current happened event type.
         */
         int m_Revents;
-        int m_Index;
+
+        /**
+        * @brief This channel PollState.
+        */
+        PollState m_PollState;
 
         std::optional<std::weak_ptr<void>> m_Tie;
 

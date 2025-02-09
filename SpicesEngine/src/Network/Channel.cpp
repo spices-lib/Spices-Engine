@@ -17,7 +17,7 @@ namespace Net {
 		, m_Loop(loop)
 		, m_Events(EventBits::None)
 		, m_Revents(0)
-		, m_Index(-1)
+		, m_PollState(PollState::Deleted)
 	{}
 
 	void Channel::HandleEvent()

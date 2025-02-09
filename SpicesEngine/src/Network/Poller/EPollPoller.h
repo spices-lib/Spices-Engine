@@ -1,3 +1,9 @@
+/**
+* @file EPollPoller.h.
+* @brief The EPollPoller Class Definitions.
+* @author Spices & Muduo.
+*/
+
 #pragma once
 #include "Poller.h"
 
@@ -7,6 +13,9 @@ namespace Spices {
 
 namespace Net {
 
+	/**
+	* @brief EPoll Poller.
+	*/
 	class EPollPoller : public Poller
 	{
 	public:
@@ -38,20 +47,51 @@ namespace Net {
 		*/
 		EPollPoller& operator=(const EPollPoller&) = delete;
 
+		/**
+		* @brief Poll events on EventList.
+		* @param[in] timeoutMs .
+		* @param[in,out] activeChannels Channels that events happened.
+		*/
 		virtual void Poll(int timeoutMs, ChannelList* activeChannels) override;
+
+		/**
+		* @brief Update Channel and Update Poll.
+		* @param[in] channel Channel.
+		*/
 		virtual void UpdateChannel(Channel* channel) override;
+
+		/**
+		* @brief Remove Channel and Update Poll.
+		* @param[in] channel Channel.
+		*/
 		virtual void RemoveChannel(Channel* channel) override;
 
 	private:
 
+		/**
+		* @brief Fill REvents to ChannelList.
+		* @param[in] numEvents .
+		* @param[in] activeChannels ChannelList.
+		*/
 		void FillActiveChannels(int numEvents, ChannelList* activeChannels) const;
+
+		/**
+		* @brief Update epoll with operation.
+		* @param[in] operation.
+		* @param[in] channel Channel.
+		*/
 		void Update(int operation, Channel* channel);
 
 	private:
 
-		static constexpr int kInitEventListSize = 16;
-
+		/**
+		* @brief EPoll fd.
+		*/
 		SOCKET m_EPollFd;
+
+		/**
+		* @brief EventList.
+		*/
 		EventList m_Events;
 	};
 }

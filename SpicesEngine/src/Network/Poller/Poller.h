@@ -1,3 +1,9 @@
+/**
+* @file Poller.h.
+* @brief The Poller Class Definitions.
+* @author Spices & Muduo.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "../InetAddress.h"
@@ -6,15 +12,21 @@ namespace Spices {
 
 namespace Net {
 
+	/**
+	* @brief Forward Declare.
+	*/
 	class Channel;
 	class EventLoop;
 
+	/**
+	* @brief Inherit from this and Implementate Specific Poller
+	*/
 	class Poller
 	{
 	public:
 
 		using ChannelList = std::vector<Channel*>;
-		using ChannelMap = std::unordered_map<SOCKET, Channel*>;
+		using ChannelMap  = std::unordered_map<SOCKET, Channel*>;
 
 	public:
 
@@ -41,12 +53,29 @@ namespace Net {
 		*/
 		Poller& operator=(const Poller&) = delete;
 
+		/**
+		* @brief Poll events on EventList.
+		* @param[in] timeoutMs .
+		* @param[in,out] activeChannels Channels that events happened.
+		*/
 		virtual void Poll(int timeoutMs, ChannelList* activeChannels) = 0;
+
+		/**
+		* @brief Update Channel and Update Poll.
+		* @param[in] channel Channel.
+		*/
 		virtual void UpdateChannel(Channel* channel) = 0;
+
+		/**
+		* @brief Remove Channel and Update Poll.
+		* @param[in] channel Channel.
+		*/
 		virtual void RemoveChannel(Channel* channel) = 0;
 
 		/**
-		* @brief 
+		* @brief Determine if channel is in ChannelMap.
+		* @param[in] channel Channel.
+		* @return Returns true if channel is in ChannelMap.
 		*/
 		bool HasChannel(Channel* channel) const;
 
@@ -59,10 +88,16 @@ namespace Net {
 
 	protected:
 
+		/**
+		* @brief This Poller interested Channels.
+		*/
 		ChannelMap m_Channels;
 
 	private:
 
+		/**
+		* @brief This Poller interested EventLoop.
+		*/
 		EventLoop* m_Loop;
 
 	};
