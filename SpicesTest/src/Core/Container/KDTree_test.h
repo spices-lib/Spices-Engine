@@ -15,7 +15,7 @@ namespace SpicesTest {
 
 	/**
 	* @brief The interface is inherited from testing::Test.
-	* Registy on Initialize.
+	* Registry on Initialize.
 	*/
 	class kd_tree_test : public testing::Test
 	{
@@ -112,11 +112,11 @@ namespace SpicesTest {
 
 		EXPECT_EQ(m_KDTree.nearest_neighbour_search({ 2.0, 0.0 }, { 3.0, 3.0 }), val);
 
-		const int nPoints  = 1000;
-		const int nSearchs = 1000;
+		constexpr int nPoints  = 1000;
+		constexpr int nSearchs = 1000;
 		scl::kd_tree<3> modelKDTree;
 		std::vector<scl::kd_tree<3>::item> points;
-		scl::kd_tree<3>::item findVal = { 50.2f, 87.3f, 12.6f };
+		const scl::kd_tree<3>::item findVal = { 50.2f, 87.3f, 12.6f };
 
 		{
 			SPICESTEST_PROFILE_SCOPE("Create Points Collection.");

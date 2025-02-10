@@ -22,7 +22,7 @@ namespace Net {
 	EventLoop::EventLoop()
 		: m_IsLooping(false)
 		, m_IsQuit(false)
-		, m_IsCallingpendingFunctors(false)
+		, m_IsCallingPendingFunctors(false)
 		, m_CurrentActiveChannel(nullptr)
 	{
 		SPICES_PROFILE_ZONE;
@@ -92,7 +92,7 @@ namespace Net {
 			m_PendingFunctors.emplace_back(cb);
 		}
 
-		if (!IsInLoopThread() || m_IsCallingpendingFunctors)
+		if (!IsInLoopThread() || m_IsCallingPendingFunctors)
 		{
 			WakeUp();
 		}
@@ -142,7 +142,7 @@ namespace Net {
 	void EventLoop::DoPendingFunctors()
 	{
 		std::vector<Functor> functors;
-		m_IsCallingpendingFunctors = true;
+		m_IsCallingPendingFunctors = true;
 
 		{
 			std::unique_lock<std::mutex> lock(m_Mutex);
@@ -154,10 +154,10 @@ namespace Net {
 			functor();
 		}
 
-		m_IsCallingpendingFunctors = false;
+		m_IsCallingPendingFunctors = false;
 	}
 
-	EventLoop*& EventLoopThreadWapper::GetInst()
+	EventLoop*& EventLoopThreadWrapper::GetInst()
 	{
 		SPICES_PROFILE_ZONE;
 

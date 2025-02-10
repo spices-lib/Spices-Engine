@@ -36,14 +36,14 @@ namespace Net {
 
 		for (auto& item : m_Connections)
 		{
-			TcpConnectionPtr connection = item.second;
+			const TcpConnectionPtr connection = item.second;
 			item.second.reset();
 
 			pTLSEventLoop.GetInst()->RunInLoop([=]() { connection->ConnectDestroyed(); });
 		}
 	}
 
-	void TcpServer::Start(int threadSize)
+	void TcpServer::Start(int threadSize) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -75,7 +75,7 @@ namespace Net {
 		}
 		InetAddress localAddress(local);
 
-		TcpConnectionPtr connectionPtr = std::make_shared<TcpConnection>(ioLoop, connName, socketFd, localAddress, peerAddress);
+		const TcpConnectionPtr connectionPtr = std::make_shared<TcpConnection>(ioLoop, connName, socketFd, localAddress, peerAddress);
 		m_Connections[connName] = connectionPtr;
 
 		connectionPtr->SetConnectionCallback(m_ConnectionCallback);

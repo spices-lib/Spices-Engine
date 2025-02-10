@@ -41,7 +41,7 @@ namespace Net {
 		}
 		else
 		{
-			m_Loops;
+			return m_Loops;
 		}
 	}
 

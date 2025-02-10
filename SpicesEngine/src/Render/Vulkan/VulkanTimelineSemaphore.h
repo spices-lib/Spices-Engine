@@ -12,7 +12,7 @@ namespace Spices {
 
 	/**
 	* @brief VulkanTimelineSemaphore Class.
-	* This class is a wapper of timeline VkSemaphore.
+	* This class is a wrapper of timeline VkSemaphore.
 	*/
 	class VulkanTimelineSemaphore : public VulkanObject
 	{
@@ -27,7 +27,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanTimelineSemaphore();
+		virtual ~VulkanTimelineSemaphore() override;
 
 		/**
 		* @brief Wait on this VkSemaphore using specific value.

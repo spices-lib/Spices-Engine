@@ -56,8 +56,8 @@ namespace SpicesTest {
         {
             sem.Wait(0);
 
-            const auto t = std::chrono::high_resolution_clock::now();
-            const float period = std::chrono::duration<float, std::chrono::milliseconds::period>(t - t0).count();
+            const auto time = std::chrono::high_resolution_clock::now();
+            const float period = std::chrono::duration<float, std::chrono::milliseconds::period>(time - t0).count();
 
             EXPECT_LE(period, 50);
         }
@@ -66,8 +66,8 @@ namespace SpicesTest {
         {
             sem.Wait(1);
 
-            const auto t = std::chrono::high_resolution_clock::now();
-            const float period = std::chrono::duration<float, std::chrono::milliseconds::period>(t - t0).count();
+            const auto time = std::chrono::high_resolution_clock::now();
+            const float period = std::chrono::duration<float, std::chrono::milliseconds::period>(time - t0).count();
 
             EXPECT_LE(period, 1050);
             EXPECT_GE(period, 950);

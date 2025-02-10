@@ -101,10 +101,10 @@ namespace Net {
 		*/
 		std::atomic_bool m_IsQuit;
 
-		std::atomic_bool m_IsCallingpendingFunctors;
+		std::atomic_bool m_IsCallingPendingFunctors;
 
 		/**
-		* @brief Thread's identify, which is runing this EventLoop.
+		* @brief Thread's identify, which is running this EventLoop.
 		*/
 		DWORD m_ThreadId;
 
@@ -121,21 +121,21 @@ namespace Net {
 	};
 
 	/**
-	* @brief Wapper of Instance/Delete ThreadCache in thread.
+	* @brief Wrapper of Instance/Delete ThreadCache in thread.
 	*/
-	class EventLoopThreadWapper
+	class EventLoopThreadWrapper
 	{
 	public:
 
 		/**
 		* @brief Constructor Function.
 		*/
-		EventLoopThreadWapper() : instance(nullptr) {}
+		EventLoopThreadWrapper() : instance(nullptr) {}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~EventLoopThreadWapper() = default;
+		virtual ~EventLoopThreadWrapper() = default;
 
 		/**
 		* @brief Get EventLoop Instance.
@@ -154,7 +154,7 @@ namespace Net {
 	/**
 	* @brief Thread Unique EventLoop.
 	*/
-	static _declspec(thread) EventLoopThreadWapper pTLSEventLoop;
+	static _declspec(thread) EventLoopThreadWrapper pTLSEventLoop;
 
 }
 

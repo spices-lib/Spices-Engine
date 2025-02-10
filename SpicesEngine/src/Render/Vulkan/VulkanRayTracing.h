@@ -151,7 +151,7 @@ namespace Spices {
 
 		/**
 		* @brief Set Scene hit groups.
-		* @param[in] Scene hit groups.
+		* @param[in] groups hit groups.
 		*/
 		void SetHitGroups(std::shared_ptr<std::unordered_map<std::string, uint32_t>> groups) { m_HitGroups = groups; }
 

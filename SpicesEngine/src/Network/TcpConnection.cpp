@@ -155,7 +155,7 @@ namespace Net {
 		m_CloseCallback.Broadcast(connectionPtr);
 	}
 
-	void TcpConnection::HandleError()
+	void TcpConnection::HandleError() const
 	{
 		char optVal;
 		socklen_t optLen = sizeof(optVal);
@@ -207,7 +207,7 @@ namespace Net {
 			else
 			{
 				nWrote = 0;
-				int err = WSAGetLastError();
+				const int err = WSAGetLastError();
 
 				if (err != WSAEWOULDBLOCK)
 				{
@@ -226,7 +226,7 @@ namespace Net {
 		*/
 		if (!faultError && remaining > 0)
 		{
-			size_t oldLen = m_OutputBuffer.ReadableBytes();
+			const size_t oldLen = m_OutputBuffer.ReadableBytes();
 			if (oldLen + remaining >= HighWaterMark && oldLen < HighWaterMark && m_HighWaterMarkCallback.size() > 0)
 			{
 				m_IoLoop->QueueInLoop([=]() { m_HighWaterMarkCallback.Broadcast(shared_from_this(), oldLen + remaining); });
@@ -239,7 +239,7 @@ namespace Net {
 		}
 	}
 
-	void TcpConnection::ShutDownInLoop()
+	void TcpConnection::ShutDownInLoop() const
 	{
 		if (!m_Channel->IsWriting())
 		{

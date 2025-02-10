@@ -96,7 +96,8 @@ namespace SpicesTest {
 		* @brief Instance a staginBuffer for transfer data from array to image.
 		*/
 		Spices::VulkanBuffer stagingBuffer(
-			m_RenderBackend->GetState(), 
+			m_RenderBackend->GetState(),
+			"StagingBuffer",
 			sizeof(dataArray),
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | 

@@ -11,16 +11,16 @@
 
 namespace SpicesTest {
 
-	class ThrealCacheTest
+	class ThreadCacheTest
 	{
 	public:
 
-		ThrealCacheTest()
+		ThreadCacheTest()
 			: m_Tuple{ 1, 2.0f, nullptr }
 		{}
 
-		ThrealCacheTest(const ThrealCacheTest&) = delete;
-		ThrealCacheTest& operator=(const ThrealCacheTest&) = delete;
+		ThreadCacheTest(const ThreadCacheTest&) = delete;
+		ThreadCacheTest& operator=(const ThreadCacheTest&) = delete;
 
 		std::tuple<int, float, void*> m_Tuple;
 	};
@@ -29,7 +29,7 @@ namespace SpicesTest {
 	* @brief The interface is inherited from testing::Test.
 	* Registry on Initialize.
 	*/
-	class ThrealCache_test : public testing::Test
+	class ThreadCache_test : public testing::Test
 	{
 	protected:
 
@@ -59,14 +59,14 @@ namespace SpicesTest {
 	/**
 	* @brief Testing Spices::ThreadCache::Allocate/Deallocate.
 	*/
-	TEST_F(ThrealCache_test, AllocateDeallocate) {
+	TEST_F(ThreadCache_test, AllocateDeallocate) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
-		std::unique_ptr<std::array<ThrealCacheTest*, n>> objects = std::make_unique<std::array<ThrealCacheTest*, n>>();
+		const std::unique_ptr<std::array<ThreadCacheTest*, n>> objects = std::make_unique<std::array<ThreadCacheTest*, n>>();
 		for (size_t i = 0; i < n; i++)
 		{
-			ThrealCacheTest* a = new(tc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
+			auto a = new(tc.Allocate(sizeof(ThreadCacheTest)))ThreadCacheTest;
 
 			EXPECT_EQ(std::get<0>(a->m_Tuple), 1);
 			EXPECT_EQ(std::get<1>(a->m_Tuple), 2.0f);
@@ -77,14 +77,14 @@ namespace SpicesTest {
 
 		for (size_t i = 0; i < n; i++)
 		{
-			tc.Deallocate((*objects)[i], sizeof(ThrealCacheTest));
+			tc.Deallocate((*objects)[i], sizeof(ThreadCacheTest));
 		}
 	}
 
 	/**
-	* @brief Testing Spices::ThrealCache::Allocate/Deallocate in Thread.
+	* @brief Testing Spices::ThreadCache::Allocate/Deallocate in Thread.
 	*/
-	TEST_F(ThrealCache_test, ThreadAllocateDeallocate) {
+	TEST_F(ThreadCache_test, ThreadAllocateDeallocate) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
@@ -95,21 +95,21 @@ namespace SpicesTest {
 			std::thread t([&]() {
 				Spices::ThreadCache internalTc;
 
-				std::unique_ptr<std::array<ThrealCacheTest*, n>> objects = std::make_unique<std::array<ThrealCacheTest*, n>>();
-				for (size_t i = 0; i < n; i++)
+				const std::unique_ptr<std::array<ThreadCacheTest*, n>> objects = std::make_unique<std::array<ThreadCacheTest*, n>>();
+				for (size_t j = 0; j < n; j++)
 				{
-					ThrealCacheTest* a = new(internalTc.Allocate(sizeof(ThrealCacheTest)))ThrealCacheTest;
+					auto a = new(internalTc.Allocate(sizeof(ThreadCacheTest)))ThreadCacheTest;
 
 					EXPECT_EQ(std::get<0>(a->m_Tuple), 1);
 					EXPECT_EQ(std::get<1>(a->m_Tuple), 2.0f);
 					EXPECT_EQ(std::get<2>(a->m_Tuple), nullptr);
 
-					(*objects)[i] = std::move(a);
+					(*objects)[j] = std::move(a);
 				}
 
-				for (size_t i = 0; i < n; i++)
+				for (size_t j = 0; j < n; j++)
 				{
-					internalTc.Deallocate((*objects)[i], sizeof(ThrealCacheTest));
+					internalTc.Deallocate((*objects)[j], sizeof(ThreadCacheTest));
 				}
 			});
 

@@ -13,7 +13,7 @@ namespace SpicesTest {
 
 	/**
 	* @brief The interface is inherited from testing::Test.
-	* Registy on Initialize.
+	* Registry on Initialize.
 	*/
 	class linked_unordered_map_test : public testing::Test
 	{
@@ -122,8 +122,8 @@ namespace SpicesTest {
 		/**
 		* @brief Testing if find a not exist element successfully.
 		*/
-		bool ishasvalue = c1.has_key(10);
-		EXPECT_EQ(ishasvalue, false);
+		const bool isHasValue = c1.has_key(10);
+		EXPECT_EQ(isHasValue, false);
 
 		/**
 		* @brief Testing if find a not exist element successfully.

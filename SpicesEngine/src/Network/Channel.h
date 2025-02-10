@@ -74,7 +74,7 @@ namespace Net {
         /**
         * @brief Handle happened events on fd.
         */
-        void HandleEvent();
+        void HandleEvent() const;
 
         /**
         * @brief Set Read Event Callback.

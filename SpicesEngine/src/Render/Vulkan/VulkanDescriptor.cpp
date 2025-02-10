@@ -85,7 +85,7 @@ namespace Spices {
 		vkDestroyDescriptorPool(m_VulkanState.m_Device, m_DescriptorPool, nullptr);
 	}
 
-	void VulkanDescriptorPool::resetPool()
+	void VulkanDescriptorPool::ResetPool() const
 	{
 		SPICES_PROFILE_ZONE;
 

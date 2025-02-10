@@ -97,17 +97,17 @@ namespace Spices {
 			return m_BufferAddress;
 		}
 
-		SPICES_CORE_ERROR("This Buffer Cannot Get Address");
+		SPICES_CORE_ERROR("This Buffer Cannot Get Address")
 		return m_BufferAddress;
 	}
-
+ 
 	void VulkanBuffer::Map(VkDeviceSize size, VkDeviceSize offset)
 	{
 		SPICES_PROFILE_ZONE;
 
 #if VMA_ALLOCATOR
 
-		SPICES_CORE_ERROR("VMA cannot enter this function.");
+		SPICES_CORE_ERROR("VMA cannot enter this function.")
 
 #else
 

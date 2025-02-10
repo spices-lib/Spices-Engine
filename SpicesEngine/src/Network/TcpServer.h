@@ -87,7 +87,7 @@ namespace Net {
 		}
 
 		/**
-		* @brief Add WriteComple Call back.
+		* @brief Add WriteComplete Call back.
 		* @param[in] cb DelegateWriteCompleteCallback::Agent.
 		*/
 		void AddWriteCompleteCallback(const DelegateWriteCompleteCallback::Agent& cb) 
@@ -95,12 +95,27 @@ namespace Net {
 			m_WriteCompleteCallback.Bind(cb);
 		}
 
-		void Start(int threadSize);
+		void Start(int threadSize) const;
 
 	private:
-
+		
+		/**
+		* @brief Handle New Connection to Acceptor.
+		* @param socketFd Accept return SOCKET.
+		* @param peerAddress Accept return Address.
+		*/
 		void NewConnection(SOCKET socketFd, const InetAddress& peerAddress);
+
+		/**
+		* @brief Remove a TcpConnection.
+		* @param connection TcpConnectionPtr.
+		*/
 		void RemoveConnection(const TcpConnectionPtr& connection);
+
+		/**
+		* @brief Remove a TcpConnection InLoop.
+		* @param connection TcpConnectionPtr.
+		*/
 		void RemoveConnectionInLoop(const TcpConnectionPtr& connection);
 
 	private:

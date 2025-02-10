@@ -20,7 +20,6 @@ namespace SpicesTest {
 
 		/**
 		* @brief Basic Override Class Function.
-		* @return Returns true.
 		*/
 		void Test()
 		{
@@ -69,7 +68,7 @@ namespace SpicesTest {
 	};
 
 	/**
-	* @brief Testing if Addnode successfully.
+	* @brief Testing if add node successfully.
 	*/
 	TEST_F(directed_acyclic_graph_test, Addnode) {
 

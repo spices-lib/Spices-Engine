@@ -548,7 +548,7 @@ namespace Spices {
 		return *m_Renderer->m_Pass->GetSubPasses()->first();
 	}
 
-	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption)
+	void Renderer::RenderBehaveBuilder::Recording(const std::string& caption) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -558,7 +558,7 @@ namespace Spices {
 		NSIGHTAFTERMATH_GPUCRASHTRACKER_SETCHECKPOINT(m_CommandBuffer, m_Renderer->m_VulkanState.m_VkFunc, "Enter Pass:" + caption)
 	}
 
-	void Renderer::RenderBehaveBuilder::EndRecording()
+	void Renderer::RenderBehaveBuilder::EndRecording() const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -597,11 +597,11 @@ namespace Spices {
 		Wait(futureCmdBuffer);
 	}
 
-	void Renderer::RenderBehaveBuilder::Wait(std::future<VkCommandBuffer>& futureCmdBuffer)
+	void Renderer::RenderBehaveBuilder::Wait(std::future<VkCommandBuffer>& futureCmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
-		VkCommandBuffer buffers = futureCmdBuffer.get();
+		const VkCommandBuffer buffers = futureCmdBuffer.get();
 
 		/**
 		* @brief Merge secondary commandbuffer to main commandbuffer.
@@ -609,13 +609,13 @@ namespace Spices {
 		vkCmdExecuteCommands(m_CommandBuffer, 1, &buffers);
 	}
 
-	void Renderer::RenderBehaveBuilder::Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers)
+	void Renderer::RenderBehaveBuilder::Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers) const
 	{
 		SPICES_PROFILE_ZONE;
 
 		std::vector<VkCommandBuffer> buffers(futureCmdBuffers.size());
 
-		for (int i = 0; i < buffers.size(); i++)
+		for (size_t i = 0; i < buffers.size(); i++)
 		{
 			buffers[i] = futureCmdBuffers[i].get();
 		}
@@ -1360,7 +1360,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::RunDGC(VkCommandBuffer cmdBuffer)
+	void Renderer::RenderBehaveBuilder::RunDGC(VkCommandBuffer cmdBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -1377,7 +1377,7 @@ namespace Spices {
 		ExecuteDGC_NV(cmdBuffer);
 	}
 
-	void Renderer::RenderBehaveBuilder::RunDGCAsync()
+	void Renderer::RenderBehaveBuilder::RunDGCAsync() const
 	{
 		SPICES_PROFILE_ZONE;
 

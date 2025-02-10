@@ -16,7 +16,7 @@ namespace SpicesTest {
     {
     public:
 
-        TcpServerTest(Spices::Net::InetAddress& addr)
+        TcpServerTest(const Spices::Net::InetAddress& addr)
             : m_Server(addr)
         {
             m_Server.AddConnectionCallback([=](const Spices::Net::TcpConnectionPtr& connection) { onConnection(connection); });

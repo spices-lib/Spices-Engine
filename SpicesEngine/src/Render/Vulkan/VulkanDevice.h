@@ -120,7 +120,7 @@ namespace Spices {
 
 		/**
 		* @brief Constructor Function.
-		* Create vkdevice.
+		* Create vkDevice.
 		* @param[in] vulkanState The global VulkanState.
 		*/
 		VulkanDevice(VulkanState& vulkanState);
@@ -149,8 +149,8 @@ namespace Spices {
 		inline const QueueHelper& GetQueueHelper() const { return m_QueueHelper; }
 
 		/**
-		* @brief Get device's maxusablesamplecount.
-		* @return Returns device's maxusablesamplecount.
+		* @brief Get device's max usable sample count.
+		* @return Returns device's max usable sample count.
 		*/
 		VkSampleCountFlagBits GetMaxUsableSampleCount() const;
 
@@ -231,10 +231,10 @@ namespace Spices {
 		bool IsQueueMeetDemand(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 
 		/**
-		* @brief Query physicaldevice's SwapChainSupport.
+		* @brief Query physical device's SwapChainSupport.
 		* @param[in] device VkPhysicalDevice.
 		* @param[in] surface VkSurfaceKHR.
-		* @param[in] window The row pointer of GLFWwindow.
+		* @param[in] window The row pointer of GLFW window.
 		* @return Returns SwapChainSupportDetails.
 		*/
 		static SwapChainSupportDetails QuerySwapChainSupport(

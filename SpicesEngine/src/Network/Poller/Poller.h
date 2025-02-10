@@ -19,7 +19,7 @@ namespace Net {
 	class EventLoop;
 
 	/**
-	* @brief Inherit from this and Implementate Specific Poller
+	* @brief Inherit from this and Implement Specific Poller
 	*/
 	class Poller
 	{

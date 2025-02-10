@@ -33,7 +33,7 @@ namespace Spices {
 		m_Accel = nullptr;
 	}
 
-	VkDeviceAddress VulkanAccelerationStructure::GetACDeviceAddress()
+	VkDeviceAddress VulkanAccelerationStructure::GetACDeviceAddress() const
 	{
 		SPICES_PROFILE_ZONE;
 

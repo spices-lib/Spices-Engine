@@ -287,7 +287,7 @@ namespace Spices {
 		VkPipelineStageFlags dstStageMask        , 
 		uint32_t             srcQueueFamilyIndex , 
 		uint32_t             dstQueueFamilyIndex
-	)
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 

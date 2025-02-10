@@ -18,7 +18,7 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        Spices::Net::InetAddress address(8080, "192.168.0.127");
+        const Spices::Net::InetAddress address(8080, "192.168.0.127");
 
         EXPECT_EQ(address.ToIP(), "192.168.0.127");
         EXPECT_EQ(address.ToIPPort(), "192.168.0.127:8080");

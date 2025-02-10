@@ -21,7 +21,7 @@ namespace SpicesTest {
 		scl::behave_state_list<void> list;
 
 		{
-			auto node = list.AddNode();
+			const auto node = list.AddNode();
 
 			node->PushBehave("B", []() {
 				std::cout << "BO" << std::endl;
@@ -29,7 +29,7 @@ namespace SpicesTest {
 		}
 
 		{
-			auto node = list.AddNode();
+			const auto node = list.AddNode();
 
 			node->PushBehave("B", []() {
 				std::cout << "B1" << std::endl;
@@ -37,7 +37,7 @@ namespace SpicesTest {
 		}
 
 		{
-			auto node = list.AddNode();
+			const auto node = list.AddNode();
 
 			node->PushBehave("B", []() {
 				std::cout << "B2" << std::endl;
@@ -46,7 +46,7 @@ namespace SpicesTest {
 
 		for (int i = 0; i < 3; i++)
 		{
-			auto node = list.GetState();
+			const auto node = list.GetState();
 
 			node->ExecuteBehave("B");
 

@@ -105,7 +105,7 @@ namespace Spices {
 		vkCmdResetQueryPool(commandBuffer, m_QueryPool, 0, m_QueryCount);
 	}
 	
-	void VulkanQueryPool::QueryResults(uint64_t* result)
+	void VulkanQueryPool::QueryResults(uint64_t* result) const
 	{
 		SPICES_PROFILE_ZONE;
 

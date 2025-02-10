@@ -20,7 +20,7 @@ namespace Net {
 		, m_PollState(PollState::Deleted)
 	{}
 
-	void Channel::HandleEvent()
+	void Channel::HandleEvent() const
 	{
 		if (m_Tie.has_value())
 		{

@@ -172,7 +172,7 @@ namespace SpicesTest {
 		std::future<uint32_t> future3 = m_ThreadPool.SubmitPoolTask(std::bind(func, 300000000, 400000000));
 		std::future<uint32_t> future4 = m_ThreadPool.SubmitPoolTask(std::bind(func, 400000000, 500000000));
 
-		uint32_t subThreadCalVal = future0.get() + future1.get() + future2.get() + future3.get() + future4.get();
+		const uint32_t subThreadCalVal = future0.get() + future1.get() + future2.get() + future3.get() + future4.get();
 
 		auto multiThreadTime = std::chrono::high_resolution_clock::now();
 
@@ -180,7 +180,7 @@ namespace SpicesTest {
 
 		inTime = std::chrono::high_resolution_clock::now();
 
-		uint32_t mainThreadCalVal = func(0, 500000000);
+		const uint32_t mainThreadCalVal = func(0, 500000000);
 
 		multiThreadTime = std::chrono::high_resolution_clock::now();
 
@@ -305,7 +305,7 @@ namespace SpicesTest {
 		EXPECT_EQ(m_ThreadPool.GetThreadIdleTimeOut(),Spices::THREAD_MAX_IDLE_TIME );
 		EXPECT_EQ(m_ThreadPool.IsPoolRunning()       ,true                         );
 
-		/* @brief Wait for subthread finish. */
+		/* @brief Wait for sub thread finish. */
 		m_ThreadPool.Wait();
 
 		EXPECT_EQ(m_ThreadPool.GetInitThreadSize()   ,nThreads                     );
@@ -516,9 +516,9 @@ namespace SpicesTest {
 	}
 
 	/**
-	* @brief Testing Continue/Suspand API.
+	* @brief Testing Continue/Suspend API.
 	*/
-	TEST_F(ThreadPoolFixed_test, ContinueSuspand) {
+	TEST_F(ThreadPoolFixed_test, ContinueSuspend) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
@@ -533,7 +533,7 @@ namespace SpicesTest {
 			{
 				m_ThreadPool.SubmitPoolTask([&]() {
 					++executeCount;
-					});
+				});
 			}
 
 			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
@@ -557,7 +557,7 @@ namespace SpicesTest {
 				m_ThreadPool.SubmitPoolTask([&]() {
 					std::this_thread::sleep_for(std::chrono::seconds(2));
 					++executeCount;
-					});
+				});
 			}
 
 			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);

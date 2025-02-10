@@ -152,10 +152,10 @@ namespace Net {
 		void HandleRead();
 		void HandleWrite();
 		void HandleClose();
-		void HandleError();
+		void HandleError() const;
 
 		void SendInLoop(const char* message, size_t len);
-		void ShutDownInLoop();
+		void ShutDownInLoop() const;
 
 	private:
 

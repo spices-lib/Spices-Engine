@@ -66,7 +66,7 @@ namespace Net {
 		}
 	}
 
-	void Socket::Connect(InetAddress* connectAddress)
+	void Socket::Connect(InetAddress* connectAddress) const
 	{
 		SPICES_PROFILE_ZONE;
 

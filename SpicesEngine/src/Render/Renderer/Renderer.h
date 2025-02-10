@@ -1013,12 +1013,12 @@ namespace Spices {
 			* @brief Recording all this behaves does.
 			* @param[in] caption Recording Name
 			*/
-			void Recording(const std::string& caption);
+			void Recording(const std::string& caption) const;
 
 			/**
 			* @brief End recording all this behaveS does.
 			*/
-			void EndRecording();
+			void EndRecording() const;
 
 			/**
 			* @brief Async Commands.
@@ -1037,13 +1037,13 @@ namespace Spices {
 			* @brief Wait for merge secondary commandbuffers.
 			* @param[in] futureCmdBuffer secondary commandbuffer.
 			*/
-			void Wait(std::future<VkCommandBuffer>& futureCmdBuffer);
+			void Wait(std::future<VkCommandBuffer>& futureCmdBuffer) const;
 
 			/**
 			* @brief Wait for merge secondary commandbuffers.
 			* @param[in] futureCmdBuffers secondary commandbuffers.
 			*/
-			void Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers);
+			void Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers) const;
 
 			/**
 			* @brief Bind the pipeline created by CreatePipeline().
@@ -1149,12 +1149,12 @@ namespace Spices {
 			* @brief Run DGC Buffer.
 			* @param[in] cmdBuffer Input a VkCommandBuffer if needs, otherwise use self variable.
 			*/
-			void RunDGC(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE);
+			void RunDGC(VkCommandBuffer cmdBuffer = VK_NULL_HANDLE) const;
 
 			/**
 			* @brief Run DGC Buffer Async.
 			*/
-			void RunDGCAsync();
+			void RunDGCAsync() const;
 
 			/**
 			* @brief Preprocess Device Generated CommandsBuffer.
@@ -2022,7 +2022,7 @@ namespace Spices {
 		scl::thread_unordered_map<std::string, std::shared_ptr<VulkanPipeline>> m_Pipelines;
 
 		/**
-		* @brief Combinaion of DescriptorSet.
+		* @brief Combination of DescriptorSet.
 		*/
 		DescriptorSetManager::DescriptorSetCombineFlags m_DescriptorSetCombine;
 
@@ -2032,7 +2032,7 @@ namespace Spices {
 		bool m_IsLoadDefaultMaterial;
 
 		/**
-		* @brief Whether this renderer is actived(submit commands in RendererBehaveBuilder).
+		* @brief Whether this renderer is active(submit commands in RendererBehaveBuilder).
 		*/
 		bool m_IsActive;
 
@@ -2655,7 +2655,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		String2 m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
+		const String2 m_DescriptorSetId = { m_Renderer->m_Pass->GetName(), m_HandledSubPass->GetName() };
 
 		const auto& descriptorSets = DescriptorSetManager::GetByName(m_DescriptorSetId);
 

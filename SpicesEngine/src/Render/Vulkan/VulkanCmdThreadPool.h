@@ -59,14 +59,14 @@ namespace Spices {
 		/*************************************************************************************************************/
 
 		/**
-		* @brief Create second CommndBuffer in rhi threadPool thread.
+		* @brief Create second CommandBuffer in rhi threadPool thread.
 		* @param[in] threadId .
-		* @return Returns second CommndBuffer.
+		* @return Returns second CommandBuffer.
 		*/
 		VkCommandBuffer CreateParallelCommandBuffers(uint32_t threadId);
 
 		/**
-		* @brief Free all second CommndBuffer in rhi threadPool thread.
+		* @brief Free all second CommandBuffer in rhi threadPool thread.
 		* @param[in] frameIndex current frame index.
 		*/
 		void FreeParallelCommandBuffers(uint32_t frameIndex);

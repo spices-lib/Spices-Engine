@@ -18,7 +18,7 @@ namespace Spices {
 
 	/**
 	* @brief VulkanThreadQueue Class.
-	* This class is a wapper of Thread VkQueue.
+	* This class is a wrapper of Thread VkQueue.
 	*/
 	class VulkanThreadQueue : public VulkanObject
 	{
@@ -34,7 +34,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanThreadQueue();
+		virtual ~VulkanThreadQueue() override;
 
 		/**
 		* @brief Create Graphic VulkanThreadQueue.
@@ -86,7 +86,7 @@ namespace Spices {
 		void Submit(VkCommandBuffer commandBuffer) const;
 
 		/**
-		* @brief Wait for queu execute.
+		* @brief Wait for queue execute.
 		*/
 		void Wait() const;
 

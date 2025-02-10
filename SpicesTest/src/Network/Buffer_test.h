@@ -89,7 +89,7 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        Spices::Net::Buffer buffer;
+        const Spices::Net::Buffer buffer;
 
         EXPECT_EQ(buffer.ReadableBytes(), 0);
         EXPECT_EQ(buffer.WriteableBytes(), 1024);

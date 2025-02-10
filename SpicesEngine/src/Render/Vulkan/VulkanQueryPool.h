@@ -71,7 +71,7 @@ namespace Spices {
 		* @brief Query results from Pool.
 		* @param[in,out] result Result Data.
 		*/
-		void QueryResults(uint64_t* result);
+		void QueryResults(uint64_t* result) const;
 
 		/**
 		* @brief Get VkQueryPool Handler.

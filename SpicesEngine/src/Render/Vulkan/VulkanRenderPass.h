@@ -47,7 +47,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanRenderPass();
+		virtual ~VulkanRenderPass() override;
 
 		/**
 		* @brief Get VkRenderPass.

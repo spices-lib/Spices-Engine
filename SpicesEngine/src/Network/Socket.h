@@ -80,7 +80,7 @@ namespace Net {
 		* @brief Connect to socket
 		* @param connectAddress Connection address.
 		*/
-		void Connect(InetAddress* connectAddress);
+		void Connect(InetAddress* connectAddress) const;
 
 		/**
 		* @brief Accept connection on socket.

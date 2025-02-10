@@ -77,10 +77,10 @@ namespace Net {
 
 		/**
 		* @brief Update epoll with operation.
-		* @param[in] operation.
+		* @param[in] operation .
 		* @param[in] channel Channel.
 		*/
-		void Update(int operation, Channel* channel);
+		void Update(int operation, Channel* channel) const;
 
 	private:
 

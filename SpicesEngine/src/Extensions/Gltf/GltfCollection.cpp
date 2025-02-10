@@ -27,7 +27,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		std::shared_ptr<LoadingState> loadingState = std::make_shared<LoadingState>();
+		const std::shared_ptr<LoadingState> loadingState = std::make_shared<LoadingState>();
 
 		/**
 		* @brief Calaulate model matrix.
@@ -119,7 +119,7 @@ namespace Spices {
 				transformComp.SetRotation(rotation);
 				transformComp.SetScale(scale);
 
-				loadingState->loadedMeshes++;
+				++loadingState->loadedMeshes;
 
 				/**
 				* @brief Mark the world with MeshAddedToWorld bit.

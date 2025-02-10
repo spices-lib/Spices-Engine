@@ -267,24 +267,24 @@ namespace Spices {
             numBytesConsumed
         ))
         {
-            SPICES_CORE_WARN("Failed to decode counters.");
+            SPICES_CORE_WARN("Failed to decode counters.")
         }
 
         if (numSamplesMerged)
         {
-            SPICES_CORE_WARN("Samples appear to be merged, this can reduce the accuracy of the collected samples. Please check for any back-to-back triggers!");
+            SPICES_CORE_WARN("Samples appear to be merged, this can reduce the accuracy of the collected samples. Please check for any back-to-back triggers!")
         }
         if (decodeStopReason != NVPW_GPU_PERIODIC_SAMPLER_DECODE_STOP_REASON_ALL_GIVEN_BYTES_READ)
         {
-            SPICES_CORE_WARN("DecodeCounters stopped unexpectedly.");
+            SPICES_CORE_WARN("DecodeCounters stopped unexpectedly.")
         }
         if (!sampler.AcknowledgeRecordBuffer(numBytesConsumed))
         {
-            SPICES_CORE_WARN("Failed to acknowledge record buffer");
+            SPICES_CORE_WARN("Failed to acknowledge record buffer")
         }
         if (!counterData.UpdatePut())
         {
-            SPICES_CORE_WARN("Failed to update counter data's put pointer.");
+            SPICES_CORE_WARN("Failed to update counter data's put pointer.")
         }
 
         const uint32_t numUnreadRanges = counterData.GetNumUnreadRanges();
@@ -338,7 +338,7 @@ namespace Spices {
             std::cout << std::flush;
             if (!counterData.UpdateGet(numRangesConsumed))
             {
-                SPICES_CORE_WARN("Counter data failed to update get pointer.");
+                SPICES_CORE_WARN("Counter data failed to update get pointer.")
             }
         }
 

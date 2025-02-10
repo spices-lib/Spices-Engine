@@ -86,8 +86,8 @@ namespace SpicesTest {
 		EXPECT_EQ(std::get<1>(o.tuple), 2);
 		EXPECT_EQ(std::get<2>(o.tuple), nullptr);
 
-		size_t allBytes = Spices::MemoryLibrary::align_up<size_t>(n * sizeof(Object), 8 * 1024);
-		size_t remainBytes = allBytes - sizeof(Object);
+        const size_t allBytes = Spices::MemoryLibrary::align_up<size_t>(n * sizeof(Object), 8 * 1024);
+        const size_t remainBytes = allBytes - sizeof(Object);
 		EXPECT_EQ(m_ObjectPool->GetSpareBytes(), remainBytes);
 		EXPECT_EQ(m_ObjectPool->GetNMemoryBlocks(), 1);
 
@@ -195,7 +195,7 @@ namespace SpicesTest {
 
 		EXPECT_EQ(m_ObjectPool->GetNMemoryBlocks(), 2);
 
-		size_t allBytes = Spices::MemoryLibrary::align_up<size_t>(n * sizeof(Object), 8 * 1024) * 2;
+		const size_t allBytes = Spices::MemoryLibrary::align_up<size_t>(n * sizeof(Object), 8 * 1024) * 2;
 		EXPECT_EQ(m_ObjectPool->GetSpareBytes(), allBytes);
 	}
 

@@ -37,10 +37,10 @@ namespace Spices {
 		* @brief Get AC Buffer Address.
 		* @return Returns AC Buffer Address.
 		*/
-		VkDeviceAddress GetACDeviceAddress();
+		VkDeviceAddress GetACDeviceAddress() const;
 
 		/**
-		* @brief Get this wrappered VkAccelerationStructureKHR.
+		* @brief Get this wrapped VkAccelerationStructureKHR.
 		* @return Returns VkAccelerationStructureKHR.
 		*/
 		VkAccelerationStructureKHR& Get() { return m_Accel; }
@@ -48,7 +48,7 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief This wrappered VkAccelerationStructureKHR.
+		* @brief This wrapped VkAccelerationStructureKHR.
 		*/
 		VkAccelerationStructureKHR m_Accel;
 	};

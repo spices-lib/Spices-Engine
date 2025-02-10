@@ -35,7 +35,7 @@ namespace Spices {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~VulkanSwapChain();
+		virtual ~VulkanSwapChain() override;
 
 		/**
 		* @brief Check whether Depth Image's Format is supported by physical device.

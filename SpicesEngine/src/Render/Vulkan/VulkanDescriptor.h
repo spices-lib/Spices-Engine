@@ -105,7 +105,7 @@ namespace Spices {
         * @brief Reset this pool.
         * @note Not in use.
         */
-        void resetPool();
+        void ResetPool() const;
 
         /**
         * @brief Get the VkDescriptorPool this class wrapped.

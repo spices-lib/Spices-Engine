@@ -108,7 +108,7 @@ namespace Net {
 		}
 	}
 
-	void EPollPoller::Update(int operation, Channel* channel)
+	void EPollPoller::Update(int operation, Channel* channel) const
 	{
 		epoll_event event  = {};
 						   

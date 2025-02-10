@@ -1,5 +1,5 @@
 /**
-* @file RuntimeMemoryBlock.h.
+* @file RuntimeMemoryBlock_test.h.
 * @brief The RuntimeMemoryBlock Definitions.
 * @author Spices.
 */
@@ -184,7 +184,7 @@ namespace SpicesTest {
 		/**
 		* @brief New a object.
 		*/
-		scl::runtime_memory_block* m1 = new scl::runtime_memory_block();
+		auto m1 = new scl::runtime_memory_block();
 
 		/**
 		* @brief Testing if init succeed.

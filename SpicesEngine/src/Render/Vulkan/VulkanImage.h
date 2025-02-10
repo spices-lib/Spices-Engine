@@ -142,7 +142,8 @@ namespace Spices {
 		);
 
 		/**
-		* @brief Wapper of Call vkcmdImageBarrier.
+		* @brief Wrapper of Call vkCmdImageBarrier.
+		* @param[in] commandBuffer .
 		* @param[in] srcAccessMask .
 		* @param[in] dstAccessMask .
 		* @param[in] srcStageMask .
@@ -158,7 +159,7 @@ namespace Spices {
 			VkPipelineStageFlags  dstStageMask        ,
 			uint32_t              srcQueueFamilyIndex ,
 			uint32_t              dstQueueFamilyIndex
-		);
+		) const;
 
 		/**
 		* @brief Copy the Buffer's data to this VkImage.
@@ -369,7 +370,7 @@ namespace Spices {
 		VkFormat m_Format{};
 
 		/**
-		* @brief The Vkimage this Class Wrapped.
+		* @brief The VkImage this Class Wrapped.
 		*/
 		VkImage m_Image{};
 

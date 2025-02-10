@@ -437,9 +437,9 @@ namespace SpicesTest {
 	}
 
 	/**
-	* @brief Testing Continue/Suspand API.
+	* @brief Testing Continue/Suspend API.
 	*/
-	TEST_F(ThreadPoolCached_test, ContinueSuspand) {
+	TEST_F(ThreadPoolCached_test, ContinueSuspend) {
 
 		SPICESTEST_PROFILE_FUNCTION();
 
@@ -454,7 +454,7 @@ namespace SpicesTest {
 			{
 				m_ThreadPool.SubmitPoolTask([&]() {
 					++executeCount;
-					});
+				});
 			}
 
 			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
@@ -478,7 +478,7 @@ namespace SpicesTest {
 				m_ThreadPool.SubmitPoolTask([&]() {
 					std::this_thread::sleep_for(std::chrono::seconds(2));
 					++executeCount;
-					});
+				});
 			}
 
 			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
