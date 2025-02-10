@@ -16,18 +16,18 @@ namespace Net {
 
 	EPollPoller::EPollPoller(EventLoop* loop)
 		: Poller(loop)
-		, m_EPollFd(reinterpret_cast<SOCKET>(epoll_create1(0)))
+		, m_EPollFd(epoll_create1(0))
 		, m_Events(InitEventListSize)
 	{}
 
 	EPollPoller::~EPollPoller()
 	{
-		::closesocket(m_EPollFd);
+		epoll_close(m_EPollFd);
 	}
 
 	void EPollPoller::Poll(int timeoutMs, ChannelList* activeChannels)
 	{
-		const int numEvents = epoll_wait(reinterpret_cast<void*>(m_EPollFd), m_Events.data(), m_Events.size(), timeoutMs);
+		const int numEvents = epoll_wait(m_EPollFd, m_Events.data(), m_Events.size(), timeoutMs);
 		const int saveErrno = WSAGetLastError();
 
 		if (numEvents > 0)
@@ -118,15 +118,21 @@ namespace Net {
 		event.data.fd      = fd;
 		event.data.ptr     = channel;
 
-		if(::epoll_ctl(reinterpret_cast<void*>(m_EPollFd), operation, fd, &event) < 0)
+		if(::epoll_ctl(m_EPollFd, operation, fd, &event))
 		{
 			if(operation == EPOLL_CTL_DEL)
 			{
-				SPICES_CORE_ERROR("EPollPoller::Update::EPOLL_CTL_DEL Error")
+				std::stringstream ss;
+				ss << "EPollPoller::Update::EPOLL_CTL_DEL Error: " << WSAGetLastError();
+
+				SPICES_CORE_ERROR(ss.str())
 			}
 			else
 			{
-				SPICES_CORE_CRITICAL("EPollPoller::Update::EPOLL_CTL_ADD/MOD Error")
+				std::stringstream ss;
+				ss << "EPollPoller::Update::EPOLL_CTL_ADD/MOD Error: " << WSAGetLastError();
+
+				SPICES_CORE_CRITICAL(ss.str())
 			}
 		}
 	}

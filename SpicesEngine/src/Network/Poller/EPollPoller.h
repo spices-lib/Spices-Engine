@@ -87,7 +87,7 @@ namespace Net {
 		/**
 		* @brief EPoll fd.
 		*/
-		SOCKET m_EPollFd;
+		HANDLE m_EPollFd;
 
 		/**
 		* @brief EventList.
