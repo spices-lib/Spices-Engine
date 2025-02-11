@@ -10,95 +10,87 @@
 #include <Network/EventLoop.h>
 #include <Network/Channel.h>
 #include "Instrumentor.h"
+#include <WinSock2.h>
 
 namespace SpicesTest {
 
-    int gEventFd = -1;
-    int gEventFd2 = -1;
-    bool fRunning = true;
-
-    void ThreadFunc()
-    {
-        HANDLE epollFd = epoll_create1(0);
-
-        epoll_event evEvent;
-        evEvent.events = EPOLLIN;
-        evEvent.data.fd = gEventFd;
-        //evEvent.data.hnd = static_cast<void*>(gEventFd);
-        evEvent.data.sock = gEventFd;
-        evEvent.data.u32 = gEventFd;
-        evEvent.data.u64 = gEventFd;
-        epoll_ctl(epollFd, EPOLL_CTL_ADD, gEventFd, &evEvent);
-
-        epoll_event evEvent2;
-        evEvent2.events = EPOLLIN;
-        evEvent2.data.fd = gEventFd2;
-
-        evEvent.data.sock = gEventFd;
-        evEvent.data.u32 = gEventFd;
-        evEvent.data.u64 = gEventFd;
-        epoll_ctl(epollFd, EPOLL_CTL_ADD, gEventFd2, &evEvent2);
-
-        epoll_event events[2];
-
-        char exp = 0;
-        int result = 0;
-        while (fRunning)
-        {
-            int nfd = epoll_wait(epollFd, events, 2, -1);
-            if (nfd > 0)
-            {
-                for (int i = 0; i < nfd; ++i)
-                {
-                    exp = 0;
-                    result = 0;
-
-                    if (events[i].data.fd == gEventFd)
-                    {
-                        result = recv(gEventFd, &exp, sizeof(char), 0);
-                        std::cout << "gEventFd recv : " << result;
-                    }
-                    else if (events[i].data.fd == gEventFd2)
-                    {
-                        result = recv(gEventFd2, &exp, sizeof(char), 0);
-                        std::cout << "gEventFd2 recv : " << result;
-                    }
-                }
-            }
-        }
-    };
-
-    void SendEventFd()
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        
-        char u = 100;
-        send(gEventFd, &u, sizeof(char), 0);
-        std::cout << WSAGetLastError() << std::endl;
-
-        send(gEventFd2, &u, sizeof(char), 0);
-    }
-
     /**
-    * @brief Testing Spices::Net::EPollPoller.
+    * @brief Testing Spices::Net::EPOLLPOLL.
     */
-    TEST(EPollPoller_test, EPollPoller) {
+    TEST(EPollPoller_test, EPOLLPOLL) {
 
         SPICESTEST_PROFILE_FUNCTION();
+        
+        using namespace Spices::Net;
 
-        Spices::Net::Socket socket;
-        socket.Create();
-        gEventFd = socket.Fd();
+        int r;
 
-        Spices::Net::Socket socket2;
-        socket2.Create();
-        gEventFd2 = socket2.Fd();
+        InetAddress addr(8000);
 
-        std::thread t1(ThreadFunc);
-        std::thread t2(SendEventFd);
+        Socket listen_sock;
+        listen_sock.Create();
+        listen_sock.BindAddress(addr);
+        listen_sock.Listen();
 
-        t1.join();
-        t2.join();
+        Socket client_sock;
+        client_sock.Create();
+
+        EPollPoller epoller(pTLSEventLoop.GetInst());
+        HANDLE ephnd = epoller.GetHandle();
+
+        // add listen_sock read event to epoll
+        {
+            epoll_event ev;
+            ev.events = EPOLLIN | EPOLLPRI;
+            ev.data.sock = listen_sock.Fd();
+
+            r = epoll_ctl(ephnd, EPOLL_CTL_ADD, listen_sock.Fd(), &ev);
+        }
+
+        // add listen_sock write event to epoll
+        {
+            epoll_event ev;
+            ev.events = EPOLLOUT;
+            ev.data.sock = client_sock.Fd();
+
+            r = epoll_ctl(ephnd, EPOLL_CTL_ADD, client_sock.Fd(), &ev);
+        }
+
+        client_sock.Connect(&addr);
+
+        // shoule be 2 event.
+        epoll_event evs[8];
+        r = epoll_wait(ephnd, evs, 8, -1);
+
+        InetAddress peerAddress;
+        Socket server_sock(listen_sock.Accept(&peerAddress));
+
+        for (int round = 0; round < 5; round++)
+        {
+            static char buf[1 << 20];
+            epoll_event evs[8];
+            int bytes_received, bytes_sent;
+
+            r = epoll_wait(ephnd, evs, 8, -1);
+
+            memset(buf, round, sizeof(buf));
+
+            bytes_sent = 0;
+            do {
+                client_sock.Send(std::string(buf, sizeof(buf)));
+                bytes_sent += sizeof(buf);
+
+                r = epoll_wait(ephnd, evs, 8, 0);
+            } while (r > 0);
+
+            bytes_received = 0;
+            do {
+                auto s = server_sock.Receive();
+                bytes_received += s.size();
+            } while (bytes_received < bytes_sent);
+        }
+
+        r = epoll_ctl(ephnd, EPOLL_CTL_DEL, client_sock.Fd(), NULL);
     }
 
 }

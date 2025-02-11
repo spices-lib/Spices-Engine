@@ -15,7 +15,7 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		EventLoop* loop = pTLSEventLoop.GetInst();
+		EventLoop* loop = EventLoopThreadWrapper::GetInst();
 
 		if (!m_Loops.empty())
 		{
@@ -37,7 +37,7 @@ namespace Net {
 
 		if (m_Loops.empty())
 		{
-			return std::vector<EventLoop*>(1, pTLSEventLoop.GetInst());
+			return std::vector<EventLoop*>(1, EventLoopThreadWrapper::GetInst());
 		}
 		else
 		{
@@ -49,7 +49,7 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		EventLoop* loop = pTLSEventLoop.GetInst();
+		EventLoop* loop = EventLoopThreadWrapper::GetInst();
 
 		if (m_ThreadInitCallback)
 		{

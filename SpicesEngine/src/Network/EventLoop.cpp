@@ -161,12 +161,17 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (!instance)
+		/**
+		* @brief Thread Unique EventLoop.
+		*/
+		static _declspec(thread) EventLoopThreadWrapper pTLSEventLoop;
+
+		if (!pTLSEventLoop.instance)
 		{
-			instance = new EventLoop();
+			pTLSEventLoop.instance = new EventLoop();
 		}
 
-		return instance;
+		return pTLSEventLoop.instance;
 	}
 
 }

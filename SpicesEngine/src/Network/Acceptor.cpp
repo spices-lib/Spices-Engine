@@ -24,7 +24,7 @@ namespace Net {
 		m_AcceptSocket.SetReuseAddress(true);
 		m_AcceptSocket.BindAddress(listenAddress);
 
-		m_AcceptChannel = std::make_shared<Channel>(m_AcceptSocket.Fd(), pTLSEventLoop.GetInst());
+		m_AcceptChannel = std::make_shared<Channel>(m_AcceptSocket.Fd(), EventLoopThreadWrapper::GetInst());
 		m_AcceptChannel->SetReadCallback([=]() { HandleRead(); });
 	}
 

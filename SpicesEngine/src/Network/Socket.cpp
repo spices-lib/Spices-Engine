@@ -57,7 +57,7 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (::listen(m_SocketFd, 1024) < 0)
+		if (::listen(m_SocketFd, SOMAXCONN) < 0)
 		{
 			std::stringstream ss;
 			ss << "Socket::Listen failed, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
@@ -70,8 +70,16 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		if (::connect(m_SocketFd, reinterpret_cast<sockaddr*>(connectAddress->GetSockAddress()), sizeof(sockaddr_in)) < 0)
+		int r = ::connect(m_SocketFd, reinterpret_cast<sockaddr*>(connectAddress->GetSockAddress()), sizeof(sockaddr_in));
+
+		if (r < 0)
 		{
+			// Non-Blocking usually return this error code.
+			if (WSAGetLastError() == 10035)
+			{
+				return;
+			}
+
 			std::stringstream ss;
 			ss << "Socket::Connect failed, socket fd: " << m_SocketFd << " Error: " << WSAGetLastError();
 

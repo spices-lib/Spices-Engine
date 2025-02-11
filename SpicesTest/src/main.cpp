@@ -60,10 +60,10 @@
 //
 ///* NetWork */
 //#include "Network/Buffer_test.h"
-#include "Network/EPollPoller_test.h"
+//#include "Network/EPollPoller_test.h"
 //#include "Network/InetAddress_test.h"
 //#include "Network/Socket_test.h"
-//#include "Network/TcpServer_test.h"
+#include "Network/TcpServer_test.h"
 
 /* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"

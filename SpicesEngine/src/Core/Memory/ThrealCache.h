@@ -102,7 +102,7 @@ namespace Spices {
 		* @brief Get ThreadCache Instance.
 		* @reutrn Returns ThreadCache Instance.
 		*/
-		ThreadCache*& GetInst();
+		static ThreadCache*& GetInst();
 
 	private:
 
@@ -111,9 +111,4 @@ namespace Spices {
 		*/
 		ThreadCache* instance;
 	};
-
-	/**
-	* @brief Thread Unique TCWapper.
-	*/
-	static _declspec(thread) ThreadCacheThreadWapper pTLSThreadCache;
 }

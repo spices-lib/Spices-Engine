@@ -146,7 +146,7 @@ namespace Net {
         */
         void DisableReading() 
         { 
-            m_Events &= ~EventBits::Read; 
+            m_Events &= ~EventBits::Read;
             Update(); 
         }
 

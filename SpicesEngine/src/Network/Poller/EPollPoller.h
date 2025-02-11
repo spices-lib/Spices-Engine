@@ -48,6 +48,12 @@ namespace Net {
 		EPollPoller& operator=(const EPollPoller&) = delete;
 
 		/**
+		* @brief Get this EPollPoller Handle.
+		* @return Return this EPollPoller Handle.
+		*/
+		HANDLE GetHandle() { return m_EPollFd; }
+
+		/**
 		* @brief Poll events on EventList.
 		* @param[in] timeoutMs .
 		* @param[in,out] activeChannels Channels that events happened.

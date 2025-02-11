@@ -141,7 +141,7 @@ namespace Net {
 		* @brief Get EventLoop Instance.
 		* @reutrn Returns EventLoop Instance.
 		*/
-		EventLoop*& GetInst();
+		static EventLoop*& GetInst();
 
 	private:
 
@@ -150,11 +150,6 @@ namespace Net {
 		*/
 		EventLoop* instance;
 	};
-
-	/**
-	* @brief Thread Unique EventLoop.
-	*/
-	static _declspec(thread) EventLoopThreadWrapper pTLSEventLoop;
 
 }
 

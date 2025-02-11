@@ -133,11 +133,16 @@ namespace Spices {
 
 	ThreadCache*& ThreadCacheThreadWapper::GetInst()
 	{
-		if (!instance)
+		/**
+		* @brief Thread Unique TCWapper.
+		*/
+		static _declspec(thread) ThreadCacheThreadWapper pTLSThreadCache;
+
+		if (!pTLSThreadCache.instance)
 		{
-			instance = objectPool.ThreadNew();
+			pTLSThreadCache.instance = objectPool.ThreadNew();
 		}
 
-		return instance;
+		return pTLSThreadCache.instance;
 	}
 }

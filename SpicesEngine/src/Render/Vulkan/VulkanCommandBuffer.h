@@ -90,6 +90,12 @@ namespace Spices {
 		*/
 		virtual ~VulkanCommandPoolThreadWrapper();
 
+		/**
+		* @brief Get this instance.
+		* @return Return this instance.
+		*/
+		static VulkanCommandPoolThreadWrapper& GetInst();
+
 	public:
 
 		/**
@@ -102,11 +108,6 @@ namespace Spices {
 		*/
 		int m_ComputeThreadId;
 	};
-
-	/**
-	* @brief Thread Unique VulkanCommandPoolThreadWrapper.
-	*/
-	static _declspec(thread) VulkanCommandPoolThreadWrapper pTLSVulkanCommandPool;
 
 	/**
 	* @brief VulkanCommandBuffer Class.

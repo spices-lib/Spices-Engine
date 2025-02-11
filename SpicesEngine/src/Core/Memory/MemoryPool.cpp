@@ -35,7 +35,7 @@ namespace Spices {
 		*/
 		else
 		{
-			return pTLSThreadCache.GetInst()->Allocate(size);
+			return ThreadCacheThreadWapper::GetInst()->Allocate(size);
 		}
 	}
 
@@ -66,7 +66,7 @@ namespace Spices {
 		*/
 		else
 		{
-			pTLSThreadCache.GetInst()->Deallocate(ptr, size);
+			ThreadCacheThreadWapper::GetInst()->Deallocate(ptr, size);
 		}
 	}
 

@@ -39,7 +39,7 @@ namespace Net {
 			const TcpConnectionPtr connection = item.second;
 			item.second.reset();
 
-			pTLSEventLoop.GetInst()->RunInLoop([=]() { connection->ConnectDestroyed(); });
+			EventLoopThreadWrapper::GetInst()->RunInLoop([=]() { connection->ConnectDestroyed(); });
 		}
 	}
 
@@ -50,7 +50,7 @@ namespace Net {
 		if(!m_ThreadPool->IsPoolRunning())
 		{
 			m_ThreadPool->Start(threadSize, m_ThreadInitCallback);
-			pTLSEventLoop.GetInst()->RunInLoop([=]() { m_Acceptor->Listen(); });
+			EventLoopThreadWrapper::GetInst()->RunInLoop([=]() { m_Acceptor->Listen(); });
 		}
 	}
 
@@ -91,7 +91,7 @@ namespace Net {
 
 	void TcpServer::RemoveConnection(const TcpConnectionPtr& connection)
 	{
-		pTLSEventLoop.GetInst()->RunInLoop([=]() { RemoveConnectionInLoop(connection); });
+		EventLoopThreadWrapper::GetInst()->RunInLoop([=]() { RemoveConnectionInLoop(connection); });
 	}
 
 	void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& connection)

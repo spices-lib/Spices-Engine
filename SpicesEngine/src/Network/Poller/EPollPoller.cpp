@@ -115,7 +115,7 @@ namespace Net {
 		SOCKET fd          = channel->Fd();
 					       
 		event.events       = channel->Events();
-		event.data.fd      = fd;
+		event.data.sock    = fd;
 		event.data.ptr     = channel;
 
 		if(::epoll_ctl(m_EPollFd, operation, fd, &event))

@@ -59,9 +59,31 @@ namespace SpicesTest {
 
         SPICESTEST_PROFILE_FUNCTION();
 
-        TcpServerTest server(Spices::Net::InetAddress(8000));
-        server.start();
-        Spices::Net::pTLSEventLoop.GetInst()->Loop();
+        using namespace Spices::Net;
+
+        InetAddress address(8000);
+        EventLoop* loop = nullptr;
+        std::thread t([&]() {
+
+            TcpServerTest server(address);
+            server.start();
+            
+            loop = EventLoopThreadWrapper::GetInst();
+            loop->Loop();
+        });
+
+        while (!loop) {}
+
+        Socket client;
+        client.Create();
+        Channel channel(client.Fd(), loop);
+        channel.EnableReading();
+        channel.EnableWriting();
+        client.Connect(&address);
+
+
+
+        t.join();
     }
 
 }

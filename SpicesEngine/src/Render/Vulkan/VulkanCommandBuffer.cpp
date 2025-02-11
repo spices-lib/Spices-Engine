@@ -37,7 +37,7 @@ namespace Spices {
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_GraphicCommandPool))
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_GraphicCommandPool), vulkanState.m_Device, "GraphicCommandPool")
 		
-		pTLSVulkanCommandPool.m_GraphicThreadId = 0;
+		VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId = 0;
 		m_ThreadGraphicCommandPool.push_back(vulkanState.m_GraphicCommandPool);
 		
 		poolInfo.queueFamilyIndex = vulkanState.m_ComputeQueueFamily;
@@ -48,7 +48,7 @@ namespace Spices {
 		VK_CHECK(vkCreateCommandPool(vulkanState.m_Device, &poolInfo, nullptr, &vulkanState.m_ComputeCommandPool))
 		DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(vulkanState.m_ComputeCommandPool), vulkanState.m_Device, "ComputeCommandPool")
 
-		pTLSVulkanCommandPool.m_ComputeThreadId = 0;
+		VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId = 0;
 		m_ThreadComputeCommandPool.push_back(vulkanState.m_ComputeCommandPool);
 	}
 
@@ -91,21 +91,21 @@ namespace Spices {
 			SPICES_CORE_ERROR("CommandPool is not active.")
 		}
 
-		if(pTLSVulkanCommandPool.m_GraphicThreadId == -1)
+		if(VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId == -1)
 		{
 			for (int i = 0; i < m_ThreadGraphicCommandPool.size(); i++)
 			{
-				if (!m_ThreadGraphicCommandPool[i]) pTLSVulkanCommandPool.m_GraphicThreadId = i;
+				if (!m_ThreadGraphicCommandPool[i]) VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId = i;
 			}
 			
-			if (pTLSVulkanCommandPool.m_GraphicThreadId == -1)
+			if (VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId == -1)
 			{
-				pTLSVulkanCommandPool.m_GraphicThreadId = m_ThreadGraphicCommandPool.size();
+				VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId = m_ThreadGraphicCommandPool.size();
 				m_ThreadGraphicCommandPool.push_back(nullptr);
 			}
 		}
 		
-		if(!m_ThreadGraphicCommandPool[pTLSVulkanCommandPool.m_GraphicThreadId])
+		if(!m_ThreadGraphicCommandPool[VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId])
 		{
 			/**
 			* @brief Instanced a VkCommandPoolCreateInfo with default value.
@@ -121,10 +121,10 @@ namespace Spices {
 			VkCommandPool pool;
 			VK_CHECK(vkCreateCommandPool(VulkanRenderBackend::GetState().m_Device, &poolInfo, nullptr, &pool))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(pool), VulkanRenderBackend::GetState().m_Device, "ThreadGraphicCommandPool")
-			m_ThreadGraphicCommandPool[pTLSVulkanCommandPool.m_GraphicThreadId] = std::move(pool);
+			m_ThreadGraphicCommandPool[VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId] = std::move(pool);
 		}
 
-		return m_ThreadGraphicCommandPool[pTLSVulkanCommandPool.m_GraphicThreadId];
+		return m_ThreadGraphicCommandPool[VulkanCommandPoolThreadWrapper::GetInst().m_GraphicThreadId];
 	}
 
 	VkCommandPool& VulkanCommandPool::GetThreadComputeCommandPool()
@@ -138,21 +138,21 @@ namespace Spices {
 			SPICES_CORE_ERROR("CommandPool is not active.")
 		}
 
-		if (pTLSVulkanCommandPool.m_ComputeThreadId == -1)
+		if (VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId == -1)
 		{
 			for (int i = 0; i < m_ThreadComputeCommandPool.size(); i++)
 			{
-				if (!m_ThreadComputeCommandPool[i]) pTLSVulkanCommandPool.m_ComputeThreadId = i;
+				if (!m_ThreadComputeCommandPool[i]) VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId = i;
 			}
 
-			if (pTLSVulkanCommandPool.m_ComputeThreadId == -1)
+			if (VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId == -1)
 			{
-				pTLSVulkanCommandPool.m_ComputeThreadId = m_ThreadComputeCommandPool.size();
+				VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId = m_ThreadComputeCommandPool.size();
 				m_ThreadComputeCommandPool.push_back(nullptr);
 			}
 		}
 		
-		if(m_ThreadComputeCommandPool[pTLSVulkanCommandPool.m_ComputeThreadId])
+		if(m_ThreadComputeCommandPool[VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId])
 		{
 			/**
 			* @brief Instanced a VkCommandPoolCreateInfo with default value.
@@ -168,10 +168,10 @@ namespace Spices {
 			VkCommandPool pool;
 			VK_CHECK(vkCreateCommandPool(VulkanRenderBackend::GetState().m_Device, &poolInfo, nullptr, &pool))
 			DEBUGUTILS_SETOBJECTNAME(VK_OBJECT_TYPE_COMMAND_POOL, reinterpret_cast<uint64_t>(pool), VulkanRenderBackend::GetState().m_Device, "ThreadComputeCommandPool")
-			m_ThreadComputeCommandPool[pTLSVulkanCommandPool.m_ComputeThreadId] = std::move(pool);
+			m_ThreadComputeCommandPool[VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId] = std::move(pool);
 		}
 
-		return m_ThreadComputeCommandPool[pTLSVulkanCommandPool.m_ComputeThreadId];
+		return m_ThreadComputeCommandPool[VulkanCommandPoolThreadWrapper::GetInst().m_ComputeThreadId];
 	}
 
 	VulkanCommandBuffer::VulkanCommandBuffer(VulkanState& vulkanState)
@@ -233,5 +233,15 @@ namespace Spices {
 				pool = nullptr;
 			}
 		}
+	}
+
+	VulkanCommandPoolThreadWrapper& VulkanCommandPoolThreadWrapper::GetInst()
+	{
+		/**
+		* @brief Thread Unique VulkanCommandPoolThreadWrapper.
+		*/
+		static _declspec(thread) VulkanCommandPoolThreadWrapper pTLSVulkanCommandPool;
+
+		return pTLSVulkanCommandPool;
 	}
 }
