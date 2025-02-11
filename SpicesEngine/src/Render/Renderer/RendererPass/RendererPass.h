@@ -55,7 +55,7 @@ namespace Spices {
 			const std::string&       subPassName , 
 			uint32_t                 index       , 
 			Querier::StatisticsFlags flags
-		);
+		) const;
 
 		/**
 		* @brief Add a attachment to this renderer pass.

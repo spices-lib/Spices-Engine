@@ -1,3 +1,9 @@
+/**
+* @file TracyProfilerWrapper.cpp file.
+* @brief The TracyProfilerWrapper Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "TracyProfilerWrapper.h"
 #include "Render/Vulkan/VulkanUtils.h"

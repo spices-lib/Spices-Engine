@@ -71,13 +71,13 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		for (auto& queryer : m_Queries)
+		for (auto& querier : m_Queries)
 		{
-			if (!queryer) continue;
+			if (!querier) continue;
 
-			if (queryer->GetStatisticsType() & flage)
+			if (querier->GetStatisticsType() & flage)
 			{
-				fn(queryer->GetStatisticsType(), queryer->GetPoolResult());
+				fn(querier->GetStatisticsType(), querier->GetPoolResult());
 			}
 		}
 	}

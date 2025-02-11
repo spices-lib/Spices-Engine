@@ -35,14 +35,9 @@ namespace Net {
 
 		/**
 		* @brief Constructor Function.
-		*/
-		EventLoop();
-
-		/**
-		* @brief Constructor Function.
 		* @param[in] address ListenAddress.
 		*/
-		EventLoop(InetAddress* address);
+		EventLoop(InetAddress* address = nullptr);
 
 		/**
 		* @brief Destructor Function.

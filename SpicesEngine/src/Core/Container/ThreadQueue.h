@@ -68,7 +68,7 @@ namespace scl {
 		std::atomic_int m_Count;
 
 		/**
-		* @brief This wrappered queue.
+		* @brief This wrapped queue.
 		*/
 		std::queue<T> m_Queue;
 	};

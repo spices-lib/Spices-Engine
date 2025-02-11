@@ -44,7 +44,7 @@ namespace Net {
 
 	TcpConnection::~TcpConnection()
 	{
-		SPICES_CORE_INFO("TcpConnection disconnection");
+		SPICES_CORE_INFO("TcpConnection disconnection")
 	}
 
 	void TcpConnection::Send(const std::string& buffer)

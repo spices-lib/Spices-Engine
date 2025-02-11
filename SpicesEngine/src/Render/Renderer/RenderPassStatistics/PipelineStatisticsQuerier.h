@@ -15,13 +15,13 @@ namespace Spices {
 	*/
 	enum class PipelineStatisticEnum
 	{
-		INPUT_ASSEMBLY_VERTICES                    = 0,          /* @brief Input Assembly of Vertics.                  */
+		INPUT_ASSEMBLY_VERTICES                    = 0,          /* @brief Input Assembly of Vertices.                 */
 		INPUT_ASSEMBLY_PRIMITIVES                  = 1,          /* @brief Input Assembly of Primitives.               */
 		VERTEX_SHADER_INVOCATIONS                  = 2,          /* @brief Vertex Shader Invocations.                  */
 		GEOMETRY_SHADER_INVOCATIONS                = 3,          /* @brief Geometry Shader Invocations.                */
 		GEOMETRY_SHADER_PRIMITIVES                 = 4,          /* @brief Geometry Shader Primitives.                 */
-		CLIPPING_INVOCATIONS                       = 5,          /* @brief Cliping Invocations.                        */
-		CLIPPING_PRIMITIVES                        = 6,          /* @brief Cliping Primitives.                         */
+		CLIPPING_INVOCATIONS                       = 5,          /* @brief Clipping Invocations.                       */
+		CLIPPING_PRIMITIVES                        = 6,          /* @brief Clipping Primitives.                        */
 		FRAGMENT_SHADER_INVOCATIONS                = 7,          /* @brief Fragment Shader Invocations.                */
 		TESSELLATION_CONTROL_SHADER_PATCHES        = 8,          /* @brief Tessellation Control Shader Patches.        */
 		TESSELLATION_EVALUATION_SHADER_INVOCATIONS = 9,          /* @brief Tessellation Evaluation Shader Invocations. */
@@ -33,9 +33,9 @@ namespace Spices {
 	};
 
 	/**
-	* @brief Thransfer a PipelineStatisticEnum to a string.
+	* @brief Transfer a PipelineStatisticEnum to a string.
 	* @param[in] e PipelineStatisticEnum.
-	* @reurn Returns transfered string.
+	* @reurn Returns transfer string.
 	*/
 	static std::string PipelineStatisticEnumToString(PipelineStatisticEnum e)
 	{

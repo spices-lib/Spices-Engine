@@ -24,9 +24,9 @@ namespace Net {
 
 		enum class State 
 		{ 
-			Disconnected = 0, 
-			Connecting = 1, 
-			Connected = 2, 
+			Disconnected  = 0, 
+			Connecting    = 1, 
+			Connected     = 2, 
 			Disconnecting = 3 
 		};
 
@@ -69,7 +69,7 @@ namespace Net {
 		* @brief Get this TcpConnection IO EventLoop.
 		* @return Returns this TcpConnection IO EventLoop.
 		*/
-		EventLoop* GetLoop() { return m_IoLoop; }
+		EventLoop* GetLoop() const { return m_IoLoop; }
 
 		/**
 		* @brief Get this TcpConnection name.
@@ -94,7 +94,16 @@ namespace Net {
 		* @return Returns true if this TcpConnection is connected.
 		*/
 		bool Connected() const { return m_State == State::Connected; }
+
+		/**
+		* @brief Send message to socket.
+		* @param[in] buffer Data.
+		*/
 		void Send(const std::string& buffer);
+
+		/**
+		* @brief ShutDown socket.
+		*/
 		void ShutDown();
 
 		/**
@@ -188,7 +197,14 @@ namespace Net {
 		*/
 		EventLoop* m_IoLoop;
 
+		/**
+		* @brief TcpConnection name.
+		*/
 		std::string m_Name;
+
+		/**
+		* @brief TcpConnection state.
+		*/
 		std::atomic<State> m_State;
 		bool m_Reading;
 

@@ -580,7 +580,7 @@ namespace Spices {
 		});
 	}
 
-	void Renderer::RenderBehaveBuilder::Await(std::function<void(const VkCommandBuffer& cmdBuffer)> func)
+	void Renderer::RenderBehaveBuilder::Await(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -2511,8 +2511,8 @@ namespace Spices {
 		Renderer*                        renderer
 	)
 		: m_Renderer(renderer)
-		, m_Material(material)
-		, m_HandledSubPass(subPass)
+		, m_Material(std::move(material))
+		, m_HandledSubPass(std::move(subPass))
 		, m_pipelineConfig{}
 	{}
 

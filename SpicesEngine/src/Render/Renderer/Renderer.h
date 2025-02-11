@@ -1031,17 +1031,17 @@ namespace Spices {
 			* @brief Await Async Commands.
 			* @param[in] func In Function Pointer.
 			*/
-			void Await(std::function<void(const VkCommandBuffer& cmdBuffer)> func);
+			void Await(std::function<void(const VkCommandBuffer& cmdBuffer)> func) const;
 
 			/**
-			* @brief Wait for merge secondary commandbuffers.
-			* @param[in] futureCmdBuffer secondary commandbuffer.
+			* @brief Wait for merge secondary commandBuffers.
+			* @param[in] futureCmdBuffer secondary commandBuffer.
 			*/
 			void Wait(std::future<VkCommandBuffer>& futureCmdBuffer) const;
 
 			/**
-			* @brief Wait for merge secondary commandbuffers.
-			* @param[in] futureCmdBuffers secondary commandbuffers.
+			* @brief Wait for merge secondary commandBuffer.
+			* @param[in] futureCmdBuffers secondary commandBuffer.
 			*/
 			void Wait(std::vector<std::future<VkCommandBuffer>>& futureCmdBuffers) const;
 

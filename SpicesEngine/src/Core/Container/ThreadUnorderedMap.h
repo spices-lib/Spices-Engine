@@ -11,7 +11,7 @@
 namespace scl {
 
 	/**
-	* @brief Thread safe unorderer_map.
+	* @brief Thread safe unordered_map.
 	*/
 	template<typename K, typename V>
 	class thread_unordered_map
@@ -32,7 +32,7 @@ namespace scl {
 		* @brief Is this queue is empty.
 		* @reutrn Returns true if empty.
 		*/
-		bool IsEmpty() { return m_Count.load() == 0; }
+		bool IsEmpty() const { return m_Count.load() == 0; }
 
 		/**
 		* @brief Insert a element to this.
@@ -89,7 +89,7 @@ namespace scl {
 		std::shared_mutex m_Mutex;
 
 		/**
-		* @brief This wrappered unordered_map.
+		* @brief This wrapped unordered_map.
 		*/
 		std::unordered_map<K, V> m_Map;
 

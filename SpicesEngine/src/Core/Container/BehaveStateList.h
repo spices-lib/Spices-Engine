@@ -50,7 +50,7 @@ namespace scl {
 		/**
 		* @brief Execute a behave in this state.
 		* @param[in] name behave name.
-		* @param[in] args Parmeters
+		* @param[in] args Parameters
 		*/
 		void ExecuteBehave(const std::string& name, Args... args)
 		{
@@ -63,7 +63,7 @@ namespace scl {
 
 	/**
 	* @brief behave_state_list.
-	* wapper of combing all state behaves.
+	* wrapper of combing all state behaves.
 	* @tparam Ret Return type.
 	* @tparam Args Parameter type.
 	*/

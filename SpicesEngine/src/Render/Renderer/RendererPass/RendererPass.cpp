@@ -26,7 +26,7 @@ namespace Spices {
 		const std::string&       subPassName  ,
 		uint32_t                 index        , 
 		Querier::StatisticsFlags flags
-	)
+	) const
 	{
 		SPICES_PROFILE_ZONE;
 		
