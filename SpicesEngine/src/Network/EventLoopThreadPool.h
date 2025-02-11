@@ -26,11 +26,12 @@ namespace Net {
         /**
         * @brief Constructor Function.
         * Create Specific ThreadPool.
-        * @param[in] name ThreadPool Name.
+        * @param[in] listenAddress InetAddress.
         */
-        EventLoopThreadPool(const std::string& name)
-            : ThreadPool_Basic(name)
+        EventLoopThreadPool(const InetAddress& listenAddress)
+            : ThreadPool_Basic(listenAddress.ToIPPort())
             , m_Next(0)
+            , m_ListenAddress(listenAddress)
             , m_ThreadInitCallback(nullptr)
         {}
 
@@ -76,6 +77,11 @@ namespace Net {
         * @brief Next EventLoop index.
         */
         int m_Next;
+
+        /**
+        * @brief ListenAddress.
+        */
+        InetAddress m_ListenAddress;
 
         /**
         * @brief All threads EventLoop collection.

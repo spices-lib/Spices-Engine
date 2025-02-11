@@ -21,6 +21,9 @@ namespace Net {
 	class Channel;
 	class Poller;
 
+	/**
+	* @brief Wrapper of Poller and wakeup socket to acceptor(SubLoop).
+	*/
 	class EventLoop
 	{
 	public:
@@ -34,6 +37,12 @@ namespace Net {
 		* @brief Constructor Function.
 		*/
 		EventLoop();
+
+		/**
+		* @brief Constructor Function.
+		* @param[in] address ListenAddress.
+		*/
+		EventLoop(InetAddress* address);
 
 		/**
 		* @brief Destructor Function.
@@ -62,8 +71,16 @@ namespace Net {
 		*/
 		void Quit();
 
+		/**
+		* @brief Push functor to pending functors.
+		* @param[in] cb Functor.
+		*/
 		void RunInLoop(Functor cb);
 
+		/**
+		* @brief Execute functor in EventLoop thread.
+		* @param[in] cb Functor.
+		*/
 		void QueueInLoop(Functor cb);
 
 		/**
@@ -71,10 +88,29 @@ namespace Net {
 		*/
 		void WakeUp();
 
+		/**
+		* @brief Update channel state with poller.
+		* @param[in] channel Channel.
+		*/
 		void UpdateChannel(Channel* channel);
+
+		/**
+		* @brief Remove channel from poller.
+		* @param[in] channel Channel.
+		*/
 		void RemoveChannel(Channel* channel);
+
+		/**
+		* @brief Determine if channel is inside poller.
+		* @param[in] channel Channel.
+		* @return Returns true if channel is inside poller.
+		*/
 		bool HasChannel(Channel* channel);
 
+		/**
+		* @brief Determine if current thread is in eventloop thread.
+		* @return Returns true if is in eventloop thread.
+		*/
 		bool IsInLoopThread() const { return m_ThreadId == GetCurrentThreadId(); }
 
 	private:
@@ -101,6 +137,9 @@ namespace Net {
 		*/
 		std::atomic_bool m_IsQuit;
 
+		/**
+		* @brief True if is execute pending functors.
+		*/
 		std::atomic_bool m_IsCallingPendingFunctors;
 
 		/**
@@ -108,15 +147,34 @@ namespace Net {
 		*/
 		DWORD m_ThreadId;
 
+		/**
+		* @brief Poller instance.
+		*/
 		std::shared_ptr<Poller> m_Poller;
 
+		/**
+		* @brief Wakeup Socket.
+		*/
 		Socket m_WakeupFd;
+
+		/**
+		* @brief Wakeup Channel.
+		*/
 		std::unique_ptr<Channel> m_WeakupChannel;
 
+		/**
+		* @brief Channels with events.
+		*/
 		ChannelList m_ActiveChannels;
-		Channel* m_CurrentActiveChannel;
 
+		/**
+		* @brief Delay functors.
+		*/
 		std::vector<Functor> m_PendingFunctors;
+
+		/**
+		* @brief Mutex for PendingFunctors.
+		*/
 		std::mutex m_Mutex;
 	};
 
@@ -141,7 +199,7 @@ namespace Net {
 		* @brief Get EventLoop Instance.
 		* @reutrn Returns EventLoop Instance.
 		*/
-		static EventLoop*& GetInst();
+		static EventLoop*& GetInst(InetAddress* address = nullptr);
 
 	private:
 

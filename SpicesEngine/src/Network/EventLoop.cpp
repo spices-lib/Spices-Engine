@@ -23,13 +23,29 @@ namespace Net {
 		: m_IsLooping(false)
 		, m_IsQuit(false)
 		, m_IsCallingPendingFunctors(false)
-		, m_CurrentActiveChannel(nullptr)
 	{
 		SPICES_PROFILE_ZONE;
 
 		m_ThreadId = GetCurrentThreadId();
 		m_Poller = Poller::DefaultPoller(this);
 		m_WakeupFd.Create();
+		m_WeakupChannel = std::make_unique<Channel>(m_WakeupFd.Fd(), this);
+
+		m_WeakupChannel->SetReadCallback([=]() { HandleWakeUp(); });
+		m_WeakupChannel->EnableReading();
+	}
+
+	EventLoop::EventLoop(InetAddress* address)
+		: m_IsLooping(false)
+		, m_IsQuit(false)
+		, m_IsCallingPendingFunctors(false)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_ThreadId = GetCurrentThreadId();
+		m_Poller = Poller::DefaultPoller(this);
+		m_WakeupFd.Create();
+		m_WakeupFd.Connect(address);
 		m_WeakupChannel = std::make_unique<Channel>(m_WakeupFd.Fd(), this);
 
 		m_WeakupChannel->SetReadCallback([=]() { HandleWakeUp(); });
@@ -157,7 +173,7 @@ namespace Net {
 		m_IsCallingPendingFunctors = false;
 	}
 
-	EventLoop*& EventLoopThreadWrapper::GetInst()
+	EventLoop*& EventLoopThreadWrapper::GetInst(InetAddress* address)
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -168,7 +184,14 @@ namespace Net {
 
 		if (!pTLSEventLoop.instance)
 		{
-			pTLSEventLoop.instance = new EventLoop();
+			if (address)
+			{
+				pTLSEventLoop.instance = new EventLoop(address);
+			}
+			else
+			{
+				pTLSEventLoop.instance = new EventLoop();
+			}
 		}
 
 		return pTLSEventLoop.instance;

@@ -49,7 +49,7 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
-		EventLoop* loop = EventLoopThreadWrapper::GetInst();
+		EventLoop* loop = EventLoopThreadWrapper::GetInst(&m_ListenAddress);
 
 		if (m_ThreadInitCallback)
 		{

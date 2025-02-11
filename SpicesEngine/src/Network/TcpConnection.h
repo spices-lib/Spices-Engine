@@ -149,12 +149,36 @@ namespace Net {
 
 		void SetState(State state) { m_State = state; }
 
+		/**
+		* @brief Handle Read event.
+		*/
 		void HandleRead();
+
+		/**
+		* @brief Handle Write event.
+		*/
 		void HandleWrite();
+
+		/**
+		* @brief Handle Close event.
+		*/
 		void HandleClose();
+
+		/**
+		* @brief Handle Error event.
+		*/
 		void HandleError() const;
 
+		/**
+		* @brief Send message to socket.
+		* @param[in] message Data pointer.
+		* @param[in] len message bytes.
+		*/
 		void SendInLoop(const char* message, size_t len);
+
+		/**
+		* @brief ShutDown socket.
+		*/
 		void ShutDownInLoop() const;
 
 	private:

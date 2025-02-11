@@ -25,7 +25,7 @@ namespace SpicesTest {
 
         void start()
         {
-            m_Server.Start(1);
+            m_Server.Start(3);
         }
 
     private:
@@ -34,19 +34,26 @@ namespace SpicesTest {
         {
             if (connection->Connected())
             {
+                std::stringstream ss;
+                ss << "TcpServer Connection Up :" << connection->PeerAddress().ToIPPort();
 
+                SPICES_CORE_INFO(ss.str())
             }
             else
             {
+                std::stringstream ss;
+                ss << "TcpServer Connection Down :" << connection->PeerAddress().ToIPPort();
 
+                SPICES_CORE_INFO(ss.str())
             }
         }
 
         void onMessage(const Spices::Net::TcpConnectionPtr& connection, Spices::Net::Buffer* buf)
         {
             std::string msg = buf->RetrieveAllAsString();
+            std::cout << msg << std::endl;
             connection->Send(msg);
-            connection->ShutDown();
+            //connection->ShutDown();
         }
 
         Spices::Net::TcpServer m_Server;
@@ -61,7 +68,7 @@ namespace SpicesTest {
 
         using namespace Spices::Net;
 
-        InetAddress address(8000);
+        InetAddress address(8000, "192.168.0.127");
         EventLoop* loop = nullptr;
         std::thread t([&]() {
 
@@ -72,7 +79,7 @@ namespace SpicesTest {
             loop->Loop();
         });
 
-        while (!loop) {}
+        while (true) {}
 
         Socket client;
         client.Create();
@@ -80,8 +87,6 @@ namespace SpicesTest {
         channel.EnableReading();
         channel.EnableWriting();
         client.Connect(&address);
-
-
 
         t.join();
     }

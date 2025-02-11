@@ -22,6 +22,9 @@ namespace Net {
 	*/
 	class EventLoopThreadPool;
 
+	/**
+	* @brief Sample of a TcpServer.
+	*/
 	class TcpServer
 	{
 	public:
@@ -95,6 +98,10 @@ namespace Net {
 			m_WriteCompleteCallback.Bind(cb);
 		}
 
+		/**
+		* @brief Start ThreadPool and call listen on acceptor.
+		* @param[in] threadSize ThreadPool size.
+		*/
 		void Start(int threadSize) const;
 
 	private:

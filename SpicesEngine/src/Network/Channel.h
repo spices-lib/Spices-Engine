@@ -207,10 +207,16 @@ namespace Net {
         */
         void SetPollState(PollState state) { m_PollState = state; }
 
+        /**
+        * @brief Remove this Channel state from Poller.
+        */
         void Remove();
 
     private:
 
+        /**
+        * @brief Update this Channel state to Poller.
+        */
         void Update();
 
         /**

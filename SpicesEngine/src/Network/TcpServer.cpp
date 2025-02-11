@@ -26,7 +26,7 @@ namespace Net {
 		m_Acceptor = std::make_unique<Acceptor>(listenAddress, option == Option::ReusePort);
 		m_Acceptor->SetConnectionCallback(std::bind(&TcpServer::NewConnection, this, std::placeholders::_1, std::placeholders::_2));
 
-		m_ThreadPool = std::make_shared<EventLoopThreadPool>(m_IpPort);
+		m_ThreadPool = std::make_shared<EventLoopThreadPool>(listenAddress);
 		m_ThreadPool->SetMode(PoolMode::MODE_FIXED);
 	}
 
