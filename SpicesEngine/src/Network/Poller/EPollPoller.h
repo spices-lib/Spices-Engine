@@ -51,7 +51,7 @@ namespace Net {
 		* @brief Get this EPollPoller Handle.
 		* @return Return this EPollPoller Handle.
 		*/
-		HANDLE GetHandle() { return m_EPollFd; }
+		HANDLE GetHandle() const { return m_EPollFd; }
 
 		/**
 		* @brief Poll events on EventList.

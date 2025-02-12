@@ -188,7 +188,7 @@ namespace Net {
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~EventLoopThreadWrapper() = default;
+		virtual ~EventLoopThreadWrapper();
 
 		/**
 		* @brief Get EventLoop Instance.

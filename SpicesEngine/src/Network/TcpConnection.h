@@ -18,6 +18,9 @@ namespace Net {
 	class EventLoop;
 	class Socket;
 
+	/**
+	* @brief Combine of Socket Connection data.
+	*/
 	class TcpConnection : public std::enable_shared_from_this<TcpConnection>
 	{
 	public:
@@ -206,12 +209,25 @@ namespace Net {
 		* @brief TcpConnection state.
 		*/
 		std::atomic<State> m_State;
-		bool m_Reading;
 
+		/**
+		* @brief TcpConnection socket.
+		*/
 		std::unique_ptr<Socket> m_Socket;
+
+		/**
+		* @brief TcpConnection channel.
+		*/
 		std::unique_ptr<Channel> m_Channel;
 
+		/**
+		* @brief TcpConnection LocalAddress.
+		*/
 		InetAddress m_LocalAddress;
+
+		/**
+		* @brief TcpConnection PeerAddress.
+		*/
 		InetAddress m_PeerAddress;
 
 		/**

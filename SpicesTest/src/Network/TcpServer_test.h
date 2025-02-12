@@ -79,7 +79,7 @@ namespace SpicesTest {
             loop->Loop();
         });
 
-        while (true) {}
+        while (!loop) {}
 
         Socket client;
         client.Create();
@@ -87,6 +87,7 @@ namespace SpicesTest {
         channel.EnableReading();
         channel.EnableWriting();
         client.Connect(&address);
+        client.Send("Hello client!");
 
         t.join();
     }

@@ -97,7 +97,7 @@ namespace Net {
 		void Send(const std::string& data) const;
 
 		/**
-		* @brief Reveive data from server.
+		* @brief Receive data from server.
 		* @return Returns received data.
 		* @note Usually not call Receive directly, but use Buffer::ReadFd.
 		*/

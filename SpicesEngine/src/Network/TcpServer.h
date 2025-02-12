@@ -162,7 +162,14 @@ namespace Net {
 		*/
 		ThreadInitCallback m_ThreadInitCallback;
 
+		/**
+		* @brief Next Connection id.
+		*/
 		int m_NextConnectedId;
+
+		/**
+		* @brief All TcpConnections.
+		*/
 		ConnectionMap m_Connections;
 
 	};

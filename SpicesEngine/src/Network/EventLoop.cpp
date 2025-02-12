@@ -160,6 +160,16 @@ namespace Net {
 		m_IsCallingPendingFunctors = false;
 	}
 
+	EventLoopThreadWrapper::~EventLoopThreadWrapper()
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (instance)
+		{
+			delete instance;
+		}
+	}
+
 	EventLoop*& EventLoopThreadWrapper::GetInst(InetAddress* address)
 	{
 		SPICES_PROFILE_ZONE;

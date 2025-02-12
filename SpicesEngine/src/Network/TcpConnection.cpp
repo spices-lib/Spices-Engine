@@ -26,7 +26,6 @@ namespace Net {
 		: m_IoLoop(ioLoop)
 		, m_Name(name)
 		, m_State(State::Connecting)
-		, m_Reading(true)
 		, m_LocalAddress(localAddress)
 		, m_PeerAddress(peerAddress)
 	{
