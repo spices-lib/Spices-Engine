@@ -5,6 +5,7 @@
 */
 
 #pragma once
+
 #include "TypeList.h"
 #include <type_traits>
 
@@ -31,8 +32,8 @@ namespace Spices {
 		};
 
 		/**
-		* @brief Determain if a given T is a function.
-		* @tparam T .
+		* @brief Determine if a given T is a function.
+		* @tparam T Specific type.
 		*/
 		template<typename T>
 		struct is_function
@@ -124,7 +125,7 @@ namespace Spices {
 	};
 
 	/**
-	* @brief Determain if a given T is a function.
+	* @brief Determine if a given T is a function.
 	* @tparam T .
 	*/
 	template<typename T>

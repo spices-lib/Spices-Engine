@@ -9,6 +9,7 @@
 #include "FieldTraits.h"
 #include "Core/Container/Tuple.h"
 #include <string>
+
 namespace Spices {
 
     /**
@@ -49,7 +50,7 @@ namespace Spices {
 		}                                                                                                                                              \
                                                                                                                                                        \
         /**                                                                                                                                            \
-        * @brief Decpnstruct Function.                                                                                                                 \
+        * @brief Destructor Function.                                                                                                                  \
         */                                                                                                                                             \
         virtual ~class_traits() = default;                                                                                                             \
                                                                                                                                                        \
@@ -156,7 +157,13 @@ namespace Spices {
 #define UPROPERTY_S(N)        field_traits<decltype(&CLASS_SCOPE::N)>{ &CLASS_SCOPE::N, #N, 0 }
 #define END_CLASS             };
 
-	template<typename T>
+    /**
+    * @brief Get class_traits instance of class.
+    * @tparam T Specific Class type.
+    * @param inst Specific Class instance.
+    * @return Returns class_traits instance.
+    */
+    template<typename T>
 	auto class_traits_i(T& inst)
 	{
 		auto traits = class_traits<T>(inst);

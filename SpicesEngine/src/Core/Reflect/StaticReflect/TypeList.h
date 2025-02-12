@@ -106,10 +106,10 @@ namespace Spices {
 
 		/**
 		* @brief Implementation of count(end condition).
-		* Calculate count that meets requeirment.
+		* Calculate count that meets requirement.
 		* @tparam T First element type.
 		* @tparam Remains Remains of other elements.
-		* @tparam F Specific requeirment function.
+		* @tparam F Specific requirement function.
 		*/
 		template<typename T, typename ...Remains, template<typename> typename F>
 		struct count<type_list<T, Remains...>, F, 0>
@@ -119,10 +119,10 @@ namespace Spices {
 
 		/**
 		* @brief Implementation of count.
-		* Calculate count that meets requeirment.
+		* Calculate count that meets requirement.
 		* @tparam T First element type.
 		* @tparam Remains Remains of other elements.
-		* @tparam F Specific requeirment function.
+		* @tparam F Specific requirement function.
 		* @tparam N Specific index of type_list.
 		*/
 		template<typename T, typename ...Remains, template<typename> typename F, size_t N>
@@ -161,7 +161,7 @@ namespace Spices {
 
 		/**
 		* @brief Implementation of cons.
-		* Psuh a param to params first.
+		* Push a param to params first.
 		* @tparam Args All elements.
 		* @tparam T Added element.
 		*/
@@ -233,7 +233,7 @@ namespace Spices {
 		/**
 		* @brief Implementation of filter(end condition).
 		* Keep elements except last.
-		* @tparam T first element.
+		* @tparam F first element.
 		*/
 		template<template<typename> typename F>
 		struct filter<type_list<>, F>
@@ -281,7 +281,7 @@ namespace Spices {
 	using nth = typename detail::nth<TypeList, N>::type;
 
 	/**
-	* @brief Calculate count that meets requeirment.
+	* @brief Calculate count that meets requirement.
 	* @tparam TypeList type_list.
 	* @tparam F count function.
 	*/
@@ -297,7 +297,7 @@ namespace Spices {
 	using map = typename detail::map<TypeList, F>::type;
 
 	/**
-	* @brief Psuh a element to elements first.
+	* @brief Push a element to elements first.
 	* @tparam TypeList type_list.
 	* @tparam T added Type.
 	*/

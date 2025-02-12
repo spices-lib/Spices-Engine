@@ -36,14 +36,14 @@ namespace Spices {
 	}
 
 	/**
-	* @brief Simplfy format of variable_type::Type.
+	* @brief Simplify format of variable_type::Type.
 	* @tparam T Variable Type with class.
 	*/
 	template<typename T>
 	using variable_type_t = typename detail::variable_type<T>::Type;
 
 	/**
-	* @brief Simplfy format of variable_type::Class.
+	* @brief Simplify format of variable_type::Class.
 	* @tparam T Variable Type with class.
 	*/
 	template<typename T>

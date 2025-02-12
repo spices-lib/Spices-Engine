@@ -13,9 +13,18 @@
 
 namespace Spices {
 
+	/**
+	* @brief Declare of Field Traits template.
+	* @tparam T Specific type.
+	* @tparam isFunc True if T is a function. 
+	*/
 	template<typename T, bool isFunc>
 	struct basic_field_traits;
 
+	/**
+	* @brief Field Traits template (Function Traits).
+	* @tparam T Specific type.
+	*/
 	template<typename T>
 	struct basic_field_traits<T, true> : public function_traits<T>
 	{
@@ -47,6 +56,10 @@ namespace Spices {
 		}
 	};
 
+	/**
+	* @brief Field Traits template (Variable Traits).
+	* @tparam T Specific type.
+	*/
 	template<typename T>
 	struct basic_field_traits<T, false> : public variable_traits<T>
 	{
@@ -73,6 +86,10 @@ namespace Spices {
 		}
 	};
 
+	/**
+	* @brief Field Traits template.
+	* @tparam T Specific type.
+	*/
 	template<typename T>
 	struct field_traits : public basic_field_traits<T, is_function_v<T>>
 	{
@@ -87,9 +104,20 @@ namespace Spices {
 				name = n.substr(pos + 1);
 			}
 		}
-	
+
+		/**
+		* @brief Field Name.
+		*/
 		std::string_view name;
+
+		/**
+		* @brief Field pointer.
+		*/
 		T pointer;
+
+		/**
+		* @brief Field offset.
+		*/
 		size_t offset;
 	};
 

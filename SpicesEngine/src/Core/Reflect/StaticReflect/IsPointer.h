@@ -7,13 +7,16 @@
 #pragma once
 
 namespace Spices {
-
+	
+	/**
+	* @brief Declare of is_pointer.
+	*/
 	template <class>
 	constexpr bool is_pointer_v = false;
-
+	
 	template <class _Ty>
 	constexpr bool is_pointer_v<_Ty*> = true;
-
+	
 	template <class _Ty>
 	constexpr bool is_pointer_v<_Ty* const> = true;
 
