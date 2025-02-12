@@ -191,7 +191,7 @@ namespace Spices {
         m_PanelSize = tempSize;
     }
 
-    std::pair<uint32_t, uint32_t> ImguiViewport::GetMousePosInViewport()
+    std::pair<uint32_t, uint32_t> ImguiViewport::GetMousePosInViewport() const
     {
         SPICES_PROFILE_ZONE;
 
@@ -206,14 +206,14 @@ namespace Spices {
         return pair;
     }
 
-    void ImguiViewport::Toggle()
+    void ImguiViewport::Toggle() const
     {
         SPICES_PROFILE_ZONE;
 
         m_ToggleStateList->ResetState();
     }
 
-    bool ImguiViewport::OnSlateResize(SlateResizeEvent& event)
+    bool ImguiViewport::OnSlateResize(SlateResizeEvent& event) const
     {
         SPICES_PROFILE_ZONE;
 
@@ -228,7 +228,7 @@ namespace Spices {
         return false;
     }
 
-    bool ImguiViewport::OnWindowResizeOver(WindowResizeOverEvent& event)
+    bool ImguiViewport::OnWindowResizeOver(WindowResizeOverEvent& event) const
     {
         SPICES_PROFILE_ZONE;
 
@@ -243,8 +243,8 @@ namespace Spices {
         return false;
     }
 
-    bool ImguiViewport::OnToggleSlate(KeyPressedEvent& event)
-	{
+    bool ImguiViewport::OnToggleSlate(KeyPressedEvent& event) const
+    {
 		SPICES_PROFILE_ZONE;
 
 		if (event.GetKeyCode() == Key::F11)

@@ -1,3 +1,9 @@
+/**
+* @file VulkanRayTracing.h.
+* @brief The VulkanRayTracing Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "VulkanUtils.h"
@@ -271,7 +277,7 @@ namespace Spices {
 		/**********************************Hit Groups*********************************************/
 
 		/**
-		* @brief Scene ray hit shader gtroups.
+		* @brief Scene ray hit shader groups.
 		*/
 		std::shared_ptr<std::unordered_map<std::string, uint32_t>> m_HitGroups;
 
@@ -330,7 +336,7 @@ namespace Spices {
 		* @brief Cannot call buildTlas twice except to update.
 		*/
 		assert(m_tlas.accel == VK_NULL_HANDLE || update);
-		uint32_t countInstance = static_cast<uint32_t>(instances.size());
+		const uint32_t countInstance = static_cast<uint32_t>(instances.size());
 
 		/**
 		* @brief Create a buffer holding the actual instance data (matrices++) for use by the AS builder.
@@ -358,7 +364,7 @@ namespace Spices {
 
 		instancesBuffer.CopyBuffer(stagingBuffer.Get(), instancesBuffer.Get(), sizeof(T) * instances.size());
 
-		VkDeviceAddress instBufferAddr = instancesBuffer.GetAddress();
+		const VkDeviceAddress instBufferAddr = instancesBuffer.GetAddress();
 
 		/**
 		* @brief Command buffer to create the TLAS.

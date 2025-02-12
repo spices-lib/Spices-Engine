@@ -53,14 +53,14 @@ namespace Spices {
 	private:
 
 		/**
-		* @brief Conbert bytes to string(GB/MB/KB).
+		* @brief Convert bytes to string(GB/MB/KB).
 		* @param[in] bytes .
 		* @return Returns string.
 		*/
 		std::string ConvertBytestoString(uint64_t bytes);
 
 		/**
-		* @brief Conbert memory flags to string.
+		* @brief Convert memory flags to string.
 		* @param[in] flag VkMemoryHeapFlags.
 		* @return Returns string.
 		*/

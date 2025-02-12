@@ -1,6 +1,6 @@
 /**
-* @file ImguiSlate.cpp.
-* @brief The ImguiSlate Class Implementation.
+* @file ImguiUtils.cpp.
+* @brief The ImguiUtils Class Implementation.
 * @author Spices.
 */
 

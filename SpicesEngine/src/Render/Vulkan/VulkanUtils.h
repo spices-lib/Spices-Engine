@@ -68,7 +68,7 @@ constexpr uint32_t MaxFrameInFlight = 2;
 	#define VK_CHECK(expr)  { auto expr_value = expr;  ASSERT(expr_value == VK_SUCCESS);  HandleVkResult(expr_value); }
 
 	/**
-	* @brief This struct contains all Vulkan object in used golbal.
+	* @brief This struct contains all Vulkan object in used global.
 	*/
 	struct VulkanState
 	{

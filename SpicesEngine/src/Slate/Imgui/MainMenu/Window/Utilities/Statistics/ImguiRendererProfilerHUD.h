@@ -52,8 +52,8 @@ namespace Spices {
 
 	private:
 
-		void DrawTimeStamp();
+		void DrawTimeStamp() const;
 
-		void DrawPipelineStatistics(int bit);
+		void DrawPipelineStatistics(int bit) const;
 	};
 }

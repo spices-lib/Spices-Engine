@@ -1,3 +1,9 @@
+/**
+* @file VulkanRayTracing.cpp.
+* @brief The VulkanRayTracing Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "VulkanRayTracing.h"
 #include "VulkanMemoryAllocator.h"

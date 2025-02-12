@@ -1,3 +1,9 @@
+/**
+* @file YamlUtils.h.
+* @brief YamlUtils Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 
@@ -132,7 +138,7 @@ namespace YAML {
 				std::stringstream ss;
 				ss << "YAML::convert<Spices::Material::ConstantParam>: not supported paramType: " << param.paramType;
 				
-				SPICES_CORE_WARN(ss.str());
+				SPICES_CORE_WARN(ss.str())
 			}
 			
 			return node;
@@ -145,7 +151,7 @@ namespace YAML {
 				std::stringstream ss;
 				ss << "YAML::convert<Spices::Material::ConstantParam>: bad node size, current size is" << node.size() << ", required 4";
 				
-				SPICES_CORE_WARN(ss.str());
+				SPICES_CORE_WARN(ss.str())
 				return false;
 			}
 
@@ -162,7 +168,7 @@ namespace YAML {
 				std::stringstream ss;
 				ss << "YAML::convert<Spices::Material::ConstantParam>: not supported paramType: " << param.paramType;
 				
-				SPICES_CORE_WARN(ss.str());
+				SPICES_CORE_WARN(ss.str())
 			}
 
 			return true;
@@ -234,7 +240,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << "YAML::operator<<: not supported paramType: " << p.paramType;
 				
-			SPICES_CORE_WARN(ss.str());
+			SPICES_CORE_WARN(ss.str())
 			
 			out << YAML::EndSeq;
 		}

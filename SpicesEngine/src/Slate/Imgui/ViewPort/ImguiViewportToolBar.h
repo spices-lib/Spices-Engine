@@ -1,3 +1,9 @@
+/**
+* @file ImguiViewportToolBar.h
+* @brief The ImguiViewportToolBar Class Definitions.
+* @author Spices.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "Slate/Imgui/ImguiUtils.h"

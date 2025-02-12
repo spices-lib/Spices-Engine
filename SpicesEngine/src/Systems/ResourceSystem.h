@@ -25,33 +25,33 @@ namespace Spices {
 		* Usually call it.
 		* @param[in] systemName The System name.
 		*/
-		ResourceSystem(const std::string& systemName) : System(systemName) {};
+		ResourceSystem(const std::string& systemName) : System(systemName) {}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~ResourceSystem() override {};
+		virtual ~ResourceSystem() override = default;
 
 		/**
-		* @brief This interface defines the behaver on specific system initialized.
+		* @brief This interface defines the behave on specific system initialized.
 		* Called when system Pushed to SystemManager.
 		*/
 		virtual void OnSystemInitialize() override;
 
 		/**
-		* @brief This interface defines the behaver on specific system shutdown.
+		* @brief This interface defines the behave on specific system shutdown.
 		* Called when system poped from SystemManager.
 		*/
 		virtual void OnSystemShutDown() override;
 
 		/**
-		* @brief This interface defines the bahaver on specific system updated every frame.
+		* @brief This interface defines the behave on specific system updated every frame.
 		* @param[in] ts TimeStep.
 		*/
 		virtual void OnSystemUpdate(TimeStep& ts) override;
 
 		/**
-		* @brief This interface defines the bahaver on golbal event function pointer is called.
+		* @brief This interface defines the behave on global event function pointer is called.
 		* @param[in] event Event.
 		*/
 		virtual void OnEvent(Event& event) override;
@@ -60,7 +60,7 @@ namespace Spices {
 		* @brief Get Resource Search Folder.
 		* @return Returns Resource Search Folder.
 		*/
-		static const std::vector<std::string>& GetSearchFolder() { return m_ResourceSearchFolder; };
+		static const std::vector<std::string>& GetSearchFolder() { return m_ResourceSearchFolder; }
 
 		/**
 		* @brief Registry Resource Search Folder.
@@ -70,6 +70,9 @@ namespace Spices {
 
 	private:
 
+		/**
+		* @brief Registry Resource Search Folder.
+		*/
 		static std::vector<std::string> m_ResourceSearchFolder;
 
 	};

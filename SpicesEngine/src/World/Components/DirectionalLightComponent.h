@@ -69,7 +69,16 @@ namespace Spices {
 		*/
 		const SpicesShader::DirectionalLight& GetLight() const { return m_DirectionalLight; }
 
+		/**
+		* @brief Set the DirectionalLight color.
+		* @param[in] color the DirectionalLight color.
+		*/
 		void SetColor(const glm::vec3& color) { m_DirectionalLight.color = color; }
+
+		/**
+		* @brief Set the DirectionalLight intensity.
+		* @param[in] intensity the DirectionalLight intensity.
+		*/
 		void SetIntensity(float intensity) { m_DirectionalLight.intensity = intensity; }
 
 	private:

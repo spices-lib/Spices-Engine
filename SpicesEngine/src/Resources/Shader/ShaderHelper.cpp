@@ -44,7 +44,7 @@ namespace Spices {
 		case Spices::ShaderStage::glsl:
 			return "glsl";
 		default:
-			SPICES_CORE_WARN("Not supported shader stage");
+			SPICES_CORE_WARN("Not supported shader stage")
 			return "none";
 		}
 	}
@@ -111,7 +111,7 @@ namespace Spices {
 		}
 		else
 		{
-			SPICES_CORE_WARN("Not supported shader stage");
+			SPICES_CORE_WARN("Not supported shader stage")
 			return ShaderStage::vert;
 		}
 	}
@@ -149,7 +149,7 @@ namespace Spices {
 		case Spices::ShaderStage::comp:
 			return shaderc_shader_kind::shaderc_compute_shader;
 		default:
-			SPICES_CORE_WARN("Not supported shader stage");
+			SPICES_CORE_WARN("Not supported shader stage")
 			return shaderc_shader_kind::shaderc_glsl_infer_from_source;
 		}
 	}
@@ -187,7 +187,7 @@ namespace Spices {
 		case Spices::ShaderStage::comp:
 			return VK_SHADER_STAGE_COMPUTE_BIT;
 		default:
-			SPICES_CORE_WARN("Not supported shader stage");
+			SPICES_CORE_WARN("Not supported shader stage")
 			return VK_SHADER_STAGE_VERTEX_BIT;
 		}
 	}

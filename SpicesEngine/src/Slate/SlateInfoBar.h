@@ -74,8 +74,8 @@ namespace Spices {
 		}
 
 		/**
-		* @brief Determine if this slateinfobar needs to be destroied.
-		* @return Returns true if this slateinfobar needs to be destroied.
+		* @brief Determine if this slate info bar needs to be destroy.
+		* @return Returns true if this slate info bar needs to be destroy.
 		*/
 		bool IsDestroy() 
 		{ 
@@ -108,7 +108,7 @@ namespace Spices {
 		std::function<std::any()> m_RateFunc;
 
 		/**
-		* @brief 
+		* @brief InfoBar progress destroy function.
 		*/
 		std::function<bool(SlateInfoBar*)> m_DestroyFunc;
 

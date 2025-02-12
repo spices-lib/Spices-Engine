@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Transcoder of Texture Container format and Tranbsform fromat and GPU cmpress format.
+	* @brief Transcoder of Texture Container format and Transform format and GPU compress format.
 	*/
 	class Transcoder
 	{
@@ -41,7 +41,7 @@ namespace Spices {
 		static ktxTexture2* CreateKTX2Texture(int& width, int& height);
 
 		/**
-		* @brief Wrte Data to ktxtexture.
+		* @brief Write Data to ktxtexture.
 		* @param[in] texture ktxtexture.
 		* @param[in] mipLevel .
 		* @param[in] data .
@@ -68,7 +68,7 @@ namespace Spices {
 
 		/**
 		* @brief Destroy a ktx file.
-		* @param[in] ktx file.
+		* @param[in] texture ktx file.
 		* @return Returns true if succeed.
 		*/
 		static bool DestroyktxTexture2(ktxTexture2* texture);
@@ -85,8 +85,8 @@ namespace Spices {
 
 		/**
 		* @brief Check if the device supports sampling and transfers for the selected image.
-		* @param[in] format.
-		* @return Retuens true if succeed.
+		* @param[in] format .
+		* @return Returns true if succeed.
 		*/
 		static bool FormatSupported(VkFormat format);
 

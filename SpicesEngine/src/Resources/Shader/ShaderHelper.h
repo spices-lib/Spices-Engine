@@ -62,6 +62,11 @@ namespace Spices {
 		*/
 		static shaderc_shader_kind ToShaderCKind(ShaderStage stage);
 
+		/**
+		* @brief Convert ShaderStage to VkShaderStageFlagBits.
+		* @param[in] stage ShaderStage.
+		* @return Returns VkShaderStageFlagBits.
+		*/
 		static VkShaderStageFlagBits ToFlagBits(ShaderStage stage);
 	};
 

@@ -51,7 +51,7 @@ namespace Spices {
 		
 		/**
 		* @brief Set SkyBox Material.
-		* @param[in] material SkyBox Material Path.
+		* @param[in] materialPath SkyBox Material Path.
 		*/
 		void SetMaterial(const std::string& materialPath);
 

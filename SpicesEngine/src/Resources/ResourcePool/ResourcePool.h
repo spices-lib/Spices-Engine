@@ -18,7 +18,7 @@ namespace Spices {
 	/**
 	* @brief Template ResourcePool Class.
 	* This class will assign Every Type of Resource per Pool.
-	* When we ask for resource, we will get from here instand of load it from disk indirectlly.
+	* When we ask for resource, we will get from here instead of load it from disk indirectly.
 	* Now we use file path as resource identity.
 	* @tparam T Resource basic Class.
 	* @todo Use UUID as resource identity instead.
@@ -40,20 +40,20 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		ResourcePool(const ResourcePool&) = delete;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		ResourcePool& operator=(const ResourcePool&) = delete;
 
 		/**
 		* @brief Load a resource by path.
 		* When we need a resource, we call this API.
-		* Load if resorce is not found.
+		* Load if resource is not found.
 		* @tparam Ty Resource specific Class.
 		* @tparam Args Resource Construct Parameters.
 		* @param[in] path Resource file path in disk.
@@ -64,7 +64,7 @@ namespace Spices {
 
 		/**
 		* @brief Access a resource by path directly.
-		* Do nothing if resorce is not found.
+		* Do nothing if resource is not found.
 		* @param[in] path Resource file path in disk.
 		* @return Returns resource smart pointer.
 		*/
@@ -77,7 +77,7 @@ namespace Spices {
 		static void UnLoad(const std::string& path);
 
 		/**
-		* @brief Determain if specific resource is exist.
+		* @brief Determine if specific resource is exist.
 		* @param[in] name Resource Name.
 		* @return Returns true if exist.
 		*/

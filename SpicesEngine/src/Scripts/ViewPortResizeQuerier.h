@@ -36,13 +36,13 @@ namespace Spices {
 		* @brief This interface defines the behave on specific component tick every frame.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnTick(TimeStep& ts);
+		virtual void OnTick(TimeStep& ts) override;
 
 		/**
 		* @brief This interface defines the behave on specific component event happened.
 		* @param[in] e Event.
 		*/
-		virtual void OnEvent(Event& e) {};
+		virtual void OnEvent(Event& e) override {};
 
 	private:
 		

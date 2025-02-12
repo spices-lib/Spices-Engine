@@ -1,3 +1,9 @@
+/**
+* @file WorldFunctions.cpp.
+* @brief The WorldFunctions Class Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "WorldFunctions.h"
 #include "World/Entity.h"

@@ -29,19 +29,19 @@ namespace Spices {
 		* @param[in] name Shader Name.
 		* @param[in] stage ShaderStage.
 		*/
-		Shader(std::string name, ShaderStage stage);
+		Shader(const std::string& name, ShaderStage stage);
 		
 		/**
 		* @brief Constructor Function.
 		* @param[in] name Shader Name.
 		* @param[in] stage ShaderStage.
 		*/
-		Shader(std::string name, const std::string& stage);
+		Shader(const std::string& name, const std::string& stage);
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Shader();
+		virtual ~Shader() = default;
 
 		/**
 		* @brief Deserialize the data from a disk file to this class.
@@ -52,12 +52,23 @@ namespace Spices {
 		* @brief Get VulkanShaderModule.
 		* @return Returns VulkanShaderModule.
 		*/
-		std::shared_ptr<VulkanShaderModule>& GetShaderModule() { return m_ShaderModule; };
+		std::shared_ptr<VulkanShaderModule>& GetShaderModule() { return m_ShaderModule; }
 
 	private:
 
+		/**
+		* @brief Shader name.
+		*/
 		std::string m_ShaderName;
+
+		/**
+		* @brief Shader stage.
+		*/
 		ShaderStage m_ShaderStage;
+
+		/**
+		* @brief VulkanShaderModule.
+		*/
 		std::shared_ptr<VulkanShaderModule> m_ShaderModule;
 
 		friend class ShaderLoader;

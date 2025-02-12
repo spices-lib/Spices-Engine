@@ -348,7 +348,7 @@ namespace Spices {
 				}
 				else
 				{
-					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.");
+					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.")
 				}
 	
 				return false;
@@ -459,7 +459,7 @@ namespace Spices {
 				*/
 				else
 				{
-					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid textureType.");
+					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid textureType.")
 				}
 
 				tindex++;
@@ -518,7 +518,7 @@ namespace Spices {
 				}
 				else
 				{
-					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.");
+					SPICES_CORE_ERROR("Material::BuildMaterial(): Invalid paramType.")
 				}
 	
 				return false;

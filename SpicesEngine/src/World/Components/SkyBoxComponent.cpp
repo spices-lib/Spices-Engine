@@ -45,7 +45,7 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		auto& e = FrameInfo::Get().m_World->QueryEntitybyID((uint32_t)m_Owner);
+		auto e = FrameInfo::Get().m_World->QueryEntitybyID((uint32_t)m_Owner);
 
 		m_Mesh->GetPacks().for_each([&](const auto& k, const auto& v) {
 			v->SetMaterial(materialPath);

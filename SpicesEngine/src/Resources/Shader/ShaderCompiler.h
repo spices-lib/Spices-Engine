@@ -11,7 +11,7 @@
 namespace Spices {
 
 	/**
-	* @brief Wapper of shaderc compiler.
+	* @brief Wrapper of shaderc compiler.
 	*/
 	class ShaderCompiler
 	{

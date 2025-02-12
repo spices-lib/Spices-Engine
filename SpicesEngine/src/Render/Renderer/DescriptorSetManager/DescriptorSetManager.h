@@ -27,7 +27,7 @@ namespace Spices {
 		enum DescriptorSetCombineBits
 		{
 			None         = 0,            /* @brief None Combination.                     */
-			PreRenderer  = 1 << 0,       /* @brief Combination with Prerenderer.         */
+			PreRenderer  = 1 << 0,       /* @brief Combination with PreRenderer.         */
 			ThisRenderer = 1 << 1,       /* @brief Combination with this Renderer.       */
 			Material     = 1 << 2,       /* @brief Combination with material.(not inuse) */
 			Max          = 3,            /* @brief Combination count.                    */

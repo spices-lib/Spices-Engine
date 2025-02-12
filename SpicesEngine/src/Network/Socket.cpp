@@ -29,13 +29,6 @@ namespace Net {
 		SPICES_PROFILE_ZONE;
 
 		SOCKET sockfd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (sockfd < 0)
-		{
-			std::stringstream ss;
-			ss << "Listen socket create failed, Error: " << WSAGetLastError();
-
-			SPICES_CORE_CRITICAL(ss.str())
-		}
 
 		m_SocketFd = sockfd;
 	}

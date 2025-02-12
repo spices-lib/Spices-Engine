@@ -20,7 +20,7 @@ namespace Spices {
 	};
 
 	/**
-	* @brief Forward declear.
+	* @brief Forward declare.
 	*/
 	class MeshPack;
 
@@ -116,7 +116,7 @@ namespace Spices {
 		);
 
 		/**
-		* @brief Find Points located in Boundarys.
+		* @brief Find Points located in Boundaries.
 		* @param[in] meshPack MeshPack.
 		* @param[in] primVertices .
 		* @param[in,out] boundaryPoints .

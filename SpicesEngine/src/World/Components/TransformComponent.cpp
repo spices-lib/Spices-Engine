@@ -315,7 +315,7 @@ namespace Spices {
 					m_Transform.rotation.y = 0.0f;
 					CalMatrix();
 					FrameInfo::Get().m_World->Mark(World::FrushStableFrame | World::NeedUpdateTLAS);
-				};
+				}
 				ImGui::SameLine();
 				ImGui::PopID();
 			}

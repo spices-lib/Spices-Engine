@@ -83,7 +83,7 @@ namespace Spices {
 		* @brief Get Mouse Position Relative Viewport(Might be negative value).
 		* @return Returns the pair of Position X, Position Y.
 		*/
-		std::pair<uint32_t, uint32_t> GetMousePosInViewport();
+		std::pair<uint32_t, uint32_t> GetMousePosInViewport() const;
 
 		/**
 		* @brief Get Gizmo Shared Pointer.
@@ -94,7 +94,7 @@ namespace Spices {
 		/**
 		* @brief Toggle viewport.
 		*/
-		void Toggle();
+		void Toggle() const;
 
 	private:
 
@@ -103,21 +103,21 @@ namespace Spices {
 		* @param[in] event SlateResizeEvent.
 		* @return Returns true if need block the event.
 		*/
-		bool OnSlateResize(SlateResizeEvent& event);
+		bool OnSlateResize(SlateResizeEvent& event) const;
 
 		/**
 		* @brief Event Dispatcher target. Registry on Windows Resized.
 		* @param[in] event WindowResizeOverEvent.
 		* @return Returns true if need block the event.
 		*/
-		bool OnWindowResizeOver(WindowResizeOverEvent& event);
+		bool OnWindowResizeOver(WindowResizeOverEvent& event) const;
 
 		/**
 		* @brief Toggle focused slate.
 		* @param[in] event KeyPressedEvent.
 		* @reutrn Returns true if want block the event.
 		*/
-		bool OnToggleSlate(KeyPressedEvent& event);
+		bool OnToggleSlate(KeyPressedEvent& event) const;
 
 	private:
 

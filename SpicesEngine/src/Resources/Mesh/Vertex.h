@@ -94,13 +94,13 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		* @param[in] f first.
-		* @param[in] s seconf.
+		* @param[in] s second.
 		*/
 		Edge(uint32_t f, uint32_t s)
 		{
 			first  = f;
 			second = s;
-		};
+		}
 
 		/**
 		* @brief Destructor Function.
@@ -117,7 +117,7 @@ namespace Spices {
 		bool operator==(const Edge& other) const {
 			return (first == other.first && second == other.second) ||
 				   (first == other.second && second == other.first);
-		};
+		}
 
 		/**
 		* @brief Less Operation.
@@ -145,13 +145,13 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		* @param[in] f first.
-		* @param[in] s seconf.
+		* @param[in] s second.
 		*/
 		HalfEdge(uint32_t f, uint32_t s)
 		{
 			first  = f;
 			second = s;
-		};
+		}
 
 		/**
 		* @brief Destructor Function.
@@ -167,7 +167,7 @@ namespace Spices {
 		*/
 		bool operator==(const HalfEdge& other) const {
 			return first == other.first && second == other.second;
-		};
+		}
 
 		/**
 		* @brief Less Operation.
@@ -209,7 +209,7 @@ namespace Spices {
 		{}
 
 		/**
-		* @brief Determain whether this edgepoint is valid.
+		* @brief Determine whether this edge point is valid.
 		* @return Returns true if valid.
 		*/
 		bool valid()

@@ -58,7 +58,7 @@ namespace Spices {
 		SlateRegister& operator=(const SlateRegister&) = delete;
 
 		/**
-		* @brief This function regist slate instance.
+		* @brief This function registry slate instance.
 		* @tparam T Slate specific type.
 		* @param[in] isPrimary Is this slate's render function is called by register or owner.
 		* @param[in] panelName The slate name.

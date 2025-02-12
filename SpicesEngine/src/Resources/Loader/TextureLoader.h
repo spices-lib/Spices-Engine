@@ -32,7 +32,6 @@ namespace Spices {
 		* @param[in] fileName Image path.
 		* @param[in,out] outTexture Texture2D pointer, only pass this to it.
 		* Feel free for using row pointer here, it's very safe, for this API only called during Material.
-		* @return Returns true if load data successfully.
 		*/
 		static void Load(const std::string& fileName, Texture2D* outTexture);
 
@@ -41,7 +40,6 @@ namespace Spices {
 		* @param[in] fileName Image path.
 		* @param[in,out] outTexture Texture2DCube pointer, only pass this to it.
 		* Feel free for using row pointer here, it's very safe, for this API only called during Material.
-		* @return Returns true if load data successfully.
 		* @todo finish it.
 		*/
 		static void Load(const std::string& fileName, Texture2DCube* outTexture);
@@ -63,8 +61,8 @@ namespace Spices {
 
 		/**
 		* @brief Function of load a ktx file.
-		* @param[in] fileName ktx filenme.
-		* @param[in] it file directfolder.
+		* @param[in] fileName ktx file name.
+		* @param[in] it file direct folder.
 		* @param[in] outTexture Pointer of texture.
 		* @return Returns true if load file succeed.
 		*/
@@ -72,8 +70,8 @@ namespace Spices {
 
 		/**
 		* @brief Function of load a src file.
-		* @param[in] fileName src filenme.
-		* @param[in] it file directfolder.
+		* @param[in] fileName src file name.
+		* @param[in] it file direct folder.
 		* @param[in] outTexture Pointer of texture.
 		* @param[in] isCreateCompressTexture Create Ktx texture in disk if true.
 		* @return Returns true if load file succeed.

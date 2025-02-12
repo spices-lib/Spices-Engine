@@ -13,13 +13,13 @@
 namespace Spices {
 
 	/**
-	* @brief Forward Declear.
+	* @brief Forward Declare.
 	*/
 	class Event;
 
 	/**
 	* @brief System Class.
-	* This class defines the basic behaver of System.
+	* This class defines the basic behaves of System.
 	* When we create an new System, we need inherit from this.
 	*/
 	class System
@@ -32,48 +32,48 @@ namespace Spices {
 		* Usually call it.
 		* @param[in] systemName The system's name.
 		*/
-		System(const std::string& systemName) : m_SystemName(systemName) {};
+		System(const std::string& systemName) : m_SystemName(systemName) {}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~System() {};
+		virtual ~System() = default;
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		System(const System&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		System& operator=(const System&) = delete;
 
 		/**
-		* @brief This interface defines the behaver on specific system initialized.
+		* @brief This interface defines the behave on specific system initialized.
 		* Called when system Pushed to SystemManager.
 		*/
-		virtual void OnSystemInitialize() {};
+		virtual void OnSystemInitialize() {}
 
 		/**
-		* @brief This interface defines the behaver on specific system shutdown.
+		* @brief This interface defines the behave on specific system shutdown.
 		* Called when system poped from SystemManager.
 		*/
-		virtual void OnSystemShutDown() {};
+		virtual void OnSystemShutDown() {}
 
 		/**
-		* @brief This interface defines the bahaver on specific system updated every frame.
+		* @brief This interface defines the behave on specific system updated every frame.
 		* @param[in] ts TimeStep.
 		*/
-		virtual void OnSystemUpdate(TimeStep& ts) {};
+		virtual void OnSystemUpdate(TimeStep& ts) {}
 
 		/**
-		* @brief This interface defines the bahaver on golbal event function pointer is called.
+		* @brief This interface defines the behave on global event function pointer is called.
 		* @param[in] event Event.
 		*/
-		virtual void OnEvent(Event& event) {};
+		virtual void OnEvent(Event& event) {}
 
 	protected:
 
@@ -85,7 +85,7 @@ namespace Spices {
 
 	/**
 	* @brief SystemManager Class.
-	* This class defines the behaver of SystemManager.
+	* This class defines the behave of SystemManager.
 	*/
 	class SystemManager
 	{
@@ -103,13 +103,13 @@ namespace Spices {
 
 		/**
 		* @brief Copy Constructor Function.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		SystemManager(const SystemManager&) = delete;
 
 		/**
 		* @brief Copy Assignment Operation.
-		* @note This Class not allowed copy behaver.
+		* @note This Class not allowed copy behave.
 		*/
 		SystemManager& operator=(const SystemManager&) = delete;
 
@@ -132,8 +132,8 @@ namespace Spices {
 		void OnEvent(Event& event);
 
 		/**
-		* @brief Push a system to this mamager.
-		* @param[in] T Specific system Class.
+		* @brief Push a system to this manager.
+		* @tparam T Specific system Class.
 		* @return Returns the SystemManager.
 		*/
 		template<typename T, typename ... Args>
@@ -165,7 +165,7 @@ namespace Spices {
 		}
 
 		/**
-		* @brief Push a system to this mamager.
+		* @brief Push a system to this manager.
 		* @param[in] systemName Specific system name.
 		* @return Returns the SystemManager.
 		*/
@@ -177,7 +177,7 @@ namespace Spices {
 				std::stringstream ss;
 				ss << systemName << " has been poped ";
 
-				SPICES_CORE_ERROR(ss.str());
+				SPICES_CORE_ERROR(ss.str())
 			}
 
 			// system shutdown
@@ -187,7 +187,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << systemName << " poped ";
 
-			SPICES_CORE_INFO(ss.str());
+			SPICES_CORE_INFO(ss.str())
 
 			m_Identities.erase(systemName);
 

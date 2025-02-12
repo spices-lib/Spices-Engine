@@ -140,7 +140,7 @@ namespace Spices {
 		{
 			FrameInfo::Get().m_PickEntityID.clear();
 
-			SPICES_CORE_TRACE("Cancel all selected entity");
+			SPICES_CORE_TRACE("Cancel all selected entity")
 		}
 
 		return false;

@@ -80,12 +80,12 @@ namespace Spices {
 		* @note This function is not in use now.
 		* @param[in] ts TimeStep.
 		*/
-		void OnUpdate(TimeStep& ts);
+		void OnUpdate(TimeStep& ts) const;
 
 		/**
 		* @brief This function will be called on global Event function pointer is called.
 		*/
-		void OnEvent(Event& event);
+		void OnEvent(Event& event) const;
 
 	private:
 

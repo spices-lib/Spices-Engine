@@ -19,9 +19,9 @@ namespace Spices {
 		ImTextureID MeshletID;           /* @brief ImTextureID of MeshletID.  */
 
 		/**
-		* @brief Free in used DescripotorSet used by GBuffer Visualizer.
+		* @brief Free in used DescriptorSet used by GBuffer Visualizer.
 		*/
-		void Free()
+		void Free() const
 		{
 			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(TriangleID));
 			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(MeshletID));

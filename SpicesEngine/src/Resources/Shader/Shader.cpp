@@ -9,7 +9,7 @@
 
 namespace Spices {
 
-	Shader::Shader(std::string name, ShaderStage stage)
+	Shader::Shader(const std::string& name, ShaderStage stage)
 		: m_ShaderName(name)
 		, m_ShaderStage(stage)
 	{
@@ -21,7 +21,7 @@ namespace Spices {
 		Deserialize();
 	}
 
-	Shader::Shader(std::string name, const std::string& stage)
+	Shader::Shader(const std::string& name, const std::string& stage)
 		: m_ShaderName(name)
 		, m_ShaderStage(ShaderHelper::ToStage(stage))
 	{
@@ -33,16 +33,13 @@ namespace Spices {
 		Deserialize();
 	}
 
-	Shader::~Shader()
-	{}
-
 	void Shader::Deserialize()
 	{
 		SPICES_PROFILE_ZONE;
 
 		if (m_ShaderName.empty())
 		{
-			SPICES_CORE_WARN("Shader::m_ShaderName is empty.");
+			SPICES_CORE_WARN("Shader::m_ShaderName is empty.")
 			return;
 		}
 

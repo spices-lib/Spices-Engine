@@ -26,7 +26,7 @@ namespace Spices {
 
 	/**
 	* @brief Texture Class.
-	* This class defines the basic behaver of texture.
+	* This class defines the basic behaves of texture.
 	* When we add an new Texture, we need inherit from this.
 	*/
 	class Texture
@@ -36,7 +36,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		Texture() {}
+		Texture() = default;
 
 		/**
 		* @brief Constructor Function.
@@ -44,12 +44,12 @@ namespace Spices {
 		* Usually call it.
 		* @param[in] path Image Path in disk.
 		*/
-		Texture(const std::string& path) : m_ResourcePath(path) {};
+		Texture(const std::string& path) : m_ResourcePath(path) {}
 
 		/**
 		* @brief Destructor Function.
 		*/
-		virtual ~Texture() {}
+		virtual ~Texture() = default;
 
 		/**
 		* @brief Get Specific resource, usually is a wrapper of VulkanImage.

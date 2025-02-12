@@ -18,7 +18,7 @@ namespace Spices {
 
 	/**
 	* @brief ResourceSystem Class.
-	* This class defines the specific behaver of RenderSystem.
+	* This class defines the specific behaves of RenderSystem.
 	*/
 	class RenderSystem : public System
 	{
@@ -38,25 +38,25 @@ namespace Spices {
 		virtual ~RenderSystem() override {};
 
 		/**
-		* @brief This interface defines the behaver on specific system initialized.
+		* @brief This interface defines the behave on specific system initialized.
 		* Called when system Pushed to SystemManager.
 		*/
 		virtual void OnSystemInitialize() override;
 
 		/**
-		* @brief This interface defines the behaver on specific system shutdown.
+		* @brief This interface defines the behave on specific system shutdown.
 		* Called when system poped from SystemManager.
 		*/
 		virtual void OnSystemShutDown() override;
 
 		/**
-		* @brief This interface defines the bahaver on specific system updated every frame.
+		* @brief This interface defines the behave on specific system updated every frame.
 		* @param[in] ts TimeStep.
 		*/
 		virtual void OnSystemUpdate(TimeStep& ts) override;
 
 		/**
-		* @brief This interface defines the bahaver on golbal event function pointer is called.
+		* @brief This interface defines the behave on global event function pointer is called.
 		* @param[in] event Event.
 		*/
 		virtual void OnEvent(Event& event) override;

@@ -52,7 +52,7 @@ namespace Spices {
 		vkDestroyQueryPool(m_VulkanState.m_Device, m_QueryPool, nullptr);
 	}
 
-	void VulkanQueryPool::BeginQuery(VkCommandBuffer commandBuffer, uint32_t index)
+	void VulkanQueryPool::BeginQuery(VkCommandBuffer commandBuffer, uint32_t index) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -73,7 +73,7 @@ namespace Spices {
 		vkCmdBeginQuery(commandBuffer, m_QueryPool, index, flags);
 	}
 
-	void VulkanQueryPool::EndQuery(VkCommandBuffer commandBuffer, uint32_t index)
+	void VulkanQueryPool::EndQuery(VkCommandBuffer commandBuffer, uint32_t index) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -85,7 +85,7 @@ namespace Spices {
 		vkCmdEndQuery(commandBuffer, m_QueryPool, index);
 	}
 
-	void VulkanQueryPool::WriteTimeStamp(VkCommandBuffer commandBuffer, uint32_t index)
+	void VulkanQueryPool::WriteTimeStamp(VkCommandBuffer commandBuffer, uint32_t index) const
 	{
 		SPICES_PROFILE_ZONE;
 
@@ -94,7 +94,7 @@ namespace Spices {
 		vkCmdWriteTimestamp2(commandBuffer, VK_PIPELINE_STAGE_2_NONE, m_QueryPool, index);
 	}
 
-	void VulkanQueryPool::Reset(VkCommandBuffer commandBuffer)
+	void VulkanQueryPool::Reset(VkCommandBuffer commandBuffer) const
 	{
 		SPICES_PROFILE_ZONE;
 

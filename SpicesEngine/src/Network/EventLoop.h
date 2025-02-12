@@ -87,20 +87,20 @@ namespace Net {
 		* @brief Update channel state with poller.
 		* @param[in] channel Channel.
 		*/
-		void UpdateChannel(Channel* channel);
+		void UpdateChannel(Channel* channel) const;
 
 		/**
 		* @brief Remove channel from poller.
 		* @param[in] channel Channel.
 		*/
-		void RemoveChannel(Channel* channel);
+		void RemoveChannel(Channel* channel) const;
 
 		/**
 		* @brief Determine if channel is inside poller.
 		* @param[in] channel Channel.
 		* @return Returns true if channel is inside poller.
 		*/
-		bool HasChannel(Channel* channel);
+		bool HasChannel(Channel* channel) const;
 
 		/**
 		* @brief Determine if current thread is in eventloop thread.

@@ -114,17 +114,17 @@ namespace Net {
 		}
 	}
 
-	void EventLoop::UpdateChannel(Channel* channel)
+	void EventLoop::UpdateChannel(Channel* channel) const
 	{
 		m_Poller->UpdateChannel(channel);
 	}
 
-	void EventLoop::RemoveChannel(Channel* channel)
+	void EventLoop::RemoveChannel(Channel* channel) const
 	{
 		m_Poller->RemoveChannel(channel);
 	}
 
-	bool EventLoop::HasChannel(Channel* channel)
+	bool EventLoop::HasChannel(Channel* channel) const
 	{
 		return m_Poller->HasChannel(channel);
 	}

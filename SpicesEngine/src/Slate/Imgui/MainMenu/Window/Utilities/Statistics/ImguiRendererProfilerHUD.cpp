@@ -168,7 +168,7 @@ namespace Spices {
         End();
     }
 
-    void ImguiRendererProfilerHUD::DrawTimeStamp()
+    void ImguiRendererProfilerHUD::DrawTimeStamp() const
     {
         SPICES_PROFILE_ZONE;
 
@@ -359,7 +359,7 @@ namespace Spices {
         }
     }
 
-    void ImguiRendererProfilerHUD::DrawPipelineStatistics(int bit)
+    void ImguiRendererProfilerHUD::DrawPipelineStatistics(int bit) const
     {
         SPICES_PROFILE_ZONE;
 

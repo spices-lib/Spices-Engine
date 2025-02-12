@@ -44,28 +44,28 @@ namespace Spices {
 		* @param[in] commandBuffer VkCommandBuffer.
 		* @param[in] index QueryIndex.
 		*/
-		void BeginQuery(VkCommandBuffer commandBuffer, uint32_t index = 0);
+		void BeginQuery(VkCommandBuffer commandBuffer, uint32_t index = 0) const;
 
 		/**
 		* @brief End query previous commands.
 		* @param[in] commandBuffer VkCommandBuffer.
 		* @param[in] index QueryIndex.
 		*/
-		void EndQuery(VkCommandBuffer commandBuffer, uint32_t index = 0);
+		void EndQuery(VkCommandBuffer commandBuffer, uint32_t index = 0) const;
 
 		/**
 		* @brief Write a TimeStamp to queryPool.
 		* @param[in] commandBuffer VkCommandBuffer.
 		* @param[in] index QueryIndex.
 		*/
-		void WriteTimeStamp(VkCommandBuffer commandBuffer, uint32_t index);
+		void WriteTimeStamp(VkCommandBuffer commandBuffer, uint32_t index) const;
 
 		/**
 		* @brief Reset QueryPool.
 		* Call it on frame start.
 		* @param[in] commandBuffer VkCommandBuffer.
 		*/
-		void Reset(VkCommandBuffer commandBuffer);
+		void Reset(VkCommandBuffer commandBuffer) const;
 
 		/**
 		* @brief Query results from Pool.

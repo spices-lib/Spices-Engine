@@ -48,7 +48,7 @@ namespace Spices {
 		virtual ~MeshResource() = default;
 
 		/**
-		* @brief Declear value Type.
+		* @brief Declare value Type.
 		*/
 		using Positions           = Attribute<glm::vec3>;                // @brief Position.(also as Point)
 		using Normals             = Attribute<glm::vec3>;                // @brief Normal
@@ -63,7 +63,7 @@ namespace Spices {
 		using Lods                = Attribute<Lod>;                      // @brief Lod
 
 		/**
-		* @brief Declear value.
+		* @brief Declare value.
 		*/
 		Positions                   positions;
 		Normals                     normals;

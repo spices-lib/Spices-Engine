@@ -43,7 +43,7 @@ namespace Spices {
 
 		/**
 		* @brief Set Sprite Material.
-		* @param[in] material Sprite Material Path.
+		* @param[in] materialPath Sprite Material Path.
 		*/
 		void SetMaterial(const std::string& materialPath);
 

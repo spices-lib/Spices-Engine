@@ -28,7 +28,7 @@ namespace Spices {
 		/**
 		* @brief Free in used DescriptorSet used by GBuffer Visualizer.
 		*/
-		void Free() 
+		void Free() const
 		{
 			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(SceneColorID));
 			ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(AlbedoID));

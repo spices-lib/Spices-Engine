@@ -199,7 +199,7 @@ namespace Net {
         * @brief Get Poll State.
         * @return Returns PollState.
         */
-        PollState GetPollState() { return m_PollState; }
+        PollState GetPollState() const { return m_PollState; }
 
         /**
         * @brief Set Poll State.
