@@ -41,7 +41,7 @@ namespace Spices {
 		}
 		else 
 		{
-			SPICES_CORE_INFO("Invalid mode passed while trying to open file");
+			SPICES_CORE_INFO("Invalid mode passed while trying to open file")
 			return false;
 		}
 
@@ -53,7 +53,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << "Error opening file: " << path;
 
-			SPICES_CORE_WARN(ss.str().c_str());
+			SPICES_CORE_WARN(ss.str().c_str())
 			return false;
 		}
 
@@ -105,16 +105,15 @@ namespace Spices {
 		return false;
 	}
 
-	bool FileLibrary::FileLibrary_Read_Line(const FileHandle* handle, uint64_t max_length, char** line_buf, uint64_t* out_line_length)
+	bool FileLibrary::FileLibrary_Read_Line(const FileHandle* handle, uint64_t max_length, char* line_buf, uint64_t* out_line_length)
 	{
 		SPICES_PROFILE_ZONE;
 
 		if (handle->handle && line_buf && out_line_length && max_length > 0) 
 		{
-			char* buf = *line_buf;
-			if (fgets(buf, static_cast<int>(max_length), static_cast<FILE*>(handle->handle)) != nullptr) 
+			if (fgets(line_buf, static_cast<int>(max_length), static_cast<FILE*>(handle->handle)) != nullptr)
 			{
-				*out_line_length = strlen(*line_buf);
+				*out_line_length = strlen(line_buf);
 				return true;
 			}
 		}
@@ -229,7 +228,7 @@ namespace Spices {
 			std::stringstream ss;
 			ss << "File path: " << srcFilePath << " was not found.";
 
-			SPICES_CORE_WARN(ss.str());
+			SPICES_CORE_WARN(ss.str())
 			return false;
 		}
 
@@ -237,6 +236,25 @@ namespace Spices {
 		std::ofstream dst(dstFilePath, std::ios::binary);
 
 		dst << src.rdbuf();
+
+		return true;
+	}
+
+	bool FileLibrary::FileLibrary_Delete(const char* filePath)
+	{
+		SPICES_PROFILE_ZONE;
+
+		if (FileLibrary_Exists(filePath))
+		{
+			if (remove(filePath) != 0)
+			{
+				std::stringstream ss;
+				ss << "File path: " << filePath << " delete failed.";
+
+				SPICES_CORE_WARN(ss.str())
+				return false;
+			}
+		}
 
 		return true;
 	}

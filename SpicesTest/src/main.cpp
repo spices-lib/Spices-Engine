@@ -26,7 +26,7 @@
 ///* Library */
 //#include "Core/Library/ClassLibrary_test.h"
 //#include "Core/Library/FileLibrary_test.h"
-//#include "Core/Library/MemoryLibrary_test.h"
+#include "Core/Library/MemoryLibrary_test.h"
 //#include "Core/Library/ProcessLibrary_test.h"
 //#include "Core/Library/StringLibrary_test.h"
 //
@@ -63,7 +63,7 @@
 //#include "Network/EPollPoller_test.h"
 //#include "Network/InetAddress_test.h"
 //#include "Network/Socket_test.h"
-#include "Network/TcpServer_test.h"
+//#include "Network/TcpServer_test.h"
 
 /* Vulkan */
 //#include "RenderAPI/Vulkan/VulkanImage_test.h"

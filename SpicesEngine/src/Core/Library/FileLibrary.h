@@ -111,7 +111,7 @@ namespace Spices {
         static bool FileLibrary_Read_Line(
             const FileHandle* handle          ,
             uint64_t          max_length      ,
-            char**            line_buf        ,
+            char*             line_buf        ,
             uint64_t*         out_line_length
         );
 
@@ -170,5 +170,12 @@ namespace Spices {
         * @return Returns true if copy succeed.
         */
         static bool FileLibrary_CopyFile(std::string srcFilePath, std::string dstFilePath);
+
+        /**
+        * @brief Delete a file from disk.
+        * @param[in] filePath The file.
+        * @return Returns true if delete succeed.
+        */
+        static bool FileLibrary_Delete(const char* filePath);
     };
 }
