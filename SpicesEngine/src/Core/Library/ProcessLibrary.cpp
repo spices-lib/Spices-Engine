@@ -54,8 +54,12 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
-		const std::string temp = std::string("TASKKILL /F /IM ") + processName;
-		system(temp.c_str());
+		const std::string temp = std::string("C:/Windows/System32/TASKKILL.exe /F /IM ") + processName;
+		if(system(temp.c_str()) != 0)
+		{
+			SPICES_CORE_WARN("Process: " + std::string(processName) + " Close Failed")
+			return false;
+		}
 
 		return true;
 	}

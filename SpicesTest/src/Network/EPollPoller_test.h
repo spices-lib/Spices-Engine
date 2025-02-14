@@ -35,7 +35,7 @@ namespace SpicesTest {
         Socket client_sock;
         client_sock.Create();
 
-        EPollPoller epoller(pTLSEventLoop.GetInst());
+        EPollPoller epoller(EventLoopThreadWrapper::GetInst());
         HANDLE ephnd = epoller.GetHandle();
 
         // add listen_sock read event to epoll

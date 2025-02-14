@@ -15,6 +15,7 @@ namespace Spices {
     class ThreadLibrary
     {
     public:
+
         /**
         * @brief Set Thread name.
         * @param name thread name.
