@@ -6,8 +6,8 @@
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Network/Buffer.h>
-#include <Network/Socket.h>
+#include <Network/Net/Buffer.h>
+#include <Network/Net/Socket.h>
 #include "Instrumentor.h"
 
 namespace SpicesTest {

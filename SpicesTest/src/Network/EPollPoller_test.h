@@ -6,9 +6,9 @@
 
 #pragma once
 #include <gmock/gmock.h>
-#include <Network/Poller/EPollPoller.h>
-#include <Network/EventLoop.h>
-#include <Network/Channel.h>
+#include <Network/Net/Poller/EPollPoller.h>
+#include <Network/Net/EventLoop.h>
+#include <Network/Net/Channel.h>
 #include "Instrumentor.h"
 #include <WinSock2.h>
 
