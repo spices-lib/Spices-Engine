@@ -9,6 +9,8 @@
 
 namespace Spices {
 
+namespace Net {
+
 	/**
 	* @brief Http Request body.
 	*/
@@ -19,29 +21,29 @@ namespace Spices {
 		enum class Method
 		{
 			Invalid = 0,
-			Get     = 1,
-			Post    = 2,
-			Head    = 3,
-			Put     = 4,
-			Delete  = 5
+			Get = 1,
+			Post = 2,
+			Head = 3,
+			Put = 4,
+			Delete = 5
 		};
 
 		enum class Version
 		{
 			UnKonwn = 0,
-			HTTP10  = 1,
-			HTTP11  = 2
+			HTTP10 = 1,
+			HTTP11 = 2
 		};
 
 	public:
 
 		/**
 		* @brief Constructor Function.
+		* @param[in] path Http Path.
 		* @param[in] method Http Method.
 		* @param[in] version Http Version.
-		* @param[in] path Http Path.
 		*/
-		HttpRequest(Method method, Version version, const std::string& path)
+		HttpRequest(const std::string& path, Method method, Version version)
 			: m_Method(method)
 			, m_Version(version)
 			, m_Path(path)
@@ -100,5 +102,7 @@ namespace Spices {
 		std::unordered_map<std::string, std::string> m_Headers;
 
 	};
+
+}
 
 }
