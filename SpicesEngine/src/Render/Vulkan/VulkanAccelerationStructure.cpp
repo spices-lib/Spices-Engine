@@ -14,6 +14,7 @@ namespace Spices {
 		VkAccelerationStructureCreateInfoKHR& accel
 	)
 		: VulkanObject(vulkanState)
+	    , m_Accel(nullptr)
 	{
 		SPICES_PROFILE_ZONE;
 

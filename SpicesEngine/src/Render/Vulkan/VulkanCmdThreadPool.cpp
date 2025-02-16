@@ -63,28 +63,20 @@ namespace Spices {
 			
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
-
-			/**
-			* @brief Name thread.
-			*/
-			std::stringstream ss;
-			ss << m_PoolName << threadId;
-			const std::string name = ss.str();
-
-			SubmitThreadTask_LightWeight(threadId, [=](VkCommandBuffer buffer){
-				ThreadLibrary::SetThreadName(name);
-			});
 		}
-
-		/**
-		* @brief Wait for name.
-		*/
-		Wait();
 	}
 
 	void VulkanCmdThreadPool::ThreadFunc(Thread<VkCommandBuffer>* thread)
 	{
 		SPICES_PROFILE_ZONE;
+
+		/**
+		* @brief Name thread.
+		*/
+		std::stringstream ss;
+		ss << m_PoolName << thread->GetId();
+
+		ThreadLibrary::SetThreadName(ss.str());
 
 		auto lastTime = std::chrono::high_resolution_clock::now();
 
@@ -94,7 +86,7 @@ namespace Spices {
 			{
 				std::unique_lock<std::mutex> lock(m_Mutex);
 
-				while (m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0)
+				while ((m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0) || m_IsSuspend)
 				{
 					/**
 					* @brief Exit.
@@ -212,7 +204,7 @@ namespace Spices {
 
 		for (int i = 0; i < m_NThreads.load(); i++)
 		{
-			if (commandBuffers[i].size() == 0) continue;
+			if (commandBuffers[i].empty()) continue;
 
 			vkFreeCommandBuffers(m_VulkanState.m_Device, m_CmdPools[i], commandBuffers[i].size(), commandBuffers[i].data());
 			commandBuffers[i].clear();

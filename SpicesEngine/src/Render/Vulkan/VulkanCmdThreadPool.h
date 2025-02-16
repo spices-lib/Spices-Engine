@@ -121,29 +121,6 @@ namespace Spices {
 						++m_IdleThreadSize;
 						++m_NThreads;
 
-						/**
-						* @brief Name thread.
-						*/
-						std::stringstream ss;
-						ss << m_PoolName << threadId;
-						const std::string name = ss.str();
-
-						m_Threads[threadId]->ReceiveThreadTask([=](VkCommandBuffer buffer) {
-							ThreadLibrary::SetThreadName(name);
-						});
-						
-						/**
-						* @brief Wait for name.
-						*/
-						{
-							m_Mutex.unlock();
-
-							m_NotEmpty.notify_all();
-							m_Threads[threadId]->Wait();
-
-							m_Mutex.lock();
-						}
-
 						break;
 					}
 				}

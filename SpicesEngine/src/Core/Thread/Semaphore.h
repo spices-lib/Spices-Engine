@@ -40,6 +40,17 @@ namespace Spices {
 		}
 
 		/**
+		* @brief Increase this semaphore sign.
+		*/
+		void Increase()
+		{
+			std::unique_lock<std::mutex> lock(m_Mutex);
+
+			++m_Sign;
+			m_Cond.notify_one();
+		}
+
+		/**
 		* @brief Wait this semaphore until it owns equal sign with given.
 		* @param[in] sign .
 		*/

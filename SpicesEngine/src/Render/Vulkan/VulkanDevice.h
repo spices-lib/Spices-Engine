@@ -164,13 +164,13 @@ namespace Spices {
 		* @brief Get DeviceGeneratedCommandsPropertiesNV.
 		* @return Returns DeviceGeneratedCommandsPropertiesNV.
 		*/
-		inline static VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV& GetDGCProperties() { return m_DGCProperties; };
+		inline static VkPhysicalDeviceDeviceGeneratedCommandsPropertiesNV& GetDGCProperties() { return m_DGCProperties; }
 
 		/**
 		* @brief Get VkPhysicalDeviceFeatures.
 		* @return Returns VkPhysicalDeviceFeatures.
 		*/
-		inline static VkPhysicalDeviceFeatures& GetDeviceFeatures() { return m_DeviceFeatures; };
+		inline static VkPhysicalDeviceFeatures& GetDeviceFeatures() { return m_DeviceFeatures; }
 
 		/**
 		* @brief Get VkPhysicalDeviceProperties.

@@ -28,7 +28,7 @@ namespace Spices {
 		*/
 		if (!SelectPhysicalDevice(vulkanState.m_Instance, vulkanState.m_Surface, vulkanState.m_Windows)) 
 		{
-			SPICES_CORE_ERROR("failed select physical device!");
+			SPICES_CORE_ERROR("failed select physical device!")
 		}
 
 		/**
@@ -195,7 +195,7 @@ namespace Spices {
 				int index = 0;
 				for (auto& [id, items] : idItems)
 				{
-					for (int i = 0; i < items.size(); i++)
+					for (size_t i = 0; i < items.size(); i++)
 					{
 						vkGetDeviceQueue(vulkanState.m_Device, family, index, &items[i]);
 						index++;
@@ -308,7 +308,7 @@ namespace Spices {
 		*/
 		if (deviceCount == 0) 
 		{
-			SPICES_CORE_WARN("Failed to find GPUs with Vulkan support!");
+			SPICES_CORE_WARN("Failed to find GPUs with Vulkan support!")
 			return false;
 		}
 
@@ -342,7 +342,7 @@ namespace Spices {
 				*/
 				m_SwapChainSupportDetails = QuerySwapChainSupport(physicalDevice, surface, window);
 
-				SPICES_CORE_INFO("VkPhysicalDevice Selected!!!");
+				SPICES_CORE_INFO("VkPhysicalDevice Selected!!!")
 				return true;
 			}
 		}
@@ -380,25 +380,25 @@ namespace Spices {
 		{
 			std::stringstream ss;
 			ss << "Limits : maxFragmentOutputAttachments = " << m_DeviceProperties.limits.maxFragmentOutputAttachments;
-			SPICES_CORE_INFO(ss.str());
+			SPICES_CORE_INFO(ss.str())
 		}
 
 		{
 			std::stringstream ss;
 			ss << "MeshShader : maxMeshOutputVertices = " << meshShaderProperties.maxMeshOutputVertices;
-			SPICES_CORE_INFO(ss.str());
+			SPICES_CORE_INFO(ss.str())
 		}
 
 		{
 			std::stringstream ss;
 			ss << "MeshShader : maxMeshOutputPrimitives = " << meshShaderProperties.maxMeshOutputPrimitives;
-			SPICES_CORE_INFO(ss.str());
+			SPICES_CORE_INFO(ss.str())
 		}
 
 		{
 			std::stringstream ss;
 			ss << "SubGroup : subgroupSize = " << subGroupProperties.subgroupSize;
-			SPICES_CORE_INFO(ss.str());
+			SPICES_CORE_INFO(ss.str())
 			assert(subGroupProperties.supportedStages & VK_SHADER_STAGE_TASK_BIT_EXT);
 			assert(subGroupProperties.supportedStages & VK_SHADER_STAGE_MESH_BIT_EXT);
 		}
@@ -641,7 +641,7 @@ namespace Spices {
 
 				std::stringstream ss;
 				ss << "Device Extension Required: " << set << ", Which is not satisfied with device: " << deviceProperties.deviceName;
-				SPICES_CORE_WARN(ss.str());
+				SPICES_CORE_WARN(ss.str())
 			}
 
 			return false;

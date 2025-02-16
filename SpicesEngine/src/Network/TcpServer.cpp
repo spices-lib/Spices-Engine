@@ -49,8 +49,8 @@ namespace Net {
 
 		if(!m_ThreadPool->IsPoolRunning())
 		{
-			m_ThreadPool->Start(threadSize, m_ThreadInitCallback);
 			EventLoopThreadWrapper::GetInst()->RunInLoop([=]() { m_Acceptor->Listen(); });
+			m_ThreadPool->Start(threadSize, m_ThreadInitCallback);
 		}
 	}
 

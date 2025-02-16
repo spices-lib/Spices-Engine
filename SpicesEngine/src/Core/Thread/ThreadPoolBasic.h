@@ -578,6 +578,14 @@ namespace Spices {
 	{
 		SPICES_PROFILE_ZONE;
 
+		/**
+		* @brief Name thread.
+		*/
+		std::stringstream ss;
+		ss << m_PoolName << thread->GetId();
+
+		ThreadLibrary::SetThreadName(ss.str());
+
 		auto lastTime = std::chrono::high_resolution_clock::now();
 
 		for (;;)
@@ -586,7 +594,7 @@ namespace Spices {
 			{
 				std::unique_lock<std::mutex> lock(m_Mutex);
 
-				while (m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0)
+				while ((m_Tasks.load() == 0 && thread->GetThreadTasksCount() == 0) || m_IsSuspend)
 				{
 					/**
 					* @brief Exit.
@@ -687,23 +695,7 @@ namespace Spices {
 
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
-
-			/**
-			* @brief Name thread.
-			*/
-			std::stringstream ss;
-			ss << m_PoolName << threadId;
-			const std::string name = ss.str();
-
-			SubmitThreadTask_LightWeight(threadId, [=]() {
-				ThreadLibrary::SetThreadName(name);
-			});
 		}
-
-		/**
-		* @brief Wait for name.
-		*/
-		Wait();
 	}
 
 	template<typename ...Params>
@@ -746,29 +738,6 @@ namespace Spices {
 
 						++m_IdleThreadSize;
 						++m_NThreads;
-
-						/**
-						* @brief Name thread.
-						*/
-						std::stringstream ss;
-						ss << m_PoolName << threadId;
-						const std::string name = ss.str();
-
-						m_Threads[threadId]->ReceiveThreadTask([=]() {
-							ThreadLibrary::SetThreadName(name);
-						});
-
-						/**
-						* @brief Wait for name.
-						*/
-						{
-							m_Mutex.unlock();
-
-							m_NotEmpty.notify_all();
-							m_Threads[threadId]->Wait();
-
-							m_Mutex.lock();
-						}
 
 						break;
 					}

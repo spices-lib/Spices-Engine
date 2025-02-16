@@ -49,6 +49,14 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
+		/**
+		* @brief Name thread.
+		*/
+		std::stringstream ss;
+		ss << m_PoolName << thread->GetId();
+
+		ThreadLibrary::SetThreadName(ss.str());
+
 		EventLoop* loop = EventLoopThreadWrapper::GetInst(&m_ListenAddress);
 
 		if (m_ThreadInitCallback)
@@ -57,6 +65,7 @@ namespace Net {
 		}
 		
 		m_Loops[thread->GetId()] = loop;
+		m_IsThreadsPrepared.Increase();
 
 		loop->Loop();
 	}
@@ -81,6 +90,11 @@ namespace Net {
 			m_Threads.emplace(threadId, std::move(ptr));
 			m_Threads[threadId]->Start();
 		}
+
+		/**
+		* @brief Wait for Thread EventLoop prepared.
+		*/
+		m_IsThreadsPrepared.Wait(initThreadSize);
 
 	}
 

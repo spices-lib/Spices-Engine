@@ -156,7 +156,7 @@ namespace Spices {
         );
 
         /**
-        * @brief Build a bindless texture VkDescriptorSetLayout with bindings.
+        * @brief Build a bindLess texture VkDescriptorSetLayout with bindings.
         * @param[in] bindings all the bindings used in a VkDescriptorSetLayout.
         * @param[in] caption DescriptorSetLayout Name.
         */
@@ -205,7 +205,7 @@ namespace Spices {
         )
             : VulkanObject(vulkanState)
             , m_Layout(vulkanState)
-            , m_Pool(pool)
+            , m_Pool(std::move(pool))
         {}
         
         /**
@@ -269,6 +269,7 @@ namespace Spices {
         
         /**
         * @brief Update this descriptor set.
+        * @param[in] binding Which binging location is.
         * @param[in] buffer VulkanBuffer.
         */
         void UpdateDescriptorSet(
@@ -278,6 +279,7 @@ namespace Spices {
 
         /**
         * @brief Update this descriptor set.
+        * @param[in] binding Which binging location is.
         * @param[in] accel VkAccelerationStructureKHR.
         */
         void UpdateDescriptorSet(

@@ -7,6 +7,7 @@
 #pragma once
 #include "Core/Thread/ThreadPoolBasic.h"
 #include "EventLoop.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace Spices {
 
@@ -92,6 +93,11 @@ namespace Net {
         * @brief ThreadInitCallback.
         */
         ThreadInitCallback m_ThreadInitCallback;
+
+        /**
+        * @brief ThreadsPrepared condition.
+        */
+        semaphore m_IsThreadsPrepared;
 
     };
 

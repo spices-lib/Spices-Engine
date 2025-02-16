@@ -68,7 +68,7 @@ namespace SpicesTest {
 
         using namespace Spices::Net;
 
-        InetAddress address(8000, "192.168.0.127");
+        InetAddress address(8000, "127.0.0.1");
         EventLoop* loop = nullptr;
         std::thread t([&]() {
 
@@ -84,12 +84,11 @@ namespace SpicesTest {
         Socket client;
         client.Create();
         Channel channel(client.Fd(), loop);
-        channel.EnableReading();
         channel.EnableWriting();
         client.Connect(&address);
         client.Send("Hello client!");
 
-        t.join();
+        t.detach();
     }
 
 }

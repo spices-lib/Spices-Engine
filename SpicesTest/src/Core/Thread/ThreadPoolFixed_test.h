@@ -536,7 +536,7 @@ namespace SpicesTest {
 				});
 			}
 
-			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), nThreads);
 			EXPECT_EQ(m_ThreadPool.GetTasks(), 10);
 
 			m_ThreadPool.Continue();
@@ -544,7 +544,7 @@ namespace SpicesTest {
 			m_ThreadPool.Wait();
 			m_ThreadPool.Suspend();
 
-			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), nThreads);
 			EXPECT_EQ(m_ThreadPool.GetTasks(), 0);
 			EXPECT_EQ(executeCount.load(), 10);
 		}
@@ -552,7 +552,7 @@ namespace SpicesTest {
 		{
 			SPICESTEST_PROFILE_SCOPE("Slow Task");
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 30; i++)
 			{
 				m_ThreadPool.SubmitPoolTask([&]() {
 					std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -560,24 +560,24 @@ namespace SpicesTest {
 				});
 			}
 
-			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
-			EXPECT_EQ(m_ThreadPool.GetTasks(), 10);
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), nThreads);
+			EXPECT_EQ(m_ThreadPool.GetTasks(), 30);
 
 			m_ThreadPool.Continue();
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			m_ThreadPool.Suspend();
 			std::this_thread::sleep_for(std::chrono::seconds(2));
 
-			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
-			EXPECT_EQ(m_ThreadPool.GetTasks(), 6);
-			EXPECT_EQ(executeCount.load(), 14);
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), nThreads);
+			EXPECT_EQ(m_ThreadPool.GetTasks(), 30 - nThreads);
+			EXPECT_EQ(executeCount.load(), 10 + nThreads);
 
 			m_ThreadPool.Continue();
 			m_ThreadPool.Wait();
 
-			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), 4);
+			EXPECT_EQ(m_ThreadPool.GetIdleThreadSize(), nThreads);
 			EXPECT_EQ(m_ThreadPool.GetTasks(), 0);
-			EXPECT_EQ(executeCount.load(), 20);
+			EXPECT_EQ(executeCount.load(), 40);
 		}
 	}
 }

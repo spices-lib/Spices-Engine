@@ -159,7 +159,7 @@ namespace SpicesTest {
 		test0.Bind([&]() { return DelegateTestT(); });										                                           
 
 		EXPECT_EQ(test0.size(), 5);
-		EXPECT_EQ(test2.empty(), false);
+		EXPECT_EQ(test2.empty(), true);
 
 		test0.UnBind(std::bind((void(DelegateFuncTest::*)()) & DelegateFuncTest::Test, &funcTestClass));
 		test0.UnBind(std::bind(&DelegateFuncTest::Test1));
@@ -168,7 +168,7 @@ namespace SpicesTest {
 		test0.UnBind([&]() { return DelegateTestT(); });
 
 		EXPECT_EQ(test0.size(), 3);
-		EXPECT_EQ(test2.empty(), false);
+		EXPECT_EQ(test2.empty(), true);
 	}
 
 	/**

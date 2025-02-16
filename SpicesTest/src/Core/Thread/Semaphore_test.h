@@ -35,6 +35,29 @@ namespace SpicesTest {
     }
 
     /**
+    * @brief Testing Spices::Semaphore::Increase.
+    */
+    TEST(Semaphore_test, Increase) {
+
+        SPICESTEST_PROFILE_FUNCTION();
+
+        Spices::semaphore sem;
+
+        std::thread t([&]() {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            sem.Increase();
+        });
+
+        // Should not block here.
+        EXPECT_EQ(sem.GetSign(), 0);
+
+        t.join();
+
+        // Should block here.
+        EXPECT_EQ(sem.GetSign(), 1);
+    }
+
+    /**
     * @brief Testing Spices::Semaphore::Wait.
     */
     TEST(Semaphore_test, Wait) {
