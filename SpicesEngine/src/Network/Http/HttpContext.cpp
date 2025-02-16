@@ -3,12 +3,21 @@
 
 namespace Spices {
 
-	namespace Net {
+namespace Net {
 
-
-
-
-
+	bool HttpContext::ParseRequest(Buffer* buf)
+	{
+		return false;
 	}
+
+	void HttpContext::Reset()
+	{
+		m_RequestParseState = RequestParseState::ExpectRequestLine;
+
+		HttpRequest dummy;
+		m_HttpRequest.Swap(dummy);
+	}
+
+}
 
 }

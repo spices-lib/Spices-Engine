@@ -39,14 +39,12 @@ namespace Net {
 
 		/**
 		* @brief Constructor Function.
-		* @param[in] path Http Path.
-		* @param[in] method Http Method.
 		* @param[in] version Http Version.
 		*/
-		HttpRequest(const std::string& path, Method method, Version version)
-			: m_Method(method)
-			, m_Version(version)
-			, m_Path(path)
+		HttpRequest()
+			: m_Method(Method::Invalid)
+			, m_Version(Version::UnKonwn)
+			, m_Path("")
 		{}
 
 		/**
@@ -55,24 +53,67 @@ namespace Net {
 		virtual ~HttpRequest() = default;
 
 		/**
+		* @brief Set Http path.
+		* @param[in] path Http Path.
+		*/
+		void SetPath(const std::string& path);
+
+		/**
+		* @brief Get Http path.
+		* @return Returns Http Path.
+		*/
+		const std::string& GetPath() { return m_Path; }
+
+		/**
+		* @brief Set Http Method.
+		* @param[in] method Http Method.
+		*/
+		void SetMethod(Method method);
+
+		/**
+		* @brief Get Http Method.
+		* @return Returns Http Method.
+		*/
+		const Method GetMethod() const { return m_Method; }
+ 
+		/**
+		* @brief Set Http Version.
+		* @param[in] version Http Version.
+		*/
+		void SetVersion(Version version);
+
+		/**
+		* @brief Get Http Version.
+		* @return Returns Http Version.
+		*/
+		const Version GetVersion() const { return m_Version; }
+
+		/**
 		* @brief Add a Parameter to this HttpRequest.
 		* @param[in] name Parameter name.
 		* @param[in] value Parameter value.
 		*/
-		void AddParameter(const std::string& name, const std::string& value)
-		{
-			m_Parameters[name] = value;
-		}
+		void AddParameter(const std::string& name, const std::string& value);
 
 		/**
 		* @brief Add a Header to this HttpRequest.
 		* @param[in] name Header name.
 		* @param[in] value Header value.
 		*/
-		void AddHeader(const std::string& name, const std::string& value)
-		{
-			m_Headers[name] = value;
-		}
+		void AddHeader(const std::string& name, const std::string& value);
+
+		/**
+		* @brief Get a Header from this HttpRequest.
+		* @param[in] name Header name.
+		* return Returns Header name.
+		*/
+		std::string GetHeader(const std::string& name) const;
+
+		/**
+		* @brief Swap with another HttpRequest.
+		* @param[in] rhs another HttpRequest.
+		*/
+		void Swap(HttpRequest& rhs);
 
 	private:
 

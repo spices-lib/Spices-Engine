@@ -47,7 +47,7 @@ namespace Net {
 
 		void OnConnection(const TcpConnectionPtr& connection);
 		void OnMessage(const TcpConnectionPtr& connection, Buffer* buf);
-		void OnRequest(const HttpRequest& request, HttpResponse* response);
+		void OnRequest(const TcpConnectionPtr& connection, const HttpRequest& request);
 
 	private:
 

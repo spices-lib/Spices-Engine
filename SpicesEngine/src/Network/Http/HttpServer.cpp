@@ -1,6 +1,8 @@
 #include "Pchheader.h"
 #include "HttpServer.h"
 #include "HttpRequest.h"
+#include "HttpResponse.h"
+#include "HttpContext.h"
 
 namespace Spices {
 
@@ -54,12 +56,50 @@ namespace Net {
 	{
 		SPICES_PROFILE_ZONE;
 
+		auto context = std::make_unique<HttpContext>();
 
+		assert(m_NameNodeMap.count(connection->GetName()));
+		Node node = m_NameNodeMap[connection->GetName()];
+
+		m_ConnectionList.splice(m_ConnectionList.end(), m_ConnectionList, node);
+		assert(node == --m_ConnectionList.end());
+
+		if (!context->ParseRequest(buf))
+		{
+			SPICES_CORE_INFO("HttpContext ParseRequest Failed")
+
+			connection->Send("HTTP/1.1 400 Bad Request\r\n\r\n");
+			connection->ShutDown();
+		}
+
+		if (context->GotAll())
+		{
+			SPICES_CORE_INFO("HttpContext ParseRequest Succeed")
+
+			OnRequest(connection, context->GetRequest());
+			context->Reset();
+		}
 	}
 
-	void HttpServer::OnRequest(const HttpRequest& request, HttpResponse* response)
+	void HttpServer::OnRequest(const TcpConnectionPtr& connection, const HttpRequest& request)
 	{
 		SPICES_PROFILE_ZONE;
+
+		std::string connectionHeader = request.GetHeader("Connection");
+
+		bool close = connectionHeader == "close" || (request.GetVersion() == HttpRequest::Version::HTTP10 && connectionHeader != "Keep-Alive");
+
+		HttpResponse response(close);
+		m_HttpCallback(request, &response);
+
+		Buffer buf;
+		response.AppendToBuffer(&buf);
+		connection->Send(buf.RetrieveAllAsString());
+
+		if (response.CloseConnection())
+		{
+			connection->ShutDown();
+		}
 	}
 
 }

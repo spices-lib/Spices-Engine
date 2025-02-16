@@ -5,11 +5,13 @@ namespace Spices {
 
 namespace Net {
 
+	class Buffer;
+
 	class HttpResponse
 	{
 	public:
 
-		enum class StatusCode
+		enum StatusCode
 		{
 			UnKnown          = 0,
 			Ok               = 200,
@@ -26,6 +28,15 @@ namespace Net {
 		{}
 
 		virtual ~HttpResponse() = default;
+
+		void SetStatusCode(StatusCode code);
+		void SetStatusMessage(const std::string& message);
+		void SetCloseConnection(bool on);
+		bool CloseConnection() const;
+		void SetContentType(const std::string& contentType);
+		void AddHeader(const std::string& name, const std::string& value);
+		void SetBody(const std::string& body);
+		void AppendToBuffer(Buffer* output);
 
 	private:
 

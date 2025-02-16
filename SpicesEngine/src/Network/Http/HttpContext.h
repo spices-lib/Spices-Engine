@@ -6,6 +6,8 @@ namespace Spices {
 
 namespace Net {
 
+	class Buffer;
+
 	class HttpContext
 	{
 	public:
@@ -22,11 +24,21 @@ namespace Net {
 
 		HttpContext()
 			: m_RequestParseState(RequestParseState::ExpectRequestLine)
-			, m_HttpRequest("", HttpRequest::Method::Get, HttpRequest::Version::HTTP11)
 		{}
 
 		virtual ~HttpContext() = default;
 
+		/**
+		* @brief Get HttpRequest.
+		* @reutrn Returns HttpRequest.
+		*/
+		const HttpRequest& GetRequest() { return m_HttpRequest; }
+
+		bool ParseRequest(Buffer* buf);
+
+		bool GotAll() { return m_RequestParseState == RequestParseState::GotAll; }
+
+		void Reset();
 
 	private:
 
