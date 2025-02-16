@@ -1,3 +1,9 @@
+/**
+* @file Math.h.
+* @brief The Math Implementation.
+* @author Spices.
+*/
+
 #include "Pchheader.h"
 #include "Math.h"
 

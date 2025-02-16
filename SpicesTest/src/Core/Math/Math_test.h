@@ -14,7 +14,59 @@
 namespace SpicesTest {
 
 	/**
-	* @brief Testing Math::DecomposeTransform.
+	* @brief Testing UInt2.
+	*/
+	TEST(Math_test, UInt2) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		Spices::UInt2 u0(1, 2);
+		Spices::UInt2 u1(1, 2);
+		Spices::UInt2 u2(1, 3);
+
+		EXPECT_EQ(u0 == u1, true);
+		EXPECT_EQ(u0 == u2, false);
+
+		std::unordered_map<Spices::UInt2, bool> maps;
+
+		maps[u0] = true;
+		EXPECT_EQ(maps.size(), 1);
+
+		maps[u1] = true;
+		EXPECT_EQ(maps.size(), 1);
+
+		maps[u2] = true;
+		EXPECT_EQ(maps.size(), 2);
+	}
+
+	/**
+	* @brief Testing String2.
+	*/
+	TEST(Math_test, String2) {
+
+		SPICESTEST_PROFILE_FUNCTION();
+
+		Spices::String2 u0("1", "2");
+		Spices::String2 u1("1", "2");
+		Spices::String2 u2("1", "3");
+
+		EXPECT_EQ(u0 == u1, true);
+		EXPECT_EQ(u0 == u2, false);
+
+		std::unordered_map<Spices::String2, bool> maps;
+
+		maps[u0] = true;
+		EXPECT_EQ(maps.size(), 1);
+
+		maps[u1] = true;
+		EXPECT_EQ(maps.size(), 1);
+
+		maps[u2] = true;
+		EXPECT_EQ(maps.size(), 2);
+	}
+
+	/**
+	* @brief Testing DecomposeTransform.
 	*/
 	TEST(Math_test, DecomposeTransform) {
 
@@ -63,8 +115,6 @@ namespace SpicesTest {
 			Spices::DecomposeTransform(matrix, position, rotation, scale);
 
 			rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
-
-			std::cout << "H" << std::endl;
 		}
 
 		{
@@ -78,8 +128,6 @@ namespace SpicesTest {
 			Spices::DecomposeTransform(matrix, position, rotation, scale);
 
 			rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
-
-			std::cout << "H" << std::endl;
 		}
 	}
 }

@@ -29,6 +29,7 @@
 #include "Core/Library/MemoryLibrary_test.h"
 #include "Core/Library/ProcessLibrary_test.h"
 #include "Core/Library/StringLibrary_test.h"
+#include "Core/Library/ThreadLibrary_test.h"
 
 /* Math */
 #include "Core/Math/Math_test.h"
@@ -66,7 +67,8 @@
 #include "Network/TcpServer_test.h"
 
 /* Vulkan */
-//#include "RenderAPI/Vulkan/VulkanImage_test.h"
+#include "RenderAPI/Vulkan/VulkanImage_test.h"
+#include "RenderAPI/Vulkan/VulkanRenderBackend_test.h"
 
 /**
 * @brief The Entry of SpicesTest.
