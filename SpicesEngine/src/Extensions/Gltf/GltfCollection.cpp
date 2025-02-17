@@ -10,6 +10,7 @@
 #include "World/Entity.h"
 #include "World/World/World.h"
 #include "World/Components/MeshComponent.h"
+#include "World/Components/EntityComponent.h"
 #include "Resources/Mesh/GltfPack.h"
 #include "Core/Math/Math.h"
 #include "Slate/SlateInfoBar.h"
@@ -52,9 +53,11 @@ namespace Spices {
 		}, [=](SlateInfoBar* that) {
 			return std::any_cast<float>(that->GetRate()) >= 1.0f;
 		});
+
+		world->Mark(World::WorldMarkBits::MeshAddedToWorld);
 	}
 
-	void GltfCollection::CreateEntityRecursive(
+	Entity GltfCollection::CreateEntityRecursive(
 		World*             world , 
 		const std::string& tag   , 
 		uint32_t           node  , 
@@ -62,73 +65,87 @@ namespace Spices {
 		std::shared_ptr<LoadingState> loadingState
 	)
 	{
-		/**
-		* @brief Recursive in nodes.
-		*/ 
 		GltfNodes::Item& item = m_Nodes->m_NodesData[node];
+
+		/**
+		* @brief Create this entity.
+		*/
+		auto self   = shared_from_this();
+
+
+		Entity entity = world->CreateEntity(tag);
+
+		auto& transformComp = entity.GetComponent<TransformComponent>();
+
+		glm::vec3 position;
+		glm::vec3 rotation;
+		glm::vec3 scale;
+
+		DecomposeTransform(model * item.matrix, position, rotation, scale);
+		rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
+
+		transformComp.SetPosition(position);
+		transformComp.SetRotation(rotation);
+		transformComp.SetScale(scale);
+
+
+		std::vector<Entity> childrens;
+
 		for (auto& n : item.children)
 		{
-			CreateEntityRecursive(world, tag, n, model * item.matrix, loadingState);
+			childrens.push_back(CreateEntityRecursive(world, tag, n, glm::mat4(1.0f), loadingState));
 		}
 
-		/**
-		* @todo Create Empty Entity here.
-		*/
-		if (item.mesh < -0.5f) return;
+		if (!childrens.empty())
+		{
+			auto& entityComp = entity.AddComponent<EntityComponent>();
 
-		auto self = shared_from_this();
-		AsyncTask(ThreadPoolEnum::Custom, [=]() {
-
-			Mesh::Builder builder;
-
-			for (int i = 0; i < self->m_Meshes->m_MeshesData[item.mesh].primitives.size(); i++)
+			for (auto& e : childrens)
 			{
-				std::stringstream ss;
-				ss << self->m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
-
-				std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* gltfPack) {
-					GltfLoader::LoadPack(gltfPack, self->m_Meshes->m_MeshesData[item.mesh].primitives[i], self->m_Accessors.get(), self->m_Buffers.get(), self->m_BufferViews.get());
-				});
-
-				std::shared_ptr<Material> material = GltfLoader::LoadMaterial(self->m_Materials->m_MaterialsData[self->m_Meshes->m_MeshesData[item.mesh].primitives[i].material], self->m_Images.get());
-
-				pack->SetMaterial(material);
-
-				builder.AddPack(pack);
+				entityComp.AddEntity(e);
 			}
+		}
 
-			std::shared_ptr<Mesh> mesh = builder.Build();
+		if (item.mesh < -0.5f)
+		{
+			return entity;
+		}
 
-			AsyncMainTask(ThreadPoolEnum::Main, [=]() {
+		Mesh::Builder builder;
 
-				Entity entity = world->CreateEntity(tag);
-				auto& meshComp = entity.AddComponent<MeshComponent>();
+		for (int i = 0; i < self->m_Meshes->m_MeshesData[item.mesh].primitives.size(); i++)
+		{
+			std::stringstream ss;
+			ss << self->m_Meshes->m_MeshesData[item.mesh].name << '_' << node;
 
-				meshComp.SetMesh(mesh);
-
-				auto& transformComp = entity.GetComponent<TransformComponent>();
-
-				glm::vec3 position;
-				glm::vec3 rotation;
-				glm::vec3 scale;
-
-				DecomposeTransform(model * item.matrix, position, rotation, scale);
-				rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
-
-				transformComp.SetPosition(position);
-				transformComp.SetRotation(rotation);
-				transformComp.SetScale(scale);
-
-				++loadingState->loadedMeshes;
-
-				/**
-				* @brief Mark the world with MeshAddedToWorld bit.
-				*/
-				if (loadingState->loadedMeshes.load() == self->m_Meshes->GetNMeshes())
-				{
-					world->Mark(World::WorldMarkBits::MeshAddedToWorld);
-				}
+			std::shared_ptr<GltfPack> pack = std::make_shared<GltfPack>(ss.str(), [&](GltfPack* gltfPack) {
+				GltfLoader::LoadPack(gltfPack, self->m_Meshes->m_MeshesData[item.mesh].primitives[i], self->m_Accessors.get(), self->m_Buffers.get(), self->m_BufferViews.get());
 			});
-		});
+
+			std::shared_ptr<Material> material = GltfLoader::LoadMaterial(self->m_Materials->m_MaterialsData[self->m_Meshes->m_MeshesData[item.mesh].primitives[i].material], self->m_Images.get());
+
+			pack->SetMaterial(material);
+
+			builder.AddPack(pack);
+		}
+
+		std::shared_ptr<Mesh> mesh = builder.Build();
+
+		auto& meshComp = entity.AddComponent<MeshComponent>();
+
+		meshComp.SetMesh(mesh);
+
+		//++loadingState->loadedMeshes;
+
+		///**
+		//* @brief Mark the world with MeshAddedToWorld bit.
+		//*/
+		//if (loadingState->loadedMeshes.load() == self->m_Meshes->GetNMeshes())
+		//{
+		//	world->Mark(World::WorldMarkBits::MeshAddedToWorld);
+		//}
+
+		return entity;
+
 	}
 }

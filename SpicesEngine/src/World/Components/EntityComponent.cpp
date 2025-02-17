@@ -8,6 +8,7 @@
 #include "EntityComponent.h"
 #include "Render/FrameInfo.h"
 #include "World/World/World.h"
+#include "World/Entity.h"
 
 namespace Spices {
 
@@ -23,5 +24,15 @@ namespace Spices {
 	void EntityComponent::DrawThis()
 	{
 		SPICES_PROFILE_ZONE;
+	}
+
+	void EntityComponent::AddEntity(uint32_t entity)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Entities.insert(entity);
+		
+		Entity e((entt::entity)entity, FrameInfo::Get().m_World.get());
+		e.RemoveFromRoot();
 	}
 }

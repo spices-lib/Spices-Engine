@@ -160,6 +160,13 @@ namespace Spices {
 		void ViewComponent(const std::vector<uint32_t>& ranges, uint32_t floor, uint32_t ceil, F&& fn);
 
 		/**
+		* @brief View all root in this world.
+		* @param fn View function.
+		*/
+		template<typename F>
+		void ViewRoot(F&& fn);
+
+		/**
 		* @brief Template Function.
 		* Used for add specific component to entity.
 		* @tparam T Specific component.
@@ -196,6 +203,12 @@ namespace Spices {
 		template<typename T>
 		bool HasComponent(entt::entity e);
 		
+		/**
+		* @brief Remove a entity from this world root.
+		* @param[in] entity Entity.
+		*/
+		void RemoveFromRoot(Entity& entity);
+
 	private:
 
 		Entity CreateEmptyEntity(UUID uuid);
@@ -225,7 +238,7 @@ namespace Spices {
 		* @noto Not in use now.
 		* @todo use it.
 		*/
-		std::unordered_map<UUID, entt::entity> m_EntityMap;
+		std::unordered_map<UUID, entt::entity> m_RootEntityMap;
 
 		/**
 		* Allow Entity access all data.
@@ -293,6 +306,20 @@ namespace Spices {
 			auto& comp = m_Registry.get<T>(e);
 
 			fn(e, comp);
+		}
+	}
+
+	template<typename F>
+	inline void World::ViewRoot(F&& fn)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
+		for (auto entity : m_RootEntityMap)
+		{
+			Entity e(entity.second, this);
+			fn(e);
 		}
 	}
 

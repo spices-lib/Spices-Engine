@@ -35,7 +35,7 @@ namespace Spices {
 		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 		
 		m_Registry.destroy(entity);
-		m_EntityMap.erase(entity.GetUUID());
+		m_RootEntityMap.erase(entity.GetUUID());
 	}
 
 	Entity World::QueryEntitybyID(uint32_t id)
@@ -55,6 +55,15 @@ namespace Spices {
 		}
 	}
 
+	void World::RemoveFromRoot(Entity& entity)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::unique_lock<std::shared_mutex> lock(m_Mutex);
+
+		m_RootEntityMap.erase(entity.GetUUID());
+	}
+
 	Entity World::CreateEmptyEntity(UUID uuid)
 	{
 		SPICES_PROFILE_ZONE;
@@ -62,7 +71,7 @@ namespace Spices {
 		std::unique_lock<std::shared_mutex> lock(m_Mutex);
 		
 		Entity entity(m_Registry.create(), this);
-		m_EntityMap[uuid] = entity;
+		m_RootEntityMap[uuid] = entity;
 		return entity;
 	}
 }

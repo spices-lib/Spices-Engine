@@ -9,6 +9,8 @@
 
 #include "Core/Library/StringLibrary.h"
 #include "World/World/World.h"
+#include "World/Entity.h"
+#include "World/Components/EntityComponent.h"
 
 namespace Spices {
 
@@ -65,46 +67,61 @@ namespace Spices {
         {
             SPICES_PROFILE_ZONEN("ImguiStage::Entity (tree)list");
 
-            ImGuiTableFlags flags =
-                ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable
-                | ImGuiTableFlags_Sortable | ImGuiTableFlags_SortMulti
-                | ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_NoBordersInBody
-                | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY
-                | ImGuiTableFlags_SizingFixedFit;
+            static ImGuiTableFlags flags = ImGuiTableFlags_BordersV | ImGuiTableFlags_BordersOuterH | ImGuiTableFlags_Resizable | ImGuiTableFlags_NoBordersInBody |
+                                           ImGuiTableFlags_Sortable | ImGuiTableFlags_Reorderable   | ImGuiTableFlags_SortMulti | ImGuiTableFlags_Hideable |
+                                           ImGuiTableFlags_ScrollY  | ImGuiTableFlags_SortTristate;
+            static constexpr ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
-            constexpr ImGuiTableColumnFlags columns_base_flags = ImGuiTableColumnFlags_None;
-            constexpr int freeze_cols = 1;
-            constexpr int freeze_rows = 1;
+            /**
+            * @brief 0: NoSort, 1: Ascending, 2: Descending.
+            */
+            static int sortState = 0;
 
-            if (ImGui::BeginTable("Entity Stage", 3, flags, ImVec2(0, 0), 0.0))
-            {
-                ImGui::TableSetupColumn("Name", columns_base_flags | ImGuiTableColumnFlags_PreferSortDescending, 0.0f);
-                ImGui::TableSetupColumn(ICON_MD_REMOVE_RED_EYE, columns_base_flags | ((flags & ImGuiTableFlags_NoHostExtendX) ? 0 : ImGuiTableColumnFlags_WidthStretch), 0.0f);
-                ImGui::TableSetupColumn("Type", columns_base_flags | ImGuiTableColumnFlags_NoSort, 0.0f);
-                ImGui::TableSetupScrollFreeze(freeze_cols, freeze_rows);
-                ImGui::TableHeadersRow();
+            static std::function<void(uint32_t, uint32_t)> DrawStageTree = [&](uint32_t e, uint32_t depth) {
 
-                m_FrameInfo.m_World->ViewComponent<TagComponent>([&](auto entityID, auto& tComp) -> bool {
+                auto entity = Entity((entt::entity)e, FrameInfo::Get().m_World.get());
 
-                    /**
-                    * @brief Search Filter here.
-                    */
-                    if(isEnableSearch)
+                auto& tagComp = entity.GetComponent<TagComponent>();
+                bool hasChild = entity.HasComponent<EntityComponent>();
+
+                /**
+                * @brief Search Filter here.
+                */
+                if (isEnableSearch)
+                {
+                    if ((*tagComp.GetTag().begin()).find(searchString) == std::string::npos)
                     {
-                        if((*tComp.GetTag().begin()).find(searchString) == std::string::npos) return false;
+                        if (hasChild)
+                        {
+                            auto& entityComp = entity.GetComponent<EntityComponent>();
+                            for (auto& child : entityComp.GetEntities())
+                            {
+                                DrawStageTree(child, depth + 1);
+                            }
+                        }
+
+                        return;
                     }
-                    
-                    ImGui::TableNextRow();
+                }
 
-                    ImGui::TableSetColumnIndex(0);
+                std::stringstream ss;
+                ss << (*tagComp.GetTag().begin()).c_str() << "##" << (uint32_t)entity;
 
-                    const bool item_is_selected = m_FrameInfo.m_PickEntityID.has_key((int)entityID);
-                    constexpr ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
+                ImGui::PushID(ss.str().c_str());
 
-                    std::stringstream ss;
-                    ss << ICON_MD_POLYMER << " " << (*tComp.GetTag().begin()).c_str() << "##" << (int)entityID;
-                    // todo: multiple select.
-                    if (ImGui::Selectable(ss.str().c_str(), item_is_selected, selectable_flags, ImVec2(0, ImGuiH::GetLineItemSize().x)))
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+
+                const bool item_is_selected = m_FrameInfo.m_PickEntityID.has_key((int)e);
+
+                if (hasChild)
+                {
+                    bool open = ImGui::Selectable(ss.str().c_str(), item_is_selected, selectable_flags);
+                    ImGui::TableNextColumn();
+                    ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize());
+                    ImGui::TableNextColumn();
+                    ImGui::Text("Entity");
+                    if (open || item_is_selected)
                     {
                         if (ImGui::GetIO().KeyShift)
                         {
@@ -113,8 +130,7 @@ namespace Spices {
                                 /**
                                 * @brief Add select entity.
                                 */
-
-                                m_FrameInfo.m_PickEntityID.push_back((int)entityID, (*tComp.GetTag().begin()));
+                                m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
                             }
                         }
                         else if (ImGui::GetIO().KeyCtrl)
@@ -124,8 +140,7 @@ namespace Spices {
                                 /**
                                 * @brief Remove select entity.
                                 */
-
-                                m_FrameInfo.m_PickEntityID.erase((int)entityID);
+                                m_FrameInfo.m_PickEntityID.erase((int)e);
                             }
                         }
                         else
@@ -133,27 +148,99 @@ namespace Spices {
                             /**
                             * @brief Set a select entity.
                             */
-
                             m_FrameInfo.m_PickEntityID.clear();
-                            m_FrameInfo.m_PickEntityID.push_back((int)entityID, (*tComp.GetTag().begin()));
+                            m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
+                        }
+
+                        auto& entityComp = entity.GetComponent<EntityComponent>();
+                        for (auto& child : entityComp.GetEntities())
+                        {
+                            DrawStageTree(child, depth + 1);
                         }
                     }
-
-                    ImGui::TableSetColumnIndex(1);
-                    // todo: hidden entity.
-                    if (ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize()))
+                }
+                else
+                {
+                    if (ImGui::Selectable(ss.str().c_str(), item_is_selected, selectable_flags))
                     {
-
+                        if (ImGui::GetIO().KeyShift)
+                        {
+                            if (!item_is_selected)
+                            {
+                                /**
+                                * @brief Add select entity.
+                                */
+                                m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
+                            }
+                        }
+                        else if (ImGui::GetIO().KeyCtrl)
+                        {
+                            if (item_is_selected)
+                            {
+                                /**
+                                * @brief Remove select entity.
+                                */
+                                m_FrameInfo.m_PickEntityID.erase((int)e);
+                            }
+                        }
+                        else
+                        {
+                            /**
+                            * @brief Set a select entity.
+                            */
+                            m_FrameInfo.m_PickEntityID.clear();
+                            m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
+                        }
                     }
-
-                    ImGui::TableSetColumnIndex(2);
+                    ImGui::TableNextColumn();
+                    ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize());
+                    ImGui::TableNextColumn();
                     ImGui::Text("Entity");
+                }
 
-                    return false;
+                ImGui::PopID();
+            };
+
+            ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.164f, 0.18f, 0.184f, 1.0f));
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.196f, 0.204f, 0.2f, 1.0f));
+
+            if (ImGui::BeginTable("EntityTree", 3, flags))
+            {
+                // The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
+                ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+                ImGui::TableSetupColumn(ICON_MD_REMOVE_RED_EYE, ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_PreferSortDescending, ImGuiH::GetLineItemSize().x * 3.0f);
+                ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_PreferSortDescending, ImGuiH::GetLineItemSize().x * 3.0f);
+                ImGui::TableHeadersRow();
+
+                // Sort our data if sort specs have been changed!
+                if (ImGuiTableSortSpecs* sort_specs = ImGui::TableGetSortSpecs())
+                {
+                    // State changed since last frame.
+                    if (sort_specs->SpecsDirty)
+                    {
+                        sortState = 0;
+
+                        // Need sort this frame.
+                        if (sort_specs->SpecsCount > 0)
+                        {
+                            sortState = sort_specs->Specs->SortDirection;
+                        }
+
+                        sort_specs->SpecsDirty = false;
+                    }
+                }
+
+                FrameInfo::Get().m_World->ViewRoot([&](Entity& entity) {
+                    DrawStageTree(entity, 0);
                 });
 
                 ImGui::EndTable();
             }
+            ImGui::PopStyleColor(4);
+            ImGui::PopStyleVar();
         }
 
         /**

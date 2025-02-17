@@ -21,8 +21,7 @@ namespace Spices {
 		/**
 		* @brief Constructor Function.
 		*/
-		EntityComponent()
-		{}
+		EntityComponent() = default;
 
 		/**
 		* @brief Destructor Function.
@@ -46,10 +45,24 @@ namespace Spices {
 		*/
 		virtual void DrawThis() override;
 		
+		/**
+		* @brief Add an child entity to this Component.
+		* @param[in] entity child entity.
+		*/
+		void AddEntity(uint32_t entity);
 
+		/**
+		* @brief Get this Component Entities.
+		* @return Returns this Component Entities.
+		*/
+		const std::set<uint32_t>& GetEntities() { return m_Entities; }
 
 	private:
 
+		/**
+		* @brief child entities.
+		*/
+		std::set<uint32_t> m_Entities;
 
 	};
 }

@@ -77,7 +77,7 @@ namespace Spices {
 		* @param[in] model recursive model matrix.
 		* @param[in] loadingState LoadingState.
 		*/
-		void CreateEntityRecursive(
+		Entity CreateEntityRecursive(
 			World*             world ,
 			const std::string& tag   ,
 			uint32_t           node  ,

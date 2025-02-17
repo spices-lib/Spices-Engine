@@ -275,12 +275,22 @@ namespace Spices {
             /**
             * @brief Function of draw whole tree.
             */
-            static std::function<void(scl::tree<TimestampResult>*, scl::tree<TimestampResult>*)> DrawTimestampTree = [&](scl::tree<TimestampResult>* node, scl::tree<TimestampResult>* root) {
+            static std::function<void(scl::tree<TimestampResult>*, uint32_t, scl::tree<TimestampResult>*)> DrawTimestampTree = [&](scl::tree<TimestampResult>* node, uint32_t depth, scl::tree<TimestampResult>* root) {
             
                 if (!node->GetData().result.valid) return;
 
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
+
+                std::stringstream space;
+                for (uint32_t i = 0; i < depth; i++)
+                {
+                    space << " ";
+                }
+
+                ImGui::Text(space.str().c_str());
+                ImGui::SameLine();
+
                 bool hasChild = node->GetChilds().size() > 0;
                 if (hasChild)
                 {
@@ -298,7 +308,7 @@ namespace Spices {
                     {
                         for (auto& child : node->GetChilds())
                         {
-                            DrawTimestampTree(child.get(), root);
+                            DrawTimestampTree(child.get(), depth + 1, root);
                         }
                         ImGui::TreePop();
                     }
@@ -350,7 +360,7 @@ namespace Spices {
                 }
 
                 SortTimestampTree(&totalResult);
-                DrawTimestampTree(&totalResult, &totalResult);
+                DrawTimestampTree(&totalResult, 0, &totalResult);
 
                 ImGui::EndTable();
             }
@@ -472,12 +482,22 @@ namespace Spices {
             /**
             * @brief Function of draw whole tree.
             */
-            static std::function<void(scl::tree<PipelineResult>*, scl::tree<PipelineResult>*)> DrawTimestampTree = [&](scl::tree<PipelineResult>* node, scl::tree<PipelineResult>* root) {
+            static std::function<void(scl::tree<PipelineResult>*, uint32_t depth, scl::tree<PipelineResult>*)> DrawTimestampTree = [&](scl::tree<PipelineResult>* node, uint32_t depth, scl::tree<PipelineResult>* root) {
             
                 if (!node->GetData().result.valid) return;
 
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
+
+                std::stringstream space;
+                for (uint32_t i = 0; i < depth; i++)
+                {
+                    space << " ";
+                }
+
+                ImGui::Text(space.str().c_str());
+                ImGui::SameLine();
+
                 bool hasChild = node->GetChilds().size() > 0;
                 if (hasChild)
                 {
@@ -495,7 +515,7 @@ namespace Spices {
                     {
                         for (auto& child : node->GetChilds())
                         {
-                            DrawTimestampTree(child.get(), root);
+                            DrawTimestampTree(child.get(), depth + 1, root);
                         }
                         ImGui::TreePop();
                     }
@@ -548,7 +568,7 @@ namespace Spices {
                 }
 
                 SortTimestampTree(&totalResult);
-                DrawTimestampTree(&totalResult, &totalResult);
+                DrawTimestampTree(&totalResult, 0, &totalResult);
 
                 ImGui::EndTable();
             }

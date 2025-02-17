@@ -79,6 +79,14 @@ namespace Spices {
 		}
 
 		/**
+		* @brief Remove a entity from this world root.
+		*/
+		void RemoveFromRoot()
+		{
+			m_World->RemoveFromRoot(*this);
+		}
+
+		/**
 		* @brief If Component is owned by this entity or not.
 		* @tparam T Which Component we will search.
 		* @return Returns true if found.
