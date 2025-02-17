@@ -1,3 +1,9 @@
+/**
+* @file HttpServer.cpp.
+* @brief The HttpServer Class Implementation.
+* @author Spices & Muduo.
+*/
+
 #include "Pchheader.h"
 #include "HttpServer.h"
 #include "HttpRequest.h"
@@ -8,7 +14,11 @@ namespace Spices {
 
 namespace Net {
 
-	HttpServer::HttpServer(const InetAddress& listenAddress, int idleSeconds, TcpServer::Option option)
+	HttpServer::HttpServer(
+		const InetAddress& listenAddress , 
+		int                idleSeconds   , 
+		TcpServer::Option  option
+	)
 		: m_Server(listenAddress, option)
 		, m_HttpCallback(nullptr)
 		, m_IdleSeconds(idleSeconds)
@@ -17,8 +27,6 @@ namespace Net {
 
 		m_Server.AddConnectionCallback(std::bind(&HttpServer::OnConnection, this, std::placeholders::_1));
 		m_Server.AddMessageCallback(std::bind(&HttpServer::OnMessage, this, std::placeholders::_1, std::placeholders::_2));
-
-		
 	}
 
 	void HttpServer::Start(int threadSize) const

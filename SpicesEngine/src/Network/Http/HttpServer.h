@@ -1,3 +1,9 @@
+/**
+* @file HttpServer.h.
+* @brief The HttpServer Class Definitions.
+* @author Spices & Muduo.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "Network/Net/TcpServer.h"
@@ -22,7 +28,21 @@ namespace Net {
 
 	public:
 
-		HttpServer(const InetAddress& listenAddress, int idleSeconds, TcpServer::Option option = TcpServer::Option::NoReusePort);
+		/**
+		* @brief Constructor Function.
+		* @param[in] listenAddress Server listen address.
+		* @param[in] idleSeconds .
+		* @param[in] option Is reuse port.
+		*/
+		HttpServer(
+			const InetAddress& listenAddress , 
+			int                idleSeconds   ,
+			TcpServer::Option  option = TcpServer::Option::NoReusePort
+		);
+
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~HttpServer() = default;
 
 		/**

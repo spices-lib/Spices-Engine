@@ -38,6 +38,8 @@ namespace Net {
 			ReusePort = 1
 		};
 
+	public:
+
 		/**
 		* @brief Constructor Function.
 		* @param[in] listenAddress Server listen address.

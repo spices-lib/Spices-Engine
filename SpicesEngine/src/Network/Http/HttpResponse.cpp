@@ -1,3 +1,9 @@
+/**
+* @file HttpResponse.cpp.
+* @brief The HttpResponse Class Implementation.
+* @author Spices & Muduo.
+*/
+
 #include "Pchheader.h"
 #include "HttpResponse.h"
 #include "../Net/Buffer.h"

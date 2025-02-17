@@ -1,3 +1,9 @@
+/**
+* @file HttpContext.h.
+* @brief The HttpContext Class Definitions.
+* @author Spices & Muduo.
+*/
+
 #pragma once
 #include "Core/Core.h"
 #include "HttpRequest.h"
@@ -8,6 +14,9 @@ namespace Net {
 
 	class Buffer;
 
+	/**
+	* @brief Http Context.
+	*/
 	class HttpContext
 	{
 	public:
@@ -22,10 +31,14 @@ namespace Net {
 
 	public:
 
-		HttpContext()
-			: m_RequestParseState(RequestParseState::ExpectRequestLine)
-		{}
+		/**
+		* @brief Constructor Function.
+		*/
+		HttpContext() : m_RequestParseState(RequestParseState::ExpectRequestLine) {}
 
+		/**
+		* @brief Destructor Function.
+		*/
 		virtual ~HttpContext() = default;
 
 		/**
@@ -36,13 +49,28 @@ namespace Net {
 
 		bool ParseRequest(Buffer* buf);
 
+		/**
+		* @brief Determine if RequestParseState is GotAll.
+		* @return Returns true if RequestParseState is GotAll.
+		*/
 		bool GotAll() { return m_RequestParseState == RequestParseState::GotAll; }
 
 		void Reset();
 
 	private:
 
+		bool ProcessRequestLine(const char* begin, const char* end);
+
+	private:
+
+		/**
+		* @brief RequestParseState.
+		*/
 		RequestParseState m_RequestParseState;
+
+		/**
+		* @brief HttpRequest.
+		*/
 		HttpRequest m_HttpRequest;
 	};
 

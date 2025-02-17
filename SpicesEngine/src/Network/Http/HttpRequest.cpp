@@ -1,3 +1,9 @@
+/**
+* @file HttpRequest.cpp.
+* @brief The HttpRequest Class Implementation.
+* @author Spices & Muduo.
+*/
+
 #include "Pchheader.h"
 #include "HttpRequest.h"
 
@@ -63,7 +69,7 @@ namespace Net {
 		std::swap(m_Method, rhs.m_Method);
 		std::swap(m_Version, rhs.m_Version);
 		m_Path.swap(rhs.m_Path);
-		
+		m_Parameters.swap(rhs.m_Parameters);
 		m_Headers.swap(rhs.m_Headers);
 	}
 
