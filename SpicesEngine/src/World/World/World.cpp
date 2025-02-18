@@ -64,6 +64,15 @@ namespace Spices {
 		m_RootEntityMap.erase(entity.GetUUID());
 	}
 
+	bool World::IsRootEntity(Entity& entity)
+	{
+		SPICES_PROFILE_ZONE;
+
+		std::shared_lock<std::shared_mutex> lock(m_Mutex);
+
+		return m_RootEntityMap.find(entity.GetUUID()) != m_RootEntityMap.end();
+	}
+
 	Entity World::CreateEmptyEntity(UUID uuid)
 	{
 		SPICES_PROFILE_ZONE;

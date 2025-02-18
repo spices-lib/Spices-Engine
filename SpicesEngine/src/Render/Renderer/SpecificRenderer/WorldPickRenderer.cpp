@@ -6,6 +6,7 @@
 
 #include "Pchheader.h"
 #include "WorldPickRenderer.h"
+#include "World/Components/EntityComponent.h"
 
 namespace Spices {
 
@@ -64,8 +65,7 @@ namespace Spices {
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName({ m_Pass->GetName(), "WorldPick" }));
 
-		frameInfo.m_PickEntityID.for_each([&](const auto& k, const auto& v) {
-			Entity e = frameInfo.m_World->QueryEntitybyID(k);
+		static std::function<void(Entity)> drawSelected = [&](Entity e) {
 
 			if (e.HasComponent<MeshComponent>())
 			{
@@ -92,7 +92,25 @@ namespace Spices {
 					});
 				});
 			}
+		};
+
+		frameInfo.m_PickEntityID.for_each([&](const auto& k, const auto& v) {
 			
+			Entity e = frameInfo.m_World->QueryEntitybyID(k);
+
+			drawSelected(e);
+
+			if (e.HasComponent<EntityComponent>())
+			{
+				EntityComponent& entityComp = e.GetComponent<EntityComponent>();
+
+				for (auto& entity : entityComp.GetEntities())
+				{
+					Entity child = frameInfo.m_World->QueryEntitybyID(entity);
+					drawSelected(child);
+				}
+			}
+
 			return false;
 		});
 

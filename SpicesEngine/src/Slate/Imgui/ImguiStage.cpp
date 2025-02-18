@@ -11,6 +11,7 @@
 #include "World/World/World.h"
 #include "World/Entity.h"
 #include "World/Components/EntityComponent.h"
+#include "Core/Input/Input.h"
 
 namespace Spices {
 
@@ -77,6 +78,43 @@ namespace Spices {
             */
             static int sortState = 0;
 
+            static std::function<void(bool, Entity&, uint32_t)> ClickSelect = [&](bool selected, Entity& entity, uint32_t e) {
+            
+                if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left))
+                {
+                    auto& tagComp = entity.GetComponent<TagComponent>();
+
+                    if (ImGui::GetIO().KeyShift)
+                    {
+                        if (!selected)
+                        {
+                            /**
+                            * @brief Add select entity.
+                            */
+                            m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
+                        }
+                    }
+                    else if (ImGui::GetIO().KeyCtrl)
+                    {
+                        if (selected)
+                        {
+                            /**
+                            * @brief Remove select entity.
+                            */
+                            m_FrameInfo.m_PickEntityID.erase((int)e);
+                        }
+                    }
+                    else
+                    {
+                        /**
+                        * @brief Set a select entity.
+                        */
+                        m_FrameInfo.m_PickEntityID.clear();
+                        m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
+                    }
+                }
+            };
+
             static std::function<void(uint32_t, uint32_t)> DrawStageTree = [&](uint32_t e, uint32_t depth) {
 
                 auto entity = Entity((entt::entity)e, FrameInfo::Get().m_World.get());
@@ -112,86 +150,36 @@ namespace Spices {
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
 
+                ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
                 const bool item_is_selected = m_FrameInfo.m_PickEntityID.has_key((int)e);
+                if (item_is_selected)
+                {
+                    tree_node_flags |= ImGuiTreeNodeFlags_Selected;
+                }
 
                 if (hasChild)
                 {
-                    bool open = ImGui::Selectable(ss.str().c_str(), item_is_selected, selectable_flags);
+                    bool open = ImGui::TreeNodeEx(ss.str().c_str(), tree_node_flags);
+                    ClickSelect(item_is_selected, entity, e);
                     ImGui::TableNextColumn();
                     ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize());
                     ImGui::TableNextColumn();
                     ImGui::Text("Entity");
-                    if (open || item_is_selected)
+                    if (open)
                     {
-                        if (ImGui::GetIO().KeyShift)
-                        {
-                            if (!item_is_selected)
-                            {
-                                /**
-                                * @brief Add select entity.
-                                */
-                                m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
-                            }
-                        }
-                        else if (ImGui::GetIO().KeyCtrl)
-                        {
-                            if (item_is_selected)
-                            {
-                                /**
-                                * @brief Remove select entity.
-                                */
-                                m_FrameInfo.m_PickEntityID.erase((int)e);
-                            }
-                        }
-                        else
-                        {
-                            /**
-                            * @brief Set a select entity.
-                            */
-                            m_FrameInfo.m_PickEntityID.clear();
-                            m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
-                        }
-
                         auto& entityComp = entity.GetComponent<EntityComponent>();
                         for (auto& child : entityComp.GetEntities())
                         {
                             DrawStageTree(child, depth + 1);
                         }
+
+                        ImGui::TreePop();
                     }
                 }
                 else
                 {
-                    if (ImGui::Selectable(ss.str().c_str(), item_is_selected, selectable_flags))
-                    {
-                        if (ImGui::GetIO().KeyShift)
-                        {
-                            if (!item_is_selected)
-                            {
-                                /**
-                                * @brief Add select entity.
-                                */
-                                m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
-                            }
-                        }
-                        else if (ImGui::GetIO().KeyCtrl)
-                        {
-                            if (item_is_selected)
-                            {
-                                /**
-                                * @brief Remove select entity.
-                                */
-                                m_FrameInfo.m_PickEntityID.erase((int)e);
-                            }
-                        }
-                        else
-                        {
-                            /**
-                            * @brief Set a select entity.
-                            */
-                            m_FrameInfo.m_PickEntityID.clear();
-                            m_FrameInfo.m_PickEntityID.push_back((int)e, (*tagComp.GetTag().begin()));
-                        }
-                    }
+                    ImGui::TreeNodeEx(ss.str().c_str(), tree_node_flags | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf);
+                    ClickSelect(item_is_selected, entity, e);
                     ImGui::TableNextColumn();
                     ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize());
                     ImGui::TableNextColumn();

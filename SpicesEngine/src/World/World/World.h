@@ -209,6 +209,12 @@ namespace Spices {
 		*/
 		void RemoveFromRoot(Entity& entity);
 
+		/**
+		* @brief Determine if a entity is in root.
+		* @param[in] entity Entity.
+		*/
+		bool IsRootEntity(Entity& entity);
+
 	private:
 
 		Entity CreateEmptyEntity(UUID uuid);
