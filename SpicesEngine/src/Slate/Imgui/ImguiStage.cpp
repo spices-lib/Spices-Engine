@@ -12,6 +12,7 @@
 #include "World/Entity.h"
 #include "World/Components/EntityComponent.h"
 #include "Core/Input/Input.h"
+#include "Core/Thread/ThreadModel.h"
 
 namespace Spices {
 
@@ -78,7 +79,7 @@ namespace Spices {
             */
             static int sortState = 0;
 
-            static std::function<void(bool, Entity&, uint32_t)> ClickSelect = [&](bool selected, Entity& entity, uint32_t e) {
+            static std::function<void(bool, Entity, uint32_t)> ClickSelect = [&](bool selected, Entity& entity, uint32_t e) {
             
                 if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left))
                 {
@@ -115,9 +116,46 @@ namespace Spices {
                 }
             };
 
-            static std::function<void(uint32_t, uint32_t)> DrawStageTree = [&](uint32_t e, uint32_t depth) {
+            static std::function<void(uint32_t, uint32_t, uint32_t)> DragDrop = [&](uint32_t e, uint32_t p, uint32_t depth) {
+            
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptNoDrawDefaultRect))
+                {
+                    ImGui::SetDragDropPayload("Stage_Drag", &e, sizeof(e), ImGuiCond_Once);
+                    ImGui::EndDragDropSource();
 
-                auto entity = Entity((entt::entity)e, FrameInfo::Get().m_World.get());
+                    if (depth > 0)
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() {
+
+                            /**
+                            * @brief remove source from source's parent.
+                            */
+                            Entity((entt::entity)p, FrameInfo::Get().m_World.get()).GetComponent<EntityComponent>().RemoveEntity(e);
+                        });
+                    }
+                }
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Stage_Drag"))
+                    {
+                        uint32_t sourceEntity = *(uint32_t*)payload->Data;
+
+                        AsyncTask(ThreadPoolEnum::Game, [=]() {
+
+                            /**
+                            * @brief Add source to this EntityComponent.
+                            */
+                            Entity((entt::entity)e, FrameInfo::Get().m_World.get()).AddComponent<EntityComponent>().AddEntity(sourceEntity);
+
+                        });
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+            };
+
+            static std::function<void(uint32_t, uint32_t, uint32_t)> DrawStageTree = [&](uint32_t e, uint32_t p, uint32_t depth) {
+
+                Entity entity((entt::entity)e, FrameInfo::Get().m_World.get());
 
                 auto& tagComp = entity.GetComponent<TagComponent>();
                 bool hasChild = entity.HasComponent<EntityComponent>();
@@ -134,7 +172,7 @@ namespace Spices {
                             auto& entityComp = entity.GetComponent<EntityComponent>();
                             for (auto& child : entityComp.GetEntities())
                             {
-                                DrawStageTree(child, depth + 1);
+                                DrawStageTree(child, e, depth + 1);
                             }
                         }
 
@@ -161,6 +199,7 @@ namespace Spices {
                 {
                     bool open = ImGui::TreeNodeEx(ss.str().c_str(), tree_node_flags);
                     ClickSelect(item_is_selected, entity, e);
+                    DragDrop(e, p, depth);
                     ImGui::TableNextColumn();
                     ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize());
                     ImGui::TableNextColumn();
@@ -170,7 +209,7 @@ namespace Spices {
                         auto& entityComp = entity.GetComponent<EntityComponent>();
                         for (auto& child : entityComp.GetEntities())
                         {
-                            DrawStageTree(child, depth + 1);
+                            DrawStageTree(child, e, depth + 1);
                         }
 
                         ImGui::TreePop();
@@ -180,6 +219,7 @@ namespace Spices {
                 {
                     ImGui::TreeNodeEx(ss.str().c_str(), tree_node_flags | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf);
                     ClickSelect(item_is_selected, entity, e);
+                    DragDrop(e, p, depth);
                     ImGui::TableNextColumn();
                     ImGui::Button(ICON_MD_REMOVE_RED_EYE, ImGuiH::GetLineItemSize());
                     ImGui::TableNextColumn();
@@ -222,7 +262,7 @@ namespace Spices {
                 }
 
                 FrameInfo::Get().m_World->ViewRoot([&](Entity& entity) {
-                    DrawStageTree(entity, 0);
+                    DrawStageTree(entity, 0, 0);
                 });
 
                 ImGui::EndTable();

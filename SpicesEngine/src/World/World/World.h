@@ -210,6 +210,12 @@ namespace Spices {
 		void RemoveFromRoot(Entity& entity);
 
 		/**
+		* @brief Add a entity to this world root.
+		* @param[in] entity Entity.
+		*/
+		void AddToRoot(Entity& entity);
+
+		/**
 		* @brief Determine if a entity is in root.
 		* @param[in] entity Entity.
 		*/

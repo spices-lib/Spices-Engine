@@ -35,4 +35,13 @@ namespace Spices {
 		Entity e((entt::entity)entity, FrameInfo::Get().m_World.get());
 		e.RemoveFromRoot();
 	}
+
+	void EntityComponent::RemoveEntity(uint32_t entity)
+	{
+		SPICES_PROFILE_ZONE;
+
+		m_Entities.erase(entity);
+		Entity e((entt::entity)entity, FrameInfo::Get().m_World.get());
+		e.AddToRoot();
+	}
 }

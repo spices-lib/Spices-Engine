@@ -87,6 +87,14 @@ namespace Spices {
 		}
 
 		/**
+		* @brief Add a entity to this world root.
+		*/
+		void AddToRoot()
+		{
+			m_World->AddToRoot(*this);
+		}
+
+		/**
 		* @brief If Component is owned by this entity or not.
 		* @tparam T Which Component we will search.
 		* @return Returns true if found.

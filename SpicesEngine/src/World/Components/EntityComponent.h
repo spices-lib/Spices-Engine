@@ -52,6 +52,12 @@ namespace Spices {
 		void AddEntity(uint32_t entity);
 
 		/**
+		* @brief Remove an child entity from this Component.
+		* @param[in] entity child entity.
+		*/
+		void RemoveEntity(uint32_t entity);
+
+		/**
 		* @brief Get this Component Entities.
 		* @return Returns this Component Entities.
 		*/
