@@ -131,18 +131,69 @@ namespace Spices {
         {
             SPICES_PROFILE_ZONEN("ImguiProperty::Components");
 
-            Entity entity(static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.end_k()), m_FrameInfo.m_World.get());
+            entt::entity item = static_cast<entt::entity>(*m_FrameInfo.m_PickEntityID.end_k());
+            Entity entity(item, m_FrameInfo.m_World.get());
 
-            DrawComponent<TransformComponent>("Transform", entity);
-            DrawComponent<CameraComponent>("Camera", entity);
+            DrawComponent<TransformComponent>       ("Transform", entity);
+            DrawComponent<CameraComponent>          ("Camera", entity);
             DrawComponent<DirectionalLightComponent>("DirectionalLight", entity);
-            DrawComponent<PointLightComponent>("PointLight", entity);
-            DrawComponent<MeshComponent>("Mesh", entity);
-            DrawComponent<NativeScriptComponent>("NativeScript", entity);
-            DrawComponent<SkyBoxComponent>("SkyBox", entity);
-            DrawComponent<SpriteComponent>("Sprite", entity);
-            DrawComponent<TagComponent>("Tag", entity);
-            DrawComponent<UUIDComponent>("UUID", entity);
+            DrawComponent<PointLightComponent>      ("PointLight", entity);
+            DrawComponent<MeshComponent>            ("Mesh", entity);
+            DrawComponent<NativeScriptComponent>    ("NativeScript", entity);
+            DrawComponent<SkyBoxComponent>          ("SkyBox", entity);
+            DrawComponent<SpriteComponent>          ("Sprite", entity);
+            DrawComponent<LandscapeComponent>       ("Landscape", entity);
+            DrawComponent<ParticleComponent>        ("Particle", entity);
+            DrawComponent<EntityComponent>          ("Attachment", entity);
+            DrawComponent<TagComponent>             ("Tag", entity);
+            DrawComponent<UUIDComponent>            ("UUID", entity);
+
+            if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight))
+            {
+                if (ImGui::BeginMenu("Add Component"))
+                {
+                    if (ImGui::MenuItem("CameraComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<CameraComponent>(); });
+                    }
+                    if (ImGui::MenuItem("DirectionalLightComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<DirectionalLightComponent>(); });
+                    }
+                    if (ImGui::MenuItem("LandscapeComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<LandscapeComponent>(); });
+                    }
+                    if (ImGui::MenuItem("MeshComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<MeshComponent>(); });
+                    }
+                    if (ImGui::MenuItem("NativeScriptComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<NativeScriptComponent>(); });
+                    }
+                    if (ImGui::MenuItem("ParticleComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<ParticleComponent>(); });
+                    }
+                    if (ImGui::MenuItem("PointLightComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<PointLightComponent>(); });
+                    }
+                    if (ImGui::MenuItem("SkyBoxComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<SkyBoxComponent>(); });
+                    }
+                    if (ImGui::MenuItem("SpriteComponent"))
+                    {
+                        AsyncTask(ThreadPoolEnum::Game, [=]() { Entity(item, m_FrameInfo.m_World.get()).AddComponent<SpriteComponent>(); });
+                    }
+                    ImGui::MenuItem("WidgetComponent");
+
+                    ImGui::EndMenu();
+                }
+                ImGui::EndPopup();
+            }
         }
 
 		/**

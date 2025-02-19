@@ -52,6 +52,15 @@ namespace Spices {
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
+			if (HasComponent<T>())
+			{
+				std::stringstream ss;
+				ss << "Entity: " << (int)m_EntityHandle << " already has such component.";
+
+				SPICES_CORE_WARN(ss.str())
+				return GetComponent<T>();
+			}
+
 			T& component = m_World->AddComponent<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_World->OnComponentAdded<T>(this, component);
 			return component;
@@ -63,7 +72,7 @@ namespace Spices {
 		* @return Returns the specific Component.
 		*/
 		template<typename T>
-		T& GetComponent()
+		T& GetComponent() const
 		{
 			return m_World->GetComponent<T>(m_EntityHandle);
 		}

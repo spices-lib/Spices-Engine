@@ -17,19 +17,6 @@ namespace Spices {
 
 		EditorWorld::OnPreActivate();
 
-		// camera
-		{
-			Entity cameraentity = CreateEntity("EditorCamera");
-			CameraComponent& camComp = cameraentity.AddComponent<CameraComponent>(true);
-			camComp.SetCamera(std::make_shared<Camera>());
-			camComp.GetCamera()->SetPerspective(45.0f, 0.001f, 100000.0f);
-			TransformComponent& transformComp = cameraentity.GetComponent<TransformComponent>();
-			transformComp.SetPosition({ 30.0f, 6.0f, 15.0f });
-			transformComp.SetRotation({ 8.0f, -90.0f, 0.0f });
-
-			cameraentity.AddComponent<NativeScriptComponent>(std::make_shared<CameraController>());
-		}
-
 		{
 			auto collection = std::make_shared<GltfCollection>("G:/Vulkan/ExtensionAssets/BistroExterior/BistroExterior.gltf");
 			collection->CreateEntity(this, "BistroExterior");

@@ -20,6 +20,10 @@
 #include "World/Components/PointLightComponent.h"
 #include "World/Components/SkyBoxComponent.h"
 #include "World/Components/SpriteComponent.h"
+#include "World/Components/EntityComponent.h"
+#include "World/Components/LandscapeComponent.h"
+#include "World/Components/ParticleComponent.h"
+#include "World/Components/WidgetComponent.h"
 
 namespace Spices {
 

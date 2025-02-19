@@ -130,7 +130,13 @@ namespace Spices {
                             /**
                             * @brief remove source from source's parent.
                             */
-                            Entity((entt::entity)p, FrameInfo::Get().m_World.get()).GetComponent<EntityComponent>().RemoveEntity(e);
+                            Entity parent((entt::entity)p, FrameInfo::Get().m_World.get());
+                            EntityComponent& comp = parent.GetComponent<EntityComponent>(); 
+                            comp.RemoveEntity(e);
+                            if (comp.GetEntities().empty())
+                            {
+                                parent.RemoveComponent<EntityComponent>();
+                            }
                         });
                     }
                 }
@@ -188,12 +194,20 @@ namespace Spices {
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
 
-                ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAllColumns;
+                ImGuiTreeNodeFlags tree_node_flags = 0;
                 const bool item_is_selected = m_FrameInfo.m_PickEntityID.has_key((int)e);
                 if (item_is_selected)
                 {
                     tree_node_flags |= ImGuiTreeNodeFlags_Selected;
                 }
+
+                std::stringstream space;
+                for (int i = 0; i < depth; i++)
+                {
+                    space << "  ";
+                }
+                ImGui::Text(space.str().c_str());
+                ImGui::SameLine();
 
                 if (hasChild)
                 {
@@ -239,8 +253,8 @@ namespace Spices {
             {
                 // The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
                 ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
-                ImGui::TableSetupColumn(ICON_MD_REMOVE_RED_EYE, ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_PreferSortDescending, ImGuiH::GetLineItemSize().x * 3.0f);
-                ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_PreferSortDescending, ImGuiH::GetLineItemSize().x * 3.0f);
+                ImGui::TableSetupColumn(ICON_MD_REMOVE_RED_EYE, ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_NoResize, ImGuiH::GetLineItemSize().x);
+                ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_NoResize, ImGuiH::GetLineItemSize().x * 3.0f);
                 ImGui::TableHeadersRow();
 
                 // Sort our data if sort specs have been changed!
@@ -265,26 +279,30 @@ namespace Spices {
                     DrawStageTree(entity, 0, 0);
                 });
 
+                /**
+                * @brief Begin render add entity panel.
+                */
+                {
+                    SPICES_PROFILE_ZONEN("ImguiStage::Add Entity");
+
+                    if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight))
+                    {
+                        if (ImGui::MenuItem("Create Empty Entity"))
+                        {
+                            AsyncTask(ThreadPoolEnum::Game, [=]() {
+
+                                FrameInfo::Get().m_World->CreateEntity("Entity");
+
+                            });
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
+
                 ImGui::EndTable();
             }
             ImGui::PopStyleColor(4);
             ImGui::PopStyleVar();
-        }
-
-        /**
-        * @brief Begin render add entity panel.
-        */
-        {
-            SPICES_PROFILE_ZONEN("ImguiStage::Add Entity");
-
-            if (ImGui::BeginPopupContextWindow(0, 1))
-            {
-                if (ImGui::MenuItem("Create Empty Entity"))
-                {
-                    std::cout << " Clicked " << std::endl;
-                }
-                ImGui::EndPopup();
-            }
         }
 
         /**
