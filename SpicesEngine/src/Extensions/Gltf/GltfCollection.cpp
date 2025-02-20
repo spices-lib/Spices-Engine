@@ -93,7 +93,7 @@ namespace Spices {
 
 		for (auto& n : item.children)
 		{
-			childrens.push_back(CreateEntityRecursive(world, tag, n, glm::mat4(1.0f), loadingState));
+			childrens.push_back(CreateEntityRecursive(world, tag, n, item.matrix, loadingState));
 		}
 
 		if (!childrens.empty())
