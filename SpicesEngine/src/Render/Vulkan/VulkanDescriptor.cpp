@@ -335,6 +335,7 @@ namespace Spices {
 			case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
 				write.pBufferInfo       = &bufferInfo[pair.first];
 				write.descriptorCount   = 1;
+				break;
 			case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
 				VkWriteDescriptorSetAccelerationStructureKHR descASInfo {};
 				descASInfo.sType                          = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
