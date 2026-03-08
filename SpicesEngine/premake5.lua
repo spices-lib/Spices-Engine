@@ -145,7 +145,6 @@ project "SpicesEngine"
 		"implot",                             -- Dependency: implot
 		"%{Library.NvAftermath}",             -- Dependency: NvAftermath
 		"%{Library.NvPerf}",                  -- Dependency: NvPerf
-		"%{Library.HoudiniEnginelib}",        -- Dependency: HoudiniEngine
 		"METIS",                              -- Dependency: METIS
 		"ktx",                                -- Dependency: ktx
 		"shaderc",                            -- Dependency: shaderc

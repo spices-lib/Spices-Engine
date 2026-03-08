@@ -5,7 +5,7 @@
 -- Includes
 IncludeDir                                = {}
 IncludeDir["GLFW"]                        = "%{wks.location}/SpicesEngine/vendor/GLFW/include"                                -- Include: GLFW
-IncludeDir["VulkanSDK"]                   = "C:/VulkanSDK/1.3.296.0/Include"                                                  -- Include: VulkanSDK
+IncludeDir["VulkanSDK"]                   = "C:/VulkanSDK/1.4.321.1/Include"                                                  -- Include: VulkanSDK
 IncludeDir["stb_image"]                   = "%{wks.location}/SpicesEngine/vendor/stb_image"                                   -- Include: stb_image
 IncludeDir["glm"]                         = "%{wks.location}/SpicesEngine/vendor/glm"                                         -- Include: glm
 IncludeDir["ImGui"]                       = "%{wks.location}/SpicesEngine/vendor/imgui"                                       -- Include: ImGui
@@ -38,7 +38,7 @@ IncludeDir["googlemock"]                  = "%{wks.location}/SpicesTest/vendor/g
 
 -- Library Directries Folder
 LibraryDir                                = {}
-LibraryDir["VulkanSDK"]                   = "C:/VulkanSDK/1.3.296.0/Lib"                                                      -- Library Directries: VulkanSDK Folder
+LibraryDir["VulkanSDK"]                   = "C:/VulkanSDK/1.4.321.1/Lib"                                                      -- Library Directries: VulkanSDK Folder
 LibraryDir["VulkanSDKDLL"]                = "%{LibraryDir.VulkanSDK}/../Bin"                                                  -- Library Directries: VulkanSDK dll Folder
 LibraryDir["NvAftermath"]                 = "%{wks.location}/SpicesEngine/vendor/NvAftermath/lib/x64"                         -- Library Directries: NvAftermath Folder
 LibraryDir["NvPerf"]                      = "%{wks.location}/SpicesEngine/vendor/NvPerf/lib"                                  -- Library Directries: NvPerf Folder

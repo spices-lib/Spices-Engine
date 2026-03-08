@@ -80,7 +80,7 @@ project "SpicesGame"
 		-- NvAftermath dll Path.
 		-- NvPerf dll Path.
 		-- Vulkan dll Path.
-		"PATH=%{LibraryDir.HoudiniEnginedll};%{LibraryDir.NvAftermath};%{LibraryDir.NvPerf};%{LibraryDir.VulkanSDKDLL}",     
+		"PATH=%{LibraryDir.NvAftermath};%{LibraryDir.NvPerf};%{LibraryDir.VulkanSDKDLL}",     
 	}
 
 	-- The Solution Dependency

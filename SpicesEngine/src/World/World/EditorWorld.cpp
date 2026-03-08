@@ -10,7 +10,6 @@
 #include "Render/FrameInfo.h"
 #include "Systems/SystemManager.h"
 #include "GamePlay/CameraController.h"
-#include "Extensions/HoudiniLiveLink/HoudiniSession.h"
 
 namespace Spices {
 
@@ -50,8 +49,6 @@ namespace Spices {
 			dirlightComp.SetColor({ 1.0f, 1.0f, 1.0f });
 			dirlightComp.SetIntensity(5.0f);
 		}
-
-		HoudiniEngine::HoudiniSession session {};
 	}
  
 	void EditorWorld::OnActivate(TimeStep& ts)

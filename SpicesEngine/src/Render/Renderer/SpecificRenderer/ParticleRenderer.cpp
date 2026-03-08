@@ -108,7 +108,7 @@ namespace Spices {
 
 		if (!buffer) return;
 
-		//builder.AddBarriers(buffer->Get(), 0, VK_ACCESS_SHADER_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
+		builder.AddBarriers(buffer->Get(), 0, VK_ACCESS_SHADER_WRITE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
 
 		builder.BindDescriptorSet(DescriptorSetManager::GetByName("PreRenderer"));
 
